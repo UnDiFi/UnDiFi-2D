@@ -1,0 +1,74 @@
+head	1.2;
+access;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2013.01.25.07.58.15;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.11.13.11.03.03;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@variable in common for Merkle's preconditioner
+@
+
+
+1.2
+log
+@the non dimensional gas constant RSTAR
+has been moved to another common
+@
+text
+@      DOUBLE PRECISION AMPSQR,MERKLE_CUTOFF
+      COMMON/MERKLE/AMPSQR,MERKLE_CUTOFF
+C
+C     This is Merkle's parameter M_p for preconditiong, see e.g.
+C     the VKI LS 1999-03
+C
+C     RSTAR is a constant in the non-dimensional equation of state:
+C     p = \rho RSTAR T
+C
+C     T changes depending on the choice of reference variables,
+C     i.e. depending on the flag -nondimensionalisation
+C     for external flows RSTAR = 1./(\gamma * M_{\infty}**2)
+C     for internal flows RSTAR = 1.
+C
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+      DOUBLE PRECISION AMPSQR,MERKLE_CUTOFF,RSTAR
+      COMMON/MERKLE/AMPSQR,MERKLE_CUTOFF,RSTAR
+@

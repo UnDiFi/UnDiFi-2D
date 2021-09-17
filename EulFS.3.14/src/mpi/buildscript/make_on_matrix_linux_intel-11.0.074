@@ -1,0 +1,26 @@
+module purge
+module load caspur
+module show compilers/64/intel-11.0.074
+module load compilers/64/intel-11.0.074
+module show openmpi/1.2.5/64/intel-11.0.074
+module load openmpi/1.2.5/64/intel-11.0.074
+module show acml/4.2.0/64/intel
+module load acml/4.2.0/64/intel
+export PETSC_DIR=/work/ahn/abonfigl/petsc-3.0.0-p6
+export PETSC_ARCH=linux_intel-11.0.074
+
+echo Using gcc: `which gcc`
+echo
+echo Using F95: `which gfortran`
+echo
+
+echo PETSC_DIR is: $PETSC_DIR
+echo
+echo PETSC_ARCH is: $PETSC_ARCH
+echo
+echo LD_LIBRARY_PATH is: $LD_LIBRARY_PATH
+echo
+
+sleep 2
+
+make install DEST=/work/ahn/$USER/bin/$PETSC_ARCH

@@ -1,0 +1,48 @@
+\hypertarget{symm2parm_8f}{}\doxysection{src/euler/symm2parm.f File Reference}
+\label{symm2parm_8f}\index{src/euler/symm2parm.f@{src/euler/symm2parm.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{symm2parm_8f_a6a37c7f43ee90a0bb605b0c1972ad7f5}{S\+Y\+M\+M2\+P\+A\+RM}} (Z\+R\+OE, D\+Z\+DV, N\+O\+F\+V\+AR, N\+D\+IM)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{symm2parm_8f_a6a37c7f43ee90a0bb605b0c1972ad7f5}\label{symm2parm_8f_a6a37c7f43ee90a0bb605b0c1972ad7f5}} 
+\index{symm2parm.f@{symm2parm.f}!SYMM2PARM@{SYMM2PARM}}
+\index{SYMM2PARM@{SYMM2PARM}!symm2parm.f@{symm2parm.f}}
+\doxysubsubsection{\texorpdfstring{SYMM2PARM()}{SYMM2PARM()}}
+{\footnotesize\ttfamily subroutine S\+Y\+M\+M2\+P\+A\+RM (\begin{DoxyParamCaption}\item[{double precision, dimension(nofvar)}]{Z\+R\+OE,  }\item[{double precision, dimension(nofvar,nofvar)}]{D\+Z\+DV,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+D\+IM }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the trasformation matrix {\ttfamily D\+Z\+DV} $ = \frac{\partial Z}{\partial \tilde{U}} $ from parameter vector to the set of Euler symmetrizing variables \[ \frac{\partial Z}{\partial \tilde{U}} = \frac{1}{\sqrt{\rho}} \left[ \begin{array}{ccc} \frac{1}{2} & \frac{1}{2} \rho / a & \mathbf{0} \\\ \frac{1}{2} \left( 2 k - H \right) & \frac{\rho}{a} \left[ \left(\gamma-\frac{1}{2}\right) H -\left(\gamma-1\right) k \right] & \rho \mathbf{u}^t \\\ \frac{1}{2} \mathbf{u} & \frac{1}{2} \rho \mathbf{u} / a & \rho \, I_{d\times d} \end{array} \right] \\\ = \left[ \begin{array}{ccccc} \frac{1}{2 z_1} & \frac{z_1}{2 \,a} & 0 & 0 & 0 \\ \frac{1}{2 z_1^2} \left( \left( z_3^2+z_4^2+z_5^2 \right)/z_1 - z_2 \right) & \frac{1}{a} \left[ \left(\gamma-\frac{1}{2}\right) z_2 -\frac{\gamma-1 }{2} \left( z_3^2+z_4^2+z_5^2 \right)/z_1 \right] & z_3 & z_4 & z_5 \\ \frac{z_3}{2 \, z_1^2} & \frac{1}{2a} z_3 & z_1 & 0 & 0 \\ \frac{z_4}{2 \, z_1^2} & \frac{1}{2a} z_4 & 0 & z_1 & 0 \\ \frac{z_5}{2 \, z_1^2} & \frac{1}{2a} z_5 & 0 & 0 & z_1 \end{array} \right] \]
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Roe\textquotesingle{}s parameter vector \\
+\hline
+\mbox{\texttt{ out}}  & {\em D\+Z\+DV} & is the matrix $ \frac{\partial Z}{\partial \tilde{U}} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & leading dimension of D\+Z\+DV \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+5 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/22 11\+:15\+:08 
+\end{DoxyParagraph}

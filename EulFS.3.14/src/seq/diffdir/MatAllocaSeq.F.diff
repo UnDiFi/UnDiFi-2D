@@ -1,0 +1,24 @@
+4c4
+< C     $Id: MatAllocaSeq.F,v 1.18 2020/02/05 15:00:37 abonfi Exp abonfi $
+---
+> C     $Id: MatAllocaSeq.F,v 1.18 2020/02/05 15:00:37 abonfi Exp $
+9a10,11
+>       IMPLICIT NONE
+> C
+14c16
+< C     $Id: MatAllocaSeq.F,v 1.18 2020/02/05 15:00:37 abonfi Exp abonfi $
+---
+> C     $Id: MatAllocaSeq.F,v 1.18 2020/02/05 15:00:37 abonfi Exp $
+16a19
+> #include "petsc/finclude/petscsys.h"
+18,19c21,22
+< CCCC#include "petsc/finclude/petscvec.h"
+< CCCC#include "petsc/finclude/petscviewer.h"
+---
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscviewer.h"
+21,24d23
+<               use petscis
+<               use petscmat
+< C
+<       IMPLICIT NONE

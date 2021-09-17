@@ -1,0 +1,10 @@
+      DOUBLE PRECISION FUNCTION FACT(N)
+      INTEGER N
+      INTEGER J
+      FACT=1
+      DO 10 J=2,N
+         FACT=FACT*J
+ 10   CONTINUE
+      RETURN
+      END
+

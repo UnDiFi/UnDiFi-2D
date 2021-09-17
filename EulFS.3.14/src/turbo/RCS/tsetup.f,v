@@ -1,0 +1,370 @@
+head	1.8;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.8
+	release3_13_0:1.8
+	release3_12_0:1.8
+	release3_11_0:1.8
+	release3_10_0:1.8
+	release3_8_0:1.8
+	release3_7_1:1.7
+	release3_7_0:1.7
+	release3_4_5:1.7
+	release3_4_4:1.7
+	release3_4_3:1.7
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.6;
+locks; strict;
+comment	@c @;
+
+
+1.8
+date	2020.04.23.09.55.35;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.09.17.10.05.48;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.01.24.08.56.39;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2009.06.11.09.48.50;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2007.11.14.09.03.26;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.09.13.07.23.55;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2002.09.13.16.02.51;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.09.22.12.50.40;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Computes some cell-averaged quantities to be used
+by the turbulence model
+@
+
+
+1.8
+log
+@now calling R8Mat_Print
+@
+text
+@      SUBROUTINE TSETUP(IELEM,NELEM,ZROE,NDIM,NOFVERT,NOFVAR,NP,
+     >                  COMPRESSIBLE,RWORK)
+C
+C     $Id: tsetup.f,v 1.7 2013/09/17 10:05:48 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+      INTEGER ISTAK(1)
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'bnd.h'
+      include 'three.com'
+      include 'stream.com'
+      include 'time.com'
+      include 'turb.com'
+      include 'nloc.com'
+C
+      INTEGER IELEM,NELEM,NDIM,NOFVERT,NOFVAR,NP
+      INTEGER IFAIL,ICN(MAXNOFVERT)
+      LOGICAL COMPRESSIBLE
+      DOUBLE PRECISION ZROE(*),RWORK(*)
+      DOUBLE PRECISION VCZ(MAXNOFVAR*MAXNOFVERT),VCN(3*MAXNOFVERT),
+     2                 VCB(3*MAXNOFVERT)
+      DOUBLE PRECISION UX,UY,UZ,OMEX,OMEY,OMEZ,OME
+      DOUBLE PRECISION VISCL,TD,TTD,VOLUME(MAXTIMLEVS+1)
+      DOUBLE PRECISION SUTHERLAW
+      INTEGER IVERT
+      EXTERNAL SUTHERLAW
+C
+C**********************************************
+C
+C     flow variables
+C
+C**********************************************
+C
+          CALL CELPTR(IELEM,NELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),
+     +    DSTAK(LVOL),ZROE,DSTAK(LFACNOR),DSTAK(LXYZDOT),NDIM,
+     +    NOFVERT, NOFVAR, NP, ICN, VCZ, VCN, VCB, VOLUME)
+C
+C     COMPUTES THE GRADIENT OF THE flow VARIABLES
+C
+          CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,
+     +                   VCZ,NOFVAR,VOLUME(1))
+C
+          IF(COMPRESSIBLE)THEN
+              CALL PARM2PRIM(NDIM,IELEM)
+              CALL GRADPRIM(IELEM,NDIM,NDIM+2)
+C
+C     kinematic viscosity
+C
+              VISCL = SUTHERLAW(M_INFTY,ABAR,ASQR)/UAVG(1)
+              UX = UAVG(3) 
+              UY = UAVG(4) 
+              UZ = UAVG(5) 
+C
+C Cell averaged vorticity
+C
+              IF(NDIM.EQ.3)THEN
+                OMEX = GRAD_PRIM(5,2) - GRAD_PRIM(4,3)
+                OMEY = GRAD_PRIM(3,3) - GRAD_PRIM(5,1)
+              ELSE
+                OMEX = ZERO
+                OMEY = ZERO
+              ENDIF
+              OMEZ = GRAD_PRIM(4,1) - GRAD_PRIM(3,2)
+          ELSE
+              VISCL = 1.d0
+              UX = ZAVG(2)
+              UY = ZAVG(3) 
+              UZ = ZAVG(4) 
+C
+C Cell averaged vorticity
+C
+              IF(NDIM.EQ.3)THEN
+                OMEX = GRAD_PARM(4,2) - GRAD_PARM(3,3)
+                OMEY = GRAD_PARM(2,3) - GRAD_PARM(4,1)
+              ELSE
+                OMEX = ZERO
+                OMEY = ZERO
+              ENDIF
+              OMEZ = GRAD_PARM(3,1) - GRAD_PARM(2,2)
+          ENDIF
+C
+          OME = SQRT(OMEX*OMEX+OMEY*OMEY+OMEZ*OMEZ)
+C
+C     compute a cell averaged wall distance
+C
+          TD = ZERO
+          DO 10 IVERT = 1,NOFVERT
+              TD = TD + DSTAK(LTD+ICN(IVERT))
+   10     CONTINUE
+          TD=TD/NOFVERT
+          IF(TTFLAG.EQ.1)THEN 
+C
+C     compute a cell averaged wall distance
+C     on periodic grids, we should rather address
+C     the original cell to vertex pointer
+C     which is stored in ICELNOD(*,IELEM+NELEM)
+C
+              TTD = ZERO
+              DO 20 IVERT = 1,NOFVERT
+                  TTD = TTD + DSTAK(LTTD+ICN(IVERT))
+   20         CONTINUE
+              TTD=TTD/NOFVERT
+          ELSE
+              TTD=ZERO
+          ENDIF
+C
+          RWORK(1) = TD
+          RWORK(2) = VISCL
+          RWORK(3) = OME
+          RWORK(4) = UX
+          RWORK(5) = UY
+          RWORK(6) = UZ
+          RWORK(7) = TTD
+C
+C     CALL R8Mat_Print('General',' ',NOFVAR,3,GRAD_PARM,NMAX,
+C    +         'gradZ ',IFAIL)
+C         write(*,*)(rwork(ivert),ivert=1,7),omex,omey,omez
+C
+          RETURN
+          END 
+@
+
+
+1.7
+log
+@VOLUME is now an array
+@
+text
+@d4 1
+a4 1
+C     $Id: tsetup.f,v 1.6 2013/01/24 08:56:39 abonfi Exp abonfi $
+d125 1
+a125 1
+C     CALL X04CAF('General',' ',NOFVAR,3,GRAD_PARM,NMAX,
+@
+
+
+1.6
+log
+@Added support for moving grid (un-tested, though)
+@
+text
+@d4 1
+a4 1
+C     $Id: tsetup.f,v 1.5 2009/06/11 09:48:50 abonfi Exp abonfi $
+d33 1
+a33 1
+      DOUBLE PRECISION VISCL,TD,TTD,VOLUME
+d51 1
+a51 1
+     +                   VCZ,NOFVAR,VOLUME)
+@
+
+
+1.5
+log
+@now passing the total number of gridpoints among the arguments of the call
+@
+text
+@d4 1
+a4 1
+C     $Id: tsetup.f,v 1.4 2007/11/14 09:03:26 abonfi Exp abonfi $
+d20 1
+a20 1
+      include 'three'
+d22 1
+d27 1
+a27 1
+      INTEGER IFAIL,ICN(4)
+d30 2
+a31 1
+      DOUBLE PRECISION VCZ(20),VCN(12)
+d45 2
+a46 2
+     +    DSTAK(LVOL),ZROE,DSTAK(LFACNOR),NDIM,
+     +    NOFVERT, NOFVAR, NP, ICN, VCZ, VCN, VOLUME)
+d50 2
+a51 2
+          CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,
+     +                   NOFVAR,VOLUME)
+@
+
+
+1.4
+log
+@setting trip point distance to ZERO
+when the trip point term is omitted
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE TSETUP(IELEM,NELEM,ZROE,NDIM,NOFVERT,NOFVAR,
+d4 1
+a4 1
+C     $Id: tsetup.f,v 1.3 2005/09/13 07:23:55 abonfi Exp abonfi $
+d18 1
+a18 1
+      include 'constants'
+d23 1
+a23 1
+      include 'nloc'
+d25 2
+a26 2
+      INTEGER IELEM,NELEM,NDIM,NOFVERT,NOFVAR,ifail
+      INTEGER ICN(4)
+d28 1
+a28 2
+      DOUBLE PRECISION ZROE(*)
+      DOUBLE PRECISION RWORK(*)
+d44 1
+a44 1
+     +    NOFVERT, NOFVAR, ICN, VCZ, VCN, VOLUME)
+@
+
+
+1.3
+log
+@the list of arguments of the CELPTR subr has changed
+in version 10.10 of the code; also corrected
+the 2nd argument passed to PARM2PRIM
+@
+text
+@d4 1
+a4 1
+C     $Id:$
+d95 1
+a95 1
+          TD = 0.d0
+d107 1
+a107 1
+              TTD = 0.d0
+d112 2
+@
+
+
+1.2
+log
+@we do NOT compute anymore all vorticity components
+in two dimensional flows
+@
+text
+@d1 4
+a4 2
+      SUBROUTINE TSETUP(IELEM,ZROE,NDIM,NOFVERT,NOFVAR,
+     >COMPRESSIBLE,RWORK)
+d25 1
+a25 1
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,ifail
+d43 1
+a43 1
+          CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),
+d53 1
+a53 1
+              CALL PARM2PRIM(NDIM,NOFVAR)
+d103 3
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d16 1
+d23 1
+a23 1
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR
+d52 1
+d63 7
+a69 2
+              OMEX = GRAD_PRIM(5,2) - GRAD_PRIM(4,3)
+              OMEY = GRAD_PRIM(3,3) - GRAD_PRIM(5,1)
+d79 8
+a86 3
+              OMEX = GRAD_PRIM(4,2) - GRAD_PRIM(3,3)
+              OMEY = GRAD_PRIM(2,3) - GRAD_PRIM(4,1)
+              OMEZ = GRAD_PRIM(3,1) - GRAD_PRIM(2,2)
+d117 4
+@

@@ -1,0 +1,9 @@
+      INTEGER FUNCTION NERROR(NERR)                                     ERRN0000
+C
+C  RETURNS NERROR = NERR = THE VALUE OF THE ERROR FLAG LERROR.
+C
+      NERROR=I8SAVE(1,0,.FALSE.)
+      NERR=NERROR
+      RETURN
+C
+      END

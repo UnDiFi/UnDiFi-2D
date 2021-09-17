@@ -1,0 +1,71 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2000.06.19.16.03.13;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@create an index set for constant pressure b.c.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE ISET2(IDX,NODCODE,NDIM,NOFVAR,NPOIN,ROWBGN)
+C
+C     This routine creates PETSc Index Sets addressing
+C          boundary meshpoints with various types of
+C          boundary conditions.
+C     In the parallel case it is important that
+C          the routine is called with NPOIN=# of processor
+C          owned nodes, since the index sets are local
+C          and shoud not address ghost nodes 
+C
+C
+C     $Id$
+C
+      IMPLICIT NONE
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/is.h"
+C
+#include "iset.com"
+C
+      INTEGER NPOIN,NDIM,NOFVAR
+      INTEGER IPOIN,NI,IFAIL,IOFF,IBGN,J,ROWBGN
+      INTEGER NODCODE(NPOIN),IDX(*)
+C
+C     Create an index set containing the node numbers
+C     (0-based indexing) of meshpoints belonging to
+C     a supersonic (or Dirichlet) boundary 
+C     to be used mainly for scalar problems 
+C
+      NI=0
+      DO 100 IPOIN = 1, NPOIN
+         IF(NODCODE(IPOIN).EQ.3000)THEN 
+             NI=NI+1
+C
+C     0-based indexing
+C
+             IDX(NI) = NOFVAR*(IPOIN-1) + ROWBGN
+         ENDIF 
+  100 CONTINUE
+C
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,CnstPressure,
+     +                     IFAIL)
+C     write(6,*)'ISCreateGeneral CnstPressure ',ifail
+C
+      RETURN
+      END 
+@

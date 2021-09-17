@@ -1,0 +1,263 @@
+head	1.5;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.5
+	release3_13_0:1.5
+	release3_12_0:1.5
+	release3_11_0:1.5
+	release3_10_0:1.5
+	release3_8_0:1.5
+	release3_7_1:1.5
+	release3_7_0:1.5
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.5
+date	2020.02.18.08.47.40;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2020.02.07.14.31.55;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.09.17.10.01.18;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2012.12.20.10.58.43;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.05.15.08.18.23;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute boundary fluxes using the telescoping property of the residuals
+@
+
+
+1.5
+log
+@removed unused variables
+@
+text
+@      SUBROUTINE CHKFLX2(ICELNOD,ICELFAC,
+     1                   VFACNOR,XYZDOT,VOL,ZROE,
+     3                   NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,
+     4                   NOFVAR,NTURB)
+C
+      IMPLICIT NONE
+C
+C     $Id: chkflx2.f,v 1.4 2020/02/07 14:31:55 abonfi Exp abonfi $
+C
+C     Here we verify the telescoping property of the residuals, i.e.
+C     we sum up the flux balances of all cells and verify that these
+C     equal the integral through all boundaries, which is computed
+C     in subroutine chkflx
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'flags.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'time.com'
+      INCLUDE 'three.com'
+C
+C
+      INTEGER NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,NELEM,NTURB
+      INTEGER ICELNOD(NOFVERT,NELEM),ICELFAC(NOFVERT,NELEM)
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM), ZROE(NOFVAR,*),
+     2                 XYZDOT(NDIM,*)
+C
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+C
+C
+C     ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell
+C
+C
+C     FACNOR(1:NDIM,1:NFACE)  cartesian components
+C                             of the NFACE faces/edges
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+C
+      INTEGER IELEM,NP,J
+      INTEGER NERR,IOPT
+      PARAMETER(NERR = 5, IOPT = 1)
+C
+C     ICN stores the vertices of the current element (0-based indexing)
+C
+C     ..
+C     .. Local Arrays ..
+      INTEGER ICN(MAXNOFVERT)
+      DOUBLE PRECISION VCN(3*MAXNOFVERT),VOLUME(4),WKSP(MAXNOFVAR)
+      DOUBLE PRECISION VCZ(MAXNOFVAR,MAXNOFVERT),VCB(3*MAXNOFVERT)
+C
+C
+C     Some initializations ....
+C
+C
+      NP = NPOIN + NGHOST + NPNOD
+C
+C     set work array equal to zero
+C
+      CALL DINIT(NOFVAR,ZERO,WKSP,1)
+C
+      DO 2000 IELEM = 1,NELEM
+C
+C     The element stiffness matrix is initialized to 0.d0
+C
+          CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+     +                VFACNOR, XYZDOT, NDIM, NOFVERT, NOFVAR, NP, ICN,
+     3                VCZ, VCN, VCB, VOLUME)
+C
+          CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,
+     +               VCZ,NOFVAR,VOLUME(1))
+C
+          CALL CHECK(IELEM,NDIM,NOFVAR)
+C
+          CALL DSCAL(NOFVAR,VOLUME(1),DivFlux,1)
+          CALL DAXPY(NOFVAR,ONE,DivFlux,1,WKSP,1)
+C
+C
+ 2000 CONTINUE ! end loop over elements
+      WRITE(6,*)
+      WRITE(6,335)(WKSP(J),J=1,NOFVAR)
+      RETURN
+  335 FORMAT(10X,'CHECKING THE TELESCOPING PROPERTY',/,21X,
+     &'OF THE INVISCID FLUXES',6(1X,E12.6))
+      END
+@
+
+
+1.4
+log
+@it should NOT be called when doing coupled RANS
+@
+text
+@d8 1
+a8 1
+C     $Id: chkflx2.f,v 1.3 2013/09/17 10:01:18 abonfi Exp abonfi $
+a43 2
+      integer I,J
+ 
+d52 1
+a52 3
+      INTEGER JVAR,IVAR,IVERT,JVERT,JV,IELEM,NP
+      INTEGER IFAIL,N4
+      DOUBLE PRECISION EPS
+a53 1
+      CHARACTER*72 ERRMSG
+@
+
+
+1.3
+log
+@VOLUME is now an array so that cell volumes at the previous
+time levels can be stored
+@
+text
+@d1 4
+a4 3
+      SUBROUTINE CHKFLX2(ICELNOD,ICELFAC,VFACNOR,XYZDOT,VOL,ZROE,
+     3                   NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     4                   NTURB)
+d8 1
+a8 1
+C     $Id: chkflx2.f,v 1.2 2012/12/20 10:58:43 abonfi Exp abonfi $
+a67 1
+      LOGICAL VISCOUS
+a72 1
+      VISCOUS = KAN .GT. 0
+d90 1
+a90 1
+          CALL CHECK(IELEM,NDIM,NOFVAR-NTURB)
+d92 2
+a93 2
+          CALL DSCAL(NOFVAR-NTURB,VOL(IELEM),DivFlux,1)
+          CALL DAXPY(NOFVAR-NTURB,ONE,DivFlux,1,WKSP,1)
+d98 1
+a98 1
+      WRITE(6,*)(WKSP(J),J=1,NOFVAR-NTURB)
+d100 2
+@
+
+
+1.2
+log
+@added support for moving grids
+@
+text
+@d7 1
+a7 1
+C     $Id: chkflx2.f,v 1.1 2010/05/15 08:18:23 abonfi Exp abonfi $
+d65 1
+a65 1
+      DOUBLE PRECISION VCN(3*MAXNOFVERT),VOLUME,WKSP(MAXNOFVAR)
+d89 1
+a89 1
+     +               VCZ,NOFVAR,VOLUME)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE CHKFLX2(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,
+d7 1
+a7 1
+C     $Id:$
+d18 1
+d24 2
+a25 1
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM), ZROE(NOFVAR,*)
+d66 2
+a67 2
+      DOUBLE PRECISION VCZ(MAXNOFVAR,MAXNOFVERT)
+      LOGICAL COMPRESSIBLE,VISCOUS
+a72 1
+      COMPRESSIBLE = ABS(KAN) .EQ. 4
+d85 2
+a86 1
+     +    VFACNOR, NDIM, NOFVERT, NOFVAR, NP, ICN, VCZ, VCN, VOLUME)
+d88 1
+a88 1
+          CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,
+@

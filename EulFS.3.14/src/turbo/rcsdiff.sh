@@ -1,0 +1,1 @@
+rcsdiff *.[f,F] Makefile

@@ -1,0 +1,58 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.10.25.09.02.37;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@well..........not really useful
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE PREALLOC(NR,D_NNZ,O_NNZ,JA,IA)
+      IMPLICIT NONE
+
+C     .. Scalar Arguments ..
+      INTEGER NR
+C     ..
+C     .. Array Arguments ..
+      INTEGER D_NNZ(NR),IA(NR+1),JA(*),O_NNZ(NR)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IROW,J,JBGN,JEND
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL IINIT
+C     ..
+      CALL IINIT(NR,0,D_NNZ,1)
+      CALL IINIT(NR,0,O_NNZ,1)
+
+      DO 100 IROW = 1,NR
+          JBGN = IA(IROW)
+          JEND = IA(IROW+1) - 1
+          DO 100 J = JBGN,JEND
+              IF (JA(J).LE.NR) THEN
+                  D_NNZ(IROW) = D_NNZ(IROW)+1
+
+              ELSE
+                  O_NNZ(IROW) = O_NNZ(IROW)+1
+              ENDIF
+
+  100 CONTINUE
+
+      RETURN
+
+      END
+@

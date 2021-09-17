@@ -1,0 +1,1385 @@
+.. From convex!dodson@anl-mcs.ARPA Mon Aug 31 19:53:21 1987
+.. From: convex!dodson@anl-mcs.ARPA (Dave Dodson)
+.. Subject: sparse blas paper
+.. 
+.. Enclosed is the troff input for the Sparse Blas paper 
+\" tbl file | eqn | nitroff -ms
+.hw spars-ity
+.ft 3
+.ps 11
+.EQ
+gsize 11
+delim @@
+.EN
+.TL
+.ps 12
+.in 0
+Sparse Extensions to the Fortran
+.sp
+Basic Linear Algebra Subprograms
+.AU
+.ps 11
+.in 0
+David S. Dodson
+.AI
+.ps 10
+.in 0
+Convex Computer Corporation
+701 N. Plano Road
+Richardson, Texas 75081
+.AU
+.ps 11
+.in 0
+Roger G. Grimes
+.AI
+.ps 10
+.in 0
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+.AU
+.ps 11
+.in 0
+John G. Lewis
+.AI
+.ps 10
+.in 0
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+.FS
+.ps 10
+.vs 11p
+Typeset on \*(DY.
+.FE
+.sp 3
+.QS
+.ps 10
+.in .25i
+.ll -.25i
+.I Abstract
+\(em This paper describes an extension to the set of Basic Linear Algebra
+Subprograms.
+The extension is targeted at sparse vector operations, with the goal of
+providing efficient, but portable, implementations of algorithms for high
+performance computers.
+.in
+.ll
+.QE
+.ps 11
+.vs 16
+.nr PS 11
+.nr VS 16
+.nr PD 0.5v
+.NH
+Introduction
+.PP
+In 1973, Hanson, Krogh, and Lawson [14] described the advantages of adopting a
+set of basic routines for problems in linear algebra.
+They observed that standardizing such a subroutine library would improve program
+clarity, portability, modularity, and maintainability.
+Additionally, if these routines were coded in assembly language for many
+computers, they would promote efficiency without sacrificing portability.
+The original basic linear algebra subprograms, now commonly referred to as
+the BLAS, were fully described in Lawson, Hanson, Kincaid, and Krogh [15,16].
+They have been used in a wide range of software, including LINPACK [4], and
+have become a \fIde facto\fR standard for the elementary vector operations.
+The success of the BLAS has led Dongarra, \fIet al.\fR [5], to propose an
+extended set of subprograms targeted toward efficiency in dense linear algebra
+on a broader class of computers.
+.PP
+Many codes now exist for solving sparse linear systems, e.g., MA28 [6], the
+Yale Sparse Matrix Package [8], SPARSPAK [9], and ICCG/ILU preconditioning
+[18].
+It has been found that sparse matrix computations are useful in many fields.
+Furthermore, much effort is being expended in other sparse matrix computations
+such as sparse least squares [10,11] and eigenvalue extraction [12,13].
+Just as the original BLAS have already demonstrated their utility for dense
+matrix computations, further development in sparse matrix algorithms will be
+well served by sparse extensions to the BLAS.
+Sparse extensions will aid software developers by promoting software
+portability while giving the advantage of efficiency across various machine
+types via tuned (assembly language) implementations [17].
+In fact, it is precisely these tuned implementations that will ease the
+transfer of much of the existing sparse linear algebra methodology to computers
+with vector or parallel architectures.
+.PP
+We believe this is an appropriate time to standardize specifications for a set
+of sparse extensions to the BLAS.
+Examination of the previously listed sparse linear algebra codes reveals that a
+few basic operations occur frequently and dominate the computations.
+Standardization of these operations may help deter additional non-portable
+extensions to Fortran such as CRAY's GATHER and CDC's Q8GATHR.
+We specify here those basic operations, along with naming conventions and
+argument lists.
+In [3] we present a model implementation of the Sparse BLAS in Fortran 77
+(extended to include the COMPLEX*16 data type), and also a set of rigorous
+test programs.
+
+.NH
+Compressed Storage of Sparse Vectors
+.PP
+In the original BLAS, a dense @n@ vector, @x@, is represented by a triple
+(N, X, INCX), where X is a Fortran array in which the components of @x@ are
+stored according to the indexing pattern:
+.EQ
+x sub i ~ roman { = ~ left {~
+  lpile { X(1+(i-1)*INCX) above X(1-(N-i)*INCX) }~~~~
+  lpile { if above if }~~
+  lpile { INCX ~ >= ~ 0 above INCX ~ < ~0. } }
+.EN
+.PP
+In sparse linear algebra, large savings in computer time and memory are realized
+by storing and operating on only the ``interesting'' (usually nonzero)
+components of vectors.
+The most common method for representing a sparse vector uses a Fortran array
+just long enough to contain the interesting components, and a companion array of
+indices that maps the stored values into their proper positions within the
+vector.
+Letting NZ be the number of interesting components of @x@, X be the Fortran
+array in which they are stored, and INDX be the Fortran array of indices, a
+sparse vector is represented by the triple (NZ, X, INDX).
+For example, if
+.KS
+.EQ
+x ~ roman = ~(0,~4,~0,~0,~1,~0,~0,~0,~6,~0)
+.EN
+and if the interesting components of @x@ are the nonzero ones, then
+.EQ
+roman { rpile { NZ above X above INDX }
+      ~ cpile { = above = above = }
+      ~ lpile { 3, above (4,~1,~6), above (2,~5,~9) } }
+.EN
+so that
+.EQ
+x sub roman INDX(i) roman { ~=~ X(i). }
+.EN
+.KE
+.PP
+As we will show later, the generality of INCX and an increment argument for
+INDX is not needed.
+
+.NH
+Scope of the Sparse BLAS
+.PP
+We follow the naming convention given in [15]: a subprogram name consists of a
+prefix that indicates the data type involved, a root that describes the
+operation performed, and an optional suffix that indicates a variant of the
+basic operation.
+An underscore in the prefix of a subprogram name may be replaced with any of
+the following type specification characters:
+.KS
+.TS
+center;
+l l.
+S	REAL
+D	DOUBLE PRECISION
+C	COMPLEX
+Z	COMPLEX*16 or DOUBLE COMPLEX (if available)
+.TE
+.KE
+Subprograms with ``Z'' prefixes may not be available on all machines since
+COMPLEX*16 is not a standard Fortran data type.
+They are included in this standard for completeness and for their usefulness
+on those systems that support this data type.
+Certain of the subprograms are not defined for complex arithmetic.
+These are indicated with an ``S'' as the prefix; ``S'' may be replaced only by
+``D''.
+In addition, certain subprograms are defined only for complex arithmetic.
+These are listed with a prefix of ``C'', which may be replaced with ``Z''
+on those machines where COMPLEX*16 is available.
+.KS
+.PP
+An examination of the original BLAS reveals that some of them do non-vector
+operations.
+These BLAS are applicable to either dense or sparse linear algebra, so sparse
+variants are not needed.
+The subprograms in this category are:
+.TS
+center;
+l l.
+SROTG	Set up Givens rotation
+SROTMG	Set up modified Givens rotation
+.TE
+.KE
+.KS
+.PP
+Some original BLAS do the correct operation when presented with the compressed
+value array of a sparse vector.
+These BLAS also do not need special sparse variants.
+They include:
+.TS
+center;
+l l.
+_NRM2	Euclidean norm
+_ASUM	Sum of absolute values
+_SCAL	Constant times a vector
+I_AMAX	Index of first component of maximum absolute value
+.TE
+.KE
+(Technically, when I_AMAX is applied to the compressed value array, X, of a
+sparse vector @x@ that is represented by (NZ, X, INDX), it returns the index
+of the first maximal element of X.
+The corresponding element of INDX gives the index of that component of @x@.
+This might not be the index of the \fIfirst\fR maximal component of @x@ if the
+associated array of indices is not in increasing order.
+This is probably of no significance.)
+.KS
+.PP
+Finally, we omit sparse variants of several of the original BLAS because we
+perceive a lack of usefulness.
+The operations thus omitted are:
+.TS
+center;
+l l.
+Sparse SROTM	Apply sparse modified Givens rotation
+Sparse _SWAP	Swap sparse vectors
+.TE
+.KE
+If these operations are implemented as an extension to the Sparse BLAS, it
+is recommended that they be named SROTMI and _SWAPI and that they conform to
+the Sparse BLAS conventions.
+.PP
+The standard BLAS operations that evidently require sparse extensions are
+_DOT-, _AXPY, and _ROT.
+Two practices are widely used to improve the efficiency of the sparse versions
+of these operations, and they both are followed in our extensions.
+In them, the major goal is to perform the operations in O(NZ) work,
+independent of @n@.
+Achieving this goal requires eliminating all searches for interesting values
+or matching indices.
+.PP
+The first idea, adopted by the authors of all the packages mentioned above,
+and described in detail in [7], is to avoid binary operations between two
+compactly-stored sparse vectors with different sparsity patterns.
+For example, the dot product of two such vectors, (NZ1, X1, INDX1) and
+(NZ2, X2, INDX2) requires work at least of order NZ1 + NZ2 to determine which
+indices match.
+The standard approach is to expand one vector to its full, uncompressed form
+and perform the numeric operation between that uncompressed vector and the
+remaining compressed vector.
+Although the expansion requires O(NZ) work, and in some cases a corresponding,
+equally-costly compression may be required, this overhead typically is
+recovered in full.
+It is common for the uncompressed vector to be involved in a series of such
+binary operations, further amortizing the expansion and compression cost over
+several vector operations.
+.PP
+The expansion and compression operations mentioned above are two symmetric
+sparse extensions of the standard BLAS routine _COPY.
+The first extension, _SCTR, expands or \fIscatters\fR a sparse compressed
+vector into full or uncompressed form.
+The second extension is the inverse operation, _GTHR, which compresses or
+\fIgathers\fR the values from the uncompressed form into the compressed form.
+These sparse variants of _COPY complete our extension to the BLAS.
+.PP
+The second idea that contributes greatly to efficiency of sparse linear algebra
+computations is separating the determination of the nonzero structure of the
+sparse vectors from the numeric computation.
+This separation allows the symbolic determination of the nonzero structure to
+exploit the sparsity characteristics of the particular algorithm being realized.
+This often obviates the need for either the O(NZ1+NZ2) work of merging index
+lists or the O(@n@) work of searching entire vectors for their nonzero entries.
+Another advantage is that the index lists are determined independently of the
+numeric operations.
+The result is that the numeric operations are implemented using static data
+structures and can be much simpler and faster, and more amenable to vector or
+parallel processing.
+The Sparse BLAS are designed for use in such an environment, and therefore do
+not change the data structures represented by NZ and INDX.
+
+.NH
+Sparse BLAS Conventions
+.NH 2
+Storage
+.PP
+Another characteristic of all the packages mentioned in \(sc 1 is that the
+full, uncompressed vector is stored contiguously, e.g., with the BLAS vector
+descriptor (N, Y, 1).
+This is the form we have adopted.
+Because contiguous storage of Y is what is used in practice, INCY has been
+restricted to unity.
+The absence of a non-unit INCY is unlikely to cause any trouble, since the Y
+array usually is a work array whose organization is arbitrary.
+Furthermore, it is not possible to allow for the backward indexing through Y
+that would be required by INCY \(<= 0 without knowing N, even though the
+implementations of the operations are otherwise independent of N.
+Thus, INCY is omitted from the argument list.
+Similarly, no increment is required for X or INDX.
+.PP
+In the specifications below, the X argument always represents a sparse vector
+in compressed storage form.
+INDX follows X, replacing INCX of the original BLAS.
+There are no restrictions on the order of the values in the INDX array.
+However, those subprograms where Y is an output will give correct and
+consistent results with vector or parallel processing only when the values in
+INDX are distinct.
+In the usual sparse matrix applications, distinct indices are the norm.
+Because our goal is efficiency, especially on high performance computers,
+together with portability, \fIwe impose the restriction that the values in
+\fRINDX\fI be distinct when \fRY\fI is an output.\fR
+
+.NH 2
+Error Handling
+.PP
+The Sparse BLAS do no explicit error checking or reporting.
+Values of @roman NZ~<=~0@ are legal, and the routines do ``the right thing'';
+i.e., the dot product routines return zero function values and all of the
+routines neither access their vector input arguments nor store into them.
+Thus, special case testing need not be performed in a calling program.
+.PP
+As mentioned above, certain routines require that the values in INDX be
+distinct.
+Checking this condition would be prohibitively expensive.
+Therefore, violating this condition may yield incorrect or inconsistent
+results without warning.
+
+.NH 2
+Naming Convention
+.PP
+If a sparse BLAS routine is an extension of a dense BLAS, the subprogram name
+is formed by appending a suffix character, ``I'', standing for \fIindexed\fR,
+to the dense name.
+Arguments justifying this minor extension of the naming convention given in [15]
+are presented in [1].
+Fortunately, current BLAS needing sparse variants have at most five characters
+in their names, so a one-character suffix can be appended to every one.
+If a sparse BLAS is not a direct extension of a dense BLAS, the root name is
+a new, mnemonic, four character name, and the suffix is reserved to describe
+variants.
+We use ``Z'' as one such variant descriptor.
+.PP
+The proposed available combinations are listed in Table I below.
+The collection of routines can be thought of as being divided into four separate
+parts, REAL, DOUBLE PRECISION, COMPLEX, and COMPLEX*16.
+Except for the routines that use COMPLEX*16 variables, the routines can be
+written in standard ANSI Fortran 77.
+
+.KS
+.ce
+Table I.  Summary of Functions and Names of the Sparse BLAS Subprograms
+.ps 10
+.vs 13
+.TS
+expand, tab(/);
+l c c s s s s s s s
+l c c s s s s s s s
+l a a0e a0e a0e a0e a0e a0e a0e a0e.
+_
+  Function/Root/Prefix and suffix
+\^/of name/of name
+_
+  Dot product/-DOT-/S-I/D-I/C-UI/Z-UI/C-CI/Z-CI
+  Scalar times a vector/-AXPY-/S-I/D-I/C-I/Z-I
+      added to a vector
+  Apply Givens rotation/-ROT-/S-I/D-I
+  Gather \fIy\fR into \fIx\fR/-GTHR-/S-/D-/C-/Z-/S-Z/D-Z/C-Z/Z-Z
+  Scatter \fIx\fR into \fIy\fR/-SCTR/S-/D-/C-/Z-
+_
+.TE
+.ps
+.vs
+.KE
+
+.KS
+.NH
+Specifications for the Sparse BLAS
+.PP
+Type and dimension declarations for variables occurring in the subroutine
+specifications are as follows:
+.TS
+center;
+c l1 l.
+all:	INTEGER	 NZ, INDX(NZ)
+S:	REAL	 A, C, S, W, X(NZ), Y(*)
+D:	DOUBLE PRECISION	 A, C, S, W, X(NZ), Y(*)
+C:	COMPLEX	 A, W, X(NZ), Y(*)
+Z:	COMPLEX*16	 A, W, X(NZ), Y(*)
+.TE
+.KE
+.KS
+Type declarations for the function names are as follows:
+.TS
+center;
+c l1 l.
+S:	REAL	SDOTI
+D:	DOUBLE PRECISION	DDOTI
+C:	COMPLEX	CDOTCI, CDOTUI
+Z:	COMPLEX*16	ZDOTCI, ZDOTUI
+.TE
+.KE
+.PP
+NZ, A, C, S, and INDX are never changed by the Sparse BLAS.
+In addition, X is not changed by _DOT-I, _AXPYI, or _SCTR, and Y is not changed
+by _DOT-I or _GTHR.
+Only the elements of Y whose indices appear in INDX are referenced or modified.
+Finally, for convenience in the mathematical descriptions of the operations,
+we assume that any component of @x@ whose index is not listed in INDX is zero.
+(The FORTRAN descriptions properly exhibit the operations even when
+``uninteresting'' means something other than ``zero.'')
+.KS
+.IP 1)
+Sparse Dot Product
+.IP
+W = SDOTI (NZ, X,INDX, Y)
+.br
+W = CDOTCI (NZ, X,INDX, Y)    Conjugated
+.br
+W = CDOTUI (NZ, X,INDX, Y)    Unconjugated
+.KE
+.IP
+SDOTI and CDOTUI compute
+.EQ
+w ~ : roman = ~ sum from {i roman = 1} to n x sub i y sub i
+      roman {~=~ sum from I=1 to NZ X(I)*Y(INDX(I))}
+.EN
+and CDOTCI computes
+.EQ
+w ~ : roman = ~ sum from {i roman = 1} to n x bar sub i y sub i
+      roman {~=~ sum from I=1 to NZ CONJG(X(I))*Y(INDX(I))}
+.EN
+where @x bar@ is the complex conjugate of @x@.
+.KS
+.IP 2)
+Sparse Elementary Vector Operation
+.IP
+CALL _AXPYI (NZ, A, X,INDX, Y)
+.KE
+.IP
+_AXPYI performs the operation
+.EQ
+y ~ : roman = ~ ax ~ + ~ y
+.EN
+which is the Fortran 77 operation
+.EQ
+roman { Y(INDX(I)) ~=~ A*X(I) ~ + ~ Y(INDX(I)) ~~~~~~for~I ~=~ 1,~...,~NZ }.
+.EN
+The values in INDX must be distinct to allow consistent vector or
+parallel execution.
+.KS
+.IP 3)
+Apply a Sparse Plane Rotation (REAL and DOUBLE PRECISION only)
+.IP
+CALL SROTI (NZ, X,INDX, Y, C,S)
+.KE
+.IP
+SROTI applies a Givens rotation to a sparse vector stored in compressed form
+and another vector stored in full storage form.
+If all nonzero components of @y@ appear in INDX, then SROTI computes
+.EQ
+left [ lpile { x sub i above y sub i } right ] ~ up 30 {: roman =}
+   ~ left [ rpile { c above -s } ~~~ rpile { s above c } ~ right ] ~ up 50 .
+   ~ left [ lpile { x sub i above y sub i } right ]
+   ~~~~for~i~ roman = ~1,~...,~n.
+.EN
+Whether or not all nonzero components of @y@ appear in INDX, the operation is
+described by the following Fortran:
+.EQ
+roman { left "" lpile { TEMP above X(I) above Y(INDX(I)) } ~
+        cpile { = above = above = } ~
+        rpile { X(I)~~~~~~~^ above C*TEMP above bold - S*TEMP } ~
+        cpile { ~ above + above + } ~
+        rpile { ~ above S*Y(INDX(I)) above C*Y(INDX(I)) }
+        ~~~ right } ~~~for~I ~=~ 1,~...,~NZ. }
+.EN
+The values in INDX must be distinct to allow consistent vector or parallel
+execution.
+.KS
+.IP 4)
+Gather a Vector into Compressed Form
+.IP
+CALL _GTHR (NZ, Y, X,INDX)
+.KE
+.IP
+Gather (copy) the specified components of a vector stored in full storage form
+into compressed form.
+If all nonzero components of @y@ appear in INDX, then _GTHR performs
+.EQ
+x ~ : roman = ~ y
+.EN
+which is symbolized by:
+.EQ
+roman { X(I) ~=~ Y(INDX(I)) ~~~~~~for~I~=~1,~...,~NZ. }
+.EN
+.IP
+Gather a Vector into Compressed Form and Zero the Full-form Vector
+.IP
+CALL _GTHRZ (NZ, Y, X,INDX)
+.IP
+Gather (copy) the specified components of a vector stored in full storage form
+into compressed form and zero the gathered components of the full-form vector.
+If all nonzero components of @y@ appear in INDX, a common occurrence in the
+use of a single uncompressed scratch vector, then _GTHRZ simultaneously performs
+.EQ
+left { ~ lpile {x ~ : roman = ~ y above y ~ : roman = ~ 0 . }
+.EN
+This is specified by the following:
+.EQ
+roman { left "" lpile { X(I) above Y(INDX(I)) } ~
+        lpile { = above = } ~
+        lpile { Y(INDX(I)) above 0.0 }
+        ~~~ right } ~~~for~I~=~1,~...,~NZ. }
+.EN
+The values in INDX must be distinct to allow consistent vector or parallel
+execution.
+.KS
+.IP 5)
+Scatter a Sparse Vector from Compressed Form
+.IP
+CALL _SCTR (NZ, X,INDX, Y)
+.KE
+.IP
+Scatter (copy) the components of a sparse vector stored in compressed form into
+specified components of a vector in full storage form.
+If @y@ is initially the zero vector, then _SCTR performs
+.EQ
+y ~ : roman = ~ x .
+.EN
+which is represented by the following Fortran:
+.EQ
+roman { Y(INDX(I)) ~=~ X(I) ~~~~~~for~I~=~1,~...,~NZ. }
+.EN
+The values in INDX must be distinct to allow consistent vector or parallel
+execution.
+
+.NH
+Acknowledgements
+.PP
+A draft of this proposal was discussed at the Parvec IV Workshop organized by
+John Rice at Purdue University on October 29-30, 1984.
+Subsequently, a revised draft appeared in the SIGNUM Newsletter [2], and was
+discussed at the SIAM Conference on Applied Linear Algebra in Raleigh, April
+29-May 2, 1985.
+We thank the participants at the workshop and meeting for their comments,
+discussions, and encouragement.
+
+.SH
+References
+.IP [1]
+D.S. Dodson and J.G. Lewis, ``Issues Relating to Extension of the Basic Linear
+Algebra Subprograms'', \fIACM SIGNUM Newsletter 20,\fR 1, (1985), pp. 19-22.
+.IP [2]
+D.S. Dodson and J.G. Lewis, ``Proposed Sparse Extensions to the Basic Linear
+Algebra Subprograms'', \fIACM SIGNUM Newsletter 20,\fR 1, (1985), pp. 22-25.
+.IP [3]
+D.S. Dodson, R.G. Grimes, and J.G. Lewis, ``Model Implementation and Test
+Package for the Sparse Basic Linear Algebra Subprograms,'' \fIthis journal.\fR
+.IP [4]
+J.J. Dongarra, J.R. Bunch, C.B. Moler, and G.W. Stewart, \fILINPACK Users'
+Guide,\fR SIAM Publications, Philadelphia, 1979.
+.IP [5]
+J.J. Dongarra, J. Du Croz, S. Hammarling, and R.J. Hanson, ``An Extended Set of
+Fortran Basic Linear Algebra Subprograms,'' \fIthis journal.\fR
+.IP [6]
+I.S. Duff, ``MA28: A Set of Fortran Subroutines for Sparse Unsymmetric Linear
+Systems,'' AERE Report R.8730, HMSO, London, (1971).
+.IP [7]
+I.S. Duff, A.M. Erisman, and J.K. Reid, \fIDirect Methods for Sparse
+Matrices,\fR Oxford University Press, (1986).
+.IP [8]
+S.C. Eisenstat, M.C. Gursky, M.H. Schultz, and A.H. Sherman, ``Yale Sparse
+Matrix Package I.  The Symmetric Codes,'' \fIInt. J. Num. Math. Eng. 18,\fR
+(1982), pp. 1145-1151.
+.IP [9]
+A. George and J.W. Liu, \fIComputer Solution of Large Sparse Positive Definite
+Systems,\fR Prentice-Hall, Inc., Englewood Cliffs, New Jersey, 1982.
+.IP [10]
+A. George and M.T. Heath, ``Solution of Sparse Linear Least Squares Problems
+Using Givens Rotations,'' \fILinear Algebra and Its Applications 34,\fR (1980),
+pp. 69-82.
+.IP [11]
+A. George, M.T. Heath, and R.J. Plemmons, ``Solution of Large-Scale Sparse
+Least Squares Problems Using Auxiliary Storage,'' Report ORNL/CSD-63, Oak Ridge
+National Laboratory, (August, 1980).
+.IP [12]
+R.G. Grimes, J.G. Lewis, and H.D. Simon, ``Experiences in Solving Large
+Eigenvalue Problems on the CRAY X-MP,'' \fIProceedings of the Eighteenth
+Semiannual CRAY Users Group Meeting,\fR Garmisch, West Germany, (October,
+1986).
+.IP [13]
+R.G. Grimes, J.G. Lewis, and H.D. Simon, ``Eigenvalue Problems and Algorithms
+in Structural Engineering,'' in \fILarge Scale Eigenvalue Problems\fR (J.
+Cullum and R. Willoughby, eds.), Elsevier North-Holland, (1986), pp. 81-93.
+.IP [14]
+R.J. Hanson, F.T. Krogh, and C.L. Lawson, ``A Proposal for Standard Linear
+Algebra Subprograms,'' TM-33-660, Jet Propulsion Laboratory, (November, 1973).
+.IP [15]
+C.L. Lawson, R.J. Hanson, D.R. Kincaid, and F.T. Krogh, ``Basic Linear Algebra
+Subprograms for Fortran Usage,'' \fIACM Transactions on Mathematical
+Software 5,\fR 3 (September, 1979), pp. 308-323.
+.IP [16]
+C.L. Lawson, R.J. Hanson, D.R. Kincaid, and F.T. Krogh, ``Algorithm 539: Basic
+Linear Algebra Subprograms for Fortran Usage,'' \fIACM Transactions on
+Mathematical Software 5,\fR 3 (September, 1979), pp. 324-325.
+.IP [17]
+J.G. Lewis and H.D. Simon, ``The Impact of Hardware Gather/Scatter on Sparse
+Gaussian Elimination,'' \fIProceedings of the 1986 International Conference on
+Parallel Processing,\fR (K. Hwang, S. Jacobs, and E. Swartzlander, eds.), IEEE
+Computer Society, Los Angeles, (1986).
+.IP [18]
+H.D. Simon, ``Incomplete LU Preconditioners for Conjugate Gradient Type
+Iterative Methods,'' Paper SPE 13533, \fIProceedings of the Eighth SPE
+Symposium on Reservoir Simulation,\fR (February, 1985).
+
+From convex!dodson@a.cs.uiuc.edu Fri Jul 15 12:41:14 1988
+Return-Path: <convex!dodson@a.cs.uiuc.edu>
+Received: from anl-mcs.ARPA by antares.mcs.anl (3.2/SMI-3.2)
+	id AA03808; Fri, 15 Jul 88 12:41:11 CDT
+Received: from a.cs.uiuc.edu (a.cs.uiuc.edu.ARPA) by anl-mcs.ARPA (4.12/4.9)
+	id AA17728; Fri, 15 Jul 88 12:47:54 cdt
+Received: by a.cs.uiuc.edu (UIUC-5.52/9.7)
+	id AA23639; Fri, 15 Jul 88 12:49:37 CDT
+Received: from convex1 (8003e3f8) by convex (4.12/4.7)
+	id AA02211; Fri, 15 Jul 88 11:46:13 cdt
+Date: Fri, 15 Jul 88 11:46:05 cdt
+From: convex!dodson@a.cs.uiuc.edu (Dave Dodson)
+Message-Id: <8807151646.AA01545@convex1>
+To: anl-mcs.ARPA!dongarra%uiucdcs.cs.uiuc.edu@a.cs.uiuc.edu
+Subject: troff source for sparse blas paper
+Status: RO
+
+\" tbl file | eqn | nitroff -ms
+.hw spars-ity
+.ft 3
+.ps 11
+.EQ
+gsize 11
+delim @@
+.EN
+.TL
+.ps 12
+.in 0
+Sparse Extensions to the FORTRAN
+.sp
+Basic Linear Algebra Subprograms
+.AU
+.ps 11
+.in 0
+David S. Dodson
+.AI
+.ps 10
+.in 0
+Convex Computer Corporation
+701 N. Plano Road
+Richardson, Texas 75081
+.AU
+.ps 11
+.in 0
+Roger G. Grimes
+.AI
+.ps 10
+.in 0
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+.AU
+.ps 11
+.in 0
+John G. Lewis
+.AI
+.ps 10
+.in 0
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+.FS
+.ps 10
+.vs 11p
+Typeset on \*(DY.
+.FE
+.sp 3
+.QS
+.ps 10
+.in .25i
+.ll -.25i
+.I Abstract
+\(em This paper describes an extension to the set of Basic Linear Algebra
+Subprograms.
+The extension is targeted at sparse vector operations, with the goal of
+providing efficient, but portable, implementations of algorithms for high
+performance computers.
+.in
+.ll
+.QE
+.ps 11
+.vs 16
+.nr PS 11
+.nr VS 16
+.nr PD 0.5v
+.NH
+Introduction
+.PP
+In 1973, Hanson, Krogh, and Lawson [16] described the advantages of adopting a
+set of basic routines for problems in linear algebra.
+They observed that standardizing such a subroutine library would improve program
+clarity, portability, modularity, and maintainability.
+Additionally, if these routines were coded in assembly language for many
+computers, they would promote efficiency without sacrificing portability.
+The original basic linear algebra subprograms, now commonly referred to as
+the BLAS, were fully described in Lawson, Hanson, Kincaid, and Krogh [17,18].
+They have been used in a wide range of software, including LINPACK [5], and
+have become a \fIde facto\fR standard for the elementary vector operations.
+The success of the BLAS has led Dongarra \fIet al.\fR [6,7] to propose
+extended sets of subprograms targeted toward efficiency in dense linear
+algebra on a broader class of computers.
+.PP
+Many codes now exist for solving sparse linear systems, e.g., MA28 [8], the
+Yale Sparse Matrix Package [10], SPARSPAK [11], and ICCG/ILU preconditioning
+[20].
+It has been found that sparse matrix computations are useful in many fields.
+Furthermore, much effort is being expended in other sparse matrix computations
+such as sparse least squares [12,13] and eigenvalue extraction [14,15].
+Just as the original BLAS have already demonstrated their utility for dense
+matrix computations, further development in sparse matrix algorithms will be
+well served by sparse extensions to the BLAS.
+Indeed the reasons that justified the original BLAS development hold even
+more strongly for the Sparse BLAS.
+.PP
+The clarity and modularity of a code are almost always improved by the use
+of higher level constructs.
+This is certainly true in the context of sparse linear algebra, where the
+ordinary matrix algebra operations occur in a complicated framework of data
+structures representing the sparsity of these operations.
+The identification of the fundamental operations eases the conceptual problems
+of writing and understanding such codes.
+.PP.
+Sparse extensions have their most profound effect in promoting software
+portability with efficiency across various machine types via tuned
+implementations [19].
+This is a far more important issue for the Sparse BLAS than for the ordinary
+BLAS because three of the fundamental operations cannot be written in portable
+FORTRAN in such a fashion that compilers can automatically optimize them for
+high performance architectures.
+The syntactic structure of the code for these operations suggests too much
+generality to permit safely executing them in vector mode or on distributed
+processors.
+It is in fact their use in the context of the Sparse BLAS that assures the
+implementor that the usage meets the conditions necessary for optimization.
+Often such tuned implementations require no more than addition of
+machine-specific compiler directives.
+However, it is precisely these tuned implementations that will ease the
+transfer of much of the existing sparse linear algebra methodology to computers
+with vector or parallel architectures.
+.PP
+In the light of recent efforts [6,7] to extend the scope of the BLAS to
+routines involving @n sup 2@ or @n sup 3@ operations, a proposal for
+standardizing routines that involve much fewer than @n@ operations may appear
+archaic.
+The granularity of the routines specified here is low, but the analogy to dense
+matrix operations is misleading.
+As mentioned above, these routines may be essential to obtaining high
+performance in a portable code.
+In such environments, the overhead of additional subroutine linkages is easily 
+absorbed.
+It is also the case that these routines are called less often than their dense
+counterparts.
+The sparse factorization of a sparse matrix results in a number of calls to
+single-loop subroutines that is more like @n@ than @n sup 2@.
+Lastly, sparsity interferes with the regularity that makes the higher level
+dense BLAS possible.
+Although the structures of certain higher level sparse BLAS have been
+identified [1], these structures appear to have less generality than the
+single-loop kernels specified here.
+.PP
+We believe this is an appropriate time to standardize specifications for a set
+of sparse extensions to the BLAS.
+Examination of the previously listed sparse linear algebra codes reveals that a
+few basic operations occur frequently and dominate the computations.
+Standardization of these operations may help deter additional non-portable
+extensions to FORTRAN such as CRAY's GATHER and CDC's Q8GATHR.
+We specify here those basic operations, along with naming conventions and
+argument lists.
+In [4] we present a model implementation of the Sparse BLAS in FORTRAN 77
+(extended to include the COMPLEX*16 data type), and also a set of rigorous
+test programs.
+
+.NH
+Compressed Storage of Sparse Vectors
+.PP
+In the original BLAS, a dense @n@ vector, @x@, is represented by a triple
+(N, X, INCX), where X is a FORTRAN array in which the components of @x@ are
+stored according to the indexing pattern:
+.EQ
+x sub i ~ roman { = ~ left {~
+  lpile { X(1+(i-1)*INCX) above X(1-(N-i)*INCX) }~~~~
+  lpile { if above if }~~
+  lpile { INCX ~ >= ~ 0 above INCX ~ < ~0. } }
+.EN
+.PP
+In sparse linear algebra, large savings in computer time and memory are realized
+by storing and operating on only the \fIinteresting\fP (usually nonzero)
+components of vectors.
+The most common method for representing a sparse vector uses a FORTRAN array
+just long enough to contain the interesting components, and a companion array of
+indices that maps the stored values into their proper positions within the
+vector.
+Letting NZ be the number of interesting components of @x@, X be the FORTRAN
+array in which they are stored, and INDX be the FORTRAN array of indices, a
+sparse vector is represented by the triple (NZ, X, INDX).
+For example, if
+.KS
+.EQ
+x ~ roman = ~(0,~4,~0,~0,~1,~0,~0,~0,~6,~0)
+.EN
+and if the interesting components of @x@ are the nonzero ones, then
+.EQ
+roman { rpile { NZ above X above INDX }
+      ~ cpile { = above = above = }
+      ~ lpile { 3, above (4,~1,~6), above (2,~5,~9) } }
+.EN
+so that
+.EQ
+x sub roman INDX(i) roman { ~=~ X(i). }
+.EN
+.KE
+.PP
+As we will show later, the generality of INCX and an increment argument for
+INDX is not needed.
+
+.NH
+Scope of the Sparse BLAS
+.PP
+We follow the naming convention given in [17]: a subprogram name consists of
+a prefix that indicates the data type involved, a root that describes the
+operation performed, and an optional suffix that indicates a variant of the
+basic operation.
+The Sparse BLAS operations are defined for several data types, so we represent
+the prefix generically with an underscore character.
+Usually, the underscore character may be replaced with any of the following
+type specification characters:
+.KS
+.TS
+center;
+l l.
+S	REAL
+D	DOUBLE PRECISION
+C	COMPLEX
+Z	COMPLEX*16 or DOUBLE COMPLEX (if available)
+.TE
+.KE
+Since a standard for a COMPLEX analog of SROT was not specified in [8], we
+provide only real plane rotations; therefore, the underscore character in
+_ROTI may be replaced only by S or D.
+Subprograms with Z prefixes may not be available on all machines since
+COMPLEX*16 is not a standard FORTRAN data type.
+They are included in this standard for completeness and for their usefulness
+on those systems that support this data type.
+.KS
+.PP
+An examination of the original BLAS reveals that some of them do non-vector
+operations.
+These BLAS are applicable to both dense and sparse linear algebra, so sparse
+variants are not needed.
+The subprograms in this category are:
+.TS
+center;
+l l.
+_ROTG	Set up Givens rotation
+_ROTMG	Set up modified Givens rotation
+.TE
+.KE
+.KS
+.PP
+Some original BLAS do the correct operation when presented with the compressed
+value array, X, of a sparse vector @x@ that is represented by (NZ, X, INDX).
+These BLAS also do not need special sparse variants.
+They include:
+.TS
+center;
+l l.
+_NRM2	Euclidean norm
+_ASUM	Sum of absolute values
+_SCAL	Constant times a vector
+I_AMAX	Index of first component of maximum absolute value
+.TE
+.KE
+(Technically, when I_AMAX is applied to X, it returns the index of the first
+maximal element of X.
+The corresponding element of INDX gives the index of that component of @x@.
+This might not be the index of the \fIfirst\fR maximal component of @x@ if the
+associated array of indices is not in increasing order.
+This is probably of no significance.)
+.KS
+.PP
+Finally, we omit sparse variants of several of the original BLAS because we
+perceive a lack of usefulness.
+The operations thus omitted are:
+.TS
+center;
+l l.
+Sparse _ROTM	Apply sparse modified Givens rotation
+Sparse _SWAP	Swap sparse vectors
+.TE
+.KE
+If these operations are implemented as an extension to the Sparse BLAS, it
+is recommended that they be named _ROTMI and _SWAPI and that they conform to
+the Sparse BLAS conventions.
+.PP
+The standard BLAS operations that evidently require sparse extensions are
+_DOT, _AXPY, and _ROT.
+Two practices are widely used to improve the efficiency of the sparse versions
+of these operations, and they both are followed in our extensions.
+In them, the major goal is to perform the operations in O(NZ) work,
+independent of @n@.
+Achieving this goal requires eliminating all searches for interesting values
+or matching indices.
+.PP
+The first idea, adopted by the authors of all the packages mentioned above,
+and described in detail in [9], is to avoid binary operations between two
+compactly-stored sparse vectors with different sparsity patterns.
+For example, the dot product of two such vectors, (NZ1, X1, INDX1) and
+(NZ2, X2, INDX2) requires work at least of order NZ1 + NZ2 to determine which
+indices match.
+The standard approach is to expand one vector to its full, uncompressed form
+and perform the numerical operation between that uncompressed vector and the
+remaining compressed vector.
+Although the expansion requires O(NZ) work, and in some cases a corresponding
+compression may be required, this overhead typically is recovered in full.
+It is common for the uncompressed vector to be involved in a series of such
+binary operations, further amortizing the expansion and compression cost over
+several vector operations.
+There also are situations, such as forming the product of a sparse matrix and
+a vector, in which it is natural for one of the vector operands to be
+uncompressed.
+.PP
+The expansion and compression operations mentioned above are two symmetric
+sparse extensions of the standard BLAS routine _COPY.
+The first extension, _SCTR, expands or \fIscatters\fR a sparse compressed
+vector into full or uncompressed form.
+The second extension is the inverse operation, _GTHR, which compresses or
+\fIgathers\fR the values from the uncompressed form into the compressed form.
+These sparse variants of _COPY complete our extension to the BLAS.
+.PP
+The second idea that contributes greatly to the efficiency of sparse linear
+algebra computations is separating the determination of the nonzero structure
+of the sparse vectors from the numerical computation.
+Ignoring fortuitous cancellation, performing an elementary row operation or a
+Givens rotation on two sparse vectors results in output vector(s) having
+nonzeros wherever either of the inputs had nonzeros.
+While it is possible to determine the locations of the merged nonzero entries
+at the same time as their values are computed, it typically is more efficient
+to perform this symbolic operation independently.
+This separation allows the symbolic determination of the nonzero structure to
+exploit the sparsity characteristics of the particular algorithm being realized.
+For example, chapter 5 of [11] discusses a number of representations for the
+process of symmetric Gaussian elimination that permit the symbolic operations
+to be performed efficiently in a form that is much more compact than the 
+sparse representation of the numerical entries.
+In this and several other important applications, the indices can be determined
+without knowing the values of the nonzero entries, but only that they are
+nonzero.
+This leads to dramatic savings in computation when several problems with common
+sparsity patterns, but different numerical values, are solved.
+Only the numerical process, not the symbolic operations, need be performed more
+than once.
+Chapters 5 and 9 of [9] point out the savings to be found by the separation
+of the symbolic and numerical processes, even in the case of sparse Gaussian
+elimination with partial pivoting where the actual numerical entries must
+affect the algorithm.
+.PP
+The result of making the symbolic and numerical algorithms distinct is that
+the numerical operations are implemented using static data structures.
+Because the data structures are known in advance of the numerical operations,
+the numerical code can be simpler, faster, and more amenable to vector or
+parallel processing.
+As observed in [9], the overhead of merging sparse vectors is reduced to
+``the difference between the use of direct and indirect addressing.''
+The Sparse BLAS are designed for use in such an environment, and therefore do
+not change the data structures represented by NZ and INDX.
+It is assumed that these data structures correctly mirror the sparsity that
+evolves.
+No determination is ever made in these codes that all the interesting entries
+are processed or allocated storage.
+That is the responsibility of the symbolic analysis.
+
+.NH
+Sparse BLAS Conventions
+.NH 2
+Storage
+.PP
+Another characteristic of all the packages mentioned in \(sc1 is that the
+full, uncompressed vector is stored contiguously, e.g., with the BLAS vector
+descriptor (N, Y, 1).
+This is the form we have adopted.
+Because contiguous storage of Y is what is used in practice, INCY has been
+restricted to unity.
+The absence of a non-unit INCY is unlikely to cause any trouble, since the Y
+array usually is a work array whose organization is arbitrary.
+Furthermore, it is not possible to allow for the backward indexing through Y
+that would be required by INCY \(<= 0 without knowing N, even though the
+implementations of the operations are otherwise independent of N.
+Thus, INCY is omitted from the argument list.
+Similarly, no increment is required for X or INDX.
+.PP
+In the specifications below, the X argument represents the compressed value
+array of a sparse vector in compressed storage form.
+INDX follows X, replacing INCX of the original BLAS.
+There are no restrictions on the order of the values in the INDX array.
+However, those subprograms where Y is an output argument will give correct and
+consistent results with vector or parallel processing only when the values in
+INDX are distinct.
+In the usual sparse matrix applications, distinct indices are the norm.
+Because our goal is efficiency, especially on high performance computers,
+together with portability, \fIwe impose the restriction that the values in
+\fRINDX\fI be distinct when \fRY\fI is an output argument \fR(\fIthat is, in
+subroutines \fR_AXPYI\fI, \fR_ROTI\fI, \fR_SCTR\fI and \fR_GTHRZ).
+
+.NH 2
+Error Handling
+.PP
+The Sparse BLAS do no explicit error checking or reporting.
+Values of @roman NZ~<=~0@ are legal, and the routines do ``the right thing'';
+i.e., the dot product routines return zero function values and all of the
+routines make no references to their vector arguments.
+Thus, special case testing need not be performed in a calling program.
+.PP
+As mentioned above, certain routines require that the values in INDX be
+distinct.
+Checking this condition would have greater complexity than the numerical
+operations, since testing a list for duplicates requires more than O(NZ)
+work if the values are not sorted.
+Therefore, compliance with the restriction is not verified and violating it
+may yield incorrect or inconsistent results without warning.
+.NH 2
+Naming Convention
+.PP
+If a Sparse BLAS routine is an extension of a dense BLAS, the subprogram name
+is formed by appending a suffix character, I, standing for ``indexed'', to the
+dense name.
+Arguments justifying this minor extension of the naming convention given in [17]
+are presented in [2].
+Fortunately, current BLAS needing sparse variants have at most five characters
+in their names, so a one-character suffix can be appended to every one.
+If a Sparse BLAS is not a direct extension of a dense BLAS, the root name is
+a new, mnemonic, four character name, and the suffix is reserved to describe
+variants.
+_GTHR and _SCTR are new root names, and Z is a variant descriptor for _GTHR.
+.PP
+The available combinations are listed in Table I.
+The collection of routines can be thought of as being divided into four separate
+parts, REAL, DOUBLE PRECISION, COMPLEX, and COMPLEX*16.
+Except for the routines that use COMPLEX*16 variables, the routines can be
+written in standard ANSI FORTRAN 77.
+
+.KS
+.ce
+Table I.  Summary of Functions and Names of the Sparse BLAS Subprograms
+.ps 10
+.vs 13
+.TS
+expand, tab(/);
+l c c s s s s s s s
+l c c s s s s s s s
+l a a0e a0e a0e a0e a0e a0e a0e a0e.
+_
+  Function/Root/Prefix and suffix
+\^/of name/of name
+_
+  Dot product/-DOT-/S-I/D-I/C-UI/Z-UI/C-CI/Z-CI
+  Scalar times a vector/-AXPY-/S-I/D-I/C-I/Z-I
+      added to a vector
+  Apply Givens rotation/-ROT-/S-I/D-I
+  Gather \fIy\fR into \fIx\fR/-GTHR-/S-/D-/C-/Z-/S-Z/D-Z/C-Z/Z-Z
+  Scatter \fIx\fR into \fIy\fR/-SCTR/S-/D-/C-/Z-
+_
+.TE
+.ps
+.vs
+.KE
+
+.KS
+.NH
+Specifications for the Sparse BLAS
+.PP
+Type and dimension declarations for variables occurring in the subroutine
+specifications are as follows:
+.TS
+center;
+c l1 l.
+all:	INTEGER	 NZ, INDX(NZ)
+S:	REAL	 A, C, S, W, X(NZ), Y(*)
+D:	DOUBLE PRECISION	 A, C, S, W, X(NZ), Y(*)
+C:	COMPLEX	 A, W, X(NZ), Y(*)
+Z:	COMPLEX*16	 A, W, X(NZ), Y(*)
+.TE
+.KE
+.KS
+Type declarations for the function names are as follows:
+.TS
+center;
+c l1 l.
+S:	REAL	SDOTI
+D:	DOUBLE PRECISION	DDOTI
+C:	COMPLEX	CDOTCI, CDOTUI
+Z:	COMPLEX*16	ZDOTCI, ZDOTUI
+.TE
+.KE
+.PP
+NZ, A, C, S, and INDX are never changed by the Sparse BLAS.
+In addition, X is not changed by _DOT-I, _AXPYI, or _SCTR, and Y is not changed
+by _DOT-I or _GTHR.
+Only the elements of Y whose indices appear in INDX are referenced or modified.
+In the descriptions the initial character S can be replaced by D to obtain
+the description of the double precision version; similarly an initial C can be
+replaced by Z.
+Finally, for convenience in the mathematical descriptions of the operations,
+we assume that any component of @x@ whose index is not listed in INDX is zero.
+The FORTRAN descriptions properly describe the operations performed even when
+\fIuninteresting\fP means something other than \fIzero\fP.
+.KS
+.IP 1)
+Sparse Dot Product
+.IP
+W = SDOTI (NZ, X,INDX, Y)
+.br
+W = DDOTI (NZ, X,INDX, Y)
+.br
+W = CDOTCI (NZ, X,INDX, Y)    Conjugated
+.br
+W = CDOTUI (NZ, X,INDX, Y)    Unconjugated
+.br
+W = ZDOTCI (NZ, X,INDX, Y)    Conjugated
+.br
+W = ZDOTUI (NZ, X,INDX, Y)    Unconjugated
+.KE
+.IP
+SDOTI, DDOTI, CDOTUI and ZDOTUI compute
+.EQ
+w ~ : roman = ~ roman sum from {i roman = 1} to n x sub i y sub i
+      roman {~=~ sum from I=1 to NZ X(I)*Y(INDX(I))}
+.EN
+while CDOTCI and ZDOTCI compute
+.EQ
+w ~ : roman = ~ roman sum from {i roman = 1} to n x bar sub i y sub i
+      roman {~=~ sum from I=1 to NZ CONJG(X(I))*Y(INDX(I))}
+.EN
+where @x bar@ is the complex conjugate of @x@.
+.KS
+.IP 2)
+Sparse Elementary Vector Operation
+.IP
+CALL SAXPYI (NZ, A, X,INDX, Y)
+.br
+CALL DAXPYI (NZ, A, X,INDX, Y)
+.br
+CALL CAXPYI (NZ, A, X,INDX, Y)
+.br
+CALL ZAXPYI (NZ, A, X,INDX, Y)
+.KE
+.IP
+_AXPYI performs the operation
+.EQ
+y ~ : roman = ~ ax ~ + ~ y
+.EN
+which is the FORTRAN 77 operation
+.EQ
+roman { Y(INDX(I)) ~=~ A*X(I) ~ + ~ Y(INDX(I)) ~~~~~~for~I ~=~ 1,~...,~NZ }.
+.EN
+The values in INDX must be distinct to allow consistent vector or
+parallel execution.
+.KS
+.IP 3)
+Apply a Sparse Plane Rotation (REAL and DOUBLE PRECISION only)
+.IP
+CALL SROTI (NZ, X,INDX, Y, C,S)
+.br
+CALL DROTI (NZ, X,INDX, Y, C,S)
+.KE
+.IP
+_ROTI applies a Givens rotation to a sparse vector stored in compressed form
+and another vector stored in full storage form.
+If all nonzero components of @y@ appear in INDX, then _ROTI computes
+.bp
+.EQ
+left [ lpile { x sub i above y sub i } right ] ~ up 30 {: roman =}
+   ~ left [ rpile { c above -s } ~~~ rpile { s above c } ~ right ] ~ up 50 .
+   ~ left [ lpile { x sub i above y sub i } right ]
+   ~~~~for~i~ roman = ~1,~...,~n.
+.EN
+Whether or not all nonzero components of @y@ appear in INDX, the operation is
+described by the following FORTRAN:
+.EQ
+roman { left "" lpile { TEMP above X(I) above Y(INDX(I)) } ~
+        cpile { = above = above = } ~
+        rpile { X(I)~~~~~~~^ above C*TEMP above bold - S*TEMP } ~
+        cpile { ~ above + above + } ~
+        rpile { ~ above S*Y(INDX(I)) above C*Y(INDX(I)) }
+        ~~~ right } ~~~for~I ~=~ 1,~...,~NZ. }
+.EN
+The values in INDX must be distinct to allow consistent vector or parallel
+execution.
+Since a standard for a COMPLEX analog of _ROT was not specified in [8], we
+provide only real plane rotations.
+.KS
+.IP 4)
+Gather a Vector into Compressed Form
+.IP
+CALL SGTHR (NZ, Y, X,INDX)
+.br
+CALL DGTHR (NZ, Y, X,INDX)
+.br
+CALL CGTHR (NZ, Y, X,INDX)
+.br
+CALL ZGTHR (NZ, Y, X,INDX)
+.KE
+.IP
+Gather (copy) the specified components of a vector stored in full storage form
+into compressed form.
+If all nonzero components of @y@ appear in INDX, then _GTHR performs
+.EQ
+x ~ : roman = ~ y
+.EN
+which is symbolized by
+.EQ
+roman { X(I) ~=~ Y(INDX(I)) ~~~~~~for~I~=~1,~...,~NZ. }
+.EN
+.IP 5)
+Gather a Vector into Compressed Form and Zero the Full-form Vector
+.IP
+CALL SGTHRZ (NZ, Y, X,INDX)
+.br
+CALL DGTHRZ (NZ, Y, X,INDX)
+.br
+CALL CGTHRZ (NZ, Y, X,INDX)
+.br
+CALL ZGTHRZ (NZ, Y, X,INDX)
+.IP
+Gather (copy) the specified components of a vector stored in full storage form
+into compressed form and zero the gathered components of the full-form vector.
+If all nonzero components of @y@ appear in INDX, a common occurrence in the
+use of a single uncompressed scratch vector, then _GTHRZ simultaneously performs
+.EQ
+left { ~ lpile {x ~ : roman = ~ y above y ~ : roman = ~ 0 . }
+.EN
+This is specified by the following:
+.EQ
+roman { left "" lpile { X(I) above Y(INDX(I)) } ~
+        lpile { = above = } ~
+        lpile { Y(INDX(I)) above 0.0 }
+        ~~~ right } ~~~for~I~=~1,~...,~NZ. }
+.EN
+In typical use of full-form temporary vectors, the vector is initially set to
+zero.
+_SCTR is used to initialize the interesting entries for processing.
+At the completion of processing, _GTHRZ is used to move the interesting values
+back into the sparse data structures and simultaneously reset the full-form
+vector to its initial, zero, state for later use.
+.IP
+The values in INDX must be distinct to allow consistent vector or parallel
+execution since otherwise the indeterminacy in the order of accessing elements
+of Y and resetting them to zero makes X ambiguous.
+.KS
+.IP 6)
+Scatter a Sparse Vector from Compressed Form
+.IP
+CALL SSCTR (NZ, X,INDX, Y)
+.br
+CALL DSCTR (NZ, X,INDX, Y)
+.br
+CALL CSCTR (NZ, X,INDX, Y)
+.br
+CALL ZSCTR (NZ, X,INDX, Y)
+.KE
+.IP
+Scatter (copy) the components of a sparse vector stored in compressed form into
+specified components of a vector in full storage form.
+If @y@ is initially the zero vector, then _SCTR performs
+.EQ
+y ~ : roman = ~ x .
+.EN
+which is represented by the following FORTRAN:
+.EQ
+roman { Y(INDX(I)) ~=~ X(I) ~~~~~~for~I~=~1,~...,~NZ. }
+.EN
+The values in INDX must be distinct to allow consistent vector or parallel
+execution.
+
+.NH
+Acknowledgements
+.PP
+A draft of this proposal was discussed at the Parvec IV Workshop organized by
+John Rice at Purdue University on October 29-30, 1984.
+Subsequently, a revised draft appeared in the SIGNUM Newsletter [3], and was
+discussed at the SIAM Conference on Applied Linear Algebra in Raleigh, April
+29-May 2, 1985.
+We thank the participants at the workshop and meeting for their comments,
+discussions, and encouragement.
+
+.SH
+References
+.IP[1]
+C.C. Ashcraft, R.G. Grimes, J.G. Lewis, B.W. Peyton and H.D. Simon,
+``Progress in Sparse Matrix Methods for Large Linear Systems on
+Vector Supercomputers'', \fiInternational Journal of Supercomputer
+Applications 1, \fR 4 (December, 1987), pp. 10-30.
+.IP [2]
+D.S. Dodson and J.G. Lewis, ``Issues Relating to Extension of the Basic Linear
+Algebra Subprograms'', \fIACM SIGNUM Newsletter 20,\fR 1, (1985), pp. 19-22.
+.IP [3]
+D.S. Dodson and J.G. Lewis, ``Proposed Sparse Extensions to the Basic Linear
+Algebra Subprograms'', \fIACM SIGNUM Newsletter 20,\fR 1, (1985), pp. 22-25.
+.IP [4]
+D.S. Dodson, R.G. Grimes, and J.G. Lewis, ``Model Implementation and Test
+Package for the Sparse Basic Linear Algebra Subprograms,'' \fIthis journal.\fR
+.IP [5]
+J.J. Dongarra, J.R. Bunch, C.B. Moler, and G.W. Stewart, \fILINPACK Users'
+Guide,\fR SIAM Publications, Philadelphia, 1979.
+.IP [6]
+J.J. Dongarra, J. Du Croz, S. Hammarling, and R.J. Hanson, ``An Extended Set of
+FORTRAN Basic Linear Algebra Subprograms,'' \fIACM Transactions on Mathematical
+Software 14,\fR 1 (March, 1988), pp. 1-17.
+.IP [7]
+J.J. Dongarra, J. Du Croz, I.S. Duff, and S. Hammarling, ``A Proposal for a Set
+of Level 3 Basic Linear Algebra Subprograms,'' \fIACM SIGNUM Newsletter 22,\fR
+3, (1987), pp. 2-14.
+.IP [8]
+I.S. Duff, ``MA28: A Set of FORTRAN Subroutines for Sparse Unsymmetric Linear
+Systems,'' AERE Report R.8730, HMSO, London, (1971).
+.IP [9]
+I.S. Duff, A.M. Erisman, and J.K. Reid, \fIDirect Methods for Sparse
+Matrices,\fR Oxford University Press, (1986).
+.IP [10]
+S.C. Eisenstat, M.C. Gursky, M.H. Schultz, and A.H. Sherman, ``Yale Sparse
+Matrix Package I.  The Symmetric Codes,'' \fIInt. J. Num. Math. Eng. 18,\fR
+(1982), pp. 1145-1151.
+.IP [11]
+A. George and J.W. Liu, \fIComputer Solution of Large Sparse Positive Definite
+Systems,\fR Prentice-Hall, Inc., Englewood Cliffs, New Jersey, 1982.
+.IP [12]
+A. George and M.T. Heath, ``Solution of Sparse Linear Least Squares Problems
+Using Givens Rotations,'' \fILinear Algebra and Its Applications 34,\fR (1980),
+pp. 69-82.
+.IP [13]
+A. George, M.T. Heath, and R.J. Plemmons, ``Solution of Large-Scale Sparse
+Least Squares Problems Using Auxiliary Storage,'' Report ORNL/CSD-63, Oak Ridge
+National Laboratory, (August, 1980).
+.IP [14]
+R.G. Grimes, J.G. Lewis, and H.D. Simon, ``Experiences in Solving Large
+Eigenvalue Problems on the CRAY X-MP,'' \fIProceedings of the Eighteenth
+Semiannual CRAY Users Group Meeting,\fR Garmisch, West Germany, (October,
+1986).
+.IP [15]
+R.G. Grimes, J.G. Lewis, and H.D. Simon, ``Eigenvalue Problems and Algorithms
+in Structural Engineering,'' in \fILarge Scale Eigenvalue Problems\fR (J.
+Cullum and R. Willoughby, eds.), Elsevier North-Holland, (1986), pp. 81-93.
+.IP [16]
+R.J. Hanson, F.T. Krogh, and C.L. Lawson, ``A Proposal for Standard Linear
+Algebra Subprograms,'' \fIACM SIGNUM Newsletter 8\fR (1973), pp. 16ff.
+.IP [17]
+C.L. Lawson, R.J. Hanson, D.R. Kincaid, and F.T. Krogh, ``Basic Linear Algebra
+Subprograms for FORTRAN Usage,'' \fIACM Transactions on Mathematical
+Software 5,\fR 3 (September, 1979), pp. 308-323.
+.IP [18]
+C.L. Lawson, R.J. Hanson, D.R. Kincaid, and F.T. Krogh, ``Algorithm 539: Basic
+Linear Algebra Subprograms for FORTRAN Usage,'' \fIACM Transactions on
+Mathematical Software 5,\fR 3 (September, 1979), pp. 324-325.
+.IP [19]
+J.G. Lewis and H.D. Simon, ``The Impact of Hardware Gather/Scatter on Sparse
+Gaussian Elimination,'' \fIProceedings of the 1986 International Conference on
+Parallel Processing,\fR (K. Hwang, S. Jacobs, and E. Swartzlander, eds.), IEEE
+Computer Society, Los Angeles, (1986).
+.IP [20]
+H.D. Simon, ``Incomplete LU Preconditioners for Conjugate Gradient Type
+Iterative Methods,'' Paper SPE 13533, \fIProceedings of the Eighth SPE
+Symposium on Reservoir Simulation,\fR (February, 1985).
+

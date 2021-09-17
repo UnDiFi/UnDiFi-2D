@@ -1,0 +1,22 @@
+IERR
+   1  invalid ISCHEME
+   2  invalid JSCHEME
+   3  negative IXDRS returned by INITXDR
+   4  invalid option
+   5  negative density
+   6  inconsistent data in array IBNDFAC
+   7  an incorrect boundary type has been assigned to a colour
+   8  number of rows in the file matr$numproc$ does not match
+      the current number of (procs owned) rows.
+   9  not enough space allocated to store the normals, probably smthg.
+      wrong in the connectivity
+  10  too much space has been allocated to store the normals, probably smthg.
+      wrong in the connectivity
+  11  the number of boundary faces (NBFAC+NBINT) does not match the
+      the number of boundary faces in the ICELCEL pointer, probably smthg.
+      wrong in the connectivity
+  12  the number of meshpoints in file ptot$nnn$.dat does not match
+      the no. of entries in the IndexSet Internal_inflow
+  13  one of the meshpoints in file ptot$nnn$.dat is not among
+      the entries in the IndexSet Internal_inflow
+  14  inlet turbulent viscosity has not been set

@@ -1,0 +1,494 @@
+head	1.11;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.11
+	release3_13_0:1.11
+	release3_12_0:1.11
+	release3_11_0:1.11
+	release3_10_0:1.11
+	release3_8_0:1.11
+	release3_7_1:1.10
+	release3_7_0:1.10
+	release3_4_5:1.9
+	release3_4_4:1.9
+	release3_4_3:1.9
+	release3_4_2:1.9
+	release3_4_1:1.9
+	release3_4_0:1.9
+	release3_3_5:1.9
+	release3_3_4:1.9
+	release3_3_3:1.9
+	release3_3_2:1.9
+	release3_3_1:1.9
+	release3_3_0:1.9;
+locks; strict;
+comment	@c @;
+
+
+1.11
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2009.10.13.08.16.06;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2009.06.11.13.10.01;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2009.06.11.08.26.35;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.12.06.13.35.34;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.08.18.13.54.32;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.08.14.15.35.30;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.08.12.08.45.04;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@function to be called from RHSFunction_t (turbulnce modeling)
+original version to be used with the TS component of PETSc
+@
+
+
+1.11
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE ApplicationFunction_t(PetscMatB,X,PetscVecRHS,
+     &                                 PetscVecDT,ctx,IFAIL)
+C ---------------------------------------------------------------------
+C
+C  ApplicationFunction_t - Computes nonlinear function
+C  for the turbulence model (segregated approach)
+C  This function is called by
+C  the higher level routines RHSFunction_t() and RHSJacobian_t()
+C
+C  $Id: ApplicationFunction_t.F,v 1.10 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C  Input Parameter:
+C  x - local vector data as a FORTRAN array
+C  A - the jacobian matrix
+C
+C  Output Parameters:
+C  PetscVecRHS - local vector data, PetscVecRHS(x)
+C  PetscMatB - the jacobian matrix
+C
+C  Notes:
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec 
+      use petscmat 
+C
+      IMPLICIT NONE
+      Vec PetscVecRHS,PetscVecDT
+      Mat PetscMatB
+C
+      INCLUDE 'flags.com'
+      INCLUDE 'implicit.h'
+C
+      double precision x(*)
+      integer ctx(*),IFAIL
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     &NELEM,NFACE,NBFAC,IOPT
+C
+      EXTERNAL TURBO,NSYS_SCHEME
+C
+      EXTERNAL N_scheme,PSI_scheme,LDA_scheme,NL_scheme,FV_scheme,
+     +FCT_scheme,NL2_scheme,NS_scheme,LW2_scheme,LDA2_scheme,LW_scheme,
+     +LDASqr_scheme,SUPG_scheme
+C
+      CHARACTER*38 ERRMSG
+      DATA ERRMSG(1:33)/'SUBR. TURBSCH, NO SUCH KSCHEME = '/
+C
+      NDIM   =ctx(1)
+      NOFVERT=ctx(2)
+      NOFVAR =ctx(3)
+      NTURB  =ctx(4)
+      NPOIN  =ctx(5)
+      NGHOST =ctx(6)
+      NELEM  =ctx(7)
+      NFACE  =ctx(8)
+      NBFAC  =ctx(9)
+      NPNOD  =ctx(10)
+C
+!     CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+!    +              NELEM,NFACE,NBFAC,PetscVecDT,X,
+!    3              PetscVecRHS,PetscMatB,TURBO,
+!    +              NL2_SCHEME,NSYS_SCHEME)
+!    
+C
+C
+C     Executable Statements ..
+ 
+C
+      GOTO (1,2,3,4,5,6,7,8,9,10,11,12,13) KSCHEME
+
+      GOTO 9999
+C
+    1 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            N_scheme,NSYS_SCHEME)
+      RETURN
+    2 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            PSI_scheme,NSYS_SCHEME)
+      RETURN
+    3 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            LDA_scheme,NSYS_SCHEME)
+      RETURN
+    4 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            NL_scheme,NSYS_SCHEME)
+      RETURN
+    5 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            FV_scheme,NSYS_SCHEME)
+      RETURN
+    6 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            FCT_scheme,NSYS_SCHEME)
+      RETURN
+    7 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            NL2_scheme,NSYS_SCHEME)
+      RETURN
+    8 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            LW_scheme,NSYS_SCHEME)
+      RETURN
+    9 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            NS_scheme,NSYS_SCHEME)
+      RETURN
+   10 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            SUPG_scheme,NSYS_SCHEME)
+      RETURN
+   11 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            LDA2_scheme,NSYS_SCHEME)
+      RETURN
+   12 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            LW2_scheme,NSYS_SCHEME)
+      RETURN
+   13 CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,PetscVecDT,X,PetscVecRHS,PetscMatB,
+     2            TURBO,
+     3            LDASqr_scheme,NSYS_SCHEME)
+      RETURN
+C
+ 9999 WRITE(ERRMSG(33:38),FMT="(I6.6)")KSCHEME
+      IFAIL = 2
+      IOPT = 1
+      CALL SETERR(ERRMSG,38,IFAIL,IOPT)
+C
+C
+      RETURN
+      END
+@
+
+
+1.10
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d10 1
+a10 1
+C  $Id: ApplicationFunction_t.F,v 1.9 2011/09/16 07:19:48 abonfi Exp abonfi $
+a21 1
+      IMPLICIT NONE
+a22 1
+#include "petsc/finclude/petscsys.h"
+d25 2
+d28 1
+@
+
+
+1.9
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d10 1
+a10 1
+C  $Id: ApplicationFunction_t.F,v 1.8 2009/10/13 08:16:06 abonfi Exp abonfi $
+d24 3
+a26 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.8
+log
+@Added support for choosing the scalar advection scheme in the Spalart-Allmaras model
+@
+text
+@d10 1
+a10 1
+C  $Id: ApplicationFunction_t.F,v 1.7 2009/06/11 13:10:01 abonfi Exp abonfi $
+d24 1
+a24 1
+#include "finclude/petsc.h"
+@
+
+
+1.7
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d10 1
+a10 1
+C  $Id: ApplicationFunction_t.F,v 1.6 2009/06/11 08:26:35 abonfi Exp abonfi $
+d37 1
+a37 1
+     &NELEM,NFACE,NBFAC
+d39 8
+a46 1
+      EXTERNAL TURBO,NL2_SCHEME,NSYS_SCHEME
+d59 85
+a143 5
+      CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +              NELEM,NFACE,NBFAC,PetscVecDT,X,
+     3              PetscVecRHS,PetscMatB,TURBO,
+     +              NL2_SCHEME,NSYS_SCHEME)
+     
+@
+
+
+1.6
+log
+@now passing NPNOD among the arguments of the call
+@
+text
+@d10 1
+a10 1
+C  $Id: ApplicationFunction_t.F,v 1.5 2000/12/06 13:35:34 aldo Exp $
+d24 3
+a26 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.5
+log
+@now using NL_2 scheme for the turbulence transport eqn
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE ApplicationFunction_t(B,X,RHS,DT,ctx,IERR)
+d10 1
+a10 1
+C  $Id: ApplicationFunction_t.F,v 1.4 2000/10/19 16:10:34 aldo Exp aldo $
+d17 2
+a18 2
+C  RHS - local vector data, RHS(x)
+C  B - the jacobian matrix
+d28 2
+a29 2
+      Vec RHS,DT
+      Mat B
+d35 3
+a37 2
+      integer ctx(*),ierr
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+d50 1
+d52 3
+a54 2
+      CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +              NELEM,NFACE,NBFAC,DT,X,RHS,B,TURBO,
+@
+
+
+1.4
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d9 1
+a9 1
+C  $Id: ApplicationFunction_t.F,v 1.3 2000/08/18 13:54:32 aldo Exp aldo $
+d37 1
+a37 1
+      EXTERNAL TURBO,NL_SCHEME,NSYS_SCHEME
+d51 1
+a51 1
+     +              NL_SCHEME,NSYS_SCHEME)
+@
+
+
+1.3
+log
+@removed unused variables
+@
+text
+@d9 1
+a9 1
+C  $Id: ApplicationFunction_t.F,v 1.2 2000/08/14 15:35:30 aldo Exp aldo $
+d24 2
+a25 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+@
+
+
+1.2
+log
+@first working version with the code
+at revision 0.10.9
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ApplicationFunction_t(B,X,RHS,dummy,IERR)
+d9 1
+a9 1
+C  $Id$
+d17 1
+a17 1
+C  A - the jacobian matrix
+a28 1
+      PetscTruth FLAG
+a32 1
+      double precision s
+d34 1
+a34 1
+      integer dummy(*)
+d39 9
+a47 10
+      NDIM   =dummy(1)
+      NOFVERT=dummy(2)
+      NOFVAR =dummy(3)
+      NTURB  =dummy(4)
+      NPOIN  =dummy(5)
+      NGHOST =dummy(6)
+      NELEM  =dummy(7)
+      NFACE  =dummy(8)
+      NBFAC  =dummy(9)
+      DT     =dummy(10)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ApplicationFunction_t(A,x,RHS,dtmin,IERR)
+d4 2
+a5 4
+C  ApplicationFunction - Computes nonlinear function or
+C  jacobian, depending on the logical flags:
+C  BUILD_RHS, BUILD_JAC which are stored in the common
+C  included as implicit.h
+d7 1
+a7 1
+C  the higher level routines FormFunction() and FormJacobian()
+d9 1
+a10 1
+C
+d12 1
+a12 1
+C  x - local vector data
+a17 2
+C  ierr - error code 
+C  dtmin - min(dt/V)
+d28 1
+a28 1
+      Mat A
+a32 2
+      INCLUDE 'geo.com'
+      INCLUDE 'var.com'
+d34 1
+a34 1
+      double precision s,dtmin
+d36 20
+a55 22
+      LOGICAL COMPRESSIBLE
+      integer ierr,ifail
+      integer NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+C
+      EXTERNAL NL_SCHEME,NSYS_SCHEME,TURBO
+C
+      IF(BUILD_RHS)
+     +CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN+NGHOST,DT,IERR)
+C
+C     For the turbulent case we skip the choice of scalar & matrix
+C     schemes, though this might became necessary if other
+C     turbulence models were implemented
+C
+      CALL NODRES_T(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +           NFACE,NBFAC,DT,X,RHS,A,
+     +           TURBO,NL_SCHEME,NSYS_SCHEME)
+C
+      IF(BUILD_RHS)THEN
+         CALL VecNorm(DT,NORM_INFINITY,DTMIN,IFAIL)
+         DTMIN=1./DTMIN
+         CALL VecDestroy(DT,IFAIL)
+      ENDIF 
+@

@@ -1,0 +1,80 @@
+15c15
+<     double precision fs1,fs2
+---
+>     double precision fs1,fs2,fs4
+18c18,25
+<     fitsigma = 3
+---
+> !   Choice a fit for sigma
+> !   fitsigma = 1 -> Fit of Boyd AIAA article data (only for p=0.013atm)
+> !   fitsigma = 2 -> Raizer (only for p=1bar)
+> !   fitsigma = 3 -> Chapman & Cowling
+> !   fitsigma = 4 -> Fit Colonna & D'Angola data(only p=1bar) 
+> !   else -> sigma=1
+> 
+>     fitsigma = 5
+20d26
+< !   fit Matlab (valid only for p=0.013atm)   
+22,27d27
+< !       if (T.le.4.d3)then
+< !          T = 4.d3
+< !       endif
+< !       if(T.ge.1.6d4)then
+< !          T = 1.6d4
+< !       endif    
+30d29
+< !   Raizer (valid only for p=1 bar)  
+39d37
+< !   Chapman &  Cowgling
+43,45c41,42
+< !   Bisek & Boyd 
+< !    elseif (fitsigma.eq.4)then
+< !       sigma = fs3(chis,Elnorm) 
+---
+>     elseif(fitsigma.eq.4)then              
+>        sigma = fs4(T)        !(Ohm/m)        
+47c44
+< !       write(6,*)'Choice a model for electrical conductivity'
+---
+> !       write(6,*)'Choice a model for the electrical conductivity'
+95a93,132
+>     
+> !   Analytical fitting function fs4
+>     double precision function fs4(x)
+>     implicit none
+>     double precision x,x1,m1(6),m2(6)
+> 
+> !   INTERVALLO TEMPERATURE (1000 - 5000 K)
+>     m1(1) =  1.232d-015;
+>     m1(2) = -1.962d-011;
+>     m1(3) =  1.202d-007;
+>     m1(4) =  -0.0003545d0;
+>     m1(5) =     0.5128d0;
+>     m1(6) =        -313.d0;
+> 
+> !   INTERVALLO TEMPERATURE (5000 - 13000 K)
+>     m2(1) =   7.34d-019;
+>     m2(2) = -3.793d-014;
+>     m2(3) =  7.856d-010;
+>     m2(4) = -8.212d-006;
+>     m2(5) =     0.04402d0;
+>     m2(6) =      -90.63d0;
+> 
+>     x1 = x
+>     if(x1.gt.1.3d4)then
+>         x1=1.3d4;
+>     endif  
+>      
+>     if(x1.lt.1.d3)then
+>         fs4=0.0d0;
+>     elseif((x1.ge.1.d3).and.(x1.le.5.d3))then
+>         fs4=m1(1)*x1**5 + m1(2)*x1**4 + m1(3)*x1**3 + m1(4)*x1**2 + m1(5)*x1 + m1(6)
+>         fs4 = exp(fs4)
+>     elseif(x.gt.5.d3)then
+>         fs4=m2(1)*x1**5 + m2(2)*x1**4 + m2(3)*x1**3 + m2(4)*x1**2 + m2(5)*x1 + m2(6)
+>         fs4 = exp(fs4)    
+>     endif
+> !
+>     return
+>     end
+> 

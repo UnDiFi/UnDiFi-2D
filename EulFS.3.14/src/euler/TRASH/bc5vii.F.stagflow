@@ -1,0 +1,215 @@
+      SUBROUTINE BC5VII(IELEM,VCN,VCZ,KPOS,NODRES,TSTEP,NDIM,NOFVERT,
+     +                  NOFVAR)
+C
+C#define PRINT
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute far-field boundary conditions for compressible
+C     flows (ghost cell approach)
+C
+      include 'paramt.h'
+      include 'constants'
+      include 'implicit.h'
+      include 'bnd.h'
+      include 'stream.com'
+      include 'three'
+C
+      INTEGER MAXNORDER,MAXORDSQR,LENA
+      PARAMETER(MAXNORDER=4,MAXORDSQR=MAXNORDER*MAXNORDER)
+      PARAMETER(LENA=MAXNOFEQN*MAXNOFEQN)
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVAR,NOFVERT
+C
+C     On entry:
+C     --------
+C     IELEM  current boundary element
+C     NDIM   dimension of the space (2 or 3)
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION KPOS(NOFVAR,NOFVAR,*),
+     +                 NODRES(NOFVAR,*),TSTEP(NOFVAR,*),
+     +                 VCN(NDIM,NOFVERT),VCZ(NOFVAR,*)
+C
+C     On entry:
+C     --------
+C     VCN(1:NDIM,1:NOFVERT) cartesian components of the normals 
+C                           to the element sides/faces
+C                           the normal to the boundary face need
+C                           to be stored in VCN(1:NDIM,NOFVERT)
+C     VCZ(1:NOFVAR,1:NOFVERT) dependent variables in the vertices
+C                           of the current (IELEM) element
+C                           the freestream values need
+C                           to be stored in VCZ(1:NOFVAR,NOFVERT)
+C     Upon return:
+C     -----------
+C     KPOS(1:NOFVAR,1:NOFVAR,1:NOFVERT-1) positive inflow parameters
+C                   in the NOFVERT-1 vertices of the boundary face
+C     NODRES(1:NOFVAR,1:NOFVERT-1) nodal residual due to the incoming
+C                   characteristics in the NOFVERT-1 vertices 
+C                   of the boundary face
+C     TSTEP(NOFVAR,1:NOFVERT) contribution to the time-step in the
+C                   vertices of the current element
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION SUM,VOLUME
+      DOUBLE PRECISION ddot
+      INTEGER IFAIL,IVAR,IVERT,I,J,ILOCA,NORDER,NOFEQN,IADD
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION KMAT(MAXORDSQR),KNEG(MAXORDSQR),
+     >                 VLEFT(MAXORDSQR),VRIGHT(MAXORDSQR),
+     +                 WNEG(MAXNORDER),WPOS(MAXNORDER),WR(MAXNORDER),
+     >                 DVDZ(LENA),DUDS(LENA),TEMPB(MAXNOFVAR*VMAX),
+     +                 DZDU(LENA*(VMAX-1)),TEMPA(25)
+!    +                 DZDU(LENA*(VMAX-1)),TEMPA(LENA*VMAX)
+C
+C     there is a bug somewhere......so that if TEMPA is
+C     dimensioned for 25 (as it should) things go wrong!!!!!
+C
+C#define PRINT
+C
+      DATA DVDZ,DUDS,DZDU/125*ZERO/
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DCOPY,DGEMM,LINEARIZE,MATSPLITVII,DDOT
+C
+C
+      double precision zn(4,3)
+      common/mytrash/zn
+C
+Caldo
+C     ..
+      VOLUME = ONE
+      CALL DINIT(NOFVERT*(NOFVAR**2),ZERO,KPOS,1)
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+C
+      CALL PARM2PRIM(IELEM,NDIM)
+C
+      NORDER=NDIM+1
+      NOFEQN=NDIM+2
+      CALL MATSPLITVII(IELEM,NDIM,NORDER,VCN(1,NOFVERT),TEMPB,NORDER,
+     +                 KMAT,TEMPA,KNEG,VLEFT,VRIGHT,NORDER,WR,WPOS,WNEG,
+     +                 .TRUE.)
+C
+      SUM = DDOT(NDIM,UAVG(3),1,VCN(1,NOFVERT),1)/REAL(NDIM)
+      KPOS(1,1,1) = HALF*(SUM+ABS(SUM))
+C
+C     Copy the matrix in symmetrizing variables into TEMPA
+C
+C     CALL MATINS(KPOS(1,1,1),NOFVAR,TEMPA,NORDER,1,1)
+      do j = 1,norder
+      do i = 1,norder
+         kpos(i+1,j+1,1) = tempa((j-1)*norder+i)
+      enddo
+      enddo
+         
+C
+#ifdef PRINT
+      CALL X04CAF('General',' ',nofvar,nofvert,vcz,
+     +nofvar,'vcz matrix ',IFAIL)
+      CALL X04CAF('General',' ',ndim,nofvert,vcz,
+     +ndim,'vcn matrix ',IFAIL)
+      CALL X04CAF('General',' ',NORder,NORder,tempa,
+     +NORder,'tempa matrix (subset of K(+)) ',IFAIL)
+      CALL X04CAF('General',' ',nofvar,nofvar,kPOS,
+     +nofvar,'K(+) matrix ',IFAIL)
+      CALL X04CAF('General',' ',norder,norder,kneg,
+     +norder,'K(-) matrix ',IFAIL)
+      pause
+#endif
+C
+C     timestep
+C
+      SUM = ZERO
+      DO 4 IVAR = 1,NORDER
+          SUM = SUM + WPOS(IVAR)
+    4 CONTINUE
+C
+C     Compute transformation matrices
+C
+      CALL SYMM2CONS(ZAVG,DUDS,NOFEQN,NDIM)
+C
+      CALL PARM2SYMM(ZAVG,DVDZ,NOFEQN,NDIM)
+C
+C     K(+) := dU/dV * K(+) is stored in TEMPB(1:NOFEQN,1:NOFEQN)
+C
+      CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,DUDS,NOFEQN,
+     +           KPOS,NOFVAR,ZERO,TEMPB,NOFEQN)
+#ifdef PRINT
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPB,
+     +NOFEQN,'dU/dV * K(+) matrix ',IFAIL)
+#endif
+C
+C     K(+) := dU/dV * K(+) * dV/dZ is stored in TEMPA(1:NOFEQN,1:NOFEQN)
+C
+      CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,TEMPB,NOFEQN,
+     +           DVDZ,NOFEQN,ZERO,TEMPA,NOFEQN)
+#ifdef PRINT
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,dVdZ,
+     +NOFEQN,'dVdZ matrix ',IFAIL)
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPA,
+     +NOFEQN,'dU/dV * K(+) * dV/dZ matrix ',IFAIL)
+#endif
+C
+C     REM: TEMPB is dimensioned NOFVAR*NOFVERT
+C
+      CALL DCOPY(NOFVAR*(NOFVERT-1),VCZ,1,TEMPB,1)
+C
+C     Looping over the vertices of the boundary face;
+C     notice that the vertex facing the boundary face is NOFVERT
+C     and is skipped in the following loop
+C     Compute U(i) := [U(i) - U(\infty)] \forall i=1,..,NOFVERT-1
+C     and store in TEMPB
+C
+      DO 50 IVERT = 1,NOFVERT - 1
+          IADD = (IVERT-1)*NOFVAR+1
+caldo     CALL DAXPY(NOFVAR,-ONE,U_INFTY,1,TEMPB(IADD),1)
+          CALL DAXPY(NOFVAR,-ONE,zn(1,ivert),1,TEMPB(IADD),1)
+          TSTEP(1,IVERT) = SUM
+   50 CONTINUE
+C
+C     Compute -K(+)*[U(i) - U(\infty)] as
+C             -dU/dV * K(+) * dV/dZ * [Z(i) - Z(\infty)]
+C
+      CALL DGEMM('No','No',NOFEQN,NOFVERT-1,NOFEQN,-ONE,TEMPA,NOFEQN,
+     +           TEMPB,NOFVAR,ZERO,NODRES,NOFVAR)
+#ifdef PRINT
+      CALL X04CAF('General',' ',nofvar,nofvert,NODRES,
+     +nofvar,'nodres matrix ',IFAIL)
+      pause
+#endif
+C
+      IF(.NOT.TIMEIMPL)RETURN
+C
+C     K(+) := K(+) * 2. * (dZ/dU)(ivert)
+C
+      DO 55 IVERT = 1,NOFVERT - 1
+          ILOCA = (IVERT-1)*NOFEQN*NOFEQN+1
+          IF(TIMEIMPL) 
+C
+C     compute dZdU(ivert)
+     +    CALL MatdZdU(VCZ(1,IVERT),DZDU(ILOCA),NDIM,NOFEQN)
+          CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,TWO,TEMPA,NOFEQN,
+     +               DZDU(ILOCA),NOFEQN,ZERO,KPOS(1,1,IVERT),
+     +               NOFVAR)
+#ifdef PRINT
+       write(6,*)ivert
+      CALL X04CAF('General',' ',nofvar,nofvar,kpos(1,1,ivert),
+     +nofvar,'kpos matrix ',IFAIL)
+      pause 
+#endif
+   55 CONTINUE
+C
+      RETURN
+
+      END

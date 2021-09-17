@@ -1,0 +1,535 @@
+head	1.9;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.9
+	release3_13_0:1.9
+	release3_12_0:1.9
+	release3_11_0:1.9
+	release3_10_0:1.9
+	release3_8_0:1.9
+	release3_7_1:1.8
+	release3_7_0:1.8
+	release3_4_5:1.8
+	release3_4_4:1.8
+	release3_4_3:1.8
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.6;
+locks; strict;
+comment	@c @;
+
+
+1.9
+date	2020.04.23.09.56.14;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.09.17.11.18.14;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.09.17.11.05.13;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.03.30.09.20.48;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2009.10.13.08.20.04;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.06.11.09.49.36;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2007.11.14.10.34.04;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.09.13.07.25.56;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2002.09.13.15.59.00;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Spalart-Allmaras model: coupled solution approach
+for incompressible flows
+@
+
+
+1.9
+log
+@now calling R8Mat_Print
+@
+text
+@      SUBROUTINE SA8(IELEM,VCN,VCZ,NDIM,NOFVERT,
+     +         NOFVAR,NTURB,NODRES,
+     +         TSTEP,STIFEL,VOLUME,MATRIX_ASSEMBLY,
+     +         SCALARSCHEME,MATRIXSCHEME,RWORK,COMPRESSIBLE,
+     4         VISCL,VISCT)
+C
+C     $Id: sa8.F,v 1.8 2013/09/17 11:18:14 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C     Spalart-Allmaras model; 
+C     transport equation for the KINEMATIC viscosity 
+C     to be used in the coupled solution approach
+C     for incompressible flows
+C     
+C
+C     .. Parameters ..
+      INCLUDE 'paramt.h'
+      INCLUDE 'time.h'
+      INCLUDE 'constants.h'
+C
+C
+      INCLUDE 'three.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'turb.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'time.com'
+      INCLUDE 'sa.com'
+C
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NELEM,NOFVAR,NTURB,NOFVERT
+      DOUBLE PRECISION VISCL,VISCT
+      LOGICAL COMPRESSIBLE
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION TSTEP(NOFVAR,*),NODRES(NOFVAR,NOFVERT),
+     +                 VCN(*),VCZ(NOFVAR,NOFVERT,*),RWORK(*), 
+     3                 STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     4                 VOLUME(*)
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL SCALARSCHEME,MATRIXSCHEME
+C     ..
+C     .. Arrays in Common ..
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION CELRES,SOURCE,OMEGA,OMEX,OMEY,OMEZ,
+     +                 TS,TCHI,TBDIFFX,GRADNRM
+      INTEGER I,IELEM,IFAIL,IVERT,J,JADD,NN,MM
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION STIFC(MAX_NOFVERT_SQR),STIFD(MAX_NOFVERT_SQR),
+     +                 WORK(MAXNOFVERT*MAXTIMLEVS),DWORK(MAXNOFVERT),
+     3                 TAUX(MAXNOFVERT),BETA(MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TBDEST,TBPROD,TBTRIP,TSC,
+     1                 TFV1
+      EXTERNAL TBDEST,TBPROD,TBTRIP,TSC,TFV1
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DINIT,TDIFF,VISCO
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC MAX,SQRT
+C     ..
+C     .. Common blocks ..
+C     ..
+C     .. Equivalences ..
+C     ..
+C
+C
+C
+CCC#define DEBUG
+C
+C
+C
+      CALL DINIT(NOFVERT,ZERO,TAUX,1)
+      IF(MATRIX_ASSEMBLY)THEN 
+         MM = NOFVERT*NOFVERT
+         CALL DINIT(MM,ZERO,STIFC,1) 
+         CALL DINIT(MM,ZERO,STIFD,1) 
+      ENDIF
+C
+C
+      VISCL = ONE
+C
+C Cell averaged vorticity
+C
+      IF( NDIM .EQ. 3 )THEN
+          OMEX = GRAD_PARM(4,2) - GRAD_PARM(3,3)
+          OMEY = GRAD_PARM(2,3) - GRAD_PARM(4,1)
+      ELSE
+          OMEX = ZERO
+          OMEY = ZERO
+      ENDIF
+      OMEZ = GRAD_PARM(3,1) - GRAD_PARM(2,2)
+C
+      OMEGA = SQRT(OMEX*OMEX+OMEY*OMEY+OMEZ*OMEZ)
+C     write(6,*)'w = ',omex,omey,omez
+!     wkarea(1) = TD
+!     wkarea(2) = VISCL
+!     wkarea(3) = OMEGA
+!     wkarea(4) = ZAVG(2)
+!     wkarea(5) = ZAVG(3)
+!     wkarea(6) = ZAVG(4)
+!     wkarea(7) = TTD
+!     if(myflag.NE.0)write(6,*)ielem,(wkarea(j),j=1,7)
+C
+C     VISCT = MAX(0.d0,ZAVG(NOFVAR))
+      VISCT = ZAVG(NOFVAR)
+C
+C     CALL R8Mat_Print('General',' ',NOFVAR,3,GRAD_PARM,NMAX,
+C    +         'Gradiente ',IFAIL)
+C     CALL R8Mat_Print('General',' ',NOFVAR,NOFVERT,VCZ,NOFVAR,
+C    +         'Nodal values ',IFAIL)
+C
+C
+      DO 22 J = 1, NTIMLEVS
+         JADD = (J-1)*NOFVERT
+         DO 22 IVERT = 1, NOFVERT
+             WORK(JADD+IVERT) = VCZ(NOFVAR,IVERT,J)
+   22 CONTINUE
+C
+C
+C
+C ****************************************************
+C          computation of the source term
+C ****************************************************
+C
+C
+C     compute "modified" vorticity
+C
+      TS = TSC(OMEGA,TD,VISCT,VISCL)
+C     write(6,*)'w = ',omega,' ts ',ts
+C
+C   it would be nice to enforce the compiler to inline all these
+C   functions
+C
+      GRADNRM = GRAD_PARM(NOFVAR,1)**2 + 
+     >          GRAD_PARM(NOFVAR,2)**2
+      IF(NDIM.EQ.3)GRADNRM = GRADNRM + GRAD_PARM(NOFVAR,3)**2
+C
+      TBDIFFX = TCB2/TPR1*REINV * GRADNRM
+C
+      SOURCE = TBPROD(VISCT,VISCL,TS) + 
+     2         TBDEST(TD,TS,VISCT,VISCL) +
+     3         TBDIFFX
+C
+      SOURCE = -SOURCE*VOLUME(1)
+C
+          IF (TTFLAG.EQ.1) THEN
+              STOP 'trip term NOT implemented '
+              SOURCE=SOURCE+TBTRIP(TD,RWORK(7),RWORK(4),
+     >RWORK(5),RWORK(6))
+C
+          ENDIF
+C
+CXXXX     pause
+CXXXX     write(6,*)source,(VISCT+VISCL)*REINV/TPR1
+C
+#ifdef DEBUG
+          source = 0.d0
+#endif
+C
+C        the convection speed is the velocity vector
+C
+      CALL SCALARSCHEME(IELEM,VCN,ZAVG(2),CELRES,SOURCE,WORK,
+     +                      TAUX,DWORK,BETA,STIFC,NDIM,NOFVERT,
+     +                      MATRIX_ASSEMBLY)
+C
+C     Diffusion term ...
+C
+#ifdef DEBUG
+          CALL VISCO(IELEM,WORK,DWORK,TAUX,NOFVAR,VCN,NDIM,
+     +               NOFVERT,VOLUME(1),STIFD,REINV,
+     +               ZERO,MATRIX_ASSEMBLY)
+#else
+          CALL VISCO(IELEM,WORK,DWORK,TAUX,NOFVAR,VCN,NDIM,
+     +               NOFVERT,VOLUME(1),STIFD,(VISCT+VISCL)*REINV/TPR1,
+     +               ZERO,MATRIX_ASSEMBLY)
+#endif
+C
+      IF(LTIME)THEN
+          DTVOL = DELT/VOLUME(1)
+          CALL UNSTEADY1(WORK,BETA,WORK,NTURB,DWORK,STIFC,VOLUME,
+     1                   NTURB,NDIM,NOFVERT,MMTYPE,MATRIX_ASSEMBLY)
+!    1                   NOFVERT,1,MATRIX_ASSEMBLY)
+      ENDIF 
+C
+C
+C we could transpose NODRES: don't know what's better.....
+C
+         DO 33 IVERT = 1, NOFVERT
+            NODRES(NOFVAR,IVERT) = DWORK(IVERT)
+            TSTEP(NOFVAR,IVERT) = TSTEP(NOFVAR,IVERT) + TAUX(IVERT)
+   33    CONTINUE
+C
+!     write(6,*)ielem
+!     write(6,*)(dwork(ivert),ivert=1,nofvert)
+!     CALL R8Mat_Print('General',' ',NOFVAR,NOFVERT,NODRES,NOFVAR,
+!    +         'Nodal update ',IFAIL)
+!     write(6,*)ielem,td,ts,visct,source
+C     write(6,*)zavg(2),zavg(3),omega
+!     write(6,*)'prod = ',TBPROD(VISCT,VISCL,TS)
+!     write(6,*)'dest = ',TBDEST(TD,TS,VISCT,VISCL)
+!     write(6,*)'diff = ',TBDIFFX
+!     write(6,*)'celr = ',CELRES
+!     pause
+C
+      IF (MATRIX_ASSEMBLY) THEN
+C
+         NN = NOFVAR*NOFVAR
+         CALL DAXPY(MM,MONE,STIFC,1,STIFD,1)
+!        CALL DSCAL(MM,MONE,STIFC,1) 
+         CALL DCOPY(MM,STIFC,1,STIFEL(NOFVAR,NOFVAR,1,1),NN)
+!        CALL DINIT(MM,ONE,STIFEL(NOFVAR,NOFVAR,1,1),NN)
+!     CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR*NOFVERT*NOFVERT,STIFEL,
+!    +         NOFVAR,'Matrice J ',IFAIL)
+      ENDIF
+C
+C     compute "real" turbulent viscosity
+C
+C     write(6,*)ielem,visct
+      TCHI = VISCT/VISCL
+      VISCT = VISCT*TFV1(TCHI)
+cxxx
+#ifdef DEBUG
+      VISCT = 0.d0
+c
+c     prova con VISCL=0.d0 ed il modello "intero"
+c
+#endif
+cxxx
+C
+      RETURN
+C
+      END
+@
+
+
+1.8
+log
+@sintax error fixed
+@
+text
+@d7 1
+a7 1
+C     $Id: sa8.F,v 1.7 2013/09/17 11:05:13 abonfi Exp abonfi $
+d116 1
+a116 1
+C     CALL X04CAF('General',' ',NOFVAR,3,GRAD_PARM,NMAX,
+d118 1
+a118 1
+C     CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ,NOFVAR,
+d204 1
+a204 1
+!     CALL X04CAF('General',' ',NOFVAR,NOFVERT,NODRES,NOFVAR,
+d221 1
+a221 1
+!     CALL X04CAF('General',' ',NOFVAR,NOFVAR*NOFVERT*NOFVERT,STIFEL,
+@
+
+
+1.7
+log
+@VOLUME is now an array used to store volumes at previous time levels (ALE formulation)
+@
+text
+@d7 1
+a7 1
+C     $Id: sa8.F,v 1.6 2011/03/30 09:20:48 abonfi Exp abonfi $
+d40 1
+a40 1
+     3                 STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT)
+@
+
+
+1.6
+log
+@uses the same mass matrix as the mean flow equations
+@
+text
+@d7 1
+a7 1
+C     $Id: sa8.F,v 1.5 2009/10/13 08:20:04 abonfi Exp abonfi $
+d34 1
+a34 1
+      DOUBLE PRECISION VOLUME,VISCL,VISCT
+d41 1
+a57 1
+!     double precision wkarea(7) 
+d153 1
+a153 1
+      SOURCE = -SOURCE*VOLUME
+d179 1
+a179 1
+     +               NOFVERT,VOLUME,STIFD,REINV,
+d183 1
+a183 1
+     +               NOFVERT,VOLUME,STIFD,(VISCT+VISCL)*REINV/TPR1,
+d188 3
+a190 3
+          DTVOL = DELT/VOLUME
+          CALL UNSTEADY1(WORK,BETA,WORK,NTURB,DWORK,STIFC,NTURB,NDIM,
+     1                   NOFVERT,MMTYPE,MATRIX_ASSEMBLY)
+@
+
+
+1.5
+log
+@Added support for choosing the scalar advection scheme
+@
+text
+@d7 1
+a7 1
+C     $Id: sa8.F,v 1.4 2009/06/11 09:49:36 abonfi Exp abonfi $
+d50 1
+a50 1
+      INTEGER I,IELEM,IFAIL,INODE,IVERT,J,JADD
+d54 1
+a54 1
+      DOUBLE PRECISION STIFC(MAX_NOFVAR_SQR),STIFD(MAX_NOFVAR_SQR),
+d82 5
+d190 2
+a191 1
+     1                   NOFVERT,MMTYPE,.FALSE.)
+d215 8
+a222 1
+             STOP 'Picard NOT implemented'
+@
+
+
+1.4
+log
+@unsteady flow release
+@
+text
+@d7 1
+a7 1
+C     $Id: sa8.F,v 1.3 2007/11/14 10:34:04 abonfi Exp abonfi $
+d166 1
+a166 1
+      CALL NL_SCHEME(IELEM,VCN,ZAVG(2),CELRES,SOURCE,WORK,
+d185 1
+a185 1
+     1                   NOFVERT,MM_LUMPED,.FALSE.)
+@
+
+
+1.3
+log
+@minor cosmetic changes
+@
+text
+@d7 1
+a7 1
+C     $Id: sa8.F,v 1.2 2005/09/13 07:25:56 abonfi Exp abonfi $
+d19 2
+d23 1
+a23 2
+      INCLUDE 'constants'
+      INCLUDE 'three'
+d28 1
+d39 1
+a39 1
+     +                 VCN(*),VCZ(NOFVAR,NOFVERT),RWORK(*), 
+d50 1
+a50 1
+      INTEGER I,IELEM,IFAIL,INODE,IVERT,J
+d55 2
+a56 2
+     +                 WORK(MAXNOFVERT),DWORK(MAXNOFVERT),
+     3                 TAUX(MAXNOFVERT)
+d116 5
+a120 2
+      DO 22 IVERT = 1, NOFVERT
+             WORK(IVERT) = VCZ(NOFVAR,IVERT)
+d124 1
+d167 1
+a167 1
+     +                      TAUX,DWORK,STIFC,NDIM,NOFVERT,
+d182 7
+@
+
+
+1.2
+log
+@using the NL scheme; also using the cell averaged
+viscosity regardless of the fact it might be negative
+(otherwise convergence could be affected by the
+MAX function)
+@
+text
+@d7 1
+a7 1
+C     $Id: sa8.F,v 1.1 2002/09/13 15:59:00 abonfi Exp abonfi $
+d17 1
+a17 2
+C
+C
+a28 3
+C     Sets residual and local timestep to zero
+C
+C     .. Parameters ..
+d35 5
+d52 4
+a55 5
+      DOUBLE PRECISION TSTEP(NOFVAR,*),NODRES(NOFVAR,NOFVERT),
+     +                 STIFC(VMAX*VMAX),STIFD(VMAX*VMAX),VCN(3*VMAX),
+     +                 VCP(3*VMAX),VCZ(NOFVAR,NOFVERT),RWORK(*),
+     +                 STIFEL(nofvar,nofvar,nofvert,nofvert),
+     +                 WORK(4),DWORK(4),pippo(3),TAUX(VMAX)
+d66 1
+a66 1
+      INTRINSIC ABS,MAX,SIGN,SQRT
+d73 2
+a77 3
+C     pippo(1) = 1.
+C     pippo(2) = 0.
+C     pippo(3) = 0.
+d97 8
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+C     $Id: turbcomp.F,v 1.14 2000/06/07 08:12:02 aldo Exp aldo $
+d73 1
+a73 1
+C#define DEBUG
+d99 2
+a100 1
+      VISCT = MAX(0.d0,ZAVG(NOFVAR))
+d153 1
+a153 4
+C     CALL NS_SCHEME(IELEM,VCN,pippo,CELRES,SOURCE,WORK,
+C    +                      TAUX,DWORK,STIFC,NDIM,NOFVERT,
+C    +                      MATRIX_ASSEMBLY)
+      CALL NL2_SCHEME(IELEM,VCN,ZAVG(2),CELRES,SOURCE,WORK,
+@

@@ -1,0 +1,84 @@
+head	1.1;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks
+	aldo:1.1; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.00.52.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@L2 and L infty norms of a vector
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE GETNRM(VCORG,WORK,A,NDIM,NOFVAR,NPOIN,INNODE,NRMINF,
+     +                  NRM2)
+C
+      IMPLICIT NONE
+
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR,NPOIN
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION A(NOFVAR,NPOIN),NRM2(NOFVAR),NRMINF(NOFVAR),
+     +                 VCORG(NDIM,NPOIN),WORK(3,*)
+      INTEGER INNODE(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IDIM,IPOIN,IVAR
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DNRM2
+      INTEGER IDAMAX
+      EXTERNAL DNRM2,IDAMAX
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS
+C     ..
+      DO 5 IVAR = 1,NOFVAR
+          IPOIN = IDAMAX(NPOIN,A(IVAR,1),NOFVAR)
+          INNODE(IVAR) = IPOIN
+          NRMINF(IVAR) = ABS(A(IVAR,IPOIN))
+          DO 7 IDIM = 1,NDIM
+              WORK(IDIM,IVAR) = VCORG(IDIM,IPOIN)
+    7     CONTINUE
+          NRM2(IVAR) = DNRM2(NPOIN,A(IVAR,1),NOFVAR)
+    5 CONTINUE
+C
+      RETURN
+
+      END
+@

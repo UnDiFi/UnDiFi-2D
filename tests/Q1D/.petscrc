@@ -1,0 +1,51 @@
+-equation Euler
+-fluid compressible
+-preconditioning yes 
+-nondimensionalisation external
+#
+-scalar_scheme NL
+-matrix_scheme B
+#
+-itmax 100
+-ibak 200
+-cfl 0.5
+-timestepping explicit
+-timestep local
+-cflmax 1.
+-linearization picard
+
+#-linearization newton
+#
+#-sles_view
+#
+# PC options for preconditioner
+#
+-ksp_monitor ksp.log
+#-ksp_view
+#
+# flow conditions
+#
+# Mach = 0.75
+#
+-freestream_Mach_number 2.00
+-flow_angles 1.,0.,0.
+-colors -1,-1,1,-1,2,-1,-1,-1,-1,-1,0,-1,-1,-1
+-data_dir ./
+-restart_file file003.dat
+-bc_type weak
+-outlet_static_pressure 0.66085998521698897
+#
+#
+#-pc_type hypre
+#-pc_hypre_type euclid
+#-pc_hypre_euclid_print_statistics
+-pc_factor_mat_ordering_type rcm
+-pc_factor_reuse_ordering
+#-mat_view_draw
+#-pc_type composite
+#-pc_composite_pcs asm,bjacobi
+#-pc_composite_type multiplicative
+#-sub_0_pc_asm_blocks 4
+#-sub_0_sub_pc_ilu_in_place
+#-sub_0_sub_pc_ilu_fill 1
+#-sub_1_pc_bjacobi 4

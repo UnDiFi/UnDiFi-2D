@@ -1,0 +1,4 @@
+F77CMD = f77
+64_BIT_REALS = -r8
+CCCMD  = cc
+RANLIB = ranlib

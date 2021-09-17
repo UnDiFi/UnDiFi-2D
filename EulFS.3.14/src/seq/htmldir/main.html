@@ -1,0 +1,805 @@
+*=*=*=*= EULFS.html =*=*=*=*
+<HEADER>
+<TITLE>PROGRAM EULFS</TITLE>
+</HEADER>
+<BODY>
+<H1>PROGRAM EULFS</H1>
+
+<PRE>
+
+      PROGRAM <A NAME=EULFS>EULFS</A>
+C
+C **********************************************************************
+C **********************************************************************
+C **                                                                  **
+C **      An unstructured triangular/tetrahedral code for             **
+C **        solving the compressible and incompressible               **
+C **          Euler and (RANS) Navier-Stokes equations                **
+C **          (as well as scalar advection-diffusion)                 **
+C **           using multidimensional upwind residual                 **
+C **        distribution (Fluctuation Splitting) schemes.             **
+C **                                                                  **
+C **  $Id: main.F,v 1.39 1999/11/05 20:57:58 aldo Exp aldo $
+C **  $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/main.F,v 1.39 1999/11/05 20:5
+C **                                                                  **
+C **                                                                  **
+C **      Written by:                                                 **
+C **      Aldo Bonfiglioli                                            **
+C **      Dipartimento di Ingegneria e Fisica dell' Ambiente          **
+C **      Universita` della Basilicata                                **
+C **      Via della Tecnica, 3                                        **
+C **      85100 Potenza Italy                                         **
+C **      Tel: ++39.0971.202.659                                       **
+C **      Fax: (+39).0971.56.537                                       **
+C **      E-mail:bonfiglioli@unibas.it                                **
+C **      Home page: http://www.unibas.it/utenti/bonfiglioli/www.html **
+C **                                                                  **
+C **********************************************************************
+C **********************************************************************
+C
+C
+      IMPLICIT NONE
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/sles.h"
+#include "include/finclude/pc.h"
+#include "include/finclude/ksp.h"
+#include "include/finclude/is.h"
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'constants'
+C
+      INCLUDE 'stack.com'
+C
+      INCLUDE 'conv.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'rk.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'mapping.com'
+      INCLUDE 'nloc'
+      INCLUDE 'IO'
+      INCLUDE 'implicit.h'
+      INCLUDE 'rsize.com'
+      INTEGER <A NAME=MY_PE>MY_PE</A>
+      COMMON/<A NAME=MPICOM>MPICOM</A>/<A NAME=MY_PE>MY_PE</A>
+C
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/<A NAME=COMISET>COMISET</A>/<A NAME=SupersonicNodes>SupersonicNodes</A>,<A NAME=SupersonicVariables>SupersonicVariables</A>,
+     +<A NAME=NoSlipNodes>NoSlipNodes</A>,<A NAME=NoSlipVelocities>NoSlipVelocities</A>
+C
+C
+      INTEGER <A NAME=ISTAK>ISTAK</A>(1)
+C     ..
+C     .. Petsc Vectors ..
+      Vec rhs,dt,ZRoe,ViscT
+C     ..
+C     .. Petsc Matrices ..
+      Mat A,B
+C     ..
+C     .. Petsc Sles ..
+      SLES FlowSolver,TurbulenceSolver
+      PLogDouble SPACE,FRAGS,MAXS,MAXSIZ,tbeg,tend,totime
+      DOUBLE PRECISION <A NAME=starttime>starttime</A>, <A NAME=endtime>endtime</A>
+C     ..
+C     .. Local Scalars ..
+C
+C
+C GRID RELATED VARIABLES
+C
+C
+C     NPOIN   number of nodes in the mesh
+C     NBPOIN  number of boundary points in the mesh
+C     NELEM   number of elements in the mesh
+C     NBELEM  number of boundary elements in the mesh
+C     NFACE   number of faces in the mesh
+C     NBFAC   number of boundary faces in the mesh
+C     NWFAC   number of viscous wall boundary faces in the mesh
+C     NHOLE   number of bodies(holes) in the mesh (ONLY for 2D)
+C
+C
+C     DIM     is the space dimension
+C     NOFVERT = DIM+1 is the number of vertices (ONLY linear elements
+C                     are currently allowed)
+C
+C
+      INTEGER <A NAME=DIM>DIM</A>,<A NAME=I>I</A>,<A NAME=IFAIL>IFAIL</A>,<A NAME=J>J</A>,<A NAME=KSTAGE>KSTAGE</A>,<A NAME=LWORK>LWORK</A>,<A NAME=NIT>NIT</A>,<A NAME=NGHOST>NGHOST</A>,
+     +        <A NAME=NBELEM>NBELEM</A>,<A NAME=NBFAC>NBFAC</A>,<A NAME=NBODY4>NBODY4</A>,<A NAME=NBODY6>NBODY6</A>,<A NAME=NBPOIN>NBPOIN</A>,<A NAME=NELEM>NELEM</A>,<A NAME=NFACE>NFACE</A>,<A NAME=NHOLE>NHOLE</A>,
+     +        <A NAME=NOFVAR>NOFVAR</A>,<A NAME=NTURB>NTURB</A>,<A NAME=NOFVERT>NOFVERT</A>,<A NAME=NPOIN>NPOIN</A>,<A NAME=NWFAC>NWFAC</A>,<A NAME=LTINDX>LTINDX</A>,<A NAME=N>N</A>,<A NAME=IERR>IERR</A>,<A NAME=locy>locy</A>,<A NAME=locv>locv</A>,
+     +        <A NAME=rowbgn>rowbgn</A>,<A NAME=rowend>rowend</A>,<A NAME=NBINT>NBINT</A>,<A NAME=LGHOST>LGHOST</A>,<A NAME=IFLAG>IFLAG</A>
+      CHARACTER <A NAME=BAKFILE>BAKFILE</A>*80,<A NAME=DATADIR>DATADIR</A>*80,<A NAME=MESHFILE>MESHFILE</A>*80,<A NAME=NGHBFILE>NGHBFILE</A>*80,
+     +          <A NAME=STARFILE>STARFILE</A>*80,<A NAME=VISCTFILE>VISCTFILE</A>*80,<A NAME=WDISTFILE>WDISTFILE</A>*80,<A NAME=OUTFILE>OUTFILE</A>*10,
+     +          <A NAME=EXT>EXT</A>*3,<A NAME=TIMEFILE>TIMEFILE</A>*10
+C     ..
+C     .. External Subroutines ..
+C
+      EXTERNAL <A NAME=BACKUP>BACKUP</A>,<A NAME=CONS_TO_PARM>CONS_TO_PARM</A>,<A NAME=DCOPY>DCOPY</A>,<A NAME=DINIT>DINIT</A>,
+     +         <A NAME=EULERII>EULERII</A>,<A NAME=EULERIIBIS>EULERIIBIS</A>,<A NAME=EULERVII>EULERVII</A>,
+     +         <A NAME=EULERVIII>EULERVIII</A>,<A NAME=EULERIX>EULERIX</A>,<A NAME=EXGEO>EXGEO</A>,<A NAME=ISTKIN>ISTKIN</A>,<A NAME=N_SCHEME>N_SCHEME</A>,
+     +<A NAME=LDA_scheme>LDA_scheme</A>,<A NAME=NL_SCHEME>NL_SCHEME</A>,<A NAME=PSI_SCHEME>PSI_SCHEME</A>,<A NAME=SUPG_SCHEME>SUPG_SCHEME</A>,<A NAME=FCT_scheme>FCT_scheme</A>,
+     +<A NAME=PARM_TO_CONS>PARM_TO_CONS</A>,<A NAME=READAT>READAT</A>,<A NAME=READVAL>READVAL</A>,<A NAME=SCALAR>SCALAR</A>,<A NAME=SCLSCH>SCLSCH</A>,<A NAME=SOLZNE>SOLZNE</A>,
+     +         <A NAME=SUBABB>SUBABB</A>,<A NAME=SUBABC>SUBABC</A>,<A NAME=UPDATE2>UPDATE2</A>,<A NAME=UPDATE3>UPDATE3</A>
+C     ..
+C     .. External Functions ..
+C
+      INTEGER <A NAME=ISTKGT>ISTKGT</A>,<A NAME=ISTKST>ISTKST</A>,<A NAME=I1MACH>I1MACH</A>
+      EXTERNAL <A NAME=ISTKGT>ISTKGT</A>,<A NAME=ISTKST>ISTKST</A>,<A NAME=I1MACH>I1MACH</A>
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC <A HREF=#DLOG10>DLOG10</A>,<A HREF=#IABS>IABS</A>,<A HREF=#LOG10>LOG10</A>
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (<A NAME=DSTAK>DSTAK</A>(1),<A NAME=ISTAK>ISTAK</A>(1))
+C
+      COMMON/<A NAME=TRASH>TRASH</A>/<A NAME=NGHOST>NGHOST</A>
+C     ..
+C
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C                 Beginning of program
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C
+#ifdef PARCH_linux
+#else
+#ifdef PARCH_alpha
+#else
+      IF(<A HREF=#MY_PE>MY_PE</A>.EQ.0)<A HREF=#starttime>starttime</A> = <A NAME=EULFS_MPI_WTIME_1  >MPI_Wtime</A>()
+#endif
+#endif
+      <A HREF=#totime>totime</A> = 0.d0
+C
+C
+C **************************************************************
+C     Set the length of the static stack ..
+C **************************************************************
+C
+      CALL <A NAME=EULFS_ISTKIN_1  >ISTKIN</A>(<A HREF=#NVA>NVA</A>,4)
+C
+C **************************************************************
+C     Initialize PETSc
+C **************************************************************
+C
+      CALL <A NAME=EULFS_PETSCINITIALIZE_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Sys/PetscInitialize.html">PetscIniti(<A HREF=#PETSC_NULL_CHARACTER>PETSC_NULL_CHARACTER</A>,<A HREF=#IERR>IERR</A>)
+C
+C **************************************************************
+C     Get the number (MY_PE) of the current processor; will be
+C         0 for the uni-processor case
+C **************************************************************
+C
+      CALL <A NAME=EULFS_MPI_COMM_RANK_1  >MPI_Comm_rank</A>(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#MY_PE>MY_PE</A>,<A HREF=#IERR>IERR</A>)
+C
+C **************************************************************
+C     Set OUTPUT devices
+C **************************************************************
+C
+#ifdef MPI
+      <A HREF=#IWUNIT>IWUNIT</A> = 19
+      <A HREF=#NOUT>NOUT</A> = 20
+      WRITE(<A HREF=#EXT>EXT</A>,FMT="(I3.3)")<A HREF=#MY_PE>MY_PE</A>+1
+      <A HREF=#OUTFILE>OUTFILE</A> = 'output.' // <A HREF=#EXT>EXT</A>
+      OPEN(UNIT=<A HREF=#NOUT>NOUT</A>,FILE=<A HREF=#OUTFILE>OUTFILE</A>,FORM="FORMATTED",STATUS="UNKNOWN")
+      OPEN(UNIT=<A HREF=#IWUNIT>IWUNIT</A>,FILE='fspl.out',FORM="FORMATTED",
+     +     STATUS="UNKNOWN")
+#else
+      <A HREF=#NOUT>NOUT</A> = <A NAME=EULFS_I1MACH_1  >I1MACH</A>(2)
+      <A HREF=#IWUNIT>IWUNIT</A> = <A HREF=#NOUT>NOUT</A>
+#endif
+C
+C **************************************************************
+C     file for timing
+C **************************************************************
+C
+      WRITE(<A HREF=#EXT>EXT</A>,FMT="(I3.3)")<A HREF=#MY_PE>MY_PE</A>
+      <A HREF=#TIMEFILE>TIMEFILE</A> = 'timing.' // <A HREF=#EXT>EXT</A>
+      OPEN(UNIT=44,FILE=<A HREF=#TIMEFILE>TIMEFILE</A>,FORM="FORMATTED",STATUS="UNKNOWN")
+      <A HREF=#TIMEFILE>TIMEFILE</A> = 'mytime.' // <A HREF=#EXT>EXT</A>
+      OPEN(UNIT=45,FILE=<A HREF=#TIMEFILE>TIMEFILE</A>,FORM="FORMATTED",STATUS="UNKNOWN")
+C
+C **************************************************************
+C     Read info from the input datafile
+C **************************************************************
+C
+      CALL <A NAME=EULFS_READVAL_1  >READVAL</A>(<A HREF=#MESHFILE>MESHFILE</A>,<A HREF=#NGHBFILE>NGHBFILE</A>,<A HREF=#STARFILE>STARFILE</A>,<A HREF=#BAKFILE>BAKFILE</A>,<A HREF=#VISCTFILE>VISCTFILE</A>,
+     +             <A HREF=#WDISTFILE>WDISTFILE</A>,<A HREF=#DATADIR>DATADIR</A>,<A HREF=#NTURB>NTURB</A>)
+C
+C **************************************************************
+C     Open files to dump the convergence history
+C **************************************************************
+C
+      IF(<A HREF=#MY_PE>MY_PE</A>.EQ.0)THEN
+          OPEN (7,FILE='convhst.l2',FORM='formatted',STATUS='UNKNOWN')
+          OPEN (8,FILE='convhst.max',FORM='formatted',STATUS='UNKNOWN')
+          IF(<A HREF=#TURBULENT>TURBULENT</A>)
+     +    OPEN(12,FILE='convhst.turb',FORM='formatted',STATUS='UNKNOWN')
+      ENDIF
+C
+C **************************************************************
+C     Reading datafiles
+C **************************************************************
+C
+      CALL <A NAME=EULFS_READAT_1  >READAT</A>(<A HREF=#NELEM>NELEM</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NGHOST>NGHOST</A>,<A HREF=#NBPOIN>NBPOIN</A>,<A HREF=#NFACE>NFACE</A>,<A HREF=#NBFAC>NBFAC</A>,<A HREF=#NBINT>NBINT</A>,<A HREF=#NHOLE>NHOLE</A>,
+     +            <A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NTURB>NTURB</A>,<A HREF=#MESHFILE>MESHFILE</A>,<A HREF=#NGHBFILE>NGHBFILE</A>)
+C
+C **************************************************************
+C     Computing geometrical quantities ..
+C **************************************************************
+C
+      CALL <A NAME=EULFS_EXGEO_1  >EXGEO</A>(<A HREF=#NELEM>NELEM</A>,<A HREF=#NPOIN>NPOIN</A>+<A HREF=#nghost>nghost</A>,<A HREF=#NBPOIN>NBPOIN</A>,<A HREF=#NFACE>NFACE</A>,<A HREF=#NBFAC>NBFAC</A>,<A HREF=#NBINT>NBINT</A>,<A HREF=#NWFAC>NWFAC</A>,
+     +           <A HREF=#NBODY4>NBODY4</A>,<A HREF=#NBODY6>NBODY6</A>,<A HREF=#NHOLE>NHOLE</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#DIM>DIM</A>)
+C
+      WRITE(<A HREF=#NOUT>NOUT</A>,FMT=9995)<A HREF=#NVA>NVA</A>
+C
+CCCCC
+CCCCC
+CCCCC
+c     LTZX = ISTKGT(NELEM,2)
+c     CALL SUBWII(ISTAK(LTZX),ISTAK(LBNDFAC),NELEM,NBFAC)
+CCCCC
+C
+C     changes the connectivity of those cells laying close
+C     to one of the periodic boundaries
+C     NPOIN is returned as NPOIN-NPNOD where NPNOD is half the
+C     # of periodic nodes
+C     Note that all FORTRAN arrays are allocated for NPOIN
+C     while PETSc vectors for NPOIN-NPNOD
+C     this extra room is used in subr. BACKUP
+C     (a little bit tricky)
+C
+C
+      IF (<A HREF=#PERIODIC_MESH>PERIODIC_MESH</A>) CALL <A NAME=EULFS_PERIODIC_1  >PERIODIC</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NOFVERT>NOFVERT</A>,
+     +<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LCELNOD>LCELNOD</A>))
+C
+C **************************************************************
+C     form PETSc right hand side (RHS) and
+C                solution (ZROE) vectors and
+C                turbulent viscosity (ViscT)
+C **************************************************************
+C
+#ifdef MPI
+C
+      <A HREF=#LGHOST>LGHOST</A> = <A NAME=EULFS_ISTKGT_1  >ISTKGT</A>(<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NGHOST>NGHOST</A>,2)
+C
+C -- reset the list of ghost nodes to 0-based indexing
+C
+      CALL <A NAME=EULFS_GETIDX_1  >GetIdx</A>(<A HREF=#NGHOST>NGHOST</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#Ltzx>Ltzx</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LGHOST>LGHOST</A>))
+C
+C -- create the r.h.s. vector
+C
+      CALL <A NAME=EULFS_VECCREATEGHOST_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateGhost.html"> VecCreateG(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NPOIN>NPOIN</A>,<A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,
+     +                    <A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NGHOST>NGHOST</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#lghost>lghost</A>),<A HREF=#RHS>RHS</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C
+C -- create the vector of the unknowns:
+C           memory is provided by the FORTRAN static vector
+C           whose pointer is LZROE
+C
+      CALL <A NAME=EULFS_VECCREATEGHOSTWITHARRAY_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateGhostWithArray.html"> V(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NPOIN>NPOIN</A>,
+     +                             <A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NGHOST>NGHOST</A>,
+     +                             <A HREF=#ISTAK>ISTAK</A>(<A HREF=#lghost>lghost</A>),<A NAME=EULFS_DSTAK_1  >DSTAK</A>(<A HREF=#LZROE>LZROE</A>),
+     +                             <A HREF=#ZROE>ZROE</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C -- release memory allocated for the GHOST array
+      CALL <A NAME=EULFS_ISTKRL_1  >ISTKRL</A>(1)
+C
+      IF(.NOT.<A HREF=#TURBULENT>TURBULENT</A>)GOTO 46
+C
+      <A HREF=#LGHOST>LGHOST</A> = <A NAME=EULFS_ISTKGT_2  >ISTKGT</A>(<A HREF=#NGHOST>NGHOST</A>,2)
+C
+C -- reset the list of ghost nodes to 0-based indexing
+C
+      CALL <A NAME=EULFS_GETIDX_2  >GetIdx</A>(<A HREF=#NGHOST>NGHOST</A>,1,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#Ltzx>Ltzx</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LGHOST>LGHOST</A>))
+C
+      CALL <A NAME=EULFS_VECCREATEGHOSTWITHARRAY_2  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateGhostWithArray.html"> V(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#NPOIN>NPOIN</A>,
+     +                             <A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,<A HREF=#NGHOST>NGHOST</A>,
+     +                             <A HREF=#ISTAK>ISTAK</A>(<A HREF=#lghost>lghost</A>),<A NAME=EULFS_DSTAK_2  >DSTAK</A>(<A HREF=#LTURB>LTURB</A>),
+     +                             <A HREF=#ViscT>ViscT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C -- release memory allocated for the GHOST array
+      CALL <A NAME=EULFS_ISTKRL_2  >ISTKRL</A>(1)
+C
+   46 CONTINUE
+C
+#else
+C
+C    create vectors for: r.h.s., flow variables, turbulent viscosity
+C
+      CALL <A NAME=EULFS_VECCREATESEQ_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateSeq.html"> VecCreateSeq(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NPOIN>NPOIN</A>,<A HREF=#RHS>RHS</A>,<A HREF=#IERR>IERR</A>)
+      CALL <A NAME=EULFS_VECCREATESEQWITHARRAY_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateSeqWithArray.html"> Vec(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NPOIN>NPOIN</A>,
+     +                           <A NAME=EULFS_DSTAK_3  >DSTAK</A>(<A HREF=#LZROE>LZROE</A>),<A HREF=#ZROE>ZROE</A>,<A HREF=#IFAIL>IFAIL</A>)
+      IF(<A HREF=#TURBULENT>TURBULENT</A>)CALL <A NAME=EULFS_VECCREATESEQWITHARRAY_2  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateSeqWithArray.html"> Vec(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NPOIN>NPOIN</A>,
+     +                           <A NAME=EULFS_DSTAK_4  >DSTAK</A>(<A HREF=#LTURB>LTURB</A>),<A HREF=#ViscT>ViscT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+#endif
+C
+C -- set the block size equal to the number of variables NOFVAR
+C
+      IF(<A HREF=#NOFVAR>NOFVAR</A>.GT.1)THEN
+          CALL <A NAME=EULFS_VECSETBLOCKSIZE_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecSetBlockSize.html"> VecSetBlo(<A HREF=#RHS>RHS</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#IFAIL>IFAIL</A>)
+          CALL <A NAME=EULFS_VECSETBLOCKSIZE_2  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecSetBlockSize.html"> VecSetBlo(<A HREF=#ZROE>ZROE</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#IFAIL>IFAIL</A>)
+      ENDIF
+C
+c
+c  =========================================================
+c               Set -restart_file filename to restart
+c  =========================================================
+c
+      IF (<A HREF=#ISTART>ISTART</A>.EQ.0) THEN
+C
+          <A HREF=#J>J</A> = <A HREF=#LZROE>LZROE</A> - 1
+          DO 1 <A HREF=#I>I</A> = 1,<A HREF=#NOFVAR>NOFVAR</A>
+              <A HREF=#J>J</A> = <A HREF=#J>J</A> + 1
+              CALL <A NAME=EULFS_DINIT_1  >DINIT</A>(<A HREF=#NPOIN>NPOIN</A>+<A HREF=#NGHOST>NGHOST</A>,<A NAME=EULFS_U_INFTY_1  >U_INFTY</A>(<A HREF=#I>I</A>),<A NAME=EULFS_DSTAK_5  >DSTAK</A>(<A HREF=#J>J</A>),<A HREF=#NOFVAR>NOFVAR</A>)
+    1     CONTINUE
+C
+          WRITE (<A HREF=#NOUT>NOUT</A>,FMT=115) (<A NAME=EULFS_U_INFTY_2  >U_INFTY</A>(<A HREF=#I>I</A>),<A HREF=#I>I</A>=1,5)
+C
+      ELSE
+          CALL <A NAME=EULFS_SOLZNE_1  >SOLZNE</A>(<A HREF=#STARFILE>STARFILE</A>,<A NAME=EULFS_DSTAK_6  >DSTAK</A>(<A HREF=#LZROE>LZROE</A>),<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>+<A HREF=#NGHOST>NGHOST</A>+<A HREF=#npnod>npnod</A>,
+     >                'r')
+      ENDIF
+C
+C **************************************************************
+C     Count Dirichlet/Neumann nodes ..
+C **************************************************************
+C
+      IF (<A HREF=#IABS>IABS</A>(<A HREF=#KAN>KAN</A>).EQ.1) THEN
+              CALL <A NAME=EULFS_SUBABB_1  >SUBABB</A>(<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LBNDFAC>LBNDFAC</A>),<A HREF=#NBFAC>NBFAC</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LCELNOD>LCELNOD</A>),<A HREF=#NOFVERT>NOFVERT</A>,
+     +                    <A HREF=#NELEM>NELEM</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LNODCOD>LNODCOD</A>),<A HREF=#NPOIN>NPOIN</A>+<A HREF=#NGHOST>NGHOST</A>)
+
+      ENDIF
+C
+C **************************************************************
+C     Count supersonic nodes ..
+C **************************************************************
+C
+      IF (<A HREF=#IABS>IABS</A>(<A HREF=#KAN>KAN</A>).EQ.4) THEN
+          CALL <A NAME=EULFS_SUBABB_2  >SUBABB</A>(<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LBNDFAC>LBNDFAC</A>),<A HREF=#NBFAC>NBFAC</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LCELNOD>LCELNOD</A>),<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NELEM>NELEM</A>,
+     +                <A HREF=#ISTAK>ISTAK</A>(<A HREF=#LNODCOD>LNODCOD</A>),<A HREF=#NPOIN>NPOIN</A>)
+      ENDIF
+C
+C **************************************************************
+C     Counts VISCOUS WALL boundary nodes
+C **************************************************************
+C
+C     NOTE that this routine must be called AFTER
+C     the flow variables have been initialized,
+C     so that the velocity components can be set to 0.0
+C     on viscous walls
+C
+      IF (<A HREF=#KAN>KAN</A>.EQ.4 .OR. <A HREF=#KAN>KAN</A>.EQ.2) CALL <A NAME=EULFS_SUBABC_1  >SUBABC</A>(<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LBNDFAC>LBNDFAC</A>),<A HREF=#NBFAC>NBFAC</A>,
+     +    <A HREF=#ISTAK>ISTAK</A>(<A HREF=#LCELNOD>LCELNOD</A>),<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LNODCOD>LNODCOD</A>),<A NAME=EULFS_DSTAK_7  >DSTAK</A>(<A HREF=#LZROE>LZROE</A>),<A HREF=#NOFVAR>NOFVAR</A>,
+     +    <A HREF=#NPOIN>NPOIN</A>)
+C
+C **************************************************************
+C     Initialize turbulent stuff (only for KAN = +2,+4)
+C **************************************************************
+C
+      IF(<A HREF=#NTURB>NTURB</A>.NE.0)CALL <A NAME=EULFS_TURBINI_1  >TURBINI</A>(<A HREF=#NBFAC>NBFAC</A>,<A HREF=#NBODY6>NBODY6</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NELEM>NELEM</A>,
+     +                           <A HREF=#ISTAK>ISTAK</A>(<A HREF=#LNODCOD>LNODCOD</A>),<A HREF=#DIM>DIM</A>,<A HREF=#NPOIN>NPOIN</A>+<A HREF=#nghost>nghost</A>+<A HREF=#npnod>npnod</A>,
+     +                           <A NAME=EULFS_DSTAK_8  >DSTAK</A>(<A HREF=#LTURB>LTURB</A>),(<A HREF=#ISTART>ISTART</A>.NE.0),
+     +                           <A HREF=#VISCTFILE>VISCTFILE</A>,<A HREF=#WDISTFILE>WDISTFILE</A>)
+#ifdef MPI
+C
+C     the following to make sure that ghost values are
+C         correctly updated from the owning processor,
+C         since some of the initialization routines only
+C         act upon the NPOIN locations
+C
+      CALL <A NAME=EULFS_VECGHOSTUPDATEBEGIN_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecGhostUpdateBegin.html"> VecGh(<A HREF=#ZROE>ZROE</A>,<A HREF=#INSERT_VALUES>INSERT_VALUES</A>,<A HREF=#SCATTER_FORWARD>SCATTER_FORWARD</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=EULFS_VECGHOSTUPDATEEND_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecGhostUpdateEnd.html"> VecGhos(<A HREF=#ZROE>ZROE</A>,<A HREF=#INSERT_VALUES>INSERT_VALUES</A>,<A HREF=#SCATTER_FORWARD>SCATTER_FORWARD</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+c  do same with turbulent viscosity
+C
+#endif
+C
+
+C
+C **************************************************************
+C     Create the index sets ...
+C **************************************************************
+C
+      <A HREF=#LWORK>LWORK</A> = <A NAME=EULFS_ISTKGT_3  >ISTKGT</A>(<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NPOIN>NPOIN</A>,2)
+      CALL <A NAME=EULFS_VECGETOWNERSHIPRANGE_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecGetOwnershipRange.html"> VecG(<A HREF=#RHS>RHS</A>,<A HREF=#ROWBGN>ROWBGN</A>,<A HREF=#ROWEND>ROWEND</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=EULFS_ISET_1  >ISET</A>(<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LWORK>LWORK</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LNODCOD>LNODCOD</A>),<A HREF=#DIM>DIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#ROWBGN>ROWBGN</A>)
+      CALL <A NAME=EULFS_ISTKRL_3  >ISTKRL</A>(1)
+C
+C **************************************************************
+C     Build the stiffness matrix ...
+C **************************************************************
+C
+      IF (<A HREF=#TIMEIMPL>TIMEIMPL</A> ) THEN
+#ifdef MPI
+          CALL <A NAME=EULFS_MATALLOCAMPI_1  >MatAllocaMPI</A>(<A HREF=#A>A</A>,<A HREF=#B>B</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NGHOST>NGHOST</A>)
+#else
+          CALL <A NAME=EULFS_MATALLOCASEQ_1  >MatAllocaSeq</A>(<A HREF=#A>A</A>,<A HREF=#B>B</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NGHOST>NGHOST</A>)
+#endif
+C
+      ENDIF
+C
+C **************************************************************
+C     Create linear solver context (for implicit timestepping only)
+C **************************************************************
+C
+      IF( .NOT. <A HREF=#TIMEIMPL>TIMEIMPL</A> )GOTO 14
+      CALL <A NAME=EULFS_SLESCREATE_1  >SLESCreate</A>(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#IERR>IERR</A>)
+      CALL <A NAME=EULFS_SLESSETFROMOPTIONS_1  >SLESSetFromOptions</A>(<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#IERR>IERR</A>)
+C
+      IF( <A HREF=#TURBULENT>TURBULENT</A> )THEN
+C
+          CALL <A NAME=EULFS_SLESCREATE_2  >SLESCreate</A>(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#TurbulenceSolver>TurbulenceSolver</A>,<A HREF=#IERR>IERR</A>)
+          CALL <A NAME=EULFS_SLESSETFROMOPTIONS_2  >SLESSetFromOptions</A>(<A HREF=#TurbulenceSolver>TurbulenceSolver</A>,<A HREF=#IERR>IERR</A>)
+C
+      ENDIF
+   14 CONTINUE
+C
+C     Checking memory usage
+C
+      CALL <A NAME=EULFS_PETSCGETRESIDENTSETSIZE_1  >PetscGetResidentSetSize</A>(<A HREF=#MAXSIZ>MAXSIZ</A>,<A HREF=#IFAIL>IFAIL</A>)
+      WRITE (<A HREF=#NOUT>NOUT</A>,FMT=9994) <A HREF=#MAXSIZ>MAXSIZ</A>
+      WRITE (<A HREF=#NOUT>NOUT</A>,FMT=9998) <A NAME=EULFS_ISTKST_1  >ISTKST</A>(3)/2,
+     +          (<A NAME=EULFS_ISTKST_2  >ISTKST</A>(3)*100.)/<A NAME=EULFS_ISTKST_3  >ISTKST</A>(4)
+C
+C **************************************************************
+C     Start iterating in pseudo-time
+C **************************************************************
+C
+      DO 10 <A HREF=#ITER>ITER</A> = 1,<A HREF=#ITMAX>ITMAX</A>
+C
+      CALL <A NAME=EULFS_PETSCGETTIME_1  >PetscGetTime</A>(<A HREF=#tbeg>tbeg</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+          <A HREF=#NITER>NITER</A> = <A HREF=#NITER>NITER</A> + 1
+C +------------------------------------------------------------+
+C     create a vector to store the local timestep
+C +------------------------------------------------------------+
+C
+#ifdef MPI
+C
+          <A HREF=#LGHOST>LGHOST</A> = <A NAME=EULFS_ISTKGT_4  >ISTKGT</A>(<A HREF=#NGHOST>NGHOST</A>,2)
+C
+C -- set 0-based indexing
+C
+          CALL <A NAME=EULFS_GETIDX_3  >GetIdx</A>(<A HREF=#NGHOST>NGHOST</A>,1,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#Ltzx>Ltzx</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LGHOST>LGHOST</A>))
+C
+C -- create the time-step vector
+C
+          CALL <A NAME=EULFS_VECCREATEGHOST_2  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateGhost.html"> VecCreateG(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,
+     +                        <A HREF=#NGHOST>NGHOST</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#lghost>lghost</A>),<A HREF=#DT>DT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C -- release memory allocated for LGHOST
+C
+          CALL <A NAME=EULFS_ISTKRL_4  >ISTKRL</A>(1)
+C
+#else
+C
+          CALL <A NAME=EULFS_VECCREATESEQ_2  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateSeq.html"> VecCreateSeq(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#DT>DT</A>,<A HREF=#IERR>IERR</A>)
+C
+#endif
+C
+C **************************************************************
+C         Scalar case (ABS(KAN)=1;NOFVAR=1)
+C **************************************************************
+C
+          IF (<A HREF=#IABS>IABS</A>(<A HREF=#KAN>KAN</A>).EQ.1) THEN
+C
+C
+              DO 2 <A HREF=#KSTAGE>KSTAGE</A> = 1,<A HREF=#NSTAGES>NSTAGES</A>
+                  CALL <A NAME=EULFS_SCLSCH_1  >SCLSCH</A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NFACE>NFACE</A>,
+     +                        <A HREF=#NBFAC>NBFAC</A>,<A HREF=#DT>DT</A>,<A HREF=#RHS>RHS</A>,<A HREF=#A>A</A>,<A NAME=EULFS_SCALAR_1  >SCALAR</A>)
+#if 0
+               IF (<A HREF=#ISCHEME>ISCHEME</A>.EQ.1)THEN
+                  CALL <A NAME=EULFS_SCALAR_2  >SCALAR</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,
+     +                        <A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#A>A</A>,<A NAME=EULFS_N_SCHEME_1  >N_SCHEME</A>)
+               ELSEIF(<A HREF=#ISCHEME>ISCHEME</A>.EQ.2)THEN
+                  CALL <A NAME=EULFS_SCALAR_3  >SCALAR</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,
+     +                        <A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#A>A</A>,<A NAME=EULFS_PSI_SCHEME_1  >PSI_SCHEME</A>)
+               ELSEIF(<A HREF=#ISCHEME>ISCHEME</A>.EQ.3)THEN
+                  CALL <A NAME=EULFS_SCALAR_4  >SCALAR</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,
+     +                        <A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#A>A</A>,<A HREF=#LDA_SCHEME>LDA_SCHEME</A>)
+               ELSEIF(<A HREF=#ISCHEME>ISCHEME</A>.EQ.4)THEN
+                  CALL <A NAME=EULFS_SCALAR_5  >SCALAR</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,
+     +                        <A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#A>A</A>,<A NAME=EULFS_NL_SCHEME_1  >NL_SCHEME</A>)
+C              ELSEIF(ISCHEME.EQ.5)THEN
+C                 CALL SCALAR(VA,FV_scheme)
+C              ELSEIF(ISCHEME.EQ.6)THEN
+C                 CALL SCALAR(VA,FVL1_scheme)
+               ELSEIF(<A HREF=#ISCHEME>ISCHEME</A>.EQ.7)THEN
+                  CALL <A NAME=EULFS_SCALAR_6  >SCALAR</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,
+     +                        <A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#A>A</A>,<A NAME=EULFS_SUPG_SCHEME_1  >SUPG_SCHEME</A>)
+               ELSEIF(<A HREF=#ISCHEME>ISCHEME</A>.EQ.9)THEN
+                  CALL <A NAME=EULFS_SCALAR_7  >SCALAR</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,
+     +                        <A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#A>A</A>,<A HREF=#FCT_SCHEME>FCT_SCHEME</A>)
+C              ELSEIF(ISCHEME.EQ.9)THEN
+C                 CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+C    +                        SUPGAV_SCHEME)
+               ELSE
+                  STOP 'Invalid scheme for SCALAR'
+               ENDIF
+#endif
+C
+C +------------------------------------------------------------+
+C         Updates the solution
+C +------------------------------------------------------------+
+C
+               CALL <A NAME=EULFS_UPDATE2_1  HREF="./update2.html">UPDATE2</A></A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#A>A</A>,<A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#ZROE>ZROE</A>)
+C
+
+    2         CONTINUE
+C
+C **************************************************************
+C
+C **************************************************************
+C
+          ELSEIF (<A HREF=#IABS>IABS</A>(<A HREF=#KAN>KAN</A>).EQ.4 .OR. <A HREF=#IABS>IABS</A>(<A HREF=#KAN>KAN</A>).EQ.2) THEN
+C
+C         Compute NODAL residuals ..
+C
+C         HE splitting for supersonic 2D flows
+C
+                  IF (<A HREF=#DECOMP>DECOMP</A>.EQ.2) THEN
+                      CALL <A NAME=EULFS_SCLSCH_2  >SCLSCH</A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NFACE>NFACE</A>,
+     +                            <A HREF=#NBFAC>NBFAC</A>,<A HREF=#DT>DT</A>,<A HREF=#RHS>RHS</A>,<A HREF=#A>A</A>,<A NAME=EULFS_EULERII_1  >EULERII</A>)
+C
+C         HE splitting
+C
+
+                  ELSEIF (<A HREF=#DECOMP>DECOMP</A>.EQ.3) THEN
+                      CALL <A NAME=EULFS_SCLSCH_3  >SCLSCH</A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NFACE>NFACE</A>,
+     +                            <A HREF=#NBFAC>NBFAC</A>,<A HREF=#DT>DT</A>,<A HREF=#RHS>RHS</A>,<A HREF=#A>A</A>,<A NAME=EULFS_EULERIIBIS_1  >EULERIIBIS</A>)
+C
+C         Unsteady compressible
+C
+                  ELSEIF (<A HREF=#DECOMP>DECOMP</A>.EQ.7) THEN
+                      CALL <A NAME=EULFS_SCLSCH_4  >SCLSCH</A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NFACE>NFACE</A>,
+     +                            <A HREF=#NBFAC>NBFAC</A>,<A HREF=#DT>DT</A>,<A HREF=#RHS>RHS</A>,<A HREF=#A>A</A>,<A NAME=EULFS_EULERVII_1  >EULERVII</A>)
+C
+C         Unsteady incompressible
+C
+                  ELSEIF (<A HREF=#DECOMP>DECOMP</A>.EQ.8) THEN
+                      CALL <A NAME=EULFS_SCLSCH_5  >SCLSCH</A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NFACE>NFACE</A>,
+     +                            <A HREF=#NBFAC>NBFAC</A>,<A HREF=#DT>DT</A>,<A HREF=#RHS>RHS</A>,<A HREF=#A>A</A>,<A NAME=EULFS_EULERVIII_1  >EULERVIII</A>)
+C
+C         Pseudo-Unsteady incompressible
+C
+                  ELSEIF (<A HREF=#DECOMP>DECOMP</A>.EQ.9) THEN
+                      CALL <A NAME=EULFS_SCLSCH_6  >SCLSCH</A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#NFACE>NFACE</A>,
+     +                            <A HREF=#NBFAC>NBFAC</A>,<A HREF=#DT>DT</A>,<A HREF=#RHS>RHS</A>,<A HREF=#A>A</A>,<A NAME=EULFS_EULERIX_1  >EULERIX</A>)
+C
+                  ELSE
+                      STOP 'INVALID DECOMP'
+C
+                  ENDIF
+C
+C         Update the solution
+C
+                  IF (<A HREF=#IABS>IABS</A>(<A HREF=#KAN>KAN</A>).EQ.4) CALL <A NAME=EULFS_PARM_TO_CONS_1  >PARM_TO_CONS</A>(<A NAME=EULFS_DSTAK_9  >DSTAK</A>(<A HREF=#LZROE>LZROE</A>),
+     +                                     <A HREF=#DIM>DIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>+<A HREF=#NGHOST>NGHOST</A>)
+C
+      CALL <A NAME=EULFS_OPTIONSHASNAME_1  >OptionsHasName</A>(<A HREF=#PETSC_NULL_CHARACTER>PETSC_NULL_CHARACTER</A>,'-test_lhs',<A HREF=#IFLAG>IFLAG</A>,<A HREF=#IERR>IERR</A>)
+      IF(<A HREF=#IFLAG>IFLAG</A>.NE.0)THEN
+          <A HREF=#locy>locy</A> = <A NAME=EULFS_ISTKGT_5  >istkgt</A>(<A HREF=#npoin>npoin</A>*<A HREF=#nofvar>nofvar</A>,<A HREF=#IREAL>IREAL</A>)
+          <A HREF=#locv>locv</A> = <A NAME=EULFS_ISTKGT_6  >istkgt</A>(<A HREF=#npoin>npoin</A>*<A HREF=#nofvar>nofvar</A>,<A HREF=#IREAL>IREAL</A>)
+          call <A NAME=EULFS_TESTLHS_1  >testlhs</A>(<A HREF=#A>A</A>,<A HREF=#ZROE>ZROE</A>,<A HREF=#RHS>RHS</A>,<A NAME=EULFS_DSTAK_10  >DSTAK</A>(<A HREF=#LOCY>LOCY</A>),<A NAME=EULFS_DSTAK_11  >DSTAK</A>(<A HREF=#LOCV>LOCV</A>),
+     +                 <A HREF=#ISTAK>ISTAK</A>(<A HREF=#LNODCOD>LNODCOD</A>),<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NOFVAR>NOFVAR</A>)
+          stop
+      ENDIF
+C
+                  CALL <A NAME=EULFS_UPDATE3_1  HREF="./update3.html">UPDATE3</A></A>(<A HREF=#DIM>DIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#A>A</A>,<A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,
+     +                         <A HREF=#ZROE>ZROE</A>)
+C
+                  IF (<A HREF=#IABS>IABS</A>(<A HREF=#KAN>KAN</A>).EQ.4) CALL <A NAME=EULFS_CONS_TO_PARM_1  >CONS_TO_PARM</A>(<A NAME=EULFS_DSTAK_12  >DSTAK</A>(<A HREF=#LZROE>LZROE</A>),
+     +                                     <A HREF=#DIM>DIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>+<A HREF=#NGHOST>NGHOST</A>)
+C
+C    Turbulent equations
+C
+              IF( .NOT. <A HREF=#TURBULENT>TURBULENT</A> )GOTO 6
+C
+C    Destroy the RHS vector and recreate it with smaller dimension
+C
+              CALL <A NAME=EULFS_VECDESTROY_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecDestroy.html"> VecDestroy</A>(<A HREF=#RHS>RHS</A>,<A HREF=#IFAIL>IFAIL</A>)
+#ifdef MPI
+C
+              <A HREF=#LGHOST>LGHOST</A> = <A NAME=EULFS_ISTKGT_7  >ISTKGT</A>(<A HREF=#NGHOST>NGHOST</A>,2)
+              CALL <A NAME=EULFS_GETIDX_4  >GetIdx</A>(<A HREF=#NGHOST>NGHOST</A>,1,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#Ltzx>Ltzx</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LGHOST>LGHOST</A>))
+              CALL <A NAME=EULFS_VECCREATEGHOST_3  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateGhost.html"> VecCreateG(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,
+     +                            <A HREF=#NGHOST>NGHOST</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#lghost>lghost</A>),<A HREF=#RHS>RHS</A>,<A HREF=#IFAIL>IFAIL</A>)
+              CALL <A NAME=EULFS_ISTKRL_5  >ISTKRL</A>(1)
+C
+#else
+              CALL <A NAME=EULFS_VECCREATESEQ_3  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateSeq.html"> VecCreateSeq(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#RHS>RHS</A>,<A HREF=#IERR>IERR</A>)
+#endif
+C
+          <A HREF=#NIT>NIT</A> = 0
+    8     CONTINUE
+          <A HREF=#NIT>NIT</A> = <A HREF=#NIT>NIT</A>+1
+C
+C     create a vector to store the local timestep
+C     note that the timestep vector (DT) had been destroyed
+C     in the UPDATE_ routines
+C
+#ifdef MPI
+C
+              <A HREF=#LGHOST>LGHOST</A> = <A NAME=EULFS_ISTKGT_8  >ISTKGT</A>(<A HREF=#NGHOST>NGHOST</A>,2)
+              CALL <A NAME=EULFS_GETIDX_5  >GetIdx</A>(<A HREF=#NGHOST>NGHOST</A>,1,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#Ltzx>Ltzx</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LGHOST>LGHOST</A>))
+              CALL <A NAME=EULFS_VECCREATEGHOST_4  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateGhost.html"> VecCreateG(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,
+     +                            <A HREF=#NGHOST>NGHOST</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#lghost>lghost</A>),<A HREF=#DT>DT</A>,<A HREF=#IFAIL>IFAIL</A>)
+              CALL <A NAME=EULFS_ISTKRL_6  >ISTKRL</A>(1)
+C
+#else
+C
+              CALL <A NAME=EULFS_VECCREATESEQ_4  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateSeq.html"> VecCreateSeq(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#DT>DT</A>,<A HREF=#IERR>IERR</A>)
+#endif
+C
+              CALL <A NAME=EULFS_TURBO_1  >TURBO</A>(<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#B>B</A>,
+     +                   <A NAME=EULFS_NL_SCHEME_2  >NL_SCHEME</A>)
+              CALL <A NAME=EULFS_UPDATE4_1  HREF="./update4.html">UPDATE4</A></A>(<A HREF=#DIM>DIM</A>,<A HREF=#NTURB>NTURB</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#TurbulenceSolver>TurbulenceSolver</A>,<A HREF=#B>B</A>,
+     +                     <A HREF=#RHS>RHS</A>,<A HREF=#ViscT>ViscT</A>,<A HREF=#DT>DT</A>,<A HREF=#NIT>NIT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+              IF( <A HREF=#NSUBIT>NSUBIT</A> .EQ. 1 )GOTO 7
+C
+C     keep iterating until the residual starts decreasing
+C
+C             IF( IFAIL .EQ. 0 .AND. NIT .GE. NSUBIT )GOTO 7
+              IF( <A HREF=#NIT>NIT</A> .GE. <A HREF=#NSUBIT>NSUBIT</A> )GOTO 7
+              GOTO 8
+C
+    7     CONTINUE
+          ENDIF
+C
+C    release memory allocated for r.h.s vector for turbulence eqn.
+C
+          CALL <A NAME=EULFS_VECDESTROY_2  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecDestroy.html"> VecDestroy</A>(<A HREF=#RHS>RHS</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C    and re-create it for Navier-Stokes
+C
+#ifdef MPI
+C
+          <A HREF=#LGHOST>LGHOST</A> = <A NAME=EULFS_ISTKGT_9  >ISTKGT</A>(<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NGHOST>NGHOST</A>,2)
+          CALL <A NAME=EULFS_GETIDX_6  >GetIdx</A>(<A HREF=#NGHOST>NGHOST</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#Ltzx>Ltzx</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LGHOST>LGHOST</A>))
+          CALL <A NAME=EULFS_VECCREATEGHOST_5  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateGhost.html"> VecCreateG(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NPOIN>NPOIN</A>,
+     +                        <A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,<A HREF=#NOFVAR>NOFVAR</A>*<A HREF=#NGHOST>NGHOST</A>,
+     +                        <A HREF=#ISTAK>ISTAK</A>(<A HREF=#lghost>lghost</A>),<A HREF=#RHS>RHS</A>,<A HREF=#IFAIL>IFAIL</A>)
+          CALL <A NAME=EULFS_ISTKRL_7  >ISTKRL</A>(1)
+C
+#else
+          CALL <A NAME=EULFS_VECCREATESEQ_5  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecCreateSeq.html"> VecCreateSeq(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NPOIN>NPOIN</A>*<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#RHS>RHS</A>,<A HREF=#IERR>IERR</A>)
+#endif
+C
+          CALL <A NAME=EULFS_VECSETBLOCKSIZE_3  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecSetBlockSize.html"> VecSetBlo(<A HREF=#RHS>RHS</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+    6 CONTINUE
+      IF (<A HREF=#LOG10>LOG10</A>(<A NAME=EULFS_RESL2_1  >RESL2</A>(<A HREF=#IVCNVG>IVCNVG</A>)/<A HREF=#RESL20>RESL20</A>).LE.<A HREF=#TOLER>TOLER</A>) GOTO 12
+C
+c
+c  =========================================================
+c  Backing up (if required)
+c  =========================================================
+c
+          IF ((<A HREF=#ITER>ITER</A>/<A HREF=#IBAK>IBAK</A>)*<A HREF=#IBAK>IBAK</A>.EQ.<A HREF=#ITER>ITER</A>) THEN
+c
+c     Computes the mass flux through
+C              the boundaries .... well, not any more
+c
+              CALL <A NAME=EULFS_BACKUP_1  >BACKUP</A>(<A HREF=#NPOIN>NPOIN</A>+<A HREF=#NGHOST>NGHOST</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NTURB>NTURB</A>,
+     +                    <A HREF=#BAKFILE>BAKFILE</A>,<A HREF=#VISCTFILE>VISCTFILE</A>)
+C
+C     Write skin friction data to a file
+C
+              IF( <A HREF=#KAN>KAN</A> .EQ. 2 .OR. <A HREF=#KAN>KAN</A> .EQ. 4 )THEN
+                  <A HREF=#LWORK>LWORK</A> = <A NAME=EULFS_ISTKGT_10  >ISTKGT</A>(2*<A HREF=#NWFAC>NWFAC</A>,2)
+                  CALL <A NAME=EULFS_WSKIN_1  >WSKIN</A>(<A NAME=EULFS_DSTAK_13  >DSTAK</A>(<A HREF=#LSKINF>LSKINF</A>),<A NAME=EULFS_DSTAK_14  >DSTAK</A>(<A HREF=#LHEAT>LHEAT</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LWORK>LWORK</A>),
+     +                       <A HREF=#NWFAC>NWFAC</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LBNDFAC>LBNDFAC</A>),<A HREF=#NBODY6>NBODY6</A>,'file016.dat')
+                  CALL <A NAME=EULFS_ISTKRL_8  >ISTKRL</A>(1)
+                  IF( <A HREF=#TURBULENT>TURBULENT</A> )THEN
+                     <A HREF=#LTINDX>LTINDX</A> = <A NAME=EULFS_ISTKGT_11  >ISTKGT</A>(<A HREF=#NWFAC>NWFAC</A>,<A HREF=#IREAL>IREAL</A>)
+                     CALL <A NAME=EULFS_WTINDX_1  >WTINDX</A>(<A NAME=EULFS_DSTAK_15  >DSTAK</A>(<A HREF=#LSKINF>LSKINF</A>),<A NAME=EULFS_DSTAK_16  >DSTAK</A>(<A HREF=#LTINDX>LTINDX</A>),
+     +                    <A NAME=EULFS_DSTAK_17  >DSTAK</A>(<A HREF=#LVOL>LVOL</A>),<A HREF=#NWFAC>NWFAC</A>,<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LBNDFAC>LBNDFAC</A>),<A HREF=#NBODY6>NBODY6</A>,
+     +                    <A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,(<A HREF=#KAN>KAN</A>.EQ.4),
+     +                    'file017.dat')
+                     CALL <A NAME=EULFS_ISTKRL_9  >ISTKRL</A>(1)
+                  ENDIF
+                  WRITE(<A HREF=#NOUT>NOUT</A>,FMT=9996)
+              ENDIF
+C
+              CALL <A NAME=EULFS_PETSCTRSPACE_1  >PetscTrSpace</A>(<A HREF=#SPACE>SPACE</A>,<A HREF=#FRAGS>FRAGS</A>,<A HREF=#MAXS>MAXS</A>,<A HREF=#IFAIL>IFAIL</A>)
+              CALL <A NAME=EULFS_PETSCGETRESIDENTSETSIZE_2  >PetscGetResidentSetSize</A>(<A HREF=#MAXSIZ>MAXSIZ</A>,<A HREF=#IFAIL>IFAIL</A>)
+              WRITE (<A HREF=#NOUT>NOUT</A>,FMT=9998) <A NAME=EULFS_ISTKST_4  >ISTKST</A>(3)/2,
+     +          (<A NAME=EULFS_ISTKST_5  >ISTKST</A>(3)*100.)/<A NAME=EULFS_ISTKST_6  >ISTKST</A>(4)
+              WRITE (<A HREF=#NOUT>NOUT</A>,FMT=9999) <A HREF=#MAXS>MAXS</A>
+              WRITE (<A HREF=#NOUT>NOUT</A>,FMT=9994) <A HREF=#MAXSIZ>MAXSIZ</A>
+C
+          ENDIF
+C
+      CALL <A NAME=EULFS_PETSCGETTIME_2  >PetscGetTime</A>(<A HREF=#tend>tend</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+      WRITE(45,*)<A HREF=#ITER>ITER</A>,<A HREF=#tend>tend</A>-<A HREF=#tbeg>tbeg</A>
+      <A HREF=#totime>totime</A> = <A HREF=#totime>totime</A> + <A HREF=#tend>tend</A>-<A HREF=#tbeg>tbeg</A>
+C
+C  =========================================================
+C
+   10 CONTINUE
+   12 CONTINUE
+C
+C
+      CALL <A NAME=EULFS_BACKUP_2  >BACKUP</A>(<A HREF=#NPOIN>NPOIN</A>+<A HREF=#NGHOST>NGHOST</A>,<A HREF=#NELEM>NELEM</A>,<A HREF=#DIM>DIM</A>,<A HREF=#NOFVERT>NOFVERT</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NTURB>NTURB</A>,
+     +                    <A HREF=#BAKFILE>BAKFILE</A>,<A HREF=#VISCTFILE>VISCTFILE</A>)
+C
+C     Write skin friction data to a file
+C
+      IF( <A HREF=#KAN>KAN</A> .EQ. 2 .OR. <A HREF=#KAN>KAN</A> .EQ. 4 )THEN
+          <A HREF=#LWORK>LWORK</A> = <A NAME=EULFS_ISTKGT_12  >ISTKGT</A>(2*<A HREF=#NWFAC>NWFAC</A>,2)
+          CALL <A NAME=EULFS_WSKIN_2  >WSKIN</A>(<A NAME=EULFS_DSTAK_18  >DSTAK</A>(<A HREF=#LSKINF>LSKINF</A>),<A NAME=EULFS_DSTAK_19  >DSTAK</A>(<A HREF=#LHEAT>LHEAT</A>),<A HREF=#ISTAK>ISTAK</A>(<A HREF=#LWORK>LWORK</A>),<A HREF=#NWFAC>NWFAC</A>,
+     +               <A HREF=#ISTAK>ISTAK</A>(<A HREF=#LBNDFAC>LBNDFAC</A>),<A HREF=#NBODY6>NBODY6</A>,'file016.dat')
+          CALL <A NAME=EULFS_ISTKRL_10  >ISTKRL</A>(1)
+          WRITE(<A HREF=#NOUT>NOUT</A>,FMT=9996)
+      ENDIF
+C
+      CALL <A NAME=EULFS_PETSCGETRESIDENTSETSIZE_3  >PetscGetResidentSetSize</A>(<A HREF=#MAXSIZ>MAXSIZ</A>,<A HREF=#IFAIL>IFAIL</A>)
+      WRITE (<A HREF=#NOUT>NOUT</A>,FMT=9998) <A NAME=EULFS_ISTKST_7  >ISTKST</A>(3)/2, (<A NAME=EULFS_ISTKST_8  >ISTKST</A>(3)*100.)/<A NAME=EULFS_ISTKST_9  >ISTKST</A>(4)
+      WRITE (<A HREF=#NOUT>NOUT</A>,FMT=9994) <A HREF=#MAXSIZ>MAXSIZ</A>
+C
+  999 continue
+caldo CLOSE(NOUT)
+caldo CLOSE(IWUNIT)
+C     call petsctrdump(ierr)
+C
+C     clear memory allocated by PETSc
+C
+      CALL <A NAME=EULFS_VECDESTROY_3  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecDestroy.html"> VecDestroy</A>(<A HREF=#RHS>RHS</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=EULFS_VECDESTROY_4  HREF="/opt/petsc-2.0.24/docs/manualpages/Vec/VecDestroy.html"> VecDestroy</A>(<A HREF=#ZROE>ZROE</A>,<A HREF=#IFAIL>IFAIL</A>)
+      IF( <A HREF=#TIMEIMPL>TIMEIMPL</A> )THEN
+          CALL <A NAME=EULFS_MATDESTROY_1  >MatDestroy</A>(<A HREF=#A>A</A>,<A HREF=#IFAIL>IFAIL</A>)
+          CALL <A NAME=EULFS_SLESDESTROY_1  >SLESDestroy</A>(<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#IFAIL>IFAIL</A>)
+          IF(<A HREF=#TURBULENT>TURBULENT</A>)THEN
+              CALL <A NAME=EULFS_SLESDESTROY_2  >SLESDestroy</A>(<A HREF=#TurbulenceSolver>TurbulenceSolver</A>,<A HREF=#IFAIL>IFAIL</A>)
+              CALL <A NAME=EULFS_MATDESTROY_2  >MatDestroy</A>(<A HREF=#B>B</A>,<A HREF=#IFAIL>IFAIL</A>)
+          ENDIF
+      ENDIF
+C     clear Index sets
+      CALL <A NAME=EULFS_ISDESTROY_1  >ISDestroy</A>(<A HREF=#SupersonicNodes>SupersonicNodes</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=EULFS_ISDESTROY_2  >ISDestroy</A>(<A HREF=#SupersonicVariables>SupersonicVariables</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=EULFS_ISDESTROY_3  >ISDestroy</A>(<A HREF=#NoSlipNodes>NoSlipNodes</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=EULFS_ISDESTROY_4  >ISDestroy</A>(<A HREF=#NoSlipVelocities>NoSlipVelocities</A>,<A HREF=#IFAIL>IFAIL</A>)
+#ifdef MPI
+      IF(<A HREF=#TIMEIMPL>TIMEIMPL</A>)CALL <A NAME=EULFS_ISLOCALTOGLOBALMAPPINGDEST    1  >ISLocalToGlobalMappingDestroy</A>(<A HREF=#mapping>mapping</A>,<A HREF=#IFAIL>IFAIL</A>)
+#endif
+C
+      CALL <A NAME=EULFS_PETSCFINALIZE_1  HREF="/opt/petsc-2.0.24/docs/manualpages/Sys/PetscFinalize.html">PetscFinaliz(<A HREF=#IERR>IERR</A>)
+C
+      IF(<A HREF=#MY_PE>MY_PE</A>.EQ.0)THEN
+#ifdef PARCH_linux
+#else
+#ifdef PARCH_alpha
+#else
+           <A HREF=#endtime>endtime</A>   = <A NAME=EULFS_MPI_WTIME_2  >MPI_Wtime</A>()
+           WRITE(<A HREF=#IWUNIT>IWUNIT</A>,FMT=*)'time spend ',<A HREF=#totime>totime</A>
+           WRITE(<A HREF=#IWUNIT>IWUNIT</A>,FMT=*)'That took ',<A HREF=#endtime>endtime</A>-<A HREF=#starttime>starttime</A>,' seconds'
+#endif
+#endif
+      ENDIF
+C
+      STOP
+C
+C *************** I/O FORMATS *****************
+C
+  100 FORMAT (17 (10X,I7,/),2 (10X,E9.6,/),10X,A1,/,4 (10X,A40,/),
+     +       5 (10X,F10.4,/))
+  115 FORMAT (5X,'Initial conditions are :',/,5X,5 (E12.6,2X),/)
+  208 FORMAT (/,5X,'Convergenge has been achieved in ',I7,1X,
+     +       'iterations',/,5X,'-- CPU time spend : ',F7.2,' sec.',/)
+ 9994 FORMAT (/,5X,'MAXIMUM MEMORY USED BY THE PROGRAM ',F12.0,
+     +       ' BYTES')
+ 9995 FORMAT (/,5X,'MEMORY ALLOCATED IN DSTAK ',I8,' REAL*8 WORDS')
+ 9996 FORMAT (5X,'Skin friction file written to file016.dat')
+ 9997 FORMAT (I6,5(1X,E12.6))
+ 9998 FORMAT (/,5X,'MAXIMUM MEMORY USED IN DSTAK',I8,
+     +       ' REAL*8 WORDS (',F5.2,' %)')
+ 9999 FORMAT (/,5X,'MAXIMUM MEMORY EVER ALLOCATED BY PETSc ',F12.0,
+     +       ' BYTES')
+
+      END
+</PRE>
+</BODY>

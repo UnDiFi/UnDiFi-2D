@@ -1,0 +1,146 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    ; strict;
+comment  @c @;
+
+
+1.2
+date     98.03.26.10.48.45;  author aldo;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     97.11.29.08.10.39;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Trip point distance computation
+@
+
+
+1.2
+log
+@bug fixed: add the loop over the bodies
+@
+text
+@      SUBROUTINE TDC2D(IBNDFAC,NBODY6,ICELNOD,NOFVERT,TD,CORG,NDIM,
+     +                 NPOIN)
+
+C    Subject 1.02: How do I find the distance from a point to a line?
+      IMPLICIT NONE
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd'
+
+C     .. Scalar Arguments ..
+      INTEGER NBODY6,NDIM,NOFVERT,NPOIN
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION CORG(NDIM,NPOIN),TD(NPOIN)
+      INTEGER IBNDFAC(3,*),ICELNOD(NOFVERT,*)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DIST,L,R,S,TEMP,XA,XB,XC,XI,YA,YB,YC,YI
+      INTEGER IA,IB,IELEM,IFACE,IPOIN,IVERT,NELEM,IBODY
+C     ..
+C     .. External Functions ..
+      INTEGER JCYCL
+      EXTERNAL JCYCL
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+      DO 100 IPOIN = 1,NPOIN
+
+          XC = CORG(1,IPOIN)
+          YC = CORG(2,IPOIN)
+
+          TEMP = 1.D+38
+
+          DO 90 IBODY = 1,NBODY6
+          DO 90 IFACE = IBGN(IBODY),IEND(IBODY)
+
+              IELEM = IBNDFAC(1,IFACE)
+              IVERT = IBNDFAC(2,IFACE)
+
+              IA = ICELNOD(JCYCL(IVERT+1),IELEM)
+              IB = ICELNOD(JCYCL(IVERT+2),IELEM)
+
+              XA = CORG(1,IA)
+              XB = CORG(1,IB)
+              YA = CORG(2,IA)
+              YB = CORG(2,IB)
+
+C   Let the point be C (XC,YC) and the line be AB (XA,YA) to (XB,YB).
+C   The length of the line segment AB is L:
+
+C       L=((XB-XA)**2+(YB-YA)**2)**0.5
+C
+              L = ((XB-XA)**2+ (YB-YA)**2)**0.5
+
+C   and
+C           (YA-YC)(YA-YB)-(XA-XC)(XB-XA)
+C       r = -----------------------------
+C                       L**2
+C
+C           (YA-YC)(XB-XA)-(XA-XC)(YB-YA)
+C       s = -----------------------------
+C                       L**2
+C
+              R = ((YA-YC)* (YA-YB)- (XA-XC)* (XB-XA))/ (L*L)
+              S = ((YA-YC)* (XB-XA)- (XA-XC)* (YB-YA))/ (L*L)
+
+C   Let I be the point of perpendicular projection of C onto AB, the
+
+C       XI=XA+r(XB-XA)
+C       YI=YA+r(YB-YA)
+C
+              XI = XA + R* (XB-XA)
+              YI = YA + R* (YB-YA)
+
+C   Distance from A to I = r*L
+C   Distance from C to I = s*L
+C
+C   If r<0      I is on backward extension of AB
+C   If r>1      I is on ahead extension of AB
+C   If 0<=r<=1  I is on AB
+
+C   If s<0      C is left of AB (you can just check the numerator)
+C   If s>0      C is right of AB
+C   If s=0      C is on AB
+
+              IF (R.LE.0.D0) THEN
+                  DIST = SQRT((XC-XA)**2+ (YC-YA)**2)
+
+              ELSEIF (R.GE.1.D0) THEN
+                  DIST = SQRT((XC-XB)**2+ (YC-YB)**2)
+
+              ELSE
+                  DIST = SQRT((XC-XI)**2+ (YC-YI)**2)
+              ENDIF
+
+              IF (DIST.LT.TEMP) TEMP = DIST
+
+   90     CONTINUE
+          TD(IPOIN) = TEMP
+  100 CONTINUE
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d18 1
+a18 1
+      INTEGER IA,IB,IELEM,IFACE,IPOIN,IVERT,NELEM
+d34 2
+a35 1
+          DO 90 IFACE = IBGN(1),IEND(NBODY6)
+@

@@ -1,0 +1,173 @@
+head	1.4;
+access
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.3
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.01.26.12.33.05;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2008.12.03.11.16.18;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.12.27.09.31.04;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@transformation matrix from primitive variables to parameter vector
+@
+
+
+1.4
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@      SUBROUTINE PARM_PRIM(ZROE,DVDZ,NOFVAR,NDIM)
+C
+C     $Id: parm2prim.f,v 1.3 2013/01/26 12:33:05 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C
+C     .. Parameters ..
+      INCLUDE 'constants.h'
+      INCLUDE 'pfcgas.com'
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DVDZ(NOFVAR,NOFVAR),ZROE(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DUM,DUMSQR
+C     ..
+      DUM = ONE/ZROE(1)
+      DUMSQR = DUM*DUM
+c
+c       .. First row ..
+c
+      DVDZ(1,1) = TWO*ZROE(1)
+      DVDZ(1,2) = ZERO
+      DVDZ(1,3) = ZERO
+      DVDZ(1,4) = ZERO
+c
+c       .. Second row ..
+c
+      DVDZ(2,1) = GM1OG*ZROE(2)
+      DVDZ(2,2) = GM1OG*ZROE(1)
+      DVDZ(2,3) = -GM1OG*ZROE(3)
+      DVDZ(2,4) = -GM1OG*ZROE(4)
+c
+c       .. Third row ..
+c
+      DVDZ(3,1) = -ZROE(3)*DUMSQR
+      DVDZ(3,2) = ZERO
+      DVDZ(3,3) = DUM
+      DVDZ(3,4) = ZERO
+c
+c       .. Fourth row ..
+c
+      DVDZ(4,1) = -ZROE(4)*DUMSQR
+      DVDZ(4,2) = ZERO
+      DVDZ(4,3) = ZERO
+      DVDZ(4,4) = DUM
+C
+      IF (NDIM.EQ.2) RETURN
+C
+      DVDZ(1,5) = ZERO
+      DVDZ(2,5) = -GM1OG*ZROE(5)
+      DVDZ(3,5) = ZERO
+      DVDZ(4,5) = ZERO
+c
+c       .. Fifth row ..
+c
+      DVDZ(5,1) = -ZROE(5)*DUMSQR
+      DVDZ(5,2) = ZERO
+      DVDZ(5,3) = ZERO
+      DVDZ(5,4) = ZERO
+      DVDZ(5,5) = DUM
+C
+      RETURN
+
+      END
+@
+
+
+1.3
+log
+@uses only the Id RCS tag (Header has been removed)
+@
+text
+@d3 1
+a3 1
+C     $Id: parm2prim.f,v 1.2 2008/12/03 11:16:18 abonfi Exp abonfi $
+d10 1
+@
+
+
+1.2
+log
+@the specific heats ratio is now included
+@
+text
+@d3 1
+a3 2
+C     $Id: parm2prim.f,v 1.1 1999/12/27 09:31:04 aldo Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.0.14.1/src/euler/RCS/parm2prim.f,v 1.1 1999/12/27 09:31:04 aldo Exp abonfi $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 2
+a4 2
+C     $Id$
+C     $Header$
+d10 1
+a10 4
+      DOUBLE PRECISION ZERO,HALF,ONE,TWO,GAM,GM1,GOGM1,GINV,GM1OG
+      PARAMETER (ZERO=0.00d0,HALF=0.5d0,ONE=1.00d0,TWO=2.00d0,
+     +          GAM=1.40d0,GM1=GAM-ONE,GOGM1=GAM/GM1,GINV=ONE/GAM,
+     +          GM1OG=GM1*GINV)
+@

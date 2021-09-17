@@ -1,0 +1,424 @@
+head	1.9;
+access
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.9
+	release3_13_0:1.9
+	release3_12_0:1.9
+	release3_11_0:1.9
+	release3_10_0:1.9
+	release3_8_0:1.9
+	release3_7_1:1.9
+	release3_7_0:1.9
+	release3_4_5:1.9
+	release3_4_4:1.9
+	release3_4_3:1.9
+	release3_4_2:1.9
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.7
+	release3_3_3:1.7
+	release3_3_2:1.7
+	release3_3_1:1.7
+	release3_3_0:1.7;
+locks; strict;
+comment	@c @;
+
+
+1.9
+date	2013.08.21.10.55.07;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.08.20.14.48.46;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2012.12.20.10.49.15;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.09.16.07.41.03;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2008.12.03.11.16.18;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.12.27.11.20.46;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	97.12.01.15.40.42;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.11.29.18.27.23;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.07.59.18;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute pressure force on a boundary face
+@
+
+
+1.9
+log
+@updated Doxygen documentation
+@
+text
+@!> \brief \b PFORCE
+C
+*>    \par Purpose:
+*>
+*     ====================== 
+CCCCCCC*>    \verbatim
+*>    PFORCE computes the pressure force acting on a
+*>    boundary face as the aritmetic mean of the face pressure
+*>    values, ie. assuming linear variation of pressure;
+*>    while this is o.k. for the INcompressible flow eqns., for
+*>    COmpressible flows one should compute
+*>    the EXACT integral of pressure which is a quadratic function
+CCCCCCC*>    \endverbatim
+*
+C
+!> @@param[in] ICLR colour of the patch the boundary face belongs to 
+!> @@param[in] IVERT vertex (in local numbering) facing the boundary face   
+!> @@param[in] VCN cartesian components of the scaled inward normals of the current cell
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] VCZ nofvar values of the dependent variable in the nofvert vertices of the current cell
+!> @@param[in] NOFVAR number of degrees of freedom
+!> @@param[in] NOFVERT number of vertices of the current simplicial element
+!> @@param[in] PRESSURE subroutine used to compute pressure from the set of dependent variables
+!> @@return the cartesian components of the pressure force acting on the current boundary face are stored in PRESF(1:d,iclr)
+C
+!> \author $Author: abonfi $
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+!> \see subroutine PFORCESimpson
+C
+      SUBROUTINE PFORCE(ICLR,IVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,PRESSURE)
+C
+C     $Id: pforce.f,v 1.8 2013/08/20 14:48:46 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd.com'
+C
+      INTEGER ICLR,IVERT,NDIM,NOFVERT,NOFVAR
+C
+C
+      DOUBLE PRECISION VCZ(NOFVAR,NOFVERT),VCN(NDIM,NOFVERT)
+C
+      DOUBLE PRECISION P
+      INTEGER I,IV
+C
+      DOUBLE PRECISION PRESSURE
+      INTEGER ICYCL
+      EXTERNAL ICYCL,PRESSURE
+C
+C  .. Loop over the nodes of the face
+C
+      P = ZERO
+      DO 1 I = 1,NOFVERT - 1
+          IV = ICYCL(IVERT+I,NOFVERT)
+          P = P + PRESSURE(NDIM,VCZ(1,IV))
+    1 CONTINUE
+C
+      PRESF(1,ICLR) = PRESF(1,ICLR) - P*VCN(1,IVERT)/NDIM
+      PRESF(2,ICLR) = PRESF(2,ICLR) - P*VCN(2,IVERT)/NDIM
+      IF(NDIM.EQ.3)PRESF(3,ICLR) = PRESF(3,ICLR) - P*VCN(3,IVERT)/NDIM
+C
+      RETURN
+
+      END
+!> \brief \b PFORCESimpson
+C
+!>    \par Purpose:
+!>
+!>    This routine computes the pressure force acting on a
+!>    boundary face using Simpson's rule which is exact
+!>    when pressure is a quadratic function of the dependent variables
+C     ====================== 
+C
+!> @@param[in] ICLR colour of the patch the boundary face belongs to 
+!> @@param[in] IVERT vertex (in local numbering) facing the boundary face   
+!> @@param[in] VCN cartesian components of the scaled inward normals of the current cell
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] VCZ nofvar values of the dependent variable in the nofvert vertices of the current cell
+!> @@param[in] NOFVAR number of degrees of freedom
+!> @@param[in] NOFVERT number of vertices of the current simplicial element
+!> @@param[in] PRESSURE subroutine used to compute pressure from the set of dependent variables
+!> @@return the cartesian components of the pressure force acting on the current boundary face are stored in PRESF(1:d,iclr)
+C
+!> \warning The 3D version is un-implemented yet
+!> \author $Author: abonfi $
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+!> \see subroutine PFORCE
+C
+      SUBROUTINE PFORCESimpson(ICLR,IVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,
+     &PRESSURE)
+C
+C     $Id: pforce.f,v 1.8 2013/08/20 14:48:46 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd.com'
+C
+      INTEGER ICLR,IVERT,NDIM,NOFVERT,NOFVAR
+C
+C
+C
+      DOUBLE PRECISION VCZ(NOFVAR,NOFVERT),VCN(NDIM,NOFVERT)
+      DOUBLE PRECISION ZG(MAXNOFVAR)
+C
+      DOUBLE PRECISION P
+      INTEGER I,IV
+C
+      DOUBLE PRECISION PRESSURE
+      INTEGER ICYCL
+      EXTERNAL ICYCL,PRESSURE
+C
+C  .. Loop over the nodes of the face
+C
+      IF(NDIM.NE.2)THEN
+         STOP 'Unimplemented feature in 3D'
+      ENDIF
+      CALL DINIT(NOFVAR,ZERO,ZG,1)
+      P = ZERO
+      DO 1 I = 1,NOFVERT - 1
+          IV = ICYCL(IVERT+I,NOFVERT)
+          P = P + PRESSURE(NDIM,VCZ(1,IV))
+          CALL DAXPY(NOFVAR,ONE,VCZ(1,IV),1,ZG,1) ! compute average Z
+    1 CONTINUE
+      CALL DSCAL(NOFVAR,ONE/REAL(NDIM),ZG,1)
+      P = (P+4.d0*PRESSURE(NDIM,ZG))/6.d0 ! use Simpson's rule
+C
+      PRESF(1,ICLR) = PRESF(1,ICLR) - P*VCN(1,IVERT)
+      PRESF(2,ICLR) = PRESF(2,ICLR) - P*VCN(2,IVERT)
+      IF(NDIM.EQ.3)PRESF(3,ICLR) = PRESF(3,ICLR) - P*VCN(3,IVERT)
+C
+      RETURN
+
+      END
+@
+
+
+1.8
+log
+@enhanced Doxygen documentation
+@
+text
+@d1 15
+d26 5
+d33 1
+a33 1
+C     $Id: pforce.f,v 1.7 2012/12/20 10:49:15 abonfi Exp abonfi $
+a43 16
+!>    \par Purpose:
+!     ====================== 
+!>    \verbatim
+!>     This routine computes the pressure force acting on a
+!>    boundary face as the aritmetic mean of the face pressure
+!>    values, ie. assuming linear variation of pressure;
+!>    while this is o.k. for the INcompressible flow eqns., for
+!>    COmpressible flows one should compute
+!>    the EXACT integral of pressure which is a quadratic function
+!>    \endverbatim
+C
+!>    \author $Author$
+C
+!>    \date $Date$
+C
+!>    \version $Revision$
+d69 9
+d87 7
+d97 1
+a97 1
+C     $Id: pforce.f,v 1.7 2012/12/20 10:49:15 abonfi Exp abonfi $
+a107 16
+!>    \par Purpose:
+!     ====================== 
+!>    \verbatim
+!>    This routine computes the pressure force acting on a
+!>    boundary face as the aritmetic mean of the face pressure
+!>    values, ie. assuming linear variation of pressure;
+!>    while this is o.k. for the INcompressible flow eqns., for
+!>    COmpressible flows one should compute
+!>    the EXACT integral of pressure which is a quadratic function
+!>    \endverbatim
+C
+!>    \author $Author$
+C
+!>    \date $Date$
+C
+!>    \version $Revision$
+@
+
+
+1.7
+log
+@added Doxygen documentation
+@
+text
+@d13 1
+a13 1
+C     $Id: pforce.f,v 1.6 2011/09/16 07:41:03 abonfi Exp abonfi $
+d24 12
+a35 6
+C     This routine computes the pressure force acting on a
+C     boundary face as the aritmetic mean of the face pressure
+C     values, ie. assuming linear variation of pressure;
+C     while this is o.k. for the INcompressible flow eqns., for
+C     COmpressible flows one should compute
+C     the EXACT integral of pressure which is a quadratic function
+d37 1
+a37 2
+C     IVERT is the local nodenumber of the vertex opposite
+C           the boundary face
+d39 1
+d65 9
+a73 1
+!> \copydoc PFORCE()
+d77 1
+a77 1
+C     $Id: pforce.f,v 1.6 2011/09/16 07:41:03 abonfi Exp abonfi $
+d88 3
+d97 5
+d103 1
+a103 2
+C     IVERT is the local nodenumber of the vertex opposite
+C           the boundary face
+@
+
+
+1.6
+log
+@Compute the pressure flux exactly using Simpson's rule
+(but only in 2D)
+@
+text
+@d1 10
+d13 1
+a13 1
+C     $Id: pforce.f,v 1.5 2008/12/03 11:16:18 abonfi Exp abonfi $
+d59 1
+d63 1
+a63 1
+C     $Id: pforce.f,v 1.5 2008/12/03 11:16:18 abonfi Exp abonfi $
+d74 6
+a79 6
+C     This routine computes the pressure force acting on a
+C     boundary face as the aritmetic mean of the face pressure
+C     values, ie. assuming linear variation of pressure;
+C     while this is o.k. for the INcompressible flow eqns., for
+C     COmpressible flows one should compute
+C     the EXACT integral of pressure which is a quadratic function
+@
+
+
+1.5
+log
+@the specific heats ratio is now included
+@
+text
+@d3 1
+a3 1
+C     $Id: pforce.f,v 1.4 2005/12/27 11:20:46 abonfi Exp abonfi $
+d45 57
+@
+
+
+1.4
+log
+@an included common has been renamed
+@
+text
+@d3 1
+a3 1
+C     $Id:$
+d7 1
+a26 2
+      DOUBLE PRECISION ZERO
+      PARAMETER (ZERO=0.D0)
+@
+
+
+1.3
+log
+@Now handles the computation of the pressure force for
+multiple bodies
+@
+text
+@d3 2
+d9 1
+a9 1
+      INCLUDE 'stream.com'
+@
+
+
+1.2
+log
+@Bug with missing arguments in the call cured
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE PFORCE(IVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,PRESSURE)
+d6 1
+d9 1
+a9 1
+      INTEGER IVERT,NDIM,NOFVERT,NOFVAR
+d11 1
+a11 1
+C  .. This routine computes the pressure force acting on a
+d41 3
+a43 3
+      PRESF(1) = PRESF(1) - P*VCN(1,IVERT)/NDIM
+      PRESF(2) = PRESF(2) - P*VCN(2,IVERT)/NDIM
+      IF(NDIM.EQ.3)PRESF(3) = PRESF(3) - P*VCN(3,IVERT)/NDIM
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE PFORCE(IVERT,NDIM,NOFVERT,PRESSURE)
+a6 1
+      INCLUDE 'cell'
+d8 1
+a8 1
+      INTEGER IVERT,NDIM,NOFVERT
+d21 1
+d42 1
+a42 1
+      PRESF(3) = PRESF(3) - P*VCN(3,IVERT)/NDIM
+@

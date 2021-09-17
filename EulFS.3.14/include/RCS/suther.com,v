@@ -1,0 +1,54 @@
+head	1.1;
+access
+	abonfi;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks
+	abonfi:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2000.08.11.14.10.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@sutherland's law of viscosity
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION C1,C2,C3,C4
+      COMMON /VISCOM/ C1,C2,C3,C4
+C
+C     Constants for the non-dimensional form
+C     of sutherland's law:
+C
+C     viscl(a) = C1 * a^3 * C4 / (C2 * a^2 + C3 )
+C
+C     where a is the sound speed and the constant
+C     depend upon the selected linearisation
+@

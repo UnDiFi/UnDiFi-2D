@@ -1,0 +1,42 @@
+1c1
+<       SUBROUTINE RHSBC1( RHS, NodalBcs ) 
+---
+>       SUBROUTINE RHSBC1( RHS ) 
+6c6
+< C     $Id: rhsbc1.F,v 1.17 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: rhsbc1.F,v 1.17 2016/11/10 11:25:13 abonfi Exp $
+9c9,11
+< CCC#include "petsc/finclude/petscsys.h"
+---
+>       IMPLICIT NONE
+> C
+> #include "petsc/finclude/petscsys.h"
+12,15d13
+<       use petscvec 
+<       use petscis 
+< C
+<       IMPLICIT NONE
+18d15
+<       INCLUDE 'constants.h'
+20c17,22
+<       INCLUDE 'iset.h'
+---
+>       INCLUDE 'constants.h'
+> C
+> #include "iset.com"
+> C
+>       INTEGER MY_PE 
+>       COMMON/MPICOM/MY_PE
+23d24
+<       IS, dimension(0:*) :: NodalBcs
+36,37c37,38
+<       CALL ISGetSize(NodalBcs(SupersonicNodes),NI,IFAIL)
+<       CALL ISGetIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,IFAIL)
+---
+>       CALL ISGetSize(SupersonicNodes,NI,IFAIL)
+>       CALL ISGetIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+48c49
+<       CALL ISRestoreIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,IFAIL)
+---
+>       CALL ISRestoreIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)

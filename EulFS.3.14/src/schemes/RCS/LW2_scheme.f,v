@@ -1,0 +1,221 @@
+head	1.3;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_3:1.3
+	release3_3_2:1.3
+	release3_3_1:1.3
+	release3_3_0:1.3;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2012.04.17.10.39.29;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.06.11.09.11.02;	author abonfi;	state Exp;
+branches
+	1.2.1.1;
+next	1.1;
+
+1.1
+date	2008.06.10.10.14.56;	author abonfi;	state Exp;
+branches;
+next	;
+
+1.2.1.1
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Lax-Wendroff scheme: time accurate version
+@
+
+
+1.3
+log
+@Galerkin distribution of the source term (following the newly
+implemented GCL)
+@
+text
+@      SUBROUTINE LW2_SCHEME(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     +                      NODRES,BETA,STIFC,NDIM,NOFVERT,
+     3                      MATRIX_ASSEMBLY)
+C
+C     $Id: LW2_scheme.f,v 1.2 2009/06/11 09:11:02 abonfi Exp abonfi $
+C
+C     .. Parameters ..
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'time.com'
+C
+      DOUBLE PRECISION CFLELEM
+      PARAMETER (CFLELEM=HALF)
+Caldo
+Caldo This scheme should be time accurate
+Caldo see De Palma et al JCP 208 (2005) 1-33
+Caldo
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION CELRES,SOURCE
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ADVECTION(NDIM),DT(NOFVERT),NODRES(NOFVERT),
+     +                 Q(NOFVERT),BETA(NOFVERT),STIFC(NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION S,HELP
+      INTEGER I,IVERT,J,IADDR
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION K(MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+C     ..
+      CELRES = ZERO
+C
+      DO 10 IVERT = 1,NOFVERT
+C
+C Dotting advection speed with the face normal
+C
+          HELP = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)
+          K(IVERT) = HELP/NDIM
+C
+          CELRES = CELRES + Q(IVERT)*K(IVERT)
+C
+          KSUM = KSUM + ABS(K(IVERT))
+C
+   10 CONTINUE
+C
+      CELRES = CELRES!+ SOURCE
+C
+C Loops over all nodes
+C
+      HELP = ONE/REAL(NOFVERT)
+      KSUM = CFLELEM*DTVOL
+      DO 20 I = 1,NOFVERT
+          IF(K(I).GT.ZERO)DT(I) = DT(I) + K(I)
+          BETA(I) = HELP + KSUM*K(I)
+          NODRES(I) = -BETA(I)*CELRES-HELP*SOURCE
+   20 CONTINUE
+C
+C
+C
+      IF (MATRIX_ASSEMBLY) THEN
+          DO 40 J = 1,NOFVERT
+              DO 40 I = 1,NOFVERT
+                  STIFC(I,J) = -BETA(I)*K(J)
+   40     CONTINUE
+      ENDIF
+C
+C
+      RETURN
+
+      END
+@
+
+
+1.2
+log
+@added BETA among the arguments of the call
+@
+text
+@d5 1
+a5 1
+C     $Id: LW2_scheme.f,v 1.1 2008/06/10 10:14:56 abonfi Exp abonfi $
+d31 1
+a31 1
+      DOUBLE PRECISION S,HELP,KHELP
+a41 1
+      KHELP = ZERO
+d56 1
+a56 1
+      CELRES = CELRES + SOURCE
+d65 1
+a65 1
+          NODRES(I) = -BETA(I)*CELRES
+@
+
+
+1.2.1.1
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@d5 1
+a5 1
+C     $Id: LW2_scheme.f,v 1.3 2012/04/17 10:39:29 abonfi Exp $
+d31 1
+a31 1
+      DOUBLE PRECISION S,HELP
+d42 1
+d57 1
+a57 1
+      CELRES = CELRES!+ SOURCE
+d66 1
+a66 1
+          NODRES(I) = -BETA(I)*CELRES-HELP*SOURCE
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 2
+a3 1
+     +                      NODRES,STIFC,NDIM,NOFVERT,PICARD)
+d5 1
+a5 1
+C     $Id:$
+d8 1
+d10 3
+a14 1
+      INCLUDE 'laxw.com'
+d23 1
+a23 1
+      LOGICAL PICARD
+d27 1
+a27 1
+     +                 Q(NOFVERT),STIFC(NOFVERT,NOFVERT),
+d31 2
+a32 2
+      DOUBLE PRECISION KNEGINV,S,HELP,KHELP
+      INTEGER I,IROW,IVERT,J,JCOL,NEGI,POSI
+d35 1
+a35 1
+      DOUBLE PRECISION K(4),BETA(4)
+d71 1
+a71 1
+      IF (PICARD) THEN
+d78 1
+@

@@ -1,0 +1,6 @@
+F77CMD = f90 -Dcray
+64_BIT_REALS =
+CCCMD  = c89 -DIFSTYLE=1 -Dcray_twobytecptrs -Dcray -h nomessage=230
+RANLIB = echo
+AR = ar
+CPP = /usr/lib/gpp

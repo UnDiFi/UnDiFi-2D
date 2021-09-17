@@ -1,0 +1,55 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.29.14.40.49;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@performs rotations for periodic bcs in 3D
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      IF( PERIODIC_MESH .AND. ANNULAR )THEN
+          DO 19 IVERT = 1, NOFVERT
+C     check if a periodic node, if not jump
+C     to the following vertex
+             IF( PFLAG(IVERT) )THEN
+C     pre-multiply by Qt
+                CYY = NODRES(IY,IVERT)
+                CZZ = NODRES(IZ,IVERT)
+                NODRES(IY,IVERT) =   CYY*COSALPHA+CZZ*SINALPHA
+                NODRES(IZ,IVERT) = - CYY*SINALPHA+CZZ*COSALPHA
+             ENDIF
+   19     CONTINUE
+      ENDIF
+@

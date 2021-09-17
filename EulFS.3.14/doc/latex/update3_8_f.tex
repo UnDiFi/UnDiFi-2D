@@ -1,0 +1,235 @@
+\hypertarget{update3_8_f}{}\doxysection{src/seq/update3.F File Reference}
+\label{update3_8_f}\index{src/seq/update3.F@{src/seq/update3.F}}
+{\ttfamily \#include \char`\"{}petsc/finclude/petscviewer.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}petsc/finclude/petscpc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}petsc/finclude/petscksp.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}petsc/finclude/petscvec.\+h\char`\"{}}\newline
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{update3_8_f_a9b5311bee4132b02d75a204897914de7}{U\+P\+D\+A\+T\+E3}} (N\+D\+IM, N\+O\+F\+V\+AR, N\+P\+O\+IN, Flow\+Solver, A, R\+HS, DT, U, V\+M\+D\+CO, V\+M\+D\+CN, Nodal\+Bcs)
+\begin{DoxyCompactList}\small\item\em updates the nodal solution by implicit time integration when K\+AN = 2,4 \end{DoxyCompactList}\item 
+subroutine \mbox{\hyperlink{update3_8_f_a0735e48f88e05eef65be20af15dec79c}{Find\+Vec\+Stride\+Abs\+Min\+Max}} (X, A\+N\+L2, A\+N\+M\+AX, I\+N\+M\+AX, W\+K\+SP, N\+D\+IM)
+\begin{DoxyCompactList}\small\item\em returns the L2-\/norm of an array along with the location where the max A\+BS value occurs \end{DoxyCompactList}\item 
+subroutine \mbox{\hyperlink{update3_8_f_a9cb67f5b4e3657ab926ea255a2fd38a9}{Find\+Vec\+Stride\+Min\+Max}} (X, A\+N\+M\+IN, A\+N\+M\+AX, I\+N\+M\+AX, W\+K\+SP, N\+D\+IM)
+\begin{DoxyCompactList}\small\item\em returns min/max values of an array along with the location where the min/max values occur \end{DoxyCompactList}\item 
+subroutine \mbox{\hyperlink{update3_8_f_ae9beb85f0cde659cc46f1c1253326e11}{R\+H\+S4\+A\+LE}} (N\+O\+F\+V\+AR, N\+P\+O\+IN, R\+HS, U, V\+M\+D\+CO, V\+M\+D\+CN)
+\begin{DoxyCompactList}\small\item\em return the modified R\+HS if we are dealing with moving and/or deforming grids \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{update3_8_f_a0735e48f88e05eef65be20af15dec79c}\label{update3_8_f_a0735e48f88e05eef65be20af15dec79c}} 
+\index{update3.F@{update3.F}!FindVecStrideAbsMinMax@{FindVecStrideAbsMinMax}}
+\index{FindVecStrideAbsMinMax@{FindVecStrideAbsMinMax}!update3.F@{update3.F}}
+\doxysubsubsection{\texorpdfstring{FindVecStrideAbsMinMax()}{FindVecStrideAbsMinMax()}}
+{\footnotesize\ttfamily subroutine Find\+Vec\+Stride\+Abs\+Min\+Max (\begin{DoxyParamCaption}\item[{}]{X,  }\item[{double precision, dimension($\ast$)}]{A\+N\+L2,  }\item[{double precision, dimension($\ast$)}]{A\+N\+M\+AX,  }\item[{integer, dimension($\ast$)}]{I\+N\+M\+AX,  }\item[{double precision, dimension(3,$\ast$)}]{W\+K\+SP,  }\item[{integer}]{N\+D\+IM }\end{DoxyParamCaption})}
+
+
+
+returns the L2-\/norm of an array along with the location where the max A\+BS value occurs 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X} & The Petsc vec \\
+\hline
+\mbox{\texttt{ out}}  & {\em A\+N\+L2} & L2-\/norm of X \\
+\hline
+\mbox{\texttt{ out}}  & {\em A\+N\+M\+AX} & maximum value \\
+\hline
+\mbox{\texttt{ out}}  & {\em I\+N\+M\+AX} & location where the maximum value occurs \\
+\hline
+\mbox{\texttt{ out}}  & {\em W\+K\+SP} & coordinates of the location where the maximum value occurs \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+84 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/04/23 09\+:46\+:19 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+The coordinates are only returned when run on a single processor 
+\end{DoxyWarning}
+\mbox{\Hypertarget{update3_8_f_a9cb67f5b4e3657ab926ea255a2fd38a9}\label{update3_8_f_a9cb67f5b4e3657ab926ea255a2fd38a9}} 
+\index{update3.F@{update3.F}!FindVecStrideMinMax@{FindVecStrideMinMax}}
+\index{FindVecStrideMinMax@{FindVecStrideMinMax}!update3.F@{update3.F}}
+\doxysubsubsection{\texorpdfstring{FindVecStrideMinMax()}{FindVecStrideMinMax()}}
+{\footnotesize\ttfamily subroutine Find\+Vec\+Stride\+Min\+Max (\begin{DoxyParamCaption}\item[{}]{X,  }\item[{double precision, dimension($\ast$)}]{A\+N\+M\+IN,  }\item[{double precision, dimension($\ast$)}]{A\+N\+M\+AX,  }\item[{integer, dimension($\ast$)}]{I\+N\+M\+AX,  }\item[{double precision, dimension(3,$\ast$)}]{W\+K\+SP,  }\item[{integer}]{N\+D\+IM }\end{DoxyParamCaption})}
+
+
+
+returns min/max values of an array along with the location where the min/max values occur 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X} & The Petsc vec \\
+\hline
+\mbox{\texttt{ out}}  & {\em A\+N\+M\+IN} & minimum value \\
+\hline
+\mbox{\texttt{ out}}  & {\em A\+N\+M\+AX} & maximum value \\
+\hline
+\mbox{\texttt{ out}}  & {\em I\+N\+M\+AX} & location where the maximum value occurs \\
+\hline
+\mbox{\texttt{ out}}  & {\em W\+K\+SP} & coordinates of the location where the maximum value occurs \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+84 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/04/23 09\+:46\+:19 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+The coordinates are only returned when run on a single processor 
+
+The location where the minimum value occurs is N\+OT returned 
+\end{DoxyWarning}
+\mbox{\Hypertarget{update3_8_f_ae9beb85f0cde659cc46f1c1253326e11}\label{update3_8_f_ae9beb85f0cde659cc46f1c1253326e11}} 
+\index{update3.F@{update3.F}!RHS4ALE@{RHS4ALE}}
+\index{RHS4ALE@{RHS4ALE}!update3.F@{update3.F}}
+\doxysubsubsection{\texorpdfstring{RHS4ALE()}{RHS4ALE()}}
+{\footnotesize\ttfamily subroutine R\+H\+S4\+A\+LE (\begin{DoxyParamCaption}\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{double precision, dimension($\ast$)}]{R\+HS,  }\item[{double precision, dimension($\ast$)}]{U,  }\item[{double precision, dimension($\ast$)}]{V\+M\+D\+CO,  }\item[{double precision, dimension($\ast$)}]{V\+M\+D\+CN }\end{DoxyParamCaption})}
+
+
+
+return the modified R\+HS if we are dealing with moving and/or deforming grids 
+
+the update for a two times levels scheme such as the Lax-\/\+Wendroff reads\+: $ K^{n+1} Z^{n+1}-K^{n} Z^{n} = R\left(Z^n\right) $, where $ K = V/ \Delta t $.
+
+this routine updates {\ttfamily R\+HS} in such a way that, within the calling subroutine {\ttfamily update3} we can later set $ U^{n+1} = U^n + \mbox{RHS} $ note that upon entry $ \mbox{RHS} = \left(K^{n}\right)^{-1} R\left(Z^n\right) $ rather than just being the nodal residual
+
+This is achieved as follows\+: \begin{eqnarray*} RHS &=& \left(K^{n+1}\right)^{-1} \left[K^{n}U^{n}+R\left(U^n\right)\right] - U^n \\\ &=& \left\{ \left[ \left(K^{n+1}\right)^{-1}K^n-I\right]U^n+\left(K^{n+1}\right)^{-1}R\left(U^n\right)\right\} \\\ &=& \left\{ \left(K^{n+1}\right)^{-1}K^n \left[U^n+\left(K^n\right)^{-1}R\left(U^n\right)\right] - U^n \right\} \\\ &=& \left(K^{n+1}\right)^{-1}K^n \left(U^n + RHS\right) - U_n \\\ &=& \left[\left(K^{n+1}\right)^{-1}K^n -I\right]U^n + \left(K^{n+1}\right)^{-1} \,K^n\, RHS \end{eqnarray*}
+
+in practice, $ \left(K^{n+1}\right)^{-1} \,K^n = V^n/V^{n+1} $
+
+when the grid is fixed, then $ (K^{n+1})^{-1}*K^n = I $ and $ \mbox{RHS} $ reduces to\+: $ RHS = (K^{n})^{-1}*R(Z^n) $
+
+since on entry $ \mbox{DT} = K^n $ and $ \mbox{RHS} = (K^n)^{-1} R(Z^n) $
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & number of dofs and leading dimension of U \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & number of gridpoints and second dimension of U \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em R\+HS} & on entry it is\+: $ \mbox{RHS} = \left(K^{n}\right)^{-1} R\left(Z^n\right) $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em U} & the vector of conserved variables \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+M\+D\+CO} & the median dual cell area/volume at time level n \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+M\+D\+CN} & the median dual cell area/volume at time level n+1\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+84 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/04/23 09\+:46\+:19 
+\end{DoxyParagraph}
+
+
+\begin{DoxyWarning}{Warning}
+N\+P\+O\+IN should only include interior nodes only (no ghosts, no periodic ones) 
+
+N\+OT sure it is going to work in parallel 
+\end{DoxyWarning}
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000002}{Todo}}]Could just pass the ratio between the Median Dual cells, rather than both \end{DoxyRefDesc}
+\mbox{\Hypertarget{update3_8_f_a9b5311bee4132b02d75a204897914de7}\label{update3_8_f_a9b5311bee4132b02d75a204897914de7}} 
+\index{update3.F@{update3.F}!UPDATE3@{UPDATE3}}
+\index{UPDATE3@{UPDATE3}!update3.F@{update3.F}}
+\doxysubsubsection{\texorpdfstring{UPDATE3()}{UPDATE3()}}
+{\footnotesize\ttfamily subroutine U\+P\+D\+A\+T\+E3 (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{}]{Flow\+Solver,  }\item[{}]{A,  }\item[{}]{R\+HS,  }\item[{}]{DT,  }\item[{}]{U,  }\item[{double precision, dimension($\ast$)}]{V\+M\+D\+CO,  }\item[{double precision, dimension($\ast$)}]{V\+M\+D\+CN,  }\item[{dimension(0\+:$\ast$)}]{Nodal\+Bcs }\end{DoxyParamCaption})}
+
+
+
+updates the nodal solution by implicit time integration when K\+AN = 2,4 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & number of dofs and leading dimension of U \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & number of gridpoints and second dimension of U \\
+\hline
+\mbox{\texttt{ in}}  & {\em Flow\+Solver} & is the P\+E\+T\+Sc K\+SP used to solve the sparse linear system \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em A} & (P\+E\+T\+Sc mat) is the jacobian matrix \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em R\+HS} & (P\+E\+T\+Sc vec) nodal residual \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em DT} & (P\+E\+T\+Sc vec) nodal timestep \\
+\hline
+\mbox{\texttt{ in}}  & {\em U} & (P\+E\+T\+Sc vec) the vector of conserved variables \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+M\+D\+CO} & the median dual cell area/volume at time level n \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+M\+D\+CN} & the median dual cell area/volume at time level n+1 \\
+\hline
+\mbox{\texttt{ in}}  & {\em Nodal\+Bcs} & array of Index Sets addressing the nodal bcs \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+84 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/04/23 09\+:46\+:19 
+\end{DoxyParagraph}
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000001}{Todo}}]Should rather destroy DT in the calling routine, where it is created 
+
+Duplicate call to {\ttfamily R\+H\+S\+B\+C4} in the {\ttfamily A\+LE} case should be changed/optimized \end{DoxyRefDesc}

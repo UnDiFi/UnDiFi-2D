@@ -1,0 +1,49 @@
+1c1
+<       subroutine RHSFunction(ts,t,global_in,global_out,dummy,NodalBcs)
+---
+>       subroutine RHSFunction(ts,t,global_in,global_out,dummy)
+5c5,7
+< C     $Id: RHSFunction.F,v 1.24 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+>       implicit none
+> C
+> C     $Id: RHSFunction.F,v 1.24 2016/11/10 11:25:13 abonfi Exp $
+9d10
+< C     NodalBcs has been ADDED to cope with petsc-3.8.*
+21a23
+> #include "petsc/finclude/petscsys.h"
+25,29d26
+<       use petscvec
+<       use petscmat
+<       use petscts
+< C
+<       implicit none
+44d40
+<       IS, dimension(0:*) :: NodalBcs
+56c52
+<      &ibgn,iend,ivar,IADDR,LINDX,NPNOD
+---
+>      &ibgn,iend,ivar,IADDR,LINDX,NPNOD,ifrst,ilast
+62a59
+>       PetscBool flg
+65d61
+<       PetscBool flg
+287c283
+<          CALL RHSBC1(global_out, NodalBcs)
+---
+>          CALL RHSBC1(global_out)
+295,296c291,292
+<          CALL RHSBC4(x_array(i_x+1),rhs_array(i_rhs+1),NodalBcs,ibgn,
+<      &               NDIM,DSTAK(LFREE),(ABS(KAN).EQ.4))
+---
+>          CALL RHSBC4(x_array(i_x+1),rhs_array(i_rhs+1),ibgn,NDIM,
+>      &               DSTAK(LFREE),(ABS(KAN).EQ.4))
+302,303c298
+<          IF(TURBULENT.AND.COUPLED)
+<      &CALL RHSBC5c(rhs_array(i_rhs+1),ibgn,NodalBcs)
+---
+>          IF(TURBULENT.AND.COUPLED)CALL RHSBC5c(rhs_array(i_rhs+1),ibgn)
+361a357,359
+> C
+>   100 FORMAT(4(F12.5,1X))
+>   235 FORMAT (E10.4,1X,1(I4,1X),6(E10.4,1X))

@@ -1,0 +1,1501 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	99.08.16.07.45.30;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.31.42;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Projectors for inviscid boundary conditions
+@
+
+
+1.2
+log
+@removed unused INCLUDE statement
+@
+text
+@C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE PRJFF4(VN,VS,VT,NVAR)
+C
+C     Compute projectors for farfield boundary conditions
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+      INCLUDE 'three'
+      INCLUDE 'projct.com'
+C     INCLUDE 'cell'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NVAR
+C
+C     .. Array Arguments ..
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+      DOUBLE PRECISION VN(*),VS(*),VT(*)
+C
+C     .. Local Scalars ..
+C
+      INTEGER IDIM,i,j,k
+#ifdef DEBUG
+      INTEGER ifail
+      LOGICAL WARNA,WARNB,WARNC,WARND,WARNE
+#endif
+      DOUBLE PRECISION N_dot_U,S_dot_U,T_dot_U,AREA,SUM1,SUM2,SUM3,SUM4
+      DOUBLE PRECISION Z1INV,Z1SQRINV,DENS,DENSINV,TEMP1,TEMP2,
+     1GM1AbarINV,GM1AsqrINV
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION dUdZ(5,5),dZdU(5,5)
+      DOUBLE PRECISION WR(5),LPOS(5),LNEG(5)
+      DOUBLE PRECISION VRIGHT(5,5),VLEFT(5,5), ZRIGHT
+     +(5,5),ZLEFT(5,5)
+#ifdef DEBUG
+      DOUBLE PRECISION WKSP(5,5),WKSP1(5,5),
+     +WKSP2(5,5),WKSP3(5,5),WKSP4(5,5)
+#endif
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+#ifdef DEBUG
+      LOGICAL  UNITMAT
+      EXTERNAL UNITMAT
+#endif
+C
+C     .. Intrinsic Functions ..
+C
+C
+C     .. Data Statements ..
+C
+      DATA dUdZ,dZdU / 50*ZERO /
+C
+C     .. Executable Statements ..
+C
+      Z1INV = ONE/ZAVG(1)
+      Z1SQRINV = Z1INV*Z1INV
+C
+C     .. Matrix dUdZ ..
+C
+      dUdZ(1,1) = TWO   * ZAVG(1)
+C
+      dUdZ(2,1) = GINV  * ZAVG(2)
+      dUdZ(2,2) = GINV  * ZAVG(1)
+      dUdZ(2,3) = GM1OG * ZAVG(3)
+      dUdZ(2,4) = GM1OG * ZAVG(4)
+      dUdZ(2,5) = GM1OG * ZAVG(5)
+C
+      dUdZ(3,1) = ZAVG(3)
+      dUdZ(3,3) = ZAVG(1)
+C
+      dUdZ(4,1) = ZAVG(4)
+      dUdZ(4,4) = ZAVG(1)
+C
+      dUdZ(5,1) = ZAVG(5)
+      dUdZ(5,5) = ZAVG(1)
+C
+C     .. Matrix dZdU ..
+C
+      dZdU(1,1) = HALF * Z1INV
+C
+      dZdU(2,1) = ( GM1 * KINETIC - HALF*Z1INV*ZAVG(2) )*Z1INV
+      dZdU(2,2) = GAM * Z1INV
+      dZdU(2,3) =-GM1 * ZAVG(3) * Z1SQRINV
+      dZdU(2,4) =-GM1 * ZAVG(4) * Z1SQRINV
+      dZdU(2,5) =-GM1 * ZAVG(5) * Z1SQRINV
+C
+      dZdU(3,1) =-HALF * ZAVG(3) * Z1SQRINV
+      dZdU(3,3) = Z1INV
+C
+      dZdU(4,1) =-HALF * ZAVG(4) * Z1SQRINV
+      dZdU(4,4) = Z1INV
+C
+      dZdU(5,1) =-HALF * ZAVG(5) * Z1SQRINV
+      dZdU(5,5) = Z1INV
+C
+C     .. define an orthonormal base in the direction of the
+C        face normal ..
+C
+      AREA = SQRT(VN(1)*VN(1)+ VN(2)*VN(2)+ VN(3)*VN(3))
+C
+      VN(1) = VN(1) / AREA
+      VN(2) = VN(2) / AREA
+      VN(3) = VN(3) / AREA
+C
+      N_dot_U = UAVG(3) * VN(1) + UAVG(4) * VN(2) + UAVG(5) * VN(3)
+      S_dot_U = UAVG(3) * VS(1) + UAVG(4) * VS(2) + UAVG(5) * VS(3)
+      T_dot_U = UAVG(3) * VT(1) + UAVG(4) * VT(2) + UAVG(5) * VT(3)
+C
+C	.. Eigenvalues ..
+C
+      WR(1) = N_dot_U
+      WR(2) = N_dot_U
+      WR(3) = ( N_dot_U + ABAR )
+      WR(4) = ( N_dot_U - ABAR )
+      WR(5) = N_dot_U
+C
+C       .. Some useful constants ..
+C
+      DENSINV = Z1SQRINV
+      DENS = ONE/DENSINV
+      GM1AsqrINV = GM1 / ASQR
+      GM1AbarINV = GM1AsqrINV * ABAR
+C
+C	.. Left Eigenvectors ..
+C
+      VLEFT(1,1) = ONE - GM1AsqrINV * KINETIC
+      VLEFT(1,2) = - GM1AsqrINV
+*
+      VLEFT(2,1) = - DENSINV * S_dot_U
+      VLEFT(2,2) = ZERO
+*
+      VLEFT(3,1) = HALF * DENSINV * ( GM1 * KINETIC / ABAR - N_dot_U )
+      VLEFT(3,2) = HALF * DENSINV * GM1AbarINV
+*
+      VLEFT(4,1) = HALF * DENSINV * ( GM1 * KINETIC / ABAR + N_dot_U )
+      VLEFT(4,2) = VLEFT(3,2)
+*
+      VLEFT(5,1) = - DENSINV * T_dot_U
+      VLEFT(5,2) = ZERO
+C
+C	.. Right Eigenvectors ..
+C
+      VRIGHT(1,1) = ONE
+      VRIGHT(2,1) = KINETIC
+*
+      VRIGHT(1,2) = ZERO
+      VRIGHT(2,2) = DENS * S_dot_U
+*
+      VRIGHT(1,3) = DENS / ABAR
+      VRIGHT(2,3) = DENS * ( UAVG(2)/ABAR + N_dot_U )
+*
+      VRIGHT(1,4) = VRIGHT(1,3)
+      VRIGHT(2,4) = DENS * ( UAVG(2)/ABAR - N_dot_U )
+*
+      VRIGHT(1,5) = ZERO
+      VRIGHT(2,5) = DENS * T_dot_U
+C
+C	.. Left Eigenvectors ..
+C
+      VLEFT(1,3) = GM1AsqrINV * UAVG(3)
+      VLEFT(2,3) = VS(1) * DensINV
+      VLEFT(3,3) = HALF * DensINV * ( - GM1AbarINV * UAVG(3) + VN(1) )
+      VLEFT(4,3) = HALF * DensINV * ( - GM1AbarINV * UAVG(3) - VN(1) )
+      VLEFT(5,3) = VT(1) * DensINV
+C
+      VLEFT(1,4) = GM1AsqrINV * UAVG(4)
+      VLEFT(2,4) = VS(2) * DensINV
+      VLEFT(3,4) = HALF * DensINV * ( - GM1AbarINV * UAVG(4) + VN(2) )
+      VLEFT(4,4) = HALF * DensINV * ( - GM1AbarINV * UAVG(4) - VN(2) )
+      VLEFT(5,4) = VT(2) * DensINV
+C
+      VLEFT(1,5) = GM1AsqrINV * UAVG(5)
+      VLEFT(2,5) = VS(3) * DensINV
+      VLEFT(3,5) = HALF * DensINV * ( - GM1AbarINV * UAVG(5) + VN(3) )
+      VLEFT(4,5) = HALF * DensINV * ( - GM1AbarINV * UAVG(5) - VN(3) )
+      VLEFT(5,5) = VT(3) * DensINV
+C
+C	.. Right Eigenvectors ..
+C
+      VRIGHT(3,1) = UAVG(3)
+      VRIGHT(3,2) = DENS * VS(1)
+      VRIGHT(3,3) = DENS * ( UAVG(3) / ABAR + VN(1) )
+      VRIGHT(3,4) = DENS * ( UAVG(3) / ABAR - VN(1) )
+      VRIGHT(3,5) = DENS * VT(1)
+C
+      VRIGHT(4,1) = UAVG(4)
+      VRIGHT(4,2) = DENS * VS(2)
+      VRIGHT(4,3) = DENS * ( UAVG(4) / ABAR + VN(2) )
+      VRIGHT(4,4) = DENS * ( UAVG(4) / ABAR - VN(2) )
+      VRIGHT(4,5) = DENS * VT(2)
+C
+      VRIGHT(5,1) = UAVG(5)
+      VRIGHT(5,2) = DENS * VS(3)
+      VRIGHT(5,3) = DENS * ( UAVG(5) / ABAR + VN(3) )
+      VRIGHT(5,4) = DENS * ( UAVG(5) / ABAR - VN(3) )
+      VRIGHT(5,5) = DENS * VT(3)
+C
+C	.. Positive and negative eigenvalues ..
+C
+      DO 12 IDIM = 1 , NVAR
+         LPOS(IDIM) = HALF*(ONE+DSIGN(ONE,WR(IDIM)))
+         LNEG(IDIM) = HALF*(ONE-DSIGN(ONE,WR(IDIM)))
+   12 CONTINUE
+C
+C     .. Transforms the right and left eigenvector in
+C        parameter vector
+C
+      DO 26 j = 1 , NVAR
+         DO 26 i =  1, NVAR
+            SUM1 = ZERO
+            SUM2 = ZERO
+            DO 28 k =  1, NVAR
+               SUM1 = SUM1 + dZdU(i,k) * VRIGHT(k,j)
+               SUM2 = SUM2 + VLEFT(i,k) * dUdZ(k,j)
+   28       CONTINUE
+            ZRIGHT(i,j) = SUM1
+            ZLEFT(i,j) = SUM2
+   26 CONTINUE
+C
+C	.. Compute ZRIGHT * Lambda(+/-) * ZLEFT
+C
+      DO 16 j = 1 , NVAR
+         DO 16 i =  1, NVAR
+            SUM1 = ZERO
+            SUM2 = ZERO
+            SUM3 = ZERO
+            SUM4 = ZERO
+            DO 18 k =  1, NVAR
+               TEMP1 = ZRIGHT(i,k) * ZLEFT(k,j)
+               TEMP2 = VRIGHT(i,k) * VLEFT(k,j)
+               SUM1 = SUM1 + TEMP1 * LPOS(k)
+               SUM2 = SUM2 + TEMP1 * LNEG(k)
+               SUM3 = SUM3 + TEMP2 * LPOS(k)
+               SUM4 = SUM4 + TEMP2 * LNEG(k)
+   18       CONTINUE
+            PPOSZ(i,j) = SUM1
+            PNEGZ(i,j) = SUM2
+            PPOSU(i,j) = SUM3
+            PNEGU(i,j) = SUM4
+   16 CONTINUE
+C
+#ifdef DEBUG
+C
+C     .. Left times Right eigenvectors in conserved ..
+C
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,ONE,VLEFT,5,
+     +VRIGHT,5,ZERO,WKSP,5)
+      WARNA = UNITMAT( WKSP, NVAR, NVAR, 5, 1.D-14 )
+C
+C     .. dUdZ * dZdU
+C
+      CALL DGEMM('N','N',5,5,5,ONE,dUdZ,5,
+     +dZdU,5,ZERO,WKSP1,5)
+      WARNB = UNITMAT( WKSP1, 5, 5, 5, 1.D-14 )
+C
+C     .. Left times Right eigenvectors in parameter ..
+C
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,ONE,ZLEFT,5,
+     +ZRIGHT,5,ZERO,WKSP2,5)
+      WARNC = UNITMAT( WKSP2, NVAR, NVAR, 5, 1.D-14 )
+C
+      DO 80 j = 1 , NVAR
+         DO 80 i =  1, NVAR
+            WKSP3(i,j) = PPOSZ(i,j)+PNEGZ(i,j)
+            WKSP4(i,j) = PPOSU(i,j)+PNEGU(i,j)
+   80 CONTINUE
+      WARND = UNITMAT( WKSP3, NVAR, NVAR, 5, 1.D-14 )
+      WARNE = UNITMAT( WKSP4, NVAR, NVAR, 5, 1.D-14 )
+C
+      WARNA = .NOT. WARNA
+      WARNB = .NOT. WARNB
+      WARNC = .NOT. WARNC
+      WARND = .NOT. WARND
+      WARNE = .NOT. WARNE
+C
+      IF( WARNA .OR. WARNB .OR. WARNC .OR. WARND .OR. WARNE )THEN
+C
+         WRITE(NOUT,*)' Subroutine PRJFF4'
+         WRITE(6,*)'n vector',(VN(i),i=1,3)
+         WRITE(6,*)'s vector',(VS(i),i=1,3)
+         WRITE(6,*)'t vector',(VT(i),i=1,3)
+         WRITE(6,*)'Z1INV = ',Z1INV,' KINETIC = ',KINETIC,' ASQR = ' ,
+     +   ASQR
+C
+         IF( WARNA )THEN
+            CALL X04CAF('General',' ',5,5,VLEFT,5,
+     +      'Left eigenvectors',IFAIL)
+            CALL X04CAF('General',' ',5,5,VRIGHT,5,
+     +      'Right eigenvectors',IFAIL)
+            CALL X04CAF('General',' ',NVAR,NVAR,WKSP,5,
+     +      'Right times left (conserved) ',IFAIL)
+         ENDIF
+C
+         IF( WARNB )CALL X04CAF('General',' ',5,5,WKSP1,5,
+     +   'dUdZ times dZdU',IFAIL)
+ 
+         IF( WARNC )CALL X04CAF('General',' ',NVAR,NVAR,WKSP,5,
+     +   'Right times left (Z) ',IFAIL)
+ 
+C
+         IF( WARND )THEN
+            CALL X04CAF('General',' ',NVAR,NVAR,WKSP3,5,
+     +      'Ppos + Pneg = I(????) in parameter vector',IFAIL)
+            CALL X04CAF('General',' ',NVAR,NVAR,PPOSZ,5,
+     +      'Ppos in Z',IFAIL)
+            CALL X04CAF('General',' ',NVAR,NVAR,PNEGZ,5,
+     +      'Pneg in Z',IFAIL)
+         ENDIF
+         IF( WARNE )CALL X04CAF('General',' ',NVAR,NVAR,WKSP4,5,
+     +   'Ppos + Pneg = I(????) in conserved variables',IFAIL)
+ 
+C
+         PAUSE
+C
+      ENDIF
+#endif
+C
+      VN(1) = VN(1) * AREA
+      VN(2) = VN(2) * AREA
+      VN(3) = VN(3) * AREA
+C
+      RETURN
+      END
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE PRJW4(VN,VS,VT,NVAR)
+C
+C     Compute projectors for inviscid wall boundary conditions
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+      INCLUDE 'three'
+C     INCLUDE 'cell'
+      INCLUDE 'projct.com'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NVAR
+C
+C     .. Array Arguments ..
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+      DOUBLE PRECISION VN(*),VS(*),VT(*)
+C
+C     .. Local Scalars ..
+C
+      INTEGER i,j
+#ifdef DEBUG
+      INTEGER ifail
+      LOGICAL WARNA
+#endif
+      DOUBLE PRECISION COEFF1,COEFF2,COEFF3,AREA
+      DOUBLE PRECISION Z1INV,Z1SQRINV,COEFF4,COEFF5,COEFF6
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION dUdZ(5,5),dZdU(5,5)
+      DOUBLE PRECISION WORK1(5,5)
+#ifdef DEBUG
+      DOUBLE PRECISION WKSP(5,5)
+#endif
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+#ifdef DEBUG
+      LOGICAL  UNITMAT
+      EXTERNAL UNITMAT
+#endif
+C
+C     .. Intrinsic Functions ..
+C
+C
+C     .. Data Statements ..
+C
+      DATA dUdZ,dZdU / 50*ZERO /
+C
+C     .. Executable Statements ..
+C
+C     .. Solid Wall Boundary Conditions
+C
+C     .. define an orthonormal base in the direction of the
+C        face normal ..
+C
+      AREA = DSQRT(VN(1)*VN(1)+ VN(2)*VN(2)+ VN(3)*VN(3))
+C
+      VN(1) = VN(1) / AREA
+      VN(2) = VN(2) / AREA
+      VN(3) = VN(3) / AREA
+C
+C     .. Z^{*} = sqrt{rho} [ 1,H,-u_n,u_s,u_t]
+C
+      COEFF1 = - VN(1)*VN(1) + VS(1)*VS(1) + VT(1)*VT(1)
+      COEFF2 = - VN(2)*VN(2) + VS(2)*VS(2) + VT(2)*VT(2)
+      COEFF3 = - VN(3)*VN(3) + VS(3)*VS(3) + VT(3)*VT(3)
+      COEFF4 = - VN(1)*VN(2) + VS(1)*VS(2) + VT(1)*VT(2)
+      COEFF5 = - VN(1)*VN(3) + VS(1)*VS(3) + VT(1)*VT(3)
+      COEFF6 = - VN(2)*VN(3) + VS(2)*VS(3) + VT(2)*VT(3)
+C
+C     An other approach
+C
+C     we take Z^{*} = sqrt{rho}[1,H,0,u_t,u_s]
+C
+C     TEMP = UAVG(3)*VN(1)+UAVG(4)*VN(2)+UAVG(5)*VN(3)
+C     TEMP = ONE/(QINV*QINV) - TEMP*TEMP
+C     TEMP = ONE/(QINV*DSQRT(TEMP))
+C
+C     COEFF1 = VS(1)*VS(1) + VT(1)*VT(1)
+C     COEFF2 = VS(2)*VS(2) + VT(2)*VT(2)
+C     COEFF3 = VS(3)*VS(3) + VT(3)*VT(3)
+C     COEFF4 = VS(1)*VS(2) + VT(1)*VT(2)
+C     COEFF5 = VS(1)*VS(3) + VT(1)*VT(3)
+C     COEFF6 = VS(2)*VS(3) + VT(2)*VT(3)
+C
+C     COEFF1 = TEMP*COEFF1
+C     COEFF2 = TEMP*COEFF2
+C     COEFF3 = TEMP*COEFF3
+C     COEFF4 = TEMP*COEFF4
+C     COEFF5 = TEMP*COEFF5
+C     COEFF6 = TEMP*COEFF6
+C
+C
+C     .. Some useful constants ..
+C
+      Z1INV = ONE/ZAVG(1)
+      Z1SQRINV = Z1INV*Z1INV
+C
+C     .. Matrix dUdZ ..
+C
+      dUdZ(1,1) = TWO   * ZAVG(1)
+C
+      dUdZ(2,1) = GINV  * ZAVG(2)
+      dUdZ(2,2) = GINV  * ZAVG(1)
+      dUdZ(2,3) = GM1OG * ZAVG(3)
+      dUdZ(2,4) = GM1OG * ZAVG(4)
+      dUdZ(2,5) = GM1OG * ZAVG(5)
+C
+      dUdZ(3,1) = ZAVG(3)
+      dUdZ(3,3) = ZAVG(1)
+C
+      dUdZ(4,1) = ZAVG(4)
+      dUdZ(4,4) = ZAVG(1)
+C
+      dUdZ(5,1) = ZAVG(5)
+      dUdZ(5,5) = ZAVG(1)
+C
+C     .. Matrix dZdU ..
+C
+      dZdU(1,1) = HALF * Z1INV
+C
+      dZdU(2,1) = ( GM1 * KINETIC - HALF*Z1INV*ZAVG(2) )*Z1INV
+      dZdU(2,2) = GAM * Z1INV
+      dZdU(2,3) =-GM1 * ZAVG(3) * Z1SQRINV
+      dZdU(2,4) =-GM1 * ZAVG(4) * Z1SQRINV
+      dZdU(2,5) =-GM1 * ZAVG(5) * Z1SQRINV
+C
+      dZdU(3,1) =-HALF * ZAVG(3) * Z1SQRINV
+      dZdU(3,3) = Z1INV
+C
+      dZdU(4,1) =-HALF * ZAVG(4) * Z1SQRINV
+      dZdU(4,4) = Z1INV
+C
+      dZdU(5,1) =-HALF * ZAVG(5) * Z1SQRINV
+      dZdU(5,5) = Z1INV
+C
+C
+      PNEGZ(1,1) = ONE
+      PNEGZ(1,2) = ZERO
+      PNEGZ(1,3) = ZERO
+      PNEGZ(1,4) = ZERO
+      PNEGZ(1,5) = ZERO
+C
+      PNEGZ(2,1) = ZERO
+      PNEGZ(2,2) = ONE
+      PNEGZ(2,3) = ZERO
+      PNEGZ(2,4) = ZERO
+      PNEGZ(2,5) = ZERO
+C
+      PNEGZ(3,1) = ZERO
+      PNEGZ(3,2) = ZERO
+      PNEGZ(3,3) = COEFF1
+      PNEGZ(3,4) = COEFF4
+      PNEGZ(3,5) = COEFF5
+C
+      PNEGZ(4,1) = ZERO
+      PNEGZ(4,2) = ZERO
+      PNEGZ(4,3) = COEFF4
+      PNEGZ(4,4) = COEFF2
+      PNEGZ(4,5) = COEFF6
+C
+      PNEGZ(5,1) = ZERO
+      PNEGZ(5,2) = ZERO
+      PNEGZ(5,3) = COEFF5
+      PNEGZ(5,4) = COEFF6
+      PNEGZ(5,5) = COEFF3
+C
+C	.. Compute dU/dZ * P^{-} * dZ/dU
+C
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,1.D0,dUdZ,5,
+     +PNEGZ,5,ZERO,WORK1,5)
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,1.D0,WORK1,5,
+     +dZdU,5,ZERO,PNEGU,5)
+C
+C
+C
+C
+      DO 3 J = 1,NVAR
+         DO 3 I = 1,NVAR
+            IF( I .EQ. J )THEN
+               PPOSZ(I,J) = ONE - PNEGZ(I,J)
+               PPOSU(I,J) = ONE - PNEGU(I,J)
+            ELSE
+               PPOSZ(I,J) = - PNEGZ(I,J)
+               PPOSU(I,J) = - PNEGU(I,J)
+            ENDIF
+    3 CONTINUE
+C
+#ifdef DEBUG
+C
+C     .. Compute dUdZ * dZdU
+C
+      CALL DGEMM('N','N',5,5,5,1.D0,dUdZ,5,dZdU,5,ZERO,
+     +WKSP,5)
+      WARNA = UNITMAT( WKSP, 5, 5, 5, 1.D-14 )
+C
+      WARNA = .NOT. WARNA
+C
+      IF( WARNA )THEN
+         WRITE(NOUT,*)' Subroutine PRJW4'
+         WRITE(6,*)(VN(i),i=1,3)
+         WRITE(6,*)(VS(i),i=1,3)
+         WRITE(6,*)(VT(i),i=1,3)
+         WRITE(6,*)'Z1INV = ',Z1INV,' KINETIC = ',KINETIC,
+     +   ' ASQR = ' ,ASQR
+         IF( WARNA ) CALL X04CAF('General',' ',5,5,WKSP,5,
+     +   'dUdZ times dZdU',IFAIL)
+         PAUSE
+      ENDIF
+C
+#endif
+C
+      VN(1) = VN(1) * AREA
+      VN(2) = VN(2) * AREA
+      VN(3) = VN(3) * AREA
+C
+      RETURN
+      END
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE PRJO4(VN,VS,VT,NVAR)
+C
+C     Compute projectors for constant pressure outlet boundary conditions
+C     (compressible)
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+      INCLUDE 'projct.com'
+      INCLUDE 'three'
+C     INCLUDE 'cell'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NVAR
+C
+C     .. Array Arguments ..
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+      DOUBLE PRECISION VN(*),VS(*),VT(*)
+C
+C     .. Local Scalars ..
+C
+      INTEGER i,j
+#ifdef DEBUG
+      INTEGER ifail
+#endif
+      DOUBLE PRECISION Z1INV,Z1SQRINV
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION dUdZ(5,5),dZdU(5,5),
+     +dPdZ(5,5),dZdP(5,5),WORK1(5,5),PNEGV(5,5)
+#ifdef DEBUG
+      DOUBLE PRECISION WKSP(5,5),WKSP1(5,5)
+#endif
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+C
+C     .. Intrinsic Functions ..
+C
+C
+C     .. Data Statements ..
+C
+      DATA dUdZ,dZdU / 25*ZERO, 25*ZERO /
+      DATA dPdZ,dZdP / 25*ZERO, 25*ZERO /
+C
+      DATA (PNEGV(1,I),I=1,5)/ONE,ZERO,ZERO,ZERO,ZERO/
+      DATA (PNEGV(2,I),I=1,5)/ZERO,ZERO,ZERO,ZERO,ZERO/
+      DATA (PNEGV(3,I),I=1,5)/ZERO,ZERO,ONE,ZERO,ZERO/
+      DATA (PNEGV(4,I),I=1,5)/ZERO,ZERO,ZERO,ONE,ZERO/
+      DATA (PNEGV(5,I),I=1,5)/ZERO,ZERO,ZERO,ZERO,ONE/
+C
+C     .. Executable Statements ..
+C
+      Z1INV = ONE/ZAVG(1)
+      Z1SQRINV = Z1INV*Z1INV
+C
+C     .. Matrix dUdZ ..
+C
+      dUdZ(1,1) = TWO   * ZAVG(1)
+C
+      dUdZ(2,1) = GINV  * ZAVG(2)
+      dUdZ(2,2) = GINV  * ZAVG(1)
+      dUdZ(2,3) = GM1OG * ZAVG(3)
+      dUdZ(2,4) = GM1OG * ZAVG(4)
+      dUdZ(2,5) = GM1OG * ZAVG(5)
+C
+      dUdZ(3,1) = ZAVG(3)
+      dUdZ(3,3) = ZAVG(1)
+C
+      dUdZ(4,1) = ZAVG(4)
+      dUdZ(4,4) = ZAVG(1)
+C
+      dUdZ(5,1) = ZAVG(5)
+      dUdZ(5,5) = ZAVG(1)
+C
+C     .. Matrix dZdU ..
+C
+      dZdU(1,1) = HALF * Z1INV
+C
+      dZdU(2,1) = ( GM1 * KINETIC - HALF*Z1INV*ZAVG(2) )*Z1INV
+      dZdU(2,2) = GAM * Z1INV
+      dZdU(2,3) =-GM1 * ZAVG(3) * Z1SQRINV
+      dZdU(2,4) =-GM1 * ZAVG(4) * Z1SQRINV
+      dZdU(2,5) =-GM1 * ZAVG(5) * Z1SQRINV
+C
+      dZdU(3,1) =-HALF * ZAVG(3) * Z1SQRINV
+      dZdU(3,3) = Z1INV
+C
+      dZdU(4,1) =-HALF * ZAVG(4) * Z1SQRINV
+      dZdU(4,4) = Z1INV
+C
+      dZdU(5,1) =-HALF * ZAVG(5) * Z1SQRINV
+      dZdU(5,5) = Z1INV
+C
+C     .. define an orthonormal base in the direction of the
+C        face normal ..
+C
+C     AREA = DSQRT(VN(1)*VN(1)+ VN(2)*VN(2)+ VN(3)*VN(3))
+C
+C     VN(1) = VN(1) / AREA
+C     VN(2) = VN(2) / AREA
+C     VN(3) = VN(3) / AREA
+C
+C
+C     .. Matrix dZdP ..
+C
+c
+c     .. First row ..
+c
+      dZdP(1,1) = HALF * Z1INV
+c
+c     .. Second row ..
+c
+      dZdP(2,1) = HALF * Z1INV * ( KINETIC - ASQR/GM1 )
+      dZdP(2,2) = GOGM1 * Z1INV
+      dZdP(2,3) = ZAVG(3)
+      dZdP(2,4) = ZAVG(4)
+      dZdP(2,5) = ZAVG(5)
+c
+c     .. Third row ..
+c
+      dZdP(3,1) = HALF * Z1INV * UAVG(3)
+      dZdP(3,3) = ZAVG(1)
+c
+c     .. Fourth row ..
+c
+      dZdP(4,1) = HALF * Z1INV * UAVG(4)
+      dZdP(4,4) = ZAVG(1)
+c
+c     .. Fifth row ..
+c
+      dZdP(5,1) = HALF * Z1INV * UAVG(4)
+      dZdP(5,5) = ZAVG(1)
+C
+C       .. Matrix dPdZ ..
+C
+c
+c	.. First row ..
+c
+      dPdZ(1,1) = TWO * ZAVG(1)
+c
+c	.. Second row ..
+c
+      dPdZ(2,1) = GM1OG * ZAVG(2)
+      dPdZ(2,2) = GM1OG * ZAVG(1)
+      dPdZ(2,3) =-GM1OG * ZAVG(3)
+      dPdZ(2,4) =-GM1OG * ZAVG(4)
+      dPdZ(2,5) =-GM1OG * ZAVG(5)
+c
+c	.. Third row ..
+c
+      dPdZ(3,1) = - ZAVG(3) * Z1SQRINV
+      dPdZ(3,3) = Z1INV
+c
+c	.. Fourth row ..
+c
+      dPdZ(4,1) = - ZAVG(4) * Z1SQRINV
+      dPdZ(4,4) = Z1INV
+c
+c	.. Fifth row ..
+c
+      dPdZ(5,1) = - ZAVG(5) * Z1SQRINV
+      dPdZ(5,5) = Z1INV
+C
+#ifdef DEBUG
+C
+      CALL DGEMM('N','N',5,5,5,ONE,dPdZ,5,dZdP,5,
+     +ZERO,WKSP,5)
+      CALL X04CAF('General',' ',NVAR,NVAR,WKSP,5,
+     +'dPdZ*dZdP = I(????)',IFAIL)
+      CALL X04CAF('General',' ',NVAR,NVAR,PNEGV,5,
+     +'PNEGV ',IFAIL)
+C
+#endif
+C
+C     .. Transform the projector from primitive to parameter vector, i.e.
+C        compute P_{Z}^{-} = dZ/dP * P_{V}^{-} * dP/dZ
+C
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,ONE,dZdP,5,
+     +PNEGV,5,ZERO,WORK1,5)
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,ONE,WORK1,5,
+     +dPdZ,5,ZERO,PNEGZ,5)
+CCCC  CALL DINIT(25,ZERO,PNEGZ,1)
+CCCC  PNEGZ(1,1) = ONE
+CCCC  PNEGZ(2,2) = ZERO
+CCCC  PNEGZ(3,3) = ONE
+CCCC  PNEGZ(4,4) = ONE
+CCCC  PNEGZ(5,5) = ONE
+C
+C     .. Transform the projector from parameter vector to conserved, i.e.
+C        compute dU/dZ * P_{Z}^{-} * dZ/dU
+C
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,ONE,dUdZ,5,
+     +PNEGZ,5,ZERO,WORK1,5)
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,ONE,WORK1,5,
+     +dZdU,5,ZERO,PNEGU,5)
+C
+C       .. Compute P^{+} both in parameter vector and conserved variables ..
+C
+      DO 3 J = 1,NVAR
+         DO 3 I = 1,NVAR
+            IF( I .EQ. J )THEN
+               PPOSZ(I,J) = ONE - PNEGZ(I,J)
+               PPOSU(I,J) = ONE - PNEGU(I,J)
+            ELSE
+               PPOSZ(I,J) = - PNEGZ(I,J)
+               PPOSU(I,J) = - PNEGU(I,J)
+            ENDIF
+    3 CONTINUE
+C
+#ifdef DEBUG
+C
+      WRITE(NOUT,*)' Subroutine PRJO'
+      WRITE(6,*)'versore n',(VN(i),i=1,3)
+      WRITE(6,*)'versore s',(VS(i),i=1,3)
+      WRITE(6,*)'versore t',(VT(i),i=1,3)
+      WRITE(6,*)'Z1INV = ',Z1INV,' KINETIC = ',KINETIC,' ASQR = ' ,ASQR
+C
+      CALL DGEMM('N','N',5,5,5,1.D0,dUdZ,5,dZdU,5,ZERO,WKSP,5)
+      CALL X04CAF('General',' ',5,5,WKSP,5,'dUdZ times dZdU',IFAIL)
+C
+      CALL X04CAF('General',' ',NVAR,NVAR,PNEGZ,5,
+     +'PNEGZ ',IFAIL)
+      CALL X04CAF('General',' ',NVAR,NVAR,PNEGU,5,
+     +'PNEGU ',IFAIL)
+C
+      DO 80 j = 1 , NVAR
+         DO 80 i =  1, NVAR
+            WKSP(i,j) = PPOSZ(i,j)+PNEGZ(i,j)
+            WKSP1(i,j) = PPOSU(i,j)+PNEGU(i,j)
+   80 CONTINUE
+      CALL X04CAF('General',' ',NVAR,NVAR,WKSP,5,
+     +'Ppos + Pneg = I(????)',IFAIL)
+      CALL X04CAF('General',' ',NVAR,NVAR,WKSP1,5,
+     +'Ppos + Pneg = I(????)',IFAIL)
+      PAUSE
+#endif
+C
+C     VN(1) = VN(1) * AREA
+C     VN(2) = VN(2) * AREA
+C     VN(3) = VN(3) * AREA
+C
+      RETURN
+      END
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE PRJFF2(VN,VS,VT,NVAR)
+C
+C     Compute projectors for farfield boundary conditions
+C     (artificial compressibility)
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+      INCLUDE 'projct.com'
+      INCLUDE 'chorin.com'
+      INCLUDE 'three'
+C     INCLUDE 'cell'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NVAR
+C
+C     .. Array Arguments ..
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C
+      DOUBLE PRECISION VN(*),VS(*),VT(*)
+C
+C     .. Local Scalars ..
+C
+      INTEGER IDIM,i,j,k
+#ifdef DEBUG
+      INTEGER ifail
+      LOGICAL WARNA,WARND,WARNE
+#endif
+      DOUBLE PRECISION AREA,SUM3,SUM4
+      DOUBLE PRECISION U_dot_M,TEMP2,C,CINV,LPLUS,LMINS,
+     +U_DOT_S,U_DOT_T,CSQR,CSQRINV
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION WR(4),LPOS(4),LNEG(4)
+      DOUBLE PRECISION VRIGHT(4,4),VLEFT(4,4)
+#ifdef DEBUG
+      DOUBLE PRECISION WKSP(4,4),
+     +WKSP3(4,4),WKSP4(4,4)
+#endif
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+#ifdef DEBUG
+      LOGICAL  UNITMAT
+      EXTERNAL UNITMAT
+#endif
+C
+C     .. Executable Statements ..
+C
+C
+      AREA = DSQRT(VN(1)*VN(1)+ VN(2)*VN(2)+ VN(3)*VN(3))
+C
+      VN(1) = VN(1) / AREA
+      VN(2) = VN(2) / AREA
+      VN(3) = VN(3) / AREA
+C
+C       .. U_dot_M is the dot product between the velocity vector
+C          and the face normal ..
+C
+      U_dot_M = ZAVG(2) * VN(1) + ZAVG(3) * VN(2) + ZAVG(4) * VN(3)
+      U_dot_S = ZAVG(2) * VS(1) + ZAVG(3) * VS(2) + ZAVG(4) * VS(3)
+      U_dot_T = ZAVG(2) * VT(1) + ZAVG(3) * VT(2) + ZAVG(4) * VT(3)
+C
+C     .. define an orthonormal base in the direction of the
+C        face normal ..
+C
+C       .. Some useful constants ..
+C
+      CSQR = U_dot_M * U_dot_M + BETA
+      CSQRINV = ONE/CSQR
+      C = SQRT( CSQR )
+      CINV = ONE/C
+C
+      LPLUS = U_dot_M + C
+      LMINS = U_dot_M - C
+C
+C       .. Eigenvalues ..
+C
+      WR(1) = U_dot_M
+      WR(2) = LMINS
+      WR(3) = LPLUS
+      WR(4) = U_dot_M
+C
+C       .. Left Eigenvectors ..
+C
+      VLEFT(1,1) =-U_DOT_S*CSQRINV
+      VLEFT(2,1) = HALF * CSQRINV
+      VLEFT(3,1) = HALF * CSQRINV
+      VLEFT(4,1) =-U_DOT_T*CSQRINV
+C
+C       .. Right Eigenvectors ..
+C
+      VRIGHT(1,1) = ZERO
+      VRIGHT(1,2) = LPLUS * C
+      VRIGHT(1,3) =-LMINS * C
+      VRIGHT(1,4) = ZERO
+C
+C       .. Left Eigenvectors ..
+C
+      VLEFT(1,2) =VS(1)-U_DOT_M*CSQRINV*U_DOT_S*VN(1)
+      VLEFT(2,2) = HALF * CSQRINV * LMINS * VN(1)
+      VLEFT(3,2) = HALF * CSQRINV * LPLUS * VN(1)
+      VLEFT(4,2) =VT(1)-U_DOT_M*CSQRINV*U_DOT_T*VN(1)
+C
+      VLEFT(1,3) =VS(2)-U_DOT_M*CSQRINV*U_DOT_S*VN(2)
+      VLEFT(2,3) = HALF * CSQRINV * LMINS * VN(2)
+      VLEFT(3,3) = HALF * CSQRINV * LPLUS * VN(2)
+      VLEFT(4,3) =VT(2)-U_DOT_M*CSQRINV*U_DOT_T*VN(2)
+C
+      VLEFT(1,4) =VS(3)-U_DOT_M*CSQRINV*U_DOT_S*VN(3)
+      VLEFT(2,4) = HALF * CSQRINV * LMINS * VN(3)
+      VLEFT(3,4) = HALF * CSQRINV * LPLUS * VN(3)
+      VLEFT(4,4) =VT(3)-U_DOT_M*CSQRINV*U_DOT_T*VN(3)
+C
+C       .. Right Eigenvectors ..
+C
+      VRIGHT(2,1) = VS(1)
+      VRIGHT(2,2) = ZAVG(2) - LPLUS * VN(1)
+      VRIGHT(2,3) = ZAVG(2) - LMINS * VN(1)
+      VRIGHT(2,4) = VT(1)
+C
+      VRIGHT(3,1) = VS(2)
+      VRIGHT(3,2) = ZAVG(3) - LPLUS * VN(2)
+      VRIGHT(3,3) = ZAVG(3) - LMINS * VN(2)
+      VRIGHT(3,4) = VT(2)
+C
+      VRIGHT(4,1) = VS(3)
+      VRIGHT(4,2) = ZAVG(4) - LPLUS * VN(3)
+      VRIGHT(4,3) = ZAVG(4) - LMINS * VN(3)
+      VRIGHT(4,4) = VT(3)
+C
+C       .. Positive and negative eigenvalues ..
+C
+      DO 12 IDIM = 1 , NVAR
+         LPOS(IDIM) = HALF*(ONE+DSIGN(ONE,WR(IDIM)))
+         LNEG(IDIM) = HALF*(ONE-DSIGN(ONE,WR(IDIM)))
+   12 CONTINUE
+C
+C       .. Compute ZRIGHT * Lambda(+/-) * ZLEFT
+C
+      DO 16 j = 1 , NVAR
+         DO 16 i =  1, NVAR
+            SUM3 = ZERO
+            SUM4 = ZERO
+            DO 18 k =  1, NVAR
+               TEMP2 = VRIGHT(i,k) * VLEFT(k,j)
+               SUM3 = SUM3 + TEMP2 * LPOS(k)
+               SUM4 = SUM4 + TEMP2 * LNEG(k)
+   18       CONTINUE
+            PPOSZ(i,j) = SUM3
+            PNEGZ(i,j) = SUM4
+            PPOSU(i,j) = SUM3
+            PNEGU(i,j) = SUM4
+   16 CONTINUE
+C
+   76 CONTINUE
+C
+#ifdef DEBUG
+C
+C     .. Left times Right eigenvectors in conserved ..
+C
+      CALL DGEMM('N','N',NVAR,NVAR,NVAR,ONE,VLEFT,4,
+     +VRIGHT,4,ZERO,WKSP,4)
+      WARNA = UNITMAT( WKSP, NVAR, NVAR, 4, 1.D-14 )
+C
+      DO 80 j = 1 , NVAR
+         DO 80 i =  1, NVAR
+            WKSP3(i,j) = PPOSZ(i,j)+PNEGZ(i,j)
+            WKSP4(i,j) = PPOSU(i,j)+PNEGU(i,j)
+   80 CONTINUE
+      WARND = UNITMAT( WKSP3, NVAR, NVAR, 4, 1.D-14 )
+      WARNE = UNITMAT( WKSP4, NVAR, NVAR, 4, 1.D-14 )
+C
+      WARNA = .NOT. WARNA
+      WARND = .NOT. WARND
+      WARNE = .NOT. WARNE
+C
+      IF( WARNA .OR. WARND .OR. WARNE )THEN
+C
+         WRITE(NOUT,*)' Subroutine PRJFF2'
+         WRITE(6,*)'n vector',(VN(i),i=1,3)
+         WRITE(6,*)'s vector',(VS(i),i=1,3)
+         WRITE(6,*)'t vector',(VT(i),i=1,3)
+C
+         IF( WARNA )THEN
+            CALL X04CAF('General',' ',NVAR,NVAR,VLEFT,4,
+     +      'Left eigenvectors',IFAIL)
+            CALL X04CAF('General',' ',NVAR,NVAR,VRIGHT,4,
+     +      'Right eigenvectors',IFAIL)
+            CALL X04CAF('General',' ',NVAR,NVAR,WKSP,4,
+     +      'Right times left (conserved) ',IFAIL)
+         ENDIF
+C
+         IF( WARND )THEN
+            CALL X04CAF('General',' ',NVAR,NVAR,WKSP3,4,
+     +      'Ppos + Pneg = I(????) in parameter vector',IFAIL)
+            CALL X04CAF('General',' ',NVAR,NVAR,PPOSZ,5,
+     +      'Ppos in Z',IFAIL)
+            CALL X04CAF('General',' ',NVAR,NVAR,PNEGZ,5,
+     +      'Pneg in Z',IFAIL)
+         ENDIF
+C
+         IF( WARNE )CALL X04CAF('General',' ',NVAR,NVAR,WKSP4,4,
+     +   'Ppos + Pneg = I(????) in conserved variables',IFAIL)
+C
+         PAUSE
+C
+      ENDIF
+#endif
+C
+      VN(1) = VN(1) * AREA
+      VN(2) = VN(2) * AREA
+      VN(3) = VN(3) * AREA
+C
+      RETURN
+      END
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE PRJW2(VN,VS,VT,NVAR)
+C
+C     Compute projectors for inviscid wall boundary conditions
+C     (artificial compresibility)
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+      INCLUDE 'projct.com'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NVAR
+C
+C     .. Array Arguments ..
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+      DOUBLE PRECISION VN(*),VS(*),VT(*)
+C
+C     .. Local Scalars ..
+C
+      INTEGER i,j
+#ifdef DEBUG
+      INTEGER ifail
+      LOGICAL WARNB,WARNC
+#endif
+      DOUBLE PRECISION COEFF1,COEFF2,COEFF3,AREA
+      DOUBLE PRECISION COEFF4,COEFF5,COEFF6
+C
+C     .. Local Arrays ..
+C
+#ifdef DEBUG
+      DOUBLE PRECISION WKSP1(4,4),WKSP2(4,4)
+#endif
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+#ifdef DEBUG
+      LOGICAL  UNITMAT
+      EXTERNAL UNITMAT
+#endif
+C
+C     .. Intrinsic Functions ..
+C
+C
+C     .. Data Statements ..
+C
+C
+C     .. Executable Statements ..
+C
+C     .. define an orthonormal base in the direction of the
+C        face normal ..
+C
+      AREA = DSQRT(VN(1)*VN(1)+ VN(2)*VN(2)+ VN(3)*VN(3))
+C
+      VN(1) = VN(1) / AREA
+      VN(2) = VN(2) / AREA
+      VN(3) = VN(3) / AREA
+C
+C     .. Solid Wall Boundary Conditions
+C
+C     .. Z^{*} = sqrt{rho} [ 1,H,-u_n,,u_s,u_t]
+C
+      COEFF1 = - VN(1)*VN(1) + VS(1)*VS(1) + VT(1)*VT(1)
+      COEFF2 = - VN(2)*VN(2) + VS(2)*VS(2) + VT(2)*VT(2)
+      COEFF3 = - VN(3)*VN(3) + VS(3)*VS(3) + VT(3)*VT(3)
+      COEFF4 = - VN(1)*VN(2) + VS(1)*VS(2) + VT(1)*VT(2)
+      COEFF5 = - VN(1)*VN(3) + VS(1)*VS(3) + VT(1)*VT(3)
+      COEFF6 = - VN(2)*VN(3) + VS(2)*VS(3) + VT(2)*VT(3)
+C
+C     An other approach
+C
+C     we take Z^{*} = sqrt{rho}[1,H,0,u_t,u_s]
+C
+C     TEMP = UAVG(3)*VN(1)+UAVG(4)*VN(2)+UAVG(5)*VN(3)
+C     TEMP = ONE/(QINV*QINV) - TEMP*TEMP
+C     TEMP = ONE/(QINV*DSQRT(TEMP))
+C
+C     COEFF1 = VS(1)*VS(1) + VT(1)*VT(1)
+C     COEFF2 = VS(2)*VS(2) + VT(2)*VT(2)
+C     COEFF3 = VS(3)*VS(3) + VT(3)*VT(3)
+C     COEFF4 = VS(1)*VS(2) + VT(1)*VT(2)
+C     COEFF5 = VS(1)*VS(3) + VT(1)*VT(3)
+C     COEFF6 = VS(2)*VS(3) + VT(2)*VT(3)
+C
+C     COEFF1 = TEMP*COEFF1
+C     COEFF2 = TEMP*COEFF2
+C     COEFF3 = TEMP*COEFF3
+C     COEFF4 = TEMP*COEFF4
+C     COEFF5 = TEMP*COEFF5
+C     COEFF6 = TEMP*COEFF6
+C
+C
+C     .. Some useful constants ..
+C
+C
+C
+      PNEGZ(1,1) = ONE
+      PNEGZ(1,2) = ZERO
+      PNEGZ(1,3) = ZERO
+      PNEGZ(1,4) = ZERO
+C
+      PNEGZ(2,1) = ZERO
+      PNEGZ(2,2) = COEFF1
+      PNEGZ(2,3) = COEFF4
+      PNEGZ(2,4) = COEFF5
+C
+      PNEGZ(3,1) = ZERO
+      PNEGZ(3,2) = COEFF4
+      PNEGZ(3,3) = COEFF2
+      PNEGZ(3,4) = COEFF6
+C
+      PNEGZ(4,1) = ZERO
+      PNEGZ(4,2) = COEFF5
+      PNEGZ(4,3) = COEFF6
+      PNEGZ(4,4) = COEFF3
+C
+      DO 3 J = 1,NVAR
+         DO 3 I = 1,NVAR
+            PNEGU(I,J) = PNEGZ(I,J)
+            IF( I .EQ. J )THEN
+               PPOSZ(I,J) = ONE - PNEGZ(I,J)
+               PPOSU(I,J) = ONE - PNEGU(I,J)
+            ELSE
+               PPOSZ(I,J) = - PNEGZ(I,J)
+               PPOSU(I,J) = - PNEGU(I,J)
+            ENDIF
+    3 CONTINUE
+C
+#ifdef DEBUG
+C
+      DO 80 j = 1 , NVAR
+         DO 80 i =  1, NVAR
+            WKSP1(i,j) = PPOSZ(i,j)+PNEGZ(i,j)
+            WKSP2(i,j) = PPOSU(i,j)+PNEGU(i,j)
+   80 CONTINUE
+C
+      WARNB = UNITMAT( WKSP1, NVAR, NVAR, 4, 1.D-14 )
+      WARNC = UNITMAT( WKSP2, NVAR, NVAR, 4, 1.D-14 )
+C
+C     WARNA = .NOT. WARNA
+      WARNB = .NOT. WARNB
+      WARNC = .NOT. WARNC
+C
+      IF( WARNB .OR. WARNC )THEN
+         WRITE(NOUT,*)' Subroutine PRJW2'
+         WRITE(6,*)(VN(i),i=1,3)
+         WRITE(6,*)(VS(i),i=1,3)
+         WRITE(6,*)(VT(i),i=1,3)
+
+         IF( WARNB )
+     +   CALL X04CAF('General',' ',NVAR,NVAR,WKSP1,4,
+     +   'Ppos + Pneg = I(????)',IFAIL)
+         IF( WARNC )
+     +   CALL X04CAF('General',' ',NVAR,NVAR,WKSP2,4,
+     +   'Ppos + Pneg = I(????)',IFAIL)
+         PAUSE
+      ENDIF
+C
+#endif
+C
+      VN(1) = VN(1) * AREA
+      VN(2) = VN(2) * AREA
+      VN(3) = VN(3) * AREA
+C
+      RETURN
+      END
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE PRJO2(VN,VS,VT,NVAR)
+C
+C     Compute projectors for constant pressure outlet b.c.
+C     (artificial compresibility)
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+      INCLUDE 'projct.com'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NVAR
+C
+C     .. Array Arguments ..
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+      DOUBLE PRECISION VN(*),VS(*),VT(*)
+C
+C     .. Local Scalars ..
+C
+#ifdef DEBUG
+      INTEGER ifail,I,J
+      LOGICAL WARNB,WARNC
+#endif
+C
+C     .. Local Arrays ..
+C
+C     DOUBLE PRECISION WORK1(4,4)
+#ifdef DEBUG
+      DOUBLE PRECISION WKSP1(4,4),WKSP2(4,4)
+#endif
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+#ifdef DEBUG
+      LOGICAL  UNITMAT
+      EXTERNAL UNITMAT
+#endif
+C
+C     .. Executable Statements ..
+C
+      PNEGZ(1,1) = ZERO
+      PNEGZ(1,2) = ZERO
+      PNEGZ(1,3) = ZERO
+      PNEGZ(1,4) = ZERO
+C
+      PNEGZ(2,1) = ZERO
+      PNEGZ(2,2) = ONE
+      PNEGZ(2,3) = ZERO
+      PNEGZ(2,4) = ZERO
+C
+      PNEGZ(3,1) = ZERO
+      PNEGZ(3,2) = ZERO
+      PNEGZ(3,3) = ONE
+      PNEGZ(3,4) = ZERO
+C
+      PNEGZ(4,1) = ZERO
+      PNEGZ(4,2) = ZERO
+      PNEGZ(4,3) = ZERO
+      PNEGZ(4,4) = ONE
+C
+C
+      PPOSZ(1,1) = ONE
+      PPOSZ(1,2) = ZERO
+      PPOSZ(1,3) = ZERO
+      PPOSZ(1,4) = ZERO
+C
+      PPOSZ(2,1) = ZERO
+      PPOSZ(2,2) = ZERO
+      PPOSZ(2,3) = ZERO
+      PPOSZ(2,4) = ZERO
+C
+      PPOSZ(3,1) = ZERO
+      PPOSZ(3,2) = ZERO
+      PPOSZ(3,3) = ZERO
+      PPOSZ(3,4) = ZERO
+C
+      PPOSZ(4,1) = ZERO
+      PPOSZ(4,2) = ZERO
+      PPOSZ(4,3) = ZERO
+      PPOSZ(4,4) = ZERO
+C
+C   ... needed for compatibility with the compressible solver ..
+C
+      PNEGU(1,1) = ZERO
+      PNEGU(1,2) = ZERO
+      PNEGU(1,3) = ZERO
+      PNEGU(1,4) = ZERO
+C
+      PNEGU(2,1) = ZERO
+      PNEGU(2,2) = ONE
+      PNEGU(2,3) = ZERO
+      PNEGU(2,4) = ZERO
+C
+      PNEGU(3,1) = ZERO
+      PNEGU(3,2) = ZERO
+      PNEGU(3,3) = ONE
+      PNEGU(3,4) = ZERO
+C
+      PNEGU(4,1) = ZERO
+      PNEGU(4,2) = ZERO
+      PNEGU(4,3) = ZERO
+      PNEGU(4,4) = ONE
+C
+C
+C
+      PPOSU(1,1) = ONE
+      PPOSU(1,2) = ZERO
+      PPOSU(1,3) = ZERO
+      PPOSU(1,4) = ZERO
+C
+      PPOSU(2,1) = ZERO
+      PPOSU(2,2) = ZERO
+      PPOSU(2,3) = ZERO
+      PPOSU(2,4) = ZERO
+C
+      PPOSU(3,1) = ZERO
+      PPOSU(3,2) = ZERO
+      PPOSU(3,3) = ZERO
+      PPOSU(3,4) = ZERO
+C
+      PPOSU(4,1) = ZERO
+      PPOSU(4,2) = ZERO
+      PPOSU(4,3) = ZERO
+      PPOSU(4,4) = ZERO
+C
+#ifdef DEBUG
+C
+      DO 80 j = 1 , NVAR
+         DO 80 i =  1, NVAR
+            WKSP1(i,j) = PPOSZ(i,j)+PNEGZ(i,j)
+            WKSP2(i,j) = PPOSU(i,j)+PNEGU(i,j)
+   80 CONTINUE
+C
+      WARNB = UNITMAT( WKSP1, NVAR, NVAR, 4, 1.D-14 )
+      WARNC = UNITMAT( WKSP2, NVAR, NVAR, 4, 1.D-14 )
+C
+C     WARNA = .NOT. WARNA
+      WARNB = .NOT. WARNB
+      WARNC = .NOT. WARNC
+C
+      IF( WARNB .OR. WARNC )THEN
+         WRITE(NOUT,*)' Subroutine PRJW2'
+         WRITE(6,*)(VN(i),i=1,3)
+         WRITE(6,*)(VS(i),i=1,3)
+         WRITE(6,*)(VT(i),i=1,3)
+
+         IF( WARNB )
+     +   CALL X04CAF('General',' ',NVAR,NVAR,WKSP1,4,
+     +   'Ppos + Pneg = I(????)',IFAIL)
+         IF( WARNC )
+     +   CALL X04CAF('General',' ',NVAR,NVAR,WKSP2,4,
+     +   'Ppos + Pneg = I(????)',IFAIL)
+         PAUSE
+      ENDIF
+C
+#endif
+C
+      RETURN
+      END
+C
+C ------------------------------ + ------------------------------
+C
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d20 1
+a20 1
+      INCLUDE 'cell'
+d364 1
+a364 1
+      INCLUDE 'cell'
+d606 1
+a606 1
+      INCLUDE 'cell'
+d872 1
+a872 1
+      INCLUDE 'cell'
+@

@@ -1,0 +1,144 @@
+head	1.2;
+access;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2013.04.30.07.42.54;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.26.12.27.49;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@transformation btw conservative and parameter vector for Argon
+@
+
+
+1.2
+log
+@the integer addresses of the energy and momentum dofs
+are now in a common
+@
+text
+@      SUBROUTINE CONS2PARM4Ar(ZROE,dZdU,NDIM,NOFVAR)
+      ENTRY MatdZdU4Ar(ZROE,dZdU,NDIM,NOFVAR)
+C
+      IMPLICIT NONE
+      INCLUDE 'paramt.h'
+C
+      INCLUDE 'constants.h' 
+      INCLUDE 'plasma.h'
+C      
+      INCLUDE 'dofs.com'
+      INCLUDE 'three.com'
+      INCLUDE 'four.com'
+C
+      INTEGER NDIM,NOFVAR
+      INTEGER I,J
+      DOUBLE PRECISION ZROE(NOFVAR),dZdU(NOFVAR,*)
+      DOUBLE PRECISION ZRINV,ZRSQRINV,HELP
+C
+C
+C     Assembles the dZdU matrix ...
+C      WRITE(*,*)'SQRTR ZAVG',SQRTR
+C
+      SQRTR = ZERO
+      DO I = 1,NSP
+         SQRTR = SQRTR + ZROE(I)
+      ENDDO      
+C
+C      write(*,*)'SQRTR ZROE',SQRTR
+C
+      ZRINV = ONE/SQRTR
+      ZRSQRINV = ZRINV*ZRINV
+C
+      KINETIC = ZROE(IX)*ZROE(IX) + ZROE(IY)*ZROE(IY)
+      IF (NDIM.EQ.3) KINETIC = KINETIC + ZROE(IZ)*ZROE(IZ)
+      KINETIC = HALF*KINETIC*ZRSQRINV
+!      write(*,*) KINETIC,ZROE(IX),ZROE(IY)
+C
+      DO I = 1 , NSP
+!         write(*,*)I
+!         write(*,*) DR(I)
+         DR(I) = CHI(I) + KAPPA * KINETIC
+!         write(*,*) DR(I)
+      ENDDO
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP 
+            dZdU(I,J) = - ZROE(I)*HALF*ZRSQRINV
+            IF(I.EQ.J) THEN
+                dZdU(I,J) = dZdU(I,J) + ZRINV
+            ENDIF
+        ENDDO
+      ENDDO
+C
+      DO J = 1 , NSP
+        dZdU(IE,J) = DR(j) * ZRINV - HALF * ZROE(IE) * ZRSQRINV 
+        dZdU(IX,J) = -HALF * ZROE(IX) * ZRSQRINV 
+        dZdU(IY,J) = -HALF * ZROE(IY) * ZRSQRINV 
+      ENDDO
+      dZdU(IE,IE) = (DE+ONE) * ZRINV
+      dZdU(IE,IX) =  -DE * ZROE(IX) * ZRSQRINV
+      dZdU(IE,IY) =  -DE * ZROE(IY) * ZRSQRINV
+C   
+      dZdU(IX,IX) = ZRINV
+C
+      dZdU(IY,IY) = ZRINV
+C
+      IF (NDIM.EQ.2) RETURN
+C
+      dZdU(IE,IZ) = -DE * ZROE(IZ) * ZRSQRINV
+
+      DO J = 1 , NSP
+        dZdU(IZ,J) = -HALF * ZROE(IZ) * ZRSQRINV 
+      ENDDO
+
+      dZdU(IZ,IZ) = ZRINV
+C
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 1
+a15 1
+!rpepe     INTEGER IE,IX,IY,IZ
+a18 4
+!      IE = NSP + 1
+!      IX = NSP + 2 
+!      IY = NSP + 3
+!      IZ = NSP + 4    
+@

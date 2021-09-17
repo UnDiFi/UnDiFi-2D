@@ -1,0 +1,263 @@
+head	1.5;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.5
+date	2011.03.30.09.13.24;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.11.03.16.36.41;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.11.03.16.18.38;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.10.19.07.36.44;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2008.12.29.09.55.02;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Sets coefficients for the mass matrix calculation
+@
+
+
+1.5
+log
+@added some de-bugging options
+@
+text
+@      subroutine setcoeff(calpha,cgamma,ndim,nofvert,ldc)
+      implicit none
+      integer ndim,nofvert,ldc
+      include"constants.h"
+      double precision calpha(ldc,ldc,*),cgamma(ldc,*)
+      double precision suma,sumg
+      double precision help
+      integer i,j,k,IFAIL
+c
+      HELP=REAL(NDIM+1)
+c
+      GOTO(10,20)ndim-1
+   10 CONTINUE
+      do k = 1, nofvert
+         do j = 1, nofvert
+            do i = 1, nofvert
+               if( (i.EQ.j) .AND. (j.EQ.k) )then ! all three are equal
+                  calpha(i,j,k) = ONE/10.d0
+               elseif( (k.EQ.j) .OR. (i.EQ.j) .OR. (i.EQ.k) )then ! at least two equal
+                  calpha(i,j,k) = ONE/30.d0
+               else ! all different
+                  calpha(i,j,k) = ONE/60.d0
+               endif
+            enddo
+         enddo
+      enddo
+      do k = 1, nofvert
+         do j = 1, nofvert
+            if( (j.EQ.k) )then ! equal
+               cgamma(j,k) = ONE/6.d0
+            else
+               cgamma(j,k) = ONE/12.d0
+            endif
+         enddo
+      enddo
+      do k = 1, nofvert
+         do j = 1, nofvert
+            do i = 1, nofvert
+               calpha(i,j,k) = calpha(i,j,k) - cgamma(j,k)/HELP
+            enddo
+         enddo
+      enddo
+!     RETURN
+c
+      do i = 1, nofvert
+      do j = 1, nofvert
+         suma = 0.d0
+         sumg = 0.d0
+         do k = 1, nofvert
+           suma = suma + calpha(i,j,k)
+           sumg = sumg + cgamma(j,k)
+         enddo
+         write(6,*)' i = ',i,' j = ',j
+         write(6,*)' S(a) = ',suma,' S(g) = ',sumg
+      enddo
+      enddo
+c
+c     in 2 D 
+c
+c     suma = 1/18 if (i .EQ. j)
+c     suma =-1/36 if (i .NE. j)
+c     sumg = 1/3
+c
+c
+      RETURN
+   20 CONTINUE
+C
+C     the 3D version, see the AIAA paper
+C
+      do k = 1, nofvert
+         do j = 1, nofvert
+            do i = 1, nofvert
+               if( (i.EQ.j) .AND. (j.EQ.k) )then ! all three are equal
+                  calpha(i,j,k) = ONE/20.d0
+               elseif( (k.EQ.j) .OR. (i.EQ.j) .OR. (i.EQ.k) )then ! at least two equal
+                  calpha(i,j,k) = ONE/60.d0
+               else ! all different
+                  calpha(i,j,k) = ONE/120.d0
+               endif
+            enddo
+         enddo
+      enddo
+      do k = 1, nofvert
+         do j = 1, nofvert
+            if( (j.EQ.k) )then ! equal
+               cgamma(j,k) = ONE/10.d0
+            else
+               cgamma(j,k) = ONE/20.d0
+            endif
+         enddo
+      enddo
+      do k = 1, nofvert
+         do j = 1, nofvert
+             do i = 1,nofvert
+                 calpha(i,j,k) = calpha(i,j,k) - 0.25d0 * cgamma(j,k)
+             enddo 
+         enddo
+      enddo
+c
+      do k = 1,nofvert
+      write(6,*)' k = ',k 
+      CALL X04CAF('General',' ',NOFVERT,NOFVERT,calpha(1,1,k),
+     +            ldc,'alpha weights ',IFAIL)
+      enddo
+c
+      do i = 1, nofvert
+      do j = 1, nofvert
+         suma = 0.d0
+         sumg = 0.d0
+         do k = 1, nofvert
+           suma = suma + calpha(i,j,k)
+           sumg = sumg + cgamma(j,k)
+         enddo
+         write(6,*)' i = ',i,' j = ',j
+         write(6,*)' S(a) = ',suma,' S(g) = ',sumg
+      enddo
+      enddo
+c     stop
+      RETURN
+c
+      END
+@
+
+
+1.4
+log
+@I re-wrote the 2D part to make it formally closer
+to the AIAA paper
+@
+text
+@d8 1
+a8 1
+      integer i,j,k
+d98 6
+@
+
+
+1.3
+log
+@3D version
+@
+text
+@d9 1
+a11 1
+c
+a28 13
+               if( (j.EQ.k) )then ! all three are equal
+                  do i = 1, nofvert
+                     calpha(i,j,k) = HELP*calpha(i,j,k) - ONE/6.d0
+                  enddo
+               else ! all different
+                  do i = 1, nofvert
+                     calpha(i,j,k) = HELP*calpha(i,j,k) - ONE/12.d0
+                  enddo
+               endif
+         enddo
+      enddo
+      do k = 1, nofvert
+         do j = 1, nofvert
+d30 1
+a30 1
+               cgamma(j,k) = HALF
+d32 1
+a32 1
+               cgamma(j,k) = HALF*HALF
+d38 3
+a40 4
+             cgamma(j,k) = cgamma(j,k) / HELP 
+             do i = 1,nofvert
+                 calpha(i,j,k) = calpha(i,j,k) / HELP
+             enddo 
+d43 1
+a43 1
+      RETURN
+d57 7
+a63 1
+c     stop
+@
+
+
+1.2
+log
+@only working in 2D
+@
+text
+@d75 48
+a122 1
+      STOP 'd = 3 unimplemented'
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a4 2
+      include "time.h"
+      include "time.com"
+d6 7
+a12 2
+!     HELP=ONE/REAL(NDIM+1)
+      GOTO(10,20)ndim
+d18 1
+a18 1
+                  calpha(i,j,k) = ONE/5.d0
+d20 1
+a20 1
+                  calpha(i,j,k) = ONE/15.d0
+d22 1
+a22 1
+                  calpha(i,j,k) = ONE/30.d0
+d31 1
+a31 1
+                     calpha(i,j,k) = calpha(i,j,k) - ONE/6.d0
+d35 1
+a35 1
+                     calpha(i,j,k) = calpha(i,j,k) - ONE/12.d0
+d49 24
+@

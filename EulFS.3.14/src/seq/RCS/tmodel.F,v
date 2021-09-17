@@ -1,0 +1,541 @@
+head	1.14;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.14
+	release3_13_0:1.14
+	release3_12_0:1.14
+	release3_11_0:1.14
+	release3_10_0:1.14
+	release3_8_0:1.14
+	release3_7_1:1.13
+	release3_7_0:1.13
+	release3_4_5:1.12
+	release3_4_4:1.11
+	release3_4_3:1.11
+	release3_4_2:1.11
+	release3_4_1:1.11
+	release3_4_0:1.11
+	release3_3_5:1.11
+	release3_3_4:1.11
+	release3_3_3:1.11
+	release3_3_2:1.11
+	release3_3_1:1.11
+	release3_3_0:1.11;
+locks; strict;
+comment	@c @;
+
+
+1.14
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2015.05.11.07.25.09;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2010.10.04.12.25.50;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2009.10.13.08.13.31;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2009.06.11.08.25.10;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2002.12.06.03.28.55;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2002.10.14.04.37.40;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.09.14.08.56.16;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.11.22.14.35.57;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.10.12.15.43.32;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@subroutine used to select the turbulence model
+@
+
+
+1.14
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                  NELEM,NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,
+     3                  PetscMatA,EulerModel,NSModel,ScalarScheme,
+     4                  MatrixScheme,TModelScheme)
+C
+C     $Id: tmodel.F,v 1.13 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C     Purpose:
+C     This routine selects the turbulence model to be used.
+C     Only Spalart-Allmaras is currently implemented
+C     For laminar flow a dummy routine is used, which returns
+C     the (cell averaged) laminar viscosity
+C     The idea is to pass the turbulence model as a subroutine
+C     at the uppermost level (i.e. at the non-linear iteration
+C     loop) to avoid multiple IFs inside the innermost loop
+C     over the elements.
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec
+      use petscmat
+C
+      IMPLICIT NONE
+C
+C
+      Vec  PetscVecDT,PetscVecRHS
+      Mat  PetscMatA
+C
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,NFACE,
+     &NBFAC
+      INTEGER IFAIL,IOPT
+      DOUBLE PRECISION X(*)
+C
+      INCLUDE 'flags.com'
+C
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NTURB   number of variables (degrees of freedom)
+C             in each meshpoint for the turbulence model
+C     NPOIN   no. of interior (processor owned) meshpoints;
+C             global number of meshpoints in the uni-processor case
+C     NGHOST  no. of ghost meshpoints on the current processor;
+C             0 the uni-processor case
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+C     NFACE   number of edges/faces in the mesh for the current
+C             processor (multi-processor case) or global number
+C             of edges/faces in the mesh (uni-processor case).
+C     NBFAC   no. of processor owned boundary faces/edges;
+C             global number of boundary faces/edges
+C             in the uni-processor case.
+C
+      EXTERNAL EulerModel,NSModel,ScalarScheme,MatrixScheme,
+     2         TModelScheme,SA8,SA7,SA7b,SA
+C
+      EXTERNAL Laminar,EVALTSA,Tdummy,EulerVIIsa
+C
+      CHARACTER*38 ERRMSG
+      LOGICAL COMPRESSIBLE
+C
+C     Executable Statements ..
+C
+      COMPRESSIBLE = (ABS(KAN).EQ.4)
+C
+C     Scalar problems
+C
+      IF(IABS(KAN).EQ.1)THEN
+          CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     2         NELEM,NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     4         Scalarscheme,MatrixScheme,TModelScheme,
+     5         EulerModel,NSModel,Tdummy)
+      ELSE
+C
+C     Euler Navier-Stokes
+C
+          IF(TURBULENT.AND.SEGREGATED)THEN
+C
+              CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     2             NELEM,NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     4             Scalarscheme,MatrixScheme,TModelScheme,
+     5             EulerModel,NSModel,EVALTSA)
+C
+          ELSEIF(TURBULENT.AND.COUPLED)THEN
+C
+            IF(COMPRESSIBLE)THEN
+              CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     2             NELEM,NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     3             Scalarscheme,MatrixScheme,TModelScheme,EulerModel,
+!    4             NSModel,SA)
+     4             NSModel,SA7)
+            ELSE
+              CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     2             NELEM,NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     3             Scalarscheme,MatrixScheme,TModelScheme,EulerModel,
+     4             NSModel,SA8)
+            ENDIF
+C             ********laminar********
+          ELSE
+              CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     2             NELEM,NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     3             Scalarscheme,MatrixScheme,TModelScheme,
+     4             EulerModel,NSModel,LAMINAR)
+C
+          ENDIF
+      ENDIF
+      RETURN
+      END
+@
+
+
+1.13
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d6 1
+a6 3
+C     $Id: tmodel.F,v 1.12 2015/05/11 07:25:09 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+a18 1
+#include "petsc/finclude/petscsys.h"
+d21 5
+@
+
+
+1.12
+log
+@added support for other variants of the SA model
+@
+text
+@d6 1
+a6 1
+C     $Id: tmodel.F,v 1.11 2011/09/16 07:19:48 abonfi Exp abonfi $
+d21 3
+a23 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.11
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d6 1
+a6 1
+C     $Id: tmodel.F,v 1.10 2010/10/04 12:25:50 abonfi Exp abonfi $
+d59 1
+a59 1
+     2         TModelScheme,SA8,SA7,SA7b
+d94 1
+@
+
+
+1.10
+log
+@it is now possible to select the scalar scheme for turbulence modeling
+@
+text
+@d6 1
+a6 1
+C     $Id: tmodel.F,v 1.9 2009/10/13 08:13:31 abonfi Exp abonfi $
+d21 1
+a21 1
+#include "finclude/petsc.h"
+@
+
+
+1.9
+log
+@Added support for choosing the scalar advection scheme in the Spalart-Allmaras model
+@
+text
+@d6 1
+a6 1
+C     $Id: tmodel.F,v 1.8 2009/06/11 13:10:58 abonfi Exp abonfi $
+d74 3
+a76 3
+     2         NELEM,NFACE,NBFAC,
+     3         X,PetscVecDT,PetscVecRHS,PetscMatA,
+     4         Scalarscheme,MatrixScheme,EulerModel,NSModel,Tdummy)
+@
+
+
+1.8
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d2 3
+a4 3
+     +                  NELEM,NFACE,NBFAC,
+     2                  X,PetscVecDT,PetscVecRHS,PetscMatA,
+     3                  EulerModel,NSModel,ScalarScheme,MatrixScheme)
+d6 1
+a6 1
+C     $Id: tmodel.F,v 1.7 2009/06/11 08:25:10 abonfi Exp abonfi $
+d58 2
+a59 1
+      EXTERNAL EulerModel,NSModel,ScalarScheme,MatrixScheme,SA8,SA7,SA7b
+d84 3
+a86 3
+     2             NELEM,NFACE, NBFAC,
+     3             X,PetscVecDT,PetscVecRHS,PetscMatA,
+     4             Scalarscheme,MatrixScheme,EulerModel,NSModel,EVALTSA)
+d91 4
+a94 7
+               CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     2              NELEM,NFACE,NBFAC,
+     3              X,PetscVecDT,PetscVecRHS,PetscMatA,
+     4              Scalarscheme,MatrixScheme,EulerModel,NSModel,SA7)
+cxxx        CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+cxxx +        NFACE, NBFAC,X,PetscVecDT,PetscVecRHS,A,Scalarscheme,MatrixScheme,
+cxxx +        EulerVIIsa,NSModel,SA7b)
+d96 4
+a99 4
+               CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     2              NELEM,NFACE,NBFAC,
+     3              X,PetscVecDT,PetscVecRHS,PetscMatA,
+     4              Scalarscheme,MatrixScheme,EulerModel,NSModel,SA8)
+d104 3
+a106 3
+     2             NELEM,NFACE,NBFAC,
+     3             X,PetscVecDT,PetscVecRHS,PetscMatA,
+     4             Scalarscheme,MatrixScheme,EulerModel,NSModel,LAMINAR)
+@
+
+
+1.7
+log
+@now passing NPNOD among the arguments
+@
+text
+@d6 1
+a6 1
+C     $Id: tmodel.F,v 1.6 2002/12/06 03:28:55 abonfi Exp $
+d21 3
+a23 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.6
+log
+@playing around with turbulence models
+@
+text
+@d1 4
+a4 3
+      SUBROUTINE TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +NFACE,NBFAC,X,DT,RHS,A, EulerModel,NSModel,ScalarScheme,
+     +MatrixScheme)
+d6 1
+a6 1
+C     $Id: tmodel.F,v 1.5 2002/10/14 04:37:40 abonfi Exp abonfi $
+d25 2
+a26 2
+      Vec  DT,RHS
+      Mat  A
+d28 4
+a31 3
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+      INTEGER NERR,IOPT
+      DOUBLE PRECISION X(NOFVAR*NPOIN)
+d72 4
+a75 3
+          CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +    NFACE, NBFAC,X,DT,RHS,A,Scalarscheme,MatrixScheme,EulerModel,
+     +    NSModel,Tdummy)
+d82 4
+a85 3
+              CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +        NFACE, NBFAC,X,DT,RHS,A,Scalarscheme,MatrixScheme,
+     +        EulerModel,NSModel,EVALTSA)
+d90 4
+a93 3
+            CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +        NFACE, NBFAC,X,DT,RHS,A,Scalarscheme,MatrixScheme,
+     +        EulerModel,NSModel,SA7)
+d95 1
+a95 1
+cxxx +        NFACE, NBFAC,X,DT,RHS,A,Scalarscheme,MatrixScheme,
+d98 4
+a101 3
+            CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +        NFACE, NBFAC,X,DT,RHS,A,Scalarscheme,MatrixScheme,
+     +        EulerModel,NSModel,SA8)
+d105 4
+a108 3
+              CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +        NFACE, NBFAC,X,DT,RHS,A,Scalarscheme,MatrixScheme,
+     +        EulerModel,NSModel,LAMINAR)
+@
+
+
+1.5
+log
+@add support for coupled solution and compressible flows
+@
+text
+@d5 1
+a5 1
+C     $Id: tmodel.F,v 1.4 2002/09/14 08:56:16 abonfi Exp abonfi $
+d56 1
+a56 1
+      EXTERNAL EulerModel,NSModel,ScalarScheme,MatrixScheme,SA8,SA7
+d58 1
+a58 1
+      EXTERNAL Laminar,EVALTSA,Tdummy
+d89 3
+@
+
+
+1.4
+log
+@now supports coupled solution strategy for RANS
+@
+text
+@d5 1
+a5 1
+C     $Id: tmodel.F,v 1.3 2000/11/22 14:35:57 aldo Exp $
+d56 1
+a56 1
+      EXTERNAL EulerModel,NSModel,ScalarScheme,MatrixScheme,SA8
+d58 1
+a58 1
+      EXTERNAL Laminar,EVALTSA,Tdummy,SCALAR2
+d86 3
+a88 1
+               STOP 'Not implemented yet'
+@
+
+
+1.3
+log
+@support for scalar problems
+@
+text
+@d5 1
+a5 1
+C     $Id: tmodel.F,v 1.2 2000/10/19 16:10:34 aldo Exp aldo $
+d56 1
+a56 1
+      EXTERNAL EulerModel,NSModel,ScalarScheme,MatrixScheme
+d58 1
+a58 1
+      EXTERNAL Laminar,EVALTSA,Tdummy
+d61 1
+d65 4
+d74 2
+a75 1
+          IF(TURBULENT)THEN
+d77 2
+d83 10
+@
+
+
+1.2
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d2 2
+a3 2
+     +                 NFACE,NBFAC,X,DT,RHS,A,
+     +                 EulerModel,NSModel,ScalarScheme,MatrixScheme)
+d5 1
+a5 1
+C     $Id: tmodel.F,v 1.1 2000/10/12 15:43:32 aldo Exp aldo $
+d16 1
+a16 1
+C     loop) to avoid multiple IFs inside the innermost loop 
+d43 1
+a43 1
+C     NPOIN   no. of interior (processor owned) meshpoints; 
+d45 1
+a45 1
+C     NGHOST  no. of ghost meshpoints on the current processor; 
+d49 2
+a50 2
+C     NFACE   number of edges/faces in the mesh for the current 
+C             processor (multi-processor case) or global number 
+d58 1
+a58 1
+      EXTERNAL Laminar,EVALTSA
+d64 6
+a69 5
+      IF(TURBULENT)THEN
+C
+      CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+     +Scalarscheme,MatrixScheme,EulerModel,NSModel,EVALTSA)
+d71 8
+a78 4
+      ELSE
+      CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+     +Scalarscheme,MatrixScheme,EulerModel,NSModel,LAMINAR)
+d80 1
+d82 1
+a82 1
+      RETURN 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+C     $Id: sclsch.F,v 1.11 2000/08/18 14:03:45 aldo Exp $
+d21 2
+a22 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+@

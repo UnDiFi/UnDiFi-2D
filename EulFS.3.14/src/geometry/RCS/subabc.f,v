@@ -1,0 +1,225 @@
+head	1.3;
+access
+	caspur;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	98.01.02.15.31.56;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.01.22.10.22;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine for
+@
+
+
+1.3
+log
+@Add nboun.com
+@
+text
+@      SUBROUTINE SUBABC( IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+     &NODCODE, ZROE, NOFVAR, NPOIN )
+C
+      IMPLICIT NONE
+C
+C     This routine sets NODCODE = 1000
+C        for those nodes which belong to a viscous wall
+C
+C        NOTE that this routine must be called AFTER
+C        the flow variables have been initialized,
+C        so that the velocity components can be set to 0.0 
+C        on viscous walls
+C
+C     Parameters ..
+C
+      INCLUDE 'constants'
+      INCLUDE 'bnd.h'
+C
+C     Commons ..
+C
+      INCLUDE 'bnd'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'IO'
+C
+C     Scalar Arguments ..
+C
+      INTEGER NBFAC,NOFVERT,NOFVAR,NPOIN
+C
+C     Array Arguments ..
+C
+      INTEGER IBNDFAC(3,*),ICELNOD(NOFVERT,*),NODCODE(*)
+      DOUBLE PRECISION ZROE(NOFVAR,*)
+C
+C     Local Scalars ..
+C
+      INTEGER ICLR,IELEM,IVERT,INODE,IFACE,I,J,IVAR,U
+C
+C     External Functions ..
+C
+      INTEGER  ICYCL
+      EXTERNAL ICYCL
+C
+C     Intrinsic Functions ..
+C
+      INTRINSIC IABS
+C
+C     Executable Statements ..
+C
+      IF( KAN .EQ. 2 )THEN
+         U = 2
+      ELSE
+         U = 3
+      ENDIF 
+C
+      DO 1 IFACE = 1 , NBFAC 
+C
+         ICLR = ICOLOR(IBNDFAC(3,IFACE))
+         IF( .NOT.(ICLR .EQ. 6 .OR. ICLR .EQ. 7) )GOTO 1
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+C
+         DO 2 I = 1 , NOFVERT - 1
+C
+            INODE = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+C        If the nodecode is negative (i.e. a supersonic node)
+C        then it won't be updated anyway
+C
+C        The information on the # of nodes meeting in INODE is lost
+C
+C        NODCODE = 1000 viscous node
+C        NODCODE =  500 prescribed velocity profile
+C
+            NODCODE(INODE) = -500 * ICLR + 4000
+C
+    2    CONTINUE
+    1 CONTINUE
+C
+C     counts the no of viscous wall nodes 
+C     and set u=v=w=0. (ONLY for viscous nodes) ...
+C
+      I = 0
+      J = 0
+      DO 3 INODE = 1, NPOIN
+         IF( NODCODE(INODE) .EQ. 1000 )THEN
+            I = I + 1
+C
+C     .. Isothermal wall .. 
+C
+            IF( KAN .EQ. 4 .AND. IADIA .NE. 0 )
+     +      ZROE(2,INODE) = GOGM1 * ZROE(1,INODE) * TWALL 
+C
+C     whenever you wish to keep a nonzero velocity
+C     on a solid wall (e.g. lid driven cavity flow) 
+C     you should comment out the following
+C
+C         set u=v=w=0. ...
+C
+         DO 5 IVAR = U, NOFVAR
+               ZROE(IVAR,INODE) = 0.D0
+    5       CONTINUE
+         ELSEIF( NODCODE(INODE) .EQ. 500 )THEN
+            J = J+1 
+C
+C     nodes on a NO-slip surface and nodes with a fixed velocity 
+C     profile are treated exactly the same way as far as the
+C     matrix modification is concerned, so we reset
+C     NODCODE to 1000 (see setbc1)
+C
+            NODCODE(INODE)= 1000
+         ENDIF
+    3 CONTINUE
+C
+      WRITE(NOUT,100)I
+      WRITE(NOUT,200)J
+C
+      NPOIN6=I
+      NPOIN7=J
+C
+      RETURN
+  100 FORMAT(/5X,'THERE ARE ',I5,' VISCOUS WALL NODES')
+  200 FORMAT(/5X,'THERE ARE ',I5,
+     +' NODES WITH PRESCRIBED VELOCITY PROFILE')
+      END
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@d2 1
+a2 1
+     &NODCODE, ZROE, NOFVAR, NPOIN, NVISCN )
+d6 1
+a6 1
+C     .. This routine sets NODCODE = 1000
+d14 1
+a14 1
+C     .. Parameters ..
+d19 1
+a19 1
+C     .. Commons ..
+d24 1
+d27 1
+a27 1
+C     .. Scalar Arguments ..
+d29 1
+a29 1
+      INTEGER NBFAC,NOFVERT,NOFVAR,NPOIN, NVISCN 
+d31 1
+a31 1
+C     .. Array Arguments ..
+d36 1
+a36 1
+C     .. Local Scalars ..
+d40 1
+a40 1
+C     .. External Functions ..
+d45 1
+a45 1
+C     .. Intrinsic Functions ..
+d49 1
+a49 1
+C     .. Executable Statements ..
+d81 2
+a82 2
+C     ... counts the no of viscous wall nodes 
+C         and set u=v=w=0. (ONLY for viscous nodes) ...
+d119 2
+a120 1
+      NVISCN=I
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+     &NODCODE, ZROE, NOFVAR, NPOIN )
+d28 1
+a28 1
+      INTEGER NBFAC,NOFVERT,NOFVAR,NPOIN 
+d117 2
+@

@@ -1,0 +1,38 @@
+1c1
+<       SUBROUTINE ISET_T(NodalBcs, IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+---
+>       SUBROUTINE ISET_T(IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+4c4
+< C     $Id: iset_t.F,v 1.15 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: iset_t.F,v 1.15 2016/11/10 11:25:13 abonfi Exp $
+13a14,16
+>       IMPLICIT NONE
+> C
+> #include "petsc/finclude/petscsys.h"
+16,19d18
+<       use petscvec 
+<       use petscis 
+< C
+<       IMPLICIT NONE
+22,23d20
+<       INCLUDE 'iset.h'
+< C
+28a26
+> #include "iset.com"
+50c48
+<       INTEGER IPOIN,NI,IFAIL,IVERT,I,ICLR,IFACE,IELEM,
+---
+>       INTEGER IPOIN,NI,IFAIL,IOFF,IFRST,J,IVERT,I,ICLR,IFACE,IELEM,
+54,55d51
+<       IS, dimension(0:*) :: NodalBcs
+< C
+126,127c122
+<      +                     PETSC_COPY_VALUES,NodalBcs(NoSlipNodes),
+<      &                     IFAIL)
+---
+>      +                     PETSC_COPY_VALUES,NoSlipNodes,IFAIL)
+189c184
+<      +                     NodalBcs(FreestreamTurbulence),IFAIL)
+---
+>      +                     FreestreamTurbulence,IFAIL)

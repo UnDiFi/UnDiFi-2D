@@ -1,0 +1,476 @@
+head	1.5;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.5
+	release3_13_0:1.5
+	release3_12_0:1.5
+	release3_11_0:1.5
+	release3_10_0:1.5
+	release3_8_0:1.5
+	release3_7_1:1.5
+	release3_7_0:1.5
+	release3_4_5:1.5
+	release3_4_4:1.5
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.5
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.04.17.06.37.26;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2002.09.10.10.03.51;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.09.21.07.19.10;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.09.20.14.30.19;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@N scheme with source term, originally implemented by Pino Pascazio
+@
+
+
+1.5
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@!> @@copydetails LDA_SCHEME()
+      SUBROUTINE NS_SCHEME(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     +                     NODRES,BETA,STIFC,NDIM,NOFVERT,
+     3                     MATRIX_ASSEMBLY)
+C
+C     $Id:$
+C
+      IMPLICIT NONE
+C
+C This routine computes the N scheme on one triangle/tetrahedron
+C
+C the treatment of the source term with N scheme
+C follows Mario Ricchiuto VKI PR ? 2001
+C
+C
+C
+C     .. Parameters ..
+      INCLUDE "paramt.h"
+      INCLUDE "constants.h"
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION CELRES,SOURCE
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ADVECTION(NDIM),BETA(NOFVERT),
+     2                 STIFC(NOFVERT,NOFVERT),
+     +                 DT(NOFVERT),NODRES(NOFVERT),Q(NOFVERT),
+     +                 VCN(NDIM,NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,SUM,UIN
+      DOUBLE PRECISION FLUCT,SIGIN,ANVT
+      INTEGER I,I1,IROW,IVERT,J,J1,J2,JCOL,NEGI,POSI
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DQ(MAXNOFVERT),K(MAXNOFVERT),PHI(MAXNOFVERT)
+      INTEGER POS(MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,MINMOD
+      INTEGER ICYCL
+      EXTERNAL DDOT,MINMOD,ICYCL
+C     ..
+      POSI = 0
+      NEGI = NOFVERT + 1
+      CELRES = ZERO
+      KPOS = ZERO
+      UIN = ZERO
+      SIGIN = ZERO
+C
+C Loops over all vertices
+C
+      DO 10 IVERT = 1,NOFVERT
+c
+c Dotting advection speed with normal
+c
+          SUM = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)
+          K(IVERT) = SUM/NDIM
+c
+          CELRES = CELRES + Q(IVERT)*K(IVERT)
+c
+          IF (K(IVERT).GT.ZERO) THEN
+              POSI = POSI + 1
+              POS(POSI) = IVERT
+              KPOS = KPOS + K(IVERT)
+c reduced value of \Sigma_{in} assuming constant source term
+              SIGIN = SIGIN - SOURCE/NOFVERT
+          ELSE
+              NEGI = NEGI - 1
+              POS(NEGI) = IVERT
+              UIN = UIN - K(IVERT)*Q(IVERT)
+              NODRES(IVERT) = ZERO
+          ENDIF
+c
+   10 CONTINUE
+C
+      IF (KPOS.EQ.ZERO) RETURN
+      UIN = UIN/KPOS
+      SIGIN = (SIGIN - SOURCE)/POSI
+C
+C Target tracking and updating
+C
+      FLUCT = ZERO
+      DO 30 I = 1,POSI
+          J = POS(I)
+C N-scheme contribution for the convective part and source term
+caldo     DQ(J) = K(J)* (Q(J)-UIN) - SOURCE/NOFVERT - SIGIN
+C
+C when the source term is constant it is simply
+C equally split among the downstream nodes
+C
+          DQ(J) = K(J)* (Q(J)-UIN) + SOURCE/POSI
+c
+          FLUCT = FLUCT + DQ(J)
+c
+c Linear time-step for all the downstream nodes
+c
+          DT(J) = DT(J) + K(J)
+          NODRES(J) = -DQ(J)
+c
+   30 CONTINUE
+
+      IF (DABS(FLUCT-(CELRES+SOURCE)).GT.1.D-12) THEN
+         write(6,*) "Check NwS.........",FLUCT,CELRES+SOURCE
+      END IF
+
+C
+C  the element stiffness matrix is that of the N scheme
+C  does not account for the source term
+C
+      IF (MATRIX_ASSEMBLY) THEN
+          KNEGINV = -ONE/KPOS
+C
+C     The convection matrix has to be zeroth since in the
+C     subsequent loops (28,30) not all vertices are touched
+C
+          DO 40 J = 1,NOFVERT
+              DO 40 I = 1,NOFVERT
+                  STIFC(I,J) = ZERO
+   40     CONTINUE
+C
+          DO 32 I = 1,POSI
+              IROW = POS(I)
+              S = K(IROW)
+              DO 28 J = NOFVERT,NEGI,-1
+                  JCOL = POS(J)
+                  STIFC(IROW,JCOL) = S*K(JCOL)*KNEGINV
+   28         CONTINUE
+              STIFC(IROW,IROW) = -S
+   32     CONTINUE
+      ENDIF
+C
+
+      RETURN
+
+      END
+C
+@
+
+
+1.4
+log
+@added the distribution matrix among the arguments of the call
+@
+text
+@d1 1
+d3 4
+a6 1
+     +                     NODRES,BETA,STIFC,NDIM,NOFVERT,PICARD)
+a16 8
+C
+C
+C
+C
+C
+C
+C
+C
+d24 1
+a24 1
+      LOGICAL PICARD
+d113 1
+a113 1
+      IF (PICARD) THEN
+@
+
+
+1.3
+log
+@bug fixed in a check
+@
+text
+@d2 1
+a2 1
+     +                     NODRES,CMAT,NDIM,NOFVERT,PICARD)
+d22 2
+a23 2
+      DOUBLE PRECISION ZERO,ONE,TWO
+      PARAMETER (ZERO=0.D0,ONE=1.D0,TWO=2.D0)
+d31 2
+a32 1
+      DOUBLE PRECISION ADVECTION(NDIM),CMAT(NOFVERT,NOFVERT),
+d42 2
+a43 2
+      DOUBLE PRECISION DQ(4),K(4),PHI(4)
+      INTEGER POS(4)
+d125 1
+a125 1
+                  CMAT(I,J) = ZERO
+d133 1
+a133 1
+                  CMAT(IROW,JCOL) = S*K(JCOL)*KNEGINV
+d135 1
+a135 1
+              CMAT(IROW,IROW) = -S
+@
+
+
+1.2
+log
+@the distribution of the source term is now done
+using the approch proposed by Mario Ricchiuto
+@
+text
+@d109 1
+a109 1
+         write(6,*) "Check NwS.........",FLUCT,CELRES-SOURCE
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d9 1
+d37 1
+a37 1
+      DOUBLE PRECISION FLUCT
+d54 1
+d71 2
+a72 1
+
+d84 1
+d86 1
+a86 1
+C Target tracking
+d91 7
+a97 2
+C N-scheme contribution for the convective part
+          DQ(J) = K(J)* (Q(J)-UIN)
+a98 4
+C LDA-scheme contribution for the source term
+c         S = K(J)*SOURCE/KPOS
+c         PHI(J) = DQ(J) + S
+
+d104 1
+d108 2
+a109 2
+      IF (DABS(FLUCT-CELRES).GT.1.D-12) THEN
+         write(6,*) "Check NwS........."
+a111 35
+      DO I = 1,POSI
+          J = POS(I)
+          IF(DABS(FLUCT).GT.1.D-10) THEN
+C N-scheme contribution for the source term
+          S = DQ(J)*SOURCE/FLUCT
+          ELSE
+C LDA-scheme contribution for the source term
+          S = K(J)*SOURCE/KPOS
+          END IF
+          PHI(J) = DQ(J) + S
+C         DQ(J) = PHI(J)
+      END DO
+
+c     DO I = 1,NOFVERT
+c       S = 1.d0/3.d0*SOURCE
+c       PHI(J) = DQ(J) + S
+c     END DO
+
+C
+C Loop over downstream nodes (TARGET UPDATING)
+C
+      DO 20 I = 1,POSI
+          J1 = POS(I)
+
+c         DO 22 I1 = 1,POSI - 1
+c             J2 = POS(ICYCL(I+I1,POSI))
+c             PHI(J1) = PHI(J1) - MINMOD(DQ(J1),-DQ(J2))
+c             PHI(J1) = PHI(J1) - MINMOD(PHI(J1),-PHI(J2))
+c  22     CONTINUE
+ 
+          S = PHI(J1)
+c
+          NODRES(J1) = -S
+c
+   20 CONTINUE
+d114 1
+d116 1
+a116 1
+CC    IF (PICARD) THEN
+d136 1
+a136 54
+CC    ENDIF
+C
+C
+C     IF( PICARD )THEN
+C
+C        DENOM = CELRES+SOURCE
+C
+C        IF(DENOM.LT.1.D-15)RETURN
+C
+C        DO 40 J = 1 , NOFVERT
+C           DO 40 I = 1 , NOFVERT
+C              CMAT(I,J) = ZERO
+C  40    CONTINUE
+C        DO 34 I = 1 , POSI
+C           IROW = POS(I)
+C           S =-PHI(IROW)*DENOM
+C           DO 28 JCOL = 1, NOFVERT
+C              CMAT(IROW,JCOL) = S * K(JCOL)
+C  28       CONTINUE
+C  34    CONTINUE
+C     ENDIF
+
+      RETURN
+
+      END
+C
+      DOUBLE PRECISION FUNCTION MINMOD(X,Y)
+C
+      IMPLICIT NONE
+C
+C
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION HALF,ONE
+      PARAMETER (HALF=0.5D0,ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,DMIN1,SIGN
+C     ..
+      MINMOD = HALF* (ONE+SIGN(ONE,X*Y))*HALF*
+     +         (SIGN(ONE,X)+SIGN(ONE,Y))*DMIN1(ABS(X),ABS(Y))
+      RETURN
+
+      END
+C
+C
+      DOUBLE PRECISION FUNCTION HARMONIC(X,Y)
+a137 17
+      IMPLICIT NONE
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION HALF,ONE,TWO
+      PARAMETER (HALF=0.5D0,ONE=1.D0,TWO=2.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SIGN
+C     ..
+      HARMONIC = HALF* (ONE+SIGN(ONE,X*Y))*TWO*X*Y/ (X+Y)
+      RETURN
+a138 21
+      END
+C
+C
+      DOUBLE PRECISION FUNCTION VANALBADA(X,Y)
+C
+      IMPLICIT NONE
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION HALF,ONE
+      PARAMETER (HALF=0.5D0,ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SIGN
+C     ..
+      VANALBADA = HALF* (ONE+SIGN(ONE,X*Y))*X*Y* (X+Y)/ (X*X+Y*Y)
+a142 30
+C
+      DOUBLE PRECISION FUNCTION SUPERBEE(X,Y)
+C
+      IMPLICIT NONE
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ZERO,HALF,ONE,TWO
+      PARAMETER (ZERO=0.D0,HALF=0.5D0,ONE=1.D0,TWO=2.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DMAX1,DMIN1,SIGN
+C     ..
+      IF (Y.LE.1.D-15) THEN
+          SUPERBEE = ZERO
+
+      ELSE
+          SUPERBEE = HALF* (ONE+SIGN(ONE,X*Y))*Y*
+     +               DMAX1(DMIN1(TWO*X/Y,ONE),DMIN1(X/Y,TWO))
+      ENDIF
+
+      RETURN
+
+      END
+@

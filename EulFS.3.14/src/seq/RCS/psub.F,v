@@ -1,0 +1,118 @@
+head	1.2;
+access
+	simula;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.26.07.36.49;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@diagonal preconditioning using the vLLR matrix
+@
+
+
+1.2
+log
+@Add automatic identification flag
+@
+text
+@C
+      SUBROUTINE PSUB( NDIM, NOFVAR, NPOIN, UCONSV, P )
+C
+      IMPLICIT NONE
+C
+C     $Id$
+C
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/pc.h"
+C
+      Mat P
+C
+C     Implicit timestepping for scalar equations ..
+C
+      INCLUDE 'constants'
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+      INCLUDE 'paramt.h'
+      INCLUDE 'nloc'
+      INCLUDE 'flags.com'
+C
+      INTEGER NDIM,NOFVAR,NPOIN
+      DOUBLE PRECISION UCONSV(NOFVAR,NPOIN)
+C
+      INTEGER LIWORK,LRWORK,IPOIN,i,MY_PE,ILOC,
+     +IDXN(1),IDXM(1),IFAIL
+C
+C
+      integer  ISTKGT
+      EXTERNAL ISTKGT
+C
+#ifdef MPI
+      STOP 'DOES NOT WORK IN PARALLEL YET'
+#endif
+C
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IFAIL) 
+C
+      LIWORK = ISTKGT(NPOIN,2)
+      CALL IINIT(NPOIN,1,ISTAK(LIWORK),1)
+C
+      CALL MatCreateSeqBAIJ(PETSC_COMM_SELF,NOFVAR,
+     +NPOIN*NOFVAR,NPOIN*NOFVAR,1,ISTAK(LIWORK),P,IFAIL)
+      write(6,*) 'MatCreateSeqBAIJ has returned ',IFAIL
+C
+      CALL ISTKRL(1)
+C
+      CALL MatSetOption(P,MAT_COLUMN_ORIENTED,IFAIL)
+      write(6,*) 'MatSetOption has returned ',IFAIL
+C
+      LRWORK = ISTKGT(NOFVAR*NOFVAR,4)
+C
+      DO 6 IPOIN = 1,NPOIN
+         CALL VLLR( UCONSV(1,IPOIN), DSTAK(LRWORK), NDIM, NOFVAR )
+         IDXM(1) = IPOIN -1
+         IDXN(1) = IPOIN -1
+         CALL MatSetValuesBlocked(P,1,IDXM,1,IDXN,DSTAK(LRWORK),
+     +                            INSERT_VALUES,IFAIL)
+C     write(6,*) 'MatSetValuesBlocked has returned ',IFAIL,IPOIN
+    6 CONTINUE
+      CALL ISTKRL(1)
+C
+      CALL MatAssemblyBegin(P,MAT_FINAL_ASSEMBLY,IFAIL)
+      CALL MatAssemblyEnd(P,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+      RETURN
+  215 FORMAT(5X,'Nodal Residual'/)
+  225 FORMAT(5X,'Nodal Update'/)
+  230 FORMAT(15X,'NONZERO ENTRIES IN THE REDUCED MATRIX ',I8/)
+  235 FORMAT (I5,1X,I4,2 (1X,E10.4))
+C
+C     write(6,*) 'SLESSolve has returned ',IFAIL
+C     write(6,*) 'SLESSetOperators has returned ',IFAIL
+      END
+C
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 3
+@

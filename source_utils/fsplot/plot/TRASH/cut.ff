@@ -1,0 +1,214 @@
+      SUBROUTINE CUT(ICLR,AA,BB,CC,Z,NOFVAR,COOR,NDIM,NPOIN,ICELNOD,
+     +               ICELCEL,NOFVERT,NELEM,IBNDFAC,NBFAC,IPNTR,SKINF,
+     +               NWFAC,REYNO,FILE)
+      IMPLICIT NONE 
+C
+C     This routine finds the values of the
+C     dependent variables along the line
+C     of equation AA*x+BB*y+CC=0.
+C     The line is traced starting from its intersection
+C     with the boundary edges colored ICLR
+C
+C     IPNTR(1:2,1:NWFAC) gives the element and vertex
+C                      of the no-slip faces
+C
+
+
+
+C     .. Scalar Arguments ..
+      REAL*8 AA,BB,CC,REYNO
+      INTEGER ICLR,NBFAC,NDIM,NELEM,NOFVAR,NOFVERT,NPOIN,NWFAC
+      CHARACTER FILE* (*)
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION COOR(NDIM,NPOIN),SKINF(NWFAC),Z(NOFVAR,NPOIN)
+      INTEGER IBNDFAC(3,NBFAC),ICELCEL(NOFVERT,NELEM),
+     +        ICELNOD(NOFVERT,NELEM),IPNTR(2,NWFAC)
+C     ..
+C     .. Local Scalars ..
+      REAL*8 DIST,FUNY,S,T,TAUW,UTAU,X0,X1,X2,XA,XB,XC,XMAX,XMIN,Y0,Y1,
+     +       Y2,YA,YB,YC,YMAX,YMIN
+      INTEGER I,IDUMMY,IE,IFACE,INTERSECT,IPNT,IUNIT,IV,IVAR,IXDRS,J,JV,
+     +        N1,N2
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION TMP(5)
+C     ..
+C     .. External Functions ..
+      INTEGER GR_LINE_CROSS,ICYCL,INITXDR
+      EXTERNAL GR_LINE_CROSS,ICYCL,INITXDR
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL XDRIMAT,XDRINT
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,MAX,MIN,SQRT
+C     ..
+C     .. Data statements ..
+
+      DATA TMP/5*0.D0/
+C     ..
+
+
+      IF (NDIM.NE.2) STOP 'Routine CUT works only in 2D'
+C     read neighbours from file FILE
+      IXDRS = INITXDR(FILE,'r')
+
+      CALL XDRINT(IXDRS,IDUMMY)
+      CALL XDRINT(IXDRS,IDUMMY)
+      CALL XDRIMAT(IXDRS,NOFVERT*NELEM,ICELCEL)
+
+      IPNT = 1
+      XMIN = MIN(XMIN,COOR(1,IPNT))
+      XMAX = MAX(XMAX,COOR(1,IPNT))
+      YMIN = MIN(YMIN,COOR(2,IPNT))
+      YMAX = MAX(YMAX,COOR(2,IPNT))
+      DO 10 IPNT = 2,NPOIN
+          XMIN = MIN(XMIN,COOR(1,IPNT))
+          XMAX = MAX(XMAX,COOR(1,IPNT))
+          YMIN = MIN(YMIN,COOR(2,IPNT))
+          YMAX = MAX(YMAX,COOR(2,IPNT))
+   10 CONTINUE
+      XMIN = 1.05*XMIN
+      XMAX = 1.05*XMAX
+      YMIN = 1.05*YMIN
+      YMAX = 1.05*YMAX
+C
+      IF (ABS(BB).GT.ABS(AA)) THEN
+          XA = XMIN
+          YA = - (AA*XA+CC)/BB
+          XB = XMAX
+          YB = - (AA*XB+CC)/BB
+
+      ELSE
+          YA = YMIN
+          XA = - (BB*YA+CC)/AA
+          YB = YMAX
+          XB = - (BB*YB+CC)/AA
+      ENDIF
+C
+C     write(6,*)xa,xb,ya,yb
+C
+      IUNIT = 20
+C
+      DO 3 I = 1,NBFAC
+C ... find the intersection of the rake with the boundary
+          IF (IBNDFAC(3,I).NE.ICLR) GOTO 3
+          IE = IBNDFAC(1,I)
+          IV = IBNDFAC(2,I)
+C ... nodes on the boundary
+          N1 = ICELNOD(ICYCL(IV+1,NOFVERT),IE)
+          N2 = ICELNOD(ICYCL(IV+2,NOFVERT),IE)
+          X1 = COOR(1,N1)
+          Y1 = COOR(2,N1)
+          X2 = COOR(1,N2)
+          Y2 = COOR(2,N2)
+C ... check whether these intersect with the line
+          INTERSECT = GR_LINE_CROSS(XA,YA,XB,YB,X1,Y1,X2,Y2,S,T)
+C ... if not go to the next boundary edge
+          IF (INTERSECT.NE.1) GOTO 3
+C
+C     compute the intersection
+C
+          X0 = (1.D0-S)*X1 + S*X2
+          Y0 = (1.D0-S)*Y1 + S*Y2
+C
+          WRITE (6,FMT=*) 'Found an intersection at ',X0,Y0
+C
+C     compute values at X0,Y0 by linear interpolation
+C
+          DO 4 IVAR = 1,NOFVAR
+              TMP(IVAR) = (1.D0-S)*Z(IVAR,N1) + S*Z(IVAR,N2)
+    4     CONTINUE
+C
+C    find the friction velocity at the wall
+C    (at present only for incompressible flows)
+C
+          TAUW = 1.D0
+          FUNY = 1.D0
+          IF( NOFVAR .EQ. 1 )GOTO 15
+          DO 13 IFACE = 1,NWFAC
+C    find the wall shear stress for the current edge
+C    remind that shear stress are associated with edges
+              IF (IE.NE.IPNTR(1,IFACE)) GOTO 13
+              IF (IV.NE.IPNTR(2,IFACE)) GOTO 13
+              TAUW = SKINF(IFACE)
+              UTAU = SQRT(TAUW)
+              FUNY = SQRT(TAUW)*REYNO
+              GOTO 15
+
+   13     CONTINUE
+          STOP 'Could not find the corresponding shear stress'
+
+   15     CONTINUE
+C
+          IUNIT = IUNIT + 1
+C
+C    writes wall distance, y+, variables, u+ for the wall node
+C
+          WRITE (IUNIT,FMT=*) 0.D0,0.D0, (TMP(IVAR),IVAR=1,NOFVAR),0.D0
+C
+C    loop over the other edges of the current triangle
+C    and check which of the two intersects the rake
+C
+    2     DO 5 J = 1,2
+              JV = ICYCL(IV+J,NOFVERT)
+              N1 = ICELNOD(ICYCL(JV+1,NOFVERT),IE)
+              N2 = ICELNOD(ICYCL(JV+2,NOFVERT),IE)
+              X1 = COOR(1,N1)
+              Y1 = COOR(2,N1)
+              X2 = COOR(1,N2)
+              Y2 = COOR(2,N2)
+              INTERSECT = GR_LINE_CROSS(XA,YA,XB,YB,X1,Y1,X2,Y2,S,T)
+              IF (INTERSECT.EQ.1) GOTO 7
+    5     CONTINUE
+          STOP 'Uh! Oh! Smthg. went wrong in subroutine CUT'
+
+    7     CONTINUE
+C    compute the intersection point
+          XC = (1.D0-S)*X1 + S*X2
+          YC = (1.D0-S)*Y1 + S*Y2
+C
+C     compute values at XC,YC by linear interpolation
+C
+          DO 9 IVAR = 1,NOFVAR
+              TMP(IVAR) = (1.D0-S)*Z(IVAR,N1) + S*Z(IVAR,N2)
+    9     CONTINUE
+          DIST = SQRT((XC-X0)**2+ (YC-Y0)**2)
+C
+C    writes wall distance, y+, variables, u+
+C    >>> incompressible <<<
+C
+          WRITE (IUNIT,FMT=80) DIST,FUNY*DIST,
+     +      (TMP(IVAR),IVAR=1,NOFVAR),TMP(2)/UTAU
+C
+          IE = ICELCEL(JV,IE)
+C
+C                  +
+C                /   \
+C               /     \
+C              /       \
+C             /         \
+C            /           \
+C          + ------------ +
+C            \           /
+C             \         /
+C              \       /
+C               \     /
+C                \   /
+C                  +
+C
+C
+          IF (IE.EQ.0 .OR. IE.GT.NELEM) GOTO 3
+          DO 11 IV = 1,NOFVERT
+              IF (ICELNOD(IV,IE).NE.N1 .AND.
+     +            ICELNOD(IV,IE).NE.N2) GOTO 2
+   11     CONTINUE
+          STOP 'Uh! Oh! Smthg. went wrong in subroutine CUT'
+
+    3 CONTINUE
+      RETURN
+
+   80 FORMAT (6 (E12.6,1X))
+
+      END

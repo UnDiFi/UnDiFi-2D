@@ -1,0 +1,24 @@
+===== readme for sparse-blas =====
+
+Sparse Extensions to the Fortran Basic Linear Algebra Subprograms
+
+The extensions are targeted at sparse vector operations, with the goal of
+providing efficient, but portable, implementations of algorithms for high
+performance computers.
+
+
+David S. Dodson
+Convex Computer Corporation
+701 N. Plano Road
+Richardson, Texas 75081
+
+Roger G. Grimes
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+
+John G. Lewis
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+

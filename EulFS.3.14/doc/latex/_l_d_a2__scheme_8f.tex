@@ -1,0 +1,51 @@
+\hypertarget{_l_d_a2__scheme_8f}{}\doxysection{src/schemes/\+L\+D\+A2\+\_\+scheme.f File Reference}
+\label{_l_d_a2__scheme_8f}\index{src/schemes/LDA2\_scheme.f@{src/schemes/LDA2\_scheme.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{_l_d_a2__scheme_8f_a2227149d264a1dcf708ed23bdee4c7c7}{L\+D\+A2\+\_\+\+S\+C\+H\+E\+ME}} (I\+E\+L\+EM, V\+CN, A\+D\+V\+E\+C\+T\+I\+ON, C\+E\+L\+R\+ES, S\+O\+U\+R\+CE, Q, DT, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, B\+E\+TA, S\+T\+I\+FC, N\+D\+IM, N\+O\+F\+V\+E\+RT, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)
+\begin{DoxyCompactList}\small\item\em Computes the L\+DA scheme for scalar problems on a triangle/tetrahedron. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{_l_d_a2__scheme_8f_a2227149d264a1dcf708ed23bdee4c7c7}\label{_l_d_a2__scheme_8f_a2227149d264a1dcf708ed23bdee4c7c7}} 
+\index{LDA2\_scheme.f@{LDA2\_scheme.f}!LDA2\_SCHEME@{LDA2\_SCHEME}}
+\index{LDA2\_SCHEME@{LDA2\_SCHEME}!LDA2\_scheme.f@{LDA2\_scheme.f}}
+\doxysubsubsection{\texorpdfstring{LDA2\_SCHEME()}{LDA2\_SCHEME()}}
+{\footnotesize\ttfamily subroutine L\+D\+A2\+\_\+\+S\+C\+H\+E\+ME (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{double precision, dimension(ndim)}]{A\+D\+V\+E\+C\+T\+I\+ON,  }\item[{double precision}]{C\+E\+L\+R\+ES,  }\item[{double precision}]{S\+O\+U\+R\+CE,  }\item[{double precision, dimension(nofvert)}]{Q,  }\item[{double precision, dimension(nofvert)}]{DT,  }\item[{double precision, dimension(nofvert)}]{N\+O\+D\+R\+ES,  }\item[{double precision, dimension(nofvert)}]{B\+E\+TA,  }\item[{double precision, dimension(nofvert,nofvert)}]{S\+T\+I\+FC,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{logical}]{M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY }\end{DoxyParamCaption})}
+
+
+
+Computes the L\+DA scheme for scalar problems on a triangle/tetrahedron. 
+
+\[ \beta_i^{LDA} = \delta_i^+ = \frac{ k_{i}^{+} }{ \sum_{\ell=1}^{d+1} k_{\ell}^{+} } \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & the N\+D\+IM cartesian component of the inward face normal to all N\+O\+F\+V\+E\+RT vertices, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em A\+D\+V\+E\+C\+T\+I\+ON} & the N\+D\+IM cartesian component of the advection speed \\
+\hline
+\mbox{\texttt{ out}}  & {\em C\+E\+L\+R\+ES} & the elemental residual \\
+\hline
+\mbox{\texttt{ in}}  & {\em S\+O\+U\+R\+CE} & the volume integral of the elemental source term \\
+\hline
+\mbox{\texttt{ in}}  & {\em Q} & the N\+O\+F\+V\+E\+RT values of the dependent variable \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em DT} & elemental contribution to the (inverse of the) time step \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+D\+R\+ES} & the signals sent to each of the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ out}}  & {\em B\+E\+TA} & the distribution matrices \\
+\hline
+\mbox{\texttt{ out}}  & {\em S\+T\+I\+FC} & the elemental contribution to the implicit matrix (computed only if M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY is true) \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & is the dimension of the space \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+F\+V\+E\+RT} & is number of vertices of the simplicial elements (= N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} & when set == .T\+R\+UE. the S\+T\+I\+FC matrix will be assembled \\
+\hline
+\end{DoxyParams}

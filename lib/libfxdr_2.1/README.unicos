@@ -1,0 +1,27 @@
+At some point Cray stopped defining the compiler symbol
+'cray' in the c89 command; I've added a "-Dcray" to the
+c89 command line to fix that.  Also, newer crays do not
+include support for the cf77 compiler; I've switched it
+to the f90 compiler.  I've not experienced any problems
+with this change.  In case you need it for old installations,
+there is a "Defines.unicos.old" that has the old values
+for the unicos system; copy that to Defines.unicos if 
+you need to.
+
+--David Pierce
+13 November 1998
+
+Note added 31 Aug 1999:
+At some point Cray decided to switch Fortran character 
+strings from one word pointers to TWO word pointers!
+Needless to say, this messed up the routines that
+transfer character strings from Fortran to C.  The 
+code has been changed to use the new style TWO word pointers.
+This is controlled by adding "-Dcray_twobytecptrs" to the
+CC command in the Defines.unicos* files.  If you have an
+old Cray installation that predates this change, you will
+probably have to get rid of the -Dcray_twobytecptrs entry
+in your Defines.unicos file, make clean, configure, then 
+make and make test.
+
+

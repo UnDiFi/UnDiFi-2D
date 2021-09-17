@@ -1,0 +1,75 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2011.03.30.09.03.46;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@computes the distance btw. two vectors
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      subroutine rdist(iter,zroe,nofvar,npoin,nghost,npnod)
+C
+      IMPLICIT NONE
+C
+#include "finclude/petsc.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+!#include "finclude/petscis.h"
+!#include "finclude/petscksp.h"
+!#include "finclude/petscts.h"
+C
+!#include "iset.com"
+C
+C
+!     INCLUDE 'implicit.h'
+!     INCLUDE 'paramt.h'
+!     INCLUDE 'bnd.h'
+!     INCLUDE 'time.h'
+!     INCLUDE 'constants.h'
+!     INCLUDE 'time.com'
+!     INCLUDE 'conv.com'
+!     INCLUDE 'stream.com'
+!     INCLUDE 'backup.com'
+!     INCLUDE 'flags.com'
+!     INCLUDE 'nloc.com'
+!     INCLUDE 'io.com'
+C
+      INTEGER iter,nofvar,npoin,nghost,npnod
+      Vec zroe,root
+      INTEGER ifail,i
+      PetscScalar      x_array(1)
+      PetscOffset i_x
+c
+      double precision s(0:10)
+c
+      CALL VecDuplicate(ZROE,root,IFAIL)
+      CALL VecGetArray(root,x_array,i_x,IFAIL)
+      CALL solzne("root010.dat",x_array(i_x+1),NOFVAR,
+     &NPOIN+NGHOST+NPNOD,'r')
+      CALL VecRestoreArray(root,x_array,i_x,IFAIL)
+      CALL VecAXPBY(root,-1.d0,1.d0,zroe,ifail)
+      CALL VecNorm(root,NORM_2,s(0),ifail)
+      do i = 1,nofvar
+         CALL VecStrideNorm(root,i-1,NORM_2,s(i),IFAIL)
+      enddo 
+      CALL VecDestroy(root,ifail)
+      write(106,*)iter,(s(i),i=0,nofvar)
+      return
+      end
+
+ 
+@

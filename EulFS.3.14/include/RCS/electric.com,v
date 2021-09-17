@@ -1,0 +1,63 @@
+head	1.2;
+access;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2014.04.10.09.52.58;	author tesistim;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.06.08.07.45.27;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Reference electric potential
+@
+
+
+1.2
+log
+@added circuit resistance
+@
+text
+@!
+      DOUBLE PRECISION PHIREF,RC
+      COMMON/ELECTRIC/  PHIREF,RC 
+!
+!
+!     VREF = Reference electrical potential
+!
+!     
+!
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 2
+a3 2
+      DOUBLE PRECISION PHIREF
+      COMMON/ELECTRIC/  PHIREF 
+@

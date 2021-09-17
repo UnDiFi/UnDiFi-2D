@@ -1,0 +1,51 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.04.07.12.48.15;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@auxiliary routine for periodic b.c.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE PDEG(DEGREE,ISETA,ISETB,PPOIN,NNZR)
+
+      IMPLICIT NONE
+
+C     .. Scalar Arguments ..
+      INTEGER NNZR,PPOIN
+C     ..
+C     .. Array Arguments ..
+      INTEGER DEGREE(*),ISETA(PPOIN),ISETB(PPOIN)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IA,IB,IPOIN,ISUM,ITMPA,ITMPB
+C     ..
+      DO 1 IPOIN = 1,PPOIN
+          IA = ISETA(IPOIN)
+          IB = ISETB(IPOIN)
+          ITMPA = DEGREE(IA)
+          ITMPB = DEGREE(IB)
+          ISUM = ITMPA + ITMPB
+          NNZR = NNZR + ISUM
+          DEGREE(IB) = ISUM
+          DEGREE(IA) = ISUM
+    1 CONTINUE
+
+      RETURN
+
+      END
+@

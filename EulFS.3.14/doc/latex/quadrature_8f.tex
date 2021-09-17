@@ -1,0 +1,61 @@
+\hypertarget{quadrature_8f}{}\doxysection{src/util/quadrature.f File Reference}
+\label{quadrature_8f}\index{src/util/quadrature.f@{src/util/quadrature.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{quadrature_8f_ad014778b03d6b519d64b7a38214cba6d}{Q\+U\+A\+D\+R\+A\+T\+U\+RE}} (N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+D\+OF, Z\+R\+OE, X\+Y\+Z\+D\+OT, F\+A\+CN, F\+L\+XN, F\+L\+U\+XF)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{quadrature_8f_ad014778b03d6b519d64b7a38214cba6d}\label{quadrature_8f_ad014778b03d6b519d64b7a38214cba6d}} 
+\index{quadrature.f@{quadrature.f}!QUADRATURE@{QUADRATURE}}
+\index{QUADRATURE@{QUADRATURE}!quadrature.f@{quadrature.f}}
+\doxysubsubsection{\texorpdfstring{QUADRATURE()}{QUADRATURE()}}
+{\footnotesize\ttfamily subroutine Q\+U\+A\+D\+R\+A\+T\+U\+RE (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+D\+OF,  }\item[{double precision, dimension(ndof,nofvert)}]{Z\+R\+OE,  }\item[{double precision, dimension(ndim,nofvert)}]{X\+Y\+Z\+D\+OT,  }\item[{double precision, dimension(ndim)}]{F\+A\+CN,  }\item[{double precision, dimension(ndof,nofvert)}]{F\+L\+XN,  }\item[{external}]{F\+L\+U\+XF }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the integral of the flux {\ttfamily F\+L\+U\+XF} through a triangular face using a quadrature formula which is exact at least for quadratic polynomials we use a three points rule
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices for a cell = N\+D\+I\+M+1 \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+OF} & nof degrees of freedom in vector Z\+R\+OE, also leading dimension of F\+L\+XN \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Roe\textquotesingle{}s parameter vector \\
+\hline
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z\+D\+OT} & the cartesian components of the grid velocity $ \mathbf{b}$ \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+A\+CN} & the cartesian components of the scaled inward normal to the face \\
+\hline
+\mbox{\texttt{ out}}  & {\em F\+L\+XN} & the eulerian (inviscid) nodal fluxes\+: the first N\+D\+IM columns return the fluxes in the N\+D\+IM vertices of the face, the last one (N\+O\+F\+V\+E\+RT) is used to store the face value computed according to Simpson\textquotesingle{}s rule \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+L\+U\+XF} & is the subroutine used to compute the flux the calling sequence is\+: \begin{DoxyVerb} FLUXF((NDIM,FACN,ZROE(1,I),XYZDOT,FLXN(1,I))\end{DoxyVerb}
+\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+2 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:54\+:05 
+\end{DoxyParagraph}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000010}{Bug}}]Not sure the grid velociy is accounted for correctly \end{DoxyRefDesc}

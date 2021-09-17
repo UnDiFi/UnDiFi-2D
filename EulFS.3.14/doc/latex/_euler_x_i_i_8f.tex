@@ -1,0 +1,49 @@
+\hypertarget{_euler_x_i_i_8f}{}\doxysection{src/euler/\+Euler\+X\+II.f File Reference}
+\label{_euler_x_i_i_8f}\index{src/euler/EulerXII.f@{src/euler/EulerXII.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{_euler_x_i_i_8f_ac38fc7736696c8c48f48d588cfd66fdf}{Euler\+X\+II}} (I\+E\+L\+EM, V\+CN, V\+CB, V\+CZ, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+O\+F\+V\+AR, N\+T\+U\+RB, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, T\+S\+T\+EP, S\+T\+I\+F\+EL, V\+O\+L\+U\+ME, P\+I\+C\+A\+RD, Scalar\+Scheme, Matrix\+Scheme)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{_euler_x_i_i_8f_ac38fc7736696c8c48f48d588cfd66fdf}\label{_euler_x_i_i_8f_ac38fc7736696c8c48f48d588cfd66fdf}} 
+\index{EulerXII.f@{EulerXII.f}!EulerXII@{EulerXII}}
+\index{EulerXII@{EulerXII}!EulerXII.f@{EulerXII.f}}
+\doxysubsubsection{\texorpdfstring{EulerXII()}{EulerXII()}}
+{\footnotesize\ttfamily subroutine Euler\+X\+II (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{double precision, dimension($\ast$)}]{V\+CN,  }\item[{double precision, dimension($\ast$)}]{V\+CB,  }\item[{double precision, dimension($\ast$)}]{V\+CZ,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+T\+U\+RB,  }\item[{double precision, dimension($\ast$)}]{N\+O\+D\+R\+ES,  }\item[{double precision, dimension($\ast$)}]{T\+S\+T\+EP,  }\item[{double precision, dimension($\ast$)}]{S\+T\+I\+F\+EL,  }\item[{double precision, dimension($\ast$)}]{V\+O\+L\+U\+ME,  }\item[{logical}]{P\+I\+C\+A\+RD,  }\item[{external}]{Scalar\+Scheme,  }\item[{external}]{Matrix\+Scheme }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & the N\+D\+IM cartesian components of the inward face normal, scaled by its measure in the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CB} & the N\+D\+IM cartesian components of the grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & the N\+O\+F\+V\+AR dofs in the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & the nof vertices of the current simplex (=N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & the nof dependent variables \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+T\+U\+RB} & the nof turbulent variables \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+D\+R\+ES} & the N\+O\+F\+V\+AR components of the residual vector in the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ out}}  & {\em T\+S\+T\+EP} & is the contribution of the current cell to the global array \\
+\hline
+\mbox{\texttt{ out}}  & {\em S\+T\+I\+F\+EL} & is the contribution of the current cell to the global jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+O\+L\+U\+ME} & is the area/volume of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+I\+C\+A\+RD} & is .T\+R\+UE. if the (approximate) jacobian matrix has to be assembled \\
+\hline
+\mbox{\texttt{ in}}  & {\em Scalar\+Scheme} & the subroutine implementing the FS scheme for scalar equations \\
+\hline
+\mbox{\texttt{ in}}  & {\em Matrix\+Scheme} & the subroutine implementing the FS scheme for hyperbolic system \\
+\hline
+\end{DoxyParams}

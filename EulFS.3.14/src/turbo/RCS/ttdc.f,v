@@ -1,0 +1,113 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	98.03.02.17.33.30;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Function for the Spalart-Allmaras model
+@
+
+
+1.2
+log
+@Compute wall spacing at trip points
+@
+text
+@      SUBROUTINE TTDC(JA,IA,IDXLST,TDXT,NTRIP,ICELCEL,ICELFAC,NOFVERT,
+     +                NELEM,FACNOR,NDIM)
+C
+      IMPLICIT NONE
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVERT,NELEM,NTRIP
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION FACNOR(NDIM,*),TDXT(NTRIP)
+      INTEGER IA(NTRIP+1),ICELCEL(NOFVERT,NELEM),ICELFAC(NOFVERT,NELEM),
+     +        IDXLST(NTRIP),JA(*)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION HSIZE
+      INTEGER I,IELEM,IFACE,IPOIN,IVERT,J,JBGN,JEND,NELT
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DNRM2
+      EXTERNAL DNRM2
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+C     loop over  trip points
+      DO 1 I = 1,NTRIP
+          IPOIN = IDXLST(I)
+          JBGN = IA(I)
+          JEND = IA(I+1) - 1
+C
+C     loop over the elements surrounding trip point IPOIN
+C
+          HSIZE = 0.d0
+          NELT = 0
+C
+          DO 3 J = JBGN,JEND
+              IELEM = JA(J)
+C
+C     loop over the vertices of the element to find boundary faces
+C
+              DO 5 IVERT = 1,NOFVERT
+                  IF (ICELCEL(IVERT,IELEM).EQ.0 .OR.
+     +                ICELCEL(IVERT,IELEM).GT.NELEM) THEN
+                      NELT = NELT+1
+                      IFACE = ICELFAC(IVERT,IELEM)
+                      IF (NDIM.EQ.2) THEN
+                          HSIZE = HSIZE + DNRM2(NDIM,FACNOR(1,IFACE),1)
+
+                      ELSE
+                          HSIZE = HSIZE + SQRT(DNRM2(NDIM,FACNOR(1,
+     +                            IFACE),1))
+                      ENDIF
+
+                  ENDIF
+
+    5         CONTINUE
+    3     CONTINUE
+C    compute an average mesh spacing at the wall
+          HSIZE = HSIZE / NELT
+          WRITE (6,FMT=1000) IPOIN,HSIZE
+          TDXT(I) = HSIZE
+    1 CONTINUE
+      RETURN
+
+ 1000 FORMAT (5X,'Mesh spacing at trip point ',I6,' is ',D12.6)
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 48
+a48 1
+      SUBROUTINE TTDC(I)
+d50 4
+a53 1
+      STOP 'TRIP POINT DISTANCE COMPUTATION NOT IMPLEMENTED YET'
+d55 9
+d65 3
+@

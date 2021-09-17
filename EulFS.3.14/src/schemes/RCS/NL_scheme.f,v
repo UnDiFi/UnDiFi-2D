@@ -1,0 +1,434 @@
+head	1.5;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.5
+	release3_13_0:1.5
+	release3_12_0:1.5
+	release3_11_0:1.5
+	release3_10_0:1.5
+	release3_8_0:1.5
+	release3_7_1:1.5
+	release3_7_0:1.5
+	release3_4_5:1.5
+	release3_4_4:1.5
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.5
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.06.11.09.21.40;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.04.08.15.32.39;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.09.21.07.16.19;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.02.24.11.19.34;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Limited N scheme
+@
+
+
+1.5
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@!> \copydetails LDA_SCHEME()
+      SUBROUTINE NL_SCHEME(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     &                     NODRES,BETA,STIFC,NDIM,NOFVERT,
+     3                     MATRIX_ASSEMBLY)
+C
+      IMPLICIT NONE
+C
+C     $Id:$
+C
+C
+C This routine computes the NL scheme on one triangle/tetrahedron
+C
+C the limiting procedure is based on the L(x,y) limiter functions:
+C
+C \phi_i^{NL} = \phi_i^{N} + \sum_{j \neq i} L( -\phi_i, \phi_j )
+C
+C the limiter is only applied to the convective part
+C while the source term (if any) is distributed using the LDA scheme
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      INCLUDE "paramt.h"
+      INCLUDE "constants.h"
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION CELRES,SOURCE
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ADVECTION(NDIM),BETA(NOFVERT),
+     2                 STIFC(NOFVERT,NOFVERT),
+     +                 DT(NOFVERT),NODRES(NOFVERT),Q(NOFVERT),
+     +                 VCN(NDIM,NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,SUM,UIN
+      INTEGER I,I1,IROW,IVERT,J,J1,J2,JCOL,NEGI,POSI
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DQ(MAXNOFVERT),K(MAXNOFVERT),PHI(MAXNOFVERT)
+      INTEGER POS(MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,MINMOD
+      INTEGER ICYCL
+      EXTERNAL DDOT,MINMOD,ICYCL
+C     ..
+      POSI = 0
+      NEGI = NOFVERT + 1
+      CELRES = ZERO
+      KPOS = ZERO
+      UIN = ZERO
+C
+C Loops over all vertices
+C
+      DO 10 IVERT = 1,NOFVERT
+c
+c Dotting advection speed with normal
+c
+          SUM = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)
+          K(IVERT) = SUM/NDIM
+c
+          CELRES = CELRES + Q(IVERT)*K(IVERT)
+c
+          IF (K(IVERT).GT.ZERO) THEN
+              POSI = POSI + 1
+              POS(POSI) = IVERT
+              KPOS = KPOS + K(IVERT)
+
+          ELSE
+              NEGI = NEGI - 1
+              POS(NEGI) = IVERT
+              UIN = UIN - K(IVERT)*Q(IVERT)
+              NODRES(IVERT) = ZERO
+          ENDIF
+c
+          BETA(IVERT) = ZERO
+c
+   10 CONTINUE
+C
+      IF (KPOS.EQ.ZERO) RETURN
+      UIN = UIN/KPOS
+C
+C Target tracking
+C
+      S = ZERO
+      DO 30 I = 1,POSI
+          J = POS(I)
+C N-scheme contribution for the convective part
+          DQ(J) = K(J)* (Q(J)-UIN)
+C LDA-scheme contribution for the source term
+          PHI(J) = DQ(J) + K(J)*SOURCE/KPOS
+          S = S + PHI(J)
+c
+c Linear time-step for all the downstream nodes
+c
+          DT(J) = DT(J) + K(J)
+c
+   30 CONTINUE
+C
+C Loop over downstream nodes (TARGET UPDATING)
+C
+      DO 20 I = 1,POSI
+          J1 = POS(I)
+          DO 22 I1 = 1,POSI - 1
+              J2 = POS(ICYCL(I+I1,POSI))
+              PHI(J1) = PHI(J1) - MINMOD(DQ(J1),-DQ(J2))
+   22     CONTINUE
+c
+          NODRES(J1) = -PHI(J1)
+          BETA(J1) = PHI(J1)/S
+c
+   20 CONTINUE
+C
+C  the element stiffness matrix is that of the N scheme
+C
+      IF (MATRIX_ASSEMBLY) THEN
+          KNEGINV = -ONE/KPOS
+C
+C     The convection matrix has to be zeroth since in the
+C     subsequent loops (28,30) not all vertices are touched
+C
+          DO 40 J = 1,NOFVERT
+              DO 40 I = 1,NOFVERT
+                  STIFC(I,J) = ZERO
+   40     CONTINUE
+C
+          DO 32 I = 1,POSI
+              IROW = POS(I)
+              S = K(IROW)
+              DO 28 J = NOFVERT,NEGI,-1
+                  JCOL = POS(J)
+                  STIFC(IROW,JCOL) = S*K(JCOL)*KNEGINV
+   28         CONTINUE
+              STIFC(IROW,IROW) = -S
+   32     CONTINUE
+      ENDIF
+C
+C
+C     IF( MATRIX_ASSEMBLY )THEN
+C
+C        DENOM = CELRES+SOURCE
+C
+C        IF(DENOM.LT.1.D-15)RETURN
+C
+C        DO 40 J = 1 , NOFVERT
+C           DO 40 I = 1 , NOFVERT
+C              STIFC(I,J) = ZERO
+C  40    CONTINUE
+C        DO 34 I = 1 , POSI
+C           IROW = POS(I)
+C           S =-PHI(IROW)*DENOM
+C           DO 28 JCOL = 1, NOFVERT
+C              STIFC(IROW,JCOL) = S * K(JCOL)
+C  28       CONTINUE
+C  34    CONTINUE
+C     ENDIF
+
+      RETURN
+
+      END
+C
+@
+
+
+1.4
+log
+@substantially changed to avoid division by zero
+@
+text
+@d1 1
+d3 2
+a4 1
+     +                     NODRES,BETA,STIFC,NDIM,NOFVERT,PICARD)
+d8 3
+d35 1
+a35 1
+      LOGICAL PICARD
+d125 1
+a125 1
+      IF (PICARD) THEN
+d148 1
+a148 1
+C     IF( PICARD )THEN
+@
+
+
+1.3
+log
+@Added BETA among the arguments of the call plus minor
+cosmetic changes
+@
+text
+@d89 1
+d95 2
+a96 2
+          S = K(J)*SOURCE/KPOS
+          PHI(J) = DQ(J) + S
+d113 2
+a114 3
+          S = PHI(J1)
+c
+          NODRES(J1) = -S
+@
+
+
+1.2
+log
+@removed limiters; these have been placed in a different file
+@
+text
+@d2 1
+a2 1
+     +                     NODRES,CMAT,NDIM,NOFVERT,PICARD)
+d24 2
+a25 2
+      DOUBLE PRECISION ZERO,ONE,TWO
+      PARAMETER (ZERO=0.D0,ONE=1.D0,TWO=2.D0)
+d33 2
+a34 1
+      DOUBLE PRECISION ADVECTION(NDIM),CMAT(NOFVERT,NOFVERT),
+d43 2
+a44 2
+      DOUBLE PRECISION DQ(4),K(4),PHI(4)
+      INTEGER POS(4)
+d80 2
+d128 1
+a128 1
+                  CMAT(I,J) = ZERO
+d136 1
+a136 1
+                  CMAT(IROW,JCOL) = S*K(JCOL)*KNEGINV
+d138 1
+a138 1
+              CMAT(IROW,IROW) = -S
+d151 1
+a151 1
+C              CMAT(I,J) = ZERO
+d157 1
+a157 1
+C              CMAT(IROW,JCOL) = S * K(JCOL)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d12 2
+a13 2
+C the treatment of the source term follows
+C Sidilkover and Roe ICASE Report No. 95-10
+a22 2
+C
+C
+a162 103
+C
+      DOUBLE PRECISION FUNCTION MINMOD(X,Y)
+C
+      IMPLICIT NONE
+C
+C
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION HALF,ONE
+      PARAMETER (HALF=0.5D0,ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,DMIN1,SIGN
+C     ..
+      MINMOD = HALF* (ONE+SIGN(ONE,X*Y))*HALF*
+     +         (SIGN(ONE,X)+SIGN(ONE,Y))*DMIN1(ABS(X),ABS(Y))
+      RETURN
+
+      END
+C
+C
+      DOUBLE PRECISION FUNCTION HARMONIC(X,Y)
+C
+      IMPLICIT NONE
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION HALF,ONE,TWO
+      PARAMETER (HALF=0.5D0,ONE=1.D0,TWO=2.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SIGN
+C     ..
+      HARMONIC = HALF* (ONE+SIGN(ONE,X*Y))*TWO*X*Y/ (X+Y)
+      RETURN
+
+      END
+C
+C
+      DOUBLE PRECISION FUNCTION VANALBADA(X,Y)
+C
+      IMPLICIT NONE
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION HALF,ONE
+      PARAMETER (HALF=0.5D0,ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SIGN
+C     ..
+      VANALBADA = HALF* (ONE+SIGN(ONE,X*Y))*X*Y* (X+Y)/ (X*X+Y*Y)
+      RETURN
+
+      END
+C
+C
+      DOUBLE PRECISION FUNCTION SUPERBEE(X,Y)
+C
+      IMPLICIT NONE
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ZERO,HALF,ONE,TWO
+      PARAMETER (ZERO=0.D0,HALF=0.5D0,ONE=1.D0,TWO=2.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DMAX1,DMIN1,SIGN
+C     ..
+      IF (Y.LE.1.D-15) THEN
+          SUPERBEE = ZERO
+
+      ELSE
+          SUPERBEE = HALF* (ONE+SIGN(ONE,X*Y))*Y*
+     +               DMAX1(DMIN1(TWO*X/Y,ONE),DMIN1(X/Y,TWO))
+      ENDIF
+
+      RETURN
+
+      END
+@

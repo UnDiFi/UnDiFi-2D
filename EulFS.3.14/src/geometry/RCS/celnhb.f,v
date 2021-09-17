@@ -1,0 +1,186 @@
+head	1.5;
+access
+	caspur
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.5
+	release3_13_0:1.5
+	release3_12_0:1.5
+	release3_11_0:1.5
+	release3_10_0:1.5
+	release3_8_0:1.5
+	release3_7_1:1.5
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.4
+	release3_3_0:1.4;
+locks; strict;
+comment	@c @;
+
+
+1.5
+date	2020.03.28.09.45.55;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.11.14.18.01.52;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.09.03.10.55.26;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.08.31.09.43.04;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.00.52.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine for reading cell neighbours
+@
+
+
+1.5
+log
+@renamed a call
+@
+text
+@C
+C ----------------------------------- + -----------------------------------
+C
+      SUBROUTINE CELNHB(ICELCEL,NOFVERT,NELEM,FILENAME)
+C
+C     .. This routine reads che cell neighbours ..
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+C
+C     .. Commons ..
+C
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NOFVERT,NELEM 
+      CHARACTER*(*) FILENAME 
+C
+C     .. Array Arguments ..
+C
+      INTEGER ICELCEL(NOFVERT,NELEM)
+C
+C ICELCEL -- Integer ICELCEL(1:NOFVERT,1:NELEM)
+C            Cell to Cell pointer : ICELCEL(i,ielem) gives the
+C            global number of the element sharing with ielem
+C            the face opposite the i-th vertex of the ielem-th cell
+C            If ICELCEL(i,ielem) = 0 or ICELCEL(i,ielem) > NELEM
+C            the element ielem is a boundary element and the face
+C            opposite its i-th vertex is a boundary face
+C
+C
+C     .. Local Scalars ..
+C
+      INTEGER IXDRS,IFAIL,IDUMMY
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      INTEGER  INITXDR,IXDRINT,IXDRIMAT,IXDRCLOSE
+      EXTERNAL INITXDR,IXDRINT,IXDRIMAT,IXDRCLOSE
+C
+C     .. Intrinsic Functions ..
+C
+C
+      DATA IFAIL /0/
+C
+C     .. Executable Statements ..
+C
+      IXDRS = INITXDR( filename , 'r' , .FALSE. ) 
+C
+      IFAIL = IXDRINT( IXDRS , IDUMMY )
+      IFAIL = IXDRINT( IXDRS , IDUMMY )
+      IFAIL = IXDRIMAT( IXDRS , NOFVERT*NELEM , ICELCEL )
+C     CALL I4Mat_Print('General',' ',NOFVERT,NELEM,ICELCEL,NOFVERT,
+C    +            'Neighbouring elements',IFAIL)
+      IFAIL = IXDRCLOSE( IXDRS )
+C
+      RETURN
+      END
+@
+
+
+1.4
+log
+@removed un-used include stmt.
+@
+text
+@d61 1
+a61 1
+C     CALL X04EAF('General',' ',NOFVERT,NELEM,ICELCEL,NOFVERT,
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@a11 1
+      INCLUDE'IO'
+@
+
+
+1.2
+log
+@changed call to XDR routines to comply to rev. 2.0
+of that library
+@
+text
+@d57 1
+a57 1
+      IXDRS = INITXDR( filename , 'r' ) 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d47 2
+a48 2
+      INTEGER  INITXDR
+      EXTERNAL INITXDR
+d59 3
+a61 3
+      CALL XDRINT( IXDRS , IDUMMY )
+      CALL XDRINT( IXDRS , IDUMMY )
+      CALL XDRIMAT( IXDRS , NOFVERT*NELEM , ICELCEL )
+d64 1
+a64 1
+      CALL XDRCLOSE( IXDRS )
+@

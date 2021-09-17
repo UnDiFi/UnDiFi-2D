@@ -1,0 +1,1421 @@
+head	1.6;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.6
+date	2002.02.19.09.25.46;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2002.02.19.09.22.51;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2001.11.09.14.19.22;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.10.25.08.16.34;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.10.19.10.37.29;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.07.19.09.59.33;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@precondizionatore di tipo moltiplicativo scritto da
+Pierluigi Amodio
+@
+
+
+1.6
+log
+@changed Scalar into PetscScalar to comply to ver. 2.1.1
+@
+text
+@C
+C   $Id: PCPierluigi.F,v 1.5 2002/02/19 09:22:51 abonfi Exp abonfi $
+C
+
+!/***********************************************************************/
+!/*          Routines for a user-defined shell preconditioner           */
+!/***********************************************************************/
+
+!
+!   PierluigiPCSetUp - This routine sets up a user-defined
+!   preconditioner context.  
+!   this routine should be called ONLY ONCE
+!
+!
+!   Input Parameters:
+!   A  - matrix
+!   B  - preconditioner matrix
+!   x     - vector
+!
+!   Output Parameter:
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   The shell preconditioner is
+!   a modified block Jacobi method (P.Amodio)
+!
+      subroutine PierluigiPCSetUp(A,B,x,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscis.h"
+
+      Vec     x
+      Mat     A,B,Amat,Pmat
+      integer ierr
+      double  precision info(MAT_INFO_SIZE)
+      PetscTruth flg
+
+!  Common block to store data for user-provided preconditioner 
+
+      PC  asm,bjacobi
+      Vec work1,work2,yb
+      IS isrowi,iscolb
+      common /mypcs/ asm,bjacobi,work1,work2,Amat,Pmat,isrowi,iscolb,yb
+      integer MY_PE
+      common /MPICOM/ MY_PE
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+c
+      INTEGER NR,NNZ,LWORK1,LWORK2,LWORK3,LWORK4,LWORK5,NLEN4,NLEN5
+      INTEGER bsize,bs
+      INTEGER ISTKGT
+      EXTERNAL ISTKGT
+C
+      call MatGetInfo(A,MAT_LOCAL,info,ierr)
+      nnz = info(MAT_INFO_NZ_ALLOCATED)
+      nr = info(MAT_INFO_ROWS_LOCAL)
+C
+      LWORK1 = ISTKGT(NR+1,2)
+      LWORK2 = ISTKGT(NR+1,2)
+      LWORK3 = ISTKGT(NNZ,2)
+C
+C W4,W5 store rows and cols of the submatrix A_{IB}
+C
+      LWORK4 = ISTKGT(NR,2)
+      LWORK5 = ISTKGT(NR,2)
+      call IINIT(NR+1,0,ISTAK(LWORK1),1)
+      call IINIT(NR+1,0,ISTAK(LWORK2),1)
+      call IINIT(NNZ,0,ISTAK(LWORK3),1)
+      call IINIT(NR,0,ISTAK(LWORK4),1)
+      call IINIT(NR,0,ISTAK(LWORK5),1)
+C
+C     constructs the sparsity pattern of the reduced matrix
+C     (this should be done only once)
+C
+      CALL riduci(A,B,ISTAK(LWORK1),ISTAK(LWORK2),ISTAK
+     +(LWORK3),ISTAK(LWORK4),ISTAK(LWORK5),NLEN4,NLEN5)
+C
+      write(6,*)'A_IB has row/cols ',nlen4,nlen5,my_pe
+c
+c     create the two index sets addressing internal (I)
+c     and boundary (B) nodes (in fact, the individual rows)
+c
+cxxxx call MatGetBlockSize(A,bs,ierr)
+cxxxx call ISCreateBlock(PETSC_COMM_SELF,bs,NLEN4,ISTAK(LWORK4),
+cxxxx&isrowi,ierr) 
+cxxxx call ISCreateBlock(PETSC_COMM_SELF,bs,NLEN5,ISTAK(LWORK5),
+cxxxx&iscolb,ierr) 
+C
+C     create a local Seq vector to store the "boundary values"
+C
+cxxxx call ISGetSize(iscolb,bsize,ierr)
+cxxxx call VecCreateSeq(PETSC_COMM_SELF,bsize,yb,ierr)
+C
+C     release workarrays
+C
+      CALL ISTKRL(5)
+C
+      call PCCreate(PETSC_COMM_WORLD,asm,ierr)
+      call PCSetType(asm,PCASM,ierr)
+c
+c The vector must be set so that the preconditioner knows what type of 
+c vector to allocate if necessary.
+c
+      call PCSetVector(asm,x,ierr)
+C
+C Sets the matrix associated with the linear system and a 
+C (possibly) different one associated with the preconditioner. 
+C we set the same operators for asm
+C
+caldo call PCSetOperators(asm,A,A,SAME_NONZERO_PATTERN,
+caldo&                     ierr)
+caldo call PCSetUp(asm,ierr)
+
+      call PCCreate(PETSC_COMM_WORLD,bjacobi,ierr)
+      call PCSetType(bjacobi,PCBJACOBI,ierr)
+c
+c The vector must be set so that the preconditioner knows what type of 
+c vector to allocate if necessary.
+c
+      call PCSetVector(bjacobi,x,ierr)
+c
+c Sets the matrix associated with the linear system and a (possibly) 
+c different one associated with the preconditioner. 
+c
+caldo call PCSetOperators(bjacobi,A,B,SAME_NONZERO_PATTERN,
+caldo&                     ierr)
+caldo call PCSetUp(bjacobi,ierr)
+c
+c     create work vectors 
+c
+      call VecDuplicate(x,work1,ierr)
+      call VecDuplicate(x,work2,ierr)
+c
+      Amat = A
+      Pmat = B
+
+      end
+
+! ------------------------------------------------------------------- 
+!
+!   PierluigiPCApply - This routine demonstrates the use of a
+!   user-provided preconditioner.
+!
+!   Input Parameters:
+!   dummy - optional user-defined context, not used here
+!   x - input vector
+!
+!   Output Parameters:
+!   y - preconditioned vector
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   This code implements the .... preconditioner
+!
+      subroutine PierluigiPCApply(dummy,x,y,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscsles.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscmat.h"
+
+      Vec     x,y
+      integer dummy,ierr
+      Mat A,B ,Amat,Pmat,submat(1)
+      MatStructure flag 
+      MatType type 
+      PCType method 
+      PC  subpc
+      SLES subsles(512)
+      integer     is_i(1),is_b(1)
+      PetscOffset i_isi,i_isb,i_x,i_yb,i_y
+      integer isize,bsize
+      PetscScalar y_array(1),yb_array(1),x_array(1)
+      double precision one,mone
+      parameter (one=1.d0,mone=-1.d0)
+      
+!  Common block to store data for user-provided preconditioner 
+      IS isrowi,iscolb
+      PC  asm,bjacobi
+      Vec work1,work2,yb
+      common /mypcs/ asm,bjacobi,work1,work2,Amat,Pmat,isrowi,iscolb,yb
+      integer MY_PE
+      common /MPICOM/ MY_PE
+      integer rowsa,colsa,rowsb,colsb,iblock,nblocks
+c
+c     y = asm^{-1} x [ x_1 = asm^{-1} b ]
+c
+      call PCApply(asm,x,y,ierr)
+c
+#if 0
+      call PCASMGetSubSLES(asm,nblocks,
+     +                     MY_PE,subsles,ierr)
+      write(6,*)' PCASMGetSubSLES returned ierr= ',ierr,my_pe
+      write(6,*)' there are nblocks = ', nblocks,' on PE ',my_pe
+c
+c     nblocks should be <= 512
+c
+      DO 10 iblock = 1, nblocks
+          call SLESGetPC(subsles(iblock),subpc,ierr)
+          call PCGetType(subpc,method,ierr)
+caldo
+          call PCGetFactoredMatrix(subpc,B,ierr)
+          call MatValid(b,flag,ierr)
+          write(6,*)'MatValid of B says ',flag,PETSC_TRUE
+          call MatGetType(b,type,ierr)
+          call MatGetLocalSize(b,rowsb,colsb,ierr)
+   10 continue
+caldo
+#endif
+C
+c
+c Gets the matrix associated with the linear system and possibly 
+c a different one associated with the preconditioner
+c for asm both matrices are the same
+c
+      call PCGetOperators(asm,A,B,flag,ierr)
+#if 0
+c
+c     isrowi keeps the interior rows (cols)
+c     iscolb keeps the boundary cols (rows)
+c
+cxxxx call MatGetSubMatrices(A,1,isrowi,iscolb,MAT_INITIAL_MATRIX,
+cxxxx&submat,ierr)
+cxxxx write(6,*)'MatGetSubMatrices has returned ierr = ',ierr,my_pe
+c
+c     gather boundary vaues into the local xb array
+c
+cxxxx call ISGetSize(isrowi,isize,ierr)
+cxxxx call ISGetSize(iscolb,bsize,ierr)
+c
+c     there are isize interior rows and bsize boundary rows
+c
+      call ISGetIndices(isrowi,is_i,i_isi,ierr)
+      call ISGetIndices(iscolb,is_b,i_isb,ierr)
+c
+c     gather boundary values into the compressed Vec yb
+c
+      call VecGetArray(y,y_array,i_y,ierr)
+      call VecGetArray(yb,yb_array,i_yb,ierr)
+      CALL DGTHR0( bsize, yb_array(i_yb+1), y_array(i_y+1), 
+     &is_b(i_isb+1) )
+      call VecRestoreArray(yb,yb_array,i_yb,ierr)
+      call VecRestoreArray(y,y_array,i_y,ierr)
+c
+c     form A_IB * y_B
+c
+!     call MatMult(submat,yb,work3,ierr)
+c
+!     call VecGetArray(x,x_arrax,i_x,ierr)
+!     call VecRestoreArray(x,x_arrax,i_x,ierr)
+!     call ISRestoreIndices(iscolb,is_b,i_isb,ierr)
+c
+c     temp = (x_I - A_IB * y_B)
+c
+      call MatGetLocalSize(A,rowsa,colsa,ierr)
+      write(6,*)'rows/cols of A ',rowsa,colsa,my_pe
+      write(6,*)'rows/cols of B ',rowsb,colsb,my_pe
+      write(6,*)'Matrix B has type  ',type(1:10)
+      call MatGetType(a,type,ierr)
+      write(6,*)'Matrix A has type  ',type(1:10)
+      call MatGetSize(submat,rowsa,colsa,ierr)
+      write(6,*)'rows/cols of submat ',rowsa,colsa,my_pe
+      call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+      stop
+#endif
+c
+c     work1 = A*y [A*x_1]
+c
+      call MatMult(A,y,work1,ierr)
+c
+c     work2 = x - A*y [ b - A*x_1 ]
+c
+      call VecWAXPY(mone,work1,x,work2,ierr)
+c
+c Gets the matrix associated with the linear system and possibly 
+c a different one associated with the preconditioner
+c
+      call PCApply(bjacobi,work2,work1,ierr)
+      call VecAXPY(one,work1,y,ierr)
+
+      end
+      subroutine riduci(A,B,iv,ib,jb,irow,jcol,nirow,mjcol)
+c
+c
+c     costruisce e alloca la matrice B 
+c
+c     we also extract the matrix A_{IB} hence we have
+c     to create two index sets one with the interior
+c     and the other one with the B rows/cols
+c
+      implicit none
+c
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscmat.h"
+c
+      Mat         A,Ad,Ao,B,Bd,Bo
+      integer     ierr,rank,o_nz,nnz,nr,nirow,mjcol
+      integer     i,j,l,ia(1),ja(1),n,icol(1),k
+      integer     ibgn,iend,shift,punt,bs,bs2
+      integer     iv(*),ib(*),jb(*),irow(nirow),jcol(mjcol)
+      double precision aaa
+      double  precision info(MAT_INFO_SIZE)
+      character*8 fname1,fname2
+c---------------------------------------------------------------------- 
+      integer ptitle,iin,iout,nlines,mode,idummy
+      real size
+      character title*72, key*8, guesol*2, munt*2 , fname*9
+      data iin /5/, iout/6/, size/5.0/, nlines/0/, ptitle/0/,mode/0/
+      data munt/'in'/, key/'01223467'/
+      data title /"il mattino ha l'oro in bocca il mattino ha l'oro in b
+     +occa il mattino ha "/
+c-----------------------------------------------------------------------
+c
+c     ib(1:n+1),jb(1:nnz) are the integer pointers in the CSR storage of B 
+c     iv(1:n) is used as a workarray
+c
+      PetscTruth  done,flg
+      PetscOffset iia,jja,iicol
+      MatType type
+
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,rank,ierr)
+      iout = 15 + rank 
+C
+      call MatGetType(A,type,ierr)
+C
+C     estrae la parte diagonale ed extradiagonale di A
+C
+      IF( type(1:7) .EQ. "mpibaij" )THEN
+          call MatMPIBAIJGetSeqBAIJ(A,Ad,Ao,icol,iicol,ierr)
+          call MatGetBlockSize(A,bs,ierr)
+      ELSEIF( type(1:7) .EQ. "seqbaij" )THEN
+          Ad = A
+          call MatGetBlockSize(A,bs,ierr)
+          WRITE(6,FMT=*)'MatType ',type
+      ELSEIF( type(1:6) .EQ. "seqaij" )THEN
+          Ad = A
+          WRITE(6,FMT=*)'MatType ',type
+      ELSEIF( type(1:6) .EQ. "mpiaij" )THEN
+          call MatMPIAIJGetSeqAIJ(A,Ad,Ao,icol,iicol,ierr)
+      ELSE
+         WRITE(6,FMT=*)'MatType ',type,' cannot be handled'
+         CALL MPI_Abort(PETSC_COMM_WORLD,-1,ierr)
+      ENDIF
+C
+      call MatGetInfo(A,MAT_LOCAL,info,ierr)
+      nnz = info(MAT_INFO_NZ_ALLOCATED)
+      nr = info(MAT_INFO_ROWS_LOCAL)
+caldo bs = info(MAT_INFO_BLOCK_SIZE)
+C
+      shift = 1
+C
+      IF( type(1:3) .EQ. "seq" )GOTO 100
+c
+c   Access off-diagonal portion of matrix
+c
+      call MatGetRowIJ(Ao,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+C
+caldo write(iout,FMT=*)'nnz,nr,n,bs ',nnz,nr,n,bs,bs2
+c
+c     number of interior rows and boundary rows
+c
+      nirow = 0
+      mjcol = 0
+c
+      do 30, i=1,n
+        o_nz = ia(iia+i+1)-ia(iia+i)
+c
+c       se o_nz = 0 il nodo e` interno, i.e. non ha punti
+c       di contatti con nodi sul contorno
+c
+        if( o_nz .EQ. 0 )then
+            iv(i) = 1
+            nirow = nirow + 1
+            irow(nirow) = (i-1)*bs
+        else
+            iv(i) = 0
+            mjcol = mjcol + 1
+            jcol(mjcol) = (i-1)*bs
+        endif
+caldo
+   30 continue
+      call MatRestoreRowIJ(Ao,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,
+     +ierr)
+caldo
+caldo
+  100 continue
+      iout=6
+c
+c     parte diagonale di A
+c
+      call MatGetRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+caldo
+      ib(1) = 1
+      l = 1
+      do 40 i=1,n
+         if( iv(i) .EQ. 0 )THEN
+            jb(l) = i
+            l = l + 1
+         else
+            ibgn = ia(iia+i)
+            iend = ia(iia+i+1)-1
+            do 50, j = ibgn,iend
+                punt = ja(jja+j)
+                if( iv(punt) .EQ. 1 )THEN
+                    jb(l) = punt
+                    l = l + 1
+                endif
+   50       continue
+         endif
+c     write(iout,*)'row ',i,' on pe # ',rank,' cols are ',iend-ibgn+1
+         ib(i+1) = l
+   40 continue
+C
+caldo call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+CCC#define PRINT
+#ifdef PRINT
+      call dump(1,n,.FALSE.,aaa,jb,ib,30+rank)
+      call dump(1,n,.FALSE.,aaa,ja(jja+1),ia(iia+1),40+rank)
+c
+c     call post script generator
+c     
+      iout = 10+rank
+      write(fname,FMT="(A3,I3.3,A3)")"mat",iout,".ps"
+      open(iout,FILE=fname)
+      call pspltm(n,n,mode,ja(jja+1),ia(iia+1),title,ptitle,
+     *     size,munt,nlines,idummy,iout)
+      close(iout)
+      iout = 20+rank
+      write(fname,FMT="(A3,I3.3,A3)")"mat",iout,".ps"
+      open(iout,FILE=fname)
+      call pspltm(n,n,mode,jb,ib,title,ptitle,size,munt,
+     *     nlines,idummy,iout)
+      close(iout)
+      write(6,*)'On pe # ',rank,' A has ',ia(iia+n+1)-ia(iia+1),
+     +' entries while B has ',ib(n+1)-ib(1)
+      call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+      stop
+#endif
+C
+C     reset jb to 0-based indexing for later use in
+C           MatSeq(B)AIJSetColumnIndices
+C
+      nnz = ib(n+1)-ib(1)
+      do 35 j = 1,nnz
+         jb(j) = jb(j)-1
+   35 continue
+c
+c
+c     overwrite ib(i) with the number of non-zero (block) entries
+C     in the i-th row of B
+c
+      do 60 i = 1,n
+         ib(i) = ib(i+1)-ib(i)
+   60 continue
+c
+      call MatRestoreRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,
+     +     ierr)
+c
+c     it appears that if we use d_nnz in MatCreateMPIAIJ,
+c     we cannot use o_nz=0, but we also need to specify 
+c     o_nnz = [0,0,.....,0]
+c
+      do 65 i = 1,n
+         iv(i) = 0
+   65 continue
+C
+C     create matrix B
+C
+      IF( type(1:7) .EQ. "mpibaij" )THEN
+      call MatCreateMPIBAIJ(PETSC_COMM_WORLD,bs,n*bs,n*bs,
+     +               PETSC_DETERMINE,PETSC_DETERMINE,
+     +               PETSC_DEFAULT_INTEGER,ib,PETSC_DEFAULT_INTEGER,
+     +               iv,B,ierr)
+      ELSEIF( type(1:6) .EQ. "seqaij" )THEN
+      call MatCreateSeqAIJ(PETSC_COMM_SELF,n,n,
+     +               PETSC_DEFAULT_INTEGER,ib,B,ierr)
+      ELSEIF( type(1:7) .EQ. "seqbaij" )THEN
+      call MatCreateSeqBAIJ(PETSC_COMM_SELF,bs,n*bs,n*bs,
+     +               PETSC_DEFAULT_INTEGER,ib,B,ierr)
+      ELSEIF( type(1:6) .EQ. "mpiaij" )THEN
+      call MatCreateMPIAIJ(PETSC_COMM_WORLD,n,n,PETSC_DETERMINE,
+     +               PETSC_DETERMINE,PETSC_DEFAULT_INTEGER,ib,
+     +               PETSC_DEFAULT_INTEGER,iv,B,ierr)
+      ENDIF
+C
+C     now we wish to set the column indices for B that
+C     are already available in jb
+C
+C     extract diagonal and off-diagonal parts of B
+C     and set column indices in the diagonal part of B
+C
+      IF( type(1:7) .EQ. "mpibaij" )THEN
+          call MatMPIBAIJGetSeqBAIJ(B,Bd,Bo,icol,iicol,ierr)
+          CALL MatSeqBAIJSetColumnIndices(Bd,jb,ierr)
+      ELSEIF( type(1:7) .EQ. "seqbaij" )THEN
+          CALL MatSeqBAIJSetColumnIndices(B,jb,ierr)
+      ELSEIF( type(1:6) .EQ. "seqaij" )THEN
+          CALL MatSeqAIJSetColumnIndices(B,jb,ierr)
+      ELSEIF( type(1:6) .EQ. "mpiaij" )THEN
+          call MatMPIAIJGetSeqAIJ(B,Bd,Bo,icol,iicol,ierr)
+          CALL MatSeqAIJSetColumnIndices(Bd,jb,ierr)
+      ENDIF
+C
+C     at this stage the CSR storage of B is available
+C
+C     if possible, we would like to de-allocate the arrays iv,ib,jb
+C
+      return
+      end
+C
+      subroutine copiaAIJ(A,B,ierr)
+c
+c
+c     inserisce in B gli elementi di A
+c     un algoritmo scritto da P.Amodio
+c
+      implicit none
+c
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscmat.h"
+c
+      double precision one
+      parameter (one=1.d0)
+c
+      Mat         A,Ad,Ao
+      Mat         B,Bd,Bo
+      integer     ierr,rank,d_nz
+      integer     i,j,k,l,n,shift
+      PetscTruth  done
+      integer     ia(1),ja(1),na,iacol(1),jabgn,jaend,ija
+      integer     ib(1),jb(1),ibcol(1),jbbgn,jbend,ijb
+      PetscOffset iia,jja,aaa,iiacol
+      PetscOffset iib,jjb,bbb,iibcol
+      MatType type
+      PetscScalar      aa(1),bb(1)
+      call MAtGetType(A,type,ierr)
+      if( type(1:3) .EQ. "mpi" )Then
+C
+C     estrae la parte diagonale ed extradiagonale di A
+C
+      call MatMPIAIJGetSeqAIJ(A,Ad,Ao,iacol,iiacol,ierr)
+C
+C     estrae la parte diagonale ed extradiagonale di B
+C
+      call MatMPIAIJGetSeqAIJ(B,Bd,Bo,ibcol,iibcol,ierr)
+C
+      ELSE
+          Bd = B
+          Ad = A
+      ENDIF
+c
+c   Access diagonal portions of both matrices
+c
+      shift = 1
+      call MatGetRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+      call MatGetRowIJ(Bd,shift,PETSC_FALSE,n,ib,iib,jb,jjb,done,ierr)
+caldo
+caldo call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+caldo call MPI_Abort(PETSC_COMM_WORLD,-1,ierr)
+caldo
+c
+c     access entries of both matrices
+c
+      call MatGetArray(Ad,aa,aaa,ierr)
+      call MatGetArray(Bd,bb,bbb,ierr)
+c
+      do 30, i=1,n
+c
+c       jbbgn,jbend first and last entries in jb(*)
+c
+          jbbgn = ib(iib+i)
+          jbend = ib(iib+i+1)-1
+c
+          d_nz = jbend-jbbgn+1
+c
+c       how many cols in B ?
+c
+c       se ncols = 1 c'e` solo l'elemento diagonale (=1)
+c
+          if( d_nz .EQ. 1 )then
+              bb(bbb+jbbgn) = one
+          elseif( d_nz .GT. 1 )then
+c
+c       copy corresponding entries of A in B
+c
+c       jabgn,jaend first and last entries in ja(i)
+c
+              jabgn = ia(iia+i)
+              jaend = ia(iia+i+1)-1
+c
+c       ciclo sulle colonne di B, riga i
+c
+              do 60 j = jbbgn,jbend
+                  ijb = jb(jjb+j)
+c
+c       cerca la colonna ijb in A
+c
+                  do 65 k = jabgn,jaend
+                      ija = ja(jja+k)
+                      if( ija .EQ. ijb )then
+                          bb(bbb+j) = aa(aaa+k)
+                          goto 60
+                      endif
+   65             continue
+c
+c     if it gets here there must smthg. wrong since B must be a subset of A
+c
+                  write(6,*)'cannot find elmt. ij = ',i,ijb,' of B in A'
+      write(6,*)'cols of A are = ',(ja(jja+k),k = jabgn,jaend)
+      write(6,*)'cols of B are = ',(jb(jjb+k),k = jbbgn,jbend)
+      call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+      call MPI_Abort(PETSC_COMM_WORLD,-1,ierr)
+   60         continue
+          else
+              write(6,*)'smthg wrong with jbbgn > jbend ',jbbgn,jbend
+              stop
+          endif
+   30 continue
+caldo
+caldo CALL MPI_Comm_rank(PETSC_COMM_WORLD,rank,ierr)
+caldo write(fname1,FMT="(A5,I3.3)")"matA.",rank
+caldo write(fname2,FMT="(A5,I3.3)")"matB.",rank
+caldo write(6,FMT=*)rank,fname1,fname2
+caldo open(unit=7+rank,file=fname1)
+caldo open(unit=8+rank,file=fname2)
+caldo call dump(1,n,.TRUE.,aa(aaa+1),ja(jja+1),ia(iia+1),7+rank)
+caldo call dump(1,n,.TRUE.,bb(bbb+1),jb(jjb+1),ib(iib+1),8+rank)
+caldo close(unit=7+rank)
+caldo close(unit=8+rank)
+      call MatRestoreArray(Ad,aa,aaa,ierr)
+      call MatRestoreArray(Bd,bb,bbb,ierr)
+      call MatRestoreRowIJ(Ad,1,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+      call MatRestoreRowIJ(Bd,1,PETSC_FALSE,n,ib,iib,jb,jjb,done,ierr)
+c
+      call MatAssemblyBegin(B,MAT_FINAL_ASSEMBLY,ierr)
+      call MatAssemblyEnd(B,MAT_FINAL_ASSEMBLY,ierr)
+c
+      return
+      end
+c
+c
+c
+c
+      subroutine PierluigiSetup(dummy,ifail)
+c
+c     this routine has been set using PCSetSetUp
+c     the arguments of this routine CANNOT be changed
+c
+      implicit none
+c
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscsles.h"
+c
+      integer dummy,ifail
+      MatStructure flag
+      PCType method 
+      PC  subpc
+      SLES subsles(512)
+c
+      PC  asm,bjacobi
+      Mat A,B
+      MatType type
+      IS isrowi,iscolb
+      Vec work1,work2,yb
+      common /mypcs/ asm,bjacobi,work1,work2,A,B,isrowi,iscolb,yb
+c
+      integer MY_PE
+      common /MPICOM/ MY_PE
+C
+      integer iblock,nblocks
+C
+C
+      call MatGetType(A,type,ifail)
+C
+C     must declare B an un-factored matrix if an in-place
+C     factorization is requested.
+C
+      call MatSetUnFactored(B,ifail)
+C
+C     copies elements of A into the reduced matrix B
+C     B is assembled within copia below
+C
+      IF( type(4:7) .EQ. "baij" )THEN
+          call copiaBAIJ(A,B,ifail)
+      ELSEIF( type(4:6) .EQ. "aij" )THEN
+          call copiaAIJ(A,B,ifail)
+      ENDIF
+c
+C
+C
+C Sets the matrix associated with the linear system and
+C one associated with the preconditioner. 
+C we set the same operators for asm
+C
+      call PCSetOperators(asm,A,A,SAME_NONZERO_PATTERN,
+     &                     ifail)
+      call PCSetUp(asm,ifail)
+      call PCASMGetSubSLES(asm,nblocks,
+     +                     MY_PE,subsles,ifail)
+c
+c     nblocks should be <= 512
+c
+      DO 10 iblock = 1, nblocks
+          call SLESGetPC(subsles(iblock),subpc,ifail)
+          call PCGetType(subpc,method,ifail)
+          call PCILUSetUseInPlace(subpc,ifail)
+   10 CONTINUE
+C
+c
+c Sets the matrix associated with the linear system and a
+c different one associated with the preconditioner. 
+c
+      call PCSetOperators(bjacobi,A,B,SAME_NONZERO_PATTERN,
+     &                     ifail)
+      call PCSetUp(bjacobi,ifail)
+      call PCBJacobiGetSubSLES(bjacobi,nblocks,
+     +                     MY_PE,subsles,ifail)
+c
+c     nblocks should be <= 512
+c
+      DO 12 iblock = 1, nblocks
+          call SLESGetPC(subsles(iblock),subpc,ifail)
+          call PCGetType(subpc,method,ifail)
+          call PCILUSetUseInPlace(subpc,ifail)
+   12 CONTINUE
+C
+      return
+      end
+C
+      subroutine copiaBAIJ(A,B,ierr)
+c
+c
+c     inserisce in B gli elementi di A
+c     un algoritmo scritto da P.Amodio
+c
+      implicit none
+c
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscmat.h"
+c
+      double precision one,zero
+      parameter (one=1.d0,zero=0.d0)
+c
+      Mat         A,Ad,Ao
+      Mat         B,Bd,Bo
+      integer     ierr,rank,d_nz,bs,bs2,iaddra,iaddrb
+      integer     i,j,k,l,n,shift
+      PetscTruth  done
+      integer     ia(1),ja(1),iacol(1),jabgn,jaend,ija
+      integer     ib(1),jb(1),ibcol(1),jbbgn,jbend,ijb
+      PetscOffset iia,jja,aaa,iiacol
+      PetscOffset iib,jjb,bbb,iibcol
+      PetscScalar      aa(1),bb(1)
+C
+      call MatGetBlockSize(A,bs,ierr)
+      bs2 = bs*bs
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,rank,ierr)
+C
+C     estrae la parte diagonale ed extradiagonale di A
+C
+      call MatMPIBAIJGetSeqBAIJ(A,Ad,Ao,iacol,iiacol,ierr)
+C
+C     estrae la parte diagonale ed extradiagonale di B
+C
+      call MatMPIBAIJGetSeqBAIJ(B,Bd,Bo,ibcol,iibcol,ierr)
+c
+c   Access diagonal portions of both matrices
+c
+      shift = 1
+      call MatGetRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+      call MatGetRowIJ(Bd,shift,PETSC_FALSE,n,ib,iib,jb,jjb,done,ierr)
+caldo
+C     call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+caldo call MPI_Abort(PETSC_COMM_WORLD,-1,ierr)
+caldo
+c
+c     access entries of both matrices
+c
+      call MatGetArray(Ad,aa,aaa,ierr)
+      call MatGetArray(Bd,bb,bbb,ierr)
+c
+      do 30, i=1,n
+c
+c       jbbgn,jbend first and last entries in jb(*)
+c
+          jbbgn = ib(iib+i)
+          jbend = ib(iib+i+1)-1
+c
+          d_nz = jbend-jbbgn+1
+c
+c       how many cols in B ?
+c
+c       se ncols = 1 c'e` solo l'elemento diagonale (=1)
+c
+          if( d_nz .EQ. 1 )then
+c
+c pointer to the memory location just ahead of where the block starts
+c
+              iaddrb = bbb+(jbbgn-1)*bs2
+c
+c initialize block to 0.d0
+c
+              do 3 k = 1,bs2
+                  bb(iaddrb+k) = zero
+    3         continue
+c
+c set diagonal entries to 1.d0
+c
+              do 4 j = 1,bs
+                  k = (j-1)*bs+j
+                  bb(iaddrb+k) = one
+    4         continue
+c
+          elseif( d_nz .GT. 1 )then
+c
+c       copy corresponding entries of A in B
+c
+c       jabgn,jaend first and last entries in ja(i)
+c
+              jabgn = ia(iia+i)
+              jaend = ia(iia+i+1)-1
+c
+c       ciclo sulle colonne di B, riga i
+c
+              do 60 j = jbbgn,jbend
+                  ijb = jb(jjb+j)
+                  iaddrb = bbb+(j-1)*bs2+1
+c
+c       cerca la colonna ijb in A
+c
+                  do 65 k = jabgn,jaend
+                      ija = ja(jja+k)
+                      if( ija .EQ. ijb )then
+                          iaddra = aaa+(k-1)*bs2+1
+                          call dcopy(bs2,aa(iaddra),1,bb(iaddrb),1)
+                          goto 60
+                      endif
+   65             continue
+c
+c     if it gets here there must smthg. wrong since B must be a subset of A
+c
+                  write(6,*)'cannot find elmt. ij = ',i,ijb,' of B in A'
+      write(6,*)'cols of A are = ',(ja(jja+k),k = jabgn,jaend)
+      write(6,*)'cols of B are = ',(jb(jjb+k),k = jbbgn,jbend)
+      call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+      call MPI_Abort(PETSC_COMM_WORLD,-1,ierr)
+   60         continue
+          else
+              write(6,*)'smthg wrong with jbbgn > jbend ',jbbgn,jbend
+              stop
+          endif
+   30 continue
+caldo
+c
+      call MatRestoreArray(Ad,aa,aaa,ierr)
+      call MatRestoreArray(Bd,bb,bbb,ierr)
+      call MatRestoreRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,
+     +ierr)
+      call MatRestoreRowIJ(Bd,shift,PETSC_FALSE,n,ib,iib,jb,jjb,done,
+     +ierr)
+c
+      call MatAssemblyBegin(B,MAT_FINAL_ASSEMBLY,ierr)
+      call MatAssemblyEnd(B,MAT_FINAL_ASSEMBLY,ierr)
+!     call MatGetBlockSize(B,bs,ierr)
+!     write(6,*)'blocksize of B is ',bs,' on PE ',rank
+!     call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+!     stop
+c
+      return
+      end
+c
+c
+      SUBROUTINE PCPierluigiDestroy( IFAIL )
+C
+C
+      IMPLICIT NONE
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscpc.h"
+C
+      INTEGER IFAIL 
+C
+C     preconditioner related stuff
+C
+      Mat  Amat,Pmat
+      PC  asm,bjacobi
+      Vec work1,work2,yb
+      IS isrowi,iscolb
+      common /mypcs/ asm,bjacobi,work1,work2,Amat,Pmat,isrowi,iscolb,yb
+C
+      call PCDestroy(asm,IFAIL)
+      call PCDestroy(bjacobi,IFAIL)
+      call VecDestroy(work1,IFAIL)
+      call VecDestroy(work2,IFAIL)
+      call MatDestroy(Pmat,IFAIL)
+C
+      RETURN
+      END
+      SUBROUTINE DGTHR0( NZ, Y, X, INDX )
+C
+C     ==================================================================
+C     ==================================================================
+C     ====  DGTHR -- DOUBLE PRECISION GATHER                        ====
+C     ==================================================================
+C     ==================================================================
+C
+C     PURPOSE
+C     -------
+C
+C         DGTHR GATHERS THE SPECIFIED ELEMENTS FROM 
+C             A DOUBLE PRECISION VECTOR  Y  IN FULL STORAGE FORM 
+C         INTO 
+C             A DOUBLE PRECISION VECTOR  X  IN COMPRESSED FORM (X,INDX).
+C
+C         ONLY THE ELEMENTS OF  Y  WHOSE INDICES ARE LISTED IN INDX 
+C         ARE REFERENCED.
+C
+C     ARGUMENTS
+C     ---------
+C
+C     INPUT ...
+C
+C         NZ      INTEGER     NUMBER OF ELEMENTS TO BE GATHERED INTO 
+C                             COMPRESSED FORM.
+C         Y       DOUBLE      ARRAY, ON INPUT, WHICH CONTAINS THE 
+C                             VECTOR  Y  IN FULL STORAGE FORM.  ONLY
+C                             THE ELEMENTS CORRESPONDING TO THE INDICES
+C                             IN  INDX  WILL BE ACCESSED.
+C         INDX    INTEGER     ARRAY CONTAINING THE INDICES OF THE
+C                             VALUES TO BE GATHERED INTO COMPRESSED FORM.  
+C
+C     OUTPUT ...
+C
+C         X       DOUBLE      ARRAY CONTAINING THE VALUES GATHERED INTO
+C                             THE COMPRESSED FORM.
+C
+C     SPARSE BASIC LINEAR ALGEBRA SUBPROGRAM
+C
+C     FORTRAN VERSION WRITTEN OCTOBER 1984
+C     ROGER G GRIMES, BOEING COMPUTER SERVICES
+C
+C     ==================================================================
+C
+C     -------------
+C     ... ARGUMENTS
+C     -------------
+C
+C
+      INTEGER             NZ, INDX (*)
+C
+      DOUBLE PRECISION    Y (*), X (*)
+C
+C     -------------------
+C     ... LOCAL VARIABLES
+C     -------------------
+C
+      INTEGER             I
+C
+C     ==================================================================
+C
+      IF  ( NZ .LE. 0 )  RETURN
+C
+      DO 10 I = 1, NZ
+          X(I) = Y(INDX(I)+1)
+   10 CONTINUE
+C
+      RETURN
+      END
+@
+
+
+1.5
+log
+@alcune modifiche incompiute
+@
+text
+@d2 1
+a2 1
+C   $Id: PCPierluigi.F,v 1.4 2001/11/09 14:19:22 abonfi Exp abonfi $
+d186 1
+a186 1
+      Scalar y_array(1),yb_array(1),x_array(1)
+d548 1
+a548 1
+      Scalar      aa(1),bb(1)
+d769 1
+a769 1
+      Scalar      aa(1),bb(1)
+@
+
+
+1.4
+log
+@heavily revised version
+@
+text
+@d2 1
+a2 1
+C   $Id: PCPierluigi.F,v 1.3 2001/10/25 08:16:34 abonfi Exp abonfi $
+d35 1
+d46 3
+a48 2
+      Vec work1,work2
+      common /mypcs/ asm,bjacobi,work1,work2,Amat,Pmat
+d59 2
+a60 1
+      INTEGER NR,NNZ,LWORK1,LWORK2,LWORK3
+d71 5
+d79 2
+d86 14
+a99 1
+     +(LWORK3))
+d101 3
+d106 1
+a106 1
+      CALL ISTKRL(3)
+d173 1
+d177 1
+a177 1
+      Mat A,B ,Amat,Pmat
+d183 4
+d191 1
+a191 1
+      common /mypcs/ asm,bjacobi,work1,work2,Amat,Pmat
+d193 2
+a194 1
+      Vec work1,work2
+d230 13
+d244 24
+a267 1
+#if 0
+d274 2
+d295 1
+a295 1
+      subroutine riduci(A,B,iv,ib,jb)
+d300 4
+d310 1
+a310 1
+      integer     ierr,rank,o_nz,nnz,nr
+d313 1
+a313 1
+      integer     iv(*),ib(*),jb(*)
+d372 6
+d386 2
+d390 2
+a393 3
+c     iv(i) = 1
+caldo
+
+d397 2
+a670 1
+      Vec work1,work2
+d679 3
+a681 1
+      common /mypcs/ asm,bjacobi,work1,work2,A,B
+d906 3
+a908 2
+      Vec work1,work2
+      common /mypcs/ asm,bjacobi,work1,work2,Amat,Pmat
+d918 70
+@
+
+
+1.3
+log
+@re-organised a bit
+@
+text
+@d2 1
+a2 1
+C   $Id: PCPierluigi.F,v 1.2 2001/10/19 10:37:29 abonfi Exp abonfi $
+d68 3
+d94 3
+a96 3
+      call PCSetOperators(asm,A,A,SAME_NONZERO_PATTERN,
+     &                     ierr)
+      call PCSetUp(asm,ierr)
+d109 3
+a111 3
+      call PCSetOperators(bjacobi,A,B,SAME_NONZERO_PATTERN,
+     &                     ierr)
+      call PCSetUp(bjacobi,ierr)
+a116 2
+!     write(6,*)'Pierluigi PC Setup (asm,bjacobi,a,b) ',
+!    +asm,bjacobi,a,b,my_pe
+d145 2
+d152 4
+d165 1
+d171 21
+d198 11
+a208 1
+!     write(6,*)'PC apply asm =? ',asm,A,B,my_pe
+a212 1
+caldo call MatMult(B,y,work1,ierr)
+a220 2
+caldo call PCGetOperators(bjacobi,A,B,flag,ierr)
+caldo write(6,*)'bjacobi =? ',A,B
+d236 3
+a238 3
+      integer     ierr,rank,o_nz,nnz
+      integer     i,j,l,ia(1),ja(1),n,icol(1)
+      integer     ibgn,iend,shift,punt,iout
+d240 12
+d256 1
+a256 1
+      PetscTruth  done
+d258 1
+d260 4
+a263 2
+caldo CALL MPI_Comm_rank(PETSC_COMM_WORLD,rank,ierr)
+caldo iout = 15 + rank 
+d267 25
+a291 1
+      call MatMPIAIJGetSeqAIJ(A,Ad,Ao,icol,iicol,ierr)
+a294 1
+      shift = 1
+d296 2
+d309 4
+d314 4
+a317 1
+      call MatRestoreRowIJ(Ao,1,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+d322 1
+d340 1
+d344 26
+d371 1
+a371 1
+C           MatSeqAIJSetColumnIndices
+d378 3
+a380 2
+c     overwrite ib(i) with the number of non-zero entries in the
+C     i-th row of B
+d399 12
+d414 1
+d420 1
+d422 11
+a432 1
+      call MatMPIAIJGetSeqAIJ(B,Bd,Bo,icol,iicol,ierr)
+a433 4
+C     set column indices in the diagonal part of B
+C
+      CALL MatSeqAIJSetColumnIndices(Bd,jb,ierr)
+C
+d441 1
+a441 1
+      subroutine copia(A,B,ierr)
+d461 1
+a461 1
+      integer     ib(1),jb(1),nb,ibcol(1),jbbgn,jbend,ijb
+d464 1
+d466 2
+a467 10
+      character*8 fname1,fname2
+c---------------------------------------------------------------------- 
+      integer ptitle,iin,iout,nlines,mode,idummy
+      real size
+      character title*72, key*8, guesol*2, munt*2 , fname*9
+      data iin /5/, iout/6/, size/5.0/, nlines/0/, ptitle/0/,mode/0/
+      data munt/'in'/, key/'01223467'/
+      data title /"il mattino ha l'oro in bocca il mattino ha l'oro in b
+     +occa il mattino ha "/
+c-----------------------------------------------------------------------
+d476 5
+d539 4
+a542 1
+                  stop
+a559 11
+c
+c     call post script generator
+c     
+caldo iout = 20+rank
+caldo write(fname,FMT="(A3,I3.3,A3)")"mat",iout,".ps"
+caldo write(6,FMT=*)fname
+caldo open(iout,FILE=fname)
+caldo call pspltm(n,n,mode,jb(jjb+1),ib(iib+1),title,ptitle,size,munt,
+caldo*     nlines,idummy,iout)
+caldo close(iout)
+c
+d577 1
+a577 1
+c     the calling sequence of this routine CANNOT be changed
+d585 1
+d588 6
+a594 1
+      Vec work1,work2
+d596 1
+a596 1
+      MatStructure flag
+d598 1
+d602 9
+a610 2
+C     copia gli elementi della matrice A nella matrice
+C     ridotta B
+d612 2
+d615 6
+a620 1
+      call copia(A,B,ifail)
+d630 11
+a646 1
+      call PCILUSetUseInPlace(bjacobi,ifail)
+d648 46
+d695 1
+a695 1
+!     call PCGetOperators(bjacobi,A,B,flag,ifail)
+d697 104
+d803 30
+@
+
+
+1.2
+log
+@a number of changes while trying to optimize
+@
+text
+@d2 1
+a2 1
+C   $Id: PCPierluigi.F,v 1.1 2001/07/19 09:59:33 abonfi Exp abonfi $
+d12 1
+d14 1
+d16 2
+a17 1
+!   A  - preconditioner matrix
+d24 2
+a25 4
+!   In this example, we define the shell preconditioner to be Jacobi
+!   method.  Thus, here we create a work vector for storing the reciprocal
+!   of the diagonal of the preconditioner matrix; this vector is then
+!   used within the routine PierluigiPCApply().
+d37 1
+a37 1
+      Mat     A,B
+d46 1
+a46 1
+      common /mypcs/ asm,bjacobi,work1,work2
+d50 21
+a70 2
+C     copia gli elementi della matrice A nella matrice
+C     ridotta B
+d72 2
+d75 1
+a75 1
+!     call copia(A,B,ierr)
+d77 1
+a107 1
+      call PCILUSetUseInPlace(bjacobi,ierr)
+d116 3
+d147 1
+a147 1
+      Mat A,B 
+d153 1
+a153 1
+      common /mypcs/ asm,bjacobi,work1,work2
+d449 3
+d454 3
+d458 1
+d463 1
+d469 1
+a469 1
+      common /mypcs/ asm,bjacobi,work1,work2
+d473 6
+d480 2
+a481 2
+C Sets the matrix associated with the linear system and a 
+C (possibly) different one associated with the preconditioner. 
+d484 3
+a486 3
+!     call PCSetOperators(asm,A,A,SAME_NONZERO_PATTERN,
+!    &                     ifail)
+!     call PCSetUp(asm,ifail)
+d488 1
+a488 1
+c Sets the matrix associated with the linear system and a (possibly) 
+d491 4
+a494 8
+!     call PCSetOperators(bjacobi,A,B,SAME_NONZERO_PATTERN,
+!    &                     ifail)
+!     call PCSetUp(bjacobi,ifail)
+C
+      call PCGetOperators(bjacobi,A,B,flag,ifail)
+C
+C     copia gli elementi della matrice A nella matrice
+C     ridotta B
+d496 1
+a496 2
+C
+      call copia(A,B,ifail)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+C   $Id:$
+d10 1
+a10 1
+!   SampleShellPCSetUp - This routine sets up a user-defined
+d14 1
+a14 1
+!   pmat  - preconditioner matrix
+d24 1
+a24 1
+!   used within the routine SampleShellPCApply().
+d26 1
+a26 1
+      subroutine SampleShellPCSetUp(pmat,pmat1,x,ierr)
+d36 1
+a36 1
+      Mat     pmat,pmat1
+d53 1
+a53 1
+      call copia(pmat,pmat1,ierr)
+a54 2
+caldo CALL MPI_Barrier(PETSC_COMM_WORLD,ierr) 
+caldo CALL MPI_Abort(PETSC_COMM_WORLD,-12,ierr) 
+d58 4
+d63 6
+a68 1
+      call PCSetOperators(asm,pmat,pmat,SAME_NONZERO_PATTERN,
+d74 4
+d79 5
+a83 1
+      call PCSetOperators(bjacobi,pmat,pmat1,SAME_NONZERO_PATTERN,
+d85 1
+d87 3
+a89 1
+
+d92 2
+d99 1
+a99 1
+!   SampleShellPCApply - This routine demonstrates the use of a
+d113 1
+a113 1
+      subroutine SampleShellPCApply(dummy,x,y,ierr)
+d122 1
+a122 1
+      Mat A,Pmat 
+d131 5
+a135 1
+
+d137 16
+a152 3
+      call PCGetOperators(asm,A,pmat,flag,ierr)
+caldo write(6,*)'asm =? ',A,pmat
+      call MatMult(pmat,y,work1,ierr)
+d154 6
+a159 2
+      call PCGetOperators(bjacobi,A,pmat,flag,ierr)
+caldo write(6,*)'bjacobi =? ',A,pmat
+d423 43
+@

@@ -1,0 +1,144 @@
+5c5
+< C     $Id: setibc.F,v 1.31 2020/03/28 09:42:43 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+6a7
+> C     $Id: setibc.F,v 1.31 2020/03/28 09:42:43 abonfi Exp $
+8,11d8
+< #include "petsc/finclude/petscsys.h"
+<       use petscsys
+< C
+<       IMPLICIT NONE
+12a10,11
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscviewer.h"
+97c96
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+104c103
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+117c116
+<             CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+---
+>             CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,
+128c127
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+141c140
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+156,157c155,156
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +PETSC_NULL_CHARACTER,'-nondimensionalisation',STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +'-nondimensionalisation',STRINGA,IFLAG,IERR)
+178c177
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+193c192
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+215c214
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+236c235
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+248c247
+< !          CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+> !          CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+256c255
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+267c266
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+279c278
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+319c318
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+368c367
+<           CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+382c381
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+435c434
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+460c459
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+475c474
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+489c488
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+503c502
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+517c516
+<           CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+533c532
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+549c548
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+621c620
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+714c713
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+759c758
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+812c811
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+824c823
+<           CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+828c827
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+848c847
+<               CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,

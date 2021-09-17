@@ -1,0 +1,51 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Turbulent viscosity computation for the Spalart-Allmaras model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION FUNCTION TVT(ICN,NOFVERT,TURB)
+C
+C     Compute a cell averaged turbulent viscosity
+C
+
+      IMPLICIT NONE
+      INCLUDE 'paramt.h' 
+
+C     .. Scalar Arguments ..
+      INTEGER NOFVERT
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION TURB(*)
+      INTEGER ICN(NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I
+C     ..
+      TVT = 0.D0
+      DO 1 I = 1,NOFVERT
+          TVT = TVT + TURB(ICN(I))
+    1 CONTINUE
+      TVT = TVT/NOFVERT
+
+      RETURN
+
+      END
+@

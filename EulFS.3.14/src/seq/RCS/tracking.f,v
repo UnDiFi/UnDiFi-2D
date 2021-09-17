@@ -1,0 +1,216 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2000.03.31.12.58.33;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.08.17.08.22.40;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@check for super/sub sonic cells; to be used
+in conjunction with the hybrid scheme by Pietro & Pino
+@
+
+
+1.2
+log
+@an attempt to implement the hybrid scheme by
+DePalma, Pascazio, Napolitano
+@
+text
+@      SUBROUTINE TRACKING(ZROE,NOFVAR,NDIM,NPOIN,ICELNOD,NOFVERT,
+     +                    NELEM,IFLAG)
+C
+      IMPLICIT NONE
+      INCLUDE 'constants'
+C
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ZROE(NOFVAR,NPOIN)
+      INTEGER ICELNOD(NOFVERT,NELEM),IFLAG(NELEM)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION AMMAX,AMMIN,AVG,RH,RK,SIGMA,TEMP
+      INTEGER IELEM,IPOIN,ITEMP,IVERT,NSHOCK,NSUBS,NSUPS
+      logical shock_cell
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION AMACH(4)
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DBLE,MAX,MIN,SQRT
+C     ..
+C     .. Data statements ..
+C     ..
+C
+      DO 1 IELEM = 1,NELEM
+          AVG = 0.D0
+          AMMAX = 0.D0
+          AMMIN = 100.D0
+          DO 3 IVERT = 1,NOFVERT
+              IPOIN = ICELNOD(IVERT,IELEM)
+              RH = ZROE(1,NPOIN)*ZROE(2,IPOIN)
+              RK = ZROE(3,IPOIN)**2 + ZROE(4,IPOIN)**2
+              IF (NDIM.EQ.3) RK = RK + ZROE(5,IPOIN)**2
+              RK = 0.5d0*RK
+              TEMP = 0.5d0*GM1* (RH/RK-1.d0)
+              TEMP = SQRT(ONE/TEMP)
+C
+C    TEMP is the Mach number in the vertex
+C
+              AVG = AVG + TEMP
+              AMMAX = MAX(AMMAX,TEMP)
+              AMMIN = MIN(AMMIN,TEMP)
+              AMACH(IVERT) = TEMP
+    3     CONTINUE
+          AVG = AVG/DBLE(NOFVERT)
+c
+c         implemented according to AIAA 99-3513
+c
+          IF (AVG.LT.1.D0) THEN
+c
+c         is there at least ONE supersonic node ?
+c
+              SHOCK_CELL = .FALSE.
+              DO 7 IVERT = 1, NOFVERT
+                 IF( AMACH(IVERT) .GT. 1.d0 )GOTO 13 
+    7        CONTINUE
+c
+c             no supersonic nodes
+c
+              GOTO 11
+   13        CONTINUE
+c
+c         is there at least ONE subsonic node with M<0.9 ?
+c
+              DO 9 IVERT = 1, NOFVERT
+                   IF( AMACH(IVERT) .LT. 0.9d0 )GOTO 15
+    9        CONTINUE
+c
+c             no!
+c
+              GOTO 11
+   15        CONTINUE
+c
+              SHOCK_CELL = .TRUE.
+c
+   11        CONTINUE
+              IF( SHOCK_CELL )THEN
+                     IFLAG(IELEM) = -1
+              ELSE
+                     IFLAG(IELEM) = 0
+              ENDIF
+
+          ELSE
+C
+C             supersonic: use HE
+C
+              IFLAG(IELEM) = 1
+          ENDIF
+
+c
+    1 CONTINUE
+c
+      NSUPS = 0
+      NSUBS = 0
+      NSHOCK = 0
+      DO 6 IELEM = 1,NELEM
+          ITEMP = IFLAG(IELEM)
+          IF (ITEMP.EQ.-1) THEN
+              NSHOCK = NSHOCK + 1
+
+          ELSEIF (ITEMP.EQ.0) THEN
+              NSUBS = NSUBS + 1
+
+          ELSEIF (ITEMP.EQ.1) THEN
+              NSUPS = NSUPS + 1
+
+          ELSE
+      WRITE (6,FMT=*) ' smthg. wrong with flag ',itemp
+
+          ENDIF
+
+    6 CONTINUE
+      WRITE (6,FMT=*) ' supersonic cells ',NSUPS
+      WRITE (6,FMT=*) ' subsonic   cells ',NSUBS
+      WRITE (6,FMT=*) ' shock   cells ',NSHOCK
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d15 3
+a17 3
+      DOUBLE PRECISION AMMAX,AMMIN,AVG,RH,RK,SIGMA,TEMP,THRESH
+      DOUBLE PRECISION sigmin,sigavg,sigmax
+      INTEGER IELEM,IPOIN,ITEMP,IVERT,NSUBI,NSUBII,NSUPI,NSUPII
+a25 1
+      DATA THRESH/0.65D0/
+a27 3
+      sigmax = 0. 
+      sigavg = 0. 
+      sigmin = 100. 
+d40 3
+d49 2
+a50 5
+C         write(6,*)ielem,avg,(amach(ivert),ivert=1,nofvert)
+          SIGMA = (AMMAX-AVG)/ (AVG-AMMIN)
+          sigmax = max(sigmax,sigma)
+          sigmin = min(sigmin,sigma)
+          sigavg = sigavg + sigma
+d53 32
+a84 1
+              IFLAG(IELEM) = -1
+d87 3
+a92 4
+          IF (SIGMA.LE.THRESH) THEN
+              IFLAG(IELEM) = 10*IFLAG(IELEM)
+          ENDIF
+
+a94 1
+      sigavg=sigavg/real(nelem)
+d96 3
+a98 4
+      NSUBI = 0
+      NSUBII = 0
+      NSUPI = 0
+      NSUPII = 0
+d102 1
+a102 1
+              NSUBII = NSUBII + 1
+d104 2
+a105 2
+          ELSEIF (ITEMP.EQ.-10) THEN
+              NSUBI = NSUBI + 1
+d108 4
+a111 1
+              NSUPII = NSUPII + 1
+a112 2
+          ELSEIF (ITEMP.EQ.10) THEN
+              NSUPI = NSUPI + 1
+d116 3
+a118 5
+      WRITE (6,FMT=*) ' supersonic cells with  I order scheme ',NSUPI
+      WRITE (6,FMT=*) ' supersonic cells with II order scheme ',NSUPII
+      WRITE (6,FMT=*) ' subsonic   cells with  I order scheme ',NSUBI
+      WRITE (6,FMT=*) ' subsonic   cells with II order scheme ',NSUBII
+      WRITE (6,FMT=*) ' min,avg,max   SIGMA ',sigmin,sigavg,sigmax
+@

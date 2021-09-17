@@ -1,0 +1,236 @@
+head	1.7;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.7
+	release3_11_0:1.7
+	release3_10_0:1.7
+	release3_8_0:1.7
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.5
+	release3_4_4:1.5
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.7
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.07.09.07.52.52;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.08.18.14.04.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@RHSJacobian function to be used with PETSc TS
+for the field equations
+@
+
+
+1.7
+log
+@changes required by petsc release 3.8
+@
+text
+@      subroutine RHSJacobian(ts,t,global_in,A,B,str,ctx)
+C
+C     $Id: RHSJacobian.F,v 1.6 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+CCCCC#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+CCCCC#include "petsc/finclude/petscksp.h"
+CCCCC#include "petsc/finclude/petscpc.h"
+CCCCC#include "petsc/finclude/petscis.h"
+#include "petsc/finclude/petscts.h"
+              use petscvec
+              use petscmat
+              use petscts
+C
+      implicit none
+C
+      INCLUDE 'implicit.h'
+      INCLUDE 'flags.com'
+      INCLUDE 'visco.com'
+C
+C  Input/output parameters:
+      TS               ts
+      double precision t
+      Vec              global_in
+      Mat              A,B
+      MatStructure     str
+      integer          ctx
+
+C  Local variables:
+      integer          IFAIL
+C
+C
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+C  Complete the matrix assembly process and set some options
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+C
+C
+      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+C
+      RETURN
+      END
+@
+
+
+1.6
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d3 1
+a3 1
+C     $Id: RHSJacobian.F,v 1.5 2011/09/16 07:19:48 abonfi Exp abonfi $
+d5 1
+a5 3
+      implicit none
+C
+#include "petsc/finclude/petscsys.h"
+d8 3
+a10 3
+#include "petsc/finclude/petscksp.h"
+#include "petsc/finclude/petscpc.h"
+#include "petsc/finclude/petscis.h"
+d12 5
+@
+
+
+1.5
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d3 1
+a3 1
+C     $Id: RHSJacobian.F,v 1.4 2009/06/11 13:10:58 abonfi Exp abonfi $
+d7 7
+a13 7
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscksp.h"
+#include "finclude/petscpc.h"
+#include "finclude/petscis.h"
+#include "finclude/petscts.h"
+@
+
+
+1.4
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d3 1
+a3 1
+C     $Id: RHSJacobian.F,v 1.3 2005/07/09 07:52:52 aldo Exp abonfi $
+d7 1
+a7 1
+#include "finclude/petsc.h"
+@
+
+
+1.3
+log
+@removed reference to SLES since it has
+been removed from PETSc
+@
+text
+@d3 1
+a3 1
+C     $Id: RHSJacobian.F,v 1.2 2000/10/19 16:10:34 aldo Exp $
+d7 7
+a13 7
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscksp.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscts.h"
+@
+
+
+1.2
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d3 1
+a3 1
+C     $Id: RHSJacobian.F,v 1.1 2000/08/18 14:04:43 aldo Exp aldo $
+a9 1
+#include "include/finclude/petscsles.h"
+d21 1
+a21 1
+      double precision t,dtmin
+a27 1
+      Vec              local_in,dummy
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+C     $Id$
+d8 7
+a14 7
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/sles.h"
+#include "include/finclude/ksp.h"
+#include "include/finclude/pc.h"
+#include "include/finclude/is.h"
+#include "include/finclude/ts.h"
+@

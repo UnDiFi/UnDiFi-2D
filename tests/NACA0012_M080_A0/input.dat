@@ -1,0 +1,11 @@
+0.20d-9   ! EPS
+0.25      ! SNDMIN
+0.025     ! DXCELL
+0.1       ! SHRELAX
+50        ! IBAK
+1.40d+0   ! GA
+1         ! number of additional hole points
+0.4 0.0   ! ccordinates of the additional hole points
+0         ! number of periodic boundary
+0         ! filter on discontinuty speeds  [0-1.0]  0=disactive
+1001      ! Iteration of Mesh topology freezing (this alue must be equal to an backup iteration)

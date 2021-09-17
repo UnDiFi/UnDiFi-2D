@@ -1,0 +1,1432 @@
+head	1.26;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.26
+	release3_13_0:1.26
+	release3_12_0:1.26
+	release3_11_0:1.26
+	release3_10_0:1.26
+	release3_8_0:1.26
+	release3_7_1:1.26
+	release3_7_0:1.26
+	release3_4_5:1.26
+	release3_4_4:1.26
+	release3_4_3:1.26
+	release3_4_2:1.24
+	release3_4_1:1.24
+	release3_4_0:1.24
+	release3_3_5:1.24
+	release3_3_4:1.24
+	release3_3_3:1.24
+	release3_3_2:1.24
+	release3_3_1:1.24
+	release3_3_0:1.24;
+locks
+	abonfi:1.26; strict;
+comment	@c @;
+
+
+1.26
+date	2013.09.18.10.39.31;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2013.09.17.10.04.58;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2012.12.20.11.08.24;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2012.03.27.08.11.09;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2009.11.09.09.16.04;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2009.01.08.10.11.29;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2001.09.20.08.25.20;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2000.11.22.16.30.02;	author aldo;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2000.11.14.17.01.38;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	99.12.03.21.37.31;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	99.11.05.20.43.23;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	99.09.02.08.27.22;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	99.08.19.16.36.21;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	99.08.19.16.34.37;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	99.08.18.08.41.53;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	98.12.23.11.53.42;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.08.13.13.21.21;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.08.07.13.23.13;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.07.27.11.54.15;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.03.09.17.01.24;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.09.13.02.17;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.02.15.33.14;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.01.22.12.32;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.11.09.30;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Driver routine for scalar problems
+@
+
+
+1.26
+log
+@Added Doxygen documentation
+@
+text
+@!> \par Purpose
+!>
+!> Here we compute the signals \c NODRES sent to the vertices of cell \c IELEM
+!> when dealing with scalar convection equations:
+!>
+!> \f[
+!> \frac{\partial u}{\partial t} + \mathbf{\lambda} \cdot \nabla u = f
+!> \f]
+!>
+!> We compute the cell averaged velocity \f$\hat{\lambda}-\hat{\mathbf{b}}\f$ relative to the grid, where:
+!>
+!> \f[
+!> \hat{\lambda} = \frac{1}{d+1} \sum_{j=1}^{d+1} u_j \quad\quad \hat{\mathbf{b}} = \frac{1}{d+1} \sum_{j=1}^{d+1} \mathbf{b}_j
+!> \f]
+!> and
+!> \f$(\mathbf{b} = 0)\f$ on a fixed grid 
+!>
+!> We compute the source term \f${\tt SOURCE} = -\int_{T_e} f \mathrm{d}V\f$
+!>
+!> We compute the signals due to the inviscid contribution \f$\int_{T_e}\left(\hat{\lambda}-\hat{\mathbf{b}}\right)\cdot\nabla u\,\mathrm{d}V\f$ 
+!>
+!> We compute the signals due to the temporal contribution 
+!>
+!> @@param[in] IELEM current element
+!> @@param[in] VCN \c NDIM Cartesian components of the \c NOFVERT inward normals for the current cell
+!> @@param[in] VCB \c NDIM Cartesian components of the \c NOFVERT grid velocity vectors
+!> @@param[in] VCZ \c dependent variable in the \c NOFVERT vertices of the current cell
+!> @@param[in] NDIM dimensionality of the space
+!> @@param[in] NOFVERT nof vertices of the current cell \c (=NDIM+1) dimensionality of the space
+!> @@param[in] NOFVAR nof dofs within each vertex \c (NOFVAR=1) for a scalar problem
+!> @@param[in] NDUMMY dummy integer used for compatibility with similar subroutines sharing the same calling sequence
+!> @@param[in,out] NODRES the nodal residual is updated with the signals scattered to the vertices of the current cell
+!> @@param[in,out] TSTEP the nodal timestep (actually \f$V_i/\Delta t_i\f$) is updated with contributions from the current cell
+!> @@param[in,out] STIFEL the elemental Jacobian matrix (\f$ C_{ij} = \frac{\partial R_i}{\partial u_j}\f$ is updated with contributions from the current cell, only if \c PICARD is set to \c .TRUE.
+!> @@param[in] VOLUME is the array with cell volumes at times: current, \c n+1, \c n, \c n-1
+!> @@param[in] PICARD should be set to \c TRUE when the Jacobian matrix has to be computed analytically
+!> @@param[in] SCALARSCHEME is the Fluctuation Splitting scheme to be used to discretize the convective term of the governing PDEs
+!> @@param[in] MATRIXSCHEME is unused and left for compatibility with similar subroutines sharing the same calling sequence
+!> \author $Author: abonfi $
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+!>
+!>
+      SUBROUTINE SCALAR(IELEM,VCN,VCB,VCZ,NDIM,NOFVERT,NOFVAR,NDUMMY,
+     +                  NODRES,TSTEP,STIFEL,VOLUME,PICARD, 
+     +                  SCALARSCHEME,MATRIXSCHEME)
+C
+      IMPLICIT NONE
+C
+C     $Id: scalar.f,v 1.25 2013/09/17 10:04:58 abonfi Exp abonfi $
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'time.h'
+C
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+C     ..
+C     .. Common blocks ..
+C     ..
+C
+      INCLUDE 'flags.com'
+      INCLUDE 'io.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'three.com'
+      INCLUDE 'time.com'
+C
+C
+C     .. Parameters ..
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR,NOFVERT,NDUMMY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION TSTEP(*),NODRES(*),
+     +STIFEL(NOFVERT,NOFVERT),VCN(*),VCZ(*),VCB(*),VOLUME(*)
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL SCALARSCHEME,MATRIXSCHEME
+C     ..
+C     .. Arrays in Common ..
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION ERR,RESIDUAL,S,SOURCE,DIVB
+      INTEGER IELEM,IFAIL,LOCA,LOCB,IOFF,I,J,IPOIN
+      LOGICAL PICARD
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION LAMBDA(3),VCP(3*MAXNOFVERT),
+     2STIFC(MAX_NOFVERT_SQR),BETA(MAXNOFVERT)
+      INTEGER ICN(MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,DNRM2,DIV
+      EXTERNAL DDOT,DNRM2,DIV
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL ADVECT,DINIT
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,MAX,SIGN
+C
+C     .. the following is also included in SUPG_scheme.f
+      DOUBLE PRECISION VOL
+      COMMON/ABC/VOL
+      DOUBLE PRECISION sumdiv
+      COMMON/DEF/sumdiv
+C
+C     Sets residual and local timestep to zero
+C
+      CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+      CALL DINIT(NOFVERT,ZERO,NODRES,1)
+C
+      LOCA = LCELNOD+(IELEM-1)*NOFVERT -1
+      DO 10 I = 1, NOFVERT
+         IPOIN = ISTAK(LOCA+I)
+         LOCB = LCORG + (IPOIN-1)*NDIM-1
+         IOFF = (I-1)*NDIM
+         DO 10 J = 1, NDIM 
+         VCP(IOFF+J) = DSTAK(LOCB+J)
+   10 CONTINUE
+C
+c     computes the advection vector and source term
+c
+      CALL ADVECT(IELEM,LAMBDA,VCP,VCZ,NDIM,NOFVERT,SOURCE)
+c
+      SOURCE = -SOURCE*VOLUME(1)
+c 
+c
+      IF(LALE)THEN
+         CALL DAXPY(NDIM,MONE,BAVG,1,LAMBDA,1) ! substracts the average grid velocity for ALE calculations
+c
+c     Not a very good solution, but.... for the time being 
+c     When using the explicit LW scheme, DUALTS = .FALSE. and the term -ZAVG(1)*DIVB
+c     should be added to the source term. This is done in UNSTEADY1 with all other
+c     schemes
+c
+         IF(.NOT.DUALTS)THEN
+            DIVB = DIV(NDIM,NOFVERT,VCN,VCB) ! computes the divergence of the grid velocity
+            SOURCE = SOURCE - ZAVG(1)*DIVB ! adds the term: -\div \mathbf{b} <u>
+         ENDIF
+      ENDIF
+c
+c
+      IF (ICHECK.NE.0) THEN
+c
+c Dots the adv. speed with the gradient
+c
+          S = DDOT(NDIM,LAMBDA,1,GRAD_PARM(1,1),NMAX)
+C
+      ENDIF
+C
+C     ugly,ugly,ugly: for the SUPG scheme..
+C
+      VOL = VOLUME(1)
+C
+C     ugly,ugly,ugly: for the LW scheme..
+C
+      IF(LTIME)DTVOL = DELT/VOLUME(1)
+C
+C     ugly,ugly,ugly
+C
+      CALL SCALARSCHEME(IELEM,VCN,LAMBDA,RESIDUAL,SOURCE,VCZ,TSTEP,
+     +                  NODRES,BETA,STIFC,NDIM,NOFVERT,PICARD)
+C
+      IF(LTIME.AND.DUALTS)THEN 
+          CALL UNSTEADY1(BETA,BETA,VCZ,1,NODRES,STIFC,VOLUME,
+     2                   1,NDIM,NOFVERT,MMTYPE,PICARD)
+      ENDIF
+C
+C
+      IF (ICHECK.NE.0) THEN
+              RESIDUAL = RESIDUAL/VOLUME(1)
+              ERR = ABS(S-RESIDUAL)
+              IF (ERR.GT.5.D-15) THEN
+                  WRITE (NOUT,FMT=200) IELEM,S,RESIDUAL,ERR
+                  PAUSE
+
+              ENDIF
+
+          ENDIF
+C
+C     CALL dcopy(nofvert*nofvert,stifc,1,stif_copy,1)
+C     CALL daxpy(nofvert*nofvert,-1.d0,stifd,1,stif_copy,1)
+C
+C     Assembling the Stiffness matrix ...
+C
+      IF (.NOT.PICARD) RETURN
+C
+      CALL DSCAL(NOFVERT*NOFVERT,MONE,STIFC,1) 
+      CALL DCOPY(NOFVERT*NOFVERT,STIFC,1,STIFEL,1) 
+C
+      RETURN
+
+  200 FORMAT (5X,'Error on scalar residual in ELEM # ',I6,/,12X,'true',
+     +       17X,'computed',14X,'error',/,3 (10X,D12.5))
+C
+      END
+@
+
+
+1.25
+log
+@VOLUME is now an array
+@
+text
+@d1 43
+d50 1
+a50 1
+C     $Id: scalar.f,v 1.24 2012/12/20 11:08:24 abonfi Exp abonfi $
+d138 10
+a147 2
+         DIVB = DIV(NDIM,NOFVERT,VCN,VCB) ! computes the divergence of the grid velocity
+         SOURCE = SOURCE - ZAVG(1)*DIVB
+a170 1
+!     write(6,*)ielem,residual,source,divb,zavg(1)
+d173 2
+a174 2
+          CALL UNSTEADY1(BETA,BETA,VCZ,1,NODRES,STIFC,1,NDIM,NOFVERT,
+     2                   MMTYPE,PICARD)
+@
+
+
+1.24
+log
+@added support for ALE calculations
+@
+text
+@d7 1
+a7 1
+C     $Id: scalar.f,v 1.23 2012/03/27 08:11:09 abonfi Exp abonfi $
+d39 1
+a39 1
+     +STIFEL(NOFVERT,NOFVERT),VCN(*),VCZ(*),VCB(*)
+d47 1
+a47 1
+      DOUBLE PRECISION ERR,RESIDUAL,S,SOURCE,VOLUME,DIVB
+d90 1
+a90 1
+      SOURCE = -SOURCE*VOLUME
+d110 1
+a110 1
+      VOL = VOLUME
+d114 1
+a114 1
+      IF(LTIME)DTVOL = DELT/VOLUME
+d129 1
+a129 1
+              RESIDUAL = RESIDUAL/VOLUME
+@
+
+
+1.23
+log
+@fixed a bug that occurred when dual-time-stepping is set to .FALSE.
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE SCALAR(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,NDUMMY,
+d7 1
+a7 1
+C     $Id: scalar.f,v 1.22 2009/11/09 09:16:04 abonfi Exp abonfi $
+a12 4
+C     ..
+C     .. Common blocks ..
+C     ..
+      INCLUDE 'nloc.com'
+d21 4
+a24 1
+      INCLUDE 'three.com'
+d27 2
+d39 1
+a39 1
+     +STIFEL(NOFVERT,NOFVERT),VCN(*),VCZ(*)
+d47 1
+a47 1
+      DOUBLE PRECISION ERR,RESIDUAL,S,SOURCE,VOLUME
+a49 1
+!     DOUBLE PRECISION DTSTEP
+d57 2
+a58 2
+      DOUBLE PRECISION DDOT,DNRM2
+      EXTERNAL DDOT,DNRM2
+d61 1
+a61 1
+      EXTERNAL ADVECT,DINIT,LINEARIZE
+d69 2
+d89 1
+d91 1
+d93 5
+a97 1
+      IF (ICHECK.NE.0) THEN
+a98 1
+c COMPUTES THE GRADIENT
+d100 1
+a100 2
+caldo     CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+caldo+                  VOLUME)
+d120 1
+@
+
+
+1.22
+log
+@lates un-steady version
+@
+text
+@d7 1
+a7 1
+C     $Id: scalar.f,v 1.21 2009/01/08 10:11:29 abonfi Exp abonfi $
+d25 1
+a25 1
+      INCLUDE 'three'
+d115 1
+a115 1
+      IF(LTIME)THEN 
+@
+
+
+1.21
+log
+@nodal updates due to previous time levels are kept
+under different locations
+@
+text
+@d7 1
+a7 3
+C     $Id: scalar.f,v 1.20 2001/09/20 08:25:20 abonfi Exp $
+C
+C
+d12 13
+d36 4
+d49 1
+a49 1
+      DOUBLE PRECISION DTSTEP
+d52 3
+a54 4
+      DOUBLE PRECISION TSTEP(*),LAMBDA(3),VCP(12),
+     +NODRES(*),STIFC(VMAX*VMAX),STIFD(VMAX*VMAX),
+     +STIFEL(NOFVERT,NOFVERT),VCN(*),VCZ(*)
+      INTEGER ICN(VMAX)
+a64 11
+C     ..
+C     .. Common blocks ..
+C     ..
+      INCLUDE 'nloc'
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+d73 1
+a73 1
+      CALL DINIT(NOFVERT*NTIMLEVS,ZERO,NODRES,1)
+d108 1
+a108 1
+      DTVOL = DELT/VOLUME
+d113 1
+a113 1
+     +                      NODRES,STIFC,NDIM,NOFVERT,PICARD)
+d115 3
+a117 9
+C     add contributions from the previous time levels
+C     if explicit time stepping is used, then NODRES(:,k) k=2,NTIMLEVS
+C     should be zero since the mass matrix routines should not be invoked
+C
+      IF(LTIME)THEN
+         DO I = 2,NTIMLEVS
+            LOCA = (I-1)*NOFVERT+1
+            CALL DAXPY(NOFVERT,ONE,NODRES(LOCA),1,NODRES,1)
+         ENDDO
+d139 1
+a139 1
+      CALL DSCAL(NOFVERT*NOFVERT,-ONE,STIFC,1) 
+@
+
+
+1.20
+log
+@computing local coordinates for source term computation
+@
+text
+@d7 1
+a7 1
+C     $Id: scalar.f,v 1.19 2000/11/22 16:30:02 aldo Exp abonfi $
+d12 2
+a13 1
+      INCLUDE 'constants'
+d17 1
+a17 1
+C
+d34 1
+d63 3
+a65 2
+C     ..
+C
+d70 1
+a70 1
+      CALL DINIT(NOFVERT,ZERO,NODRES,1)
+d99 10
+d112 12
+@
+
+
+1.19
+log
+@call to the visco routine has been removed from here
+@
+text
+@d7 1
+a7 1
+C     $Id: scalar.f,v 1.18 2000/11/14 17:01:38 aldo Exp aldo $
+d31 1
+a31 1
+      INTEGER IELEM,IFAIL
+d52 9
+d69 9
+@
+
+
+1.18
+log
+@changed the argument list
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE SCALAR(IELEM,VCN,VCZ,VDUMMY,NDIM,NOFVERT,NOFVAR,NDUMMY,
+d7 1
+a7 1
+C     $Id: scalar.f,v 1.17 1999/12/03 21:37:31 aldo Exp aldo $
+a14 1
+      INCLUDE 'visco.com'
+a18 3
+C
+C     Sets residual and local timestep to zero
+C
+d37 1
+a37 1
+     +STIFEL(NOFVERT,NOFVERT),VCN(*),VCZ(*),VDUMMY(*)
+d45 1
+a45 1
+      EXTERNAL ADVECT,DINIT,LINEARIZE,VISCO
+d54 3
+d69 2
+a70 2
+          CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +                  VOLUME)
+a91 6
+C     Diffusion term ...
+C
+          IF (KAN.GT.0) CALL VISCO(IELEM,REINV,VCZ,NODRES,TSTEP,VCN,
+     +                             STIFD,NDIM,NOFVERT,VOLUME)
+C
+C
+d99 2
+a100 9
+      IF( KAN .EQ. -1 )THEN
+          CALL DSCAL(NOFVERT*NOFVERT,-ONE,STIFC,1) 
+          CALL DCOPY(NOFVERT*NOFVERT,STIFC,1,STIFEL,1) 
+      ELSEIF( KAN .EQ. 1 )THEN
+          CALL DCOPY(NOFVERT*NOFVERT,STIFD,1,STIFEL,1) 
+          CALL DAXPY(NOFVERT*NOFVERT,-ONE,STIFC,1,STIFEL,1) 
+      ENDIF 
+C
+  100 CONTINUE
+@
+
+
+1.17
+log
+@major rewriting, now same calling arguments
+as the eulerian routines
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE SCALAR(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+d7 1
+a7 1
+C     $Id: scalar.F,v 1.16 1999/11/05 20:43:23 aldo Exp aldo $
+d16 1
+a16 1
+      INCLUDE 'IO'
+d26 1
+a26 1
+      INTEGER NDIM,NOFVAR,NOFVERT
+d36 1
+a36 1
+      logical picard 
+d41 1
+a41 1
+     +STIFEL(NOFVERT,NOFVERT),VCN(*),VCZ(*)
+@
+
+
+1.16
+log
+@changed DOUBLE PRECISION into scalar
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE SCALAR(NPOIN,NELEM,NDIM,NOFVERT,NOFVAR,
+     +                  rhs,dt,A,SCALARSCHEME)
+d7 1
+a7 1
+C     $Id: scalar.F,v 1.15 1999/09/02 08:27:22 aldo Exp aldo $
+a9 4
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/viewer.h"
+d12 1
+a12 1
+      INCLUDE 'nloc'
+a15 1
+      INCLUDE 'implicit.h'
+a17 16
+      Vec rhs,dt
+#ifdef MPI
+      Vec rhs_local,dt_local
+#endif
+      Mat A
+      PetscOffset VEC_I 
+C
+      Scalar ZERO
+C
+C
+C
+C
+C
+C
+C
+C
+a23 2
+      DOUBLE PRECISION ROOT_MACHINE_EPS
+      PARAMETER (ROOT_MACHINE_EPS=1.d-07)
+d26 1
+a26 1
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+d29 1
+a29 1
+      EXTERNAL SCALARSCHEME
+a31 2
+      DOUBLE PRECISION DSTAK(1)
+      integer nghost
+d34 3
+a36 3
+      DOUBLE PRECISION EPS,ERR,RESIDUAL,S,SOURCE,VOLUME
+      INTEGER I,IELEM,IFAIL,IVERT,J,LOC,NNZ,LRWORK,MY_PE
+      Scalar VEC_V(1)
+d39 4
+a42 5
+      DOUBLE PRECISION TSTEP(VMAX),DVCZ(NMAX*VMAX),LAMBDA(3),
+     +NODRES(VMAX),NODRES2(VMAX),STIFC(VMAX*VMAX),STIFD(VMAX*VMAX),
+     +STIFEL(VMAX*VMAX),VCN(3*VMAX),VCP(3*VMAX),VCZ(NMAX*VMAX)
+      INTEGER ICF(VMAX),ICN(VMAX),ISTAK(1)
+      DOUBLE PRECISION STIF_COPY(VMAX*VMAX)
+d49 1
+a49 1
+      EXTERNAL ADVECT,CELPTR,DAXPYI,DINIT,LINEARIZE,VISCO
+a54 3
+      COMMON /CSTAK/DSTAK
+      COMMON /trash/nghost
+      COMMON /MPICOM/MY_PE
+a55 2
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+d58 2
+a59 48
+C     set nodal residual and timestep to zero
+C
+      ZERO = 0.d0
+      CALL VecSet(ZERO,rhs,IFAIL)
+      CALL VecSet(ZERO,dt,IFAIL)
+C
+#ifdef MPI
+C
+C     set ghost values to zero
+C     note that VecSet only sets values belonging to the
+C          owning processor 
+C
+COLD  CALL VecGhostUpdateBegin(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+COLD  CALL VecGhostUpdateBegin(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+COLD  CALL VecGhostUpdateEnd(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+COLD  CALL VecGhostUpdateEnd(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+C
+C
+C     get local numbering
+C
+      CALL VecGhostGetLocalForm(RHS,RHS_local,IFAIL)
+      CALL VecGhostGetLocalForm(DT,DT_local,IFAIL)
+C
+C     it is necessary to access ghosted values AFTER
+C     the call to VecGhostGetLocalForm()
+C
+      CALL VecGetArray(RHS_local,VEC_V,VEC_I,IFAIL)
+      CALL DINIT(NGHOST,ZERO,VEC_V(VEC_I+NPOIN+1),1)
+      CALL VecRestoreArray(RHS_local,VEC_V,VEC_I,IFAIL)
+      CALL VecGetArray(DT_local,VEC_V,VEC_I,IFAIL)
+      CALL DINIT(NGHOST,ZERO,VEC_V(VEC_I+NPOIN+1),1)
+      CALL VecRestoreArray(DT_local,VEC_V,VEC_I,IFAIL)
+C
+#endif
+C
+      IF (TIMEIMPL) CALL MatZeroEntries(A,IFAIL)
+C
+C     Loops over cells to compute the fluctuation
+C
+      DO 100 IELEM = 1,NELEM
+C
+C
+          CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+          CALL DINIT(NOFVERT,ZERO,NODRES,1)
+C
+      CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   DSTAK(LZROE), DSTAK(LFACNOR), NDIM, NOFVERT, NOFVAR, ICN,
+     +   VCZ, VCN, VOLUME)
+d63 2
+a64 2
+          CALL ADVECT(IELEM,LAMBDA,VCP,VCZ,NDIM,NOFVERT,SOURCE)
+          SOURCE = -SOURCE*VOLUME
+d66 1
+a66 1
+          IF (ICHECK.NE.0) THEN
+d70 2
+a71 2
+              CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +                       VOLUME)
+d75 1
+a75 1
+              S = DDOT(NDIM,LAMBDA,1,GRAD_PARM(1,1),NMAX)
+d77 1
+a77 1
+          ENDIF
+d79 1
+a79 1
+          CALL SCALARSCHEME(IELEM,VCN,LAMBDA,RESIDUAL,SOURCE,VCZ,TSTEP,
+d82 1
+a82 1
+          IF (ICHECK.NE.0) THEN
+a97 15
+C     Scatter and add nodal update and timestep to global PETSc arrays
+C
+#ifdef MPI
+C
+          CALL VecSetValues(DT_local,NOFVERT,ICN,TSTEP,
+     +                      ADD_VALUES,IFAIL)
+          CALL VecSetValues(RHS_local,NOFVERT,ICN,NODRES,
+     +                      ADD_VALUES,IFAIL)
+C
+#else
+C
+          CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+          CALL VecSetValues(RHS,NOFVERT,ICN,NODRES,ADD_VALUES,IFAIL)
+C
+#endif
+d104 1
+a104 1
+          IF (PICARD) THEN
+d107 2
+a108 3
+          DO 33 IVERT = 1, NOFVERT*NOFVERT
+              STIFEL(IVERT) = -STIFC(IVERT) 
+   33     CONTINUE
+d110 2
+a111 3
+          DO 34 IVERT = 1, NOFVERT*NOFVERT
+              STIFEL(IVERT) = STIFD(IVERT)-STIFC(IVERT) 
+   34     CONTINUE
+a113 64
+#ifdef MPI
+          CALL MatSetValuesLocal(A,NOFVERT,ICN,NOFVERT,ICN,STIFEL,
+     +                      ADD_VALUES,IFAIL)
+#else
+          CALL MatSetValues(A,NOFVERT,ICN,NOFVERT,ICN,STIFEL,
+     +                      ADD_VALUES,IFAIL)
+#endif
+C
+C
+          ELSEIF (NEWTON) THEN
+C
+C     I is the vertex we perturb
+C
+              DO 10 I = 1,NOFVERT
+C
+C     make a copy of the local variables
+C
+                  DO 11 J = 1,NOFVERT
+                      DVCZ(J) = VCZ(J)
+   11             CONTINUE
+C
+C     perturb
+C
+                  EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(I)),1.d0)*
+     +                  SIGN(1.d0,VCZ(I))
+                  DVCZ(I) = VCZ(I) + EPS
+C
+c
+c     computes the advection vector and source term
+c     (might in general be nonlinear functions of Z)
+c
+                  CALL ADVECT(IELEM,LAMBDA,VCP,DVCZ,NDIM,NOFVERT,SOURCE)
+                  SOURCE = -SOURCE*VOLUME
+C
+                  CALL SCALARSCHEME(IELEM,VCN,LAMBDA,RESIDUAL,SOURCE,
+     +                              DVCZ,TSTEP,NODRES2,STIFC,NDIM,
+     +                              NOFVERT,.FALSE.)
+C                                      ^
+C                                      |
+C     do NOT compute element stiffness matrix
+C
+                  IF (KAN.GT.0) CALL VISCO(IELEM,REINV,DVCZ,NODRES2,
+     +                                     TSTEP,VCN,STIFD,NDIM,
+     +                                     NOFVERT,VOLUME)
+C
+C        compute jacobian by finite differences
+C
+                  LOC = (I-1)*NOFVERT
+                  DO 13 J = 1,NOFVERT
+                      STIFC(LOC+J) =-(NODRES2(J)-NODRES(J))/EPS
+   13             CONTINUE
+   10         CONTINUE
+C
+C
+#ifdef MPI
+          CALL MatSetValuesLocal(A,NOFVERT,ICN,NOFVERT,ICN,STIFC,
+     +                      ADD_VALUES,IFAIL)
+#else
+          CALL MatSetValues(A,NOFVERT,ICN,NOFVERT,ICN,STIFC,
+     +                      ADD_VALUES,IFAIL)
+#endif
+C
+          ENDIF
+C
+a115 51
+C     Must assembly RHS now, since a call to VecSetValues()
+C     with the INSERT_VALUES option will follow in rhsbc1()
+C
+      CALL VecAssemblyBegin(rhs,IFAIL)
+      CALL VecAssemblyBegin(dt,IFAIL)
+      CALL VecAssemblyEnd(rhs,IFAIL)
+      CALL VecAssemblyEnd(dt,IFAIL)
+c
+C     CALL VecNorm(RHS,NORM_2,s,IFAIL)
+C     if(my_pe.eq.0)write(6,*)'2-norm of r.h.s. before rhsbc is ',s
+C
+C update ghost values
+C
+#ifdef MPI
+C
+      CALL VecGhostUpdateBegin(rhs,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateBegin(dt,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateEnd(rhs,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateEnd(dt,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+caldo
+caldo CALL VecNorm(RHS,NORM_2,s,IFAIL)
+caldo CALL VecNorm(RHS,NORM_INFINITY,s,IFAIL)
+caldo if(my_pe.eq.0)write(6,*)'rhs norm after ghost update = ',s
+C     write(6,*)'rhs norm after ghost update = ',s
+#endif
+c
+      IF( TIMEIMPL )THEN
+          CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+          CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+      ENDIF
+C
+C     Applies boundary conditions to the nodal residual (RHS Vector)
+C
+#ifdef MPI
+C
+      CALL RHSBC1(RHS_local)
+C
+#else
+C
+      CALL RHSBC1(RHS)
+C
+#endif
+C
+C
+#ifdef MPI
+C
+      CALL VecGhostRestoreLocalForm(RHS,RHS_local,IFAIL)
+      CALL VecGhostRestoreLocalForm(DT,DT_local,IFAIL)
+C
+#endif
+C
+a120 22
+C     CALL MatGetInfo(A,MAT_LOCAL,INFO,IFAIL)
+C
+C     write(6,*)'number of global rows and columns',info(1),info(2)
+C     write(6,*)'number of local rows and columns',info(3),info(4)
+C     write(6,*)'block size',info(5)
+C     write(6,*)'number of nonzeros',info(6),info(7),info(8)
+C     write(6,*)'memory allocated',info(9)
+C     write(6,*)'number of matrix assemblies',info(10)
+C     write(6,*)'number of mallocs during MatSetValues()',info(11)
+C     write(6,*)'fill ratio for LU/ILU',info(12),info(13)
+C     write(6,*)'number of mallocs during factorization',info(14)
+C
+C
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"mat.output",
+C    +VIEWER_STDOUT_SELF,IFAIL) 
+C     write(6,*)'ViewerFileOpenASCII has returned ',ifail
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IFAIL)
+C     write(6,*)'ViewerSetFormat has returned ',ifail
+C     CALL MatView(A,VIEWER_STDOUT_SELF,IFAIL)
+C     write(6,*)'MatView has returned ',ifail
+
+@
+
+
+1.15
+log
+@MY_PE moved to common
+@
+text
+@d6 1
+a6 1
+C     $Id: scalar.F,v 1.14 1999/08/19 16:36:21 aldo Exp $
+d60 1
+a60 1
+      DOUBLE PRECISION INFO(MAT_INFO_SIZE),VEC_V(1)
+d66 1
+a66 2
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX),ISTAK(1)
+@
+
+
+1.14
+log
+@changed calling sequence for CELPTR
+@
+text
+@d2 1
+a2 1
+     +rhs,dt,A,SCALARSCHEME)
+d6 1
+a6 1
+C     $Id: scalar.F,v 1.13 1999/08/19 16:34:37 aldo Exp aldo $
+a14 1
+C     INCLUDE 'constants'
+a71 1
+      INTEGER ISTKGT
+d83 1
+a87 2
+C
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IFAIL)
+@
+
+
+1.13
+log
+@changed IDX_V into ICN
+@
+text
+@d6 1
+a6 1
+C     $Id: scalar.F,v 1.12 1999/08/18 08:41:53 aldo Exp aldo $
+d137 4
+a140 4
+          CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,NELEM,NPOIN,ICN,ICF,VCP,VCZ,
+     +                VCN,VOLUME,IDX_P,IDX_V,IDX_F)
+c
+@
+
+
+1.12
+log
+@renamed VecGhostGetLocalRepresentation to VecGhostGetLocalForm
+@
+text
+@d6 1
+a6 1
+C     $Id: scalar.F,v 1.11 1998/12/23 11:53:42 aldo Exp aldo $
+d184 1
+a184 1
+          CALL VecSetValues(RHS_local,NOFVERT,IDX_V,NODRES,
+d190 1
+a190 1
+          CALL VecSetValues(RHS,NOFVERT,IDX_V,NODRES,ADD_VALUES,IFAIL)
+@
+
+
+1.11
+log
+@*** empty log message ***
+@
+text
+@d6 1
+a6 1
+C     $Id: scalar.F,v 1.10 1998/11/07 09:01:00 aldo Exp $
+d112 2
+a113 2
+      CALL VecGhostGetLocalRepresentation(RHS,RHS_local,IFAIL)
+      CALL VecGhostGetLocalRepresentation(DT,DT_local,IFAIL)
+d116 1
+a116 1
+C     the call to VecGhostGetLocalRepresentation()
+d323 2
+a324 2
+      CALL VecGhostRestoreLocalRepresentation(RHS,RHS_local,IFAIL)
+      CALL VecGhostRestoreLocalRepresentation(DT,DT_local,IFAIL)
+@
+
+
+1.10
+log
+@Add automatic identification flag
+@
+text
+@d6 1
+a6 1
+C     $Id$
+@
+
+
+1.9
+log
+@ghost values are set to 0. without message passing
+@
+text
+@d6 3
+@
+
+
+1.8
+log
+@some cleanup
+@
+text
+@d25 1
+d53 1
+d57 2
+a58 2
+      INTEGER I,IELEM,IFAIL,IVERT,J,LOC,NNZ,LIWORK,LRWORK,MY_PE
+      DOUBLE PRECISION INFO(MAT_INFO_SIZE)
+d81 1
+d101 5
+a105 11
+      CALL VecGhostUpdateBegin(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateBegin(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+C
+caldo CALL VecGetArray(RHS,VEC_I,VEC_V,IFAIL)
+caldo CALL DINIT(NGHOST*NOFVAR,ZERO,VEC_V(VEC_I+NPOIN+1),1)
+caldo CALL VecRestoreArray(RHS,VEC_I,VEC_V,IFAIL)
+caldo CALL VecGetArray(DT,VEC_I,VEC_V,IFAIL)
+caldo CALL DINIT(NGHOST,ZERO,VEC_V(VEC_I+NPOIN+1),1)
+caldo CALL VecRestoreArray(DT,VEC_I,VEC_V,IFAIL)
+d112 10
+a182 3
+C
+C     write(6,*)'VecSetValues has returned ',ifail
+C     write(6,*)'VecSetValues has returned ',ifail
+@
+
+
+1.7
+log
+@Add some pre-processor directives and code for parallel processing
+@
+text
+@d103 7
+d303 1
+a303 1
+C     LIWORK and LRWORK require much less memory than NPOIN
+d305 1
+a305 5
+      LIWORK = ISTKGT(NPOIN,2)
+      LRWORK = ISTKGT(NPOIN,4)
+#ifdef MPI
+      CALL RHSBC1(NPOIN,NDIM,RHS_local,ISTAK(LIWORK),DSTAK(LRWORK),
+     +            ISTAK(LNODCOD))
+a306 4
+C     CALL VecNorm(RHS,NORM_2,s,IFAIL)
+C     CALL VecNorm(RHS,NORM_INFINITY,s,IFAIL)
+C     write(6,*)'rhs norm before ghost update = ',s
+C     write(6,*)'rhs norm before ghost update = ',s
+d308 3
+a310 2
+      CALL RHSBC1(NPOIN,NDIM,RHS,ISTAK(LIWORK),DSTAK(LRWORK),
+     +            ISTAK(LNODCOD))
+d312 1
+a312 4
+      CALL ISTKRL(2) 
+c
+C     CALL VecNorm(RHS,NORM_2,s,IFAIL)
+C     if(my_pe.eq.0)write(6,*)'2-norm of r.h.s. AFTER rhsbc is ',s
+@
+
+
+1.6
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d21 3
+d55 1
+a55 1
+      INTEGER I,IELEM,IFAIL,IVERT,J,LOC,NNZ,LIWORK,LRWORK
+d83 5
+d92 18
+d163 12
+d178 2
+d196 5
+d203 1
+d251 4
+d257 1
+d270 19
+d290 2
+a291 2
+      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+d300 9
+d311 1
+d313 8
+d322 1
+@
+
+
+1.5
+log
+@restored explicit timestepping for scalar problems
+@
+text
+@d6 4
+a9 4
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/viewer.h"
+@
+
+
+1.4
+log
+@restored computation of the jacobian by finite differences
+@
+text
+@a155 3
+C     write(6,*)(icn(ivert),ivert=1,nofvert)
+C     CALL X04CAF('General',' ',nofvert,nofvert,STIFEL,nofvert,
+C    +'STIFEL',IFAIL)
+a203 5
+C     CALL X04CAF('General',' ',nofvert,nofvert,STIFC,nofvert,
+C    +'Newton',IFAIL)
+C     CALL X04CAF('General',' ',nofvert,nofvert,STIF_copy,nofvert,
+C    +'Picard',IFAIL)
+C      pause
+a216 1
+      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+d219 2
+d222 17
+a260 18
+C
+C     Applies boundary conditions to the nodal residual (RHS Vector)
+C
+C     LIWORK and LRWORK require much less memory than NPOIN
+C
+      LIWORK = ISTKGT(NPOIN,2)
+      LRWORK = ISTKGT(NPOIN,4)
+      CALL RHSBC1(NPOIN,NDIM,RHS,ISTAK(LIWORK),DSTAK(LRWORK),
+     +            ISTAK(LNODCOD))
+      CALL ISTKRL(2) 
+C
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL) 
+C     WRITE(6,*)'Residual norm is ',S
+C
+      RETURN
+
+  200 FORMAT (5X,'Error on scalar residual in ELEM # ',I6,/,12X,'true',
+     +       17X,'computed',14X,'error',/,3 (10X,D12.5))
+@
+
+
+1.3
+log
+@call to RHSBC1 inserted
+@
+text
+@d84 1
+a84 5
+      IF (TIMEIMPL) THEN
+C
+C
+          CALL MatZeroEntries(A,IFAIL)
+      ENDIF
+d140 2
+a141 2
+CXXX  CALL dcopy(nofvert*nofvert,stifc,1,stif_copy,1)
+CXXX  CALL daxpy(nofvert*nofvert,-1.d0,stifd,1,stif_copy,1)
+a145 2
+CXXX          CALL ASSMBS(KAN,IELEM,ICN,STIFC,STIFD,NOFVERT,
+CXXX +                    DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR))
+a163 1
+          STOP 'No Newton yet' 
+d203 1
+a203 1
+                      STIFC(LOC+J) = (NODRES2(J)-NODRES(J))/EPS
+d207 5
+a211 5
+CXXX  CALL X04CAF('General',' ',nofvert,nofvert,STIFC,nofvert,
+CXXX +'Newton',IFAIL)
+CXXX  CALL X04CAF('General',' ',nofvert,nofvert,STIF_copy,nofvert,
+CXXX +'Picard',IFAIL)
+CXXX   pause
+d213 2
+a214 4
+C     use a dummy KAN = -1 so that STIFD is not add
+C
+CXXX          CALL ASSMBS(-1,IELEM,ICN,STIFC,STIFD,NOFVERT,DSTAK(LACSR),
+CXXX +                    ISTAK(LJACSR),ISTAK(LIACSR))
+d221 1
+a221 1
+C     with the INSERT_VALUES option will follow in Setbc0()
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@d52 1
+a52 1
+      INTEGER I,IELEM,IFAIL,IVERT,J,LOC,NNZ
+d65 1
+a65 1
+CXXX  INTEGER NNZERO
+d69 1
+a69 1
+      EXTERNAL ADVECT,CELPTR,DAXPYI,DINIT,LINEARIZE,SETBC1,VISCO
+a79 2
+CXXX  CALL DINIT(NPOIN,ZERO,DSTAK(LDTLIN),1)
+CXXX  CALL DINIT(NPOIN,ZERO,DSTAK(LRESID),1)
+a85 11
+C     CALL MatGetInfo(A,MAT_LOCAL,INFO,IFAIL)
+C
+C     write(6,*)'number of global rows and columns',info(1),info(2)
+C     write(6,*)'number of local rows and columns',info(3),info(4)
+C     write(6,*)'block size',info(5)
+C     write(6,*)'number of nonzeros',info(6),info(7),info(8)
+C     write(6,*)'memory allocated',info(9)
+C     write(6,*)'number of matrix assemblies',info(10)
+C     write(6,*)'number of mallocs during MatSetValues()',info(11)
+C     write(6,*)'fill ratio for LU/ILU',info(12),info(13)
+C     write(6,*)'number of mallocs during factorization',info(14)
+d141 2
+a142 2
+          CALL VecSetValues(dt,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+          CALL VecSetValues(rhs,NOFVERT,IDX_V,NODRES,ADD_VALUES,IFAIL)
+d229 3
+d261 3
+a263 1
+C     Applies boundary conditions to the nodal residual (r.h.s.)
+d265 5
+a269 1
+      CALL SETBC1(NPOIN,NELEM,NDIM,NOFVAR,RHS,ISTAK(LNODCOD))
+d271 2
+a272 2
+      CALL VecNorm(RHS,NORM_2,S,IFAIL) 
+      WRITE(6,*)'Residual norm is ',S
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE SCALAR(NPOIN,NELEM,NDIM,NOFVERT,NOFVAR,SCALARSCHEME)
+d4 6
+d12 1
+a12 1
+      INCLUDE 'constants'
+d20 2
+d23 1
+a23 2
+C
+C
+d53 1
+d56 3
+a58 3
+      DOUBLE PRECISION DT(VMAX),DVCZ(NMAX*VMAX),LAMBDA(3),NODRES(VMAX),
+     +                 NODRES2(VMAX),STIFC(VMAX*VMAX),STIFD(VMAX*VMAX),
+     +                 VCN(3*VMAX),VCP(3*VMAX),VCZ(NMAX*VMAX)
+d65 2
+a66 2
+      INTEGER NNZERO
+      EXTERNAL DDOT,DNRM2,NNZERO
+d69 1
+a69 1
+      EXTERNAL ADVECT,ASSMBS,CELPTR,DAXPYI,DINIT,LINEARIZE,SETBC1,VISCO
+d80 5
+a84 2
+      CALL DINIT(NPOIN,ZERO,DSTAK(LDTLIN),1)
+      CALL DINIT(NPOIN,ZERO,DSTAK(LRESID),1)
+d87 14
+a100 2
+          NNZ = NNZERO(ISTAK(LIACSR),NPOIN)
+          CALL DINIT(NNZ,ZERO,DSTAK(LACSR),1)
+d108 1
+a108 1
+          CALL DINIT(NOFVERT,ZERO,DT,1)
+d133 1
+a133 1
+          CALL SCALARSCHEME(IELEM,VCN,LAMBDA,RESIDUAL,SOURCE,VCZ,DT,
+d149 2
+a150 2
+          IF (KAN.GT.0) CALL VISCO(IELEM,REINV,VCZ,NODRES,DT,VCN,STIFD,
+     +                             NDIM,NOFVERT,VOLUME)
+d152 1
+a152 1
+C     Scatter and add nodal update and timestep to global arrays
+d154 2
+a155 2
+          CALL DAXPYI(NOFVERT,1.D0,DT,ICN,DSTAK(LDTLIN))
+          CALL DAXPYI(NOFVERT,1.D0,NODRES,IDX_V,DSTAK(LRESID))
+d163 18
+a180 2
+              CALL ASSMBS(KAN,IELEM,ICN,STIFC,STIFD,NOFVERT,
+     +                    DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR))
+d183 1
+d209 2
+a210 2
+     +                              DVCZ,DT,NODRES2,STIFC,NDIM,NOFVERT,
+     +                              .FALSE.)
+d215 3
+a217 3
+                  IF (KAN.GT.0) CALL VISCO(IELEM,REINV,DVCZ,NODRES2,DT,
+     +                                     VCN,STIFD,NDIM,NOFVERT,
+     +                                     VOLUME)
+d235 2
+a236 2
+              CALL ASSMBS(-1,IELEM,ICN,STIFC,STIFD,NOFVERT,DSTAK(LACSR),
+     +                    ISTAK(LJACSR),ISTAK(LIACSR))
+d242 35
+a276 1
+C     .. Applies boundary conditions to the nodal residual (r.h.s.)
+a277 2
+      CALL SETBC1(NPOIN,NELEM,NDIM,NOFVAR,DSTAK(LRESID),ISTAK(LNODCOD))
+c
+@

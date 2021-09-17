@@ -1,0 +1,158 @@
+\hypertarget{vsflx4_8f}{}\doxysection{src/navier-\/stokes/vsflx4.f File Reference}
+\label{vsflx4_8f}\index{src/navier-\/stokes/vsflx4.f@{src/navier-\/stokes/vsflx4.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{vsflx4_8f_a10011952338ce2e78a6acded71132121}{V\+S\+F\+L\+X4}} (I\+E\+L\+EM, Z\+R\+OE, Nod\+Res, T\+S\+T\+EP, N\+O\+F\+V\+AR, V\+CN, N\+D\+IM, N\+O\+F\+V\+E\+RT, V\+O\+L\+U\+ME, S\+T\+I\+FD, V\+I\+S\+CL, V\+I\+S\+CT, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)
+\begin{DoxyCompactList}\small\item\em Compute viscous fluxes in the interior cells (compressible case) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{vsflx4_8f_a10011952338ce2e78a6acded71132121}\label{vsflx4_8f_a10011952338ce2e78a6acded71132121}} 
+\index{vsflx4.f@{vsflx4.f}!VSFLX4@{VSFLX4}}
+\index{VSFLX4@{VSFLX4}!vsflx4.f@{vsflx4.f}}
+\doxysubsubsection{\texorpdfstring{VSFLX4()}{VSFLX4()}}
+{\footnotesize\ttfamily subroutine V\+S\+F\+L\+X4 (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{double precision, dimension(nofvar,nofvert)}]{Z\+R\+OE,  }\item[{double precision, dimension(nofvar,nofvert)}]{Nod\+Res,  }\item[{double precision, dimension(nofvar,nofvert)}]{T\+S\+T\+EP,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{double precision}]{V\+O\+L\+U\+ME,  }\item[{double precision, dimension(nofvar,nofvar,nofvert,             nofvert)}]{S\+T\+I\+FD,  }\item[{double precision}]{V\+I\+S\+CL,  }\item[{double precision}]{V\+I\+S\+CT,  }\item[{logical}]{M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY }\end{DoxyParamCaption})}
+
+
+
+Compute viscous fluxes in the interior cells (compressible case) 
+
+\doxysubsection*{Calculation of the nodal residual }
+
+Each vertex {\ttfamily i} of cell {\ttfamily T} receives a contribution due to the viscous fluxes which amounts to\+: \[ {\tt GFLUX(:,IVERT)} = -\frac{1}{d} \mathbf{n}_i^T \cdot \mathbf{G}^T \]
+
+where\+: \[ \mathbf{G}^T = \left( \begin{array}{c} 0 \\ \mathbf{u} \cdot \mathbf{\tau} + \nabla q \\ \mathbf{\tau} \end{array} \right) \] is cell-\/wise constant (hence the superscript {\ttfamily T}).
+
+In order to be consistent with the use of parameter vector as the set of dependent variables, the gradient of the primitive variables $\left(\rho,p,u,v,w\right)$ is computed from the gradient of the parameter vector and stored in\+: \[ {\tt GRAD\_PRIM} = \left( \begin{array}{ccc} \rho_x & \rho_x & \rho_x \\ p_x & p_x & p_x \\ u_x & u_x & u_x \\ v_x & v_x & v_x \\ w_x & w_x & w_x \end{array} \right) \]
+
+The stress tensor, which is also cell-\/wise constant, is stored in ${\tt TAU}$ and it is computed using the entries of ${\tt GRAD\_PRIM}$
+
+\begin{eqnarray*} {\tt TAU} &=& \mu \left[ \nabla \mathbf{u} + \left(\nabla\mathbf{u}\right)^t \right] + \lambda \left(\nabla \cdot \mathbf{u} \right)\\ &=& \left( \begin{array}{ccc} 2\,\mu\,u_x +\lambda\,{\tt DIVV} & \mu\left(u_y+v_x\right) & \mu\left(u_z+w_x\right) \\ \mu\left(v_x+u_y\right) & 2\,\mu\,v_y +\lambda\,{\tt DIVV} & \mu\left(v_z+w_y\right) \\ \mu\left(w_x+u_z\right) & \mu\left(w_y+v_z\right) & 2\,\mu\,w_z +\lambda\,{\tt DIVV} \end{array} \right) \end{eqnarray*}
+
+where ${\tt DIVV} = u_x + v_y + w_z$, $\mu = {\tt VISCL} + {\tt VISCT}$ and $\lambda = -2/3\,\mu$.
+
+The term that accounts for thermal conductivity is\+:
+
+\[ \nabla q = \frac{1}{\gamma-1} \; k \; \nabla a^2 \]
+
+where\+:
+
+\[ k = \left( \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T} \right) = {\tt VISCL/PRANDTL+VISCT/TPR} \]
+
+\[ \nabla a^2 = \gamma \nabla \left( \frac{p}{\rho} \right) = \frac{1}{\hat{\rho}} \left[\gamma\,\nabla p - \hat{a}^2\,\nabla\rho\right] \]
+
+Having set\+:
+
+\[ {\tt CNST} = \frac{k}{\left(\gamma-1\right)\hat{\rho}} \]
+
+the viscous contribution to the energy equation is stored in the fourth column of the array ${\tt TAU}$\+:
+
+\[ {\tt TAU(:,4)} = {\tt CNST} \left[\gamma\,\nabla p - \hat{a}^2\,\nabla\rho\right] + \hat{\mathbf{u}} \cdot \mathbf{\tau} \]
+
+The cell-\/averaged flow velocity $\hat{\mathbf{u}}$ is stored in ${UAVG(3:5)}$; the entries of ${UAVG}$ are $\left(\hat{\rho},\hat{H},\hat{u},\hat{v},\hat{w}\right)$, where\+:
+
+\[ \hat{\rho} = \widehat{Z}_1^2, \quad \hat{H} = \widehat{Z}_2/\widehat{Z}_1, \quad \hat{u} = \widehat{Z}_3/\widehat{Z}_1, \quad \hat{v} = \widehat{Z}_4/\widehat{Z}_1, \quad \hat{w} = \widehat{Z}_5/\widehat{Z}_1 \] and the cell-\/averaged value of the parameter vector is\+: \[ \hat{Z} = \frac{1}{d+1} \sum_{j=1}^{d+1} Z_j \]
+
+where the subscript $j$ refers to the vertex, not to the individual components of $Z$.
+
+\doxysubsection*{Calculation of the time-\/step }
+
+In order to mimick the scalar case, the time-\/step restriction should read\+:
+
+\[ \frac{\Delta t}{V_i} \le \frac{1}{\sum d_{ij}} \quad\quad\mbox{where}\quad\quad d_{ij} = \frac{\nu}{d^2 \,V^T} \mathbf{n}_i \cdot \mathbf{n}_j \]
+
+$\nu = \mu/\hat{\rho}$ being the cell-\/averaged kinematic viscosity.
+
+Instead, the dimensionless version we use is\+:
+
+\[ d_{ij} = \frac{1}{d^2 \, \mbox{Re} \, V^T} \mathbf{n}_i \cdot \mathbf{n}_j \]
+
+which amounts to assume that the dimensionless kinematic viscosity equals 1.
+
+\doxysubsection*{Matrix assembly (only when {\ttfamily M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} {\ttfamily }.E\+QV. {\ttfamily T\+R\+UE} ) }
+
+the {\ttfamily D\+M\+A\+T(\+:,\+:,i,j)} matrix is such that
+
+\[ -\frac{1}{d} \mathbf{n}_i^T \cdot \mathbf{G}^T = \sum_{j=1}^{d+1} D_{ij} U_j \]
+
+where the summation ranges over all {\ttfamily d+1} vertices of the cell and $U_j$ is the value of the conservative variable in vertex {\ttfamily j}.
+
+It can be shown that\+:
+
+\[ D_{ij}^T = \frac{1}{d^2 \, V^T \, \mbox{Re}} \left[ D_{ij}^{\tau} + D_{ij}^{\nabla q} \right] 2 \left( \frac{\partial U}{\partial Z} \right)_{Z_j}. \] where\+: \[ D_{ij}^{\tau} = \frac{1}{\widehat{\sqrt{\rho}}} \left( \begin{array}{ccc} 0 & 0 & {\bf 0} \\ - {\bf d}_{ij} \cdot \hat{\mathbf{u}} & 0 & {\bf d}_{ij}^t \\ -\tilde{D}_{ij} \cdot \hat{\mathbf{u}} & 0 & \tilde{D}_{ij} \end{array} \right), \] \[ D_{ij}^{\nabla q} = \frac{k}{\widehat{\sqrt{\rho}}}\, \left( \begin{array}{ccr} 0 & 0 & {\bf 0}^t \\ \hat{H} - \hat{a}^2/\delta & 1 & -\hat{\mathbf{u}} \\ {\bf 0} & {\bf 0} & {\bf 0} \end{array} \right) \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) \] \[ {\bf d}_{ij} = \mu \left( \hat{\mathbf{u}} \cdot \mathbf{n}_j \right) \mathbf{n}_i + \mu \left( \mathbf{n}_j \cdot \mathbf{n}_i \right) \hat{\mathbf{u}} + \lambda \left( \hat{\mathbf{u}} \cdot \mathbf{n}_i \right) \mathbf{n}_j \] \[ \tilde{D}_{ij} = \left[ \mu \left( \mathbf{n}_j \mathbf{n}_i \right) + \mu \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) I + \lambda \left( \mathbf{n}_i \mathbf{n}_j \right) \right] \] observe that $\tilde{D}_{ij} = \tilde{D}^{t}_{ji}$ and that matrix $D_{ij}^{\nabla q}$, apart from the term $\mathbf{n}_i \cdot \mathbf{n}_j$, is cell-\/wise constant.
+
+This is to say that we might save some calculations, which we are not doing right now.
+
+the vector ${\bf d}_{ij}$ is stored in {\ttfamily W\+O\+R\+K(2,3\+:5)}.
+
+the matrix $\tilde{D}_{ij}$ is stored in {\ttfamily W\+O\+R\+K(3\+:5,3\+:5)}.
+
+the scalar $-{\bf d}_{ij}\cdot\hat{\mathbf{u}}$ is stored in {\ttfamily W\+O\+R\+K(2,1)}.
+
+the vector $-\tilde{D}_{ij}\cdot\hat{\mathbf{u}}$ is stored in {\ttfamily W\+O\+R\+K(3\+:5,1)}.
+
+so that, at this stage, apart from the term $\widehat{\sqrt{\rho}}$, matrix $D_{ij}^{\tau}$ has been built and stored in {\ttfamily W\+O\+RK}.
+
+we set ${\tt TEMPA} = \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T}$
+
+we set ${\tt TEMPB} = {\tt TEMPA} \left( \mathbf{n}_i \cdot \mathbf{n}_j\right)$
+
+we set\+: \[ {\tt TEMPC} = \frac{1}{d^2\,\widehat{\sqrt{\rho}}\,\mbox{Re}\,V^T} \]
+
+then add matrix, apart from the term $\widehat{\sqrt{\rho}}$, $D_{ij}^{\nabla q}$ to {\ttfamily W\+O\+RK}.
+
+Finally, we compute matrix $D_{ij}$ by calling the Blas routine {\ttfamily D\+G\+E\+MM} of each pair of vertices.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & counter of the current triangle/tetrahedron \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & is parameter vector in the N\+O\+F\+V\+E\+RT vertices of cell {\ttfamily I\+E\+L\+EM} \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em Nod\+Res} & nodal residual \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em T\+S\+T\+EP} & nodal timestep \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & is the nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices (= N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+O\+L\+U\+ME} & area/volume of the current element (triangle,tetrahedron) \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em S\+T\+I\+FD} & implicit matrix, built only when {\ttfamily M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} .E\+QV. .T\+R\+UE. \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+I\+S\+CL} & laminar viscosity \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+I\+S\+CT} & turbulent viscosity \\
+\hline
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} & {\ttfamily }.E\+QV. {\ttfamily }.T\+R\+UE. if the implicit matrix {\ttfamily S\+T\+I\+FD} has to be built, i.\+e. we are using Picard linearization\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+19 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:52\+:52 
+\end{DoxyParagraph}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000005}{Bug}}]The calculation of the time-\/step restriction assumes that the dimensionless kinematic viscosity equals 1 \end{DoxyRefDesc}
+\begin{DoxyWarning}{Warning}
+The calculation of {\ttfamily D\+M\+AT} might be speeded up 
+\end{DoxyWarning}

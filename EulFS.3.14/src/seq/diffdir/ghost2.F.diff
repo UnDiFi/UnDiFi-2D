@@ -1,0 +1,46 @@
+12c12
+< C     $Id: ghost2.F,v 1.29 2020/03/28 09:41:59 abonfi Exp abonfi $
+---
+> C     $Id: ghost2.F,v 1.29 2020/03/28 09:41:59 abonfi Exp $
+14a15
+>       IMPLICIT NONE
+16a18
+> #include "petsc/finclude/petscsys.h"
+19,21d20
+<       use petscvec
+<       use petscmat
+<       IMPLICIT NONE
+233,234c232,233
+<               CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFEL(1,1,
+<      +        IVERT,1), Nofvar,'Picard matrix ',IFAIL)
+---
+>               CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFEL(1,1,IVERT,
+>      +        1), Nofvar,'Picard matrix ',IFAIL)
+292,295c291,294
+<                   CALL R8Mat_Print('General',' ',Nofvar,Nofvert,
+<      +            vcz(1,1),Nofvar,'Z ',IFAIL)
+<                   CALL R8Mat_Print('General',' ',Nofvar,Nofvert,
+<      +            vcdz(1,1),Nofvar,'DZ ',IFAIL)
+---
+>                   CALL R8Mat_Print('General',' ',Nofvar,Nofvert,vcz(1,1),
+>      +            Nofvar,'Z ',IFAIL)
+>                   CALL R8Mat_Print('General',' ',Nofvar,Nofvert,vcdz(1,1),
+>      +            Nofvar,'DZ ',IFAIL)
+323,324c322,323
+<            CALL R8Mat_Print('General',' ',Nofvar,Nofvar,stifel(1,1,
+<      &     ivert,jvert), Nofvar,'Jacobian Matrix in Ghost2 (3) ',IFAIL)
+---
+>            CALL R8Mat_Print('General',' ',Nofvar,Nofvar,stifel(1,1,ivert,
+>      &     jvert), Nofvar,'Jacobian Matrix in Ghost2 (3) ',IFAIL)
+347,348c346,347
+<                       CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+<      +                stifel(1,1,ivert,jvert), Nofvar,
+---
+>                       CALL R8Mat_Print('General',' ',Nofvar,Nofvar,stifel(1,
+>      +                1,ivert,jvert), Nofvar,
+375,376c374,375
+<               CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFEL(1,1,
+<      +        IVERT,1), Nofvar,'Jacobian in Ghost2 (2) ',IFAIL)
+---
+>               CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFEL(1,1,IVERT,
+>      +        1), Nofvar,'Jacobian in Ghost2 (2) ',IFAIL)

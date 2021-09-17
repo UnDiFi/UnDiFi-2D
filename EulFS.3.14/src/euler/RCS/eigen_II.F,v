@@ -1,0 +1,708 @@
+head	1.11;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.11
+	release3_13_0:1.11
+	release3_12_0:1.11
+	release3_11_0:1.11
+	release3_10_0:1.11
+	release3_8_0:1.11
+	release3_7_1:1.11
+	release3_7_0:1.10
+	release3_4_5:1.10
+	release3_4_4:1.10
+	release3_4_3:1.10
+	release3_4_2:1.10
+	release3_4_1:1.10
+	release3_4_0:1.10
+	release3_3_5:1.10
+	release3_3_4:1.10
+	release3_3_3:1.10
+	release3_3_2:1.10
+	release3_3_1:1.9
+	release3_3_0:1.8;
+locks; strict;
+comment	@c @;
+
+
+1.11
+date	2020.03.28.09.51.14;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.01.24.17.58.20;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.08.09.19.38.39;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2002.09.14.09.11.12;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2002.08.24.10.08.21;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.10.13.13.16.37;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.12.27.09.30.00;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.01.15.09.46.40;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.24.15.53.02;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.22.18.04.00;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@eigenvalues/vectors for the HE splitting
+in two dimensions and for supersonic flows
+@
+
+
+1.11
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE Eigen_II(Matrix,LDA,DVDZ,DUDV,NDIM,NOFVAR)
+C
+C#define DEBUG
+C
+C     van Leer, Lee, Roe preconditioner in conservative form ..
+C
+      IMPLICIT NONE
+C
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+      INCLUDE 'three.com'
+      INCLUDE 'blkEulerII.com'
+      INCLUDE 'frame.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'pfcgas.com'
+C
+      INTEGER LDA,NDIM,NOFVAR
+C
+      DOUBLE PRECISION Matrix(LDA,LDA,*),DVDZ(NOFVAR,NOFVAR),
+     +DUDV(NOFVAR,NOFVAR)
+C
+      DOUBLE PRECISION MSQRM1,CNST,QBAR,ZDOTN,ZDOTT,ZDOTS
+      DOUBLE PRECISION DensAbar,TEMP1,TEMP2,TEMP3,TEMP4,
+     +TEMP0,TEMPA,TEMPX,TEMPY,TEMPZ,DENSABARINV,DENSINVABARINV
+      INTEGER IDIM,JDIM,IFAIL
+      logical nullmat
+C
+      DOUBLE PRECISION U_dot_DU(3),S_dot_DU(3),WORK(4,4)
+C
+C
+      DOUBLE PRECISION DDOT,fun_BETA_aldo
+      EXTERNAL         DDOT,fun_BETA_aldo
+C
+C
+C              .. Mach related variables ..
+C
+      MSQRM1       = MACHSQR - ONE
+caldo BETA        = SQRT( MAX( EPSQR_SONIC , ABS( MSQRM1 ) ) )
+      BETA       = fun_BETA_aldo( MSQRM1 )
+      BETASQR       = BETA*BETA
+      X              = BETA / MAX( MACH , ONE )
+      nu_p       = HALF * ( MSQRM1/BETASQR + ONE )
+      nu_m       = HALF * ( MSQRM1/BETASQR - ONE )
+C
+      QBAR = ONE / QINV
+      DensAbar = UAVG(1)*ABAR
+      TEMP1 = BETA/DensAbar
+      DENSABARINV = UAVG(1)/ABAR
+      DENSINVABARINV = ONE/DENSABAR
+C
+C     unroll !!!
+C
+      CALL GRADPRIM(-10,NDIM,NDIM+2)
+C
+         U_dot_dU(1) = DDOT(NDIM,GRAD_PRIM(3,1),1,
+     1                         RotationMatrix(1,1),1)
+         U_dot_dU(2) = DDOT(NDIM,GRAD_PRIM(3,2),1,
+     1                         RotationMatrix(1,1),1)
+         S_dot_dU(1) = DDOT(NDIM,GRAD_PRIM(3,1),1,
+     1                         RotationMatrix(1,2),1)
+         S_dot_dU(2) = DDOT(NDIM,GRAD_PRIM(3,2),1,
+     1                         RotationMatrix(1,2),1)
+C
+C     Transformation matrix from parameter vector 
+C     to characteristic variables
+C
+      ZDOTN =(RotationMatrix(1,1) * ZAVG(3) +
+     1        RotationMatrix(2,1) * ZAVG(4) )/UAVG(1)
+C
+      ZDOTS =(RotationMatrix(1,2) * ZAVG(3) +
+     1        RotationMatrix(2,2) * ZAVG(4) )/UAVG(1)
+C
+C
+      TEMP0 = GM1OG/ASQR
+      TEMP2 = GM1OG*DENSINVABARINV
+      TEMPX = TEMP2 * ZAVG(3)
+      TEMPY = TEMP2 * ZAVG(4)
+      TEMPZ = TEMP2 * ZAVG(5)
+      TEMPA = TWO*ZAVG(1) - TEMP0 * ZAVG(2)
+C
+      dVdZ(1,1) = TWO*ZAVG(1)-TEMP0*ZAVG(2)
+      dVdZ(1,2) = -TEMP0*ZAVG(1)
+      dVdZ(1,3) =  TEMP0*ZAVG(3)
+      dVdZ(1,4) =  TEMP0*ZAVG(4)
+C
+      dVdZ(2,1) = TEMP2 * ZAVG(2) - MACH * ZDOTN
+      dVdZ(2,2) = TEMP2 * ZAVG(1)
+      dVdZ(2,3) =-TEMPX + MACH*RotationMatrix(1,1)/ZAVG(1)
+      dVdZ(2,4) =-TEMPY + MACH*RotationMatrix(2,1)/ZAVG(1)
+C
+      dVdZ(3,1) = BETA * TEMP2 * ZAVG(2) - MACH * ZDOTS
+      dVdZ(3,2) = BETA * dVdZ(2,2)
+      dVdZ(3,3) =-BETA * TEMPX + MACH * RotationMatrix(1,2) / ZAVG(1)
+      dVdZ(3,4) =-BETA * TEMPY + MACH * RotationMatrix(2,2) / ZAVG(1)
+C
+      dVdZ(4,1) = BETA * TEMP2 * ZAVG(2) + MACH * ZDOTS
+      dVdZ(4,2) = dVdZ(3,2)
+      dVdZ(4,3) =-BETA * TEMPX - MACH * RotationMatrix(1,2) / ZAVG(1)
+      dVdZ(4,4) =-BETA * TEMPY - MACH * RotationMatrix(2,2) / ZAVG(1)
+C
+      dVdZ(1,5) =  TEMP0*ZAVG(5)
+      dVdZ(2,5) =-TEMPZ + MACH*RotationMatrix(3,1)/ZAVG(1)
+      dVdZ(3,5) =-BETA * TEMPZ + MACH * RotationMatrix(3,2) / ZAVG(1)
+      dVdZ(4,5) =-BETA * TEMPZ - MACH * RotationMatrix(3,2) / ZAVG(1)
+C
+C     Advection speeds ..
+C
+         R_SPEED(1,1) = RotationMatrix(1,1)
+         R_SPEED(1,2) = RotationMatrix(1,1)
+         R_SPEED(1,3) = X*(nu_p*RotationMatrix(1,1)+
+     1                          RotationMatrix(1,2)/BETA)
+         R_SPEED(1,4) = X*(nu_p*RotationMatrix(1,1)-
+     1                          RotationMatrix(1,2)/BETA)
+C
+         R_SPEED(2,1) = RotationMatrix(2,1)
+         R_SPEED(2,2) = RotationMatrix(2,1)
+         R_SPEED(2,3) = X*(nu_p*RotationMatrix(2,1)+
+     1                          RotationMatrix(2,2)/BETA)
+         R_SPEED(2,4) = X*(nu_p*RotationMatrix(2,1)-
+     1                          RotationMatrix(2,2)/BETA)
+C
+      IF(ICHECK.NE.0)THEN
+C
+C       The Characteristic variables ..
+C
+C       1. Entropy ..
+C
+         GRAD_CHAR(1,1)=-GRAD_PRIM(2,1)/ASQR + GRAD_PRIM(1,1)
+         GRAD_CHAR(1,2)=-GRAD_PRIM(2,2)/ASQR + GRAD_PRIM(1,2)
+C
+C       2. Total Enthalpy ..
+C
+         GRAD_CHAR(2,1)= GRAD_PRIM(2,1)/DensAbar + Mach*U_dot_DU(1)
+         GRAD_CHAR(2,2)= GRAD_PRIM(2,2)/DensAbar + Mach*U_dot_DU(2)
+C
+C       3. Acoustic variables ..
+C
+         GRAD_CHAR(3,1)= TEMP1*GRAD_PRIM(2,1)+Mach*S_dot_DU(1)
+         GRAD_CHAR(3,2)= TEMP1*GRAD_PRIM(2,2)+Mach*S_dot_DU(2)
+         GRAD_CHAR(4,1)= TEMP1*GRAD_PRIM(2,1)-Mach*S_dot_DU(1)
+         GRAD_CHAR(4,2)= TEMP1*GRAD_PRIM(2,2)-Mach*S_dot_DU(2)
+C
+C       Jacobian matrix of the acoustic+shear subsystem ..
+C       
+C
+         Matrix(1,1,1) = X*(nu_p*RotationMatrix(1,1)+
+     &                           RotationMatrix(1,2)/BETA)
+         Matrix(1,2,1) = X*nu_m* RotationMatrix(1,1)
+C
+         Matrix(2,1,1) = Matrix(1,2,1)
+         Matrix(2,2,1) = X*(nu_p*RotationMatrix(1,1)-
+     &                           RotationMatrix(1,2)/BETA)
+C
+         Matrix(1,1,1) = X*(nu_p*RotationMatrix(1,1)+
+     &                           RotationMatrix(1,2)/BETA)
+         Matrix(1,2,1) = X*nu_m* RotationMatrix(1,1)
+C
+         Matrix(2,1,1) = Matrix(1,2,1)
+         Matrix(2,2,1) = X*(nu_p*RotationMatrix(1,1)-
+     &                           RotationMatrix(1,2)/BETA)
+C
+C
+C
+         Matrix(1,1,2) = X*(nu_p*RotationMatrix(2,1)+
+     &                           RotationMatrix(2,2)/BETA)
+         Matrix(1,2,2) = X*nu_m* RotationMatrix(2,1)
+C
+         Matrix(2,1,2) = Matrix(1,2,2)
+         Matrix(2,2,2) = X*(nu_p*RotationMatrix(2,1)-
+     &                           RotationMatrix(2,2)/BETA)
+C
+         Matrix(1,1,2) = X*(nu_p*RotationMatrix(2,1)+
+     &                           RotationMatrix(2,2)/BETA)
+         Matrix(1,2,2) = X*nu_m* RotationMatrix(2,1)
+C
+         Matrix(2,1,2) = Matrix(1,2,2)
+         Matrix(2,2,2) = X*(nu_p*RotationMatrix(2,1)-
+     &                           RotationMatrix(2,2)/BETA)
+C
+      ENDIF
+C
+C     Right eigenvector matrix in conserved variables ..
+C
+      CNST = QBAR
+C
+      TEMP1 = HALF + ONE / (GM1*MACHSQR)
+      TEMP2 = CNST * HALF * DensAbar / KINETIC
+      TEMP3 = HALF * TEMP2 * BETA / X
+      TEMP4 = CNST * DensAbar / X * QINV
+C
+      dUdV(1,1) = CNST
+      dUdV(2,1) = CNST * KINETIC
+C
+      dUdV(1,2) = TEMP2
+      dUdV(2,2) = CNST * DensAbar * ( TEMP1 + ONE )
+C
+      dUdV(1,3) = TEMP3
+      dUdV(2,3) = TEMP3 * UAVG(2)
+C
+      dUdV(1,4) = dUdV(1,3)
+      dUdV(2,4) = dUdV(2,3)
+C
+      dUdV(1,5) = ZERO
+      dUdV(2,5) = ZERO
+C
+      DO 31 IDIM = 1 , NDIM
+         JDIM = IDIM + 2
+C
+         dUdV(JDIM,1) = CNST         * UAVG(JDIM)
+         dUdV(JDIM,2) = TWO  * TEMP2 * UAVG(JDIM) 
+         dUdV(JDIM,3) = HALF * TEMP4 * (BETA*RotationMatrix(IDIM,1)
+     &                                      +RotationMatrix(IDIM,2))
+         dUdV(JDIM,4) = HALF * TEMP4 * (BETA*RotationMatrix(IDIM,1)
+     &                                      -RotationMatrix(IDIM,2))
+         dUdV(JDIM,5) =        TEMP4 *       RotationMatrix(IDIM,3)
+C
+   31 CONTINUE
+C
+#ifdef DEBUG
+C
+      CALL DGEMM('N','N',4,2,4,ONE,dVdZ,NOFVAR,GRAD_PARM,NMAX,ZERO,
+     +           WORK,4) 
+C
+      do jdim = 1,4
+      do idim = 1,4
+         work(idim,jdim) = work(idim,jdim) -GRAD_CHAR(idim,jdim)
+      enddo
+      enddo
+      if(.not. nullmat(work,4,2,4,1.D-12) )then
+      CALL R8Mat_Print('General',' ',4,2,GRAD_CHAR,LDW,
+     +            'DW ',IFAIL)
+      CALL R8Mat_Print('General',' ',4,2,WORK,4,
+     +            'DW - dW/dZ * grad(Z) ',IFAIL)
+      write(6,*)'M^2, beta, abar ',machsqr,beta,abar
+      CALL R8Mat_Print('General',' ',NDIM+2,NDIM,GRAD_PARM,NMAX,
+     +            'grad(parametr) ',IFAIL)
+      CALL R8Mat_Print('General',' ',NDIM+2,NDIM,GRAD_PRIM,NMAX,
+     +            'grad(primitive) ',IFAIL)
+      CALL R8Mat_Print('General',' ',NDIM+2,NDIM+2,dVdZ,NOFVAR,
+     +            'grad(primitive) ',IFAIL)
+
+      pause
+      endif
+#endif
+C
+      RETURN
+      END
+@
+
+
+1.10
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@d232 1
+a232 1
+      CALL X04CAF('General',' ',4,2,GRAD_CHAR,LDW,
+d234 1
+a234 1
+      CALL X04CAF('General',' ',4,2,WORK,4,
+d237 1
+a237 1
+      CALL X04CAF('General',' ',NDIM+2,NDIM,GRAD_PARM,NMAX,
+d239 1
+a239 1
+      CALL X04CAF('General',' ',NDIM+2,NDIM,GRAD_PRIM,NMAX,
+d241 1
+a241 1
+      CALL X04CAF('General',' ',NDIM+2,NDIM+2,dVdZ,NOFVAR,
+@
+
+
+1.9
+log
+@names of included common/parameters have been changed
+@
+text
+@d17 1
+@
+
+
+1.8
+log
+@cosmetic changes
+@
+text
+@d11 1
+a11 1
+      INCLUDE 'constants'
+d13 2
+a14 2
+      INCLUDE 'three'
+      INCLUDE 'blkEulerII'
+@
+
+
+1.7
+log
+@re-add support for checking (ICHECK != 0)
+@
+text
+@d3 1
+a3 1
+#define DEBUG
+d36 1
+a36 1
+C		.. Mach related variables ..
+d38 7
+a44 7
+      MSQRM1	= MACHSQR - ONE
+caldo BETA 	= SQRT( MAX( EPSQR_SONIC , ABS( MSQRM1 ) ) )
+      BETA	= fun_BETA_aldo( MSQRM1 )
+      BETASQR	= BETA*BETA
+      X		= BETA / MAX( MACH , ONE )
+      nu_p	= HALF * ( MSQRM1/BETASQR + ONE )
+      nu_m	= HALF * ( MSQRM1/BETASQR - ONE )
+d125 1
+a125 1
+C	The Characteristic variables ..
+d127 1
+a127 1
+C	1. Entropy ..
+d132 1
+a132 1
+C	2. Total Enthalpy ..
+d137 1
+a137 1
+C	3. Acoustic variables ..
+d144 2
+a145 2
+C	Jacobian matrix of the acoustic+shear subsystem ..
+C	
+@
+
+
+1.6
+log
+@a call to GRAD_PRIM has been inserted
+,
+@
+text
+@d16 1
+d122 2
+a123 1
+#ifdef DEBUG
+d180 2
+a181 1
+#endif
+a219 2
+  200 CONTINUE
+C
+@
+
+
+1.5
+log
+@a number of changes, both in the calling sequence and in the storage
+of certain arrays
+@
+text
+@d3 1
+a3 1
+C#define DEBUG
+d53 2
+@
+
+
+1.4
+log
+@add an include file for a common
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE Eigen_II(Matrix,LDA,NDIM)
+d3 2
+a15 1
+      INCLUDE 'fix'
+d17 1
+a17 1
+      INTEGER LDA,NDIM
+d19 2
+a20 1
+      DOUBLE PRECISION Matrix(LDA,LDA,*)
+d51 2
+d79 24
+a102 23
+      dVdU(1,1) = TWO*ZAVG(1)-TEMP0*ZAVG(2)
+      dVdU(1,2) = -TEMP0*ZAVG(1)
+      dVdU(1,3) =  TEMP0*ZAVG(3)
+      dVdU(1,4) =  TEMP0*ZAVG(4)
+      dVdU(1,5) =  TEMP0*ZAVG(5)
+C
+      dVdU(2,1) = TEMP2 * ZAVG(2) - MACH * ZDOTN
+      dVdU(2,2) = TEMP2 * ZAVG(1)
+      dVdU(2,3) =-TEMPX + MACH*RotationMatrix(1,1)/ZAVG(1)
+      dVdU(2,4) =-TEMPY + MACH*RotationMatrix(2,1)/ZAVG(1)
+      dVdU(2,5) =-TEMPZ + MACH*RotationMatrix(3,1)/ZAVG(1)
+C
+      dVdU(3,1) = BETA * TEMP2 * ZAVG(2) - MACH * ZDOTS
+      dVdU(3,2) = BETA * dVdU(2,2)
+      dVdU(3,3) =-BETA * TEMPX + MACH * RotationMatrix(1,2) / ZAVG(1)
+      dVdU(3,4) =-BETA * TEMPY + MACH * RotationMatrix(2,2) / ZAVG(1)
+      dVdU(3,5) =-BETA * TEMPZ + MACH * RotationMatrix(3,2) / ZAVG(1)
+C
+      dVdU(4,1) = BETA * TEMP2 * ZAVG(2) + MACH * ZDOTS
+      dVdU(4,2) = dVdU(3,2)
+      dVdU(4,3) =-BETA * TEMPX - MACH * RotationMatrix(1,2) / ZAVG(1)
+      dVdU(4,4) =-BETA * TEMPY - MACH * RotationMatrix(2,2) / ZAVG(1)
+      dVdU(4,5) =-BETA * TEMPZ - MACH * RotationMatrix(3,2) / ZAVG(1)
+d119 1
+d176 1
+d217 1
+a217 1
+C     return
+d219 1
+a219 1
+      CALL DGEMM('N','N',4,2,4,ONE,dVdU,5,GRAD_PARM,NMAX,ZERO,
+d231 9
+a239 1
+     +            'dW/dZ * grad(Z) ',IFAIL)
+d242 1
+@
+
+
+1.3
+log
+@Linux version
+@
+text
+@d13 1
+@
+
+
+1.2
+log
+@reformatted
+@
+text
+@a228 67
+C
+C
+C
+      SUBROUTINE StreamAlignedFrame
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+      INCLUDE 'three'
+      INCLUDE 'blkEulerII'
+C
+      EXTERNAL	CROSS_PROD,DCOPY
+C
+      INTEGER  ISDMIN,JCYCL
+      EXTERNAL ISDMIN,JCYCL
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+C
+C     Builds the rotation matrix ..
+C
+   20 CONTINUE ! ++++++++++ 2D ++++++++++
+C
+      RotationMatrix(1,1) = UAVG(3)*QINV
+      RotationMatrix(2,1) = UAVG(4)*QINV
+      RotationMatrix(3,1) = ZERO
+C
+      RotationMatrix(1,2) =-UAVG(4)*QINV
+      RotationMatrix(2,2) = UAVG(3)*QINV
+      RotationMatrix(3,2) = ZERO
+C
+      CALL CROSS_PROD( RotationMatrix(1,1) , RotationMatrix(1,2) ,
+     &	               RotationMatrix(1,3) )
+C
+      RETURN
+      END
+CC
+CC------------------------------+------------------------------
+CC
+      DOUBLE PRECISION FUNCTION fun_BETA_aldo( X )
+C
+C	.. The argument (X) MUST be Mach^2 - 1.00
+C
+      IMPLICIT NONE
+C
+
+      REAL*8     EPS_SONIC,EPSQR_SONIC,EPS_STAG,EPSQR_STAG
+
+      PARAMETER( EPS_SONIC = 0.10d0 , EPSQR_SONIC = EPS_SONIC**2)
+      PARAMETER( EPS_STAG  = 0.10d0 , EPSQR_STAG  = EPS_STAG**2)
+      DOUBLE PRECISION	X
+      DOUBLE PRECISION	A,C
+      INTRINSIC	DSQRT,DABS
+C
+      A=0.25D0*(EPS_SONIC**(-1.5D0))
+      C=0.75D0*(EPS_SONIC**0.5D0)
+C
+      IF( ABS(X) .LT. EPS_SONIC )THEN
+	fun_BETA_aldo = A*X*X + C
+      ELSE
+	fun_BETA_aldo = DSQRT( DABS( X ) )
+      ENDIF
+C
+      RETURN
+      END
+C
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+C	.. van Leer, Lee, Roe preconditioner in conservative form ..
+d19 5
+a23 3
+      DOUBLE PRECISION MSQRM1,CNST,QBAR
+      DOUBLE PRECISION DensAbar,TEMP1,TEMP2,TEMP3,TEMP4
+      INTEGER IDIM,JDIM
+d25 1
+a25 2
+C
+      DOUBLE PRECISION U_dot_DU(3),S_dot_DU(3)
+d45 2
+d57 42
+a98 1
+C	.. Advection speeds ..
+d103 1
+a103 1
+     1                             RotationMatrix(1,2)/BETA)
+d105 1
+a105 1
+     1                             RotationMatrix(1,2)/BETA)
+d110 1
+a110 1
+     1                             RotationMatrix(2,2)/BETA)
+d112 3
+a114 2
+     1                             RotationMatrix(2,2)/BETA)
+C	.. The Characteristic variables ..
+d116 1
+a116 1
+C	.. Entropy ..
+d121 1
+a121 1
+C	.. Total Enthalpy ..
+d126 1
+a126 1
+C	.. Acoustic variables ..
+d133 2
+a134 1
+C	.. Jacobian matrix of the acoustic+shear subsystem ..
+d137 1
+a137 1
+     &                              RotationMatrix(1,2)/BETA)
+d139 1
+a139 1
+*
+d142 2
+a143 2
+     &                              RotationMatrix(1,2)/BETA)
+*
+d145 1
+a145 1
+     &                              RotationMatrix(1,2)/BETA)
+d147 1
+a147 1
+*
+d150 1
+a150 1
+     &                              RotationMatrix(1,2)/BETA)
+d155 1
+a155 1
+     &                              RotationMatrix(2,2)/BETA)
+d160 1
+a160 1
+     &                              RotationMatrix(2,2)/BETA)
+d163 1
+a163 1
+     &                              RotationMatrix(2,2)/BETA)
+d168 1
+a168 1
+     &                              RotationMatrix(2,2)/BETA)
+d170 1
+a170 1
+C     .. Right eigenvector matrix in conserved variables ..
+d200 1
+a200 1
+     &                                   +RotationMatrix(IDIM,2))
+d202 1
+a202 1
+     &                                   -RotationMatrix(IDIM,2))
+d209 18
+a235 2
+C     .. Parameters ..
+C
+a238 2
+C     .. Commons ..
+C
+a240 4
+C
+C     INTEGER I
+C
+C     DOUBLE PRECISION SING,COSG,TEMP2
+@

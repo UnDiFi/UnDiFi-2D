@@ -1,0 +1,5 @@
+F77CMD = f77
+64_BIT_REALS = -r8
+CCCMD  = cc
+F77OPTS =
+CCOPTS =

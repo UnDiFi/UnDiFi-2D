@@ -1,0 +1,183 @@
+head	1.5;
+access;
+symbols;
+locks
+	abonfi:1.5; strict;
+comment	@# @;
+
+
+1.5
+date	2020.04.25.15.11.10;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2020.04.25.14.56.38;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.05.07.08.53.40;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.05.07.07.05.36;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2012.11.30.12.02.25;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@an included Makefile for testing the EulFS code
+@
+
+
+1.5
+log
+@also test for file015.dat.BAK
+@
+text
+@#include ${PETSC_DIR}/bmake/${PETSC_ARCH}/packages
+#
+# SEQ_CODE = ${HOME}/bin/${PETSC_ARCH}/eulfs
+# if the full path is set for the seq code then the output is sent
+# to ${HOME}/bin/${PETSC_ARCH} !!! at least on alpha
+#
+#SEQ_CODE = eulfs11.8
+#MPI_CODE = ${HOME}/bin/${PETSC_ARCH}/peulfs
+#
+#
+#
+#
+runseq:
+	@@cp .petscrc ${HOME}
+	@@echo "running code " ${SEQ_CODE} " with runtime options :" ${FSPL_OPTS}
+	@@${SEQ_CODE} ${FSPL_OPTS} -data_dir ${DATA_DIR} > out.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.seq.${PETSC_ARCH}
+diff:
+	@@if (diff convhst.seq.${ARCH1} convhst.seq.${ARCH2} >> ${LOGFILE} ) \
+	then echo "No differences have been found while running" ${TCASE}; else echo "Possible problem with " ${TCASE} ", check for differences"; echo; fi
+vdiff:
+	@@cp .petscrc ${HOME}; rm -f convhst.?.${PETSC_ARCH}
+	@@echo >> ${LOGFILE}
+	@@echo "running testcase : " ${TCASE} " with: " ${CODE1} >> ${LOGFILE}
+	@@echo "running testcase with: " ${CODE1} ${FSPL_OPTS}
+	@@for i in file010.dat file015.dat fold010.dat; do \
+	if ([ -e $$i.BAK ]) then \
+		cp -vp $$i.BAK $$i  ; \
+	else \
+		echo 'There is no' $$i 'to be copied' ; \
+	fi \
+	done
+	@@if (${CODE1} ${FSPL_OPTS} -data_dir ${DATA_DIR} > out.1.${PETSC_ARCH}) \
+	then (cut -c1-10,33- convhst.l2 > convhst.1.${PETSC_ARCH}) \
+	else echo; echo ${CODE1} has failed on ${TCASE}; echo; echo "error:" ${CODE1} has failed on ${TCASE} >> ${LOGFILE}; fi
+	@@echo "running testcase with: " ${CODE2} ${FSPL_OPTS}
+	@@echo "running testcase : " ${TCASE} " with: " ${CODE2} >> ${LOGFILE}
+	@@for i in file010.dat fold010.dat; do \
+		rm -v $$i; \
+	if ([ -e $$i.BAK ]) then \
+		cp -vp $$i.BAK $$i  ; \
+	else \
+		echo 'There is no' $$i 'to be copied' ; \
+	fi \
+	done
+	@@if (${CODE2} ${FSPL_OPTS} -data_dir ${DATA_DIR} > out.2.${PETSC_ARCH}) \
+	then (cut -c1-10,33- convhst.l2 > convhst.2.${PETSC_ARCH}) \
+	else echo; echo ${CODE2} has failed on ${TCASE}; echo; echo "error:" ${CODE2} has failed on ${TCASE} >> ${LOGFILE};  fi
+	@@if (diff convhst.1.${PETSC_ARCH} convhst.2.${PETSC_ARCH} > scratchfile ) \
+	then echo "No differences have been found while running" ${TCASE}; echo "No differences have been found while running" ${TCASE} >> ${LOGFILE}; \
+	else echo "Possible problem with " ${TCASE} ", check for differences"; echo "Possible problem with " ${TCASE} ", differences are listed below" >> ${LOGFILE}; cat scratchfile >> ${LOGFILE}; fi
+
+pdiff:
+	@@cp .petscrc ${HOME}
+	@@echo "running testcase : " ${TCASE} " with: " ${SEQ_CODE} >> ${LOGFILE}
+	@@echo "running testcase with: " ${SEQ_CODE}
+	@@${SEQ_CODE} ${FSPL_OPTS} -data_dir ${DATA_DIR} > out1.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.1.${PETSC_ARCH}
+	@@echo "running testcase with: " ${MPI_CODE} "on " ${NPES} "processors"
+	@@echo "running testcase : " ${TCASE} " with: " ${MPI_CODE} "on " ${NPES} "processors" >> ${LOGFILE}
+	@@mpirun \-np ${NPES} ${MPI_CODE} ${FSPL_OPTS} -data_dir ${DATA_DIR}/np${NPES} > out.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.${NPES}.${PETSC_ARCH}
+	@@if (diff convhst.1.${PETSC_ARCH} convhst.${NPES}.${PETSC_ARCH} >> ${LOGFILE} ) \
+	then true; else echo "Possible problem, check for differences"; fi
+clean:	
+	@@rm -f convhst.* output.??? out* fort.* log* slip-free* no-slip* timing.??? mytime.??? fspl.out
+@
+
+
+1.4
+log
+@test if *.BAK exists, before making a copy
+@
+text
+@d26 1
+a26 2
+	@@for i in file010.dat fold010.dat; do \
+		rm -v $$i; \
+@
+
+
+1.3
+log
+@copies restart files
+@
+text
+@d27 3
+a29 4
+	if \
+		cp $$i.BAK $$i  ; \
+	then \
+		echo $$i.BAK 'has been copied' ; \
+d40 3
+a42 4
+	if \
+		cp $$i.BAK $$i  ; \
+	then \
+		echo $$i 'has been copied' ; \
+a67 10
+copy_restart:
+	@@for i in file010.dat fold010.dat; do \
+	if \
+		cp $$i $$i.BAK  ; \
+	then \
+		echo $$i 'has been copied' ; \
+	else \
+		echo 'There is no' $$i 'to be copied' ; \
+	fi \
+	done
+@
+
+
+1.2
+log
+@before trying to detect code failure
+@
+text
+@d26 12
+a37 2
+	@@${CODE1} ${FSPL_OPTS} -data_dir ${DATA_DIR} > out.1.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.1.${PETSC_ARCH}
+d40 12
+a51 2
+	@@${CODE2} ${FSPL_OPTS} -data_dir ${DATA_DIR} > out.2.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.2.${PETSC_ARCH}
+d70 10
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d34 2
+a35 2
+	else echo "Possible problem with " ${TCASE} ", check for differences"; echo "Possible problem with " ${TCASE} ", differences are listed below" >> ${LOGFILE}; cat scratchfile >> ${LOGFILE}; \
+	echo; mailx -s"Problem with :"${TCASE} aldo.bonfiglioli@@unibas.it < scratchfile ;fi
+@

@@ -1,0 +1,118 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2000.06.23.10.38.45;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@constant pressure boundary condition, only for incompressible flows
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE SUBPTO( IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+     &NODCODE, ZROE, NOFVAR, NPOIN )
+C
+      IMPLICIT NONE
+C
+C     This routine sets NODCODE = 1000
+C        for those nodes which belong to a viscous wall
+C
+C        NOTE that this routine must be called AFTER
+C        the flow variables have been initialized,
+C        so that the velocity components can be set to 0.0 
+C        on viscous walls
+C
+C     Parameters ..
+C
+      INCLUDE 'constants'
+      INCLUDE 'bnd.h'
+C
+C     Commons ..
+C
+      INCLUDE 'bnd'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'IO'
+C
+C     Scalar Arguments ..
+C
+      INTEGER NBFAC,NOFVERT,NOFVAR,NPOIN
+C
+C     Array Arguments ..
+C
+      INTEGER IBNDFAC(3,*),ICELNOD(NOFVERT,*),NODCODE(*)
+      DOUBLE PRECISION ZROE(NOFVAR,*)
+C
+C     Local Scalars ..
+C
+      INTEGER ICLR,IELEM,IVERT,INODE,IFACE,I,J,IVAR,U
+C
+C     External Functions ..
+C
+      INTEGER  ICYCL
+      EXTERNAL ICYCL
+C
+C     Intrinsic Functions ..
+C
+      INTRINSIC IABS
+C
+C     Executable Statements ..
+C
+      DO 1 IFACE = 1 , NBFAC 
+C
+         ICLR = ICOLOR(IBNDFAC(3,IFACE))
+         IF( ICLR .NE. 2 )GOTO 1
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+C
+         DO 2 I = 1 , NOFVERT - 1
+C
+            INODE = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+C        If the nodecode is negative (i.e. a supersonic node)
+C        then it won't be updated anyway
+C
+C        The information on the # of nodes meeting in INODE is lost
+C
+C        NODCODE = 1000 viscous node
+C        NODCODE =  500 prescribed velocity profile
+C        NODCODE = 3000 constant pressure
+C
+            NODCODE(INODE) = -500 * ICLR + 4000
+C
+    2    CONTINUE
+    1 CONTINUE
+C
+C     counts the no of cnst pressure nodes 
+C
+      I = 0
+      DO 3 INODE = 1, NPOIN
+            IF( NODCODE(INODE) .EQ. 3000 )THEN
+C
+            I = I+1 
+C
+         ENDIF
+    3 CONTINUE
+C
+      WRITE(NOUT,100)I
+C
+C
+      RETURN
+  100 FORMAT(/5X,'THERE ARE ',I5,' CONSTANT PRESSURE NODES')
+  200 FORMAT(/5X,'THERE ARE ',I5,
+     +' NODES WITH PRESCRIBED VELOCITY PROFILE')
+      END
+@

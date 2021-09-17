@@ -1,0 +1,2123 @@
+head	1.36;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.36
+	release3_13_0:1.36
+	release3_12_0:1.36
+	release3_11_0:1.36
+	release3_10_0:1.36
+	release3_8_0:1.36
+	release3_7_1:1.35
+	release3_7_0:1.35
+	release3_4_5:1.34
+	release3_4_4:1.34
+	release3_4_3:1.34
+	release3_4_2:1.34
+	release3_4_1:1.32
+	release3_4_0:1.30
+	release3_3_5:1.30
+	release3_3_4:1.30
+	release3_3_3:1.30
+	release3_3_2:1.30
+	release3_3_1:1.30
+	release3_3_0:1.30;
+locks; strict;
+comment	@c @;
+
+
+1.36
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2013.07.18.14.48.59;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2013.07.16.14.52.47;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2013.06.07.15.30.07;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2013.06.04.15.25.17;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2012.03.21.10.40.37;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2011.12.14.09.53.31;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2011.09.16.07.22.59;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2008.02.25.09.35.13;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2007.11.20.08.19.43;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2005.10.22.11.03.52;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2004.12.20.14.33.57;	author aldo;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2004.03.18.02.39.24;	author aldo;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2004.02.27.14.56.43;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2003.08.08.03.37.30;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2002.10.25.06.02.17;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2001.07.19.09.55.54;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2001.07.07.08.44.32;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2001.01.20.13.50.34;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.11.22.14.29.47;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.10.30.16.24.54;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.10.26.15.15.50;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.10.20.10.45.39;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.10.20.08.31.30;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.08.18.13.58.21;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2000.06.23.16.45.44;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2000.06.20.07.59.12;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.06.19.16.02.47;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.11.05.20.55.53;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.07.13.19.25;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.29.16.53.37;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Creates PETSc index sets for boundary meshpoints
+@
+
+
+1.36
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE ISET(NodalBcs, IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+     &NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, NPNOD, NELEM,
+     &ROWBGN, COMPRESSIBLE )
+C
+C     $Id: iset.F,v 1.35 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C     This routine creates PETSc Index Sets addressing
+C          boundary meshpoints with various types of
+C          boundary conditions.
+C     Warnings:
+C     --------
+C     In the parallel case it is important that
+C          the routine is called with NPOIN=# of processor
+C          owned nodes, since the index sets are local
+C          and shoud not address ghost nodes
+C
+C     NODCODE will address interior nodes as well ghost ones
+C     so it must be allocated for NPOIN+NGHOST in the calling routine
+C
+C     Note that Index sets are created even if empty
+C
+C     One of the limitations in the current implementation is that
+C     if a boundary vertex belongs to two (or more) boundary faces
+C     where different types of b.c. are specified the routine won't
+C     detect it (though it shouldn't be too difficult to modify it
+C     so that it will) but, more importantly, conflicts may arise
+C     (or may not) depending on whether the two b.c. affect different
+C     variables or not.
+C     For instance: take the trailing edge of a flat plate
+C     and suppose the t.e. is also located on the outflow boundary
+C     where a cnst. pressure boundary condition is specified.
+C     This won't conflict with the no-slip boundary
+C     condition but WILL conflict if you specify an iso-thermal b.c.
+C     on the whole plate (you can give it a try).
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscis.h"
+      use petscvec
+      use petscis
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'bnd.h'
+      INCLUDE 'bctype.h'
+      INCLUDE 'iset.h'
+C
+      INCLUDE 'bnd.com'
+      INCLUDE 'io.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'ibc8.com'
+      INCLUDE 'time.com'
+C
+#ifdef MPI
+      integer istatus(MPI_STATUS_SIZE)
+      integer isum,source,dest,total,p,tag
+#endif
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+C     Scalar arguments:
+C
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NPNOD,NBFAC,NELEM,ROWBGN
+      LOGICAL COMPRESSIBLE
+C
+C     Array arguments:
+C
+      INTEGER NODCODE(NPOIN+NGHOST),IDX(NPOIN),IBNDFAC(3,NBFAC)
+      INTEGER ICELNOD(NOFVERT,*)
+C
+C     Local scalars:
+C
+      INTEGER IPOIN,NI,IFAIL,IOFF,IFRST,J,IVERT,I,ICLR,IFACE,IELEM
+      INTEGER ICYCL
+C
+      IS, dimension(0:*) :: NodalBcs 
+C
+      WRITE(NOUT,1000)MY_PE
+#ifdef MPI
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,1000)MY_PE
+#endif
+C
+C
+C     +-----------------------------------------------------+
+C     Test for no-slip b.c. (IBC=6)
+C     and prescribed velocity-profile (IBC=7)
+C     +-----------------------------------------------------+
+C
+C
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1)
+C
+      DO 1 IFACE = 1 , NBFAC
+C
+          ICLR = ICOLOR(IBNDFAC(3,IFACE),1) ! colours for the mean flow equations
+C
+C        faces with no-slip b.c. or prescribed velocity profile
+C
+          IF( .NOT.(ICLR .EQ. BC_TYPE_NO_SLIP .OR. 
+     &              ICLR .EQ. BC_TYPE_PROFILE) ) GOTO 1
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+C
+          DO 2 I =  1, NOFVERT - 1
+C
+              IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+              NODCODE(IPOIN) = 1000
+C
+    2     CONTINUE
+    1 CONTINUE
+C
+C     Create an Index Set of No-slip velocity components
+C     (to be used to set b.c. for N-S computations)
+C     IOFF is the # of variables stored BEFORE the velocity
+C     components
+C
+      IF(COMPRESSIBLE)THEN
+          IOFF = 2
+      ELSE
+          IOFF = 1
+      ENDIF
+C
+      NI=0
+      I=0
+      DO 230 IPOIN = 1, NPOIN
+          IF(NODCODE(IPOIN).EQ.1000)THEN
+              I=I+1
+              IFRST = (IPOIN-1)*NOFVAR+IOFF -  1+ ROWBGN
+              DO 220 J = 1,NDIM
+                  NI=NI+1
+                  IDX(NI) = IFRST + J
+  220         CONTINUE
+          ENDIF
+  230 CONTINUE
+C
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     +PETSC_COPY_VALUES,NodalBcs(NoSlipVelocities),IFAIL)
+      WRITE(NOUT,2000)NI/NDIM,CBTYPE(BC_TYPE_NO_SLIP)
+C
+#ifdef MPI
+      CALL MPI_COMM_SIZE(PETSC_COMM_WORLD, p, ifail)
+      TAG = 50
+      DEST = 0
+      if (MY_PE .EQ. 0) then
+          total = NI
+          do source = 1, p-1
+              call MPI_RECV(isum, 1, MPI_INTEGER, source, tag, 
+     +              PETSC_COMM_WORLD, istatus, ifail)
+              total = total + isum
+          enddo 
+          WRITE(IWUNIT,2000)total/NDIM,CBTYPE(BC_TYPE_NO_SLIP)
+      else
+          call MPI_SEND(NI, 1, MPI_INTEGER, dest, 
+     +          tag, PETSC_COMM_WORLD, ifail)
+      endif
+#endif
+C
+C     +-----------------------------------------------------+
+C     Create an index set containing the row numbers
+C     (0-based indexing) where \rhoE is stored for
+C     meshpoints belonging to
+C     a solid wall no-slip boundary (IBC=6)
+C    (to be used to set b.c. for isothermal b.c.)
+C     +-----------------------------------------------------+
+C
+      IF(IADIA.NE.0)THEN
+C
+!        CALL SETFLAG(IBNDFAC,NBFAC,NODCODE,NPOIN,NGHOST,
+!    &                ICELNOD,NOFVERT,ICOLOR,BC_TYPE_NO_SLIP)
+         CALL IINIT(NPOIN+NGHOST,0,NODCODE,1)
+C
+         DO 41 IFACE = 1 , NBFAC
+C
+             ICLR = ICOLOR(IBNDFAC(3,IFACE),1) ! colours for the mean flow equations
+C
+C        faces with no-slip b.c.
+C
+             IF( ICLR .NE. BC_TYPE_NO_SLIP) GOTO 41
+             IELEM = IBNDFAC(1,IFACE)
+             IVERT = IBNDFAC(2,IFACE)
+C
+             DO 42 I =  1, NOFVERT - 1
+C
+                 IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+                 NODCODE(IPOIN) = 1000
+C
+   42        CONTINUE
+   41    CONTINUE
+C
+C     IOFF-1=+1 since the storage is: \rho,\rho E, etc.
+C
+         NI=0
+         IOFF=2
+         DO 330 IPOIN = 1, NPOIN
+             IF(NODCODE(IPOIN).EQ.1000)THEN
+                 NI=NI+1
+                 IDX(NI) = (IPOIN-1)*NOFVAR+IOFF -  1+ ROWBGN
+             ENDIF
+  330    CONTINUE
+C
+      ELSE
+          NI=0
+      ENDIF
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     &                     PETSC_COPY_VALUES,NodalBcs(Isothermal),
+     &                     IFAIL)
+      WRITE(NOUT,2000)NI,"ISOTHERMAL BCS"
+C
+C
+C     +-----------------------------------------------------+
+C     Test for supersonic b.c. (IBC=1)
+C     +-----------------------------------------------------+
+C
+!        CALL SETFLAG(IBNDFAC,NBFAC,NODCODE,NPOIN,NGHOST,
+!    &                ICELNOD,NOFVERT,ICOLOR,BC_TYPE_SUPS_INLET)
+C
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1)
+C
+      DO 3 IFACE = 1 , NBFAC
+C
+          ICLR = ICOLOR(IBNDFAC(3,IFACE),1) ! colours for the mean flow equations
+C
+C        faces with dirichlet b.c.
+C
+          IF( ICLR .NE. BC_TYPE_SUPS_INLET )GOTO 3
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+C
+          DO 4 I =  1, NOFVERT - 1
+C
+              IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+              NODCODE(IPOIN) = BC_TYPE_SUPS_INLET
+C
+    4     CONTINUE
+    3 CONTINUE
+C
+C
+C     Create an index set containing the indices of the variables
+C     (0-based indexing) of meshpoints belonging to
+C     a supersonic (or Dirichlet) boundary
+C     to be used in Euler/N-S computations
+C
+      NI=0
+      I=0
+      DO 130 IPOIN = 1, NPOIN
+          IF(NODCODE(IPOIN).EQ.BC_TYPE_SUPS_INLET)THEN
+              I=I+1
+              NI=NI+1
+              IDX(NI) = (IPOIN-1) + ROWBGN
+!             IDX(NI) = (IPOIN-1)*NOFVAR + ROWBGN ! changed to comply to petsc-3.2
+          ENDIF
+  130 CONTINUE
+      WRITE(NOUT,2000)I,CBTYPE(BC_TYPE_SUPS_INLET)
+      IF(NOFVAR.EQ.1)THEN
+          CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,PETSC_COPY_VALUES,
+     +                         NodalBcs(SupersonicNodes),IFAIL)
+      ELSE
+          CALL ISCreateBlock(PETSC_COMM_SELF,NOFVAR,NI,IDX,
+     +    PETSC_COPY_VALUES,NodalBcs(SupersonicVariables),IFAIL)
+      ENDIF
+C
+#ifdef MPI
+      call MPI_COMM_SIZE(PETSC_COMM_WORLD, p, ifail)
+      tag = 50
+      dest = 0
+      if (MY_PE .EQ. 0) then
+          total = NI
+          do source = 1, p-1
+              call MPI_RECV(isum, 1, MPI_INTEGER, source, tag, 
+     +              PETSC_COMM_WORLD, istatus, ifail)
+              total = total + isum
+          enddo 
+          WRITE(IWUNIT,2000)total,CBTYPE(BC_TYPE_SUPS_INLET)
+      else
+          call MPI_SEND(NI, 1, MPI_INTEGER, dest, 
+     +          tag, PETSC_COMM_WORLD, ifail)
+      endif
+#endif
+C
+      IF( LALE .AND. ALE_LAPLACE_GRID )THEN 
+C
+C     +-----------------------------------------------------+
+C     Test for Dirchlet boundary conditions for the Motion solver
+C     all boundaries are of Dirchlet type
+C     +-----------------------------------------------------+
+C
+         CALL IINIT(NPOIN+NGHOST+NPNOD,0,NODCODE,1)
+C
+         DO 17 IFACE = 1 , NBFAC
+C
+            IELEM = IBNDFAC(1,IFACE)
+            IVERT = IBNDFAC(2,IFACE)
+C
+            DO 19 I =  1, NOFVERT - 1
+C
+                IPOIN = ICELNOD(ICYCL(IVERT+I,NOFVERT),IELEM)
+C
+                NODCODE(IPOIN) = NODCODE(IPOIN)+1
+C
+   19       CONTINUE
+   17    CONTINUE
+C
+         NI=0
+         DO 739 IPOIN = 1, NPOIN ! ONLY interior nodes should be addressed
+            IF(NODCODE(IPOIN).NE.0)THEN
+                IFRST = (IPOIN-1)+ ROWBGN ! 0-based indexing for Petsc
+                NI=NI+1
+                IDX(NI) = IFRST
+            ENDIF
+  739 CONTINUE
+C
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     &                     PETSC_COPY_VALUES,NodalBcs(MotionSolverBCS),
+     &                     IFAIL)
+      WRITE(NOUT,2000)NI,'MotionSolverBCS '
+C
+      ENDIF ! LapLAcE's equation for the motion solver
+C
+C
+      IF( LAPLACE )THEN 
+C
+C     +-----------------------------------------------------+
+C     Test for Dirchlet boundary conditions for Poisson's eqn.
+C     +-----------------------------------------------------+
+C
+         CALL IINIT(NPOIN+NGHOST+NPNOD,0,NODCODE,1)
+C
+         DO 7 IFACE = 1 , NBFAC
+C
+            ICLR = ICOLOR(IBNDFAC(3,IFACE),3) ! colours for the mean flow equations
+C
+C        faces with Dirichlet bndry conditions
+C
+          IF( ICLR .NE. BC_TYPE_SUPS_INLET )GOTO 7 ! pick up all boundary nodes
+             IELEM = IBNDFAC(1,IFACE)
+             IVERT = IBNDFAC(2,IFACE)
+C
+            DO 9 I =  1, NOFVERT - 1
+C
+C
+C
+                IPOIN = ICELNOD(ICYCL(IVERT+I,NOFVERT),IELEM)
+C
+                NODCODE(IPOIN) = NODCODE(IPOIN)+1
+C
+    9       CONTINUE
+    7    CONTINUE
+C
+         NI=0
+         IOFF = NOFVAR ! the potential is stored last
+         DO 734 IPOIN = 1, NPOIN
+            IF(NODCODE(IPOIN).NE.0)THEN
+                IFRST = (IPOIN-1)*NOFVAR+IOFF -  1+ ROWBGN
+                NI=NI+1
+                IDX(NI) = IFRST
+            ENDIF
+  734 CONTINUE
+C
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     &                     PETSC_COPY_VALUES,NodalBcs(Dirichlet4Poisson)
+     &                    ,IFAIL)
+      WRITE(NOUT,2000)NI,'Dirichlet 4 Poisson'
+C
+      ENDIF ! LapLAcE
+C
+C     +-----------------------------------------------------+
+C     +-----------------------------------------------------+
+C
+C
+C     +-----------------------------------------------------+
+C     Test for hanging ndoes
+C     +-----------------------------------------------------+
+C
+      CALL IINIT(NPOIN+NGHOST,-1,NODCODE,1)
+C
+      DO 31 IELEM = 1 , NELEM
+C
+          DO 32 IVERT =  1, NOFVERT
+C
+              IPOIN = ICELNOD( IVERT , IELEM )
+              NODCODE(IPOIN) = 0
+C
+   32     CONTINUE
+   31 CONTINUE
+C
+C     Create an Index Set of hanging nodes
+C
+      NI=0
+      DO 732 IPOIN = 1, NPOIN
+          IF(NODCODE(IPOIN).EQ.-1)THEN
+              IFRST = (IPOIN-1)*NOFVAR-  1+ ROWBGN
+              DO I= 1,NOFVAR
+                 NI=NI+1
+                 IDX(NI) = IFRST + I
+              ENDDO
+          ENDIF
+  732 CONTINUE
+C
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     &                     PETSC_COPY_VALUES,NodalBcs(HangingNodes),
+     &                     IFAIL)
+      WRITE(NOUT,2000)NI/NOFVAR,"HANGING NODES"
+C
+#ifdef MPI
+      call MPI_COMM_SIZE(PETSC_COMM_WORLD, p, ifail)
+      tag = 50
+      dest = 0
+      if (MY_PE .EQ. 0) then
+          total = NI
+          do source = 1, p-1
+              call MPI_RECV(isum, 1, MPI_INTEGER, source, tag, 
+     +              PETSC_COMM_WORLD, istatus, ifail)
+              total = total + isum
+          enddo 
+          WRITE(IWUNIT,2000)total/NOFVAR,"HANGING NODES"
+      else
+          call MPI_SEND(NI, 1, MPI_INTEGER, dest, 
+     +          tag, PETSC_COMM_WORLD, ifail)
+      endif
+#endif
+C
+      RETURN
+ 1000 FORMAT(/,5X,'NODAL BOUNDARY CONDITIONS ON PE # ',I4,/ 5X,38("="))
+ 
+ 2000 FORMAT(I7,' NODES with B.C. ',A)
+      END
+C
+      SUBROUTINE SETFLAG(IBNDFAC,NBFAC,NODCODE,NP,
+     &ICELNOD,NOFVERT,ICOLOR,BC_TYPE)
+C
+C
+      INTEGER IBNDFAC(3,NBFAC),NODCODE(*),ICELNOD(NOFVERT,*),ICOLOR(*)
+      INTEGER NBFAC,NP,BC_TYPE
+      INTEGER IFACE,ICLR,IELEM,IVERT,I
+      INTEGER ICYCL
+C
+      CALL IINIT(NP,0,NODCODE,1)
+C
+      DO 1 IFACE = 1 , NBFAC
+C
+          ICLR = ICOLOR(IBNDFAC(3,IFACE))
+C
+C        faces with no-slip b.c. or prescribed velocity profile
+C
+          IF( .NOT.(ICLR .EQ. BC_TYPE)) GOTO 1
+C
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+C
+          DO 2 I =  1, NOFVERT - 1
+C
+              IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+              NODCODE(IPOIN) = BC_TYPE
+C
+    2     CONTINUE
+    1 CONTINUE
+      RETURN
+      END
+@
+
+
+1.35
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ISET(IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+d5 1
+a5 1
+C     $Id: iset.F,v 1.34 2013/07/18 14:48:59 abonfi Exp abonfi $
+a35 3
+      IMPLICIT NONE
+C
+#include "petsc/finclude/petscsys.h"
+d38 4
+d45 2
+a53 1
+#include "iset.com"
+d77 2
+d138 1
+a138 1
+     +PETSC_COPY_VALUES,NoSlipVelocities,IFAIL)
+d207 3
+a209 1
+     &                     PETSC_COPY_VALUES,Isothermal,IFAIL)
+d259 1
+a259 1
+     +                         SupersonicNodes,IFAIL)
+d262 1
+a262 1
+     +    PETSC_COPY_VALUES,SupersonicVariables,IFAIL)
+d316 2
+a317 1
+     &                     PETSC_COPY_VALUES,MotionSolverBCS,IFAIL)
+d363 2
+a364 1
+     &                     PETSC_COPY_VALUES,Dirichlet4Poisson,IFAIL)
+d403 2
+a404 1
+     &                     PETSC_COPY_VALUES,HangingNodes,IFAIL)
+a428 1
+ 2100 FORMAT(' BOUNDARY TYPE ',A,' is NOT currently implemented')
+@
+
+
+1.34
+log
+@introduced ALE_LAPLACE_GRID
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.33 2013/07/16 14:52:47 abonfi Exp abonfi $
+d38 3
+a40 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.33
+log
+@added Index Sets for the Motion Solver,
+removed IS for X,Y,Z symmetry bcs
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.32 2013/06/07 15:30:07 abonfi Exp abonfi $
+d277 1
+a277 1
+      IF( LALE .AND. ALE_READ_GRID )THEN 
+@
+
+
+1.32
+log
+@the array ICOLOR included from bnd.com has changed
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.31 2013/06/04 15:25:17 abonfi Exp abonfi $
+d49 1
+d277 39
+a361 1
+C     Test for symmetry b.c. (IBC=9,10,11)
+a363 46
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1)
+C
+      DO 71 IFACE = 1 , NBFAC
+C
+          ICLR = ICOLOR(IBNDFAC(3,IFACE),1) ! colours for the mean flow equations
+C
+C        faces with no-slip b.c. or prescribed velocity profile
+C
+          IF( (ICLR .EQ. BC_TYPE_X_SYMMETRY .OR. 
+     &         ICLR .EQ. BC_TYPE_Z_SYMMETRY) ) THEN
+               WRITE(NOUT,2100)CBTYPE(ICLR)
+               STOP
+          ENDIF
+          IF( ICLR .EQ. BC_TYPE_Y_SYMMETRY )THEN
+             IELEM = IBNDFAC(1,IFACE)
+             IVERT = IBNDFAC(2,IFACE)
+C
+             DO 72 I =  1, NOFVERT - 1
+C
+                 IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+                 NODCODE(IPOIN) = 1000
+C
+   72        CONTINUE
+          ENDIF
+   71 CONTINUE
+C
+C     Create an Index Set of Y-symmetry bcs
+C
+      IF(COMPRESSIBLE)THEN
+          IOFF = 3
+      ELSE
+          IOFF = 2
+      ENDIF
+C
+      NI=0
+      DO 730 IPOIN = 1, NPOIN
+          IF(NODCODE(IPOIN).EQ.1000)THEN
+              IFRST = (IPOIN-1)*NOFVAR+IOFF -  1+ ROWBGN
+              NI=NI+1
+              IDX(NI) = IFRST + 1
+          ENDIF
+  730 CONTINUE
+C
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     &                     PETSC_COPY_VALUES,Ysymmetry,IFAIL)
+      WRITE(NOUT,2000)NI/NDIM,CBTYPE(BC_TYPE_Y_SYMMETRY)
+@
+
+
+1.31
+log
+@removed support for strong boundary conditions
+and added support for Dirichlet nodes when solving Poisson's equation
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.30 2012/03/21 10:40:37 abonfi Exp abonfi $
+d90 1
+a90 1
+          ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d170 1
+a170 1
+             ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d216 1
+a216 1
+          ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d286 1
+a286 1
+            ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d288 1
+a288 1
+C        faces with any colour
+d290 1
+a290 1
+!         IF( ICLR .NE. BC_TYPE_SUBS_INLET )GOTO 7 ! pick up all boundary nodes
+a295 1
+C     we access the un-mapped version of the cell to node pointer
+d297 2
+a298 1
+                IPOIN = ICELNOD(ICYCL(IVERT+I,NOFVERT),IELEM+NELEM)
+d306 1
+a306 1
+         IOFF = NOFVAR
+d329 1
+a329 1
+          ICLR = ICOLOR(IBNDFAC(3,IFACE))
+@
+
+
+1.30
+log
+@changed calls to PETSc functions to upgrade to petsc release 3.2
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.29 2011/12/14 09:53:31 abonfi Exp abonfi $
+d276 2
+a277 1
+      IF(IBCTYPE.EQ.BC_TYPE_STRONG)THEN
+d279 1
+a279 1
+C     Test for constant pressure b.c. (IBC=2)
+d282 1
+a282 3
+!        CALL SETFLAG(IBNDFAC,NBFAC,NODCODE,NPOIN,NGHOST,
+!    &                ICELNOD,NOFVERT,ICOLOR,BC_TYPE_SUBS_OUTLET)
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1)
+d284 1
+a284 1
+      DO 5 IFACE = 1 , NBFAC
+d286 1
+a286 1
+          ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d288 1
+a288 1
+C        faces with dirichlet b.c.
+d290 3
+a292 3
+          IF( ICLR .NE. BC_TYPE_SUBS_OUTLET )GOTO 5
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+d294 1
+a294 1
+          DO 6 I =  1, NOFVERT - 1
+d296 1
+a296 1
+              IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+d298 1
+a298 1
+              NODCODE(IPOIN) = 3000
+d300 1
+a300 2
+    6     CONTINUE
+    5 CONTINUE
+d302 2
+a303 3
+C     for compressible flows the Index Set addresses the energy (2nd) eqn.
+C     while for incompressible it addresses the mass (1st) eqn.
+C     this is the reason for using IOFF
+d305 9
+a313 11
+      IF(COMPRESSIBLE)THEN
+          IOFF=1
+      ELSE
+          IOFF=0
+      ENDIF
+      NI=0
+      DO 100 IPOIN = 1, NPOIN
+          IF(NODCODE(IPOIN).EQ.3000)THEN
+              NI=NI+1
+C
+C     0-based indexing
+a314 3
+              IDX(NI) = NOFVAR*(IPOIN-1)+IOFF + ROWBGN
+          ENDIF
+  100 CONTINUE
+d316 2
+a317 43
+     &                     PETSC_COPY_VALUES,CnstPressure,IFAIL)
+ 
+      WRITE(NOUT,2000)NI,CBTYPE(BC_TYPE_SUBS_INLET)
+      ENDIF ! IBCTYPE
+C
+C     +-----------------------------------------------------+
+C     Test for inflow b.c. (IBC=8) for an internal flow
+C     +-----------------------------------------------------+
+C
+C     two different implementations exist for subsonic
+C     inflow/outflow boundary conditions, 
+C     these are chosen at run-time using
+C     -bc_type [weak/strong] which sets the corresponding
+C     flag BC_TYPE_WEAK/BC_TYPE_STRONG
+C
+C     using STRONG boundary conditions the jacobian matrix is modified
+C     using WEAK   boundary conditions ghost cells are created
+C
+!     CALL SETFLAG(IBNDFAC,NBFAC,NODCODE,NPOIN,NGHOST,
+!    &             ICELNOD,NOFVERT,ICOLOR,BC_TYPE_SUBS_INLET)
+!
+      CALL IINIT(NPOIN+NGHOST+NPNOD,0,NODCODE,1)
+C
+      DO 7 IFACE = 1 , NBFAC
+C
+          ICLR = ICOLOR(IBNDFAC(3,IFACE))
+C
+C        faces with subsonic inflow bcs
+C
+          IF( ICLR .NE. BC_TYPE_SUBS_INLET )GOTO 7
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+C
+          DO 9 I =  1, NOFVERT - 1
+C
+C     we access the un-mapped version of the cell to node pointer
+C
+              IPOIN = ICELNOD(ICYCL(IVERT+I,NOFVERT),IELEM+NELEM)
+C
+              NODCODE(IPOIN) = BC_TYPE_SUBS_INLET
+C
+    9     CONTINUE
+    7 CONTINUE
+d319 1
+a319 61
+      IF(IBCTYPE.EQ.BC_TYPE_WEAK)THEN
+         NLIST=0
+C     here we also include GHOST AND NPNOD meshpoints
+         DO 135 IPOIN = 1, NPOIN + NGHOST + NPNOD
+             IF(NODCODE(IPOIN).EQ.BC_TYPE_SUBS_INLET)NLIST=NLIST+1
+  135    CONTINUE
+c
+c     We do NOT need ISets when using weak bcs for inflow/outflow
+c
+      ELSEIF(IBCTYPE.EQ.BC_TYPE_STRONG)THEN ! IBCTYPE
+        NI=0
+        DO 137 IPOIN = 1, NPOIN
+           IF(NODCODE(IPOIN).EQ.BC_TYPE_SUBS_INLET)THEN
+               IF(COMPRESSIBLE)THEN
+C
+C     Compressible case
+C     0-based indexing, addresses the equations for:
+C     \rho, \rhoE, \rho v, \rho w
+C     (should be made more general concerning the flow
+C      directions to be imposed)
+C
+                   NI=NI+1
+                   IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN
+                   NI=NI+1
+                   IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +1
+                   NI=NI+1
+                   IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +3
+                   IF(NDIM.EQ.3)THEN
+                       NI=NI+1
+                       IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +4
+                   ENDIF
+C
+               ELSE
+C
+C     Incompressible case
+C     0-based indexing, addresses the equations for:
+C     p, v, w
+C     (should be made more general)
+C
+                   NI=NI+1
+                   IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN
+                   NI=NI+1
+                   IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +2
+                   IF(NDIM.EQ.3)THEN
+                       NI=NI+1
+                       IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +3
+                   ENDIF ! NDIM
+               ENDIF ! COMPRESSIBLE
+           ENDIF ! NODCOD
+  137   CONTINUE ! loop over IPOIN
+        CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     &  PETSC_COPY_VALUES,Internal_inflow,IFAIL)
+        IF(COMPRESSIBLE)THEN
+            IOFF=NDIM+1
+        ELSE
+            IOFF=NDIM
+        ENDIF
+        WRITE(NOUT,2000)NI/IOFF,CBTYPE(BC_TYPE_SUBS_INLET)
+      ELSE  ! IBCTYPE
+              STOP 'INVALID BC_TYPE'
+      ENDIF ! IBCTYPE
+@
+
+
+1.29
+log
+@changes required due to the upgrade to petsc-3.2
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.28 2011/09/16 07:22:59 abonfi Exp abonfi $
+d132 2
+a133 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,NoSlipVelocities,
+     +PETSC_COPY_VALUES,IFAIL)
+d201 2
+a202 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Isothermal,
+     &                     PETSC_COPY_VALUES,IFAIL)
+d251 2
+a252 2
+          CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX, SupersonicNodes,
+     +    PETSC_COPY_VALUES,IFAIL)
+d255 1
+a255 1
+     +    SupersonicVariables,PETSC_COPY_VALUES,IFAIL)
+d323 2
+a324 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,CnstPressure,
+     &                     PETSC_COPY_VALUES,IFAIL)
+d418 2
+a419 2
+        CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Internal_inflow,
+     &  PETSC_COPY_VALUES,IFAIL)
+d477 2
+a478 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Ysymmetry,
+     &                     PETSC_COPY_VALUES,IFAIL)
+d510 2
+a511 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,HangingNodes,
+     &                     PETSC_COPY_VALUES,IFAIL)
+@
+
+
+1.28
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.27 2009/06/11 13:10:58 abonfi Exp abonfi $
+d133 1
+a133 1
+     +IFAIL)
+d201 2
+a202 1
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Isothermal, IFAIL)
+d245 2
+a246 1
+              IDX(NI) = (IPOIN-1)*NOFVAR + ROWBGN
+d252 1
+a252 1
+     +    IFAIL)
+d255 1
+a255 1
+     +    SupersonicVariables,IFAIL)
+d323 2
+a324 1
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,CnstPressure, IFAIL)
+d419 1
+a419 1
+     &  IFAIL)
+d477 2
+a478 1
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Ysymmetry,IFAIL)
+d510 2
+a511 1
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,HangingNodes,IFAIL)
+@
+
+
+1.27
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.26 2008/02/25 09:35:13 abonfi Exp abonfi $
+d38 1
+a38 1
+#include "finclude/petsc.h"
+@
+
+
+1.26
+log
+@add global checking for parallel runs
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.25 2007/11/20 08:19:43 abonfi Exp abonfi $
+d38 3
+a40 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscis.h"
+@
+
+
+1.25
+log
+@added support for hanging nodes
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.24 2005/12/27 11:49:19 abonfi Exp abonfi $
+d51 4
+d75 3
+d136 17
+d256 18
+d324 1
+a324 1
+      ENDIF
+d348 1
+a348 1
+C        faces with dirichlet b.c.
+d371 6
+a376 3
+      ELSEIF(IBCTYPE.EQ.BC_TYPE_STRONG)THEN
+      NI=0
+      DO 137 IPOIN = 1, NPOIN
+d411 13
+a423 12
+                   ENDIF
+               ENDIF
+           ENDIF
+  137 CONTINUE
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Internal_inflow,IFAIL)
+      IF(COMPRESSIBLE)THEN
+          IOFF=NDIM+1
+      ELSE
+          IOFF=NDIM
+      ENDIF
+      WRITE(NOUT,2000)NI/IOFF,CBTYPE(BC_TYPE_SUBS_INLET)
+      ELSE
+d425 1
+a425 1
+      ENDIF
+d509 18
+@
+
+
+1.24
+log
+@an included common has been renamed
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.23 2005/10/22 11:03:52 abonfi Exp abonfi $
+d431 31
+@
+
+
+1.23
+log
+@implemented c-lines
+@
+text
+@d5 1
+a5 1
+C     $Id: iset.F,v 1.22 2004/12/20 14:33:57 aldo Exp abonfi $
+d44 1
+a44 1
+      INCLUDE 'bnd'
+@
+
+
+1.22
+log
+@an unimplemented feature
+@
+text
+@d2 2
+a3 1
+     &NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, ROWBGN, COMPRESSIBLE )
+d5 1
+a5 1
+C     $Id: iset.F,v 1.21 2004/03/18 02:39:24 aldo Exp aldo $
+d57 1
+a57 1
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NBFAC,ROWBGN
+d300 1
+a300 1
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1)
+d314 3
+a316 1
+              IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+d325 2
+a326 2
+C     here we also include GHOST meshpoints
+         DO 135 IPOIN = 1, NPOIN + NGHOST
+d439 1
+a439 1
+      SUBROUTINE SETFLAG(IBNDFAC,NBFAC,NODCODE,NPOIN,NGHOST,
+d444 1
+a444 1
+      INTEGER NBFAC,NPOIN,NGHOST,BC_TYPE
+d448 1
+a448 1
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1)
+@
+
+
+1.21
+log
+@add Index Set Y_SYMMETRY
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.20 2004/02/27 14:56:43 abonfi Exp abonfi $
+d139 2
+d183 2
+d236 2
+d296 3
+d319 1
+d435 33
+@
+
+
+1.20
+log
+@isothermal boundary conditions in place
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.19 2003/08/08 03:37:30 abonfi Exp aldo $
+a173 1
+      write(6,*)'Isothermal IndexSet has ',NI,' entries'
+d368 51
+d423 1
+@
+
+
+1.19
+log
+@boundary types for faces(edges) have been made more descriptive
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.18 2002/10/25 06:02:17 abonfi Exp abonfi $
+a137 1
+          DO 300 I= 1, NI
+d139 31
+a169 1
+C     +1 since the storage is: \rho,\rho E, etc.
+a170 2
+              IDX(I) = IDX(I)*NOFVAR+1 + ROWBGN
+  300     CONTINUE
+d174 1
+a175 1
+ 
+@
+
+
+1.18
+log
+@re-implemented strong bcs for inlet/outlet
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.17 2001/07/19 09:55:54 abonfi Exp abonfi $
+d86 2
+a87 2
+          IF( .NOT.(ICLR .EQ. BC_NO_SLIP .OR. ICLR .EQ. BC_PROFILE) )
+     +    GOTO 1
+d126 1
+a126 1
+      WRITE(NOUT,2000)NI/NDIM,CBTYPE(BC_NO_SLIP)
+d164 1
+a164 1
+          IF( ICLR .NE. BC_SUPS_INLET )GOTO 3
+d172 1
+a172 1
+              NODCODE(IPOIN) = BC_SUPS_INLET
+d186 1
+a186 1
+          IF(NODCODE(IPOIN).EQ.BC_SUPS_INLET)THEN
+d192 1
+a192 1
+      WRITE(NOUT,2000)I,CBTYPE(BC_SUPS_INLET)
+d214 1
+a214 1
+          IF( ICLR .NE. BC_CNST_PRES )GOTO 5
+d248 1
+a248 1
+      WRITE(NOUT,2000)NI,CBTYPE(BC_CNST_PRES)
+d255 9
+d272 1
+a272 1
+          IF( ICLR .NE. BC_INTERNAL_INFLOW )GOTO 7
+d280 1
+a280 1
+              NODCODE(IPOIN) = BC_INTERNAL_INFLOW
+d288 1
+a288 1
+             IF(NODCODE(IPOIN).EQ.BC_INTERNAL_INFLOW)NLIST=NLIST+1
+d293 1
+a293 1
+           IF(NODCODE(IPOIN).EQ.BC_INTERNAL_INFLOW)THEN
+d337 1
+a337 1
+      WRITE(NOUT,2000)NI/IOFF,CBTYPE(BC_INTERNAL_INFLOW)
+@
+
+
+1.17
+log
+@changes made necessary when inflow/outflow boundary conditions have
+been changed as of version 0.10.13
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.16 2001/07/07 08:44:32 abonfi Exp abonfi $
+d42 1
+d45 1
+d201 1
+a201 1
+#if 0
+d249 1
+a249 1
+#endif
+d275 2
+a276 1
+      NLIST=0
+d278 54
+a331 3
+      DO 135 IPOIN = 1, NPOIN + NGHOST
+          IF(NODCODE(IPOIN).EQ.BC_INTERNAL_INFLOW)NLIST=NLIST+1
+  135 CONTINUE
+@
+
+
+1.16
+log
+@subsonic inflow IndexSet has been changed
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.15 2001/01/20 13:50:34 aldo Exp abonfi $
+d274 2
+a275 1
+      DO 135 IPOIN = 1, NPOIN
+@
+
+
+1.15
+log
+@add variable inlet profile for total pressure and also
+extended to INcompressible flows
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.14 2000/11/22 14:29:47 aldo Exp aldo $
+d45 1
+d199 1
+d247 1
+d273 1
+a273 1
+      NI=0
+d275 1
+a275 37
+          IF(NODCODE(IPOIN).EQ.BC_INTERNAL_INFLOW)THEN
+              IF(COMPRESSIBLE)THEN
+C
+C     Compressible case
+C     0-based indexing, addresses the equations for:
+C     \rho, \rhoE, \rho v, \rho w
+C     (should be made more general concerning the flow
+C      directions to be imposed)
+C
+                  NI=NI+1
+                  IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN
+                  NI=NI+1
+                  IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +1
+                  NI=NI+1
+                  IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +3
+                  IF(NDIM.EQ.3)THEN
+                      NI=NI+1
+                      IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +4
+                  ENDIF
+C
+              ELSE
+C
+C     Incompressible case
+C     0-based indexing, addresses the equations for:
+C     p, v, w
+C     (should be made more general)
+C
+                  NI=NI+1
+                  IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN
+                  NI=NI+1
+                  IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +2
+                  IF(NDIM.EQ.3)THEN
+                      NI=NI+1
+                      IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +3
+                  ENDIF
+              ENDIF
+          ENDIF
+a276 8
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Internal_inflow,
+     +IFAIL)
+      IF(COMPRESSIBLE)THEN
+          IOFF=NDIM+1
+      ELSE
+          IOFF=NDIM
+      ENDIF
+      WRITE(NOUT,2000)NI/IOFF,CBTYPE(BC_INTERNAL_INFLOW)
+@
+
+
+1.14
+log
+@add the row offset to ISet SupersonicNodes
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.13 2000/11/15 09:15:09 aldo Exp aldo $
+d14 1
+a14 1
+C          and shoud not address ghost nodes 
+d18 1
+a18 1
+C          
+d27 1
+a27 1
+C     variables or not. 
+d49 1
+a49 1
+      COMMON/MPICOM/MY_PE 
+d70 2
+a71 2
+C     Test for no-slip b.c. (IBC=6) 
+C     and prescribed velocity-profile (IBC=7) 
+d75 1
+a75 1
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1) 
+d77 1
+a77 1
+      DO 1 IFACE = 1 , NBFAC 
+d79 1
+a79 1
+         ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d81 1
+a81 1
+C        faces with no-slip b.c. or prescribed velocity profile 
+d83 4
+a86 4
+         IF( .NOT.(ICLR .EQ. BC_NO_SLIP .OR. ICLR .EQ. BC_PROFILE) )
+     +   GOTO 1
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+d88 1
+a88 1
+         DO 2 I = 1 , NOFVERT - 1
+d90 1
+a90 1
+            IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+d92 1
+a92 1
+            NODCODE(IPOIN) = 1000
+d94 1
+a94 1
+    2 CONTINUE
+d111 8
+a118 8
+         IF(NODCODE(IPOIN).EQ.1000)THEN 
+             I=I+1
+             IFRST = (IPOIN-1)*NOFVAR+IOFF - 1 + ROWBGN
+             DO 220 J = 1,NDIM
+                 NI=NI+1
+                 IDX(NI) = IFRST + J
+  220        CONTINUE
+         ENDIF 
+d122 1
+a122 1
+     +                     IFAIL)
+d128 1
+a128 1
+C     (0-based indexing) where \rhoE is stored for 
+d130 1
+a130 1
+C     a solid wall no-slip boundary (IBC=6) 
+d137 1
+a137 1
+C     +1 since the storage is: \rho,\rho E, etc. 
+d144 2
+a145 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,Isothermal,
+     +                     IFAIL)
+d149 1
+a149 1
+C     Test for supersonic b.c. (IBC=1) 
+d153 1
+a153 1
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1) 
+d155 1
+a155 1
+      DO 3 IFACE = 1 , NBFAC 
+d157 1
+a157 1
+         ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d161 3
+a163 3
+         IF( ICLR .NE. BC_SUPS_INLET )GOTO 3
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+d165 1
+a165 1
+         DO 4 I = 1 , NOFVERT - 1
+d167 1
+a167 1
+            IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+d169 1
+a169 1
+            NODCODE(IPOIN) = BC_SUPS_INLET
+d171 1
+a171 1
+    4 CONTINUE
+d177 1
+a177 1
+C     a supersonic (or Dirichlet) boundary 
+d183 5
+a187 5
+         IF(NODCODE(IPOIN).EQ.BC_SUPS_INLET)THEN 
+             I=I+1
+             NI=NI+1
+             IDX(NI) = (IPOIN-1)*NOFVAR + ROWBGN
+         ENDIF 
+d191 2
+a192 2
+         CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     +                   SupersonicNodes,IFAIL)
+d194 3
+a196 3
+         CALL ISCreateBlock(PETSC_COMM_SELF,NOFVAR,NI,IDX,
+     +                   SupersonicVariables,IFAIL)
+      ENDIF 
+d199 1
+a199 1
+C     Test for constant pressure b.c. (IBC=2) 
+d202 1
+a202 1
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1) 
+d204 1
+a204 1
+      DO 5 IFACE = 1 , NBFAC 
+d206 1
+a206 1
+         ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d210 3
+a212 3
+         IF( ICLR .NE. BC_CNST_PRES )GOTO 5
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+d214 1
+a214 1
+         DO 6 I = 1 , NOFVERT - 1
+d216 1
+a216 1
+            IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+d218 1
+a218 1
+            NODCODE(IPOIN) = 3000
+d220 1
+a220 1
+    6 CONTINUE
+d228 1
+a228 1
+         IOFF=1
+d230 1
+a230 1
+         IOFF=0
+d234 2
+a235 2
+         IF(NODCODE(IPOIN).EQ.3000)THEN 
+             NI=NI+1
+d239 2
+a240 2
+             IDX(NI) = NOFVAR*(IPOIN-1)+IOFF + ROWBGN
+         ENDIF 
+d242 2
+a243 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,CnstPressure,
+     +                     IFAIL)
+d250 1
+a250 1
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1) 
+d252 1
+a252 1
+      DO 7 IFACE = 1 , NBFAC 
+d254 1
+a254 1
+         ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d258 3
+a260 3
+         IF( ICLR .NE. BC_INTERNAL_INFLOW )GOTO 7
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+d262 1
+a262 1
+         DO 9 I = 1 , NOFVERT - 1
+d264 1
+a264 1
+            IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+d266 1
+a266 1
+            NODCODE(IPOIN) = BC_INTERNAL_INFLOW
+d268 1
+a268 1
+    9    CONTINUE
+d272 2
+a273 1
+         IF(NODCODE(IPOIN).EQ.BC_INTERNAL_INFLOW)THEN 
+d275 1
+d278 20
+d299 10
+a308 11
+             NI=NI+1
+             IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN
+             NI=NI+1
+             IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +1
+             NI=NI+1
+             IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +3
+             IF(NDIM.EQ.3)THEN
+                NI=NI+1
+                IDX(NI) = NOFVAR*(IPOIN-1)+ ROWBGN +4
+             ENDIF 
+         ENDIF 
+d311 7
+a317 2
+     +                     IFAIL)
+      WRITE(NOUT,2000)NI/(NDIM+1),CBTYPE(BC_INTERNAL_INFLOW)
+d320 2
+a321 2
+ 1000 FORMAT(/,5X,'NODAL BOUNDARY CONDITIONS ON PE # ',I4,/
+     &       5X,38("="))
+@
+
+
+1.13
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.12 2000/10/30 16:24:54 aldo Exp aldo $
+d169 1
+a169 1
+            NODCODE(IPOIN) = -1
+d183 1
+a183 1
+         IF(NODCODE(IPOIN).LT.0)THEN 
+d186 1
+a186 1
+             IDX(NI) = (IPOIN-1)*NOFVAR
+d191 1
+a191 1
+         CALL ISCreateBlock(PETSC_COMM_SELF,NOFVAR,NI,IDX,
+@
+
+
+1.12
+log
+@minor cosmetic change
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.11 2000/10/26 15:15:50 aldo Exp aldo $
+d43 1
+a43 1
+      INCLUDE 'IO'
+@
+
+
+1.11
+log
+@ninor cosmetics
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.10 2000/10/20 10:45:39 aldo Exp aldo $
+d294 1
+a294 1
+ 1000 FORMAT(5X,'NODAL BOUNDARY CONDITIONS ON PE # ',I4,/
+d296 1
+a296 1
+ 2000 FORMAT(/,I7,' NODES with B.C. ',A)
+@
+
+
+1.10
+log
+@account for the third dimension in the subs. inlet b.c.
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.9 2000/10/20 08:31:30 aldo Exp aldo $
+d123 1
+d291 1
+a291 1
+      WRITE(NOUT,2000)NI/3,CBTYPE(BC_INTERNAL_INFLOW)
+d296 1
+a296 1
+ 2000 FORMAT(I7,' NODES with B.C. ',A)
+@
+
+
+1.9
+log
+@should now work also with extra variables (turbulent, for instance)
+appended to the conserved ones
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.8 2000/08/18 13:58:21 aldo Exp aldo $
+d68 1
+d274 1
+a274 1
+C     \rho \rhoE \rho v
+d282 4
+@
+
+
+1.8
+log
+@add subsonic inflow b.c.
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.7 2000/06/23 16:45:44 aldo Exp aldo $
+d9 2
+d15 3
+a17 2
+C     N.B. NODCODE will address ghost nodes as well
+C     so it must be allocated for NPOIN+NGHOST
+d19 1
+d21 13
+a33 1
+C     Note that even if Index sets are created even if empty
+d38 2
+a39 2
+#include "include/finclude/vec.h"
+#include "include/finclude/is.h"
+d45 1
+d48 10
+a57 2
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NBFAC,IFACE,IELEM
+      INTEGER IPOIN,NI,IFAIL,IOFF,IFRST,J,IVERT,I,ICLR,ROWBGN
+d60 4
+d65 2
+a66 1
+      LOGICAL COMPRESSIBLE
+d98 2
+d101 5
+a105 1
+      IOFF = NOFVAR - NDIM
+a122 15
+C     +-----------------------------------------------------+
+C     Create an index set containing the node numbers
+C     (0-based indexing) of meshpoints belonging to
+C     a solid wall no-slip boundary (IBC=6) 
+C     (to be used to set b.c. for turb model in N-S computations)
+C     +-----------------------------------------------------+
+C
+C
+      NI=0
+      DO 200 IPOIN = 1, NPOIN
+         IF(NODCODE(IPOIN).EQ.1000)THEN 
+             NI=NI+1
+             IDX(NI) = IPOIN-1
+         ENDIF 
+  200 CONTINUE
+a123 4
+      WRITE(NOUT,2000)NI,BC_NO_SLIP
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,NoSlipNodes,
+     +                     IFAIL)
+C
+d187 1
+a187 1
+      WRITE(NOUT,2000)I,BC_SUPS_INLET
+d242 1
+a242 1
+      WRITE(NOUT,2000)NI,BC_CNST_PRES
+d285 1
+a285 2
+      WRITE(NOUT,2000)NI/3,BC_INTERNAL_INFLOW
+C
+d288 3
+a290 1
+ 2000 FORMAT(I7,' NODES with B.C. ',I1)
+@
+
+
+1.7
+log
+@major re-writing
+@
+text
+@d2 1
+a2 1
+     &NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, COMPRESSIBLE )
+d4 2
+d17 1
+a17 2
+C     $Id: iset.F,v 1.6 2000/06/20 07:59:12 aldo Exp aldo $
+C
+d32 1
+a32 1
+      INTEGER IPOIN,NI,IFAIL,IOFF,IFRST,J,IVERT,I,ICLR
+d76 1
+a76 1
+             IFRST = (IPOIN-1)*NOFVAR+IOFF - 1
+a85 1
+C     write(6,*)'ISCreateBlock NoSlipVelocities ',ifail
+d90 1
+a90 1
+C     a solid wall no-slip boundary (IBC=2) 
+a105 1
+C     write(6,*)'ISCreateGeneral NoSlipNodes ',ifail
+d112 1
+a112 1
+C     (to be used to set b.c. for isothermal b.c.)
+d120 1
+a120 1
+              IDX(I) = IDX(I)*NOFVAR+1
+d122 3
+a126 1
+      ENDIF
+a127 1
+C     write(6,*)'ISCreateGeneral NoSlipNodes ',ifail
+a177 1
+C     write(6,*)'ISCreateBlock SupersonicNodes ',ifail
+d180 1
+a180 1
+C     Test for constant pressure b.c. (IBC=1) 
+d220 1
+a220 1
+             IDX(NI) = NOFVAR*(IPOIN-1)+IOFF
+d226 44
+@
+
+
+1.6
+log
+@major re-writing
+@
+text
+@d2 1
+a2 1
+     &NODCODE, NDIM, NOFVAR, NPOIN, NGHOST )
+d15 1
+a15 1
+C     $Id: iset.F,v 1.4 1999/11/05 20:55:53 aldo Exp aldo $
+d27 1
+d35 1
+d91 1
+a91 2
+C     (to be used to set b.c. for turb model in N-S computations
+C     and to set isothermal b.c.)
+a94 1
+      I=0
+a97 1
+             I=I+1
+d103 1
+d107 21
+a127 1
+      WRITE(NOUT,2000)I,BC_NO_SLIP
+d205 9
+a214 1
+      I=0
+a216 1
+             I=I+1
+d221 1
+a221 1
+             IDX(NI) = IPOIN-1
+d226 1
+a226 1
+      WRITE(NOUT,2000)I,BC_CNST_PRES
+@
+
+
+1.5
+log
+@now including COMISET
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE ISET(IDX,NODCODE,NDIM,NOFVAR,NPOIN,ROWBGN)
+d11 3
+a14 1
+C
+a17 1
+
+d24 3
+d29 55
+a83 3
+      INTEGER NPOIN,NDIM,NOFVAR
+      INTEGER IPOIN,NI,IFAIL,IOFF,IBGN,J,ROWBGN
+      INTEGER NODCODE(NPOIN),IDX(*)
+d85 1
+d88 5
+a92 2
+C     a supersonic (or Dirichlet) boundary 
+C     to be used mainly for scalar problems 
+d94 1
+d96 3
+a98 2
+      DO 100 IPOIN = 1, NPOIN
+         IF(NODCODE(IPOIN).LT.0)THEN 
+a99 3
+C
+C     0-based indexing
+C
+d102 1
+a102 1
+  100 CONTINUE
+d104 1
+a104 1
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,SupersonicNodes,
+d106 7
+a112 1
+C     write(6,*)'ISCreateGeneral SupersonicNodes ',ifail
+d114 22
+d142 1
+d145 1
+d147 1
+a147 1
+             IDX(NI) = (IPOIN-1)*NOFVAR + ROWBGN
+d150 6
+a155 1
+      CALL ISCreateBlock(PETSC_COMM_SELF,NOFVAR,NI,IDX,
+d157 6
+a162 1
+C     write(6,*)'ISCreateBlock SupersonicVariables ',ifail
+d164 7
+a170 4
+C     Create an index set containing the node numbers
+C     (0-based indexing) of meshpoints belonging to
+C     a solid wall no-slip boundary 
+C     (to be used to set b.c. for 1-eqn turb model in N-S computations)
+d172 3
+a174 7
+      NI=0
+      DO 200 IPOIN = 1, NPOIN
+         IF(NODCODE(IPOIN).EQ.1000)THEN 
+             NI=NI+1
+             IDX(NI) = IPOIN-1
+         ENDIF 
+  200 CONTINUE
+d176 1
+a176 1
+C     maybe I could use a Block index of bs=NDIM
+d178 1
+a178 3
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,NoSlipNodes,
+     +                     IFAIL)
+C     write(6,*)'ISCreateGeneral NoSlipNodes ',ifail
+d180 1
+a180 2
+C     Create an Index Set of No-slip velocity components
+C     (to be used to set b.c. for N-S computations)
+d182 2
+a183 1
+      IOFF = NOFVAR - NDIM
+d186 9
+a194 7
+      DO 230 IPOIN = 1, NPOIN
+         IF(NODCODE(IPOIN).EQ.1000)THEN 
+             IBGN = (IPOIN-1)*NOFVAR+IOFF - 1 + ROWBGN
+             DO 220 J = 1,NDIM
+                 NI=NI+1
+                 IDX(NI) = IBGN + J
+  220        CONTINUE
+d196 2
+a197 2
+  230 CONTINUE
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,NoSlipVelocities,
+d199 2
+a200 1
+C     write(6,*)'ISCreateGeneral NoSlipVelocities ',ifail
+d202 2
+a203 1
+      END 
+@
+
+
+1.4
+log
+@replaced integer with IS
+@
+text
+@d12 1
+a12 1
+C     $Id: iset.F,v 1.3 1998/11/07 09:01:00 aldo Exp caspur $
+d22 1
+a22 5
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/COMISET/SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+@
+
+
+1.3
+log
+@Add automatic identification flag
+@
+text
+@d12 1
+a12 1
+C     $Id$
+d20 1
+a20 1
+#include "include/finclude/viewer.h"
+d22 5
+a26 1
+      INCLUDE 'iset.com'
+@
+
+
+1.2
+log
+@indexing is GLOBAL for some of the IndexSets
+@
+text
+@d12 3
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ISET(IDX,NODCODE,NDIM,NOFVAR,NPOIN)
+d22 1
+a22 1
+      INTEGER IPOIN,NI,IFAIL,IOFF,IBGN,J
+d54 1
+a54 1
+             IDX(NI) = (IPOIN-1)*NOFVAR
+d88 1
+a88 1
+             IBGN = (IPOIN-1)*NOFVAR+IOFF - 1
+@

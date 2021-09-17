@@ -1,0 +1,30 @@
+These are the routine with STOP statements
+they shoud be replaced by calls to SETERR
+./seq/bndvflx.F
+./seq/main.F
+./seq/nodres.F
+./seq/rdat.F
+./seq/setupRHS_t.F
+./seq/test.F
+./seq/seterr.F
+./seq/solzne.F
+./seq/inflow.F
+./seq/MatAllocaMPI.F
+./seq/isothwall.F
+./util/xgemv.f
+./util/gauss.f
+./turbo/turbcomp.F
+./turbo/tindx.F
+./euler/chpsi.f
+./euler/EulerII.f
+./euler/eigen_IIbis.F
+./schemes/CDS.f
+./schemes/LWbSys_scheme.f
+./schemes/NSys_scheme.f
+./schemes/LDA2Sys_scheme.f
+./schemes/LDASys_scheme.f
+./schemes/LWSys_scheme.f
+./schemes/LimNSys_scheme.f
+./navier-stokes/wskin.F
+./geometry/bndchk.f
+

@@ -1,0 +1,313 @@
+head	1.4;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.4
+	release3_3_0:1.4;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2000.11.22.16.27.57;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.02.07.10.26.01;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.30.08.39.46;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.11.09.30;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Routine for computing the viscous terms for scalar problems
+@
+
+
+1.4
+log
+@made a number of changes in the arguments, etc.
+@
+text
+@      SUBROUTINE VISCO(IELEM,VCZ,NODRES,DT,NOFVAR,VCN,NDIM,NOFVERT,
+     +                 VOLUME,STIFD,EPSILON,DUMMY,PICARD)
+C
+C
+C     Subroutine to compute the diffusion term over a triangle/
+C     tetrahedron for scalar problems. The diffusion coefficient
+C     EPSILON is taken to be constant
+C
+C
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION EPSILON,VOLUME,DUMMY
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL PICARD
+C
+C     EPSILON 
+C             On entry, EPSILON specifies the diffusion coefficient. 
+C             Unchanged on exit.
+C
+C     VOLUME 
+C             On entry, VOLUME specifies the area/volume of the current
+C             element.  Unchanged on exit.
+C
+C     IELEM 
+C             On entry, IELEM specifies the number of the current
+C             element.  Unchanged on exit.
+C
+C     NDIM 
+C             On entry, NDIM specifies the dimension of the space.
+C             Unchanged on exit.
+C
+C     NOFVERT 
+C             On entry, NOFVERT specifies the number of vertices
+C             of the current element.  Unchanged on exit.
+C
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION STIFD(NOFVERT,NOFVERT),DT(NOFVERT),
+     +                 NODRES(NOFVERT),VCN(NDIM,NOFVERT),VCZ(NOFVERT)
+C
+C     STIFD    On exit, the array STIFD is overwritten with 
+C             the element diffusion matrix
+C
+C     DT      On entry, DT contains the of the local timestep
+C             in the nodes of the current element. 
+C             On exit, the timestep due to the viscous terms is
+C             added to.
+C
+C     NODRES  On entry, NODRES contains the residual
+C             in the nodes of the current element.
+C             On exit, the nodal residual due to the viscous terms is
+C             added to.
+C
+C     VCN     On entry, VCN contains the components of the
+C             inward normals to the edges/faces of the current element.
+C             Unchanged on exit.
+C
+C     VCZ       On entry, VCZ contains the values of the dependent
+C             variable in te nodes of the current element.
+C             Unchanged on exit.
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION SUM,TEMPB
+      INTEGER I,J
+      DOUBLE PRECISION TMPIJ(4,4)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+C     ..
+C     ..
+      TEMPB = EPSILON/ (NDIM*NDIM*VOLUME)
+C
+      DO 1 J = 1,NOFVERT
+          DO 1 I = 1,NOFVERT
+              IF (J.LE.I) THEN
+                  TMPIJ(I,J) = TEMPB*DDOT(NDIM,VCN(1,I),1,VCN(1,J),1)
+
+              ELSE
+                  TMPIJ(I,J) = TMPIJ(J,I)
+              ENDIF
+
+    1 CONTINUE
+C
+      DO 2 I = 1,NOFVERT
+          SUM = 0.D0
+          DO 3 J = 1,NOFVERT
+              SUM = SUM + TMPIJ(I,J)*VCZ(J)
+              IF(PICARD)STIFD(I,J)=STIFD(I,J)+TMPIJ(I,J)
+    3     CONTINUE
+          NODRES(I) = NODRES(I) - SUM
+
+
+          DT(I) = DT(I) + TMPIJ(I,I)
+    2 CONTINUE
+C
+      RETURN
+
+      END
+@
+
+
+1.3
+log
+@D1(I) is now correctly computed
+@
+text
+@d1 2
+a3 1
+C ------------------------------ + ------------------------------
+a4 4
+      SUBROUTINE VISCO(IELEM,EPSILON,W,NODRES,DT,VCN,DMAT,NDIM,NOFVERT,
+     +                 VOLUME)
+C
+C
+d11 1
+a11 1
+      DOUBLE PRECISION EPSILON,VOLUME
+d13 1
+d37 2
+a38 2
+      DOUBLE PRECISION DMAT(NOFVERT,NOFVERT),DT(NOFVERT),
+     +                 NODRES(NOFVERT),VCN(NDIM,NOFVERT),W(NOFVERT)
+d40 1
+a40 1
+C     DMAT    On exit, the array DMAT is overwritten with 
+d57 1
+a57 1
+C     W       On entry, W contains the values of the dependent
+a61 6
+C     .. Scalars in Common ..
+      DOUBLE PRECISION D2
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION D1(4)
+C     ..
+d63 1
+a63 1
+      DOUBLE PRECISION TEMPA,TEMPB
+d65 1
+a70 2
+C     .. Common blocks ..
+      COMMON /DIFFUNE/D1,D2
+a73 1
+C
+d77 1
+a77 2
+                  TEMPA = TEMPB*DDOT(NDIM,VCN(1,I),1,VCN(1,J),1)
+                  DMAT(I,J) = TEMPA
+d80 1
+a80 1
+                  DMAT(I,J) = DMAT(J,I)
+d86 1
+a86 1
+          TEMPA = 0.D0
+d88 2
+a89 1
+              TEMPA = TEMPA + DMAT(I,J)*W(J)
+d91 1
+a91 1
+          NODRES(I) = NODRES(I) - TEMPA
+a92 1
+          D1(I) = -TEMPA
+d94 1
+a94 1
+          DT(I) = DT(I) + DMAT(I,I)
+@
+
+
+1.2
+log
+@Cleaned up, reformatted with Toolpack,
+comments added
+@
+text
+@d103 1
+a103 1
+          D1(I) = TEMPA
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 2
+a5 2
+      SUBROUTINE VISCO(IELEM,EPSILON,W,NODRES,DT,VCN,DMAT,
+     &NDIM,NOFVERT,VOLUME)
+a6 1
+      IMPLICIT NONE
+d8 3
+a10 1
+C     .. Parameters ..
+a11 7
+      INCLUDE 'constants'
+      INCLUDE 'paramt.h'
+C
+      INCLUDE 'three'
+C
+      DOUBLE PRECISION d1(4),d2
+      common/diffune/d1,d2
+d13 2
+a15 14
+      DOUBLE PRECISION DT(NOFVERT),NODRES(NOFVERT),W(NOFVERT),
+     +VCN(NDIM,NOFVERT),DMAT(NOFVERT,NOFVERT) 
+      DOUBLE PRECISION EPSILON,VOLUME
+C
+C
+C
+C
+      DOUBLE PRECISION TEMP
+      INTEGER i,j
+C
+C
+C
+C
+C
+d17 58
+d77 5
+d84 11
+d96 6
+a101 18
+C
+      DO 1 j = 1 , NOFVERT
+         DO 1 i = 1 , NOFVERT
+            IF( j .LE. i )THEN
+               TEMP = EPSILON * DDOT(NDIM,VCN(1,i),1,VCN(1,j),1) /
+     1         (NDIM*NDIM*VOLUME)
+               DMAT(i,j) = TEMP 
+            ELSE
+               DMAT(i,j) = DMAT(j,i)
+            ENDIF
+    1 CONTINUE 
+C
+      DO 2 i = 1 , NOFVERT
+         TEMP = ZERO
+         DO 3 j = 1 , NOFVERT
+            TEMP = TEMP + DMAT(i,j) * W(j)
+    3    CONTINUE
+         NODRES(i) = NODRES(I) - TEMP
+d103 1
+a103 1
+	 d1(i) = temp
+d105 1
+a105 1
+         DT(i) = DT(i) + DMAT(i,i)
+d109 1
+a110 2
+C
+C
+@

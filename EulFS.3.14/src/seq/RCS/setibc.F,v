@@ -1,0 +1,2316 @@
+head	1.32;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.32
+	release3_13_0:1.32
+	release3_12_0:1.32
+	release3_11_0:1.32
+	release3_10_0:1.32
+	release3_8_0:1.32
+	release3_7_1:1.31
+	release3_7_0:1.30
+	release3_4_5:1.28
+	release3_4_4:1.28
+	release3_4_3:1.27
+	release3_4_2:1.27
+	release3_4_1:1.27
+	release3_4_0:1.26
+	release3_3_5:1.26
+	release3_3_4:1.25
+	release3_3_3:1.25
+	release3_3_2:1.24
+	release3_3_1:1.23
+	release3_3_0:1.22;
+locks; strict;
+comment	@c @;
+
+
+1.32
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2020.03.28.09.42.43;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2016.11.11.08.56.11;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2014.04.10.09.48.28;	author tesistim;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2013.06.08.09.39.16;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2013.05.02.10.55.09;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2013.02.05.08.13.01;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2013.01.29.14.40.49;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2013.01.26.11.48.03;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2011.12.14.09.53.31;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2011.03.30.09.00.36;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2010.11.06.10.32.32;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2009.06.11.09.01.03;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2008.12.05.07.41.25;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2008.02.25.09.42.17;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2005.09.09.08.48.42;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2002.02.19.09.09.54;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2001.11.09.14.21.53;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2001.10.17.15.33.59;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2001.06.25.12.09.40;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2001.05.24.10.27.21;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2001.05.24.10.14.06;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2000.12.14.12.17.51;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.10.20.09.27.31;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.09.29.09.24.40;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.08.18.13.58.42;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.08.03.10.07.19;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@read options related to freestream conditions
+and set some assignements
+@
+
+
+1.32
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE SETIBC(NDIM,NOFVAR)
+C
+C     This routine SETs Initial and Boundary Conditions
+C
+C     $Id: setibc.F,v 1.31 2020/03/28 09:42:43 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscsys.h"
+      use petscsys
+C
+      IMPLICIT NONE
+C
+C
+      PetscBool IFLAG
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'plasma.h'
+      include 'bnd.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'visco.h'
+      INCLUDE 'chem.h'
+      INCLUDE 'paramchem.h'
+C
+      INCLUDE 'bnd.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'dofs.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'io.com'
+      INCLUDE 'merkle.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'pfcgas.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'suther.com'
+      INCLUDE 'verbose.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'streamplasma.com'
+      INCLUDE 'ioplasma.com' 
+      INCLUDE 'commonchem.inc' 
+      INCLUDE 'electric.com' 
+C
+      INTEGER NDIM,NOFVAR
+      DOUBLE PRECISION SDIM,VISC0,T0DIM,R
+      PARAMETER(SDIM=110.5d0,VISC0=0.1716d-4,T0DIM=273.1d0,R=SDIM/T0DIM)
+      INTEGER INTERNAL_FLOW,EXTERNAL_FLOW
+      PARAMETER(INTERNAL_FLOW=0,EXTERNAL_FLOW=1)
+C
+      INTEGER NONDIM
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+      CHARACTER*80 STRINGA
+      CHARACTER*72 ERRMSG
+      INTEGER IERR,NVALS,ISP,IR,IFIT,IMDA 
+      INTEGER NERR,IOPT
+      DOUBLE PRECISION RTOT,PTOT,TTOT,TEMP,HREF,T
+      DOUBLE PRECISION A1,R1,T1,P1,H1,U1,V1,W1,VISCL,Z1,MACH1,RF
+      DOUBLE PRECISION IONDEGREE,RHOS(NSP),ALPHAREF(NSP),RMIX,HFTOT,
+     +                 CONC_M,SOURCE(NSP),DAS(NSP),HELP,
+     +                 DAMAX,RGASS(NSP),VGEN
+      LOGICAL COMPRESSIBLE,INCOMPRESSIBLE,VISCOUS,LFLAG,PLASMA
+C
+      DOUBLE PRECISION PRESSC,PRESS4AR
+ 
+      EXTERNAL PRESSC,PRESS4AR
+C
+C     Sutherland's law in dimensional form
+C
+      VISCL(T) = VISC0 * ((ONE+R)/(T/T0DIM+R))* ((T/T0DIM)**1.5d0)
+C
+C     Executable Statements ..
+C
+      COMPRESSIBLE = (ABS(KAN).EQ.4)
+      INCOMPRESSIBLE = (.NOT.COMPRESSIBLE)
+      VISCOUS = (KAN.EQ.2).OR.(KAN.EQ.4)
+      PLASMA = (KAN.EQ.-3)
+C
+C
+      IF( PERIODIC_MESH .AND. ANNULAR )THEN
+         CALL INIQMAT(QMAT,NOFVAR)
+!        CALL R8Mat_Print('General',' ',Nofvar,Nofvar,QMAT,
+!    +   Nofvar,'Rotation Matrix inside setibc ',IERR)
+!        pause
+      ENDIF
+C
+C        
+C
+      IF(MY_PE.EQ.0)WRITE (IWUNIT,FMT=2000) 
+ 2000 FORMAT (/,/,' INITIAL-BOUNDARY CONDITIONS ',/,1X,28('='),/)
+C
+C
+C     *********************************************
+C     Read number of chemical reactions
+C     *********************************************  
+C         
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +      '-chem',CHEM,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+                CHEM = 0
+      ENDIF
+      WRITE(6,*)'Chemical source ','CHEM ',CHEM
+!
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +      '-reaction_number',NREAC,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+                NREAC = 3
+      ENDIF
+      WRITE(6,*)'Chemical reactions number ','NREAC  ',NREAC
+C
+      IF( LAPLACE )THEN
+C
+C     *********************************************
+C     Read electromagnetic quantities
+C     *********************************************  
+C         
+            CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+     +           PETSC_NULL_CHARACTER,'-ohm_source',OHM,IFLAG,IERR)
+            IF( IFLAG .EQV. PETSC_FALSE )THEN
+                OHM = 0
+            ENDIF
+           WRITE(6,*)' ','Ohmic heat source ',OHM
+
+C
+C         Read generator electrical potential 
+C
+caldo
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-generator_potential',VGEN,
+     &             IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN                 
+                  VGEN = ONE
+              ENDIF
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Generator Potential','VGEN',VGEN
+              PHIREF = VGEN
+caldo
+C
+C         Read circuit resistence 
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-circuit_resistence',RC,IFLAG,
+     &             IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  RC = 0.d0
+              ENDIF
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Circuit Resistence','RC',RC
+!
+      ENDIF ! test on Laplace
+C
+C     *********************************************
+C     Check non-dimensionalisation of the equations
+C     *********************************************  
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,'-nondimensionalisation',STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG(1:56),300)'-nondimensionalisation'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,56,NERR,IOPT)
+      ELSE
+          IF(STRINGA(1:8).EQ.'external') THEN
+              NONDIM = EXTERNAL_FLOW
+          ELSEIF(STRINGA(1:8).EQ.'internal') THEN
+              NONDIM = INTERNAL_FLOW
+          ELSE
+              WRITE(ERRMSG,310)STRINGA,'-nondimensionalisation'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ENDIF
+C
+C         read adiabatic index and gas constant
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-adiabatic_index',GAM,IFLAG,
+     &             IERR)
+C
+C         If not explicitely set, we set the adiabatic index equal to 1.4
+C
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  GAM = 1.4d0 ! diatomic gas
+              ENDIF
+              GM1 = GAM-ONE
+              GM1OG = GM1/GAM
+              GP1OG = (GAM+ONE)/GAM
+              GOGM1 = GAM/GM1
+              GINV = ONE/GAM
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-specific_gas_constant',RGAS,
+     &             IFLAG,IERR)
+C
+C         If not explicitely set, we set the specific gas constant equal to that of air = 287
+C
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  RGAS = 287.d0 ! specific gas constant for air
+              ENDIF
+C
+C
+      IF(MY_PE.EQ.0)THEN
+         WRITE(IWUNIT,320)'Specific heats ratio ','GAMMA',GAM
+         WRITE(IWUNIT,320)'Specific gas constant ','RGAS',RGAS
+      ENDIF
+C
+      IF( NONDIM .EQ. EXTERNAL_FLOW )THEN
+C
+          IF(COMPRESSIBLE.OR.PLASMA)THEN
+C
+C         read freestream Mach number
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,'-freestream_Mach_number',M_INFTY,IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  WRITE(ERRMSG(1:56),300)'-freestream_Mach_number'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,56,NERR,IOPT)
+              ENDIF
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Freestream Mach number','M_INFTY',
+     +M_INFTY
+C
+C         set constant for Merkle's preconditioner and isothermal bcs
+C
+              RSTAR = ONE/(GAM*M_INFTY*M_INFTY)
+          ENDIF
+C
+          IF( (COMPRESSIBLE.AND.VISCOUS) .OR. PLASMA )THEN
+C
+C         read Freestream Static Temperature
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-freestream_temperature',TREF,
+     &             IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  TREF = 273.d0
+              ENDIF
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Freestream Temperature','TREF',TREF
+          ENDIF
+C
+         IF(PLASMA) THEN
+C
+!          CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+!     +        '-reactions_number',NR,IFLAG,IERR)
+!              IF( IFLAG .EQV. PETSC_FALSE )THEN
+!                  NR = 3
+!              ENDIF
+
+C         read Freestream Static Pressure
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-freestream_pressure',PREF,
+     &             IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  PREF = 1.d5
+              ENDIF
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Freestream Pressure','PREF',PREF
+C
+C         read Freestream Ionization degree
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-ionization_degree',IONDEGREE,
+     &             IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+C                  CALL IONDEGREE4Ar(PREF,TREF,IONDEGREE)
+C                  IONDEGREE = 0.d0
+              ENDIF
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Ionization Degree','IONDEGREE',IONDEGREE
+C
+C         read initial molar concentration of metastable Argon     
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-conc_metastable',CONC_M,
+     &             IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+!                  CONC_M = 0.d0
+                   CALL BOLTZEQ4Ar(PREF,TREF,IONDEGREE,CONC_M)
+              ENDIF
+C              
+              IF( CONC_M.GT.(1.0d0-2.0d0*IONDEGREE) ) THEN
+                 CALL BOLTZEQ4Ar(PREF,TREF,IONDEGREE,CONC_M)
+              ENDIF
+C
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Ar* concentration','CONC_M',CONC_M
+C                      
+C          compute Freestream Density  
+C
+             CALL PLASFLOW_INF(PREF,TREF,IONDEGREE,RHOS,RREF,RMIX,
+     &       RGASS,HFTOT,CONC_M)
+C              
+C          compute Freestream Speed
+C         
+              UREF = M_INFTY * SQRT(GAM*RMIX*TREF)
+C
+C          compute Freestream Enthalpy           
+C
+              HREF = UREF**2
+C
+              WRITE(IWUNIT,320)'Freestream Speed','UREF',UREF
+C
+              DO ISP=1,NSP
+                 ALPHAREF(ISP) = RHOS(ISP) / RREF
+              ENDDO         
+
+C         compute Freestream chemical source term
+C
+!             CALL CHEMSOURCEII(TREF,PREF,RHOS,SOURCE)              
+C
+C         read Reference Length
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-reference_length',LREF,IFLAG,
+     &             IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  LREF = 1.d0
+              ENDIF
+              IF(MY_PE.EQ.0)
+     &        WRITE(IWUNIT,320)'Reference Length','LREF',LREF
+C
+C         compute Damkohler numbers 
+C
+!           DO ISP = 1,NSP
+!              DAS(ISP) = SOURCE(ISP)*LREF/(RREF*UREF)
+!           ENDDO
+C
+C         compute reference Damkohler number
+C
+!           DAMAX=0.0d0
+!           DO ISP = 1,NSP
+!           WRITE(IWUNIT,320)'Damkohler number','DAS',DAS(ISP)
+!           WRITE(IWUNIT,320)'Source term','SOURCE',SOURCE(ISP)
+!              IF(ABS(DAS(ISP)).GT.DAMAX)THEN
+!                 DAMAX=ABS(DAS(ISP))
+!                 IMDA=ISP
+!              ENDIF                     
+!           ENDDO                       
+C
+!           WRITE(IWUNIT,320)'Max Damkohler number','DAMAX',DAMAX
+!           WRITE(IWUNIT,320)'Species Index Da Max','ISP',IMDA       
+C          
+C         common in streamplasma.com
+C          
+          PREFP = RREF*UREF**2
+          RREFP = RREF
+          UREFP = UREF
+          HREFP = HREF
+          TREFP = TREF
+          LREFP = LREF
+          DO ISP=1,NSP
+             RSTARP(ISP)=RGASS(ISP)*TREF/UREF**2
+          ENDDO
+C
+          WRITE(IWUNIT,320)'Freestream Pressure plasma','PREFP',PREFP  
+C        
+          ENDIF
+C
+C         read flow angles
+C
+          NVALS = NDIM
+          CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-flow_angles',FLOWDIR,NVALS,IFLAG,
+     &         IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-flow_angles'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+C
+          IF(VISCOUS)THEN
+C
+C    read Reynolds number
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-Reynolds',RE,IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  WRITE(ERRMSG,FMT=300)'-Reynolds'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,72,NERR,IOPT)
+              ENDIF
+              IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Reynolds Number ','RE',RE
+              REINV=1.d0/RE
+          ELSE
+              RE = 1.E+38
+              REINV = ZERO
+              PRANDTL = 1.E+38
+          ENDIF
+C
+C     Set freestream values (to be used for far-field
+C         boundary conditions)
+C
+          IF(COMPRESSIBLE)THEN
+C
+C     We take freestream density and velocity equal to 1
+C     and compute enthalpy accordingly (based on Mach number)
+C
+C
+              HREF = (TWO+GM1*M_INFTY*M_INFTY)/(TWO*GM1*M_INFTY*M_INFTY)
+              U_INFTY(1) = ONE
+              U_INFTY(2) = HREF
+              U_INFTY(3) = FLOWDIR(1)
+              U_INFTY(4) = FLOWDIR(2)
+              U_INFTY(5) = FLOWDIR(3)
+          ELSEIF(PLASMA)THEN
+              HREF = (TWO+GM1*M_INFTY*M_INFTY)/(TWO*GM1*M_INFTY*M_INFTY)
+              HREF = HREF + HFTOT/(UREF**2)
+              U_INFTY(1) = ALPHAREF(1)
+              U_INFTY(2) = ALPHAREF(2)
+              U_INFTY(3) = ALPHAREF(3)
+              U_INFTY(4) = ALPHAREF(4)
+              U_INFTY(5) = HREF
+              U_INFTY(6) = FLOWDIR(1)
+              U_INFTY(7) = FLOWDIR(2)
+              U_INFTY(8) = FLOWDIR(3)
+          ELSE
+              U_INFTY(1) = ONE
+              U_INFTY(2) = FLOWDIR(1)
+              U_INFTY(3) = FLOWDIR(2)
+              U_INFTY(4) = FLOWDIR(3)
+          ENDIF
+C
+C     outlet static pressure (NON dimensional)
+C     this is only required if any of the boundaries
+C     is of type BC_CNST_PRESSURE
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-outlet_static_pressure',POUTLET,
+     &         IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+C
+C     If one does not specify the value of the outlet
+C     static pressure, this is
+C     computed using the freestream conditions
+C
+              IF(COMPRESSIBLE)THEN
+                  POUTLET = PRESSC(NDIM,U_INFTY(1))
+              ELSEIF(PLASMA)THEN
+                  POUTLET = PRESS4Ar( NDIM,U_INFTY(1))                  
+              ELSE
+                  POUTLET = ONE
+              ENDIF
+          ENDIF
+C
+C
+      ELSEIF( NONDIM .EQ. INTERNAL_FLOW )THEN
+C
+C         set constant for Merkle's preconditioner and isothermal bcs
+C
+          RSTAR = ONE
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-inlet_total_temperature',TTOT,
+     &         IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-inlet_total_temperature'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+C
+          TREF=TTOT
+C
+          IF(MY_PE.EQ.0)
+     &    WRITE(IWUNIT,320)'Inlet Total Temperature','TREF',TREF
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-inlet_total_pressure',PTOT,
+     &         IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-inlet_total_pressure'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+          IF(MY_PE.EQ.0)
+     &    WRITE(IWUNIT,320)'Inlet Total Pressure','PTOT',PTOT
+C
+          PREF=PTOT
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-outlet_static_pressure',POUTLET,
+     &         IFLAG,IERR)
+ 
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-outlet_static_pressure'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+          IF(MY_PE.EQ.0)
+     &    WRITE(IWUNIT,320)'Outlet Static Pressure','POUTLET',POUTLET
+          POUTLET=POUTLET/PTOT
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-reference_length',LREF,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-reference_length'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Reference Length ','LREF',
+     +  LREF
+C
+C         read flow angles
+C
+          NVALS = NDIM
+          CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-flow_angles',FLOWDIR,NVALS,IFLAG,
+     &         IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-flow_angles'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+C
+        IF ( PLASMA )THEN
+C       Setting of initial and bc for internal adimensionalization and plasma flow           
+C            STOP 'Internal flows NOT yet available for plasma'
+C
+C         read inlet Ionization degree
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-ionization_degree',IONDEGREE,
+     &             IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  WRITE(ERRMSG(1:56),300)'-ionization_degree'
+                  CALL IONDEGREE4Ar(PREF,TREF,IONDEGREE)
+!                  IONDEGREE = 0.d0
+                  write(6,*)'iondegree not declared'
+                  pause
+              ENDIF
+!              CALL IONDEGREE4Ar(PREF,TREF,IONDEGREE)
+              IF(MY_PE.EQ.0)                               
+     &        WRITE(IWUNIT,320)'Ionization Degree','IONDEGREE',IONDEGREE
+C
+C         read inlet molar concentration of metastable Argon     
+C
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-conc_metastable',CONC_M,
+     &             IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  WRITE(ERRMSG(1:56),300)'-conc_metastable'
+!                  CALL BOLTZEQ4Ar(PREF,TREF,IONDEGREE,CONC_M)
+                  write(6,*)'Conc_M not declared'
+                  pause
+              ENDIF
+C              
+              IF( CONC_M.GT.(1.0d0-2.0d0*IONDEGREE) ) THEN
+!                  CALL BOLTZEQ4Ar(PREF,TREF,IONDEGREE,CONC_M)
+              ENDIF
+!              CALL BOLTZEQ4Ar(PREF,TREF,IONDEGREE,CONC_M)
+C
+              IF(MY_PE.EQ.0)              
+     &        WRITE(IWUNIT,320)'Ar* concentration','CONC_M',CONC_M
+C                      
+C          compute inlet density  
+C
+             CALL PLASFLOW_INF(PTOT,TTOT,IONDEGREE,RHOS,RTOT,RMIX,
+     &       RGASS,HFTOT,CONC_M)
+C
+C          compute inlet adimensional gas constant (R_i1^*=\rho^0 T^0/p^0 *Ri1 )
+C
+             DO ISP = 1,NSP
+                 RSSTAR(ISP) = RTOT*TTOT/PTOT * RGASS(ISP)
+             ENDDO
+C
+C          compute species concentrations (\rho_i1^0/rho_1^0) 
+C
+              DO ISP=1,NSP
+                 ALPHAREF(ISP) = RHOS(ISP) / RTOT
+              ENDDO              
+C
+C          compute dimensional reference values 
+C
+             UREF = SQRT(RMIX*TTOT)
+             RREF = RTOT
+             HREF = RMIX*TTOT
+C
+C         common in streamplasma.com
+C          
+            PREFP = PREF
+            RREFP = RREF
+            UREFP = UREF
+            HREFP = HREF
+            TREFP = TREF
+            LREFP = LREF   
+!            RSTARP = RGASS
+!            RSTARP = RSSTAR
+            RMIXSTAR = 0.d0
+            DO ISP = 1,NSP
+               RMIXSTAR = RMIXSTAR + ALPHAREF(ISP)*RSSTAR(ISP)
+               RSTARP(ISP) = RSSTAR(ISP)
+            ENDDO
+           WRITE(IWUNIT,320)'Reference Density','RREF',RREF
+!           WRITE(IWUNIT,320)'Dimensionles Mixture Constant ',
+!     +                      'RMIXSTAR', RMIXSTAR
+C           WRITE(IWUNIT,320)'Dimensional Mixture Constant','RMIX',RMIX
+C           WRITE(IWUNIT,320)'Reference Temperature','TREF',TREF
+C           WRITE(IWUNIT,320)'Reference Pressure','PREF',PREF
+C
+C         common in ioplasma.com
+C
+            DO ISP = 1,NSP
+               ALPHA1(ISP) = ALPHAREF(ISP)
+            ENDDO      
+      
+C     the inlet mach number is only required to initialise
+C     the flowfield
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +    PETSC_NULL_CHARACTER,'-inlet_mach_number',MACH1,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-inlet_mach_number'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+C
+C     what follows is only required to compute
+C     the initial conditions 
+C
+          TEMP = ONE+HALF*GM1*MACH1*MACH1
+          t1=ttot/temp
+          p1=ptot/(temp**GOGM1)
+          r1=p1/(RMIX*t1)
+          CALL PLASFLOW_INF(p1,t1,IONDEGREE,RHOS,r1,RMIX,
+     &                  RGASS,HFTOT,CONC_M)
+         
+!          Do isp=1,NSP
+!              write(6,*)'alpha',isp,RHOS(isp)/r1
+!              write(6,*)'alpharef',isp,ALPHAREF(isp)
+!          enddo  
+!          pause  
+          
+          a1=sqrt(GAM*RMIX*t1)
+          u1=mach1*a1*flowdir(1)
+          v1=mach1*a1*flowdir(2)
+          w1=mach1*a1*flowdir(3)
+          temp=HALF/GM1*(TWO+GM1*mach1*mach1)
+          h1 = a1*a1*temp + HFTOT/HREF            
+          r1=r1/rtot
+          h1=h1/href
+          u1=u1/uref
+          v1=v1/uref
+          w1=w1/uref 
+          z1=sqrt(r1)
+C
+          DO ISP = 1,NSP 
+              U_infty(ISP) = z1*ALPHAREF(ISP)
+          ENDDO
+          U_infty(NSP+1) = z1 * h1
+          U_infty(NSP+2) = z1 * u1
+          U_infty(NSP+3) = z1 * v1
+          U_infty(NSP+4) = z1 * w1          
+C
+!       Help = LREF/RREF/UREF 
+!       write(6,*)'L/(rho*u)=',Help
+
+C         compute Freestream chemical source term
+!
+!              CALL CHEMSOURCEII(TREF,PREF,RHOS,SOURCE)   
+C
+C         compute Damkohler numbers 
+C
+!           DO ISP = 1,NSP
+!              DAS(ISP) = SOURCE(ISP)*LREF/(RREF*UREF)
+!           ENDDO
+C
+C         compute reference Damkohler number
+C
+!           DAMAX=0.0d0
+!           DO ISP = 1,NSP
+!           WRITE(IWUNIT,320)'Damkohler number','DAS',DAS(ISP)
+!           WRITE(IWUNIT,320)'Source term','SOURCE',SOURCE(ISP)
+!              IF(ABS(DAS(ISP)).GT.DAMAX)THEN
+!                 DAMAX=ABS(DAS(ISP))
+!                 IMDA=ISP
+!              ENDIF
+!           ENDDO
+C
+!           WRITE(IWUNIT,320)'Max Damkohler number','DAMAX',DAMAX
+!           WRITE(6,*)'Species Index Da Max','ISP',IMDA
+
+           WRITE(IWUNIT,320)'Reference Speed','UREF',UREF      
+C
+C
+       ELSEIF ( COMPRESSIBLE )THEN
+C
+C     dimensional reference values: to be used to compute the
+C     Reynolds number
+C
+          UREF = SQRT(RGAS*TTOT)
+          RTOT = PTOT/(RGAS*TTOT)
+          RREF = RTOT
+          HREF = RGAS*TTOT
+          RE = RTOT*UREF*LREF/VISCL(TTOT)
+          REINV = ONE/RE
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Reynolds Number ','RE',RE
+C
+C     the inlet mach number is only required to initialise
+C     the flowfield
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +    PETSC_NULL_CHARACTER,'-inlet_mach_number',MACH1,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-inlet_mach_number'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+C
+C     what follows is only required to compute
+C     the initial conditions
+C
+          TEMP = ONE+HALF*GM1*MACH1*MACH1
+          t1=ttot/temp
+          p1=ptot/(temp**GOGM1)
+          r1=p1/(rgas*t1)
+          a1=sqrt(GAM*rgas*t1)
+          u1=mach1*a1*flowdir(1)
+          v1=mach1*a1*flowdir(2)
+          w1=mach1*a1*flowdir(3)
+          temp=HALF/GM1*(TWO+GM1*mach1*mach1)
+          h1 = a1*a1*temp
+C
+          r1=r1/rtot
+          h1=h1/href
+          u1=u1/uref
+          v1=v1/uref
+          w1=w1/uref
+          z1=sqrt(r1)
+C
+          U_infty(1) = z1
+          U_infty(2) = z1 * h1
+          U_infty(3) = z1 * u1
+          U_infty(4) = z1 * v1
+          U_infty(5) = z1 * w1
+C
+C        write(6,*)'sono in compressible internal'
+C
+          ELSEIF( INCOMPRESSIBLE )THEN
+C
+C     dimensional reference values: to be used to compute the
+C     Reynolds number
+C
+C     set constant density 
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +    PETSC_NULL_CHARACTER,'-constant_density',RTOT,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:56),300)'-constant_density'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,56,NERR,IOPT)
+          ENDIF
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Constant density',
+     +    'kg/m**3',RTOT
+          RREF=RTOT 
+C
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Total temperature',
+     +    'K',TTOT
+          TREF=TTOT
+C
+C         reference velocity
+C
+          UREF = SQRT(PTOT/RTOT)
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Reference velocity',
+     +    'm/s',UREF
+          RE = RTOT*UREF*LREF/VISCL(TTOT)
+          REINV = ONE/RE
+          IF(MY_PE.EQ.0)THEN
+             WRITE(IWUNIT,320)'Viscosity ','kg/(m*s)',VISCL(TTOT)
+             WRITE(IWUNIT,320)'Kinematic Viscosity ',
+     +                        'm**2/s',VISCL(TTOT)/RTOT
+             WRITE(IWUNIT,320)'Reynolds Number ','RE',RE
+          ENDIF
+C
+          a1=sqrt(GAM*rgas*TTOT)
+          u1=0.1d0*a1*flowdir(1)
+          v1=0.1d0*a1*flowdir(2)
+          w1=0.1d0*a1*flowdir(3)
+          temp = half * ( u1*u1 + v1*v1 + w1*w1 )
+          p1 = PTOT - temp
+          U_infty(1) = p1/PTOT
+          U_infty(2) = u1/UREF
+          U_infty(3) = v1/UREF
+          U_infty(4) = w1/UREF
+C
+C        write(6,*) 'sono in incopressible internal'
+C
+          ENDIF
+C
+      ENDIF ! kind of non-dimensionalization
+      IF(MY_PE.EQ.0)
+     &WRITE(IWUNIT,320)"Dimensionless gas constant ",'RSTAR',RSTAR
+C
+C     A few options follow that are only meaningful for
+C     compressible flows
+C
+      IF(COMPRESSIBLE.AND.VISCOUS)THEN
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-Prandtl',PRANDTL, IFLAG,IERR)
+C
+C     Prandtl number Defaults to the value for air, if not
+C             explicitely given
+C
+          IF( IFLAG .EQV. PETSC_FALSE )PRANDTL = 0.72d0
+          IF(MY_PE.EQ.0)
+     &    WRITE(IWUNIT,320)"Prandtl Number ",'PRANDTL',PRANDTL
+C
+C     test for isothermal walls
+C
+          CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-isothermal_wall',IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_TRUE )THEN
+              IADIA = 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-wall_temperature',TWALL,
+     &             IFLAG,IERR)
+C
+C     uses recovery temperature, if left unspecified in the
+C     control file
+C
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  IF(TURBULENT)THEN
+                     RF = PRANDTL**(ONE/3.d0)
+                  ELSE
+                     RF = SQRT(PRANDTL)
+                  ENDIF
+                  TWALL = RF*HALF*GM1*M_INFTY*M_INFTY+ONE
+                  TWALL = TWALL*TREF
+                  IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=315)"Using recovery tem
+     &perature"
+              ENDIF
+              IF(MY_PE.EQ.0)WRITE(IWUNIT,320)"Wall temperature ",'TWALL'
+     &,TWALL
+              CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+     +             PETSC_NULL_CHARACTER,'-isothermal_bc_replace_eqn',
+     &             IADIA_REPLACE_EQN,IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  IADIA_REPLACE_EQN = IADIA_REPLACE_ENER
+              ELSE
+                  LFLAG = (IADIA_REPLACE_EQN .EQ. IADIA_REPLACE_CONT)
+     &               .OR. (IADIA_REPLACE_EQN .EQ. IADIA_REPLACE_ENER)
+                  IF(.NOT.LFLAG)THEN
+                      STOP 'Invalid IADIA_REPLACE_EQN'
+                  ENDIF
+              ENDIF
+          ELSE
+              IADIA = 0
+              IADIA_REPLACE_EQN = -12438341
+          ENDIF
+          TWALL = TWALL/TREF
+C
+C     CONSTANTS FOR SUTHERLAND's LAW
+C
+          IF( NONDIM .EQ. EXTERNAL_FLOW )THEN
+              C2 = M_INFTY*M_INFTY
+              C1 = C2*M_INFTY
+          ELSEIF( NONDIM .EQ. INTERNAL_FLOW )THEN
+              C1 = GAM**(-1.5d0)
+              C2 = GINV
+          ENDIF
+          C3 = SDIM/TREF
+          C4 = ONE+C3
+      ENDIF
+C
+  300 FORMAT('SETIBC Need to specify option: ',A25)
+  310 FORMAT('Invalid argument: ',A22,' for option ',A18)
+  315 FORMAT(5X,A30)
+  320 FORMAT(5X,A30,2X,'(',A10,') =',E12.6)
+C
+      RETURN
+      END
+@
+
+
+1.31
+log
+@renamed a call
+@
+text
+@d5 1
+a5 1
+      IMPLICIT NONE
+a6 1
+C     $Id: setibc.F,v 1.30 2016/11/11 08:56:11 abonfi Exp abonfi $
+d8 4
+a12 2
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscviewer.h"
+d97 1
+a97 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d104 1
+a104 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d117 1
+a117 1
+            CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,
+d128 1
+a128 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d141 1
+a141 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d156 2
+a157 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +'-nondimensionalisation',STRINGA,IFLAG,IERR)
+d178 1
+a178 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d193 1
+a193 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d215 1
+a215 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d236 1
+a236 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d248 1
+a248 1
+!          CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d256 1
+a256 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d267 1
+a267 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d279 1
+a279 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d319 1
+a319 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d368 1
+a368 1
+          CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+d382 1
+a382 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d435 1
+a435 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d460 1
+a460 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d475 1
+a475 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d489 1
+a489 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d503 1
+a503 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d517 1
+a517 1
+          CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+d533 1
+a533 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d549 1
+a549 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d621 1
+a621 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d714 1
+a714 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d759 1
+a759 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d812 1
+a812 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d824 1
+a824 1
+          CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+d828 1
+a828 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d848 1
+a848 1
+              CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,
+@
+
+
+1.30
+log
+@In Petsc 3.7 the Options take an optional PetscOptions object as the first argument
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.29 2016/11/10 11:25:13 abonfi Exp abonfi $
+d81 1
+a81 1
+!        CALL X04CAF('General',' ',Nofvar,Nofvar,QMAT,
+@
+
+
+1.29
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.28 2014/04/10 09:48:28 tesistim Exp abonfi $
+d96 1
+a96 1
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+d103 1
+a103 1
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+d116 2
+a117 2
+            CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+     +      '-ohm_source',OHM,IFLAG,IERR)
+d127 3
+a129 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-generator_potential',VGEN,IFLAG,IERR)
+d140 3
+a142 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-circuit_resistence',RC,IFLAG,IERR)
+d155 1
+a155 1
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+d177 3
+a179 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-adiabatic_index',GAM,IFLAG,IERR)
+d192 3
+a194 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-specific_gas_constant',RGAS,IFLAG,IERR)
+d214 2
+a215 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-freestream_Mach_number',M_INFTY,IFLAG,IERR)
+d235 3
+a237 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-freestream_temperature',TREF,IFLAG,IERR)
+d247 1
+a247 1
+!          CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+d255 3
+a257 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-freestream_pressure',PREF,IFLAG,IERR)
+d266 3
+a268 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-ionization_degree',IONDEGREE,IFLAG,IERR)
+d278 3
+a280 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-conc_metastable',CONC_M,IFLAG,IERR)
+d318 3
+a320 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-reference_length',LREF,IFLAG,IERR)
+d367 3
+a369 2
+          CALL PetscOptionsGetRealArray(PETSC_NULL_CHARACTER,
+     +    '-flow_angles',FLOWDIR,NVALS,IFLAG,IERR)
+d381 2
+a382 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-Reynolds',RE,IFLAG,IERR)
+d434 3
+a436 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-outlet_static_pressure',POUTLET,IFLAG,IERR)
+d459 3
+a461 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-inlet_total_temperature',TTOT,IFLAG,IERR)
+d474 3
+a476 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-inlet_total_pressure',PTOT,IFLAG,IERR)
+d488 3
+a490 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-outlet_static_pressure',POUTLET, IFLAG,IERR)
+d502 2
+a503 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-reference_length',LREF,IFLAG,IERR)
+d516 3
+a518 2
+          CALL PetscOptionsGetRealArray(PETSC_NULL_CHARACTER,
+     +    '-flow_angles',FLOWDIR,NVALS,IFLAG,IERR)
+d532 3
+a534 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-ionization_degree',IONDEGREE,IFLAG,IERR)
+d548 3
+a550 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-conc_metastable',CONC_M,IFLAG,IERR)
+d620 2
+a621 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-inlet_mach_number',MACH1,IFLAG,IERR)
+d713 2
+a714 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-inlet_mach_number',MACH1,IFLAG,IERR)
+d758 2
+a759 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +    '-constant_density',RTOT,IFLAG,IERR)
+d811 2
+a812 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-Prandtl',
+     +    PRANDTL, IFLAG,IERR)
+d823 2
+a824 2
+          CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+     +    '-isothermal_wall',IFLAG,IERR)
+d827 3
+a829 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-wall_temperature',TWALL,IFLAG,IERR)
+d847 3
+a849 2
+              CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+     +        '-isothermal_bc_replace_eqn',IADIA_REPLACE_EQN,IFLAG,IERR)
+@
+
+
+1.28
+log
+@Circuit Resistance has been added
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.27 2013/06/08 09:39:16 abonfi Exp $
+d10 2
+a11 2
+#include "finclude/petscsys.h"
+#include "finclude/petscviewer.h"
+@
+
+
+1.27
+log
+@Handles the ohmic source term
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.26 2013/05/02 10:55:09 abonfi Exp abonfi $
+d139 7
+a145 7
+!              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+!     +        '-circuit_resistence',RCIRC,IFLAG,IERR)
+!              IF( IFLAG .EQV. PETSC_FALSE )THEN
+!                  RCIRC = 0.d0
+!              ENDIF
+!              IF(MY_PE.EQ.0)
+!     &        WRITE(IWUNIT,320)'','Circuit Resistence',RCIRC
+@
+
+
+1.26
+log
+@the locations where the momentum components and energy
+are stored are now included from dofs.com
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.25 2013/02/05 08:13:01 abonfi Exp abonfi $
+d39 1
+d59 2
+a60 2
+     +                 CONC_M,SOURCE(NSP),DAS(NSP),Help,
+     +                 DAMAX,RGASS(NSP)
+d96 1
+a96 1
+            CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+d98 1
+a98 1
+            IF( IFLAG .EQV. PETSC_FALSE )THEN
+d100 2
+a101 2
+            ENDIF
+           WRITE(6,*)'Chemical source ','CHEM ',CHEM
+d103 13
+d117 1
+a117 1
+     +      '-reaction_number',NREAC,IFLAG,IERR)
+d119 1
+a119 1
+                NREAC = 3
+d121 27
+a147 2
+           WRITE(6,*)'Chemical reactions number ','NREAC  ',NREAC
+!           pause   
+@
+
+
+1.25
+log
+@changes made by Raffaele Pepe in Jan 2013:
+needed to upgrade to his 3.2.11 release of the code
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.24 2013/01/29 14:40:49 abonfi Exp abonfi $
+d17 1
+a21 2
+      INTEGER NSP
+      PARAMETER (NSP=4)
+d26 1
+a76 12
+C     IY,IZ are used for periodic bcs
+C
+      IF( INCOMPRESSIBLE )THEN
+         IY = 3
+         IZ = 4
+      ELSEIF( COMPRESSIBLE )THEN
+         IY = 4
+         IZ = 5
+      ELSEIF( PLASMA )THEN
+         IY = 7
+         IZ = 8
+      ENDIF 
+a84 3
+!      IF(PLASMA)THEN 
+!
+!      ENDIF               
+@
+
+
+1.24
+log
+@The adiabatic index is now a variable, not any longer a parameter
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.23 2013/01/26 11:48:03 abonfi Exp abonfi $
+a148 2
+          IF(COMPRESSIBLE.OR.PLASMA)THEN
+C
+d161 1
+a161 1
+              GP1OG = (GAM+ONE)/GM1
+a173 2
+          ENDIF
+C
+d251 1
+a251 1
+C                  CALL BOLTZEQ4Ar(PREF,TREF,IONDEGREE,CONC_M)
+@
+
+
+1.23
+log
+@added support for an Argon plasma
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.23 2012/07/11 16:50:06 tesistim Exp tesistim $
+a20 1
+!      INCLUDE 'plasma.h'
+a21 1
+!      PARAMETER (NSP=4,NR=6)
+a22 2
+!      INTEGER NR
+!      PARAMETER(NR=3)
+d31 1
+a98 42
+!         Stoichiometric coefficients (reagents)
+!             OPEN(10,FILE='creagent.dat')
+!             DO ISP = 1,NSP
+!                READ(10,*)(scr(ISP,IR),IR=1,NR)
+!             ENDDO
+!             CLOSE(10)
+!
+!         Stoichiometric coefficients (products)
+!             OPEN(10,FILE='cproduct.dat')
+!             DO ISP = 1,NSP
+!                READ(10,*)(scp(ISP,IR),IR=1,NR)
+!             ENDDO
+!             CLOSE(10)
+!
+!        IF(NR.LE.3)THEN
+!
+!       SOURCE TERMS WITHOUT ATOM-ATOM INTERACTIONS  
+!
+!         Rate fit coefficients 
+!             OPEN(10,FILE='fitdata.dat')
+!             DO IFIT = 1,NFIT
+!                READ(10,*)(mc(IFIT,IR),IR=1,2*Nc+1)
+!             ENDDO
+!             CLOSE(10)
+!     
+!        ELSEIF(NR.GT.3)THEN
+!
+!         SOURCE TERMS WITH ATOM-ATOM INTERACTIONS
+!
+!         Rate fit coefficients (atom-electron interactions-Colonna fit) 
+!            OPEN(10,FILE='fitdata.dat')
+!            DO IFIT = 1,NFIT
+!               READ(10,*)(mc(IFIT,IR),IR=1,2*Nc+1)
+!            ENDDO
+!            CLOSE(10)
+!    
+!         Rate fit coefficients (atom-atom interactions-Bacri Vleck fit) 
+!            OPEN(10,FILE='fitdatabacri.dat')
+!            DO IFIT = 1,2
+!               READ(10,*)(mbv(IFIT,IR),IR=1,Nb)
+!            ENDDO
+!        ENDIF
+d149 35
+a183 2
+      IF(MY_PE.EQ.0)
+     &WRITE(IWUNIT,320)'Specific heats ratio ','GAMMA',GAM
+@
+
+
+1.22
+log
+@changes required due to the upgrade to petsc-3.2
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.21 2011/09/16 07:19:48 abonfi Exp abonfi $
+d20 8
+d39 3
+d56 1
+a56 1
+      INTEGER IERR,NVALS
+d60 4
+a63 1
+      LOGICAL COMPRESSIBLE,INCOMPRESSIBLE,VISCOUS,LFLAG
+d65 1
+a65 1
+      DOUBLE PRECISION PRESSC
+d67 1
+a67 1
+      EXTERNAL PRESSC
+d78 1
+d88 3
+d100 47
+d150 20
+d172 1
+a172 1
+C     *********************************************
+d198 1
+a198 1
+          IF(COMPRESSIBLE)THEN
+d219 1
+a219 1
+          IF(COMPRESSIBLE.AND.VISCOUS)THEN
+d232 115
+d394 11
+d426 2
+d503 170
+a672 1
+        IF ( COMPRESSIBLE )THEN
+d724 2
+d774 1
+d778 1
+a778 1
+      ENDIF
+@
+
+
+1.21
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.20 2011/03/30 09:00:36 abonfi Exp abonfi $
+d13 1
+a13 1
+      PetscTruth IFLAG
+@
+
+
+1.20
+log
+@sets constant for the dimensionless equation of state
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.19 2010/11/06 10:32:32 abonfi Exp abonfi $
+d10 1
+a10 1
+#include "finclude/petsc.h"
+@
+
+
+1.19
+log
+@now sets the RSTAR constant for Merkle's preconditioner
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.18 2009/06/11 13:10:58 abonfi Exp abonfi $
+d129 1
+a129 1
+C         set constant for Merkle's preconditioner, even if not needed 
+d223 1
+a223 1
+C         set constant for Merkle's preconditioner 
+d394 2
+@
+
+
+1.18
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.17 2009/06/11 09:01:03 abonfi Exp abonfi $
+d16 1
+d21 1
+a21 2
+      INCLUDE 'visco.com'
+      INCLUDE 'constants'
+a22 1
+      INCLUDE 'stream.com'
+a23 1
+      INCLUDE 'bnd.com'
+d25 1
+d27 1
+d30 1
+d128 4
+d223 3
+@
+
+
+1.17
+log
+@prints the adiabatic index
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.16 2008/12/05 07:41:25 abonfi Exp abonfi $
+d10 2
+a11 2
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscviewer.h"
+d90 1
+a90 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d118 1
+a118 1
+              IF( IFLAG .EQ. PETSC_FALSE )THEN
+d135 1
+a135 1
+              IF( IFLAG .EQ. PETSC_FALSE )THEN
+d147 1
+a147 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d160 1
+a160 1
+              IF( IFLAG .EQ. PETSC_FALSE )THEN
+d202 1
+a202 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d221 1
+a221 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d235 1
+a235 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d249 1
+a249 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d261 1
+a261 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d275 1
+a275 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d300 1
+a300 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d343 1
+a343 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d397 1
+a397 1
+          IF( IFLAG .EQ. PETSC_FALSE )PRANDTL = 0.72d0
+d405 1
+a405 1
+          IF( IFLAG .EQ. PETSC_TRUE )THEN
+d413 1
+a413 1
+              IF( IFLAG .EQ. PETSC_FALSE )THEN
+d428 1
+a428 1
+              IF( IFLAG .EQ. PETSC_FALSE )THEN
+@
+
+
+1.16
+log
+@isothermal bcs: can now choose which eqn should be replaced
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.15 2008/02/25 09:42:17 abonfi Exp abonfi $
+d108 2
+@
+
+
+1.15
+log
+@changed variable names
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.14 2005/09/09 08:48:42 abonfi Exp abonfi $
+d17 2
+a19 1
+      INCLUDE 'implicit.h'
+d47 2
+a48 2
+      DOUBLE PRECISION A1,R1,T1,P1,H1,U1,V1,W1,VISCL,Z1,MACH1
+      LOGICAL COMPRESSIBLE,INCOMPRESSIBLE,VISCOUS
+d407 19
+d427 7
+a433 4
+                  WRITE(ERRMSG,FMT=300)'-wall_temperature'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,72,NERR,IOPT)
+a434 2
+          IF(MY_PE.EQ.0)
+     &    WRITE(IWUNIT,320)"Wall temperature ",'TWALL',TWALL
+d437 1
+d456 1
+@
+
+
+1.14
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.13 2002/02/19 09:09:54 abonfi Exp $
+d24 1
+a24 1
+      INCLUDE 'bnd'
+d45 1
+a45 1
+      DOUBLE PRECISION RTOT,PTOT,TTOT,TEMP,UREF,CHORD,HREF,T
+a179 1
+              Q_INFTY = ONE
+d224 1
+d226 1
+d241 2
+d257 1
+a257 1
+     +    '-reference_length',CHORD,IFLAG,IERR)
+d264 2
+a265 2
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Reference Length ','CHORD',
+     +  CHORD
+d279 1
+a279 1
+	  IF ( COMPRESSIBLE )THEN
+d286 1
+d288 1
+a288 1
+          RE = RTOT*UREF*CHORD/VISCL(TTOT)
+d348 1
+a348 16
+C
+C     the inlet mach number (say around 0.1)
+C     is only required to initialise the flowfield
+C
+!         CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+!    +    '-inlet_mach_number',MACH1,IFLAG,IERR)
+!         IF( IFLAG .EQ. PETSC_FALSE )THEN
+!             WRITE(ERRMSG(1:56),300)'-inlet_mach_number'
+!             NERR = 4
+!             IOPT = 1
+!             CALL SETERR(ERRMSG,56,NERR,IOPT)
+!         ENDIF
+C
+C         compute static pressure
+C
+!         PSTA = PTOT / (ONE+HALF*GAM*MACH1*MACH1)
+d352 1
+d359 1
+a359 1
+          RE = RTOT*UREF*CHORD/VISCL(TTOT)
+d361 6
+a366 4
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Viscosity ','xxx',VISCL(TTOT)
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Kinematic Viscosity ',
+     +  'm**2/s',VISCL(TTOT)/RTOT
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Reynolds Number ','RE',RE
+@
+
+
+1.13
+log
+@changed PetscOptionsGetDouble into PetscOptionsGetReal (ver.2.1.1)
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.12 2001/11/09 14:21:53 abonfi Exp abonfi $
+d26 1
+d43 1
+a43 1
+      INTEGER I,IERR,NVALS
+d45 1
+a45 1
+      DOUBLE PRECISION RTOT,PTOT,TTOT,TEMP,U,UREF,CHORD,HREF,T
+d49 1
+a49 2
+      INTEGER I1MACH
+      DOUBLE PRECISION DNRM2,PRESSC
+d63 17
+@
+
+
+1.12
+log
+@changed initial/boundary conditions for
+incompressible internal flows
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.11 2001/10/17 15:33:59 abonfi Exp $
+d96 1
+a96 1
+              CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d113 1
+a113 1
+              CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d125 1
+a125 1
+          CALL PetscOptionsGetDoubleArray(PETSC_NULL_CHARACTER,
+d138 1
+a138 1
+              CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d181 1
+a181 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d200 1
+a200 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d212 1
+a212 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d223 1
+a223 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d236 1
+a236 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d250 1
+a250 1
+          CALL PetscOptionsGetDoubleArray(PETSC_NULL_CHARACTER,
+d274 1
+a274 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d317 1
+a317 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d331 1
+a331 1
+!         CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d379 1
+a379 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-Prandtl',
+d395 1
+a395 1
+              CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+@
+
+
+1.11
+log
+@changed Options into PetscOptions as required by petsc-2.1.0
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.10 2001/06/25 12:09:40 abonfi Exp abonfi $
+d315 1
+a315 1
+C         compute (constant) density from total
+d317 13
+d331 18
+a348 1
+          RTOT = PTOT/(RGAS*TTOT)
+d350 2
+a351 1
+caldoite(6,*)'RTOT;UREF;VISCL ',RTOT,UREF,VISCL(TTOT)
+d354 3
+@
+
+
+1.10
+log
+@fixing a minor bug
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.9 2001/05/24 10:27:21 abonfi Exp abonfi $
+d70 1
+a70 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,
+d96 1
+a96 1
+              CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d113 1
+a113 1
+              CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d125 1
+a125 1
+          CALL OptionsGetDoubleArray(PETSC_NULL_CHARACTER,
+d138 2
+a139 2
+              CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-Reynolds',RE,
+     +        IFLAG,IERR)
+d181 1
+a181 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d200 1
+a200 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d212 1
+a212 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d223 1
+a223 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d236 1
+a236 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d250 1
+a250 1
+          CALL OptionsGetDoubleArray(PETSC_NULL_CHARACTER,
+d274 1
+a274 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d345 1
+a345 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-Prandtl',
+d357 2
+a358 2
+          CALL OptionsHasName(PETSC_NULL_CHARACTER,'-isothermal_wall',
+     +    IFLAG,IERR)
+d361 1
+a361 1
+              CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+@
+
+
+1.9
+log
+@bug fixed when writing to UNIT=IWUNIT
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.7 2000/12/14 12:17:51 aldo Exp abonfi $
+d244 2
+a245 1
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,320)'Reference Length ','CHORD',CHORD
+@
+
+
+1.8
+log
+@initial conditions for INcompressible internal flows
+@
+text
+@d63 1
+a63 1
+      WRITE (IWUNIT,FMT=2000) 
+d104 2
+a105 1
+              WRITE(IWUNIT,320)'Freestream Mach number','M_INFTY',
+d118 2
+a119 1
+              WRITE(IWUNIT,320)'Freestream Temperature','TREF',TREF
+d146 1
+a146 1
+              WRITE(IWUNIT,320)'Reynolds Number ','RE',RE
+d209 2
+a210 1
+          WRITE(IWUNIT,320)'Inlet Total Temperature','TREF',TREF
+d220 2
+a221 1
+          WRITE(IWUNIT,320)'Inlet Total Pressure','PTOT',PTOT
+d232 2
+a233 1
+          WRITE(IWUNIT,320)'Outlet Static Pressure','POUTLET',POUTLET
+d244 1
+a244 1
+          WRITE(IWUNIT,320)'Reference Length ','CHORD',CHORD
+d268 1
+a268 1
+          WRITE(IWUNIT,320)'Reynolds Number ','RE',RE
+d322 1
+a322 1
+          WRITE(IWUNIT,320)'Reynolds Number ','RE',RE
+d351 2
+a352 1
+          WRITE(IWUNIT,320)"Prandtl Number ",'PRANDTL',PRANDTL
+d368 2
+a369 1
+          WRITE(IWUNIT,320)"Wall temperature ",'TWALL',TWALL
+@
+
+
+1.7
+log
+@bug fixed with the reference velocity
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.6 2000/11/15 09:15:09 aldo Exp aldo $
+d253 2
+d303 29
+@
+
+
+1.6
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.5 2000/10/20 09:27:31 aldo Exp aldo $
+d256 1
+a256 1
+          UREF = SQRT(GAM*RGAS*TTOT)
+@
+
+
+1.5
+log
+@put parenthesis for the SGI f90 compiler
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.4 2000/10/19 16:10:34 aldo Exp aldo $
+d25 1
+a25 1
+      INCLUDE 'IO'
+d144 1
+a144 1
+              WRITE(IWUNIT,320)"Reynolds' Number ",'RE',RE
+d261 1
+a261 1
+          WRITE(IWUNIT,320)"Reynolds' Number ",'RE',RE
+@
+
+
+1.4
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.3 2000/09/29 09:24:40 aldo Exp aldo $
+d343 1
+a343 1
+              C1 = GAM**-1.5d0
+@
+
+
+1.3
+log
+@changed to IO unit
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.2 2000/08/18 13:58:42 aldo Exp aldo $
+d11 1
+a11 1
+#include "include/finclude/viewer.h"
+@
+
+
+1.2
+log
+@mayor changes following the introduction
+of the nondimensionalisation for internal flows
+@
+text
+@d7 1
+a7 1
+C     $Id: setibc.F,v 1.1 2000/08/03 10:07:19 aldo Exp aldo $
+d63 3
+d104 2
+a105 1
+              WRITE(6,320)'Freestream Mach number','M_INFTY',M_INFTY
+d117 1
+a117 1
+              WRITE(6,320)'Freestream Temperature','TREF',TREF
+d144 1
+a144 1
+              WRITE(6,320)"Reynolds' Number ",'RE',RE
+d207 1
+a207 1
+          WRITE(6,320)'Inlet Total Temperature','TREF',TREF
+d217 1
+a217 1
+          WRITE(6,320)'Inlet Total Pressure','PTOT',PTOT
+d228 1
+a228 1
+          WRITE(6,320)'Outlet Static Pressure','POUTLET',POUTLET
+d239 1
+a239 1
+          WRITE(6,320)'Reference Length ','CHORD',CHORD
+d261 1
+a261 1
+          WRITE(6,320)"Reynolds' Number ",'RE',RE
+d315 1
+d331 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.38 2000/07/07 15:56:51 aldo Exp aldo $
+d45 2
+a46 1
+      DOUBLE PRECISION TEMP,A1,R1,T1,P1,H1,U1,V1,W1,VISCL,Z1,MACH1
+d49 3
+a51 3
+      DOUBLE PRECISION DNRM2
+C
+C     Executable Statements ..
+a52 1
+C
+d57 5
+d87 18
+d106 1
+a106 1
+      IF( NONDIM .EQ. EXTERNAL_FLOW )THEN
+d108 6
+a113 4
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+     +    '-freestream_temperature',TREF,IFLAG,IERR)
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+              TREF = 273.d0
+d116 5
+a120 3
+          NVALS = 5
+          CALL OptionsGetDoubleArray(PETSC_NULL_CHARACTER,'-freestream',
+     +    U_infty,NVALS,IFLAG,IERR)
+d122 1
+a122 1
+              WRITE(ERRMSG(1:44),300)'-freestream'
+d125 1
+a125 1
+              CALL SETERR(ERRMSG,44,NERR,IOPT)
+d128 1
+a128 1
+C     Set freestream values
+d130 1
+a130 2
+C     Q_INFTY: is the freestream kinetic energy
+C     M_INFTY: is the freestream Mach number
+d132 10
+a141 2
+          IF(KAN .EQ. 4)THEN
+              U = 3
+d143 3
+a145 1
+              U = 2
+d147 22
+a168 5
+          Q_INFTY = DNRM2(NDIM,U_INFTY(U),1)
+          IF( ABS(KAN) .EQ.  4)THEN
+              TEMP = U_INFTY(1)*U_INFTY(2)/Q_INFTY
+              Q_INFTY = Q_INFTY/U_INFTY(1)**2
+              M_INFTY = SQRT(ONE/GM1/ (TEMP-HALF))
+d171 3
+a173 1
+C     outlet pressure (NON dimensional)
+d175 2
+a176 2
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-outlet_pressure',
+     +    POUTLET,IFLAG,IERR)
+d178 10
+a187 1
+              POUTLET = 1.
+d203 1
+d213 1
+d224 1
+a224 1
+C
+d235 1
+d237 2
+d252 1
+a252 1
+          UREF = SQRT(GAM*rgas*ttot)
+d257 1
+a257 2
+          write(6,*)'Reynolds number is ',RE
+          write(6,*)'UREF,RTOT,HREF',UREF,RTOT,HREF
+d259 1
+a259 1
+C     inlet mach number is only required to initialise
+d281 1
+a283 5
+          write(6,*)'temp =',t1,ttot
+          write(6,*)'pres =',p1,ptot
+          write(6,*)'dens =',r1,rtot
+          write(6,*)'sound=',a1,uref
+          write(6,*)'enth=',h1,href
+d290 1
+a290 1
+          z1=sqrt(r1) 
+d296 3
+a298 1
+          U_infty(5) = ZERO
+d300 2
+a301 5
+          write(6,*)U_infty(1)
+          write(6,*)U_infty(2)
+          write(6,*)U_infty(3)
+          write(6,*)U_infty(4)
+c         pause
+d303 8
+a310 1
+      ENDIF
+d314 14
+a327 11
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-isothermal_wall',
+     +                   IFLAG,IERR)
+      IF( IFLAG .EQ. PETSC_TRUE )THEN
+          IADIA = 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+     +                      '-wall_temperature',TWALL,IFLAG,IERR)
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+              WRITE(ERRMSG,FMT=300)'-wall_temperature'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+d329 1
+a329 4
+      ELSE
+          IADIA = 0
+      ENDIF
+      TWALL = TWALL/TREF
+d333 9
+a341 6
+      IF( NONDIM .EQ. EXTERNAL_FLOW )THEN
+          C2 = M_INFTY*M_INFTY
+          C1 = C2*M_INFTY
+      ELSEIF( NONDIM .EQ. INTERNAL_FLOW )THEN
+          C1 = GAM**-1.5d0
+          C2 = GINV
+a342 2
+      C3 = SDIM/TREF
+      C4 = ONE+C3
+d346 1
+@

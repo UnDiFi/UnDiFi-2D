@@ -1,0 +1,2 @@
+C     NELEM  no. of processor owned elements (triangles/tetrahedra);
+C            global number of elements in the uni-processor case

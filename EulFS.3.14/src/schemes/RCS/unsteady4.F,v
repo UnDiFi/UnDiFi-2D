@@ -1,0 +1,1323 @@
+head	1.11;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.11
+	release3_13_0:1.11
+	release3_12_0:1.11
+	release3_11_0:1.11
+	release3_10_0:1.11
+	release3_8_0:1.11
+	release3_7_1:1.11
+	release3_7_0:1.10
+	release3_4_5:1.10
+	release3_4_4:1.10
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.11
+date	2020.03.28.09.49.28;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2014.04.08.10.34.19;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.03.21.13.25.17;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.02.03.16.31.05;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.02.03.08.52.31;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.01.30.17.22.09;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.01.24.07.52.15;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.03.30.09.10.09;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.01.29.11.31.40;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.01.29.10.42.55;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.11.04.13.44.04;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@FS discretisation of the time derivative using mass matrices
+@
+
+
+1.11
+log
+@renamed subroutine call
+@
+text
+@!> \par Purpose
+!>
+!> Add the time-dependent term for unsteady Euler problems
+!>
+!> If we deal with a non-linear PDE, a dual time-stepping strategy is adopted.
+!> We can define a modified nodal residual (\f$R\f$) augmented with the time derivative term:
+!> \f[
+!> R_i\left(u^{n+1,k}\right) := R_i\left(u^{n+1,k}\right) -
+!> \sum_{j} m_{ij} \frac{\left(1+\gamma_t/2\right)u_j^{n+1}-\left(1+\gamma_t\right)u_j^n
+!> +\left(\gamma_t/2\right)u_j^{n-1}}{\Delta t}
+!> \f]
+!>
+!> When using an ALE formulation the nodal residual should be updated as follows, see J. Dobes phD thesis on page 62, Eq.(3.119):
+!>
+!> \f[
+!> R_i\left(u^{n+1,k}\right) := R_i\left(u^{n+1,k}\right) -
+!> \sum_{j} m_{ij} \frac{\left(1+\gamma_t/2\right)|T^e|^{n+1}u_j^{n+1}-\left(1+\gamma_t\right)|T^e|^{n}u_j^n
+!> +\left(\gamma_t/2\right)|T^e|^{n-1}u_j^{n-1}}{\Delta t} +
+!> \frac{\left(1+\gamma_t/2\right)|T^e|^{n+1}-\left(1+\gamma_t\right)|T^e|^{n} +\left(\gamma_t/2\right)|T^e|^{n-1}}{\Delta t} 
+!> \sum_{j} m_{ij} u_j^{n+1,k}
+!> \f]
+!>
+!>
+!> various kinds of mass-matrices could be assembled, depending on the value of \c MYTYPE and according to the table below:
+!>
+!> at present, however, only the mass-matrix described in [here] is available.
+!> [here]: http://www.tandfonline.com/doi/abs/10.1080/10618562.2013.813491#.UuuQcf6nSnw "A. Bonfiglioli, R. Paciorri. A mass-matrix formulation of unsteady fluctuation splitting schemes consistent with Roe’s parameter vector, 2014"
+!>
+!
+!> @@param[in] dUdZ is \f$\partial U/\partial Z\f$
+!> @@param[in] BETA the distribution matrices \f$ \beta_i \f$
+!> @@param[in] ZROE nodal values of the dependent variable at the various time levels: \f$ Z(*,1) = Z^{n+1,k}; Z(*,2) = Z^{n}; Z(*,3) = Z^{n-1} \f$ 
+!> @@param[in] NOFVAR nof degrees of freedom (=1) used for compatibility with the calling sequence of similar routines; note that NOFVAR is the leading dimension of both Z and NODRES; when solving the RANS eqns NOFVAR > NDOF
+!> @@param[in,out] NODRES nodal residual updated with the contribution of the time-derivative term
+!> @@param[in,out] STIFC the Jacobian matrix updated with the time derivative term; only if MATRIX_ASSEMBLY == .TRUE.
+!> @@param[in] VOL the volumes at: current time level (e.g. \c n+a), \c n+1 \c n \c n-1
+!> @@param[in] NDOF leading dimension of dUdZ used for compatibility with the calling sequence of similar routines
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NOFVERT (\c =NDIM+1) nof of vertices of the current simplex
+!> @@param[in] MATRIX_ASSEMBLY when .TRUE. entries of STIFC are updated
+!>
+!> \author $Author: abonfi $
+!> \version $Revision: 1.10 $
+!> \date $Date: 2014/04/08 10:34:19 $
+!> \warning Almost un-tested with \c DUALTS = \c .FALSE.
+!>
+!>
+      SUBROUTINE UNSTEADY4(dUdZ,BETA,ZROE,NOFVAR,NODRES,STIFC,VOL,NDOF,
+     &                     NDIM,NOFVERT,MATRIX_ASSEMBLY)
+C
+C     $Id: unsteady4.F,v 1.10 2014/04/08 10:34:19 abonfi Exp abonfi $
+C
+C
+CCC#define DEBUG
+CCC#define XPRINT
+CCCC#define PRINT
+CCCCCCC#define USE_BLAS
+C
+      IMPLICIT NONE
+C
+C     unsteady update for compressible flows
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'time.h'
+      INCLUDE 'time.com'
+      INCLUDE 'stream.com'
+C
+C     .. Parameters ..
+      INTEGER LWORK
+      PARAMETER (LWORK=MAXNOFVERT*MAX_NOFVAR_SQR)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NOFVAR,NDOF,NDIM,NOFVERT
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION dUdZ(NDOF,NDOF,NOFVERT),BETA(NDOF,NDOF,NOFVERT),
+     1       ZROE(NOFVAR,NOFVERT,*),NODRES(NOFVAR,*),
+     2       STIFC(NDOF,NDOF,NOFVERT,NOFVERT),VOL(*)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION S,HELP,ALPHA,DIVB,CNST
+      INTEGER I,J,K,L,IR,IC,IADDR,ORDSQR,INFO,JADDR,IVERT,IVAR,IJADDR,
+     &JIADDR,IBGN,IEND
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION MMAT(MAX_NOFVERT_SQR*MAX_NOFVAR_SQR),
+     1                 WORKB(LWORK),WKSPC(LWORK),
+     3                 dZdt(MAXNOFVAR*MAXNOFVERT),dZdU(MAX_NOFVAR_SQR)
+      INTEGER IPIV(MAXNOFVAR)
+#ifdef DEBUG
+      DOUBLE PRECISION WORKA(LWORK), WORKC(LWORK)
+#endif
+C     ..
+C     .. External Functions ..
+      LOGICAL NULLMAT
+C     ..
+C     .. Statement Functions ..
+      INTEGER IDX,JDX
+      IDX(I,J) = ((J-1)*NOFVERT+I-1)*ORDSQR+1
+      JDX(I,J) =  (J-1)*NDOF+I-1
+C
+      ORDSQR = NDOF*NDOF
+#ifdef PRINT
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,dudZ,
+     +                NDOF,'nodal dudZ (<<<) ',INFO)
+#endif
+      GOTO (10,20,30,20,50) MMTYPE
+   10 CONTINUE ! lumped mass matrix
+      STOP 'MM-LM yet to be implemented'
+      GOTO 100
+   20 CONTINUE ! Petrov-Galerkin or Simple-Upwind (up to a certain stage they're the same)
+C
+C     compute (d+1)<(dU/dZ)> and store in MMAT(1,1)
+C
+#ifdef USE_BLAS
+      CALL DCOPY(ORDSQR,dUdZ(1,1,1),1,MMAT,1)
+      DO IVERT = 2,NOFVERT
+         CALL DAXPY(ORDSQR,ONE,dUdZ(1,1,IVERT),1,MMAT,1) 
+      ENDDO
+#else
+      DO I = 1,ORDSQR
+         MMAT(I) = ZERO
+      ENDDO
+      DO IVERT = 1,NOFVERT
+         DO IC = 1,NDOF
+            DO IR = 1,NDOF
+               HELP = MMAT(JDX(IR,IC)+1)
+               MMAT(JDX(IR,IC)+1) = HELP + dUdZ(IR,IC,IVERT)
+            ENDDO
+         ENDDO
+      ENDDO
+#endif
+#ifdef PRINT
+      CALL R8Mat_Print('G',' ',NDOF,NDOF,MMAT(1),
+     +                NDOF,'average dudZ (<<<) ',INFO)
+#endif
+      IF(MATRIX_ASSEMBLY)THEN
+          CALL DCOPY(ORDSQR,MMAT,1,dZdU,1) 
+          CALL DSCAL(ORDSQR,ONE/REAL(NOFVERT),dZdU,1)
+          CALL DGETRF( NDOF,NDOF, dZdU, NDOF, IPIV, INFO )
+          IF(INFO.NE.0)THEN
+              CALL EXIT(INFO)
+          ENDIF
+          CALL DGETRI(NDOF,dZdU,NDOF,IPIV,WORKB,LWORK,INFO)
+          IF(INFO.NE.0)THEN
+              CALL EXIT(INFO)
+          ENDIF
+      ENDIF
+C
+C     0. copy (d+1)<(dU/dZ)> into M_{ij}
+C
+      DO 3 J = 1,NOFVERT
+         DO 3 I = 1,NOFVERT
+            IF((I.EQ.1).AND.(J.EQ.1))GOTO 3
+            IJADDR = IDX(I,J)
+#ifdef USE_BLAS
+            CALL DCOPY(ORDSQR,MMAT(1),1,MMAT(IJADDR),1)
+#else
+            DO IC = 1,NDOF
+               DO IR = 1,NDOF
+                  MMAT(IJADDR+JDX(IR,IC)) = MMAT(JDX(IR,IC)+1)
+               ENDDO
+            ENDDO
+#endif
+#ifdef PRINT
+      CALL R8Mat_Print('G',' ',NDOF,NDOF,MMAT(IJADDR),
+     +                NDOF,'M_ij (0) ',INFO)
+#endif
+    3 CONTINUE ! end loop over vertices i,j
+C
+#ifdef DEBUG
+C
+C     compute the exact column sum (just for de-bugging)
+C
+      DO IVERT = 1,NOFVERT
+         IADDR = (IVERT-1)*ORDSQR+1
+         CALL DCOPY(ORDSQR,dUdZ(1,1,IVERT),1,WORKA(IADDR),1)
+         CALL DCOPY(ORDSQR,BETA(1,1,IVERT),1,WORKB(IADDR),1)
+      ENDDO
+C
+C     B_i := B_i-I/[(d+1)(d+2)]
+C
+      HELP = ONE/(NOFVERT*(NDIM+2))
+      DO IVERT = 1,NOFVERT
+         IBGN = (IVERT-1)*ORDSQR+1
+         IEND = IBGN+ORDSQR-1
+         DO I = IBGN,IEND,(NDOF+1) 
+            WORKB(I) = WORKB(I) - HELP
+         ENDDO
+      ENDDO
+      DO IVERT = 1,NOFVERT
+         IADDR = (IVERT-1)*ORDSQR+1
+         CALL DGEMM('No','No',NDOF,NDOF,NDOF,ONE/NOFVERT,WORKB(IADDR),
+     &              NDOF,MMAT(1),NDOF,HELP,WORKA(IADDR),NDOF)
+      ENDDO
+#endif
+C
+C     compute C_j = (1/[(d+1)(d+2)])[(dU/dZ)_j + (d+1)<(dU/dZ)>]
+C
+C     1. copy dUdZ_k into C for all k=1,NOFVERT
+C     2. copy B_i    into B for all k=1,NOFVERT
+C
+      CALL DCOPY(ORDSQR*NOFVERT,dUdZ(1,1,1),1,WKSPC,1)
+      CALL DCOPY(ORDSQR*NOFVERT,BETA(1,1,1),1,WORKB,1)
+C
+#ifdef PRINT
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WKSPC,
+     +                NDOF,'C_j (1) ',INFO)
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WORKB,
+     +                NDOF,'B_i (2) ',INFO)
+#endif
+C
+C     3. C_j := [(dU/dZ)_j + (d+1)<(dU/dZ)>]
+C
+      DO IVERT =1, NOFVERT
+          IADDR = (IVERT-1)*ORDSQR+1
+          CALL DAXPY(ORDSQR,ONE,MMAT(1),1,WKSPC(IADDR),1)
+      ENDDO 
+C
+#ifdef PRINT
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WKSPC,
+     +                NDOF,'C_j (3) ',INFO)
+#endif
+C
+C     4. C_j := 1/[(d+1)(d+2)] * C_j
+C
+      HELP = ONE/(NOFVERT*(NDIM+2))
+#ifdef USE_BLAS
+      CALL DSCAL(ORDSQR*NOFVERT,HELP,WKSPC,1)
+#else
+      DO I = 1,ORDSQR*NOFVERT
+           WKSPC(I) = HELP * WKSPC(I)
+      ENDDO
+#endif
+#ifdef PRINT
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WKSPC,
+     +                NDOF,'C_j (4) ',INFO)
+#endif
+C
+C     Up to this point MM-PG and MM-SU are the same;
+C     for MM-SU we can however skip certain operations
+C
+      IF(MMTYPE.EQ.4)GOTO 40
+C
+C     Here we do MM-PG
+C
+C     5. B_i := B_i - I/(d+1)
+C
+      HELP = ONE/NOFVERT
+      DO IVERT = 1,NOFVERT
+         IBGN = (IVERT-1)*ORDSQR+1
+         IEND = IBGN+ORDSQR-1
+         DO I = IBGN,IEND,(NDOF+1) 
+            WORKB(I) = WORKB(I) - HELP
+         ENDDO
+      ENDDO
+#ifdef PRINT
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WORKB,
+     +                NDOF,'B_j (5) ',INFO)
+#endif
+C
+C     the cost should be: (d+1)**2 GEMM + [(d+1)**3 +(d+1)] AXPY
+C
+C
+      DO J = 1,NOFVERT
+         JADDR = ORDSQR*(J-1)+1
+         DO I = 1,J
+            IADDR = ORDSQR*(I-1)+1
+            IF(I.EQ.J)THEN
+               ALPHA = TWO/(NDIM+3)
+               HELP = -TWO/(10.d0*NDIM)
+            ELSE
+               ALPHA = ONE/(NDIM+3)
+               HELP = MONE/(10.d0*NDIM)
+            ENDIF
+            HELP = HELP/NOFVERT
+            IJADDR = IDX(I,J)
+#ifdef USE_BLAS
+            CALL DSCAL(ORDSQR,HELP,MMAT(IJADDR),1)
+            CALL DAXPY(ORDSQR,ALPHA,WKSPC(IADDR),1,MMAT(IJADDR),1)
+            CALL DAXPY(ORDSQR,ALPHA,WKSPC(JADDR),1,MMAT(IJADDR),1)
+#else
+            DO IC = 1,NDOF
+               DO IR = 1,NDOF
+                  S = HELP*MMAT(IJADDR+JDX(IR,IC))
+                  S = S+(WKSPC(IADDR+JDX(IR,IC))+
+     &                   WKSPC(JADDR+JDX(IR,IC)))*ALPHA
+                  MMAT(IJADDR+JDX(IR,IC)) = S
+               ENDDO 
+            ENDDO
+#endif
+#ifdef PRINT
+         WRITE(6,*)'I = ',I,' J = ',J 
+         CALL R8Mat_Print('G',' ',NDOF,NDOF,MMAT(IJADDR),
+     +                NDOF,'Mass matrix ',INFO)
+#endif
+         ENDDO ! loop over I
+      ENDDO ! loop over J
+C
+C     Here we take advantage of symmetry
+C
+      DO J = 1,NOFVERT
+         JADDR = ORDSQR*(J-1)+1
+         DO I = J+1,NOFVERT
+            IJADDR = IDX(I,J)
+            JIADDR = IDX(J,I)
+#ifdef USE_BLAS
+            CALL DCOPY(ORDSQR,MMAT(JIADDR),1,MMAT(IJADDR),1)
+#else
+            DO IC = 1,NDOF
+               DO IR = 1,NDOF
+                  MMAT(IJADDR+JDX(IR,IC)) = MMAT(JIADDR+JDX(IR,IC))
+               ENDDO 
+            ENDDO
+#endif
+#ifdef PRINT
+            WRITE(6,*)'I = ',I,' J = ',J 
+            CALL R8Mat_Print('G',' ',NDOF,NDOF,MMAT(IJADDR),
+     +                NDOF,'Mass matrix ',INFO)
+            CALL R8Mat_Print('G',' ',NDOF,NDOF,MMAT(JIADDR),
+     +                NDOF,'Mass matrix ',INFO)
+#endif
+          ENDDO ! end loop over i
+       ENDDO ! end loop over j
+C
+   40 CONTINUE ! this is for both MM-SU and MM-PG
+C
+C     performs (d+1)**2 GEMMs
+C     M_{ij} = M_{ij} + B_i x C_j for MM-PG
+C     M_{ij} =          B_i x C_j for MM-SU
+C
+      IF(MMTYPE.EQ.2)THEN
+         CNST = ONE 
+      ELSE
+         CNST = ZERO 
+      ENDIF
+      DO J = 1,NOFVERT 
+         JADDR = ORDSQR*(J-1)+1
+         DO I = 1,NOFVERT 
+            IADDR = ORDSQR*(I-1)+1
+            IJADDR = IDX(I,J)
+#ifdef USE_BLAS
+            CALL DGEMM('N','N',NDOF,NDOF,NDOF,ONE,WORKB(IADDR),
+     &      NDOF,WKSPC(JADDR),NDOF,CNST,MMAT(IJADDR),NDOF)
+#else
+            DO IC = 1,NDOF
+               DO IR = 1,NDOF
+                  IF(MMTYPE.EQ.2)THEN
+                     HELP = MMAT(IJADDR+JDX(IR,IC)) ! MM-PG
+                  ELSE
+                     HELP = ZERO ! MM-SU
+                  ENDIF
+                  DO L = 1,NDOF
+                     HELP = HELP+WORKB(IADDR+JDX(IR,L))*
+     &                           WKSPC(JADDR+JDX(L,IC))
+                  ENDDO 
+                  MMAT(IJADDR+JDX(IR,IC)) = HELP
+               ENDDO 
+            ENDDO 
+#endif
+#ifdef PRINT
+         WRITE(6,*)'I = ',I,' J = ',J 
+         CALL R8Mat_Print('G',' ',NDOF,NDOF,MMAT(IADDR),
+     +                NDOF,'Mass matrix ',INFO)
+#endif
+         ENDDO
+      ENDDO
+      GOTO 45
+   45 CONTINUE ! this is for MM-SU 
+C
+#ifdef DEBUG
+C
+C     compute the column sum
+C
+      CALL DINIT(ORDSQR*NOFVERT,ZERO,WORKB,1)
+      DO I = 1,NOFVERT
+         IADDR = (I-1)*ORDSQR+1
+         DO J = 1,NOFVERT
+            IJADDR = IDX(I,J)
+            CALL DAXPY(ORDSQR,ONE,MMAT(IJADDR),1,WORKB(IADDR),1)
+         ENDDO
+      ENDDO
+C
+      CALL DCOPY(ORDSQR*NOFVERT,WORKA,1,WORKC,1)
+      CALL DAXPY(ORDSQR*NOFVERT,MONE,WORKB,1,WORKC,1)
+      IF( .NOT. NULLMAT(WORKC,NDOF,NDOF,NDOF,1.D-13) )THEN
+C
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WORKB,
+     +                NDOF,'ROWSUM matrix ',INFO)
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WORKA,
+     +                NDOF,'exact ROWSUM matrix ',INFO)
+      CALL R8Mat_Print('G',' ',NDOF,NDOF*NOFVERT,WORKC,
+     +                NDOF,'error matrix ',INFO)
+          pause
+      ENDIF
+C
+#endif
+      GOTO 100
+   30 CONTINUE ! Consistent Upwind
+      STOP 'MM-CU yet to be implemented'
+      GOTO 100
+   50 CONTINUE ! Centred
+      STOP 'MM-CC yet to be implemented'
+  100 CONTINUE
+c
+#ifdef PRINT
+      DO J = 1,NOFVERT
+      DO I = 1,NOFVERT
+         IJADDR = IDX(I,J)
+         WRITE(6,*)'I = ',I,' J = ',J 
+         CALL R8Mat_Print('G',' ',NDOF,NDOF,MMAT(IJADDR),
+     +                NDOF,'Mass matrix ',INFO)
+!         CALL R8Mat_Print('G',' ',NOFVERT,NOFVERT,STIFC(1,1),
+!    +                NOFVERT,'C_ij matrix ',INFO)
+      ENDDO
+      ENDDO
+#endif
+C
+C
+C
+      IF(DUALTS)THEN ! dual time stepping
+C
+C update the rhs by adding the contribution
+C of the time derivative term
+C
+caldo
+!     CALL R8Mat_Print('G',' ',ndof,NOFVERT*NTIMLEVS,ZROE,
+!    +                ndof,'Z matrix ',INFO)
+!     CALL R8Mat_Print('G',' ',ndof,NOFVERT*NTIMLEVS,ZROE,
+!    +                ndof,'ZROE matrix before  ',INFO)
+!     CALL R8Mat_Print('G',' ',ndof,NOFVERT*NTIMLEVS,NODRES,
+!    +                NOFVAR,'R matrix before  ',INFO)
+caldo
+C
+C     dZdt(1:NDOF,1:NOFVERT) is the time derivative of the parameter vector
+C
+         IF(LALE)THEN 
+            CALL DINIT(NDOF*NOFVERT,ZERO,dZdt,1)
+            DIVB = ZERO
+            DO K = 1,NTIMLEVS
+               DIVB = DIVB + TCOEF(2-K)*VOL(K+1)
+            ENDDO
+            DIVB = DIVB/DELT
+            DO IVERT = 1,NOFVERT
+               DO K = 1,NTIMLEVS
+!                 ALPHA = -TCOEF(2-K)/DTVOL ! *VOL(K+1)/DELT
+                  ALPHA = -TCOEF(2-K)*VOL(K+1)/DELT! /DTVOL ! *VOL(K+1)/DELT
+                  DO IVAR = 1,NDOF 
+                     IADDR = (IVERT-1)*NDOF+IVAR
+                     dZdt(IADDR) = dZdt(IADDR) + ALPHA * 
+     &                             ZROE(IVAR,IVERT,K)
+!    &                             U_infty(IVAR)
+                  ENDDO
+               ENDDO
+            ENDDO
+!     WRITE(6,*)'Vol(b) = ',(VOL(K),K=1,NTIMLEVS+1) 
+!     WRITE(6,*)'Div(b) = ',divb 
+!     CALL R8Mat_Print('G',' ',ndof,NTIMLEVS,dZdt,
+!    +                NDOF,'matrix dZdt  ',INFO)
+         ELSE ! fixed grid
+C
+            HELP = ONE/DTVOL
+            CALL DINIT(NDOF*NOFVERT,ZERO,dZdt,1)
+            DO IVERT = 1,NOFVERT
+               DO K = 1,NTIMLEVS
+                  ALPHA =-HELP*TCOEF(2-K)
+                  DO IVAR = 1,NDOF 
+                     IADDR = (IVERT-1)*NDOF+IVAR
+                     dZdt(IADDR) = dZdt(IADDR) + ALPHA * 
+     &                             ZROE(IVAR,IVERT,K)
+                  ENDDO
+               ENDDO
+            ENDDO
+#ifdef PRINT
+         CALL R8Mat_Print('G',' ',ndof,NOFVERT,dzdt,ndof,'dzdt matrix',INFO)
+#endif
+         ENDIF
+C             
+C     unsteady contribution: applies to both fixed and moving meshes
+C             
+#ifdef XPRINT
+         CALL DINIT(NDOF*NOFVERT,ZERO,WORKA,1)
+         CALL DINIT(NDOF*NOFVERT,ZERO,WORKB,1)
+#endif
+         DO I = 1,NOFVERT ! loop over vertices
+            DO J = 1,NOFVERT ! loop over vertices
+               IADDR = IDX(I,J)
+               JADDR = (J-1)*NDOF+1
+               CALL DGEMV('No Transpose',NDOF,NDOF,ONE,MMAT(IADDR), ! notice that we account in ALPHA for the (-) sign
+     2                    NDOF,dZdt(JADDR),1,ONE,NODRES(1,I),1)
+            ENDDO ! j
+         ENDDO ! i
+#ifdef XPRINT
+      CALL R8Mat_Print('G',' ',ndof,NOFVERT,dzdt,ndof,'dzdt matrix',INFO)
+      CALL R8Mat_Print('G',' ',ndof,Nofvert,NODRES,
+     +                nofvar,'R vector before ',INFO)
+      write(6,*)'Div(b) = ',divb
+#endif
+C
+C     this is the term: div (b) \sum m_{ij} Z_j^{n+1,k}
+C
+         IF(LALE)THEN
+            DO I = 1,NOFVERT ! loop over vertices
+               DO J = 1,NOFVERT ! loop over vertices
+                  IADDR = IDX(I,J)
+                  CALL DGEMV('No Transpose',NDOF,NDOF,DIVB,
+     2                       MMAT(IADDR),NDOF,ZROE(1,J,1),1,ONE,
+     3                       NODRES(1,I),1)
+               ENDDO ! j
+            ENDDO ! i
+#ifdef XPRINT
+      CALL R8Mat_Print('G',' ',ndof,Nofvert,NODRES,
+     +                nofvar,'R vector after ',INFO)
+      CALL DAXPY(NDOF*NOFVERT,ONE,WORKB,1,WORKA,1) 
+      IF( .NOT. NULLMAT(WORKA,NDOF,NOFVERT,NDOF,1.D-13) )THEN
+      WRITE(6,*)'Uh! Oh! *****'
+      CALL R8Mat_Print('G',' ',ndof,Nofvert,WORKA,
+     +                nofvar,'WORKA vector ',INFO)
+!     CALL R8Mat_Print('G',' ',ndof,Nofvert,WORKB,
+!    +                nofvar,'WORKB vector ',INFO)
+      ENDIF
+#endif
+         ENDIF
+C
+C update the matrix by adding the mass matrix
+C
+         IF(MATRIX_ASSEMBLY)THEN
+!           HELP =-(ONE+HALF*GAMT)/(NOFVERT*DTVOL)
+!           HELP = +TCOEF(1)/DTVOL
+            HELP = -TCOEF(1)/DTVOL
+!           HELP = HELP/NOFVERT
+            HELP = 0.d0
+            DO J = 1,NOFVERT
+               DO I = 1,NOFVERT
+                  IADDR = IDX(I,J)
+!     CALL R8Mat_Print('G',' ',ndof,Ndof,STIFC(1,1,I,J),
+!    +                ndof,'C matrix before ',INFO)
+cold              CALL DAXPY(ORDSQR,HELP,MMAT(IADDR),1,STIFC(1,1,I,J),1)
+            CALL DGEMM('N','N',NDOF,NDOF,NDOF,HELP,MMAT(IADDR),
+     &      NDOF,dZdU,NDOF,ONE,STIFC(1,1,I,J),NDOF)
+!                                             ^
+!                                             | use NOFVAR for turbulent flow cases?
+!     CALL R8Mat_Print('G',' ',ndof,Ndof,STIFC(1,1,I,J),
+!    +                ndof,'C matrix after ',INFO)
+               ENDDO ! loop over I
+            ENDDO ! loop over J
+!           pause
+         ENDIF
+      ELSE ! no inner iterations (DUALTS == .FALSE.)
+         STOP 'Unimplemented feature: Must use dual ts !'
+      ENDIF 
+      RETURN
+      END
+@
+
+
+1.10
+log
+@fixed bug with ALE on deforming meshes
+@
+text
+@d43 2
+a44 2
+!> \version $Revision: 1.9 $
+!> \date $Date: 2014/03/21 13:25:17 $
+d51 1
+a51 1
+C     $Id: unsteady4.F,v 1.9 2014/03/21 13:25:17 abonfi Exp abonfi $
+d106 1
+a106 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,dudZ,
+d136 1
+a136 1
+      CALL X04CAF('G',' ',NDOF,NDOF,MMAT(1),
+d168 1
+a168 1
+      CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IJADDR),
+d209 1
+a209 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WKSPC,
+d211 1
+a211 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WORKB,
+d223 1
+a223 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WKSPC,
+d238 1
+a238 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WKSPC,
+d260 1
+a260 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WORKB,
+d296 1
+a296 1
+         CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IJADDR),
+d320 1
+a320 1
+            CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IJADDR),
+d322 1
+a322 1
+            CALL X04CAF('G',' ',NDOF,NDOF,MMAT(JIADDR),
+d365 1
+a365 1
+         CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IADDR),
+d390 1
+a390 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WORKB,
+d392 1
+a392 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WORKA,
+d394 1
+a394 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WORKC,
+d413 1
+a413 1
+         CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IJADDR),
+d415 1
+a415 1
+!         CALL X04CAF('G',' ',NOFVERT,NOFVERT,STIFC(1,1),
+d429 1
+a429 1
+!     CALL X04CAF('G',' ',ndof,NOFVERT*NTIMLEVS,ZROE,
+d431 1
+a431 1
+!     CALL X04CAF('G',' ',ndof,NOFVERT*NTIMLEVS,ZROE,
+d433 1
+a433 1
+!     CALL X04CAF('G',' ',ndof,NOFVERT*NTIMLEVS,NODRES,
+d460 1
+a460 1
+!     CALL X04CAF('G',' ',ndof,NTIMLEVS,dZdt,
+d477 1
+a477 1
+         CALL X04CAF('G',' ',ndof,NOFVERT,dzdt,ndof,'dzdt matrix',INFO)
+d496 2
+a497 2
+      CALL X04CAF('G',' ',ndof,NOFVERT,dzdt,ndof,'dzdt matrix',INFO)
+      CALL X04CAF('G',' ',ndof,Nofvert,NODRES,
+d514 1
+a514 1
+      CALL X04CAF('G',' ',ndof,Nofvert,NODRES,
+d519 1
+a519 1
+      CALL X04CAF('G',' ',ndof,Nofvert,WORKA,
+d521 1
+a521 1
+!     CALL X04CAF('G',' ',ndof,Nofvert,WORKB,
+d538 1
+a538 1
+!     CALL X04CAF('G',' ',ndof,Ndof,STIFC(1,1,I,J),
+d545 1
+a545 1
+!     CALL X04CAF('G',' ',ndof,Ndof,STIFC(1,1,I,J),
+@
+
+
+1.9
+log
+@fixed a Doxygen error
+@
+text
+@d18 1
+a18 1
+!> +\left(\gamma_t/2\right)|T^e|^{n-1}u_j^{n-1}}{\Delta t} -
+d43 2
+a44 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2014/02/03 16:31:05 $
+d51 1
+a51 1
+C     $Id: unsteady4.F,v 1.8 2014/02/03 16:31:05 abonfi Exp abonfi $
+d54 2
+a55 1
+CCCCC#define DEBUG
+d67 1
+d89 1
+a89 1
+     1                 WKSPB(LWORK),WKSPC(LWORK),
+d93 1
+a93 1
+      DOUBLE PRECISION WORKA(LWORK), WORKB(LWORK), WORKC(LWORK)
+d146 1
+a146 1
+          CALL DGETRI(NDOF,dZdU,NDOF,IPIV,WKSPB,LWORK,INFO)
+d206 1
+a206 1
+      CALL DCOPY(ORDSQR*NOFVERT,BETA(1,1,1),1,WKSPB,1)
+d211 1
+a211 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WKSPB,
+d256 1
+a256 1
+            WKSPB(I) = WKSPB(I) - HELP
+d260 1
+a260 1
+      CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,WKSPB,
+d345 1
+a345 1
+            CALL DGEMM('N','N',NDOF,NDOF,NDOF,ONE,WKSPB(IADDR),
+d356 1
+a356 1
+                     HELP = HELP+WKSPB(IADDR+JDX(IR,L))*
+d448 2
+a449 1
+                  ALPHA = -TCOEF(2-K)/DTVOL ! *VOL(K+1)/DELT
+d454 1
+d458 4
+d481 1
+a481 1
+C     unsteady contribution: applies for both fixed and moving meshes
+d483 4
+d491 1
+a491 1
+               CALL DGEMV('No Transpose',NDOF,NDOF,ONE,MMAT(IADDR), ! we account in ALPHA for the (-) sign
+d495 6
+d508 1
+a508 1
+                  CALL DGEMV('No Transpose',NDOF,NDOF,-DIVB, ! look: there is a minus (-) sign
+d513 12
+@
+
+
+1.8
+log
+@implemented MM-SU (Simple Upwind)
+@
+text
+@d32 1
+a32 1
+!> @@param[in] Z nodal values of the dependent variable at the various time levels: \f$ Z(*,1) = Z^{n+1,k}; Z(*,2) = Z^{n}; Z(*,3) = Z^{n-1} \f$ 
+a39 1
+!> @@param[in] MYTYPE type of mass-matrix to be computed, see time.h
+d43 2
+a44 2
+!> \version $Revision: 1.7 $
+!> \date $Date: 2014/02/03 08:52:31 $
+d51 1
+a51 1
+C     $Id: unsteady4.F,v 1.7 2014/02/03 08:52:31 abonfi Exp abonfi $
+@
+
+
+1.7
+log
+@added the 3BDF scheme for moving meshes
+@
+text
+@d44 2
+a45 2
+!> \version $Revision: 1.6 $
+!> \date $Date: 2014/01/30 17:22:09 $
+d52 1
+a52 1
+C     $Id: unsteady4.F,v 1.6 2014/01/30 17:22:09 abonfi Exp abonfi $
+d82 1
+a82 1
+      DOUBLE PRECISION S,HELP,ALPHA,DIVB
+d108 1
+a108 1
+      GOTO (10,20,30,40,50) MMTYPE
+d112 1
+a112 1
+   20 CONTINUE ! Petrov-Galerkin
+d241 7
+d301 1
+d327 2
+d330 2
+a331 1
+C     M_{ij} = M_{ij} + B_i x C_j
+d333 5
+d345 1
+a345 1
+     &      NDOF,WKSPC(JADDR),NDOF,ONE,MMAT(IJADDR),NDOF)
+d349 5
+a353 1
+                  HELP = MMAT(IJADDR+JDX(IR,IC))
+d369 2
+a401 3
+      GOTO 100
+   40 CONTINUE ! Simple Upwind
+      STOP 'MM-SU yet to be implemented'
+@
+
+
+1.6
+log
+@supporting implicit ALE calculations
+@
+text
+@d26 2
+a27 11
+!> \f[
+!> \begin{array}{c|c|c}
+!> {\tt MYTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\\\hline
+!> {\tt MM\_LUMPED} & & \frac{\delta_{ij}}{d+1} |T_e| \\\
+!> {\tt MM\_PETROV\_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} &  \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\
+!> {\tt MM\_CONS\_UPWIND} & & \frac{1}{d+1} \beta_i \left(1+\delta_{ij}-\beta_j\right) |T_e| \\\
+!> {\tt MM\_SIMPLE\_UPWIND} & \beta_i & \frac{1}{d+1} \beta_i |T_e| \\\
+!> {\tt MM\_CENTRED} & & \frac{|T_e|}{d+1} \\\
+!> {\tt MM\_NEW} & &
+!> \end{array}
+!> \f]
+d45 1
+a45 1
+!> \date $Date: 2013/09/18 09:25:54 $
+d52 1
+a52 1
+C     $Id: unsteady4.F,v 1.5 2013/01/24 07:52:15 abonfi Exp abonfi $
+d79 1
+a79 1
+     2       STIFC(NDOF,NDOF,NOFVERT,NOFVERT)
+a407 3
+C        compute (u^n-u^{n-1}) .AND.  (u^{n+1}-u^{n})
+C
+C
+d428 1
+a428 1
+                  ALPHA = -TCOEF(2-K)*VOL(K+1)/DELT
+d472 3
+a474 2
+                  CALL DGEMV('No Transpose',NDOF,NDOF,MONE,MMAT(IADDR),
+     2                       NDOF,ZROE(1,J,1),1,DIVB,NODRES(1,I),1)
+@
+
+
+1.5
+log
+@trying to implement PICARD linearization; apparently not working
+@
+text
+@d1 59
+a59 2
+      SUBROUTINE UNSTEADY4(dUdZ,BETA,ZROE,NOFVAR,NODRES,STIFC,NDOF,NDIM,
+     &                     NOFVERT,MATRIX_ASSEMBLY)
+d61 1
+a61 1
+C     $Id: unsteady4.F,v 1.4 2011/03/30 09:10:09 abonfi Exp abonfi $
+a62 2
+C     Remark that NOFVAR is the leading dimension of both Z and NODRES
+C     when solving the RANS eqns NOFVAR > NDOF
+d91 1
+a91 1
+      DOUBLE PRECISION S,HELP,ALPHA
+d410 2
+d431 18
+d450 10
+a459 8
+         HELP = ONE/DTVOL
+         CALL DINIT(NDOF*NOFVERT,ZERO,dZdt,1)
+         DO IVERT = 1,NOFVERT
+            DO K = 1,NTIMLEVS
+               ALPHA =-HELP*TCOEF(2-K)
+               DO IVAR = 1,NDOF 
+                  IADDR = (IVERT-1)*NDOF+IVAR
+                  dZdt(IADDR) = dZdt(IADDR) + ALPHA * ZROE(IVAR,IVERT,K)
+a461 1
+         ENDDO
+d465 1
+d467 1
+a467 1
+C     unsteady contribution             
+d473 1
+a473 1
+               CALL DGEMV('No Transpose',NDOF,NDOF,ONE,MMAT(IADDR),
+d477 12
+a488 2
+!     CALL X04CAF('G',' ',ndof,NOFVERT*NTIMLEVS,NODRES,
+!    +                ndof,'R matrix  ',INFO)
+@
+
+
+1.4
+log
+@major rewriting of the mass matrices
+@
+text
+@d4 1
+a4 1
+C     $Id: unsteady4.F,v 1.3 2011/01/29 11:31:40 abonfi Exp abonfi $
+d23 2
+d42 3
+a44 3
+     1                 WKSPB(MAXNOFVERT*MAX_NOFVAR_SQR),
+     1                 WKSPC(MAXNOFVERT*MAX_NOFVAR_SQR),
+     3                 dZdt(MAXNOFVAR*MAXNOFVERT)
+d46 1
+a46 3
+      DOUBLE PRECISION WORKA(MAX_NOFVAR_SQR*MAXNOFVERT),
+     1                 WORKB(MAX_NOFVAR_SQR*MAXNOFVERT),
+     1                 WORKC(MAX_NOFVAR_SQR*MAXNOFVERT)
+d92 12
+d372 1
+a372 1
+C     set to zero R^{n} and R^{n-1}
+d387 1
+a387 2
+      CALL X04CAF('G',' ',ndof,NOFVERT,dzdt,
+     +                ndof,'dzdt matrix ',INFO)
+d392 2
+a393 2
+         DO I = 1,NOFVERT
+            DO J = 1,NOFVERT
+d406 5
+a410 1
+            HELP =-(ONE+HALF*GAMT)/(NOFVERT*DTVOL)
+d414 12
+a425 3
+                  CALL DAXPY(ORDSQR,HELP,MMAT(IADDR),1,STIFC(1,1,I,J),1)
+               ENDDO
+            ENDDO
+@
+
+
+1.3
+log
+@added a test on the column sum
+@
+text
+@d4 1
+a4 1
+C     $Id: unsteady4.F,v 1.2 2011/01/29 10:42:55 abonfi Exp abonfi $
+d9 1
+a9 1
+CCCC#define DEBUG
+d11 1
+d35 1
+a35 1
+      INTEGER I,J,K,L,IADDR,ORDSQR,INFO,JADDR,IVERT,IVAR,IJADDR,
+d42 1
+a42 2
+     3                 dZdt(MAXNOFVAR*MAXNOFVERT),
+     4                 AVGdUdZ(MAX_NOFVAR_SQR)
+d53 1
+a53 1
+      INTEGER IDX
+d55 1
+a66 1
+      CALL DINIT(ORDSQR*NOFVERT*NOFVERT,ZERO,MMAT,1)! set mass matrix to zero
+d68 1
+a68 1
+C     compute (d+1)<(dU/dZ)>
+d70 2
+a71 1
+      CALL DCOPY(ORDSQR,dUdZ(1,1,1),1,AVGdUdZ,1)
+d73 1
+a73 1
+         CALL DAXPY(ORDSQR,ONE,dUdZ(1,1,IVERT),1,AVGdUdZ,1) 
+d75 13
+d89 1
+a89 1
+      CALL X04CAF('G',' ',NDOF,NDOF,AVGdUdZ,
+d93 21
+d116 1
+a116 1
+C     compute the exact column sum
+d137 1
+a137 1
+     &              NDOF,AVGdUdZ,NDOF,HELP,WORKA(IADDR),NDOF)
+d160 1
+a160 1
+          CALL DAXPY(ORDSQR,ONE,AVGdUdZ,1,WKSPC(IADDR),1)
+d171 1
+d173 5
+a200 12
+C     6. copy (d+1)<(dU/dZ)> into M_{ij}
+C
+      DO 3 J = 1,NOFVERT
+         DO 3 I = 1,NOFVERT
+            IJADDR = IDX(I,J)
+            CALL DCOPY(ORDSQR,AVGdUdZ,1,MMAT(IJADDR),1)
+#ifdef PRINT
+      CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IJADDR),
+     +                NDOF,'M_ij (0) ',INFO)
+#endif
+    3 CONTINUE ! end loop over vertices i,j
+C
+d214 1
+d218 10
+d242 1
+d244 7
+d252 2
+a253 2
+         WRITE(6,*)'I = ',I,' J = ',J 
+         CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IJADDR),
+d255 1
+a255 1
+         CALL X04CAF('G',' ',NDOF,NDOF,MMAT(JIADDR),
+d258 3
+a260 2
+         ENDDO
+      ENDDO
+d262 2
+d269 1
+d272 12
+a358 3
+!     write(6,*)'coeff = ',(a(k),k=-1,1)
+!        CALL DINIT(NDOF,ZERO,WORK,1)
+!        CALL DINIT(ORDSQR*MAXNOFVERT,ZERO,MATHELP,1)
+@
+
+
+1.2
+log
+@possibly reducing even further the computational cost
+@
+text
+@d4 1
+a4 1
+C     $Id: unsteady4.F,v 1.1 2010/11/04 13:44:04 abonfi Exp abonfi $
+d9 1
+a9 1
+CCCCC#define DEBUG
+d44 3
+a46 3
+      DOUBLE PRECISION MATXXX(MAX_NOFVAR_SQR),MATYYY(MAX_NOFVAR_SQR),
+     2       ROWSUM(MAX_NOFVAR_SQR),ROWTRU(MAX_NOFVAR_SQR*MAXNOFVERT),
+     2                 MATHELP(MAX_NOFVAR_SQR*MAXTIMLEVS)
+d50 1
+d79 27
+a156 31
+#ifdef DEBUG
+!     CALL DINIT(ORDSQR,ZERO,MATXXX,1)! set mass matrix to zero
+!     CALL DINIT(ORDSQR*NOFVERT,ZERO,ROWTRU,1)
+!aldo
+!     CALL DINIT(ORDSQR,ZERO,MATYYY,1) ! average dUdZ
+!     DO I = 1,NOFVERT
+!        CALL DAXPY(ORDSQR,ONE,dUdZ(1,1,I),1,MATYYY,1)
+!     ENDDO
+!     CALL DSCAL(ORDSQR,ONE/REAL(NDIM+1),MATYYY,1)
+!     CALL X04CAF('G',' ',NDOF,NDOF,MATYYY,
+!    +                NDOF,'average dudZ (<<<) ',INFO)
+caldo
+!     DO I = 1,NOFVERT
+!        CALL X04CAF('G',' ',NDOF,NDOF,BETA(1,1,I),
+!    +                NDOF,'BETA matrix (<<<) ',INFO)
+!        CALL DCOPY(ORDSQR,BETA(1,1,I),1,ROWSUM,1)
+!        DO L = 1,ORDSQR,(NDOF+1)
+!           ROWSUM(L) = ROWSUM(L)-1.d0/12.d0
+!        ENDDO
+!        CALL X04CAF('G',' ',NDOF,NDOF,ROWSUM,
+!    +                NDOF,'Rowsum matrix (<<<) ',INFO)
+!        IADDR = ORDSQR*(I-1)+1
+!        CALL DCOPY(ORDSQR,dUdZ(1,1,I),1,ROWTRU(IADDR),1)
+!        CALL DGEMM('No','No',NDOF,NDOF,NDOF,ONE,ROWSUM,
+!    &              NDOF,MATYYY,NDOF,ONE/12.d0,ROWTRU(IADDR),NDOF)
+!        CALL X04CAF('G',' ',NDOF,NDOF,ROWTRU(IADDR),
+!    +                NDOF,'exact ROWSUM matrix (<<<) ',INFO)
+!     ENDDO
+caldo
+#endif
+C
+a184 1
+!           write(6,*)I,J,'dscal '
+a185 1
+!           write(6,*)I,J,'daxpy (1) '
+a186 1
+!           write(6,*)I,J,'daxpy (2) '
+d212 1
+a212 1
+C
+d229 25
+a253 22
+!        call daxpy(ORDSQR,ONE,MMAT(IADDR),1,MATXXX,1)
+#endif
+c     calcola sum_j M_ij e metti in rowsum
+#ifdef DEBUG
+!     DO I = 1,NOFVERT
+!        CALL DINIT(ORDSQR,ZERO,ROWSUM,1)
+!        DO J = 1,NOFVERT
+!           IADDR = IDX(I,J)
+!           CALL DAXPY(ORDSQR,ONE,MMAT(IADDR),1,ROWSUM,1)
+!        ENDDO
+!        write(6,*)'Row is I = ',i
+!        CALL X04CAF('G',' ',NDOF,NDOF,ROWSUM,
+!    +                NDOF,'ROWSUM matrix ',INFO)
+!        IADDR = (I-1)*ORDSQR+1
+!        CALL X04CAF('G',' ',NDOF,NDOF,ROWTRU(IADDR),
+!    +                NDOF,'exact ROWSUM matrix ',INFO)
+!     ENDDO
+!        CALL X04CAF('G',' ',NDOF,NDOF,MATYYY,
+!    +                NDOF,'Y matrix (true) ',INFO)
+!        CALL X04CAF('G',' ',NDOF,NDOF,MATXXX,
+!    +                NDOF,'X matrix ',INFO)
+!         pause
+d313 1
+a313 1
+#ifdef DEBUG
+a329 16
+!     write(6,*)'ielem = ',-1,MATRIX_ASSEMBLY
+!        do j = 1,nofvert 
+!           k = (j-1)*ordsqr+1 
+!           do i = 1,nofvert 
+!              IADDR = IDX(I,J)
+!              CALL daxpy(NDOF*NDOF,ONE,MMAT(IADDR),1,MATHELP(k),1)
+!           enddo
+!        enddo
+!     CALL X04CAF('G',' ',ndof,NOFVERT*Ndof,bighelp,
+!    +                ndof,'I matrix ????  ',INFO)
+!     write(6,FMT=110)(work(i),i=1,ndof)
+!     write(6,FMT=110)(wksp(i),i=1,ndof)
+  110 FORMAT(4(E12.6,1X))
+!     write(6,*)'ielem = ',ielem
+!     CALL X04CAF('G',' ',ndof,NOFVERT,WORK,
+!    +                ndof,'work matrix after  ',INFO)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+C     $Id:$
+d10 1
+d34 2
+a35 1
+      INTEGER I,J,K,L,IADDR,ORDSQR,INFO,JADDR,IVERT,IVAR
+d39 1
+d41 2
+a42 2
+     2                 MATHELP(MAX_NOFVAR_SQR*MAXTIMLEVS),
+     3                 dZdt(MAXNOFVAR*MAXNOFVERT)
+d45 2
+a46 1
+     2       ROWSUM(MAX_NOFVAR_SQR),ROWTRU(MAX_NOFVAR_SQR*MAXNOFVERT)
+d56 4
+a59 2
+!     CALL X04CAF('G',' ',NDOF,NDOF*NOFVERT,dudZ,
+!    +                NDOF,'nodal dudZ (<<<) ',INFO)
+d66 6
+a71 7
+#ifdef DEBUG
+      CALL DINIT(ORDSQR,ZERO,MATXXX,1)! set mass matrix to zero
+      CALL DINIT(ORDSQR*NOFVERT,ZERO,ROWTRU,1)
+caldo
+      CALL DINIT(ORDSQR,ZERO,MATYYY,1) ! average dUdZ
+      DO I = 1,NOFVERT
+         CALL DAXPY(ORDSQR,ONE,dUdZ(1,1,I),1,MATYYY,1)
+d73 2
+a74 2
+      CALL DSCAL(ORDSQR,ONE/REAL(NDIM+1),MATYYY,1)
+      CALL X04CAF('G',' ',NDOF,NDOF,MATYYY,
+d76 64
+d141 7
+a147 7
+      DO I = 1,NOFVERT
+         CALL X04CAF('G',' ',NDOF,NDOF,BETA(1,1,I),
+     +                NDOF,'BETA matrix (<<<) ',INFO)
+         CALL DCOPY(ORDSQR,BETA(1,1,I),1,ROWSUM,1)
+         DO L = 1,ORDSQR,(NDOF+1)
+            ROWSUM(L) = ROWSUM(L)-1.d0/12.d0
+         ENDDO
+d150 4
+a153 4
+         IADDR = ORDSQR*(I-1)+1
+         CALL DCOPY(ORDSQR,dUdZ(1,1,I),1,ROWTRU(IADDR),1)
+         CALL DGEMM('No','No',NDOF,NDOF,NDOF,ONE,ROWSUM,
+     &              NDOF,MATYYY,NDOF,ONE/12.d0,ROWTRU(IADDR),NDOF)
+d156 1
+a156 1
+      ENDDO
+d160 41
+a200 1
+C     compute C_j = sum_k \gamma_jk dUdZ_k
+a201 1
+C     the cost should be: (d+1)**2 GEMM + [(d+1)**3 +(d+1)] AXPY
+a202 1
+      CALL DINIT(ORDSQR*NOFVERT,ZERO,WKSPC(1),1)
+d205 11
+a215 2
+         DO K = 1,NOFVERT 
+            CALL DAXPY(ORDSQR,CGAMMA(J,K),dUdZ(1,1,K),1,WKSPC(JADDR),1)
+d218 2
+a219 1
+      DO 3 J = 1,NOFVERT
+d221 13
+a233 9
+         DO 3 I = 1,NOFVERT
+            IADDR = IDX(I,J)
+            CALL DINIT(ORDSQR,ZERO,MMAT(IADDR),1) ! should be useless
+            DO K = 1, NOFVERT
+                CALL DAXPY(ORDSQR,CALPHA(I,J,K),dUdZ(1,1,K),1,
+     &MMAT(IADDR),1)
+            ENDDO ! loop over k
+            CALL DGEMM('No','No',NDOF,NDOF,NDOF,ONE,BETA(1,1,I),
+     &                 NDOF,WKSPC(JADDR),NDOF,ONE,MMAT(IADDR),NDOF)
+d235 1
+a235 1
+         call daxpy(ORDSQR,ONE,MMAT(IADDR),1,MATXXX,1)
+a236 5
+!        WRITE(6,*)'I = ',I,' J = ',J 
+!        CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IADDR),
+!    +                NDOF,'Mass matrix ',INFO)
+!          pause
+    3 CONTINUE ! end loop over vertices i,j
+d239 18
+a256 20
+      DO I = 1,NOFVERT
+!        iaddr = (i-1)*ordsqr+1
+!        call daxpy(ORDSQR,ONE,ROWTRU(IADDR),1,MATXXX,1)
+         CALL DINIT(ORDSQR,ZERO,ROWSUM,1)
+         DO J = 1,NOFVERT
+            IADDR = IDX(I,J)
+            CALL DAXPY(ORDSQR,ONE,MMAT(IADDR),1,ROWSUM,1)
+         ENDDO
+         write(6,*)'Row is I = ',i
+         CALL X04CAF('G',' ',NDOF,NDOF,ROWSUM,
+     +                NDOF,'ROWSUM matrix ',INFO)
+         IADDR = (I-1)*ORDSQR+1
+         CALL X04CAF('G',' ',NDOF,NDOF,ROWTRU(IADDR),
+     +                NDOF,'exact ROWSUM matrix ',INFO)
+      ENDDO
+         CALL X04CAF('G',' ',NDOF,NDOF,MATYYY,
+     +                NDOF,'Y matrix (true) ',INFO)
+         CALL X04CAF('G',' ',NDOF,NDOF,MATXXX,
+     +                NDOF,'X matrix ',INFO)
+          pause
+d272 1
+a272 1
+         IADDR = IDX(I,J)
+d274 1
+a274 1
+         CALL X04CAF('G',' ',NDOF,NDOF,MMAT(IADDR),
+@

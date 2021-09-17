@@ -1,0 +1,110 @@
+head	1.2;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2014.04.15.10.16.20;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2012.04.06.10.03.14;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@computes the divergence of the vector field V
+@
+
+
+1.2
+log
+@added Doxygen documentation
+@
+text
+@!> \par Purpose
+!>
+!> Compute the volume mutiplied divergence of a vector field.
+!>
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NOFVERT nof vertices for a cell = NDIM+1
+!> @@param[in] VCN the cartesian components of the scaled inward normal to the face
+!> @@param[in] V the cartesian components of the grid velocity \f$ \mathbf{b}\f$ or any other vector field
+!>
+!>
+!> \f{eqnarray*}{
+!> \nabla \cdot \mathbf{b} \; |T_e| &=& - \sum_{\ell=1}^{d} \frac{1}{d+1} \left(\mathbf{b}_i+\mathbf{b}_j+\mathbf{b}_k\right) \cdot \mathbf{n}_{\ell} \\
+!> &=& \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{n}_j \cdot \mathbf{b}_j
+!>
+!> \f}
+C
+!> \author $Author: abonfi $
+!> \version $Revision: 1.5 $
+!> \date $Date: 2014/04/03 09:26:51 $
+C
+      DOUBLE PRECISION FUNCTION DIV(NDIM,NOFVERT,VCN,V)
+      IMPLICIT NONE
+C
+C     computes the divergence of the vector field V
+C     (defined in the vertices of a simplicial element)
+C     VCN are the inward scaled normals to the vertices
+C
+C     $Id: div.f,v 1.1 2012/04/06 10:03:14 abonfi Exp abonfi $
+C
+      INCLUDE "constants.h"
+C
+C     VCN are the inward face normals, scaled by their measure
+C     V is the vector field defined in the vertices of the mesh
+C
+      INTEGER NDIM,NOFVERT
+      INTEGER I
+      DOUBLE PRECISION VCN(NDIM,NOFVERT),V(NDIM,NOFVERT)
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+C
+      DIV = ZERO
+      DO I = 1,NOFVERT
+         DIV = DIV + DDOT(NDIM,V(1,I),1,VCN(1,I),1)
+      ENDDO
+      DIV=DIV/REAL(NDIM)
+      RETURN
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 20
+d28 1
+a28 1
+C     $Id:$
+@

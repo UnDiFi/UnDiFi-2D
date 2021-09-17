@@ -1,0 +1,7 @@
+C
+C	The INWARD normal of the face opposite the I-th vertex
+C	of element IELEM is found as:
+C
+C	NORMSIGN( I , IELEM ) * FACENORM( ? , ICELFAC(I,IELEM) )
+C
+C

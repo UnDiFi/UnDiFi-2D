@@ -1,0 +1,240 @@
+0a1,30
+> !> @param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+> !> @param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+> !> @param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+> !> @param[in] XYZDOT the cartesian components of the grid velocity
+> !> @param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+> !> @param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+> !> @param[in] ZTURB Nodal values of the turbulent variable(s); for both the compressible and incompressible equations: \f$ \tilde{\nu} \f$
+> !> @param[in,out] STIFEL elemental stiffness matrix
+> !> @param[in,out] NODRES 
+> !> @param[in,out] NEWRES 
+> !> @param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCDZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+> !> @param[in] NELEM is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+> !> @param[in] NPOIN nof interior nodes in the mesh
+> !> @param[in] NGHOST nof ghost nodes in the mesh
+> !> @param[in] NPNOD nof periodic nodes in the mesh
+> !> @param[in] NDIM dimension of the space
+> !> @param[in] NOFVERT number of vertices per element (=NDIM+1, since only triangles or tetrahedra are allowed)
+> !> @param[in] NOFVAR number of variables (degrees of freedom) in each meshpoint
+> !> @param[in] NTURB nof turbulent dofs =1 for SA
+> !> @param[in,out] PetscVecDT Petsc Vec where time-step is stored
+> !> @param[in,out] PetscVecRHS Petsc Vec where the nodal residual is stored
+> !> @param[in,out] PetscMatA Petsc Mat where the implicit matrix is stored
+> !> @param[in] ScalarScheme is the SUBROUTINE used to discretize scalar equation
+> !> @param[in] MatrixScheme is the SUBROUTINE used to discretize hyperbolic systems of equations
+> !> @param[in] TModelScheme is the SUBROUTINE used to discretize the turbulence transport equations
+> !> @param[in] EulerModel is the SUBROUTINE used to discretize the inviscid mean-flow equations
+> !> @param[in] NSModel is the SUBROUTINE used to discretize the viscous terms of the  mean-flow equations
+> !> @param[in] TurbulenceModel is the SUBROUTINE used to discretize the turbulence model
+9c39,41
+< C     $Id: setupRHS.F,v 1.31 2020/03/28 09:42:48 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: setupRHS.F,v 1.32 2020/04/19 09:22:44 abonfi Exp $
+12a45
+> #include "petsc/finclude/petscsys.h"
+15,19d47
+<       use petscvec
+<       use petscmat
+< C
+<       IMPLICIT NONE
+< C
+49,60d76
+<       integer i,j
+< C
+< C     On entry:
+< C     --------
+< C
+< C     NDIM    dimension of the space (2 or 3)
+< C     NOFVERT number of vertices per element (=NDIM+1, since
+< C             only triangles or tetrahedra are allowed)
+< C     NOFVAR  number of variables (degrees of freedom)
+< C             in each meshpoint
+< C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+< C             global number of elements in the uni-processor case
+64,67d79
+< C     ICELNOD(1:NOFVERT,1:NELEM)
+< C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+< C            global node number of the i-th vertex of the ielem-th cell
+< C
+84a97,99
+> C     ICN stores the vertices of the current element (0-based indexing)
+> C
+> C
+102,103c117,118
+<       INTEGER JVAR,IVAR,IVERT,JVERT,JV,IELEM,NP
+<       INTEGER IFAIL,N4
+---
+>       INTEGER JVAR,IVAR,IVERT,JVERT,JV,IELEM,NP,IADDR,IOFF,IFAIL,N4
+>       INTEGER I,J,M
+108,110d122
+< C
+< C     ICN stores the vertices of the current element (0-based indexing)
+< C
+125,126d136
+<       INTEGER I,J
+<       INTEGER IADDR
+226,228c236,238
+<           DO 5 IVERT = 1, NOFVERT
+<               DO 5 IVAR = 1, NOFVAR
+<                   CALL DCOPY(NOFVAR*NOFVERT*NTIMLEVS,VCZ,1,VCDZ,1)
+---
+>              DO IVERT = 1, NOFVERT
+>                 DO IVAR = 1, NOFVAR
+>                    CALL DCOPY(NOFVAR*NOFVERT*NTIMLEVS,VCZ,1,VCDZ,1)
+246,247c256,257
+<                   EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),1.d0)*
+<      +            SIGN(1.d0,VCZ(IVAR,IVERT))
+---
+>                   EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),ONE)*
+>      +            SIGN(ONE,VCZ(IVAR,IVERT))
+312c322
+< C     construct the jacobian entries
+---
+> C     construct the jacobian entries using one-sided FD
+314,315c324,325
+<                   DO 5 JVAR = 1, NOFVAR
+<                       DO 5 JVERT = 1, NOFVERT
+---
+>                   DO JVAR = 1, NOFVAR
+>                       DO JVERT = 1, NOFVERT
+319c329,332
+<     5     CONTINUE ! loop over JVAR,IVAR,JVERT,IVERT
+---
+>                       ENDDO ! JVERT
+>                    ENDDO ! JVAR
+>                 ENDDO ! loop over IVAR
+>              ENDDO ! loop over IVERT
+322c335,384
+< C     Insert element matrices into the global one
+---
+> C   Insert element matrices into the global one
+> !
+> !   STIFEL è una matrice quadridimensionale
+> !   double precision STIFEL (bs,bs,nvt,nvt) 
+> !   dove (nell'esempio qui sotto)
+> !   bs = NOFVAR = 2, nvt = NOFVERT = 3
+> !   -------------------------------------
+> !   |  1.   3. |   13.  15.|   25.   27.|
+> !   |  2.   4. |   14.  16.|   26.   28.| 
+> !   -------------------------------------
+> !   |  5.   7. |   17.  19.|   29.   31.| 
+> !   |  6.   8. |   18.  20.|   30.   32.| 
+> !   -------------------------------------
+> !   |  9.   11.|   21.  23.|   33.   35.| 
+> !   |  10.  12.|   22.  24.|   34.   36.| 
+> !   -------------------------------------
+> !   Vista come un vettore 1d, gli elementi
+> !   di questo sono nell'ordine degli interi,
+> !   perché riempio la matrice con:
+> !   do jvt = 1, nvt
+> !      do ivt = 1, nvt
+> !         do j = 1, bs
+> !            do i = 1, bs
+> !               C(i,j,ivt,jvt) = ...
+> !            enddo
+> !         enddo
+> !      enddo
+> !   enddo
+> !   Sull' ordine degli elementi di C non posso intervenire
+> !   senza stravolgere troppe cose, pero':
+> !   Fino alla versione 1.31 inserivo uno alla volta i blocchi nella matrice
+> !   PETsc, cioe' chiamavo nvt**2 volte MatSetValuesBlocked()
+> !
+> !   Nella 1.32 faccio un'unica chiamata a MatSetValuesBlocked(),
+> !   ma devo passare a Petsc una matrice 2d
+> !   che "vede" C come un'unica matrice, cioe' 
+> !   A(bs*nvt,bs*nvt) =
+> !   -----------------------------------
+> !   |  1.   3.    13.  15.   25.   27.|
+> !   |  2.   4.    14.  16.   26.   28.| 
+> !   |  5.   7.    17.  19.   29.   31.| 
+> !   |  6.   8.    18.  20.   30.   32.| 
+> !   |  9.   11.   21.  23.   33.   35.| 
+> !   |  10.  12.   22.  24.   34.   36.| 
+> !   -----------------------------------
+> !   oppure, passandogli il vettore 1d
+> !   y = 1,2,5,6,9,10,3, etc.
+> !   
+> !   C'è un modo più clever di fare questa cosa,
+> !   rispetto alla copia che faccio adesso?
+328,329d389
+<               DO 35 IVERT = 1,NOFVERT
+<                   DO 35 JVERT = 1,NOFVERT
+331,332c391,392
+<                       CALL MatSetValuesLocal(PetscMatA,1,ICN(IVERT),1,
+<      +                ICN(JVERT),STIFEL(1,1,IVERT,JVERT),ADD_VALUES,
+---
+>              CALL MatSetValuesLocal(PetscMatA,NOFVERT,ICN,NOFVERT,
+>      +                ICN,STIFEL(1,1,1,1),ADD_VALUES,
+335,336c395,396
+<                       CALL MatSetValues(PetscMatA,1,ICN(IVERT),1,
+<      +                ICN(JVERT),STIFEL(1,1,IVERT,JVERT),ADD_VALUES,
+---
+>              CALL MatSetValues(PetscMatA,NOFVERT,ICN,NOFVERT,
+>      +                ICN,STIFEL(1,1,1,1),ADD_VALUES,
+339,340c399
+<    35         CONTINUE
+<           ELSE
+---
+>           ELSE ! NOFVAR
+347,348c406,426
+<               DO 37 IVERT = 1,NOFVERT
+<                   DO 37 JVERT = 1,NOFVERT
+---
+>               DO JVERT = 1,NOFVERT
+>                  m = (jvert-1)*NOFVERT*NOFVAR*NOFVAR
+>                  DO IVERT = 1,NOFVERT
+>                     ioff = m + (IVERT-1)*NOFVAR
+>                     do j = 1, NOFVAR
+>                        iaddr = ioff + (j-1)*NOFVAR*NOFVERT
+>                        do i = 1, NOFVAR
+>                           DUMMY(iaddr+i) = STIFEL(i,j,IVERT,JVERT)
+>                        enddo ! i
+>                     enddo ! j
+>                  enddo ! IVERT
+> #ifdef PRINT_MATRICES
+>                      write(6,*)ivert,jvert
+>                      CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+>      +               stifel(1,1,ivert,jvert), Nofvar,
+>      &               'Jacobian Matrix in setupRHS (1) ',IFAIL)
+> #endif
+>               enddo ! JVERT
+> C
+> C Insert all at once
+> C
+350,352c428,430
+<                       CALL MatSetValuesBlockedLocal(PetscMatA,1,
+<      +                ICN(IVERT),1,ICN(JVERT),STIFEL(1,1,IVERT,JVERT),
+<      +                ADD_VALUES, IFAIL)
+---
+>               CALL MatSetValuesBlockedLocal(PetscMatA,NOFVERT,
+>      +                        ICN,NOFVERT,ICN,DUMMY,
+>      +                         ADD_VALUES, IFAIL)
+354,356c432,434
+<                       CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,
+<      +                ICN(JVERT), STIFEL(1,1,IVERT,JVERT),ADD_VALUES,
+<      +                IFAIL)
+---
+>               CALL MatSetValuesBlocked(PetscMatA,NOFVERT,ICN,
+>      +                               NOFVERT,ICN,DUMMY,ADD_VALUES,
+>      +                            IFAIL)
+358,365c436
+< #ifdef PRINT_MATRICES
+<                       write(6,*)ivert,jvert
+<                       CALL R8Mat_Print('General',' ',Nofvar,Nofvar,stifel(1,
+<      +                1,ivert,jvert), Nofvar,
+<      &                'Jacobian Matrix in setupRHS (1) ',IFAIL)
+< #endif
+<    37         CONTINUE
+<           ENDIF
+---
+>           ENDIF ! Check on NOFVAR
+370c441
+<               CALL DAXPY(N4,-1.d0,STIFEL,1,ERRMAT,1)
+---
+>               CALL DAXPY(N4,MONE,STIFEL,1,ERRMAT,1)

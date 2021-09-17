@@ -1,0 +1,33 @@
+head	1.1;
+access;
+symbols;
+locks
+	aldo:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for debugging stuff
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION tmpconv(5000)
+      DOUBLE PRECISION tmpdif1(5000)
+      DOUBLE PRECISION tmpdif2(5000)
+      DOUBLE PRECISION tmpsou1(5000)
+      DOUBLE PRECISION tmpsou2(5000)
+      DOUBLE PRECISION tmpsou3(5000)
+      COMMON/DEBUG/tmpconv,tmpdif1,tmpdif2,tmpsou1,tmpsou2,
+     +tmpsou3
+@

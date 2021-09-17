@@ -1,0 +1,39 @@
+-equation Euler
+-fluid compressible
+-preconditioning Yes
+-nondimensionalisation external
+#
+-scalar_scheme NL
+-matrix_scheme B
+#
+-itmax 1
+-ibak 200
+-cfl 1.
+-cflmax 1.
+#-cflmax 1.E+38
+-timestepping explicit
+-timestep global
+-linearization picard
+#-linearization newton
+#
+#-sles_view
+#
+# PC options for preconditioner
+#
+# flow conditions
+#
+#
+-freestream_Mach_number 3.0
+-flow_angles 1.0,0.0,0.0
+-colors -1,4,1,5,1,4,1,-1,-1,-1,0,0,0,0
+#-data_dir /msa20/home/abonfi/grids/2D/samefamily/
+#-restart_file /msa20/home/abonfi/grids/2D/samefamily/file003.dat
+-data_dir ./
+-restart_file ./file003.dat
+#
+#-linearization newton
+#
+-bc_type weak
+#
+-options_table
+-options_left

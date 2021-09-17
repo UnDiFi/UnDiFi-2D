@@ -1,0 +1,136 @@
+      SUBROUTINE   GPSKCD   (N, DEGREE, RSTART, CONNEC, STNODE, AVAIL,  GPSKC719
+     1                       ACTIVE, MXDPTH, LIST, DEPTH, WIDTH, MAXWID,
+     2                       ERROR, SPACE)
+C
+C     ==================================================================
+C     BUILD THE LEVEL TREE ROOTED AT 'STNODE' IN THE SPACE PROVIDED IN
+C     LIST.  OVERFLOW CHECK NEEDED ONLY ON DEPTH OF TREE.
+C
+C     BUILD THE LEVEL TREE TO COMPLETION ONLY IF THE WIDTH OF ALL
+C     LEVELS IS SMALLER THAN 'MAXWID'.  IF A WIDER LEVEL IS FOUND
+C     TERMINATE THE CONSTRUCTION.
+C     ==================================================================
+C
+      INTEGER     N, RSTART(N), STNODE, AVAIL, ACTIVE, MXDPTH,
+     1            DEPTH, WIDTH, MAXWID, ERROR, SPACE
+C
+CIBM  INTEGER *2  DEGREE(N), CONNEC(1), LIST(AVAIL)
+      INTEGER     DEGREE(N), CONNEC(1), LIST(AVAIL)
+C
+C     ... PARAMETERS:
+C
+C         INPUT ...
+C
+C             N, DEGREE, RSTART, CONNEC -- DESCRIBE THE MATRIX STRUCTURE
+C
+C             STNODE -- THE ROOT OF THE LEVEL TREE.
+C
+C             AVAIL  -- THE LENGTH OF THE WORKING SPACE AVAILABLE
+C
+C             NLEFT  -- THE NUMBER OF NODES YET TO BE NUMBERED
+C
+C             ACTIVE -- THE NUMBER OF NODES IN THE COMPONENT
+C
+C             MXDPTH -- MAXIMUM DEPTH OF LEVEL TREE POSSIBLE IN
+C                       ALLOTTED WORKING SPACE
+C
+C             LIST   -- THE WORKING SPACE.
+C
+C         OUTPUT ...
+C
+C             DEPTH  -- THE DEPTH OF THE LEVEL TREE ROOTED AT  STNODE.
+C
+C             WIDTH  -- THE WIDTH OF THE LEVEL TREE ROOTED AT  STNODE.
+C
+C             MAXWID -- LIMIT ON WIDTH OF THE TREE.  TREE WILL NOT BE
+C                       USED IF WIDTH OF ANY LEVEL IS AS GREAT AS
+C                       MAXWID, SO CONSTRUCTION OF TREE NEED NOT
+C                       CONTINUE IF ANY LEVEL THAT WIDE IS FOUND.
+C             ERROR  -- ZERO UNLESS STORAGE WAS INSUFFICIENT.
+C
+C     ------------------------------------------------------------------
+C
+      INTEGER     LSTART, NLEVEL, FRONT, J, NEWNOD, PTR, BACK,
+     1            SPTR, FPTR, LFRONT, LISTJ
+C
+C     ... BUILD THE LEVEL TREE USING  LIST  AS A QUEUE AND LEAVING
+C         THE NODES IN PLACE.  THIS GENERATES THE NODES ORDERED BY LEVEL
+C         PUT POINTERS TO THE BEGINNING OF EACH LEVEL, BUILDING FROM
+C         THE BACK OF THE WORK AREA.
+C
+      BACK = 1
+      DEPTH = 0
+      WIDTH = 0
+      ERROR = 0
+      LSTART = 1
+      FRONT = 1
+      LIST (BACK) = STNODE
+      DEGREE (STNODE) = -DEGREE (STNODE)
+      LIST (AVAIL)  = 1
+      NLEVEL = AVAIL
+C
+C     ... REPEAT UNTIL QUEUE BECOMES EMPTY OR WE RUN OUT OF SPACE.
+C     ------------------------------------------------------------
+C
+ 1000     IF ( FRONT .LT. LSTART ) GO TO 1100
+C
+C         ... FIRST NODE OF LEVEL.  UPDATE POINTERS.
+C
+              LSTART = BACK + 1
+              WIDTH = MAX0 (WIDTH, LSTART - LIST(NLEVEL))
+              IF  ( WIDTH .GE. MAXWID )  GO TO 2000
+              NLEVEL = NLEVEL - 1
+              DEPTH = DEPTH + 1
+              IF ( DEPTH .GT. MXDPTH )  GO TO 5000
+                  LIST (NLEVEL) = LSTART
+C
+C         ... FIND ALL NEIGHBORS OF CURRENT NODE, ADD THEM TO QUEUE.
+C
+ 1100     LFRONT = LIST (FRONT)
+          SPTR = RSTART (LFRONT)
+          FPTR = SPTR - DEGREE (LFRONT) - 1
+          DO 1200 PTR = SPTR, FPTR
+              NEWNOD = CONNEC (PTR)
+C
+C             ... ADD TO QUEUE ONLY NODES NOT ALREADY IN QUEUE
+C
+              IF ( DEGREE(NEWNOD) .LE. 0 )  GO TO 1200
+                  DEGREE (NEWNOD) = -DEGREE (NEWNOD)
+                  BACK = BACK + 1
+                  LIST (BACK) = NEWNOD
+ 1200     CONTINUE
+          FRONT = FRONT + 1
+C
+C         ... IS QUEUE EMPTY?
+C         -------------------
+C
+          IF ( FRONT .LE. BACK )  GO TO 1000
+C
+C     ... YES, THE TREE IS BUILT.  UNDO OUR MARKINGS.
+C
+      IF (BACK .NE. ACTIVE)  GO TO 6000
+C
+ 1300 DO 1400 J = 1, BACK
+          LISTJ = LIST(J)
+          DEGREE (LISTJ) = -DEGREE (LISTJ)
+ 1400 CONTINUE
+C
+      RETURN
+C
+C     ... ABORT GENERATION OF TREE BECAUSE IT IS ALREADY TOO WIDE
+C
+ 2000 WIDTH = N + 1
+      DEPTH = 0
+      GO TO 1300
+C
+C     ... INSUFFICIENT STORAGE ...
+C
+ 5000 SPACE = 3 * ( (ACTIVE+1-BACK)*DEPTH / ACTIVE + (ACTIVE+1-BACK) )
+      ERROR = 111
+      RETURN
+C
+ 6000 ERROR = 13
+      SPACE = -1
+      RETURN
+C
+      END

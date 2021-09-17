@@ -1,0 +1,12 @@
+export PETSC_DIR=/usr/local/src/petsc/petsc-2.3.3-p9
+export PETSC_ARCH=linux_intel8.1-opt
+
+echo `which gcc`
+echo `which gfortran`
+
+echo $PETSC_DIR
+echo $PETSC_ARCH
+
+sleep 2
+
+make install PROGRAM=peulfs11.13-$PETSC_ARCH\_reproduce

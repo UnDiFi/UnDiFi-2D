@@ -1,0 +1,149 @@
+\hypertarget{tmp_2rg_8f}{
+\section{src/util/tmp/rg.f File Reference}
+\label{tmp_2rg_8f}\index{src/util/tmp/rg.f@{src/util/tmp/rg.f}}
+}
+\subsection*{Functions/Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{tmp_2rg_8f_a8942cae6319671cdf7ba91a0ba689cc9}{rg} (nm, \hyperlink{time_8com_ae2924ded6f091682ae95d5e9c68e516c}{n}, a, wr, wi, matz, z, iv1, fv1, ierr)
+\item 
+subroutine \hyperlink{tmp_2rg_8f_aba120d9bbf60938700210c16106cdf2f}{balanc} (nm, \hyperlink{time_8com_ae2924ded6f091682ae95d5e9c68e516c}{n}, a, low, igh, scale)
+\item 
+subroutine \hyperlink{tmp_2rg_8f_a88904eee0d26b87d49e5ff3f8f4fa6d1}{balbak} (nm, \hyperlink{time_8com_ae2924ded6f091682ae95d5e9c68e516c}{n}, low, igh, scale, m, z)
+\item 
+subroutine \hyperlink{tmp_2rg_8f_a0a5595f19cd351dc283c4be4ffd1096e}{cdiv} (ar, ai, br, bi, cr, ci)
+\item 
+subroutine \hyperlink{tmp_2rg_8f_a721848a66951298977535e93e3ad353b}{elmhes} (nm, \hyperlink{time_8com_ae2924ded6f091682ae95d5e9c68e516c}{n}, low, igh, a, int)
+\item 
+subroutine \hyperlink{tmp_2rg_8f_a3937bdfec6d2fc2a7c998388d12eab4f}{eltran} (nm, \hyperlink{time_8com_ae2924ded6f091682ae95d5e9c68e516c}{n}, low, igh, a, int, z)
+\item 
+subroutine \hyperlink{tmp_2rg_8f_a629b9c03a461254bd4d5b1c36efbc2dd}{hqr} (nm, \hyperlink{time_8com_ae2924ded6f091682ae95d5e9c68e516c}{n}, low, igh, h, wr, wi, ierr)
+\item 
+subroutine \hyperlink{tmp_2rg_8f_ae4440094f77fe6b409524b1c869bedb9}{hqr2} (nm, \hyperlink{time_8com_ae2924ded6f091682ae95d5e9c68e516c}{n}, low, igh, h, wr, wi, z, ierr)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{tmp_2rg_8f_aba120d9bbf60938700210c16106cdf2f}{
+\index{tmp/rg.f@{tmp/rg.f}!balanc@{balanc}}
+\index{balanc@{balanc}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{balanc}]{\setlength{\rightskip}{0pt plus 5cm}subroutine balanc (
+\begin{DoxyParamCaption}
+\item[{integer}]{nm, }
+\item[{integer}]{n, }
+\item[{double precision,dimension(nm,{\bf n})}]{a, }
+\item[{integer}]{low, }
+\item[{integer}]{igh, }
+\item[{double precision,dimension({\bf n})}]{scale}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_aba120d9bbf60938700210c16106cdf2f}
+\hypertarget{tmp_2rg_8f_a88904eee0d26b87d49e5ff3f8f4fa6d1}{
+\index{tmp/rg.f@{tmp/rg.f}!balbak@{balbak}}
+\index{balbak@{balbak}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{balbak}]{\setlength{\rightskip}{0pt plus 5cm}subroutine balbak (
+\begin{DoxyParamCaption}
+\item[{integer}]{nm, }
+\item[{integer}]{n, }
+\item[{integer}]{low, }
+\item[{integer}]{igh, }
+\item[{double precision,dimension({\bf n})}]{scale, }
+\item[{integer}]{m, }
+\item[{double precision,dimension(nm,m)}]{z}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_a88904eee0d26b87d49e5ff3f8f4fa6d1}
+\hypertarget{tmp_2rg_8f_a0a5595f19cd351dc283c4be4ffd1096e}{
+\index{tmp/rg.f@{tmp/rg.f}!cdiv@{cdiv}}
+\index{cdiv@{cdiv}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{cdiv}]{\setlength{\rightskip}{0pt plus 5cm}subroutine cdiv (
+\begin{DoxyParamCaption}
+\item[{double precision}]{ar, }
+\item[{double precision}]{ai, }
+\item[{double precision}]{br, }
+\item[{double precision}]{bi, }
+\item[{double precision}]{cr, }
+\item[{double precision}]{ci}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_a0a5595f19cd351dc283c4be4ffd1096e}
+\hypertarget{tmp_2rg_8f_a721848a66951298977535e93e3ad353b}{
+\index{tmp/rg.f@{tmp/rg.f}!elmhes@{elmhes}}
+\index{elmhes@{elmhes}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{elmhes}]{\setlength{\rightskip}{0pt plus 5cm}subroutine elmhes (
+\begin{DoxyParamCaption}
+\item[{integer}]{nm, }
+\item[{integer}]{n, }
+\item[{integer}]{low, }
+\item[{integer}]{igh, }
+\item[{double precision,dimension(nm,{\bf n})}]{a, }
+\item[{integer,dimension(igh)}]{int}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_a721848a66951298977535e93e3ad353b}
+\hypertarget{tmp_2rg_8f_a3937bdfec6d2fc2a7c998388d12eab4f}{
+\index{tmp/rg.f@{tmp/rg.f}!eltran@{eltran}}
+\index{eltran@{eltran}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{eltran}]{\setlength{\rightskip}{0pt plus 5cm}subroutine eltran (
+\begin{DoxyParamCaption}
+\item[{integer}]{nm, }
+\item[{integer}]{n, }
+\item[{integer}]{low, }
+\item[{integer}]{igh, }
+\item[{double precision,dimension(nm,igh)}]{a, }
+\item[{integer,dimension(igh)}]{int, }
+\item[{double precision,dimension(nm,{\bf n})}]{z}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_a3937bdfec6d2fc2a7c998388d12eab4f}
+\hypertarget{tmp_2rg_8f_a629b9c03a461254bd4d5b1c36efbc2dd}{
+\index{tmp/rg.f@{tmp/rg.f}!hqr@{hqr}}
+\index{hqr@{hqr}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{hqr}]{\setlength{\rightskip}{0pt plus 5cm}subroutine hqr (
+\begin{DoxyParamCaption}
+\item[{integer}]{nm, }
+\item[{integer}]{n, }
+\item[{integer}]{low, }
+\item[{integer}]{igh, }
+\item[{double precision,dimension(nm,{\bf n})}]{h, }
+\item[{double precision,dimension({\bf n})}]{wr, }
+\item[{double precision,dimension({\bf n})}]{wi, }
+\item[{integer}]{ierr}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_a629b9c03a461254bd4d5b1c36efbc2dd}
+\hypertarget{tmp_2rg_8f_ae4440094f77fe6b409524b1c869bedb9}{
+\index{tmp/rg.f@{tmp/rg.f}!hqr2@{hqr2}}
+\index{hqr2@{hqr2}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{hqr2}]{\setlength{\rightskip}{0pt plus 5cm}subroutine hqr2 (
+\begin{DoxyParamCaption}
+\item[{integer}]{nm, }
+\item[{integer}]{n, }
+\item[{integer}]{low, }
+\item[{integer}]{igh, }
+\item[{double precision,dimension(nm,{\bf n})}]{h, }
+\item[{double precision,dimension({\bf n})}]{wr, }
+\item[{double precision,dimension({\bf n})}]{wi, }
+\item[{double precision,dimension(nm,{\bf n})}]{z, }
+\item[{integer}]{ierr}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_ae4440094f77fe6b409524b1c869bedb9}
+\hypertarget{tmp_2rg_8f_a8942cae6319671cdf7ba91a0ba689cc9}{
+\index{tmp/rg.f@{tmp/rg.f}!rg@{rg}}
+\index{rg@{rg}!tmp/rg.f@{tmp/rg.f}}
+\subsubsection[{rg}]{\setlength{\rightskip}{0pt plus 5cm}subroutine rg (
+\begin{DoxyParamCaption}
+\item[{integer}]{nm, }
+\item[{integer}]{n, }
+\item[{double precision,dimension(nm,{\bf n})}]{a, }
+\item[{double precision,dimension({\bf n})}]{wr, }
+\item[{double precision,dimension({\bf n})}]{wi, }
+\item[{integer}]{matz, }
+\item[{double precision,dimension(nm,{\bf n})}]{z, }
+\item[{integer,dimension({\bf n})}]{iv1, }
+\item[{double precision,dimension({\bf n})}]{fv1, }
+\item[{integer}]{ierr}
+\end{DoxyParamCaption}
+)}}
+\label{tmp_2rg_8f_a8942cae6319671cdf7ba91a0ba689cc9}

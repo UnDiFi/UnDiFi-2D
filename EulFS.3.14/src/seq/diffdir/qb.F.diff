@@ -1,0 +1,11 @@
+2a3
+>       implicit none
+4c5
+< c     $Id: qb.F,v 1.7 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> c     $Id: qb.F,v 1.7 2016/11/10 11:25:13 abonfi Exp $
+7,10d7
+<       use petscsys
+< C
+<       implicit none
+< C

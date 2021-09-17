@@ -1,0 +1,61 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.26.16;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@sums two matrices
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+      SUBROUTINE MATSUM(A,LDA,B,LDB,NR,NC)
+C
+      IMPLICIT NONE
+C
+C     A := A + B
+C
+      INTEGER LDA,LDB,NR,NC
+      DOUBLE PRECISION A(LDA,*),B(LDB,*)
+      INTEGER I,J
+      DO 1 J = 1 , NC
+         DO 1 I = 1 , NR
+            A(I,J) = A(I,J) + B(I,J)
+   1  CONTINUE
+      RETURN
+      END
+C
+@

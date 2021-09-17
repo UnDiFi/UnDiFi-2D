@@ -1,0 +1,113 @@
+head	1.3;
+access
+	abonfi;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_3:1.3
+	release3_3_2:1.3
+	release3_3_1:1.3
+	release3_3_0:1.3;
+locks; strict;
+comment	@ * @;
+
+
+1.3
+date	2013.01.25.08.17.43;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.12.10.27.52;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.12.01.14.47.25;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Includes for the implicit solver
+@
+
+
+1.3
+log
+@added support for CFL ramping strategy
+@
+text
+@      LOGICAL       TIMEIMPL,PICARD,NEWTON
+      INTEGER       IGLOB,CFL_SER,CFL_EXP
+      DOUBLE PRECISION PE
+      COMMON/IMPSOL/TIMEIMPL,PICARD,NEWTON,IGLOB
+      PARAMETER(CFL_SER=1,CFL_EXP=2,PE=30.d0)
+C
+C     TIMEIMPL = .TRUE.  ---->     use implicit time-stepping
+C     PICARD = .TRUE.  ---->     use Picard linearization
+C     NEWTON = .TRUE.  ---->     use F.D. Newton linearization
+C     IGLOB  = 0 (.TRUE.)  ---> use global timestepping
+C
+C     [default]:
+C
+C     TIMEIMPL = .TRUE.
+C     PICARD = .TRUE. 
+C     NEWTON = .FALSE. 
+C     IGLOB  = 1 (.FALSE.)  ---> use Local timestepping
+C     option -explicit sets TIMEIMPL = .FALSE.
+C     option -Newton   sets PICARD = .FALSE. .AND. NEWTON = .TRUE.
+@
+
+
+1.2
+log
+@removed unused variables
+@
+text
+@d2 4
+a5 1
+      COMMON/IMPSOL/TIMEIMPL,PICARD,NEWTON
+d10 1
+d17 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 3
+      INTEGER IREORD
+      LOGICAL       TIMEIMPL,PICARD,NEWTON,SORTED,REORDERING
+      COMMON/impsol/IREORD,TIMEIMPL,PICARD,NEWTON,SORTED,REORDERING
+d4 3
+a6 10
+C     MINDEG    is the minumum vertex degree
+C     MAXDEG    is the maximum vertex degree
+C     NNZ       is the number of NONzero entries in the stiffness matrix
+C     NNZR      is the number of NONzero BLOCK entries in the stiffness matrix
+C               (NNZ = NNZR * NBLK)
+C     NELTR
+C     IDUMP
+C     SORTED    .TRUE. if columns are sorted in the CSR storage of the
+C               stiffness matrix
+C  REORDERING   .TRUE. if a bandwidth minimization has been applied
+d8 7
+@

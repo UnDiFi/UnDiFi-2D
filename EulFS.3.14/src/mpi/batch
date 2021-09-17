@@ -1,0 +1,5 @@
+for i in `ls *.F`
+do
+	echo $i
+diff $i /home/simula/aldo/EulFS.0.9.5.BAK/src/seq/$i > $i.diff
+done

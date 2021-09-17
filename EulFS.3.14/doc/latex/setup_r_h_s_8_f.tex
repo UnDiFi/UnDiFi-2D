@@ -1,0 +1,81 @@
+\hypertarget{setup_r_h_s_8_f}{}\doxysection{src/seq/setup\+R\+HS.F File Reference}
+\label{setup_r_h_s_8_f}\index{src/seq/setupRHS.F@{src/seq/setupRHS.F}}
+{\ttfamily \#include \char`\"{}petsc/finclude/petscvec.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}petsc/finclude/petscmat.\+h\char`\"{}}\newline
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{setup_r_h_s_8_f_aaf25cb498a5160e653c69028e9534f30}{Setup\+R\+HS}} (I\+C\+E\+L\+N\+OD, I\+C\+E\+L\+F\+AC, V\+F\+A\+C\+N\+OR, X\+Y\+Z\+D\+OT, V\+OL, Z\+R\+OE, Z\+T\+U\+RB, S\+T\+I\+F\+EL, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, N\+E\+W\+R\+ES, V\+CZ, V\+C\+DZ, V\+CB, N\+E\+L\+EM, N\+P\+O\+IN, N\+G\+H\+O\+ST, N\+P\+N\+OD, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+O\+F\+V\+AR, N\+T\+U\+RB, Petsc\+Vec\+DT, Petsc\+Vec\+R\+HS, Petsc\+MatA, Scalar\+Scheme, Matrix\+Scheme, T\+Model\+Scheme, Euler\+Model, N\+S\+Model, Turbulence\+Model)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{setup_r_h_s_8_f_aaf25cb498a5160e653c69028e9534f30}\label{setup_r_h_s_8_f_aaf25cb498a5160e653c69028e9534f30}} 
+\index{setupRHS.F@{setupRHS.F}!SetupRHS@{SetupRHS}}
+\index{SetupRHS@{SetupRHS}!setupRHS.F@{setupRHS.F}}
+\doxysubsubsection{\texorpdfstring{SetupRHS()}{SetupRHS()}}
+{\footnotesize\ttfamily subroutine Setup\+R\+HS (\begin{DoxyParamCaption}\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+N\+OD,  }\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+F\+AC,  }\item[{double precision, dimension(ndim,$\ast$)}]{V\+F\+A\+C\+N\+OR,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+D\+OT,  }\item[{double precision, dimension(nelem)}]{V\+OL,  }\item[{double precision, dimension(nofvar,$\ast$)}]{Z\+R\+OE,  }\item[{double precision, dimension($\ast$)}]{Z\+T\+U\+RB,  }\item[{double precision, dimension(nofvar,nofvar,nofvert,nofvert)}]{S\+T\+I\+F\+EL,  }\item[{double precision, dimension(nofvar,nofvert)}]{N\+O\+D\+R\+ES,  }\item[{double precision, dimension(nofvar,nofvert)}]{N\+E\+W\+R\+ES,  }\item[{double precision, dimension(nofvar,nofvert)}]{V\+CZ,  }\item[{double precision, dimension(nofvar,nofvert)}]{V\+C\+DZ,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CB,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{integer}]{N\+G\+H\+O\+ST,  }\item[{integer}]{N\+P\+N\+OD,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+T\+U\+RB,  }\item[{}]{Petsc\+Vec\+DT,  }\item[{}]{Petsc\+Vec\+R\+HS,  }\item[{}]{Petsc\+MatA,  }\item[{external}]{Scalar\+Scheme,  }\item[{external}]{Matrix\+Scheme,  }\item[{external}]{T\+Model\+Scheme,  }\item[{external}]{Euler\+Model,  }\item[{external}]{N\+S\+Model,  }\item[{external}]{Turbulence\+Model }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+N\+OD} & Cell to node pointer\+: {\ttfamily I\+C\+E\+L\+N\+O\+D(i,j)} gives the global node number of the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+F\+AC} & Cell to face pointer\+: {\ttfamily I\+C\+E\+L\+F\+AC}(i,j\} gives the global face number of the face opposite the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+F\+A\+C\+N\+OR} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z\+D\+OT} & the cartesian components of the grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+OL} & area/volume of the simplicial elements (triangles,tetrahedra) \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Nodal values of the dependent variable; compressible equations\+: $ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) $; incompressible equations\+: $ Z = \left( p, \mathbf{u} \right) $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+T\+U\+RB} & Nodal values of the turbulent variable(s); for both the compressible and incompressible equations\+: $ \tilde{\nu} $ \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em S\+T\+I\+F\+EL} & elemental stiffness matrix \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em N\+O\+D\+R\+ES} & \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em N\+E\+W\+R\+ES} & \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+CZ} & returns the {\ttfamily N\+O\+F\+V\+AR} dofs of the N\+O\+F\+V\+E\+RT vertices of cell {\ttfamily I\+E\+L\+EM}; V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,1) stores the values at time level {\ttfamily n+1},k ; {\ttfamily V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,2)} those at tme level n and {\ttfamily V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,3)} those at time level {\ttfamily n-\/1} \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+C\+DZ} & returns the {\ttfamily N\+O\+F\+V\+AR} dofs of the N\+O\+F\+V\+E\+RT vertices of cell {\ttfamily I\+E\+L\+EM}; V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,1) stores the values at time level {\ttfamily n+1},k ; {\ttfamily V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,2)} those at tme level n and {\ttfamily V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,3)} those at time level {\ttfamily n-\/1} \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+CB} & returns the {\ttfamily N\+D\+IM} Cartesian components of the nodal grid velocities at time {\ttfamily n+1/2} of the N\+O\+F\+V\+E\+RT vertices of cell {\ttfamily I\+E\+L\+EM}; only if {\ttfamily L\+A\+LE} is {\ttfamily }.T\+R\+UE. \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-\/processor case \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & nof interior nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+G\+H\+O\+ST} & nof ghost nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+N\+OD} & nof periodic nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & number of vertices per element (=N\+D\+I\+M+1, since only triangles or tetrahedra are allowed) \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & number of variables (degrees of freedom) in each meshpoint \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+T\+U\+RB} & nof turbulent dofs =1 for SA \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em Petsc\+Vec\+DT} & Petsc Vec where time-\/step is stored \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em Petsc\+Vec\+R\+HS} & Petsc Vec where the nodal residual is stored \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em Petsc\+MatA} & Petsc Mat where the implicit matrix is stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em Scalar\+Scheme} & is the S\+U\+B\+R\+O\+U\+T\+I\+NE used to discretize scalar equation \\
+\hline
+\mbox{\texttt{ in}}  & {\em Matrix\+Scheme} & is the S\+U\+B\+R\+O\+U\+T\+I\+NE used to discretize hyperbolic systems of equations \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+Model\+Scheme} & is the S\+U\+B\+R\+O\+U\+T\+I\+NE used to discretize the turbulence transport equations \\
+\hline
+\mbox{\texttt{ in}}  & {\em Euler\+Model} & is the S\+U\+B\+R\+O\+U\+T\+I\+NE used to discretize the inviscid mean-\/flow equations \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+S\+Model} & is the S\+U\+B\+R\+O\+U\+T\+I\+NE used to discretize the viscous terms of the mean-\/flow equations \\
+\hline
+\mbox{\texttt{ in}}  & {\em Turbulence\+Model} & is the S\+U\+B\+R\+O\+U\+T\+I\+NE used to discretize the turbulence model \\
+\hline
+\end{DoxyParams}

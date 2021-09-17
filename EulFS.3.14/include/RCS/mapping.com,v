@@ -1,0 +1,104 @@
+head	1.4;
+access
+	abonfi;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_1:1.3
+	release3_3_0:1.3;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2013.06.25.07.18.41;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.01.25.08.01.01;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.09.02.08.03.46;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.12.10.18.19;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Mapping between local and global numbering for
+parallel computations
+@
+
+
+1.4
+log
+@mapping for a matrix used to compute the grid motion
+@
+text
+@      ISLocalToGlobalMapping mapping(3)
+      COMMON/COMMAP/mapping
+C
+C     mapping(1) is the mapping for the flow eqn. matrix
+C     mapping(2) is the mapping for the turbulence eqn. matrix
+C     mapping(3) is the mapping for the motion solver matrix
+C
+@
+
+
+1.3
+log
+@now uses ISLocalToGlobalMapping instead of integer
+@
+text
+@d1 1
+a1 1
+      ISLocalToGlobalMapping mapping(2)
+d6 1
+@
+
+
+1.2
+log
+@unused variable removed
+@
+text
+@d1 1
+a1 1
+      INTEGER mapping
+d3 4
+a6 1
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+      INTEGER mapping,RowMapping
+      COMMON/COMMAP/mapping,RowMapping
+@

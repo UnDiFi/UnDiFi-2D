@@ -1,0 +1,591 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	98.02.10.08.55.00;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.02.09.17.46.01;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Modified version of the Spalart-Allmaras model
+@
+
+
+1.2
+log
+@minor changes for the debugging version
+@
+text
+@      SUBROUTINE TURBO2(NPOIN,NELEM,NDIM,NOFVERT,NOFVAR,RHS,DT,B,
+     +SCALARSCHEME)
+C
+C     Driver routine for the Spalart-Allmaras model
+C
+      IMPLICIT NONE
+C
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+C
+C     define BUDGET to write to file the budget of the
+C     turbulent quantities
+C
+C#define DEBUG 
+C#define BUDGET 
+C
+      INCLUDE 'paramt.h'
+C
+      Vec RHS,DT
+      Mat B
+C
+      INCLUDE 'constants'
+      INCLUDE 'nloc'
+      INCLUDE 'three'
+      INCLUDE 'flags.com'
+      INCLUDE 'turb.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'implicit.h'
+      INCLUDE 'IO'
+C
+      integer lia,lja,lpoin6
+      COMMON/turbo3/lia,lja,lpoin6
+
+      integer nbfac
+      common /trashcom/nbfac
+
+C
+#ifdef BUDGET
+      DOUBLE PRECISION tmpconv(5000)
+      DOUBLE PRECISION tmpdif1(5000)
+      DOUBLE PRECISION tmpdif2(5000)
+      DOUBLE PRECISION tmpsou1(5000)
+      DOUBLE PRECISION tmpsou2(5000)
+      DOUBLE PRECISION tmpdiff(5000)
+      DOUBLE PRECISION tmpsum(5000)
+      double precision s1,s2,s3,d1(4),d2
+      common /sorgente/s1,s2,s3
+      common /diffune/d1,d2
+#endif
+#ifdef DEBUG
+      DOUBLE PRECISION vort(10000)
+      DOUBLE PRECISION stilde(10000)
+      DOUBLE PRECISION tfw,tr
+      EXTERNAL tfw
+#endif
+C
+C     Sets residual and local timestep to zero
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ROOT_MACHINE_EPS
+      PARAMETER (ROOT_MACHINE_EPS=1.d-07)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL SCALARSCHEME
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION EPS,RESIDUAL,SOURCE,LPROD,LDEST,
+     +                 TD,TS,TTD,TV,VI,VOLUME,PAVG,DAVG
+#ifdef BUDGET
+      DOUBLE PRECISION BETA
+      integer inode
+#endif
+      INTEGER I,IELEM,IFAIL,ISTKGT,IVERT,J,LOC,LIWORK,LRWORK,
+     &        LOMEGA,LVISCL,LCV,loca,ICODE
+      LOGICAL COMPRESSIBLE
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION TSTEP(VMAX),NODRES(VMAX),NODRES2(VMAX),
+     +                 STIFC(VMAX*VMAX),STIFD(VMAX*VMAX),VCN(3*VMAX),
+     +                 VCP(3*VMAX),VCZ(NMAX*VMAX),DVISCT(VMAX),
+     +                 STIFEL(VMAX*VMAX),VISCT(VMAX),
+     +                 WALLD(VMAX),TRIPD(VMAX),VISCL(VMAX),
+     +                 OMEGA(VMAX),STILDE(VMAX),PROD(VMAX),DEST(VMAX)
+CXXX  DOUBLE PRECISION STIFC_COPY(VMAX*VMAX)
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX),ISTAK(1),KCN(VMAX)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,newTSC,TVIC
+      EXTERNAL DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,newTSC,TVIC
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL CELPTR,DGTHR,DINIT,LINEARIZE,PARM2PRIM,
+     +         TDIFF,VISCO
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,MAX,SIGN,SQRT
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C     ..
+C
+      CALL VecSet(ZERO,rhs,IFAIL)
+C     print*, 'VecSet RHS has returned ',ifail
+      CALL VecSet(ZERO,dt,IFAIL)
+C     print*, 'VecSet DT has returned ',ifail
+C
+#ifdef BUDGET
+      CALL DINIT(NPOIN,ZERO,tmpconv,1)
+      CALL DINIT(NPOIN,ZERO,tmpsou1,1)
+      CALL DINIT(NPOIN,ZERO,tmpsou2,1)
+      CALL DINIT(NPOIN,ZERO,tmpdif1,1)
+      CALL DINIT(NPOIN,ZERO,tmpdif2,1)
+      CALL DINIT(NPOIN,ZERO,tmpdiff,1)
+      CALL DINIT(NPOIN,ZERO,tmpsum,1)
+#endif
+#ifdef DEBUG
+      CALL DINIT(NELEM,ZERO,vort,1)
+      CALL DINIT(NELEM,ZERO,stilde,1)
+#endif
+C
+      COMPRESSIBLE = (KAN.EQ.4)
+C
+      IF (TIMEIMPL) THEN
+          CALL MatZeroEntries(B,IFAIL)
+C     print*, 'MatZeroEntries has returned ',ifail
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFD,1)
+      ENDIF
+C
+C     allocate space for:
+C     vorticity
+C     laminar kinematic viscosity
+C     volume of the median dual cells
+C
+      LOMEGA = ISTKGT(NPOIN,4)
+      LVISCL = ISTKGT(NPOIN,4)
+      LCV = ISTKGT(NPOIN,4)
+      CALL DINIT(NPOIN,ZERO,DSTAK(LCV),1)
+C
+C     compute the median dual area(volume)
+C
+      CALL MEDIAN(DSTAK(LCV),DSTAK(LVOL),ISTAK(LCELNOD),NOFVERT,
+     &            NELEM)
+C
+C     compute vorticity in the nodes
+C
+      CALL VORTICITY(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +            DSTAK(LCV),DSTAK(LOMEGA),NDIM,NOFVERT,
+     +            NOFVAR,NELEM,NPOIN,COMPRESSIBLE)
+C
+C     compute laminar, kinematic viscosity in the nodes
+C
+      IF( COMPRESSIBLE )THEN
+          CALL CALCVI(DSTAK(LVISCL),DSTAK(LZROE),NDIM,NOFVAR,NPOIN)
+      ELSE
+          CALL DINIT(NPOIN,ONE,DSTAK(LVISCL),1)
+      ENDIF
+C
+C
+      LPROD = ISTKGT(npoin,4)
+      LDEST = ISTKGT(npoin,4)
+C
+C     compute production and destruction terms in the 
+C     no slip wall boundary nodes.
+C
+      CALL TURBOBC(NPOIN,NELEM,NBFAC,NDIM,NOFVERT,NOFVAR,
+     +ISTAK(LJA),ISTAK(LIA),ISTAK(LPOIN6),DSTAK(LPROD),
+     +DSTAK(LDEST),ISTAK(LBNDFAC),LVISCL)
+C
+C     compute production and destruction terms in all nodes
+C
+      loca = ISTKGT(npoin,4)
+      CALL PRIN(DSTAK(LVISCL),DSTAK(LTURB),DSTAK(LTD),DSTAK(LOMEGA),
+     &dstak(loca),dstak(LPROD),dstak(LDEST),dstak(lcv),ISTAK(lnodcod),
+     &ndim,nofvar,npoin)
+C     stop
+C
+C     Loops over cells
+C
+      DO 100 IELEM = 1,NELEM
+C
+          CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,NELEM,1,ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+C
+C     COMPUTES THE GRADIENT OF THE flow VARIABLES
+C
+C         CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+C    +                   VOLUME)
+C
+C         IF (COMPRESSIBLE) CALL PARM2PRIM(NDIM,IELEM)
+C
+C     set a cell to node pointer with 1 based indexing
+C
+          DO 7 IVERT = 1,NOFVERT
+             KCN(IVERT)=ICN(IVERT)+1
+    7     CONTINUE
+C
+C     retrieve turbulent viscosity and store in VISCT
+C
+          CALL DGTHR(NOFVERT,DSTAK(LTURB),VISCT,KCN)
+C
+C     COMPUTES THE GRADIENT OF THE turbulent viscosity
+C
+          CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VISCT,1,VOLUME)
+C
+C     note that the gradient and cell average state of
+C     turbulent viscosity are overwritten on density/pressure
+C
+C ****************************************************
+C          computation of the source term
+C ****************************************************
+C
+C  retrieve from global arrays:
+C  trip point distance (TTD)
+C  wall distance (TD)
+C  laminar kinematic viscosity
+C  vorticity
+C  production term
+C  destruction term
+C  modified vorticity
+C
+          CALL DGTHR(NOFVERT,DSTAK(LTTD),TRIPD,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LTD),WALLD,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LVISCL),VISCL,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LOMEGA),OMEGA,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LPROD),PROD,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LDEST),DEST,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(Loca),STILDE,KCN)
+C
+          PAVG = ZERO
+          DAVG = ZERO
+          TV = ZERO
+          VI = ZERO
+          DO 10 IVERT = 1,NOFVERT
+              PAVG = PAVG + PROD(IVERT)
+              DAVG = DAVG + DEST(IVERT)
+              TV = TV + VISCT(IVERT) 
+              VI = VI + VISCL(IVERT) 
+   10     CONTINUE
+C
+          PAVG = PAVG/NOFVERT
+          DAVG = DAVG/NOFVERT
+          TV = TV/NOFVERT
+          VI = VI/NOFVERT
+C
+C
+          SOURCE = PAVG + DAVG
+C
+#ifdef BUDGET
+         s1=PAVG*volume
+         s2=DAVG*volume
+#endif
+#ifdef DEBUG
+         tr = TV/ (TS* (TK*TD)**2.)*REINV
+         TR = (TV/(TS*RE)) / ((TK*TD)**2)
+         vort(ielem) = tr
+         stilde(ielem) = tfw(tr)
+#endif
+C
+      GOTO 19
+C
+          IF (TTFLAG.EQ.1) THEN
+              IF (COMPRESSIBLE) THEN
+                  SOURCE = SOURCE + TBTRIP(TD,TTD,UAVG(3),UAVG(4),
+     +                     UAVG(5))
+
+              ELSE
+                  SOURCE = SOURCE + TBTRIP(TD,TTD,ZAVG(2),ZAVG(3),
+     +                     ZAVG(4))
+              ENDIF
+
+          ENDIF
+   19 CONTINUE
+C
+          SOURCE = -SOURCE*VOLUME
+C
+C        the convection speed is the velocity vector
+C
+          IF (COMPRESSIBLE) THEN
+              R_SPEED(1,1) = UAVG(3)
+              R_SPEED(2,1) = UAVG(4)
+              R_SPEED(3,1) = UAVG(5)
+          ELSE
+              R_SPEED(1,1) = ZAVG(2)
+              R_SPEED(2,1) = ZAVG(3)
+              R_SPEED(3,1) = ZAVG(4)
+          ENDIF
+C
+          CALL DINIT(NOFVERT,ZERO,NODRES,1)
+          CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+C
+          CALL SCALARSCHEME(IELEM,VCN,R_SPEED(1,1),RESIDUAL,SOURCE,
+     +         VISCT,TSTEP,NODRES,STIFC,NDIM,NOFVERT,PICARD)
+C
+#ifdef BUDGET
+      do 43 i = 1,nofvert
+         inode = icn(i)+1
+         beta =-nodres(i)/(source+residual)
+         tmpconv(inode) = tmpconv(inode) + beta * residual
+         tmpsou1(inode) = tmpsou1(inode) + beta * s1
+         tmpsou2(inode) = tmpsou2(inode) + beta * s2
+   43 continue
+#endif
+C
+C     Diffusion term ...
+C
+          CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,VISCT,NODRES,TSTEP,VCN,
+     +               STIFD,NDIM,NOFVERT,VOLUME)
+C
+C     Non conservative diffusion term
+C
+          CALL TDIFF(IELEM,TCB2*REINV/TPR1,VISCT,NODRES,TSTEP,VCN,STIFD,
+     +               NDIM,NOFVERT,VOLUME)
+C
+#ifdef BUDGET
+      do 35 i = 1,nofvert
+         inode = icn(i)+1
+         tmpdif1(inode) = tmpdif1(inode) + d1(i)
+         tmpdif2(inode) = tmpdif2(inode) + d2
+   35 continue
+#endif
+C
+C     Scatter and add nodal update and timestep to global arrays
+C
+          CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+C     print*, 'VecSetValues DT has returned ',ifail
+          CALL VecSetValues(RHS,NOFVERT,ICN,NODRES,ADD_VALUES,IFAIL)
+C     print*, 'VecSetValues RHS has returned ',ifail
+C
+C     **** The computation of the residual (r.h.s.) ends HERE ****
+C
+C     Add element Stiffness matrix to the global one
+C
+          IF (PICARD) THEN
+          DO 34 IVERT = 1, NOFVERT*NOFVERT
+              STIFEL(IVERT) = STIFD(IVERT)-STIFC(IVERT) 
+   34     CONTINUE
+          CALL MatSetValues(B,NOFVERT,ICN,NOFVERT,ICN,STIFEL,
+     +                      ADD_VALUES,IFAIL)
+C     print*, 'MatSetValues RHS has returned ',ifail
+C
+          ELSEIF (NEWTON) THEN
+C
+C     I is the vertex we perturb
+C
+              DO 110 I = 1,NOFVERT
+C
+C
+C     make a copy of the local variables
+C
+                  DO 11 J = 1,NOFVERT
+                      DVISCT(J) = VISCT(J)
+   11             CONTINUE
+C
+C     perturb, unless a no-slip node
+C
+                  ICODE = ISTAK(LNODCOD+ICN(I))
+                  IF( ICODE .EQ. 1000 )THEN
+                  CALL DINIT(NOFVERT,ZERO,STIFC((I-1)*NOFVERT+1),1)
+                  GOTO 110
+                  ENDIF
+                  EPS = ROOT_MACHINE_EPS*MAX(ABS(VISCT(I)),ONE)*
+     +                  SIGN(ONE,VISCT(I))
+                  DVISCT(I) = VISCT(I) + EPS
+C
+C     COMPUTES THE GRADIENT OF THE perturbed turbulent viscosity
+C
+          CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,DVISCT,1,VOLUME)
+C
+C     We neglect dependence of the flow variables upon
+C     turbulent viscosity; therefore local vorticity and
+C     velocity will not be recomputed; also laminar viscosity
+C     need NOT to be recomputed
+C
+C
+          PAVG = ZERO
+          DAVG = ZERO
+          TV = ZERO
+          DO 12 IVERT = 1,NOFVERT
+C
+              TV = TV + DVISCT(IVERT)
+              IF( IVERT .EQ. I )THEN
+C
+                 STILDE(IVERT) = newTSC(OMEGA(IVERT),WALLD(IVERT),
+     +                               DVISCT(IVERT),VISCL(IVERT)) 
+C 
+                 PAVG = PAVG + TBPROD(DVISCT(IVERT),VISCL(IVERT),
+     +                             STILDE(IVERT))
+                 DAVG = DAVG + TBDEST(WALLD(IVERT),STILDE(IVERT),
+     +                             DVISCT(IVERT),VISCL(IVERT)) 
+              ELSE
+                 PAVG = PAVG + PROD(IVERT)
+                 DAVG = DAVG + DEST(IVERT)
+              ENDIF
+   12     CONTINUE
+C
+          PAVG = PAVG/NOFVERT
+          DAVG = DAVG/NOFVERT
+          TV = TV/NOFVERT
+C
+C
+          SOURCE = PAVG + DAVG
+C
+C
+                  IF (TTFLAG.EQ.1) THEN
+                      IF (COMPRESSIBLE) THEN
+                          SOURCE = SOURCE + TBTRIP(TD,TTD,UAVG(3),
+     +                             UAVG(4),UAVG(5))
+
+                      ELSE
+                          SOURCE = SOURCE + TBTRIP(TD,TTD,ZAVG(2),
+     +                             ZAVG(3),ZAVG(4))
+                      ENDIF
+
+                  ENDIF
+C
+                  SOURCE = -SOURCE*VOLUME
+C
+                  CALL SCALARSCHEME(IELEM,VCN,R_SPEED,RESIDUAL,SOURCE,
+     +                              DVISCT,TSTEP,NODRES2,STIFC,NDIM,
+     +                              NOFVERT,.FALSE.)
+CXXX +                              .true.)
+C                                      ^
+C                                      |
+C     do NOT compute element stiffness matrix
+C
+CXXX  call dcopy(nofvert*nofvert,stifc,1,stifc_copy,1)
+C
+C     Diffusion term ...
+C
+                  CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,DVISCT,NODRES2,
+     +                       TSTEP,VCN,STIFD,NDIM,NOFVERT,VOLUME)
+CXXX  call daxpy(nofvert*nofvert,-1.d0,stifd,1,stifc_copy,1)
+C     Non conservative diffusion term
+                  CALL TDIFF(IELEM,TCB2*REINV/TPR1,DVISCT,NODRES2,TSTEP,
+     +                       VCN,STIFD,NDIM,NOFVERT,VOLUME)
+C
+C        compute jacobian by finite differences
+C
+                  LOC = (I-1)*NOFVERT
+                  DO 13 J = 1,NOFVERT
+                      STIFC(LOC+J) =-(NODRES2(J)-NODRES(J))/EPS
+   13             CONTINUE
+  110         CONTINUE
+C
+CXXX  CALL X04CAF('General',' ',nofvert,nofvert,STIFC,nofvert,
+CXXX +'Newton',Ifail)
+CXXX  CALL X04CAF('General',' ',nofvert,nofvert,STIFc_copy,nofvert,
+CXXX +'Picard',Ifail)
+CXXX   pause
+C
+          CALL MatSetValues(B,NOFVERT,ICN,NOFVERT,ICN,STIFC,
+     +                      ADD_VALUES,IFAIL)
+C
+          ENDIF
+C
+  100 CONTINUE
+C
+C     release arrays
+C
+      CALL ISTKRL(6)
+C
+#ifdef BUDGET
+      loc = ISTKGT(npoin,4)
+      call dinit(npoin,zero,dstak(loc),1)
+      call median(dstak(loc),dstak(lvol),istak(lcelnod),nofvert,
+     +            nelem)
+C
+      call dcopy(npoin,tmpdif1,1,tmpdiff,1)
+      call daxpy(npoin,1.d0,tmpdif2,1,tmpdiff,1)
+C
+      call dcopy(npoin,tmpdiff,1,tmpsum,1)
+      call daxpy(npoin,1.d0,tmpsou1,1,tmpsum,1)
+      call daxpy(npoin,1.d0,tmpsou2,1,tmpsum,1)
+C
+C     SUM = PROD - DESTR + DIFF
+C
+      call scala(npoin,tmpconv,dstak(loc))
+      call scala(npoin,tmpdif1,dstak(loc))
+      call scala(npoin,tmpdif2,dstak(loc))
+      call scala(npoin,tmpsou1,dstak(loc))
+      call scala(npoin,tmpsou2,dstak(loc))
+      call scala(npoin,tmpdiff,dstak(loc))
+      call scala(npoin,tmpsum,dstak(loc))
+C
+C     call scala(npoin,tmpsou3,dstak(loc))
+C
+      call istkrl(1)
+      call SOLZNE('file030.dat',tmpconv,1,NPOIN,'w')
+      call SOLZNE('file031.dat',tmpdif1,1,NPOIN,'w')
+      call SOLZNE('file032.dat',tmpdif2,1,NPOIN,'w')
+      call SOLZNE('file033.dat',tmpsou1,1,NPOIN,'w')
+      call SOLZNE('file034.dat',tmpsou2,1,NPOIN,'w')
+      call SOLZNE('file036.dat',tmpdiff,1,NPOIN,'w')
+      call SOLZNE('file037.dat',tmpsum,1,NPOIN,'w')
+C     call SOLZNE('file035.dat',tmpsou3,1,NPOIN,'w')
+      stop
+#endif
+#ifdef DEBUG
+      call SOLZNE('vorticity.dat',vort,1,NELEM,'w')
+      call SOLZNE('stilde.dat',stilde,1,NELEM,'w')
+      STOP
+#endif
+C
+C     Must assembly RHS now, since a call to VecSetValues()
+C     with the INSERT_VALUES option will follow in rhsbc1()
+C
+      CALL VecAssemblyBegin(rhs,IFAIL)
+      CALL VecAssemblyBegin(dt,IFAIL)
+      CALL MatAssemblyBegin(B,MAT_FINAL_ASSEMBLY,IFAIL)
+      CALL VecAssemblyEnd(rhs,IFAIL)
+      CALL VecAssemblyEnd(dt,IFAIL)
+      CALL MatAssemblyEnd(B,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+C
+C     set boundary conditions on the r.h.s.
+C
+C     Applies boundary conditions to the nodal residual (RHS Vector)
+C
+      LIWORK = ISTKGT(NPOIN6,2)
+      LRWORK = ISTKGT(NPOIN6,4)
+      CALL RHSBC5(NPOIN,NDIM,RHS,ISTAK(LIWORK),DSTAK(LRWORK),
+     +            ISTAK(LNODCOD))
+      CALL ISTKRL(2) 
+c
+      RETURN
+
+  200 FORMAT (5X,'Error on scalar residual in ELEM # ',I6,/,12X,'true',
+     +       17X,'computed',14X,'error',/,3 (10X,D12.5))
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d79 1
+d125 2
+a173 2
+      CALL DINIT(NPOIN,ZERO,DSTAK(LPROD),1) 
+      CALL DINIT(NPOIN,ZERO,DSTAK(LDEST),1) 
+d263 2
+a264 2
+         s1=PROD*volume
+         s2=DEST*volume
+d478 1
+@

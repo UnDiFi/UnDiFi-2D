@@ -1,0 +1,521 @@
+head	1.15;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.15
+	release3_13_0:1.15
+	release3_12_0:1.15
+	release3_11_0:1.15
+	release3_10_0:1.15
+	release3_8_0:1.15
+	release3_7_1:1.14
+	release3_7_0:1.14
+	release3_4_5:1.13
+	release3_4_4:1.13
+	release3_4_3:1.13
+	release3_4_2:1.13
+	release3_4_1:1.13
+	release3_4_0:1.13
+	release3_3_5:1.13
+	release3_3_4:1.13
+	release3_3_3:1.13
+	release3_3_2:1.13
+	release3_3_1:1.12
+	release3_3_0:1.11;
+locks; strict;
+comment	@c @;
+
+
+1.15
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.01.29.14.40.49;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.01.26.11.42.18;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2012.08.09.07.31.58;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.03.30.09.05.21;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.07.09.07.55.12;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2004.02.24.21.22.26;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.08.18.13.50.05;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.08.14.15.36.25;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.08.14.13.47.08;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.06.23.16.37.40;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@isothermal wall boundary conditions
+@
+
+
+1.15
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@!> \details
+!> @@param[in] A is the PETSc jacobian matrix
+!> @@param[in] X is the FORTRAN vector of CONSERVED variables
+!> @@param[in] NodalBcs is the PETSc IS where nodal bndry conditions are stored
+!> @@param[in] IBGN the order of the system to be solved
+!> @@param[in] NDIM the dimension of the space
+!> @@param[in] NOFVAR nof degrees of freedom within each gridpoint
+!> @@param[in] COMPRESSIBLE is currently unused
+C
+      subroutine isothwall(A,X,NodalBcs,IBGN,NDIM,NOFVAR,COMPRESSIBLE)
+C
+C     $Id: lhsbc6.F,v 1.14 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C     set b.c. for isothermal wall nodes in the Jacobian
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscis.h"
+      use petscvec
+      use petscmat
+      use petscis
+C
+      implicit none
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+      INCLUDE 'pfcgas.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'visco.com'
+C
+C
+C  Input/output parameters:
+      double precision x(*)
+      integer     NDIM,NOFVAR,IBGN
+      Mat A
+      PetscOffset i_is
+      IS, dimension(0:*) :: NodalBcs
+      LOGICAL COMPRESSIBLE
+
+C  Local variables:
+      integer maxcols
+      parameter(maxcols=5)
+      double precision alpha,y(maxcols),help
+      integer     iloc,i,IFAIL,nrows,irow(maxcols),icol(maxcols)
+      integer     is_array(1)
+C
+C
+      ALPHA = RSTAR*TWALL/GM1
+C
+      call ISGetIndices(NodalBcs(Isothermal),is_array,i_is,IFAIL)
+      call ISGetSize(NodalBcs(Isothermal),Nrows,IFAIL)
+C
+      DO 1 I = 1, Nrows
+         irow(1) = is_array(i_is + I)
+         icol(1) = irow(1)-1
+         iloc = irow(1) - IBGN + 1! local node numbering: adds one because FORTRAN based
+         help = -X(iloc)/X(iloc-1)
+C
+C        help equals alpha as long as the initial temperature on the walls is twall
+C        this is not any longer true when restarting from a solution with a different twall
+C
+!        y(1) = -alpha
+         y(1) =  help
+!        write(6,*)I,'i = ',irow(1),'j = ',icol(1),y(1),help,ibgn
+         CALL MatSetValues(A,1,irow,1,icol,y,INSERT_VALUES,IFAIL)
+    1 CONTINUE 
+C
+C
+      CALL ISRestoreIndices(NodalBcs(Isothermal),is_array,i_is,IFAIL)
+C
+C
+      RETURN
+      END
+@
+
+
+1.14
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d4 1
+d10 1
+a10 1
+      subroutine isothwall(A,X,IBGN,NDIM,NOFVAR,COMPRESSIBLE)
+d12 1
+a12 1
+C     $Id: lhsbc6.F,v 1.13 2013/01/29 14:40:49 abonfi Exp abonfi $
+a15 3
+      implicit none
+C
+#include "petsc/finclude/petscsys.h"
+d19 5
+d26 1
+d28 1
+a28 1
+      INCLUDE 'constants.h'
+a32 1
+#include "iset.com"
+d39 1
+a47 1
+      double precision vals(maxcols)
+d52 2
+a53 2
+      call ISGetIndices(Isothermal,is_array,i_is,IFAIL)
+      call ISGetSize(Isothermal,Nrows,IFAIL)
+d67 1
+a67 1
+         CALL MatSetValues(A,1,irow,1,icol(1),y(1),INSERT_VALUES,IFAIL)
+d71 1
+a71 1
+      CALL ISRestoreIndices(Isothermal,is_array,i_is,IFAIL)
+@
+
+
+1.13
+log
+@The adiabatic index is now a variable, not any longer a parameter
+@
+text
+@d11 1
+a11 1
+C     $Id: lhsbc6.F,v 1.12 2013/01/26 11:42:18 abonfi Exp abonfi $
+d17 4
+a20 4
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscis.h"
+@
+
+
+1.12
+log
+@changed the name of an included header file
+@
+text
+@d11 1
+a11 1
+C     $Id: lhsbc6.F,v 1.11 2012/08/09 07:31:58 abonfi Exp abonfi $
+d25 2
+a27 1
+      INCLUDE 'stream.com'
+@
+
+
+1.11
+log
+@Now handle the case when the initial wall temperature
+is NOT the one prescribed be the bcs
+@
+text
+@d11 1
+a11 1
+C     $Id: lhsbc6.F,v 1.10 2011/09/16 07:19:48 abonfi Exp abonfi $
+d24 1
+a24 1
+      INCLUDE 'constants'
+@
+
+
+1.10
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d1 8
+d11 1
+a11 1
+C     $Id: lhsbc6.F,v 1.9 2011/03/30 09:05:21 abonfi Exp abonfi $
+d13 1
+a13 1
+C     set b.c. for adiabatic wall nodes in the Jacobian
+a19 1
+#include "finclude/petscksp.h"
+a20 1
+#include "finclude/petscts.h"
+d33 1
+a33 1
+      Mat              A
+d39 3
+a41 3
+      parameter(maxcols=50)
+      double precision alpha,y(maxcols)
+      integer          i,IFAIL,nrows,irow(maxcols),icol(maxcols)
+a45 1
+C     ALPHA = TWALL/GAM/GM1/(M_infty*M_infty)
+d54 9
+a62 2
+         y(1) = -alpha
+!     write(6,*)I,'i = ',irow(1),'j = ',icol(1),y(1)
+a68 9
+caldo
+c     irow(2) = 487*4
+c     DO 2 I = 0, 3
+c        irow(1) = irow(2)+I
+c        call MatGetRow(A,irow(1),ncols,icol,vals,IFAIL)
+c        write(6,*)irow(1),(icol(j),vals(j),j=1,ncols)
+c        call MatRestoreRow(A,irow(1),ncols,icol,vals,IFAIL)
+c   2 continue
+c     stop
+@
+
+
+1.9
+log
+@now referencing the non-dimensional gas constant RSTAR
+@
+text
+@d3 1
+a3 1
+C     $Id: lhsbc6.F,v 1.8 2009/06/11 13:10:58 abonfi Exp abonfi $
+d9 1
+a9 1
+#include "finclude/petsc.h"
+@
+
+
+1.8
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d3 1
+a3 1
+C     $Id: lhsbc6.F,v 1.7 2005/07/09 07:55:12 aldo Exp abonfi $
+d40 2
+a41 1
+      ALPHA = TWALL/GAM/GM1/(M_infty*M_infty)
+d50 1
+a50 1
+!     write(6,*)I,'i = ',irow(1),'j = ',icol(1),alpha
+@
+
+
+1.7
+log
+@removed reference to PETSc SLES
+@
+text
+@d3 1
+a3 1
+C     $Id: lhsbc6.F,v 1.6 2004/02/24 21:22:26 abonfi Exp $
+d9 6
+a14 6
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscksp.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscts.h"
+@
+
+
+1.6
+log
+@removed MatSetValuesLocal
+@
+text
+@d3 1
+a3 1
+C     $Id: lhsbc6.F,v 1.5 2000/10/19 16:10:34 aldo Exp aldo $
+a11 1
+#include "include/finclude/petscsles.h"
+@
+
+
+1.5
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d3 1
+a3 1
+C     $Id: lhsbc6.F,v 1.4 2000/08/18 13:50:05 aldo Exp aldo $
+d47 1
+a47 1
+         irow(1) = is_array(i_is + I)-IBGN
+d50 1
+a50 4
+#ifdef MPI
+         CALL MatSetValuesLocal(A,1,irow,1,icol(1),y(1),INSERT_VALUES,
+     &                          IFAIL)
+#else
+a51 1
+#endif
+@
+
+
+1.4
+log
+@introduced starting row number
+@
+text
+@d3 1
+a3 1
+C     $Id: lhsbc6.F,v 1.3 2000/08/14 15:36:25 aldo Exp aldo $
+d10 6
+a15 6
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/sles.h"
+#include "include/finclude/ksp.h"
+#include "include/finclude/is.h"
+#include "include/finclude/ts.h"
+@
+
+
+1.3
+log
+@brought calls to MatZeroRows into the calling routine
+@
+text
+@d1 1
+a1 1
+      subroutine isothwall(A,X,NDIM,NOFVAR,COMPRESSIBLE)
+d3 1
+a3 1
+C     $Id: lhsbc6.F,v 1.2 2000/08/14 13:47:08 aldo Exp aldo $
+d27 1
+a27 1
+      integer     NDIM,NOFVAR
+d36 1
+a36 2
+      integer          i,IFAIL,nrows,ncols,irow(maxcols),icol(maxcols),j
+      PetscOffset      i_x
+a37 3
+      Scalar           x_array(1)
+      PLogDouble       tbeg,tend
+      integer cols(maxcols)
+d47 1
+a47 1
+         irow(1) = is_array(i_is + I)
+@
+
+
+1.2
+log
+@the final Matrix Assembly has been moved to the
+calling routine
+@
+text
+@d3 1
+a3 1
+C     $Id: isothwall.F,v 1.1 2000/06/23 16:37:40 aldo Exp aldo $
+a44 4
+C     MUST do a FINAL_ASSEMBLY, NOT FLUSH_ASSEMBLY otherwise 
+C     MatZeroRows will complain
+C
+C
+a45 8
+C
+C     diagonal element corresponding to the energy eqn.
+C
+#ifdef MPI
+      call MatZeroRowsLocal(A,Isothermal,1.d0,IFAIL)
+#else
+      call MatZeroRows(A,Isothermal,1.d0,IFAIL)
+#endif
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      subroutine AdbWall(A)
+d3 1
+a3 1
+C     $Id$
+a13 1
+C#include "include/finclude/pc.h"
+d26 2
+a27 1
+      double precision t,dtmin
+a28 1
+      integer     is_array(1)
+d30 1
+d38 1
+a73 1
+      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+d75 1
+a75 1
+C     CALL ISRestoreIndices(Isothermal,is_array,i_is,IFAIL)
+a76 1
+      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+d78 8
+a85 6
+C     DO 2 I = 1, Nrows
+C        irow(1) = is_array(i_is + I)
+C        call MatGetRow(A,irow(1),ncols,icol,vals,IFAIL)
+C        write(6,*)irow(1),(icol(j),vals(j),j=1,ncols)
+C        call MatRestoreRow(A,irow(1),ncols,icol,vals,IFAIL)
+C   2 continue
+a86 2
+      CALL ISRestoreIndices(Isothermal,is_array,i_is,IFAIL)
+c     stop
+@

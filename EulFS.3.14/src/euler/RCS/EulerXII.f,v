@@ -1,0 +1,773 @@
+head	1.7;
+access;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.7
+	release3_11_0:1.7
+	release3_10_0:1.7
+	release3_8_0:1.7
+	release3_7_1:1.7
+	release3_7_0:1.6
+	release3_4_5:1.6
+	release3_4_4:1.6
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.4
+	release3_3_5:1.3
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.7
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.01.30.17.16.33;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.06.08.09.35.32;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.06.04.12.44.34;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.05.09.10.48.41;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.02.06.07.37.26;	author tesistim;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.26.12.23.11;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@driver routine for solving plasma flow in conservation variables
+@
+
+
+1.7
+log
+@renamed subroutine call
+@
+text
+@!> \copydetails EulerIX()
+      SUBROUTINE EulerXII(IELEM,VCN,VCB,VCZ,NDIM,NOFVERT,NOFVAR,
+     &                    NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     &                    ScalarScheme,MatrixScheme)
+C
+      IMPLICIT NONE 
+C
+C     Unsteady equations in conserved variables ..
+C
+C     $Id: EulerXII.f,v 1.6 2014/01/30 17:16:33 abonfi Exp abonfi $
+C
+C
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'time.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'plasma.h'
+C
+C     NEQMAX is the max. no. of equations (5 in 3D)
+C            for the matrix scheme (solves for conserved vars.)
+C     MAXNOFEQN is the max. no. of mean flow equations (5 in 3D)
+C
+C
+      DOUBLE PRECISION SOURCECHEM(NSP),PRESS,MAXDAM,SOURCEEN
+      INTEGER NEQMAX,LNNVV
+      DOUBLE PRECISION TOLER
+      PARAMETER (NEQMAX=MAXNOFEQN,TOLER=1.D-15)
+      PARAMETER (LNNVV=NMAX*NMAX*MAXNOFVERT*MAXNOFVERT)
+      INTEGER IWRK,FRSTEQ
+      PARAMETER(IWRK=10,FRSTEQ=1)
+      INTEGER MOVE(IWRK)
+C
+C
+      INCLUDE 'dofs.com'
+      INCLUDE 'three.com'
+      INCLUDE 'time.com'
+      INCLUDE 'transf.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'bodyf.com'
+      INCLUDE 'commonchem.inc'
+      INCLUDE 'tauchem.com'
+C
+C
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,ISP
+C
+C
+      EXTERNAL ScalarScheme,MatrixScheme
+C
+C
+      INTEGER IVAR,IVERT,JVERT,NTURB,IDIM,IADD,JADD,KADD
+      INTEGER NORDER,ifail,M,N,N4,JCOL
+      DOUBLE PRECISION FLUCT,SCALRES,ESQR
+      LOGICAL LFLAG,PICARD
+C
+C
+      DOUBLE PRECISION VCZ(*),VCN(*),VOLUME(*),
+     +                 STIFEL(*),NODRES(*),TSTEP(*),VCB(*)
+C
+C
+C
+      DOUBLE PRECISION CONSV(MAXNOFEQN*MAXNOFVERT),
+     2                DCONSV(MAXNOFEQN*MAXNOFVERT),
+     3       TAUX(MAXNOFEQN*MAXNOFVERT),SOURCE(MAXNOFVAR),
+     4       Jacobian(NEQMAX,NEQMAX*3),
+     5       TEMPA((MAXNOFEQN*MAXNOFVERT)**2),
+     6       TEMPB((MAXNOFEQN*MAXNOFVERT)**2),
+     7       BETA(MAX_NOFVERT_SQR*MAXNOFEQN*MAXNOFEQN),
+     8       PHI(NEQMAX),RESIDUAL(2*NEQMAX),DAMK(NSP),
+     9       STIFC(MAXNOFVERT*MAXNOFVERT*NEQMAX*NEQMAX)
+         DOUBLE PRECISION HELP,SUMK,ULOCAL,HEIGHT 
+C
+C     NOFEQN (= DIM+2) is actual no. of mean flow equations
+C     NORDER (= DIM+2) is actual no. of equations being solved
+C                      with the system scheme
+C
+      INTEGER NOFEQN,ORDSQR
+C
+C     RESIDUAL[1:NORDER] stores the residual computed by
+C                        the Matrix scheme as \sum K_j U_j
+C     RESIDUAL[NORDER+1:2*NORDER]
+C                        stores the residual computed by
+C                        the Matrix scheme as \sum C_{ij} U_j
+C     it is used just for debugging purposes, to be compared with
+C     the residual computed as:
+C     dF/dU * dU/dX + dG/dU * dU/dy + [ dH/dU * dU/dz ]
+C
+C
+      DOUBLE PRECISION DDOT,DNRM2,PRESS4Ar,OHMHEAT
+      EXTERNAL DNRM2,DDOT,OHMHEAT
+      EXTERNAL PRESS4Ar
+!      INTEGER CHEM
+C
+      EXTERNAL MatSplitNum,MatSplitXII
+C
+      DATA SOURCE/MAXNOFVAR*ZERO/
+C
+C
+C     Statement function
+C
+      INTEGER JADDR
+      JADDR(IVERT,JVERT,N) = (((JVERT-1)*NOFVERT+IVERT-1)*N*N) + 1
+C
+C
+      NORDER = NDIM + NSP + 1
+      NOFEQN = NDIM + NSP + 1
+      ORDSQR = NOFEQN*NOFEQN
+      N4 = NOFVAR*NOFVAR*NOFVERT*NOFVERT
+C
+!     CALL R8Mat_Print('G',' ',NOFVAR,Nofvert,VCZ,NOFVAR,
+!    +      'Nodal values of the Z variables ',IFAIL)
+      CALL PARM2PRIM4Ar(NDIM,IELEM)
+!     write(6,*)'<Z>',ielem,(ZAVG(jcol),jcol=1,NORDER)
+!     write(6,*)'<U>',ielem,(UAVG(jcol),jcol=1,NORDER)
+C
+C     The element stiffness matrix is initialized to 0.d0
+C
+      IF (PICARD) THEN
+          CALL DINIT(N4,ZERO,STIFEL,1)
+          CALL DINIT((NORDER*NOFVERT)**2,ZERO,STIFC,1)
+      ENDIF
+C
+C     set local residual and timestep to zero (should maybe bring it
+C     in the calling routine)
+C
+      CALL DINIT(NOFVERT*NOFEQN,ZERO,DCONSV,1)
+      CALL DINIT(NOFVERT*NORDER,ZERO,TAUX,1)
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.EQ.0) GOTO 7
+C
+C    Some initializations ....
+C
+      CALL DINIT(NORDER,ZERO,PHI,1)
+      CALL CHECK(IELEM,NDIM,NOFEQN)
+C
+C
+C     The Jacobian Matrix of the subsystem is assembled and
+C         the eigenvectors computed ..
+C
+      CALL Eigen_XII(Jacobian,NEQMAX,dVdZ,dUdV,NDIM,NOFEQN)
+C
+C
+C     COMPUTES THE RESIDUAL/VOLUME as:
+C     dF/dU * dU/dX + dG/dU * dU/dy + [ dH/dU * dU/dz ]
+C     for debugging purposes
+C
+      DO 11 idim = 1,NDIM
+          jcol = (idim-1)*NEQMAX + 1
+          CALL DGEMV('N',NORDER,NORDER,ONE,Jacobian(1,jcol),NEQMAX,
+     +               GRAD_CHAR(FrstEq,idim),1,ONE,PHI,1)
+    
+   11 CONTINUE
+C
+C     passing this test ensures that the gradient of the
+C     conserved variables and the jacobian matrix
+C     in conserved variables are computed correctly
+C     withing subr. eigen_XII
+C
+C     CALL TEST(DivFlux,PHI,TOLER,IELEM,NOFEQN)
+C
+C --------------- Debugging code ends here ---------------
+C
+    7 CONTINUE
+C
+C
+C     The quasi linear form we discretize is in
+C     conservation variables CONSV = (r,rE,ru,rvrw)
+C
+C
+C     conserved variables are computed through the relation
+C     \U_j = M Z_j
+C
+C     where M = \frac{\partial U}{\partial Z}
+C
+C
+      CALL PARM2CONS4Ar(ZAVG,DVDZ,NOFEQN,NDIM)
+      CALL DGEMM('NoTranspose','NoTranspose',NOFEQN,NOFVERT,NOFEQN,
+     +           ONE,dVdZ,NOFEQN,VCZ,NOFVAR,ZERO,CONSV,NOFEQN)
+C
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,dVdZ,NOFEQN,
+!    +      'Matrice di trasformazione',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFEQN,Nofvert,CONSV,NOFEQN,
+!    +      'Nodal values of the CONS variables ',IFAIL)
+!     pause
+C
+C     ---------- Matrix scheme ----------
+C
+C     If CHEM=1 the Source term is ON
+C     If CHEM=~1 the Source term is OFF
+C
+!     *************************************
+!     N.B. Inserire if(Plasma) esterno 
+!          a if(Chem.eq.1) 
+!     ************************************
+
+!      IF(PLASMA)THEN
+C
+      IF (CHEM.EQ.1)THEN
+C
+          PRESS = PRESS4Ar(NDIM,ZAVG)      
+C
+          CALL CHEMSOURCE(ZAVG,PRESS,SOURCECHEM)       
+C
+          DO ISP = 1 , NSP
+              SOURCE(ISP) = -SOURCECHEM(ISP)*VOLUME(1)
+!              write(6,*)'SOURCE=',ISP,SOURCE(ISP)
+          ENDDO
+          IF (OHM.EQ.1)THEN              
+              ESQR = DDOT(NDIM,GRAD_PARM(NOFVAR,1),NOFVAR,
+     &                         GRAD_PARM(NOFVAR,1),NOFVAR)
+              SOURCEEN = OHMHEAT(ZAVG,PRESS,ESQR,NDIM,NOFVAR)
+              SOURCE(IE) = -SOURCEEN*VOLUME(1)
+          ELSE         
+              SOURCE(IE) = ZERO
+          ENDIF         
+          SOURCE(IX) = ZERO
+          SOURCE(IY) = ZERO
+          IF(NDIM.EQ.3)SOURCE(IZ) = ZERO
+C
+      ELSE ! CHEM = 0 
+          DO ISP = 1 , NOFVAR
+              SOURCE(ISP) = ZERO
+          ENDDO
+      ENDIF  
+C
+C
+      CALL MatrixScheme(MatSplitXII,CONSV(1),DCONSV(1),TAUX(1),
+     +                  BETA,STIFEL,NORDER,NORDER,NOFVERT,VCN,NDIM,
+     +                  Jacobian,NEQMAX,RESIDUAL,SOURCE,IELEM,PICARD)
+C
+C
+C     compute the timestep
+C
+      DO IVERT = 1, NOFVERT ! loop over the vertices
+         IADD = (IVERT-1)*NORDER
+         HELP = ZERO 
+C
+C     sum over the dofs
+C
+         DO IVAR = 1,NORDER
+            JADD = IADD + IVAR
+            IF( CHAR_TIMESTEPPING )THEN
+               HELP = MAX(HELP,TAUX(JADD)) ! take the maximum
+            ELSE
+               HELP = HELP + TAUX(JADD) ! sum up
+            ENDIF
+         ENDDO
+         DO IVAR = 1,NORDER
+            JADD = IADD + IVAR
+            TAUX(JADD) = HELP
+         ENDDO
+      ENDDO ! loop over vertices
+      IF( CHAR_TIMESTEPPING )THEN  
+  
+!      OPEN(12,FILE='fort.12')
+C
+!      cell lenght scale
+C      h = (Vol * |u|)/(sum k_j^+)
+         SUMK = ZERO
+         DO IVERT = 1, NOFVERT
+            HELP = DDOT(NDIM,VCN((IVERT-1)*NDIM+1),1,UAVG(IX),1)
+            SUMK = SUMK + MAX(ZERO,HELP)
+         ENDDO
+         HELP = REAL(NDIM)
+         SUMK = SUMK/HELP ! SUMK = (u \cdot n_j )/d
+         ULOCAL = DNRM2(NDIM,UAVG(IX),1)
+         HEIGHT = VOLUME(1) * ULOCAL / SUMK
+!      write(13,*)IELEM,'cell size=',HEIGHT
+!      pause
+!      HEIGHT = ONE
+
+!     Damkohler number  (Da_i = S_i*L/(u*\rho_i))
+!        MAXDAM=10.0d0
+         DO ISP = 1, NSP
+!           DAMK(ISP)=SOURCECHEM(ISP)/(ULOCAL*UAVG(ISP))        
+!           DAMK(ISP)=abs(DAMK(ISP))*HEIGHT ! /(1.0d0 - 1.0d0/exp(1.0d0)
+!           WRITE(6,*)'DAMK(',ISP,') before=',DAMK(ISP)           
+           DAMK(ISP)=HEIGHT/ULOCAL/TAU(ISP)    
+!           WRITE(6,*)'DAMK(',ISP,') after=',DAMK(ISP)                     
+         ENDDO
+
+!         pause
+!       WRITE(12,*)IELEM,HEIGHT,MAXDAM
+!      WRITE(12,*)IELEM,(DAMK(ISP),ISP=1,NSP)
+      
+C
+C     Time step scaling      
+C
+         DO IVERT = 1, NOFVERT
+            IADD = (IVERT-1)*NOFEQN
+            DO ISP = 1,NSP 
+               IF (DAMK(ISP).GT.ONE)THEN
+                  TAUX(IADD+ISP) = TAUX(IADD+ISP)*DAMK(ISP)
+               ENDIF
+            ENDDO
+         ENDDO
+      ENDIF ! test on char_timestepping
+
+!     CALL R8Mat_Print('G',' ',NOFEQN,nofvert,TAUX,
+!    +            NOFEQN,'Nodal timestep ',IFAIL)
+C
+C     add DCONSV to NODRES and
+C     copy the timestep from TAUX into TSTEP (update)
+C     could we call MatrixScheme passing NODRES ?????
+C     should we really add or just insert ?!?!
+C
+      DO 16 IVERT = 1, NOFVERT
+         IADD = (IVERT-1)*NOFEQN
+         JADD = (IVERT-1)*NOFVAR
+         DO 16 IVAR = 1, NOFEQN
+            TSTEP(JADD+IVAR) = TSTEP(JADD+IVAR) + TAUX(IADD+IVAR)
+            NODRES(JADD+IVAR) = NODRES(JADD+IVAR) + DCONSV(IADD+IVAR)
+   16 CONTINUE
+C
+      IF(LTIME)THEN
+         DTVOL = DELT/VOLUME(1)
+         DO IVERT = 1, NOFVERT
+             IADD = (IVERT-1)*NOFVAR+1 ! must be NOFVAR for RANS when NOFVAR != NOFEQN
+             JADD = (IVERT-1)*ORDSQR+1 
+             CALL PARM2CONS4Ar(VCZ(IADD),TEMPA(JADD),NOFEQN,NDIM)
+         ENDDO
+C
+!     CALL R8Mat_Print('G',' ',Norder,norder*nofvert,tempa,Norder,
+!    +      'dudz ',IFAIL)
+!          pause
+C
+         IF(DUALTS)
+     &   CALL UNSTEADY4(TEMPA,BETA,VCZ,NOFVAR,NODRES,STIFEL,VOLUME,
+     &                  NORDER,NDIM,NOFVERT,PICARD)
+C
+!     CALL R8Mat_Print('G',' ',Norder,norder*nofvert,tempa,Norder,
+!    +      'dudz ',IFAIL)
+C
+      ENDIF
+C
+!     write(6,*)'ielem = ',ielem
+!     CALL R8Mat_Print('G',' ',Norder,norder*nofvert,beta,Norder,
+!    +      'beta(U) ',IFAIL)
+C
+!     CALL R8Mat_Print('G',' ',NOFEQN,nofvert,NODRES,
+!    +            NOFEQN,'Nodal update in U',IFAIL)
+      IF(PICARD)CALL DSCAL(N4,-ONE,STIFEL,1)
+C
+C     CALL R8Mat_Print('G',' ',Norder,2,residual,Norder,
+C    +      'residual ',IFAIL)
+C     CALL R8Mat_Print('G',' ',Nofvar,Nofvert,consv,Nofvar,
+C    +      'cons. vars. ',IFAIL)
+!     CALL R8Mat_Print('G',' ',Nofvar,Nofvert,dconsv,Nofvar,
+!    +      'update ',IFAIL)
+!     pause
+C
+C --------------- Debugging code starts here ---------------
+C
+C    Checks the decomposition ..
+C
+      IF (ICHECK.NE.0) THEN
+          CALL DSCAL(2*NORDER,ONE/VOLUME(1),RESIDUAL,1)
+          LFLAG = .TRUE.
+          DO 18 IVAR = 1,NORDER
+              IF (DABS(PHI(IVAR)-RESIDUAL(IVAR)).GT.
+     +            TOLER) LFLAG = .FALSE.
+   18     CONTINUE
+          IF (LFLAG .EQV. .FALSE.) THEN
+              WRITE (6,99999) IELEM
+              DO 22 IVAR = 1,NORDER
+                  WRITE (6,*) PHI(IVAR),RESIDUAL(IVAR),
+     +              DABS(PHI(IVAR)-RESIDUAL(IVAR))
+   22         CONTINUE
+C           PAUSE 'ehi ! you!'
+C
+          ENDIF
+C
+C     test the residual as computed by the "explicit" scheme
+C
+          CALL TEST(DivFlux,RESIDUAL,TOLER,IELEM,NOFEQN)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C
+C --------------- If explicit, return now  ---------------
+C
+      IF (.NOT.PICARD) RETURN
+C
+C     Add the element stiffness matrix to the global stiffness matrix
+C
+C
+C     transform the element stiffness matrix into conserved variables
+C
+      IF(ICHECK.NE.0)THEN
+caldo IF( NOFVAR .EQ. NOFEQN )THEN
+caldo     CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+caldo+               NOFVAR*NOFVERT*NOFVERT,NOFVAR,-ONE,dUdV,
+caldo+               NOFVAR,STIFEL,NOFVAR,ZERO,TEMPA,NOFVAR)
+caldo ELSE
+          CALL DINIT(NOFEQN*NOFVAR,ZERO,TEMPB,1)
+          DO 14 IVERT = 1, NOFVERT
+                  IADD = (IVERT-1)*NOFEQN
+          DO 13 JVERT = 1, NOFVERT
+                  IF(JVERT.EQ.IVERT)GOTO 13
+                  JADD = (JVERT-1)*NOFEQN
+                  KADD = JADDR(IVERT,JVERT,NOFVAR)
+                  DO IVAR = 1,NOFEQN
+                     TEMPA(IADD+IVAR) = CONSV(JADD+IVAR)-
+     &                                  CONSV(IADD+IVAR)
+                  ENDDO
+          CALL DGEMV('NoTranspose',NOFEQN,NOFEQN,ONE,STIFEL(KADD),
+     +               NOFVAR,TEMPA(IADD+1),1,ONE,TEMPB(IADD+1),1)
+   13     CONTINUE
+caldo     do ivar = 1,nofeqn
+caldo        write(6,*)ivar,TEMPB(IADD+IVAR),dconsv(iadd+ivar)
+caldo     enddo
+   14     CONTINUE
+caldo ENDIF
+      CALL DINIT(NOFEQN*NOFVAR,ZERO,TEMPA,1)
+      DO 15 IVERT = 1, NOFVERT
+         IADD = (IVERT-1)*NOFEQN
+         CALL DAXPY(NOFEQN,MONE/VOLUME(1),TEMPB(IADD+1),1,TEMPA,1)
+   15 CONTINUE
+caldo do ivar = 1,nofeqn
+caldo   write(6,*)ivar,TEMPA(IVAR),residual(ivar),divflux(ivar)
+caldo enddo
+      CALL TEST(DivFlux,TEMPA,TOLER,-100*IELEM,NOFEQN)
+      PAUSE 'check passed'
+      GOTO 747
+C
+C
+caldo CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN*nofvert,tempb,NOFEQN,
+caldo+      'TEMPB ',IFAIL)
+caldo pause
+C
+          DO 35 IVERT = 1,NOFVERT
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+          DO 35 JVERT = 1,NOFVERT
+                  JADD = (JVERT-1)*NOFEQN*NOFEQN + 1
+                  KADD = JADDR(IVERT,JVERT,NOFEQN)
+C
+C
+!     write(6,*)ivert,jvert
+!     CALL R8Mat_Print('G',' ',Nofvar,Nofvar,stifel(iadd),Nofvar,
+!    +      'C(i,j) ',IFAIL)
+C
+   35     CONTINUE
+!     pause
+C
+  747 continue
+      ENDIF
+C
+      IF (ICHECK.EQ.0) RETURN
+C
+C --------------- Debugging code starts here ---------------
+C
+C     test the residual as computed by the "implicit" scheme
+C
+      CALL TEST(DivFlux,RESIDUAL(NORDER+1),TOLER,-IELEM,NOFEQN)
+C
+C --------------- Debugging code ends here ---------------
+C
+      RETURN
+
+99999 FORMAT (5X,'Vector residual in Element ',I6,' EulerVII')
+
+      END
+@
+
+
+1.6
+log
+@VOLUME is now a F77 array
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerXII.f,v 1.5 2013/06/08 09:35:32 abonfi Exp abonfi $
+d110 1
+a110 1
+!     CALL X04CAF('G',' ',NOFVAR,Nofvert,VCZ,NOFVAR,
+d182 1
+a182 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dVdZ,NOFEQN,
+d184 1
+a184 1
+!     CALL X04CAF('G',' ',NOFEQN,Nofvert,CONSV,NOFEQN,
+d301 1
+a301 1
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,TAUX,
+d325 1
+a325 1
+!     CALL X04CAF('G',' ',Norder,norder*nofvert,tempa,Norder,
+d333 1
+a333 1
+!     CALL X04CAF('G',' ',Norder,norder*nofvert,tempa,Norder,
+d339 1
+a339 1
+!     CALL X04CAF('G',' ',Norder,norder*nofvert,beta,Norder,
+d342 1
+a342 1
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,NODRES,
+d346 1
+a346 1
+C     CALL X04CAF('G',' ',Norder,2,residual,Norder,
+d348 1
+a348 1
+C     CALL X04CAF('G',' ',Nofvar,Nofvert,consv,Nofvar,
+d350 1
+a350 1
+!     CALL X04CAF('G',' ',Nofvar,Nofvert,dconsv,Nofvar,
+d430 1
+a430 1
+caldo CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,tempb,NOFEQN,
+d442 1
+a442 1
+!     CALL X04CAF('G',' ',Nofvar,Nofvar,stifel(iadd),Nofvar,
+@
+
+
+1.5
+log
+@Added the ohmic source term
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerXII.f,v 1.2 2013/02/06 07:37:26 tesistim Exp abonfi $
+d57 1
+a57 1
+      DOUBLE PRECISION VCZ(*),VCN(*),VOLUME,
+d207 1
+a207 1
+              SOURCE(ISP) = -SOURCECHEM(ISP)*VOLUME
+d214 1
+a214 1
+              SOURCE(IE) = -SOURCEEN*VOLUME   
+d269 1
+a269 1
+         HEIGHT = VOLUME * ULOCAL / SUMK
+d318 1
+a318 1
+         DTVOL = DELT/VOLUME
+d330 2
+a331 2
+     &   CALL UNSTEADY4(TEMPA,BETA,VCZ,NOFVAR,NODRES,STIFEL,NORDER,NDIM,
+     &                  NOFVERT,PICARD)
+d359 1
+a359 1
+          CALL DSCAL(2*NORDER,ONE/VOLUME,RESIDUAL,1)
+d420 1
+a420 1
+         CALL DAXPY(NOFEQN,-ONE/VOLUME,TEMPB(IADD+1),1,TEMPA,1)
+@
+
+
+1.4
+log
+@scales timestep by Dahmkolher number
+@
+text
+@d25 1
+a25 1
+      DOUBLE PRECISION SOURCECHEM(NSP),PRESS,MAXDAM
+d53 1
+a53 1
+      DOUBLE PRECISION FLUCT,SCALRES
+d89 2
+a90 2
+      DOUBLE PRECISION DDOT,DNRM2,PRESS4Ar
+      EXTERNAL DNRM2,DDOT
+d210 8
+a217 1
+          SOURCE(IE) = ZERO
+a220 7
+!         ELSE 
+!            SOURCE(IE) = -GRAV(1)*VOLUME
+!            SOURCE(IX) = -GRAV(1)*VOLUME
+!            IF(NDIM.EQ.3)SOURCE(IY) = -GRAV(3)*VOLUME  
+!         ENDIF 
+C
+!      ELSEIF((COMPRESSIBLE).OR.(INCOMPRESSIBLE))THEN 
+@
+
+
+1.3
+log
+@charcteristic timestepping
+@
+text
+@d25 1
+a25 1
+      DOUBLE PRECISION SOURCECHEM(NSP),PRESS
+d42 1
+d256 2
+d259 2
+a260 20
+C     DAMKOHLER NUMBER 
+C
+!        ZRHO = 0.0d0
+!        DO ISP = 1, NSP
+!          ZRHO = RHO + ZAVG(ISP)
+!        ENDDO  
+!     density
+!        RHO = ZRHO*ZRHO  
+
+!     flow speed       
+!        UU = (ZAVG(IX)*ZAVG(IX) + ZAVG(IY)*ZAVG(IY))/RHO
+!        IF(NDIM.EQ.3)THEN
+!          UU = UU + ZAVG(IZ)*ZAVG(IZ)/RHO
+!        ENDIF
+!        UU = SQRT(UU)
+
+!     cell lenght scale
+C     h = (Vol * |u|)/(sum k_j^+)
+C
+!        CALL PARM2PRIM4Ar(NDIM,IELEM)
+d275 1
+a275 2
+!        MAXDAM=0.0d0
+!        ISMAX=0.0d0
+d277 5
+a281 7
+           DAMK(ISP)=SOURCECHEM(ISP)/(ULOCAL*UAVG(ISP))   !*(1.0d0/exp(1)-1)
+           DAMK(ISP)=abs(DAMK(ISP))*HEIGHT
+!          DAMK(ISP)=ZERO
+!          IF(DAMK(ISP).GT.MAXDAM)THEN
+!             MAXDAM = DAMK(ISP)
+!             ISMAX = ISP
+!          ENDIF   
+d284 1
+d287 1
+@
+
+
+1.2
+log
+@set source term to 0 where needed
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerXII.f,v 1.1 2013/01/26 12:23:11 abonfi Exp $
+d35 1
+d51 1
+a51 1
+      INTEGER NORDER,ifail,M,N,MN,N4,JCOL
+d68 1
+a68 1
+     8       PHI(NEQMAX),RESIDUAL(2*NEQMAX),
+d70 1
+d88 2
+a89 2
+      DOUBLE PRECISION DDOT,PRESS4Ar
+      EXTERNAL DDOT
+a226 2
+C REM: calling with TAUX(1) will add new contributions
+C      to those already computed when solving entropy
+a231 1
+C     copy the timestep from TAUX into TSTEP (update)
+d233 73
+a305 5
+      DO 12 IVERT = 1, NOFVERT
+         IADD = (IVERT-1)*NOFVAR+1
+         JADD = (IVERT-1)*NORDER+1
+         TSTEP(IADD) = TSTEP(IADD) + TAUX(JADD)
+   12 CONTINUE
+d307 12
+a318 2
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,DCONSV,
+!    +            NOFEQN,'Nodal update in U (before)',IFAIL)
+d320 2
+a321 1
+C     add DCONSV to NODRES
+d329 1
+a478 1
+89999 FORMAT (5X,'Scalar residual in Element ',I6,' Wave # ',I1)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerXI.f,v 1.6 2011/12/30 11:26:48 abonfi Exp abonfi $
+d197 1
+a197 1
+      IF (CHEM.eq.1)THEN
+d207 4
+a210 3
+          SOURCE(IE) = -GRAV(1)*VOLUME
+          SOURCE(IX) = -GRAV(2)*VOLUME
+          IF(NDIM.EQ.3)SOURCE(IY) = -GRAV(3)*VOLUME  
+d219 4
+a222 4
+      ELSE  
+          SOURCE(2) = -GRAV(1)*VOLUME
+          SOURCE(3) = -GRAV(2)*VOLUME
+          IF(NDIM.EQ.3)SOURCE(4) = -GRAV(3)*VOLUME
+@

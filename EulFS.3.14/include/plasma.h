@@ -1,0 +1,2 @@
+      INTEGER NSP
+      PARAMETER (NSP=4)

@@ -1,0 +1,37 @@
+head	1.1;
+access;
+symbols;
+locks
+	abonfi:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2016.11.10.10.40.45;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Make script for petsc 3.7
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@export PETSC_DIR=/usr/local/src/petsc/petsc-3.7.4
+export PETSC_ARCH=linux_gnu64ompi-opt
+
+`which gcc` --version
+`which gfortran` --version
+
+echo $PETSC_DIR
+echo $PETSC_ARCH
+
+sleep 2
+
+make install
+@

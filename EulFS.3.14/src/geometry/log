@@ -1,0 +1,117 @@
+Sun Mar 28 05:34:33 PM CEST 2021
+chkflx.f
+58c58
+<       DOUBLE PRECISION DOTM,RAVG,TEMP
+---
+>       DOUBLE PRECISION DOTM,TEMP
+67,68c67,68
+<       PARAMETER(VERBOSE=.FALSE.)
+< !     PARAMETER(VERBOSE=.TRUE.)
+---
+> !     PARAMETER(VERBOSE=.FALSE.)
+>       PARAMETER(VERBOSE=.TRUE.)
+75c75
+<       EXTERNAL         DDOT,ICYCL,FLUX4
+---
+>       EXTERNAL         DDOT,ICYCL,FLUX2,FLUX4
+128d127
+<          RAVG = ZERO
+143c142
+<    12    CONTINUE ! end loop over the vertices
+---
+>    12    CONTINUE ! end loop over the vertices of cell IELEM
+154c153,165
+<             IF(LWRITE)THEN
+---
+>          ELSE ! incompressible
+>                  write(6,*)'compressible ? ',COMPRESSIBLE
+>             IF(NDIM.EQ.2)THEN
+>                CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,VCB,
+>      &                   FACENORM(1,IFACE),FLXN,FLUX2)
+>             ELSEIF(NDIM.EQ.3)THEN
+>                CALL QUADRATURE(NDIM,NOFVERT,NOFVAR,VCZ,VCB,
+>      &                   FACENORM(1,IFACE),FLXN,FLUX2)
+>             ELSE
+>                     STOP 'Error with NDIM in CHKFLX'
+>             ENDIF
+>          ENDIF
+>          IF(LWRITE)THEN
+157,169c168,173
+<                DO I = 1, NBFLX(1) ! there are NBFLX(1) patches where the flux has to be computed
+<                   IC = IBFLX(I)
+<                   IF(IC.EQ.IBC)THEN 
+<                      WRITE(120,*)(IV(JVERT),JVERT=1,(NOFVERT-1)),IBC
+<                      WRITE(120,*)(FLXN(J),J=1,NOFVAR)
+<                   ENDIF
+<                ENDDO
+<             ENDIF
+<             CALL DAXPY(NOFVAR,ONE,FLXN((NOFVERT-1)*NOFVAR+1),1,
+<      &                                        WKSP(1,IBC),1)
+<          ELSE ! incompressible
+<             DO J = 1, NDIM
+<                UAVG(J) = UAVG(J) / REAL(NOFVERT-1)
+---
+>             DO I = 1, NBFLX(1) ! there are NBFLX(1) patches where the flux has to be computed
+>                IC = IBFLX(I)
+>                IF(IC.EQ.IBC)THEN 
+>                   WRITE(120,*)(IV(JVERT),JVERT=1,(NOFVERT-1)),IBC
+>                   WRITE(120,*)(FLXN(J),J=1,NOFVAR)
+>                ENDIF
+171,172d174
+<             DOTM= DOTM+DDOT(NDIM,FACENORM(1,IFACE),1,UAVG,1)
+<             WKSP(1,IBC) = WKSP(1,IBC) + DOTM
+173a176,177
+>          CALL DAXPY(NOFVAR,ONE,FLXN((NOFVERT-1)*NOFVAR+1),1,
+>      &                                        WKSP(1,IBC),1)
+182c186
+<    16 CONTINUE
+---
+>    16 CONTINUE ! main loop over all boundary faces
+256a261,307
+> C
+>       RETURN
+>       END 
+> !> \brief \b FLUX2
+> !
+> !> \par Purpose
+> !>
+> !>    compute the incompressible Eulerian fluxes through the face of normal FACN from primitive variables
+> !> \f[ 
+> !> F = \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} ,
+> !> \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} + p \mathbf{n}
+> !> \right)
+> !> \f] 
+> !
+> !> @param[in] NDIM dimension of the space
+> !> @param[in] FACN the cartesian components of the scaled inward normal to the face
+> !> @param[in] ZROE p,u,v,w
+> !> @param[in] XYZDOT the cartesian components of the grid velocity
+> !> @param[out] FLXN the eulerian (inviscid) flux through the face
+> !>
+> C
+> !>    \author $Author: abonfi $
+> !>    \version $Revision: 1.15 $
+> !>    \date $Date: 2021/01/24 11:50:35 $
+> C
+>       SUBROUTINE FLUX2(NDIM,FACN,ZROE,XYZDOT,FLXN)
+>       IMPLICIT NONE
+> C
+>       INCLUDE 'paramt.h'
+>       INCLUDE 'constants.h'
+> C
+>       INTEGER NDIM
+> C
+>       DOUBLE PRECISION FACN(NDIM),ZROE(*),XYZDOT(*),FLXN(*)
+> C
+>       DOUBLE PRECISION DOTM,PRES
+> C
+>       DOTM = FACN(1)*(ZROE(2)-XYZDOT(1))+
+>      &       FACN(2)*(ZROE(3)-XYZDOT(2))
+>       IF(NDIM.EQ.3)DOTM = DOTM + FACN(3)*(ZROE(4)-XYZDOT(3))
+> C
+>       PRES = ZROE(1)
+> C
+>       FLXN(1) = DOTM
+>       FLXN(2) = ZROE(2)*DOTM+PRES*FACN(1)
+>       FLXN(3) = ZROE(3)*DOTM+PRES*FACN(2)
+>       IF(NDIM.EQ.3)FLXN(4) = ZROE(4)*DOTM+PRES*FACN(3)

@@ -1,0 +1,1215 @@
+head	1.27;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.27
+	release3_13_0:1.27
+	release3_12_0:1.27
+	release3_11_0:1.27
+	release3_10_0:1.27
+	release3_8_0:1.27
+	release3_7_1:1.26
+	release3_7_0:1.26
+	release3_4_5:1.24
+	release3_4_4:1.24
+	release3_4_3:1.24
+	release3_4_2:1.24
+	release3_4_1:1.24
+	release3_4_0:1.23
+	release3_3_5:1.23
+	release3_3_4:1.23
+	release3_3_3:1.23
+	release3_3_2:1.23
+	release3_3_1:1.23
+	release3_3_0:1.23;
+locks; strict;
+comment	@c @;
+
+
+1.27
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2018.01.22.14.04.57;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2013.06.06.10.34.38;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2012.03.21.10.41.33;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2009.11.20.11.23.20;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2008.09.27.09.48.12;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2002.12.06.03.27.03;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2002.09.14.08.56.16;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2002.02.19.09.09.54;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2001.10.08.15.55.43;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2001.07.19.09.50.36;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.10.26.15.33.58;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.10.25.15.23.57;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.08.18.14.09.23;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.06.23.16.45.09;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.09.01.10.21.49;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.06.03.08.00.55;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.03.02.17.33.30;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.02.25.17.45.06;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.02.09.17.34.26;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.02.03.08.32.48;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initialization routine for the Spalart-Allmaras model
+@
+
+
+1.27
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE TURBINI(NodalBcs,NOFVERT,NOFVAR,NDIM,NP,
+     &                   TURB,ZROE,TD,TTD,RESTART,ROWBGN,
+     &                   VISCTFILE,WDISTFILE)
+C  ==============================================================
+C
+C
+C
+C      $Id: turbini.F,v 1.26 2018/01/22 14:04:57 abonfi Exp abonfi $
+C
+C      DESCRIPTION:
+C      -----------
+C
+C      initialize turbulence computation
+C      (Spalart & Allmaras model)
+C
+C      REM: NP is the number of meshpoints in the uni-processor case
+C           in the multi-procs case it is the NPOIN+NGHOST+NPNOD
+C           
+C
+C  ==============================================================
+C
+C
+#include "petsc/finclude/petscis.h"
+      use petscis
+C
+      IMPLICIT NONE
+c2345678
+C
+      INCLUDE 'bnd.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'iset.h'
+      INCLUDE 'turb.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'nboun.com' 
+      INCLUDE 'flags.com'
+      INCLUDE 'io.com'
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVERT,NOFVAR,NP,ROWBGN
+      LOGICAL RESTART
+      CHARACTER*(*) VISCTFILE,WDISTFILE
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION TURB(NP),ZROE(NP),TD(NP),TTD(NP)
+C     ..
+C     .. Arrays in Common ..
+C     ..
+C     .. Local Scalars ..
+      INTEGER IROW,NTURB,NI,IFAIL,I,IOPT,NERR
+      CHARACTER TRIPFILE*11,ERRMSG*72
+      DOUBLE PRECISION TVAL
+C
+C     ..
+C     .. Petsc stuff
+C
+      PetscBool IFLAG
+      PetscOffset IDX_I
+      IS, dimension(0:*) :: NodalBcs 
+C
+      INTEGER IDX_V(1)
+C     ..
+C     .. Local Arrays ..
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DINIT,SOLZNE
+C     ..
+C     .. Common blocks ..
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C     ..
+C     .. Equivalences ..
+C     ..
+C     .. Data statements ..
+
+      DATA NTURB/1/
+      DATA TRIPFILE/'file014.dat'/
+C
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,1000)
+C
+C************************************************************
+C
+C Set trip point variables
+C
+C************************************************************
+C23456
+C
+C**************************************************************
+C
+C     when restarting, read turbulent viscosity
+C
+      IF (RESTART.AND.SEGREGATED) 
+     &CALL SOLZNE(VISCTFILE,TURB,NTURB,NP,'r')
+C
+C**************************************************************
+C
+C Turbulent viscosity initialization
+C
+C*************************************************************
+C
+      CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +        '-inflow_turbulent_viscosity',TVAL,IFLAG,IFAIL)
+      IF(IFLAG.EQV.PETSC_FALSE)THEN
+          WRITE(ERRMSG,300)'-inflow_turbulent_viscosity [value]'
+          NERR = 14
+          IOPT = 1
+          CALL SETERR(ERRMSG,69,NERR,IOPT)
+      ELSE
+          IF(SEGREGATED.AND.(.NOT.RESTART))THEN
+              CALL DINIT(NP,TVAL,TURB,1)
+          ELSEIF(COUPLED.AND.(.NOT.RESTART))THEN 
+              CALL DINIT(NP,TVAL,ZROE(NOFVAR),NOFVAR)
+          ENDIF
+      ENDIF
+C
+C Retrieve from the Index Set the gridpoints where no-slip
+C boundary conditions are applied so that turbulent viscosity
+C can be set to 0. there
+C
+      CALL ISGetSize(NodalBcs(NoSlipNodes),NI,IFAIL)
+      IF(NI.NE.0)THEN
+         CALL ISGetIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+C
+C     set turbulent viscosity = 0.0 on no-slip walls
+C
+         DO 110 I = 1,NI
+             IROW = IDX_V(IDX_I+I)+1-ROWBGN
+             IF(SEGREGATED)THEN
+                 TURB(IROW) = ZERO
+             ELSE 
+                 ZROE(IROW) = ZERO
+             ENDIF
+  110    CONTINUE
+         CALL ISRestoreIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+      ENDIF
+C
+C**************************************************************
+C
+C Read Wall distance from a file
+C
+C*************************************************************
+
+          I = 1
+          CALL SOLZNE(WDISTFILE,TD,I,NP,'r')
+C
+C read trip point distance from file011.dat
+C
+          IF(TTFLAG.EQ.1)CALL SOLZNE('file011.dat',TTD,I,NP,'r')
+C
+      RETURN
+  300 FORMAT(5X,'Need to specify option: ',A35)
+ 1000 FORMAT(//5X,'TURBULENCE MODELING: Spalart-Allmaras',/,5X,38("="))
+      END
+@
+
+
+1.26
+log
+@0.d0 changed to ZERO
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE TURBINI(NOFVERT,NOFVAR,NDIM,NP,
+d8 1
+a8 1
+C      $Id: turbini.F,v 1.25 2016/11/10 11:25:13 abonfi Exp abonfi $
+d21 6
+a26 1
+
+d28 1
+a28 2
+      IMPLICIT NONE
+
+d31 1
+a37 4
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscis.h"
+C
+#include "iset.com"
+d54 3
+d59 2
+a77 2
+C     ..
+
+d101 1
+a101 1
+      CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d116 3
+d120 1
+a120 1
+      CALL ISGetSize(NoSlipNodes,NI,IFAIL)
+d122 1
+a122 1
+         CALL ISGetIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+d134 1
+a134 1
+         CALL ISRestoreIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+@
+
+
+1.25
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.24 2013/06/06 10:34:38 abonfi Exp abonfi $
+d26 1
+d51 1
+a51 1
+      DOUBLE PRECISION VALUE
+d97 2
+a98 2
+      CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +        '-inflow_turbulent_viscosity',VALUE,IFLAG,IFAIL)
+d106 1
+a106 1
+              CALL DINIT(NP,VALUE,TURB,1)
+d108 1
+a108 1
+              CALL DINIT(NP,VALUE,ZROE(NOFVAR),NOFVAR)
+d122 1
+a122 1
+                 TURB(IROW) = 0.d0
+d124 1
+a124 1
+                 ZROE(IROW) = 0.d0
+d143 1
+a143 1
+ 9999 RETURN
+a145 1
+ 1010 FORMAT(5X,'trip point term is ON ',I2,' trip points') 
+@
+
+
+1.24
+log
+@now includes bnd.h
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.23 2012/03/21 10:41:33 abonfi Exp abonfi $
+d32 2
+a33 2
+#include "finclude/petscsys.h"
+#include "finclude/petscis.h"
+@
+
+
+1.23
+log
+@changed PETSc variable definition from PetscTruth to PetscBool
+to upgrade to petsc release 3.2
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.22 2011/09/16 07:19:48 abonfi Exp abonfi $
+d24 2
+d27 2
+a28 1
+      INCLUDE 'nloc'
+a61 1
+      INCLUDE 'nboun.com' 
+@
+
+
+1.22
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.21 2009/11/20 11:23:20 abonfi Exp abonfi $
+d49 1
+a49 1
+      PetscTruth IFLAG
+@
+
+
+1.21
+log
+@when re-starting, turbulent viscosity was re-set anyway
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.20 2009/06/11 13:10:58 abonfi Exp abonfi $
+d29 1
+a29 1
+#include "finclude/petsc.h"
+@
+
+
+1.20
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.19 2008/09/27 09:48:12 abonfi Exp abonfi $
+d102 1
+a102 1
+          IF(SEGREGATED)THEN
+@
+
+
+1.19
+log
+@the restart file is now read BEFORE setting the turbulent
+viscosity=0.d0 on solid walls
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.18 2002/12/06 03:27:03 abonfi Exp abonfi $
+d29 2
+a30 2
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscis.h"
+d45 1
+a45 1
+      INTEGER IROW,NTURB,NI,IFAIL,I,IFLAG,IOPT,NERR
+d49 1
+d96 1
+a96 1
+      IF(IFLAG.EQ.PETSC_FALSE)THEN
+@
+
+
+1.18
+log
+@bug fixed for parallel I/O
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.17 2002/09/14 08:56:16 abonfi Exp $
+d82 4
+a85 1
+
+d132 1
+a132 1
+	  I = 1
+a138 5
+C     when restarting, read turbulent viscosity
+C
+      IF (RESTART.AND.SEGREGATED) 
+     &CALL SOLZNE(VISCTFILE,TURB,NTURB,NP,'r')
+C
+@
+
+
+1.17
+log
+@now supports coupled solution strategy for RANS
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.16 2002/02/19 09:09:54 abonfi Exp abonfi $
+d59 2
+d71 1
+a71 1
+      WRITE(IWUNIT,1000)
+@
+
+
+1.16
+log
+@changed PetscOptionsGetDouble into PetscOptionsGetReal (ver.2.1.1)
+@
+text
+@d1 3
+a3 3
+C
+      SUBROUTINE TURBINI(NBFAC,NBODY6,NOFVERT,NELEM,NODCOD,NDIM,NPOIN,
+     +                   TURB,RESTART,ROWBGN,VISCTFILE,WDISTFILE)
+d8 1
+a8 1
+C      $Id: turbini.F,v 1.15 2001/10/08 15:55:43 abonfi Exp abonfi $
+d13 1
+a13 1
+C      initialition turbulence computation
+d16 3
+d26 1
+d35 1
+a35 1
+      INTEGER NBFAC,NBODY6,NDIM,NELEM,NOFVERT,NPOIN,ROWBGN
+d40 1
+a40 2
+      DOUBLE PRECISION TURB(NPOIN)
+      INTEGER NODCOD(NPOIN)
+a42 1
+      DOUBLE PRECISION DSTAK(1)
+d45 1
+a45 1
+      INTEGER IPOIN,NTURB,NI,IFAIL,I,IFLAG,IOPT,NERR
+a52 1
+      INTEGER ISTAK(1)
+a54 1
+      integer istkgt
+a57 1
+      COMMON /CSTAK/DSTAK
+a60 1
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+d96 5
+a100 1
+          CALL DINIT(NPOIN,VALUE,TURB,1)
+d111 6
+a116 2
+             IPOIN = IDX_V(IDX_I+I)+1-ROWBGN
+             TURB(IPOIN) = 0.d0
+d128 1
+a128 6
+          CALL SOLZNE(WDISTFILE,DSTAK(LTD),I,NPOIN,'r')
+          IF(TTFLAG.EQ.1)
+     >CALL SOLZNE('file011.dat',DSTAK(LTTD),I,NPOIN,'r')
+caldo
+c         CALL SOLZNE('wdist.dat',DSTAK(LTD),I,NPOIN,'w')
+caldo
+d130 1
+a130 1
+C trip point distance computation
+d132 1
+d136 2
+a137 1
+      IF (RESTART) CALL SOLZNE(VISCTFILE,TURB,NTURB,NPOIN,'r')
+@
+
+
+1.15
+log
+@changed Options into PetscOptions to comply to Petsc 2.1.0
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.14 2001/07/19 09:50:36 abonfi Exp abonfi $
+d90 1
+a90 1
+      CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+@
+
+
+1.14
+log
+@turbulent viscosity in the inflow plane must now be given explicitely
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.12 2000/10/26 15:33:58 aldo Exp aldo $
+d90 1
+a90 1
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+@
+
+
+1.13
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d43 3
+a45 2
+      INTEGER IPOIN,NTURB,NI,IFAIL,JOB,I
+      CHARACTER*11 TRIPFILE
+d86 1
+a86 1
+C Turbulent viscosity initialition
+d90 11
+a100 1
+      CALL DINIT(NPOIN,0.01D0,TURB,1)
+d137 1
+@
+
+
+1.12
+log
+@minor cosmetic change
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.11 2000/10/25 15:23:57 aldo Exp aldo $
+d23 1
+a23 1
+      INCLUDE 'IO'
+@
+
+
+1.11
+log
+@add the rowbgn offset for the parallel case
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.10 2000/10/19 16:10:34 aldo Exp aldo $
+d23 1
+d70 1
+a70 1
+      WRITE(6,1000)
+@
+
+
+1.10
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d3 1
+a3 1
+     +                   TURB,RESTART,VISCTFILE,WDISTFILE)
+d8 1
+a8 1
+C      $Id: turbini.F,v 1.9 2000/08/18 14:09:23 aldo Exp aldo $
+d30 1
+a30 1
+      INTEGER NBFAC,NBODY6,NDIM,NELEM,NOFVERT,NPOIN
+d97 1
+a97 1
+             IPOIN = IDX_V(IDX_I+I)+1
+@
+
+
+1.9
+log
+@parameters for the turbulence model are now
+included from an include file
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.F,v 1.8 2000/06/23 16:45:09 aldo Exp aldo $
+d25 1
+a25 1
+#include "include/finclude/is.h"
+@
+
+
+1.8
+log
+@some rewriting: now uses index sets to address wall nodes
+@
+text
+@d8 1
+a8 1
+C      $Id: turbini.f,v 1.7 1999/09/01 10:21:49 aldo Exp aldo $
+d53 1
+a53 1
+      EXTERNAL DINIT,SOLZNE,TTDC
+a70 26
+C
+C**************************************************************
+C
+C Set Turbulence model parameters
+C
+C*************************************************************
+      TCB1 = 0.1355d0
+      TCB2 = 0.622d0
+      TPR = 0.9d0
+      TPR1 = 2.d0/3.d0
+      TK = 0.41d0
+      TCW1 = TCB1/TK**2 + (1.0+TCB2)/TPR1
+      TCW2 = 0.3d0
+      TCW3 = 2.d0
+      TCV1 = 7.1d0
+c     TCV1 = 6.9
+      TCV2 = 5.d0
+      TCT1 = 1.
+c     TCT1=10.
+      TCT2 = 2.0
+      TCT3 = 1.2
+      TCT4 = 0.5
+c     TCT4=4.00
+c     TCT3=1.1
+c     TCT4=2.0
+
+a76 3
+      tdxt = 1.e-6
+      tdxt = .02
+      tdxt = 6.e-7
+@
+
+
+1.7
+log
+@removed stuff related to trip point computations
+also fixed a problem in the DATA stmt. on T3E
+@
+text
+@d4 14
+a17 15
+*  ==============================================================
+*
+*
+*      FILENAME: turbini.f
+*
+*      $Id$
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      initialition turbulence computation
+*      (Spalart & Allmaras model: mgship version)
+*
+*
+*  ==============================================================
+a21 1
+      INCLUDE 'trip.com'
+d23 6
+d42 1
+a42 1
+      INTEGER IPOIN,NTURB,LOCIA,LOCJA,NNZR,IERR,JOB,I
+d44 3
+d103 3
+d119 3
+a121 1
+      DO 1 IPOIN = 1,NPOIN
+d125 7
+a131 3
+          IF (NODCOD(IPOIN).EQ.1000) TURB(IPOIN) = 0.D0
+    1 CONTINUE
+
+d140 2
+d143 1
+a143 1
+          CALL SOLZNE('wdist.dat',DSTAK(LTD),I,NPOIN,'w')
+a144 1
+
+@
+
+
+1.6
+log
+@Model upgrade according to the suggestions in Ashford's PhD thesis
+@
+text
+@d3 1
+a3 1
+     +                   TURB,RESTART)
+d9 1
+a9 1
+*
+a16 5
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : April 97
+d28 1
+d46 1
+a46 1
+      EXTERNAL DINIT,SOLZNE,TDC2D,TTDC
+a50 2
+C     integer lia,lja,lpoin6
+C     COMMON/turbo3/lia,lja,lpoin6
+d58 1
+a58 1
+      DATA TRIPFILE/11Hfile014.dat/
+d118 1
+a118 1
+C Wall distance computation
+d122 5
+a126 3
+      IF (NDIM.EQ.2) THEN
+          CALL TDC2D(ISTAK(LBNDFAC),NBODY6,ISTAK(LCELNOD),NOFVERT,
+     +               DSTAK(LTD),DSTAK(LCORG),NDIM,NPOIN)
+a127 4
+      ELSE
+          STOP '3D wall distance not implemented yet'
+
+      ENDIF
+a130 80
+      IF (TTFLAG.EQ.1) THEN
+C
+          OPEN(14,FILE=TRIPFILE,STATUS='OLD')
+          READ(14,*)NTRIP 
+C
+          WRITE(6,1010)NTRIP 
+C
+C allocate space for:  
+C
+C   LOCTRP the linear list of trip points
+C   LOCTIA the pointer for the linked list of neighbouring elements
+C   LOCTJA the list of neighbouring elements
+C   LOCDXT the linear list of mesh spacing at trip points
+C   LOCTST the linear list of vorticity at trip points
+C
+          LOCTRP = ISTKGT(NTRIP,2)
+          LOCTIA = ISTKGT(NTRIP+1,2)
+          LOCTJA = ISTKGT(10*NTRIP,2)
+          LOCDXT = ISTKGT(NTRIP,4)
+          LOCTST = ISTKGT(NTRIP,4)
+C
+          LTTD = ISTKGT(NPOIN,4)
+          LTTI = ISTKGT(NELEM,2)
+C
+C   read trip points indexes from file
+C
+          DO 100 IPOIN = 0,NTRIP-1
+             READ(14,*)ISTAK(LOCTRP+IPOIN)
+  100     CONTINUE
+C
+C   read closest point index 
+C
+          DO 90 I = LTTI,LTTI+NELEM-1
+               READ(14,*)ISTAK(I)
+   90     CONTINUE  
+          CLOSE(14)
+C
+C     Construct the node to cell adjacency list
+C
+          NNZR = 7*NPOIN 
+          LOCIA = ISTKGT(NPOIN+1,2)
+          LOCJA = ISTKGT(NNZR,2)
+          CALL NOD2CEL(NPOIN,NELEM,NOFVERT,ISTAK(LCELNOD),ISTAK(LOCJA),
+     +                 NNZR,ISTAK(LOCIA),NPOIN+1,IERR)
+          IF(IERR.NE.0)
+     +STOP 'NOD2CEL has returned non zero IERR in subr. TURBINI'
+C
+C     extract the linked list corresponding to the trip points
+C
+          JOB = 0
+          I = 1
+          CALL XTROWS(I,NTRIP,DSTAK(1),ISTAK(LOCJA),ISTAK(LOCIA),
+     +                DSTAK(1),ISTAK(LOCTJA),ISTAK(LOCTIA),
+     +                ISTAK(LOCTRP),JOB)
+C
+C     release memory allocated for LOCIA,LOCJA
+C
+          CALL ISTKRL(2)
+C
+C     compute mesh spacing along the walls at trip points
+C
+          CALL TTDC(ISTAK(LOCTJA),ISTAK(LOCTIA),ISTAK(LOCTRP),
+     +              DSTAK(LOCDXT),NTRIP,ISTAK(LCELCEL),ISTAK(LCELFAC),
+     +              NOFVERT,NELEM,DSTAK(LFACNOR),NDIM)
+C
+C     reads "nearest trip point distance" from file
+C
+          I=1
+          CALL SOLZNE('file019.dat',DSTAK(LTTD),I,NPOIN,'r')
+C
+C     pause 'about to call dump'
+C     call dump(1,ntrip,.false.,dstak(1),ISTAK(LoctJA),ISTAK(LoctIA),36)
+C     write(6,*)istak(loctia+ntrip)-1,10*ntrip
+C     stop
+C
+      ENDIF
+C
+C     write "nearest wall distance" to file
+C
+      CALL SOLZNE('file018.dat',DSTAK(LTD),1,NPOIN,'w')
+d134 1
+a134 1
+      IF (RESTART) CALL SOLZNE('file015.dat',TURB,NTURB,NPOIN,'r')
+@
+
+
+1.5
+log
+@modified for newer implementation of
+the trip term
+@
+text
+@d76 5
+a80 5
+      TCB1 = 0.1355
+      TCB2 = 0.622
+      TPR = 0.9
+      TPR1 = 2./3.
+      TK = 0.41
+d82 3
+a84 3
+      TCW2 = 0.3
+      TCW3 = 2.
+      TCV1 = 7.1
+d86 1
+@
+
+
+1.4
+log
+@Now reading trip point distance file
+@
+text
+@d28 1
+d42 2
+a43 2
+      INTEGER IPOIN,NTURB,LIBGN,LIADJ,NN,IERR
+      double precision a
+d55 2
+a56 2
+      integer lia,lja,lpoin6
+      COMMON/turbo3/lia,lja,lpoin6
+d64 1
+d67 4
+d100 2
+a101 7
+c23456
+      TTFLAG = 1
+      TNTRIP = 1859
+      TDXT = 6.D-07
+      TNTRIP = 3719
+      TDXT = 0.014
+
+d138 4
+a141 1
+C     IF (TTFLAG.EQ.1) CALL TTDC(0)
+d143 1
+a143 1
+C     CALL TSC
+d145 1
+a145 1
+C     write "nearest wall distance" to file
+d147 5
+a151 1
+      CALL SOLZNE('file018.dat',DSTAK(LTD),1,NPOIN,'w')
+d153 5
+a157 1
+C     read "trip point distance" from file
+d159 2
+a160 2
+      IF( TTFLAG .EQ. 1 )
+     +CALL SOLZNE('file019.dat',DSTAK(LTTD),NTURB,NPOIN,'r')
+d162 1
+a162 1
+C     when restarting, read turbulent viscosity
+d164 3
+a166 1
+      IF (RESTART) CALL SOLZNE('file015.dat',TURB,NTURB,NPOIN,'r')
+d168 1
+a168 1
+      RETURN
+d170 4
+a173 3
+      LPOIN6 = ISTKGT(NPOIN6,2)
+      LIA = ISTKGT(NPOIN6+1,2)
+      LJA = ISTKGT(7*NPOIN6,2)
+d177 21
+a197 6
+      LIBGN = ISTKGT(NPOIN+1,2)
+      NN = 7*NPOIN 
+      LIADJ = ISTKGT(NN,2)
+      CALL NOD2CEL(NPOIN,NELEM,NOFVERT,ISTAK(LCELNOD),ISTAK(LIADJ),NN,
+     +             ISTAK(LIBGN),NPOIN+1,IERR)
+      IF(IERR.NE.0)STOP 'NOD2CEL has returned non zero IERR' 
+d199 3
+a201 1
+C     Construct the node to cell adjacency list
+d203 1
+a203 3
+      CALL ZZ003(NODCOD,NPOIN,ISTAK(LIBGN),ISTAK(LIADJ),
+     +           ISTAK(LIA),NPOIN6+1,ISTAK(LJA),7*NPOIN6,
+     +           ISTAK(LPOIN6),NPOIN6)
+d205 2
+a206 1
+C     free LIADJ, LIBGN 
+d208 3
+a210 3
+      CALL ISTKRL(2)
+
+C     call dump(1,npoin6,.false.,a,ISTAK(LJA),ISTAK(LIA),36)
+d213 10
+a222 1
+
+d224 2
+a225 1
+
+@
+
+
+1.3
+log
+@modified version of the initialization routine
+handles source term computed using nodal values
+@
+text
+@d95 5
+a99 3
+      TTFLAG = 0
+      TNTRIP = 50
+      TDXT = .0013
+d145 1
+a145 1
+C     write "trip point distance" to file
+d147 2
+a148 1
+      CALL SOLZNE('file019.dat',DSTAK(LTTD),1,NPOIN,'w')
+d153 2
+@
+
+
+1.2
+log
+@reformatted using toolpack
+@
+text
+@d41 2
+a42 1
+      INTEGER IPOIN,NTURB
+d48 1
+d53 3
+d150 26
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a0 7
+
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)main.f      1.0.0.1 4/1/94  95/08/21        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.main.f
+d2 2
+a3 7
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+      SUBROUTINE TURBINI(NBFAC,NBODY6,NOFVERT,NELEM,NODCOD,
+     &                   NDIM,NPOIN,TURB,RESTART)
+d29 6
+a34 1
+      INTEGER NBFAC,NBODY6,NOFVERT,NELEM,NDIM,NPOIN
+d36 2
+a37 4
+      INTEGER IPOIN
+      INTEGER NTURB
+      DOUBLE PRECISION TURB(NPOIN)
+      LOGICAL RESTART
+d39 5
+a43 1
+      COMMON/CSTAK/DSTAK
+d45 11
+a55 1
+      EQUIVALENCE(ISTAK(1),DSTAK(1)) 
+d58 1
+a58 18
+
+C     write(*,*)'Start esecution of turbini subrutine'
+C     write(*,*)'Entra in turbini 2D'
+
+C     if(ni.lt.60)goto 9999
+C**********************************************************
+C
+C reading turbulent viscosity input-output file names 
+C 
+C**********************************************************
+
+
+C**************************************************************
+C
+C Set some main variables 
+C
+C**************************************************************
+
+d67 1
+a67 1
+      TPR  = 0.9
+d69 2
+a70 2
+      TK   = 0.41
+      TCW1 = TCB1/TK**2+(1.0+TCB2)/TPR1
+d75 1
+a75 1
+      TCT1=1.
+d77 3
+a79 3
+      TCT2=2.0
+      TCT3=1.2
+      TCT4=0.5
+d85 3
+a87 3
+C 
+C Set trip point variables 
+C 
+d90 3
+a92 3
+      TTFLAG=0
+      TNTRIP=50
+      TDXT=.0013
+d100 1
+a100 1
+C Turbulent viscosity initialition 
+d106 1
+a106 1
+      DO 1 IPOIN = 1, NPOIN
+d108 1
+a108 1
+C     set turbulent viscosity = 0.0 on no-slip walls 
+d110 2
+a111 2
+         IF( NODCOD(IPOIN) .EQ. 1000 )TURB(IPOIN) = 0.D0
+    1 CONTINUE 
+d119 1
+a119 1
+      IF( NDIM .EQ. 2 )THEN
+d121 2
+a122 1
+     +                 DSTAK(LTD),DSTAK(LCORG),NDIM,NPOIN)
+d125 1
+d130 1
+a130 1
+      IF(TTFLAG.EQ.1)CALL TTDC(0)
+d134 1
+a134 1
+C     write "nearest wall distance" to file 
+d138 1
+a138 1
+C     write "trip point distance" to file 
+d144 1
+a144 1
+      IF(RESTART)CALL SOLZNE('file015.dat',TURB,NTURB,NPOIN,'r')
+d147 2
+a148 1
+9999  RETURN
+a149 3
+
+
+
+@

@@ -1,0 +1,307 @@
+head	1.10;
+access;
+symbols
+	release3_14_0:1.10
+	release3_13_0:1.10
+	release3_12_0:1.10
+	release3_11_0:1.10
+	release3_10_0:1.10
+	release3_8_0:1.10
+	release3_7_1:1.10
+	release3_7_0:1.10
+	release3_4_5:1.10
+	release3_4_4:1.9
+	release3_4_3:1.9
+	release3_4_2:1.7
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.2
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.10
+date	2015.05.20.07.49.51;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.10.23.10.49.08;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.09.23.11.28.48;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.08.19.09.03.30;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.07.18.14.50.15;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.07.18.13.04.53;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.06.25.14.32.51;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.04.29.10.41.58;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.03.28.10.29.17;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.25.08.07.45;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Variables used in un-steady simulations
+@
+
+
+1.10
+log
+@Added pitching frequency and amplitude
+@
+text
+@      DOUBLE PRECISION DELT,GAMT,GAMTBAK,THETAT,DTVOL,TCOEF(-1:1),
+     2                 ALFALE,XYZ_C(3),OPITCH(3),APITCH(3)
+      INTEGER ITSTEP,NTIMLEVS,MMTYPE,ITIM,IALE
+      LOGICAL LTIME,DUALTS,LFOOLD,LALE,ALE_MOVE_GRID,ALE_READ_GRID,
+     2        ALE_LAPLACE_GRID,ALE_READ_GRIDVEL,CHAR_TIMESTEPPING,GCLCHK
+      COMMON/R8TIME/DELT,GAMT,GAMTBAK,THETAT,DTVOL,TCOEF,ALFALE,XYZ_C,
+     2              OPITCH,APITCH
+      COMMON/I4TIME/ITSTEP,NTIMLEVS,MMTYPE,ITIM,IALE
+      COMMON/L4TIME/LTIME,DUALTS,LFOOLD,LALE,ALE_MOVE_GRID,
+     2              ALE_READ_GRID,ALE_LAPLACE_GRID,ALE_READ_GRIDVEL,
+     3              CHAR_TIMESTEPPING,GCLCHK
+C
+!>     DELT is the time step size for time accurate calculations (-time_step_size)
+!>     GAMT weights the contribution of the three time levels: (n+1), n, (n-1)
+!>     GAMTBAK is a backup copy of GAMT
+!>     THETAT weights the contribution of the spatial residuals at time level (n+1) and n
+!>     DTVOL 
+!>     \todo DTVOL is a local parameter, should be rather placed elsewhere
+!>     TCOEF(-1:1) coefficients of the 3 time levels scheme
+!>     ALFALE weights used to determine the mesh configurations that guarantees GCL
+!>     XYZ_C coordinates of the point about which rotation/deformation is performed when moving the grid
+!>     OPITCH dimensionless angular velocity of the pitching motion
+!>     APITCH pitching amplitude velocity of the pitching motion
+!>
+!>     ITSTEP is the number of time steps (-nof_time_steps)
+!>     NTIMLEVS is the actual nof of time levels; can be two: (n+1) and n or three: (n+1), n, (n-1)
+!>     MMTYPE is the scheme used for the Mass Matrix, see time.h 
+!>     ITIM is the current time step, i.e. we are moving from n to n+1
+!>     IALE control the function used to move the grid (or its boundaries)
+!>     LTIME is set to .TRUE. for time accurate calculations; activated using:
+!>
+!>     DUALTS is set to .TRUE. when dual time stepping is chosen (-dual_ts [Y/N])
+!>     LFOOLD should be set to .TRUE. when reading time level n-1 from a datafile
+!>     LALE     = .TRUE. when doing arbitrary eulerian lagrangian 
+!>     \verbatim
+!>     -ale
+!>     \endverbatim
+!>     ALE_MOVE_GRID when .TRUE. the new mesh is only moved
+!>     ALE_LAPLACE_GRID when .TRUE. the new mesh is obtained by solving Laplace's equation for the grid velocities
+!>     ALE_READ_GRID when .TRUE. the new mesh is read from file (currently un-used)
+!>     ALE_READ_GRIDVEL when .TRUE. the new mesh is read from file
+!>     CHAR_TIMESTEPPING is set to .TRUE. when characteristic time stepping is chosen
+!>     GCLCHK when set to .TRUE. checks whether the GCL is verified on a per cell basis; activated using
+!>     \verbatim
+!>     -ale_check_gcl
+!>     \endverbatim
+!>
+@
+
+
+1.9
+log
+@added ALE_READ_GRIDVEL for reading the grid velocitites from a file
+@
+text
+@d2 1
+a2 1
+     &ALFALE,XYZ_C(3)
+d5 3
+a7 2
+     &ALE_LAPLACE_GRID,ALE_READ_GRIDVEL,CHAR_TIMESTEPPING,GCLCHK
+      COMMON/R8TIME/DELT,GAMT,GAMTBAK,THETAT,DTVOL,TCOEF,ALFALE,XYZ_C
+d10 2
+a11 2
+     2ALE_READ_GRID,ALE_LAPLACE_GRID,ALE_READ_GRIDVEL,CHAR_TIMESTEPPING,
+     3GCLCHK
+d22 2
+@
+
+
+1.8
+log
+@add the logical flag GCLCHK: activates GCL checking
+on demand (using -ale_check_gcl)
+@
+text
+@d5 1
+a5 2
+     &ALE_LAPLACE_GRID,CHAR_TIMESTEPPING,GCLCHK
+c     DTVOL is a local parameter, should be rather placed elsewhere
+d9 2
+a10 32
+     &ALE_READ_GRID,ALE_LAPLACE_GRID,CHAR_TIMESTEPPING,GCLCHK
+C
+C     DELT is the time step size for time accurate calculations (-time_step_size)
+C     GAMT weights the contribution of the three time levels: (n+1), n, (n-1)
+C     GAMTBAK is a backup copy of GAMT
+C     THETAT weights the contribution of the spatial residuals at time level (n+1) and n
+C     DTVOL
+C     TCOEF(-1:1) coefficients of the 3 time levels scheme
+C     ALFALE weights used to determine the mesh configurations that guarantees GCL
+C     XYZ_C coordinates of the point about which rotation/deformation is performed
+C           when moving the grid
+C     ------------------------------------------------------------------------------------
+C     ITSTEP is the number of time steps (-nof_time_steps)
+C     NTIMLEVS is the actual nof of time levels; can be two: (n+1) and n or three: (n+1), n, (n-1)
+C     MMTYPE is the scheme used for the Mass Matrix, see time.h 
+C     ITIM is the current time step, i.e. we are moving from n to n+1
+C     IALE control the function used to move the grid (or its boundaries)
+C     ------------------------------------------------------------------------------------
+C     LTIME is set to .TRUE. for time accurate calculations (-time_accurate)
+C     DUALTS is set to .TRUE. when dual time stepping is chosen (-dual_ts [Y/N])
+C     LFOOLD should be set to .TRUE. when reading time level n-1 from a datafile
+C     LALE     = .TRUE. when doing arbitrary eulerian lagrangian 
+C     ALE_MOVE_GRID when .TRUE. the new mesh is only moved
+C     ALE_LAPLACE_GRID when .TRUE. the new mesh is obtained by solving Laplace's equation for the grid velocities
+C     ALE_READ_GRID when .TRUE. the new mesh is read from file
+C     CHAR_TIMESTEPPING is set to .TRUE. when characteristic time stepping is chosen
+C     ------------------------------------------------------------------------------------
+C
+C
+C
+C
+C
+d12 33
+@
+
+
+1.7
+log
+@added XYZ_C to store the coordinates of the point
+about which the mesh is rotated or deformed
+@
+text
+@d5 1
+a5 1
+     &ALE_LAPLACE_GRID,CHAR_TIMESTEPPING
+d10 1
+a10 1
+     &ALE_READ_GRID,ALE_LAPLACE_GRID,CHAR_TIMESTEPPING
+@
+
+
+1.6
+log
+@added ALE_LAPLACE_GRID
+@
+text
+@d1 2
+a2 1
+      DOUBLE PRECISION DELT,GAMT,GAMTBAK,THETAT,DTVOL,TCOEF(-1:1),ALFALE
+d7 1
+a7 1
+      COMMON/R8TIME/DELT,GAMT,GAMTBAK,THETAT,DTVOL,TCOEF,ALFALE
+d19 2
+@
+
+
+1.5
+log
+@added a flag (IALE) used to select different hardwired grid motions
+@
+text
+@d4 1
+a4 1
+     &CHAR_TIMESTEPPING
+d9 1
+a9 1
+     &ALE_READ_GRID,CHAR_TIMESTEPPING
+d30 1
+@
+
+
+1.4
+log
+@added comments
+@
+text
+@d2 1
+a2 1
+      INTEGER ITSTEP,NTIMLEVS,MMTYPE,ITIM
+d7 1
+a7 1
+      COMMON/I4TIME/ITSTEP,NTIMLEVS,MMTYPE,ITIM
+d23 1
+@
+
+
+1.3
+log
+@introduces characteristic time stepping
+@
+text
+@d15 4
+d22 2
+a25 1
+C     CHAR_TIMESTEPPING is set to .TRUE. when characteristic time stepping is chosen
+d30 2
+a31 1
+C     ALFALE weight used to determine the mesh configurations that guarantees GCL
+@
+
+
+1.2
+log
+@added GAMTBAK where a copy of GAMT is kept
+@
+text
+@d3 2
+a4 1
+      LOGICAL LTIME,DUALTS,LFOOLD,LALE,ALE_MOVE_GRID,ALE_READ_GRID
+d8 2
+a9 1
+      COMMON/L4TIME/LTIME,DUALTS,LFOOLD,LALE,ALE_MOVE_GRID,ALE_READ_GRID
+d20 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      DOUBLE PRECISION DELT,GAMT,THETAT,DTVOL,TCOEF(-1:1),ALFALE
+d5 1
+a5 1
+      COMMON/R8TIME/DELT,GAMT,THETAT,DTVOL,TCOEF,ALFALE
+d11 1
+@

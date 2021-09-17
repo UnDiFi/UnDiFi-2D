@@ -1,0 +1,89 @@
+\hypertarget{_l_d_a_sys__scheme_8_f}{}\doxysection{src/schemes/\+L\+D\+A\+Sys\+\_\+scheme.F File Reference}
+\label{_l_d_a_sys__scheme_8_f}\index{src/schemes/LDASys\_scheme.F@{src/schemes/LDASys\_scheme.F}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{_l_d_a_sys__scheme_8_f_aff796dba95ddbc02a2aab2ca58f217a6}{L\+D\+A\+S\+Y\+S\+\_\+\+S\+C\+H\+E\+ME}} (M\+A\+T\+R\+I\+X\+S\+P\+L\+I\+T\+T\+ER, W, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, T\+S\+T\+EP, B\+E\+TA, S\+T\+I\+FC, N\+O\+R\+D\+ER, N\+D\+OF, N\+O\+F\+V\+E\+RT, V\+CN, N\+D\+IM, D\+F\+G\+H\+DU, L\+DJ, C\+E\+L\+R\+ES, S\+O\+U\+R\+CE, I\+E\+L\+EM, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)
+\begin{DoxyCompactList}\small\item\em {\bfseries{L\+D\+A\+S\+Y\+S\+\_\+\+S\+C\+H\+E\+ME}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{_l_d_a_sys__scheme_8_f_aff796dba95ddbc02a2aab2ca58f217a6}\label{_l_d_a_sys__scheme_8_f_aff796dba95ddbc02a2aab2ca58f217a6}} 
+\index{LDASys\_scheme.F@{LDASys\_scheme.F}!LDASYS\_SCHEME@{LDASYS\_SCHEME}}
+\index{LDASYS\_SCHEME@{LDASYS\_SCHEME}!LDASys\_scheme.F@{LDASys\_scheme.F}}
+\doxysubsubsection{\texorpdfstring{LDASYS\_SCHEME()}{LDASYS\_SCHEME()}}
+{\footnotesize\ttfamily subroutine L\+D\+A\+S\+Y\+S\+\_\+\+S\+C\+H\+E\+ME (\begin{DoxyParamCaption}\item[{external}]{M\+A\+T\+R\+I\+X\+S\+P\+L\+I\+T\+T\+ER,  }\item[{double precision, dimension(ndof,nofvert)}]{W,  }\item[{double precision, dimension(ndof,nofvert)}]{N\+O\+D\+R\+ES,  }\item[{double precision, dimension(ndof,nofvert)}]{T\+S\+T\+EP,  }\item[{double precision, dimension($\ast$)}]{B\+E\+TA,  }\item[{double precision, dimension(ndof,ndof,nofvert,nofvert)}]{S\+T\+I\+FC,  }\item[{integer}]{N\+O\+R\+D\+ER,  }\item[{integer}]{N\+D\+OF,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{integer}]{N\+D\+IM,  }\item[{double precision, dimension(ldj,$\ast$)}]{D\+F\+G\+H\+DU,  }\item[{integer}]{L\+DJ,  }\item[{double precision, dimension($\ast$)}]{C\+E\+L\+R\+ES,  }\item[{double precision, dimension($\ast$)}]{S\+O\+U\+R\+CE,  }\item[{integer}]{I\+E\+L\+EM,  }\item[{logical}]{M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{L\+D\+A\+S\+Y\+S\+\_\+\+S\+C\+H\+E\+ME}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+This routine computes the L\+DA version 1 system scheme on one tetrahedron;
+
+it differs from the L\+DA version 2 system scheme since here the matrix $ K_i^+ $ multiplies $ \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} $ from the right, i.\+e.
+
+the distribution matrix for the L\+DA verion 1 scheme reads\+: \[ B_i = \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} K_i^+ \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+S\+P\+L\+I\+T\+T\+ER} & is the subroutine use to split the Jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em W} & is the set of N\+O\+R\+D\+ER dependent variables in the N\+O\+F\+V\+E\+RT vertices of the current cell \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+D\+R\+ES} & are the signals sent to each of the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em T\+S\+T\+EP} & is the elemental contribution to the (inverse of the) time step \\
+\hline
+\mbox{\texttt{ out}}  & {\em B\+E\+TA} & the N\+O\+F\+V\+E\+RT distribution matrices \\
+\hline
+\mbox{\texttt{ out}}  & {\em S\+T\+I\+FC} & the elemental contribution to the implicit matrix (computed only if M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY is true) \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+R\+D\+ER} & is the order of the hyperbolic system being solved, it could be $<$ than N\+D\+OF \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+OF} & is the number of dofs in the gridpoints, also the leading dimension of W, S\+T\+I\+FC, N\+O\+D\+R\+ES, T\+S\+T\+EP \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+F\+V\+E\+RT} & is number of vertices of the simplicial elements (= N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & the N\+D\+IM cartesian component of the inward face normal to all N\+O\+F\+V\+E\+RT vertices, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & is the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em D\+F\+G\+H\+DU} & the N\+D\+IM cartesian components of the Jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DJ} & is the leading dimension of D\+F\+G\+H\+DU \\
+\hline
+\mbox{\texttt{ out}}  & {\em C\+E\+L\+R\+ES} & the elemental residual \\
+\hline
+\mbox{\texttt{ in}}  & {\em S\+O\+U\+R\+CE} & the elemental source term \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & is the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} & when set == .T\+R\+UE. the S\+T\+I\+FC matrix will be assembled \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+15 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:49\+:28 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+Define {\ttfamily F\+S\+P\+L\+\_\+\+U\+S\+E\+\_\+\+P\+E\+T\+S\+C\+\_\+\+K\+E\+R\+N\+E\+LS} if you want to use P\+E\+T\+Sc\textquotesingle{}s kernels to invert matrix $ \left( \sum_{j=1}^{d+1} K_j^+\right) $ (the preferred choice) 
+
+Define {\ttfamily F\+S\+P\+L\+\_\+\+U\+S\+E\+\_\+\+L\+A\+P\+A\+CK} if you want to use L\+A\+P\+A\+CK to invert matrix $ \left( \sum_{j=1}^{d+1} K_j^+\right) $ (presumably much slower than the former) 
+\end{DoxyWarning}

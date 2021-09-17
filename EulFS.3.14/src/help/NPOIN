@@ -1,0 +1,2 @@
+C     NPOIN    no. of interior (processor owned) meshpoints; 
+C              global number of meshpoints in the uni-processor case

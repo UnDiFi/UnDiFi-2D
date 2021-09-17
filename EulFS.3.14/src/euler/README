@@ -1,0 +1,6 @@
+this directory contains most (if not all)
+the NON PETSc source codes needed to solve 
+the Euler eqns., either compressible or
+incompressible, preconditioned or not.
+
+TRASH contains *XIsa.* and *VIsa.*

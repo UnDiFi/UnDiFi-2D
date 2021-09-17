@@ -1,0 +1,107 @@
+The following e-mail might be helpful to people using the FXDR
+library on the Sun platform, or using it in conjunction with IDL.
+The alterations and routines mentioned below have been included 
+with the release.
+
+----------------------------------------------------------------
+
+From wilms@rocinante.Colorado.EDU Tue Aug 13 09:11:26 1996
+Date: Tue, 13 Aug 1996 09:42:24 -0600
+From: Joern Wilms <wilms@rocinante.Colorado.EDU>
+To: dpierce@ucsd.edu
+
+Dear Dr. Pierce,
+
+first I'd like to thank you for the development of  the
+fxdr library, which is a great help for all of us who are
+stuck with FORTRAN...
+
+I recently compiled fxdr on a Sun machine (uname -a is)
+
+	SunOS dulcinea 5.5.1 Generic sun4u sparc SUNW,Ultra-1
+
+using the standard Sun compilers. On this machine, in order
+to get the library to work, it is also necessary to link the binaries
+with the nsl library (i.e. -L/usr/local/lib -lfxdr -lnsl) because the
+xdr routines are not in the system-library. Apart from that, the
+Defines.unsupported just worked fine.
+
+Secondly when interfacing the library with IDL, a visualization language
+often used in astronomy, satellite imagery, and in medical applications, I
+found it necessary to add some subroutines that write shorts in xdr format
+(IDL writes its integers as shorts and prepends strings with their length
+in short format; in addition, IDL DOES NOT use the xdr_array function to
+write its arrays, but just uses a loop to write all array elements, here,
+the array is NOT prepended with its length; I really wonder why they didn't
+use the standard xdr constructs in both cases...). I've attached the
+necessary subroutines, feel free to include them with the next release of
+fxdr (only if you want....)
+
+Thanks again,
+
+Joern
+
+
+
+****
+xdrshort.F
+****
+
+c
+c     Write/Read an integer as a short (may cause wrap-around!)
+c     J. Wilms, wilms@astro.uni-tuebingen.de or wilms@colorado.edu
+c
+      subroutine xdrshort (ixdrs, num)
+      integer ixdrs,ixdrsm1,num
+
+      ixdrsm1=ixdrs - 1
+
+      call cxdrshort( ixdrsm1, num)
+
+      return
+      end
+
+*****
+cxdrshort.c
+*****
+
+/* Write/Read a short */
+/* J. Wilms, wilms@astro.uni-tuebingen.de or wilms@colorado.edu */
+
+#include <stdio.h>
+#include <rpc/rpc.h>
+#include "cfxdr.h"
+
+extern XDR_element xdrfile[MAX_N_XDR_FILES];
+
+	void
+#ifdef cray
+	CXDRSHORT( int *ixdrid, int *i )
+
+#elif defined( hpux )
+	cxdrshort( ixdrid, i )
+	int    *ixdrid;
+	int	*i;
+
+#else
+	cxdrshort_( int *ixdrid, int *i )
+#endif
+{
+	XDR 	*xdrs;
+	short ii;
+
+	xdrs = xdrfile[*ixdrid].xdrs;
+
+	if (xdrs->x_op == XDR_ENCODE) ii=(short) *i;
+
+	if( ! xdr_short( xdrs, &ii ) ) {
+		fprintf( stderr, "FXDR library error!  Call to read short ");
+		fprintf( stderr, "did not complete successfully!\n" );
+		fprintf( stderr, "Error occured in file %s\n", 
+			xdrfile[*ixdrid].filename );
+		exit( -1 );
+		}
+
+	if (xdrs->x_op == XDR_DECODE) i=(int) ii;
+}
+

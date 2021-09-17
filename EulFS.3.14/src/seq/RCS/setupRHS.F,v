@@ -1,0 +1,1992 @@
+head	1.35;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.35
+	release3_13_0:1.32
+	release3_12_0:1.32
+	release3_11_0:1.32
+	release3_10_0:1.32
+	release3_8_0:1.32
+	release3_7_1:1.31
+	release3_7_0:1.30
+	release3_4_5:1.29
+	release3_4_4:1.29
+	release3_4_3:1.29
+	release3_4_2:1.28
+	release3_4_1:1.28
+	release3_4_0:1.28
+	release3_3_5:1.28
+	release3_3_4:1.27
+	release3_3_3:1.27
+	release3_3_2:1.25
+	release3_3_1:1.25
+	release3_3_0:1.24;
+locks
+	abonfi:1.35; strict;
+comment	@c @;
+
+
+1.35
+date	2021.02.02.10.23.18;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2021.02.02.08.29.50;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2021.01.29.08.57.04;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2020.04.23.09.51.45;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2020.03.28.09.42.48;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2013.09.17.09.57.31;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2013.05.02.10.55.09;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2013.02.06.07.56.56;	author tesistim;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2013.02.05.12.00.26;	author tesistim;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2013.01.26.11.48.45;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2012.04.03.12.07.47;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2009.10.13.08.13.31;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2009.06.11.09.00.29;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2008.02.22.11.04.15;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2007.11.14.10.14.35;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2005.09.09.08.47.41;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2005.08.08.10.51.06;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2004.08.23.20.04.17;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2002.10.25.06.03.39;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2002.09.14.09.04.14;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2002.09.09.15.53.30;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2001.07.19.10.01.09;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.11.15.09.16.49;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.11.08.09.40.52;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2000.10.20.08.35.39;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2000.06.23.16.42.37;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.03.31.08.58.06;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.12.27.09.20.28;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.12.09.10.14.00;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.12.06.12.11.11;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.12.02.08.20.34;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@driver for residual calculation
+@
+
+
+1.35
+log
+@flag for printing element matrices has been commented out
+@
+text
+@!> @@param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+!> @@param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+!> @@param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+!> @@param[in] XYZDOT the cartesian components of the grid velocity
+!> @@param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+!> @@param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+!> @@param[in] ZTURB Nodal values of the turbulent variable(s); for both the compressible and incompressible equations: \f$ \tilde{\nu} \f$
+!> @@param[in,out] STIFEL elemental stiffness matrix
+!> @@param[in,out] NODRES 
+!> @@param[in,out] NEWRES 
+!> @@param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+!> @@param[out] VCDZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+!> @@param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+!> @@param[in] NELEM is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+!> @@param[in] NPOIN nof interior nodes in the mesh
+!> @@param[in] NGHOST nof ghost nodes in the mesh
+!> @@param[in] NPNOD nof periodic nodes in the mesh
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NOFVERT number of vertices per element (=NDIM+1, since only triangles or tetrahedra are allowed)
+!> @@param[in] NOFVAR number of variables (degrees of freedom) in each meshpoint
+!> @@param[in] NTURB nof turbulent dofs =1 for SA
+!> @@param[in,out] PetscVecDT Petsc Vec where time-step is stored
+!> @@param[in,out] PetscVecRHS Petsc Vec where the nodal residual is stored
+!> @@param[in,out] PetscMatA Petsc Mat where the implicit matrix is stored
+!> @@param[in] ScalarScheme is the SUBROUTINE used to discretize scalar equation
+!> @@param[in] MatrixScheme is the SUBROUTINE used to discretize hyperbolic systems of equations
+!> @@param[in] TModelScheme is the SUBROUTINE used to discretize the turbulence transport equations
+!> @@param[in] EulerModel is the SUBROUTINE used to discretize the inviscid mean-flow equations
+!> @@param[in] NSModel is the SUBROUTINE used to discretize the viscous terms of the  mean-flow equations
+!> @@param[in] TurbulenceModel is the SUBROUTINE used to discretize the turbulence model
+      SUBROUTINE SetupRHS(ICELNOD,ICELFAC,VFACNOR,XYZDOT,VOL,ZROE,ZTURB,
+     +                    STIFEL,NODRES,NEWRES,VCZ,VCDZ,VCB,
+     3                    NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     4                    NTURB,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                    ScalarScheme,MatrixScheme,TModelScheme,
+     6                    EulerModel,NSModel,TurbulenceModel)
+C
+C     $Id: setupRHS.F,v 1.34 2021/02/02 08:29:50 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec
+      use petscmat
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'time.h'
+      INCLUDE 'constants.h'
+C
+      Vec PetscVecDT,PetscVecRHS
+      Mat PetscMatA
+C
+C
+C#define TEST_JACOBIAN
+C#define PRINT_MATRICES
+C
+C     On Aug. 21, 2002 I have tested the diffusive terms of 
+C     the incompressible NS eqns.
+C
+C
+C
+      INCLUDE 'dofs.com'
+      INCLUDE 'three.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'sa.com'
+      INCLUDE 'newtoneps.com'
+      INCLUDE 'time.com'
+C
+C
+      INTEGER NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,NELEM,NTURB
+C
+      INTEGER ICELNOD(NOFVERT,NELEM),ICELFAC(NOFVERT,NELEM)
+C
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM), ZROE(NOFVAR,*),
+     1                 ZTURB(*),XYZDOT(NDIM,*),
+     +STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT), NODRES(NOFVAR,NOFVERT),
+     +NEWRES(NOFVAR,NOFVERT), VCZ(NOFVAR,NOFVERT),VCDZ(NOFVAR,NOFVERT),
+     +VCB(NDIM,NOFVERT)
+ 
+C
+C     FACNOR(1:NDIM,1:NFACE)  cartesian components
+C                             of the NFACE faces/edges
+C     NODRES(1:NOFVAR,1:NOFVERT) is used to accumulate the
+C         nodal residual in conserved variables and scatter
+C         it to the PetscVecRHS PETSc vector
+C     NEWRES(1:NOFVAR,1:NOFVERT) same as NODRES, but for the
+C         perturbed dependent variable (only Newton iteration)
+C     TSTEP(1:NOFVERT) is used to accumulate the timestep
+C         and then scatter it to the PETSc vector PetscVecDT
+C
+C     ICN stores the vertices of the current element (0-based indexing)
+C
+C
+C
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+      INTEGER ISTAK(1)
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+      EXTERNAL ScalarScheme,MatrixScheme,
+     +         EulerModel,NSModel,TurbulenceModel,TModelScheme
+C
+C
+      INTEGER JVAR,IVAR,IVERT,JVERT,JV,IELEM,NP,IADDR,IOFF,IFAIL,N4
+      INTEGER I,J,M
+      DOUBLE PRECISION EPS
+      INTEGER NERR,IOPT
+      CHARACTER*72 ERRMSG
+      PARAMETER(NERR = 5, IOPT = 1)
+C     ..
+C     .. Local Arrays ..
+      INTEGER ICN(MAXNOFVERT)
+      DOUBLE PRECISION TSTEP(MAXNOFVAR*MAXNOFVERT)
+      DOUBLE PRECISION VCN(3*MAXNOFVERT),VOLUME(MAXTIMLEVS+1),
+     &DUMMY(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR),VISCT(MAXNOFVERT)
+      LOGICAL COMPRESSIBLE,VISCOUS,PLASMA
+C
+#ifdef TEST_JACOBIAN
+      DOUBLE PRECISION ERRMAT((MAXNOFVAR*MAXNOFVERT)**2)
+      DOUBLE PRECISION STIFD((MAXNOFVAR*MAXNOFVERT)**2)
+      DOUBLE PRECISION S
+      DOUBLE PRECISION DNRM2
+      EXTERNAL DNRM2
+      IADDR(I,J) = ((J-1)*NOFVERT+(I-1))*(NOFVAR**2)+1
+#endif
+C
+C     Some initializations ....
+C
+      N4 = NOFVAR*NOFVAR*NOFVERT*NOFVERT
+      CALL DINIT(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR,ZERO,DUMMY,1)
+C
+C
+      COMPRESSIBLE = ABS(KAN) .EQ. 4
+      PLASMA = ABS(KAN) .EQ. 3
+      VISCOUS = (KAN .GT. 0)
+      NP = NPOIN + NGHOST + NPNOD
+C
+C
+      DO 2000 IELEM = 1,NELEM
+C
+C     The element stiffness matrix is initialized to 0.d0
+C
+          IF (TIMEIMPL) CALL DINIT(N4,ZERO,STIFEL,1)
+C
+C     set local residual and timestep to zero
+C
+          CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1)
+          CALL DINIT(NOFVERT*NOFVAR,ZERO,TSTEP,1)
+C
+          CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+     +                VFACNOR, XYZDOT, NDIM, NOFVERT, NOFVAR, NP, ICN,
+     3                VCZ, VCN, VCB, VOLUME)
+C
+!         write(6,*)ielem,(icn(j)+1,j=1,nofvert)
+!         CALL R8Mat_Print('General',' ',Nofvar,Nofvert*NTIMLEVS,VCZ,
+!    +    Nofvar,'Z array just after celptr ',IFAIL)
+C
+C     in the segregated approach, VISCT is not altered,
+C     so we can compute it only once.
+C
+          IF(TURBULENT.AND.SEGREGATED)THEN
+              DO 10 IVERT = 1, NOFVERT
+                  VISCT(IVERT) = ZTURB(ICN(IVERT)+1)
+   10         CONTINUE
+          ELSEIF(TURBULENT.AND.COUPLED)THEN
+C
+C     here we compute wall and trip point distance
+C     as required by the Spalart-Allmaras model
+C     this is NOT very elegant (ugly!!)
+C     also requires DSTAK
+C
+              TD  = ZERO
+              TTD = ZERO
+              DO 12 IVERT = 1, NOFVERT
+                  TD  =  TD + DSTAK(LTD+ICN(IVERT))
+                  TTD = TTD + DSTAK(LTTD+ICN(IVERT))
+                  visct(ivert) = ZERO
+   12         CONTINUE
+              TD  = TD / NOFVERT
+              TTD = TTD / NOFVERT
+          ENDIF
+C
+C     test for periodic i-nodes
+C
+      INCLUDE 'ptest.f'
+C
+C     Compute nodal residual and timestep
+C
+#ifdef TEST_JACOBIAN
+          CALL NONAME(IELEM,VCN,VCB,VCZ,VISCT,NDIM,NOFVERT,NOFVAR,
+     1    NTURB,VOLUME(1),.TRUE.,VISCOUS,COMPRESSIBLE,
+     2    EulerModel,TurbulenceModel,NSModel,
+     3    ScalarScheme,MatrixScheme,TModelScheme,
+     4    NODRES,TSTEP,STIFD)
+#else
+!         write(6,*)ielem
+!         write(6,*)(vcn(i),i=1,nofvert*ndim)
+!         do i = 1,nofvert
+!         write(6,*) (vcz(j,i),j=1,nofvar)
+!         enddo
+!         write(6,*)'visct = ',(visct(i),i=1,nofvert)
+!         write(6,*) ndim,nofvert,nofvar,
+!    &    NTURB,VOLUME(1),PICARD,VISCOUS,COMPRESSIBLE
+caldo
+          CALL NONAME(IELEM,VCN,VCB,VCZ,VISCT,NDIM,NOFVERT,NOFVAR,
+     1                NTURB,VOLUME(1),PICARD,VISCOUS,COMPRESSIBLE,
+     2                EulerModel,TurbulenceModel,NSModel,
+     3                ScalarScheme,MatrixScheme,TModelScheme,
+     4                NODRES,TSTEP,STIFEL)
+C
+!         write(6,*)'Beyond noname outside Newton loop ',ielem
+!         write(6,*)' ielem = ',ielem,' ivert = ',ivert,' ivar = ',ivar
+!         CALL R8Mat_Print('General',' ',Nofvar,Nofvert,Nodres,
+!    +    Nofvar,'REsidual Matrix before Newton',IFAIL)
+#endif
+C
+          IF(.NOT.TIMEIMPL)GOTO 1500
+C
+          IF(NEWTON)THEN
+C
+C     Compute Jacobian by finite differences
+C
+             DO IVERT = 1, NOFVERT
+                DO IVAR = 1, NOFVAR
+                   CALL DCOPY(NOFVAR*NOFVERT*NTIMLEVS,VCZ,1,VCDZ,1)
+C
+C     For compressible flows, it is necessary to transform to
+C     conserved variables, perturb and then transform back to
+C     parameter vector
+C
+                  IF(COMPRESSIBLE)THEN
+                    CALL PARM_TO_CONS(VCZ (1,IVERT),NDIM,NOFVAR,1,LTSQR,
+     &                                IFAIL)
+                    CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,LTSQR,
+     &                                IFAIL)
+                  ELSEIF(PLASMA)THEN
+                    CALL PARM_TO_CONS4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+     &                                .FALSE.,IFAIL)
+                    CALL PARM_TO_CONS4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                .FALSE.,IFAIL)
+                  ENDIF
+C
+                  EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),ONE)*
+     +            SIGN(ONE,VCZ(IVAR,IVERT))
+                  VCDZ(IVAR,IVERT) = VCZ(IVAR,IVERT) + EPS
+C
+                  IF(COMPRESSIBLE)THEN
+                    CALL CONS_TO_PARM(VCZ (1,IVERT),NDIM,NOFVAR,1,LTSQR,
+     &                                IFAIL)
+                  ELSEIF(PLASMA)THEN
+                    CALL CONS_TO_PARM4Ar(VCZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                .FALSE.,IFAIL)
+                  ELSE ! incompressible
+                      IFAIL = 0
+                  ENDIF ! compressible
+                  IF(IFAIL.NE.0)THEN
+                       WRITE(ERRMSG(1:64),FMT=105)'setupRHS__',MY_PE,
+     &                                            "(1)"
+                       CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                  ENDIF   ! ifail
+                  IF(COMPRESSIBLE)THEN
+                    CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,LTSQR,
+     &                                IFAIL)
+                  ELSEIF(PLASMA)THEN
+                    CALL CONS_TO_PARM4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                .FALSE.,IFAIL)
+                  ELSE ! incompressible
+                      IFAIL = 0
+                  ENDIF ! compressible
+                  IF(IFAIL.NE.0)THEN
+                     WRITE(ERRMSG(1:64),FMT=105)'setupRHS__',MY_PE,
+     &                                            "(2)"
+                     CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                  ENDIF   ! ifail
+C
+C         we set the "perturbed" residual to 0.d0
+C         since this is not any more done within
+C         the EulerModel routines. Note, however,
+C         that most scheme would do this (to be checked)
+C
+                  CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,NEWRES,1)
+C
+!         write(6,*)' before noname in Newton loop ',ielem
+!         write(6,*)ielem
+!         write(6,*)(vcn(i),i=1,nofvert*ndim)
+!         do i = 1,nofvert
+!         write(6,*) (vcdz(j,i),j=1,nofvar)
+!         enddo
+!         write(6,*)'visct = ',(visct(i),i=1,nofvert)
+!         write(6,*) ndim,nofvert,nofvar,
+!    &    NTURB,VOLUME(1),PICARD,VISCOUS,COMPRESSIBLE
+!         call dcopy(nofvar*nofvert,VCDZ,1,JUMMY,1)
+!         iflg = 13
+                  CALL NONAME(IELEM,VCN,VCB,VCDZ,VISCT,NDIM,NOFVERT,
+     1                        NOFVAR,NTURB,VOLUME(1),.FALSE.,VISCOUS,
+     2                        COMPRESSIBLE,EulerModel,TurbulenceModel,
+     3                        NSModel,ScalarScheme,MatrixScheme,
+     3                        TModelScheme,NEWRES,DUMMY,DUMMY)
+C
+!         write(6,*)' ielem = ',ielem,' ivert = ',ivert,' ivar = ',ivar
+!         CALL R8Mat_Print('General',' ',Nofvar,Nofvert*NTIMLEVS,VCZ,
+!    +    Nofvar,'Z array ',IFAIL)
+!         CALL R8Mat_Print('General',' ',Nofvar,Nofvert*NTIMLEVS,VCDZ,
+!    +    Nofvar,'Perturbed Z array ',IFAIL)
+!         CALL R8Mat_Print('General',' ',Nofvar,Nofvert,NEWRES,
+!    +    Nofvar,'REsidual Matrix ',IFAIL)
+!         pause
+C
+C     construct the jacobian entries using one-sided FD
+C
+                  DO JVAR = 1, NOFVAR
+                      DO JVERT = 1, NOFVERT
+                          STIFEL(JVAR,IVAR,JVERT,IVERT) = -(NEWRES
+     +                    (JVAR,JVERT)-NODRES(JVAR,JVERT))/EPS
+C
+                      ENDDO ! JVERT
+                   ENDDO ! JVAR
+                ENDDO ! loop over IVAR
+             ENDDO ! loop over IVERT
+          ENDIF ! Newton
+C
+C   Insert element matrices into the global one
+!
+!   STIFEL è una matrice quadridimensionale
+!   double precision STIFEL (bs,bs,nvt,nvt) 
+!   dove (nell'esempio qui sotto)
+!   bs = NOFVAR = 2, nvt = NOFVERT = 3
+!   -------------------------------------
+!   |  1.   3. |   13.  15.|   25.   27.|
+!   |  2.   4. |   14.  16.|   26.   28.| 
+!   -------------------------------------
+!   |  5.   7. |   17.  19.|   29.   31.| 
+!   |  6.   8. |   18.  20.|   30.   32.| 
+!   -------------------------------------
+!   |  9.   11.|   21.  23.|   33.   35.| 
+!   |  10.  12.|   22.  24.|   34.   36.| 
+!   -------------------------------------
+!   Vista come un vettore 1d, gli elementi
+!   di questo sono nell'ordine degli interi,
+!   perché riempio la matrice con:
+!   do jvt = 1, nvt
+!      do ivt = 1, nvt
+!         do j = 1, bs
+!            do i = 1, bs
+!               C(i,j,ivt,jvt) = ...
+!            enddo
+!         enddo
+!      enddo
+!   enddo
+!   Sull' ordine degli elementi di C non posso intervenire
+!   senza stravolgere troppe cose, pero':
+!   Fino alla versione 1.31 inserivo uno alla volta i blocchi nella matrice
+!   PETsc, cioe' chiamavo nvt**2 volte MatSetValuesBlocked()
+!
+!   Nella 1.32 faccio un'unica chiamata a MatSetValuesBlocked(),
+!   ma devo passare a Petsc una matrice 2d
+!   che "vede" C come un'unica matrice, cioe' 
+!   A(bs*nvt,bs*nvt) =
+!   -----------------------------------
+!   |  1.   3.    13.  15.   25.   27.|
+!   |  2.   4.    14.  16.   26.   28.| 
+!   |  5.   7.    17.  19.   29.   31.| 
+!   |  6.   8.    18.  20.   30.   32.| 
+!   |  9.   11.   21.  23.   33.   35.| 
+!   |  10.  12.   22.  24.   34.   36.| 
+!   -----------------------------------
+!   oppure, passandogli il vettore 1d
+!   y = 1,2,5,6,9,10,3, etc.
+!   
+!   C'è un modo più clever di fare questa cosa,
+!   rispetto alla copia che faccio adesso?
+C
+          IF(NOFVAR.EQ.1)THEN
+C
+C     Scalar problems ******************
+C
+#ifdef MPI
+             CALL MatSetValuesLocal(PetscMatA,NOFVERT,ICN(1),NOFVERT,
+     +                ICN(1),STIFEL(1,1,1,1),ADD_VALUES,
+     +                IFAIL)
+#else
+             CALL MatSetValues(PetscMatA,NOFVERT,ICN(1),NOFVERT,
+     +                ICN(1),STIFEL(1,1,1,1),ADD_VALUES,
+     +                IFAIL)
+#endif
+          ELSE ! NOFVAR
+C
+              IF( PERIODIC_MESH .AND. ANNULAR )
+     &        CALL ROTATECIJ(STIFEL,NOFVAR,NOFVERT,NOFVERT,NOFVERT)
+C
+C     Euler/NS problems ******************
+C
+              DO 37 IVERT = 1,NOFVERT
+                  DO 37 JVERT = 1,NOFVERT
+                      CALL DCOPY(NOFVAR*NOFVAR,STIFEL(1,1,IVERT,JVERT),
+     &                           1,DUMMY,1)
+#ifdef MPI
+                      CALL MatSetValuesBlockedLocal(PetscMatA,1,
+     +                ICN(IVERT),1,ICN(JVERT),DUMMY,ADD_VALUES, IFAIL)
+#else
+                      CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,
+     +                ICN(JVERT),DUMMY,ADD_VALUES,IFAIL)
+#endif
+#ifdef PRINT_MATRICES
+                      ERRMSG(1:32) = 'Jacobian Matrix in setupRHS (1) '
+                      write(ERRMSG(33:59),FMT=120)IELEM,IVERT,JVERT 
+                      CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+     +                stifel(1,1,ivert,jvert),Nofvar,ERRMSG(1:59),
+     &                IFAIL)
+#endif
+   37         CONTINUE
+C
+          ENDIF ! Check on NOFVAR
+C
+#ifdef TEST_JACOBIAN
+C
+              CALL DCOPY(N4,STIFD,1,ERRMAT,1)
+              CALL DAXPY(N4,MONE,STIFEL,1,ERRMAT,1)
+              DO 39 IVERT = 1,NOFVERT
+                  DO 39 JVERT = 1,NOFVERT
+                     I= IADDR(IVERT,JVERT)
+                     S = DNRM2(NOFVAR*NOFVAR,ERRMAT(I),1)
+                     IF(ABS(S).GT.1.E-5)THEN
+                        write(6,*)ielem,icn(ivert),icn(jvert),s
+                 CALL R8Mat_Print('General',' ',Nofvar,Nofvar,stifel(1,
+     +           1,ivert,jvert), Nofvar,
+     &           'Jacobian Matrix in setupRHS (1) ',IFAIL)
+                 CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFD(i),
+     +           Nofvar,'Picard Matrix ',IFAIL)
+                 pause
+                     ENDIF
+   39         CONTINUE
+#endif
+C
+ 1500 CONTINUE
+C
+C     Insert nodal residual and timestep into PETSc vectors
+C
+       INCLUDE 'rotaterhs.f'
+C
+caldo     CALL R8Mat_Print('General',' ',Nofvar,Nofvert,NODRES,
+caldo+    Nofvar,'REsidual Matrix ',IFAIL)
+caldo     pause
+C
+         
+         CALL DCOPY(NOFVAR*NOFVERT,NODRES,1,DUMMY,1)
+         IF(NOFVAR.EQ.1)THEN
+              CALL VecSetValues(PetscVecDT,NOFVERT,ICN,TSTEP,
+     +        ADD_VALUES,IFAIL)
+              CALL VecSetValues(PetscVecRHS,NOFVERT,ICN,DUMMY,
+     +        ADD_VALUES,IFAIL)
+         ELSE
+              CALL VecSetValuesBlocked(PetscVecDT,NOFVERT,ICN,TSTEP,
+     +        ADD_VALUES,IFAIL)
+              CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT,ICN,DUMMY,
+     +        ADD_VALUES,IFAIL)
+         ENDIF
+ 2000 CONTINUE ! end loop over elements
+      RETURN
+  105 FORMAT('CONS_TO_PARM failed when called from ',A10,' on PE # ',I4,
+     &1X,A3)
+  120 FORMAT(1X,'ie = ',I6,' iv = ',I1,' jv = ',I1)
+      END
+@
+
+
+1.34
+log
+@changes introduced in revision 1.32 have been removed because
+they were apparently buggy when run in parallel
+@
+text
+@d38 1
+a38 1
+C     $Id: setupRHS.F,v 1.33 2021/01/29 08:57:04 abonfi Exp abonfi $
+d59 1
+a59 1
+#define PRINT_MATRICES
+@
+
+
+1.33
+log
+@changed call to MatSetValuesLocal because of type checking introduced in petsc
+@
+text
+@d38 1
+a38 1
+C     $Id: setupRHS.F,v 1.32 2020/04/23 09:51:45 abonfi Exp abonfi $
+d59 1
+a59 1
+CCC#define PRINT_MATRICES
+d406 11
+a416 11
+              DO JVERT = 1,NOFVERT
+                 m = (jvert-1)*NOFVERT*NOFVAR*NOFVAR
+                 DO IVERT = 1,NOFVERT
+                    ioff = m + (IVERT-1)*NOFVAR
+                    do j = 1, NOFVAR
+                       iaddr = ioff + (j-1)*NOFVAR*NOFVERT
+                       do i = 1, NOFVAR
+                          DUMMY(iaddr+i) = STIFEL(i,j,IVERT,JVERT)
+                       enddo ! i
+                    enddo ! j
+                 enddo ! IVERT
+d418 5
+a422 4
+                     write(6,*)ivert,jvert
+                     CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+     +               stifel(1,1,ivert,jvert), Nofvar,
+     &               'Jacobian Matrix in setupRHS (1) ',IFAIL)
+d424 1
+a424 3
+              enddo ! JVERT
+C
+C Insert all at once
+a425 9
+#ifdef MPI
+              CALL MatSetValuesBlockedLocal(PetscMatA,NOFVERT,
+     +                        ICN,NOFVERT,ICN,DUMMY,
+     +                         ADD_VALUES, IFAIL)
+#else
+              CALL MatSetValuesBlocked(PetscMatA,NOFVERT,ICN,
+     +                               NOFVERT,ICN,DUMMY,ADD_VALUES,
+     +                            IFAIL)
+#endif
+d475 1
+@
+
+
+1.32
+log
+@calls to MatSetValues and VecSetValues had to be modified
+following petsc release 3.8
+@
+text
+@d38 1
+a38 1
+C     $Id: setupRHS.F,v 1.32 2020/04/19 09:22:44 abonfi Exp $
+d391 2
+a392 2
+             CALL MatSetValuesLocal(PetscMatA,NOFVERT,ICN,NOFVERT,
+     +                ICN,STIFEL(1,1,1,1),ADD_VALUES,
+d395 2
+a396 2
+             CALL MatSetValues(PetscMatA,NOFVERT,ICN,NOFVERT,
+     +                ICN,STIFEL(1,1,1,1),ADD_VALUES,
+@
+
+
+1.31
+log
+@renamed a call
+@
+text
+@d1 30
+a36 1
+ 
+d38 1
+a38 1
+      IMPLICIT NONE
+a39 1
+C     $Id: setupRHS.F,v 1.30 2016/11/10 11:25:13 abonfi Exp abonfi $
+d41 4
+d46 1
+a47 3
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+a76 12
+      integer i,j
+C
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+a79 4
+C     ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell
+C
+d97 3
+d117 2
+a118 2
+      INTEGER JVAR,IVAR,IVERT,JVERT,JV,IELEM,NP
+      INTEGER IFAIL,N4
+a122 3
+C
+C     ICN stores the vertices of the current element (0-based indexing)
+C
+a136 2
+      INTEGER I,J
+      INTEGER IADDR
+d236 3
+a238 3
+          DO 5 IVERT = 1, NOFVERT
+              DO 5 IVAR = 1, NOFVAR
+                  CALL DCOPY(NOFVAR*NOFVERT*NTIMLEVS,VCZ,1,VCDZ,1)
+d256 2
+a257 2
+                  EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),1.d0)*
+     +            SIGN(1.d0,VCZ(IVAR,IVERT))
+d322 1
+a322 1
+C     construct the jacobian entries
+d324 2
+a325 2
+                  DO 5 JVAR = 1, NOFVAR
+                      DO 5 JVERT = 1, NOFVERT
+d329 4
+a332 1
+    5     CONTINUE ! loop over JVAR,IVAR,JVERT,IVERT
+d335 50
+a384 1
+C     Insert element matrices into the global one
+a389 2
+              DO 35 IVERT = 1,NOFVERT
+                  DO 35 JVERT = 1,NOFVERT
+d391 2
+a392 2
+                      CALL MatSetValuesLocal(PetscMatA,1,ICN(IVERT),1,
+     +                ICN(JVERT),STIFEL(1,1,IVERT,JVERT),ADD_VALUES,
+d395 2
+a396 2
+                      CALL MatSetValues(PetscMatA,1,ICN(IVERT),1,
+     +                ICN(JVERT),STIFEL(1,1,IVERT,JVERT),ADD_VALUES,
+d399 1
+a399 2
+   35         CONTINUE
+          ELSE
+d406 21
+a426 2
+              DO 37 IVERT = 1,NOFVERT
+                  DO 37 JVERT = 1,NOFVERT
+d428 3
+a430 3
+                      CALL MatSetValuesBlockedLocal(PetscMatA,1,
+     +                ICN(IVERT),1,ICN(JVERT),STIFEL(1,1,IVERT,JVERT),
+     +                ADD_VALUES, IFAIL)
+d432 3
+a434 9
+                      CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,
+     +                ICN(JVERT), STIFEL(1,1,IVERT,JVERT),ADD_VALUES,
+     +                IFAIL)
+#endif
+#ifdef PRINT_MATRICES
+                      write(6,*)ivert,jvert
+                      CALL R8Mat_Print('General',' ',Nofvar,Nofvar,stifel(1,
+     +                1,ivert,jvert), Nofvar,
+     &                'Jacobian Matrix in setupRHS (1) ',IFAIL)
+d436 1
+a436 2
+   37         CONTINUE
+          ENDIF
+d441 1
+a441 1
+              CALL DAXPY(N4,-1.d0,STIFEL,1,ERRMAT,1)
+d468 3
+a470 1
+          IF(NOFVAR.EQ.1)THEN
+d473 1
+a473 1
+              CALL VecSetValues(PetscVecRHS,NOFVERT,ICN,NODRES,
+d475 1
+a475 1
+          ELSE
+d478 1
+a478 1
+              CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT,ICN,NODRES,
+d480 1
+a480 1
+          ENDIF
+@
+
+
+1.30
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.29 2013/09/17 09:57:31 abonfi Exp abonfi $
+d156 1
+a156 1
+!         CALL X04CAF('General',' ',Nofvar,Nofvert*NTIMLEVS,VCZ,
+d214 1
+a214 1
+!         CALL X04CAF('General',' ',Nofvar,Nofvert,Nodres,
+d302 1
+a302 1
+!         CALL X04CAF('General',' ',Nofvar,Nofvert*NTIMLEVS,VCZ,
+d304 1
+a304 1
+!         CALL X04CAF('General',' ',Nofvar,Nofvert*NTIMLEVS,VCDZ,
+d306 1
+a306 1
+!         CALL X04CAF('General',' ',Nofvar,Nofvert,NEWRES,
+d358 1
+a358 1
+                      CALL X04CAF('General',' ',Nofvar,Nofvar,stifel(1,
+d375 1
+a375 1
+                 CALL X04CAF('General',' ',Nofvar,Nofvar,stifel(1,
+d378 1
+a378 1
+                 CALL X04CAF('General',' ',Nofvar,Nofvar,STIFD(i),
+d391 1
+a391 1
+caldo     CALL X04CAF('General',' ',Nofvar,Nofvert,NODRES,
+@
+
+
+1.29
+log
+@VOLUME has become an array so that cell volumes at the previous
+time instants can be stored
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.28 2013/05/02 10:55:09 abonfi Exp abonfi $
+d15 3
+a17 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.28
+log
+@the locations where the momentum components and energy
+are stored are now included from dofs.com
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.27 2013/02/06 07:56:56 tesistim Exp abonfi $
+d113 1
+a113 1
+      DOUBLE PRECISION VCN(3*MAXNOFVERT),VOLUME,
+d192 1
+a192 1
+     1    NTURB,VOLUME,.TRUE.,VISCOUS,COMPRESSIBLE,
+d204 1
+a204 1
+!    &    NTURB,VOLUME,PICARD,VISCOUS,COMPRESSIBLE
+d207 1
+a207 1
+     1                NTURB,VOLUME,PICARD,VISCOUS,COMPRESSIBLE,
+d292 1
+a292 1
+!    &    NTURB,VOLUME,PICARD,VISCOUS,COMPRESSIBLE
+d296 1
+a296 1
+     1                        NOFVAR,NTURB,VOLUME,.FALSE.,VISCOUS,
+@
+
+
+1.27
+log
+@bug fixed with a logical flag
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.26 2013/02/05 12:00:26 tesistim Exp tesistim $
+d36 1
+@
+
+
+1.26
+log
+@fixed a bug passing VCZ instead of VCDZ
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.25 2013/01/26 11:48:45 abonfi Exp tesistim $
+d134 1
+a134 1
+      PLASMA = ABS(KAN) .EQ. -3
+@
+
+
+1.25
+log
+@added support for an Argon plasma
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.24 2012/04/03 12:07:47 abonfi Exp abonfi $
+d265 1
+a265 1
+                    CALL CONS_TO_PARM4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+@
+
+
+1.24
+log
+@changes needed to pass the grid velocity down to the lower level routines
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.23 2011/09/16 07:19:48 abonfi Exp abonfi $
+d36 1
+a36 1
+      INCLUDE 'three'
+d39 1
+a39 1
+      INCLUDE 'nloc'
+d114 1
+a114 1
+      LOGICAL COMPRESSIBLE,VISCOUS
+d134 1
+d236 5
+d250 7
+a256 1
+                    IF(IFAIL.NE.0)THEN
+d260 2
+a261 1
+                    ENDIF   ! ifail
+d264 8
+a271 2
+                    IF(IFAIL.NE.0)THEN
+                       WRITE(ERRMSG(1:64),FMT=105)'setupRHS__',MY_PE,
+d273 2
+a274 3
+                       CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                    ENDIF   ! ifail
+                  ENDIF ! compressible
+@
+
+
+1.23
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE SetupRHS(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,ZTURB,STIFEL,
+     +                    NODRES,NEWRES,VCZ,VCDZ,
+d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.22 2009/10/13 08:13:31 abonfi Exp abonfi $
+d66 1
+a66 1
+     1 ZTURB(*),
+d68 2
+a69 1
+     +NEWRES(NOFVAR,NOFVERT), VCZ(NOFVAR,NOFVERT),VCDZ(NOFVAR,NOFVERT)
+d134 1
+a134 1
+      VISCOUS = KAN .GT. 0
+d150 2
+a151 1
+     +    VFACNOR, NDIM, NOFVERT, NOFVAR, NP, ICN, VCZ, VCN, VOLUME)
+d189 1
+a189 1
+          CALL NONAME(IELEM,VCN,VCZ,VISCT,NDIM,NOFVERT,NOFVAR,
+d204 6
+a209 5
+          CALL NONAME(IELEM,VCN,VCZ,VISCT,NDIM,NOFVERT,NOFVAR,
+     1    NTURB,VOLUME,PICARD,VISCOUS,COMPRESSIBLE,
+     2    EulerModel,TurbulenceModel,NSModel,
+     3    ScalarScheme,MatrixScheme,TModelScheme,
+     4    NODRES,TSTEP,STIFEL)
+d276 5
+a280 5
+                  CALL NONAME(IELEM,VCN,VCDZ,VISCT,NDIM,NOFVERT,NOFVAR,
+     1                       NTURB,VOLUME,.FALSE.,VISCOUS,COMPRESSIBLE,
+     2                       EulerModel,TurbulenceModel,NSModel,
+     3                       ScalarScheme,MatrixScheme,TModelScheme,
+     3                       NEWRES,DUMMY,DUMMY)
+@
+
+
+1.22
+log
+@Added support for choosing the scalar advection scheme in the Spalart-Allmaras model
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.21 2009/06/11 13:10:58 abonfi Exp abonfi $
+d15 1
+a15 1
+#include "finclude/petsc.h"
+@
+
+
+1.21
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d5 1
+a5 1
+     +                    ScalarScheme,MatrixScheme,
+d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.20 2009/06/11 09:00:29 abonfi Exp abonfi $
+d95 1
+a95 1
+     +         EulerModel,NSModel,TurbulenceModel
+a125 2
+C
+C
+d190 1
+a190 1
+     3    ScalarScheme,MatrixScheme,
+d205 1
+a205 1
+     3    ScalarScheme,MatrixScheme,
+d276 1
+a276 1
+     3                       ScalarScheme,MatrixScheme,
+@
+
+
+1.20
+log
+@now passing NPNOD among the arguments of the call
+@
+text
+@d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.19 2008/02/22 11:04:15 abonfi Exp abonfi $
+d15 3
+a17 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.19
+log
+@improved error checking when calling CONS_TO_PARM
+@
+text
+@d2 5
+a6 4
+     +                    NODRES,NEWRES,VCZ,VCDZ,NELEM,NPOIN,NGHOST,
+     +                    NDIM,NOFVERT,NOFVAR,NTURB,PetscVecDT,
+     +                    PetscVecRHS,PetscMatA,ScalarScheme,
+     +                 MatrixScheme,EulerModel,NSModel,TurbulenceModel)
+d11 1
+a11 1
+C     $Id: setupRHS.F,v 1.18 2007/11/14 10:14:35 abonfi Exp abonfi $
+d21 2
+a26 1
+      INCLUDE 'constants'
+d29 1
+a29 1
+C#define PRINT_MATRICES
+d42 1
+d45 1
+a45 1
+      INTEGER NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,NELEM,NTURB
+d98 1
+a98 1
+      INTEGER JVAR,IVAR,IVERT,JVERT,JV,IELEM
+d136 1
+d151 5
+a155 1
+     +    VFACNOR, NDIM, NOFVERT, NOFVAR, ICN, VCZ, VCN, VOLUME)
+d210 3
+d223 1
+a223 1
+                  CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+d262 1
+a262 1
+                  CALL DINIT(NOFVAR*NOFVERT,ZERO,NEWRES,1)
+a279 2
+!         write(6,*)' beyond noname in Newton loop ',ielem
+!         stop
+d281 5
+@
+
+
+1.18
+log
+@ROOT_MACHINE_EPS is now computed only once in the main
+and stored in common STCOM
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.16 2005/09/09 08:47:41 abonfi Exp aldo $
+d88 2
+d98 3
+d109 1
+a109 2
+     &DUMMY(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR),VISCT(MAXNOFVERT),
+     &JUMMY(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR)
+d219 4
+a222 2
+                    CALL PARM_TO_CONS(VCZ (1,IVERT),NDIM,NOFVAR,1,LTSQR)
+                    CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,LTSQR)
+d230 15
+a244 3
+                    CALL CONS_TO_PARM(VCZ (1,IVERT),NDIM,NOFVAR,1,LTSQR)
+                    CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,LTSQR)
+                  ENDIF
+d283 1
+a283 1
+    5     CONTINUE
+d374 2
+@
+
+
+1.17
+log
+@an included common has been renamed
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.16 2005/09/09 08:47:41 abonfi Exp abonfi $
+d17 3
+a23 3
+      INCLUDE 'paramt.h'
+C
+C
+a24 2
+!     INCLUDE 'bnd.h'
+C
+a34 1
+      INCLUDE 'implicit.h'
+d39 1
+d43 1
+d63 1
+a63 1
+     1 ZTURB(*),VISCT(4),
+d95 1
+a95 5
+      DOUBLE PRECISION D1MACH
+C
+C
+C
+      DOUBLE PRECISION EPS,ROOT_MACHINE_EPS
+d99 2
+d104 2
+a105 1
+     &DUMMY(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR)
+d119 2
+d124 1
+a125 3
+C     problems with CRAY
+C
+caldo EPS = 100.*D1MACH(1)
+a126 2
+caldo ROOT_MACHINE_EPS = SQRT(EPS)
+      ROOT_MACHINE_EPS=1.d-07
+d130 1
+d164 1
+a181 2
+C
+C
+d183 9
+d197 1
+a197 1
+!         pause 'after noname'
+d200 1
+a200 22
+       INCLUDE 'rotaterhs.f'
+C
+caldo     CALL X04CAF('General',' ',Nofvar,Nofvert,NODRES,
+caldo+    Nofvar,'REsidual Matrix ',IFAIL)
+caldo     pause
+C
+C     Insert nodal residual and timestep into PETSc vectors
+C
+          IF(NOFVAR.EQ.1)THEN
+              CALL VecSetValues(PetscVecDT,NOFVERT,ICN,TSTEP,
+     +        ADD_VALUES,IFAIL)
+              CALL VecSetValues(PetscVecRHS,NOFVERT,ICN,NODRES,
+     +        ADD_VALUES,IFAIL)
+          ELSE
+              CALL VecSetValuesBlocked(PetscVecDT,NOFVERT,ICN,TSTEP,
+     +        ADD_VALUES,IFAIL)
+              CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT,ICN,NODRES,
+     +        ADD_VALUES,IFAIL)
+          ENDIF
+!         pause 'after VecSetValuesBlocked'
+C
+          IF(.NOT.TIMEIMPL)GOTO 2000
+d202 1
+a202 1
+          IF(PICARD)GOTO 1000
+d233 1
+a233 1
+          CALL DINIT(NOFVAR*NOFVERT,ZERO,NEWRES,1)
+d235 18
+a252 5
+          CALL NONAME(IELEM,VCN,VCDZ,VISCT,NDIM,NOFVERT,NOFVAR,
+     1    NTURB,VOLUME,.FALSE.,VISCOUS,COMPRESSIBLE,
+     2    EulerModel,TurbulenceModel,NSModel,
+     3    ScalarScheme,MatrixScheme,
+     3    NEWRES,TSTEP,DUMMY)
+a257 2
+ 
+C
+d266 1
+a266 1
+ 1000     CONTINUE
+a279 1
+ 
+a287 3
+C             INCLUDE 'rotatecij.f'
+!                 pause ' about to call rotatecij'
+!             write(6,*)ielem,(pflag(jv),jv=1,nofvert)
+a289 2
+!                 pause ' after call rotatecij'
+C
+d307 2
+a308 1
+     +                1,ivert,jvert), Nofvar,'Jacobian Matrix ',IFAIL)
+d321 9
+a329 9
+              IF(ABS(S).GT.1.E-5)THEN
+caldo         IF( .TRUE. )THEN
+              write(6,*)ielem,icn(ivert),icn(jvert),s
+              CALL X04CAF('General',' ',Nofvar,Nofvar,stifel(1,
+     +        1,ivert,jvert), Nofvar,'Jacobian Matrix ',IFAIL)
+              CALL X04CAF('General',' ',Nofvar,Nofvar,STIFD(i),
+     +        Nofvar,'Picard Matrix ',IFAIL)
+              pause
+              ENDIF
+d332 22
+@
+
+
+1.16
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.15 2005/08/08 10:51:06 abonfi Exp abonfi $
+d25 1
+a25 1
+      INCLUDE 'bnd.h'
+@
+
+
+1.15
+log
+@just reformatting lines
+@
+text
+@d2 4
+a5 4
+     +                    NODRES,NEWRES,VCZ,VCDZ,NELEM,NDIM,NOFVERT,
+     +                    NOFVAR,NTURB,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                    ScalarScheme,MatrixScheme,
+     +                    EulerModel,NSModel,TurbulenceModel)
+d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.14 2004/08/23 20:04:17 aldo Exp aldo $
+d39 1
+d44 1
+a44 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NELEM,NTURB
+d94 1
+a94 1
+      INTEGER JVAR,IVAR,IVERT,JVERT,IELEM
+d107 1
+a107 1
+     &DUMMY((MAXNOFVAR*MAXNOFVERT)**2)
+d145 2
+a146 2
+          CALL CELPTR(IELEM, ICELNOD, ICELFAC, VOL, ZROE, VFACNOR, NDIM,
+     +    NOFVERT, NOFVAR, ICN, VCZ, VCN, VOLUME)
+d159 1
+a159 1
+C     this is NOT very elegant
+d171 4
+a174 1
+C     write(6,*)ielem,td,ttd
+d195 2
+d231 1
+a231 1
+                     CALL PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1,LTSQR)
+d240 1
+a240 1
+                    CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1,LTSQR)
+d294 8
+@
+
+
+1.14
+log
+@renamed a couple of variables
+@
+text
+@d10 1
+a10 1
+C     $Id: setupPetscVecRHS.F,v 1.13 2002/10/25 06:03:39 abonfi Exp $
+d276 3
+a278 2
+                      CALL MatSetValuesLocal(PetscMatA,1,ICN(IVERT),1, ICN
+     +                (JVERT),STIFEL(1,1,IVERT,JVERT), ADD_VALUES,IFAIL)
+@
+
+
+1.13
+log
+@add a flag when calling PARM_TO_CONS() and CONS_TO_PARM()
+@
+text
+@d2 2
+a3 2
+     +                    NODRES,NEWRES,VCZ,VCDZ,NELEM,NDIM,
+     +                    NOFVERT,NOFVAR,NTURB,DT,RHS,A,
+d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.12 2002/09/14 09:04:14 abonfi Exp abonfi $
+d18 2
+a19 2
+      Vec DT,RHS
+      Mat A
+d72 1
+a72 1
+C         it to the RHS PETSc vector
+d76 1
+a76 1
+C         and then scatter it to the PETSc vector DT
+d93 1
+a93 1
+      INTEGER JVAR,IVAR,IVERT,JVERT,IELEM,I,J
+d103 4
+a106 3
+      INTEGER ICN(VMAX)
+      DOUBLE PRECISION TSTEP(NMAX*VMAX)
+      DOUBLE PRECISION VCN(3*VMAX),VOLUME,DUMMY((NMAX*VMAX)**2)
+d110 2
+a111 2
+      DOUBLE PRECISION ERRMAT((NMAX*VMAX)**2)
+      DOUBLE PRECISION STIFD((NMAX*VMAX)**2)
+d115 1
+d198 3
+a200 1
+              CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,
+a201 2
+              CALL VecSetValues(RHS,NOFVERT,ICN,NODRES, ADD_VALUES,
+     +        IFAIL)
+d203 3
+a205 3
+              CALL VecSetValuesBlocked(DT,NOFVERT,ICN,TSTEP,
+     +    ADD_VALUES,IFAIL)
+              CALL VecSetValuesBlocked(RHS,NOFVERT,ICN,NODRES,
+d276 1
+a276 1
+                      CALL MatSetValuesLocal(A,1,ICN(IVERT),1, ICN
+d280 3
+a282 2
+                      CALL MatSetValues(A,1,ICN(IVERT),1,ICN(JVERT),
+     +                STIFEL(1,1,IVERT,JVERT),ADD_VALUES,IFAIL)
+d292 6
+a297 2
+                      CALL MatSetValuesBlockedLocal(A,1,ICN(IVERT),1,
+     +                ICN(JVERT),STIFEL(1,1,IVERT,JVERT), ADD_VALUES,
+a298 3
+#else
+                      CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN
+     +                (JVERT), STIFEL(1,1,IVERT,JVERT),ADD_VALUES,IFAIL)
+d326 2
+a327 2
+#endif TEST_JACOBIAN
+ 2000 CONTINUE
+@
+
+
+1.12
+log
+@the timestep vector is now dimensioned NOFVAR x NPOIN
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.11 2002/09/09 15:53:30 abonfi Exp abonfi $
+d106 1
+a106 1
+      LOGICAL COMPRESSIBLE,VISCOUS,LFLAG
+d223 2
+a224 2
+                      CALL PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                      CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+d232 2
+a233 2
+                      CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                      CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+@
+
+
+1.11
+log
+@coupled approach for turbulence modeling
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.10 2001/07/19 10:01:09 abonfi Exp $
+a96 1
+      DOUBLE PRECISION TSTEP(4)
+a98 1
+C
+d104 1
+d140 1
+a140 1
+          CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+d168 1
+d186 1
+a191 1
+ 
+a194 1
+          CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+d196 2
+d201 2
+d206 1
+d236 7
+d249 3
+@
+
+
+1.10
+log
+@add a check to compare approximate (Picard) and F.D. jacobian
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.9 2000/11/15 09:16:49 aldo Exp abonfi $
+d29 1
+d31 2
+d35 1
+d39 2
+d79 10
+d105 2
+a106 2
+      INTEGER ICN(4)
+      DOUBLE PRECISION VCN(12),VOLUME,DUMMY(400)
+d110 2
+a111 1
+      DOUBLE PRECISION ERRMAT(400)
+d116 1
+a116 1
+      IADDR(I,J) = ((J-1)*NOFVERT+I)*(NOFVAR**2)
+d136 1
+a136 3
+          IF (TIMEIMPL) THEN
+              CALL DINIT(N4,ZERO,STIFEL,1)
+          ENDIF
+d149 1
+a149 1
+          IF(TURBULENT)THEN
+d153 15
+d177 1
+a177 1
+     4    NODRES,TSTEP,STIFEL)
+a178 1
+          call dcopy(n4,stifel,1,dummy,1) 
+a238 3
+caldo     CALL X04CAF('General',' ',Nofvar,Nofvert,NEWRES,
+caldo+    Nofvar,'REsidual Matrix 4 jacobian ',IFAIL)
+caldo     pause
+d282 1
+a282 1
+#if 0
+a289 1
+ 2000 CONTINUE
+d292 1
+a292 1
+              CALL DCOPY(N4,DUMMY,1,ERRMAT,1)
+d297 4
+a300 3
+              S = DNRM2(NOFVAR*NOFVAR,ERRMAT(I),1)
+              IF(ABS(S).GT.1.E-3)THEN
+              write(6,*)icn(ivert),icn(jvert)
+d303 1
+a303 1
+              CALL X04CAF('General',' ',Nofvar,Nofvar,dummy(i),
+d305 1
+d309 1
+@
+
+
+1.9
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.8 2000/11/08 09:40:52 aldo Exp aldo $
+d28 1
+a34 1
+caldo INCLUDE 'IO'
+d77 1
+a77 1
+      INTEGER JVAR,IVAR,IVERT,JVERT,IELEM
+d91 1
+a91 1
+      LOGICAL COMPRESSIBLE,VISCOUS
+d93 9
+d142 1
+d144 1
+a144 1
+     1    NTURB,VOLUME,PICARD,VISCOUS,COMPRESSIBLE,
+d147 1
+a147 1
+     2    NODRES,TSTEP,STIFEL)
+d149 1
+d151 7
+d265 17
+@
+
+
+1.8
+log
+@commented out a call to SQRT that caused problems on CRAY
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.7 2000/10/20 08:35:39 aldo Exp aldo $
+d34 1
+a34 1
+      INCLUDE 'IO'
+@
+
+
+1.7
+log
+@restructured so that the Euler and NS components are now separated
+@
+text
+@d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.6 2000/06/23 16:42:37 aldo Exp aldo $
+d101 1
+a101 1
+      ROOT_MACHINE_EPS = SQRT(EPS)
+@
+
+
+1.6
+log
+@modified to re-introduce turbulence modeling
+@
+text
+@d4 2
+a5 1
+     +                    ScalarScheme,MatrixScheme,Model)
+d10 1
+a10 1
+C     $Id: setupRHS.F,v 1.5 2000/03/31 08:58:06 aldo Exp aldo $
+d15 2
+a16 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+d73 2
+a74 1
+      EXTERNAL ScalarScheme,MatrixScheme,Model
+d91 1
+a91 1
+      LOGICAL COMPRESSIBLE
+d104 1
+d133 11
+a143 3
+          CALL MODEL(IELEM,VCN,VCZ,VISCT,NDIM,NOFVERT,NOFVAR,
+     1    NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     2    ScalarScheme,MatrixScheme)
+d185 10
+a194 3
+                  CALL MODEL(IELEM,VCN,VCDZ,VISCT,NDIM,NOFVERT,NOFVAR,
+     +            NTURB,NEWRES,
+     +            TSTEP,DUMMY,VOLUME,.FALSE.,ScalarScheme,MatrixScheme)
+@
+
+
+1.5
+log
+@removed a call to D1MACH, gave problems on the T3E
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE SetupRHS(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE, STIFEL,
+     +                    NODRES,NEWRES,VCZ,VCDZ, NELEM,NDIM,NOFVERT,
+     +                    NOFVAR,DT,RHS,A,
+d9 1
+a9 1
+C     $Id: setupRHS.F,v 1.4 1999/12/27 09:20:28 aldo Exp aldo $
+d27 3
+d36 1
+a36 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NELEM
+d56 1
+a59 1
+ 
+d118 9
+a126 1
+ 
+d130 3
+a132 2
+          CALL MODEL(IELEM,VCN,VCZ,NDIM, NOFVERT,NOFVAR,NODRES,TSTEP,
+     +    STIFEL,VOLUME,PICARD, ScalarScheme,MatrixScheme)
+d174 3
+a176 2
+                  CALL MODEL(IELEM,VCN,VCDZ,NDIM,NOFVERT,NOFVAR, NEWRES,
+     +            TSTEP,DUMMY,VOLUME,.FALSE., ScalarScheme,MatrixScheme)
+@
+
+
+1.4
+log
+@FD computation of the jacobian
+@
+text
+@d9 1
+a9 1
+C     $Id: setupRHS.F,v 1.3 1999/12/09 10:14:00 aldo Exp $
+d91 5
+a95 1
+      EPS = 100.*D1MACH(1)
+@
+
+
+1.3
+log
+@now handles consistently the perturbation for
+compressible conservation variables
+@
+text
+@d1 5
+a5 4
+      SUBROUTINE SetupRHS(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,
+     +               STIFEL,NODRES,NEWRES,VCZ,VCDZ, 
+     +               NELEM,NDIM,NOFVERT,NOFVAR,DT,RHS,A,
+     +               ScalarScheme,MatrixScheme,Model)
+d7 1
+a7 1
+      IMPLICIT NONE 
+d9 1
+a9 1
+C     $Id: setupRHS.F,v 1.2 1999/12/06 12:11:11 aldo Exp aldo $
+a29 1
+      INCLUDE 'stream.com'
+d35 11
+d47 21
+a67 5
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM),
+     +                 ZROE(NOFVAR,*),
+     +                 STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 NODRES(NOFVAR,NOFVERT),NEWRES(NOFVAR,NOFVERT),
+     +                 VCZ(NOFVAR,NOFVERT),VCDZ(NOFVAR,NOFVERT)
+d72 2
+a73 2
+      INTEGER JVAR,IVAR,IVERT,JVERT,IDIM,ielem
+      INTEGER ifail,N4
+a76 8
+      DOUBLE PRECISION help(3,3,3,3)
+C
+C     NODRES(1:NOFVAR,1:NOFVERT) is used to accumulate the
+C         nodal residual in conserved variables and scatter
+C         it to the RHS PETSc vector
+C
+C     TSTEP(1:NOFVERT) is used to accumulate the timestep
+C         and then scatter it to the DT PETSc vector 
+d96 1
+a96 1
+      DO 2000 IELEM = 1,NELEM 
+d100 3
+a102 3
+      IF (TIMEIMPL) THEN
+          CALL DINIT(N4,ZERO,STIFEL,1)
+      ENDIF
+d106 2
+a107 2
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1)
+      CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+d109 3
+a111 3
+      CALL CELPTR(IELEM, ICELNOD, ICELFAC, VOL,
+     +   ZROE, VFACNOR, NDIM, NOFVERT, NOFVAR, ICN,
+     +   VCZ, VCN, VOLUME)
+d115 3
+a117 9
+      CALL MODEL(IELEM,VCN,VCZ,NDIM,
+C    +           NOFVERT,NOFVAR,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     +           NOFVERT,NOFVAR,NODRES,TSTEP,STIFEL,VOLUME,.true.,
+     +           ScalarScheme,MatrixScheme)
+C
+#if 0
+      CALL X04CAF('General',' ',Nofvar,Nofvar,STIFEL(1,1,1,1),
+     +            Nofvar,'Picard Matrix ',IFAIL)
+#endif
+d121 8
+a128 8
+      CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+      IF(NOFVAR.EQ.1)THEN
+      CALL VecSetValues(RHS,NOFVERT,ICN,NODRES,
+     +                         ADD_VALUES,IFAIL)
+      ELSE
+      CALL VecSetValuesBlocked(RHS,NOFVERT,ICN,NODRES,
+     +                         ADD_VALUES,IFAIL)
+      ENDIF
+d130 1
+a130 1
+      IF(.NOT.TIMEIMPL)RETURN
+d132 1
+a132 1
+      IF(PICARD)GOTO 1000
+d136 32
+a167 18
+      DO 5 IVERT = 1, NOFVERT
+          DO 5 IVAR = 1, NOFVAR
+             CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+#if 1
+             IF(COMPRESSIBLE)THEN
+                CALL PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+             ENDIF
+#endif
+             EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),1.d0)*
+     +             SIGN(1.d0,VCZ(IVAR,IVERT))
+             VCDZ(IVAR,IVERT) = VCZ(IVAR,IVERT) + EPS
+#if 1
+             IF(COMPRESSIBLE)THEN
+                CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+             ENDIF
+#endif
+d169 2
+a170 8
+             CALL MODEL(IELEM,VCN,VCDZ,NDIM,NOFVERT,NOFVAR,
+     +                  NEWRES,TSTEP,DUMMY,VOLUME,.FALSE.,
+     +                  ScalarScheme,MatrixScheme)
+C
+             DO 5 JVAR = 1, NOFVAR
+                 DO 5 JVERT = 1, NOFVERT
+                 STIFEL(JVAR,IVAR,JVERT,IVERT) =
+     +           -(NEWRES(JVAR,JVERT)-NODRES(JVAR,JVERT))/EPS
+d172 1
+a172 2
+    5 CONTINUE
+ 1000 CONTINUE
+d174 3
+a176 1
+C     Insert element matrices into the global one
+d178 2
+a179 3
+      IF(NOFVAR.EQ.1)THEN
+          DO 35 IVERT = 1,NOFVERT
+              DO 35 JVERT = 1,NOFVERT
+d181 3
+a183 3
+                  CALL MatSetValuesLocal(A,1,ICN(IVERT),1,
+     +                 ICN(JVERT),STIFEL(1,1,IVERT,JVERT),
+     +                 ADD_VALUES,IFAIL)
+d185 2
+a186 2
+                  CALL MatSetValues(A,1,ICN(IVERT),1,ICN(JVERT),
+     +                 STIFEL(1,1,IVERT,JVERT),ADD_VALUES,IFAIL)
+d188 7
+a194 9
+#if 0
+      write(6,*)ivert,jvert
+      CALL X04CAF('General',' ',Nofvar,Nofvar,stifel(1,1,ivert,jvert),
+     +            Nofvar,'Jacobian Matrix ',IFAIL)
+#endif
+   35     CONTINUE
+      ELSE
+          DO 37 IVERT = 1,NOFVERT
+              DO 37 JVERT = 1,NOFVERT
+d196 3
+a198 3
+                  CALL MatSetValuesBlockedLocal(A,1,ICN(IVERT),1,
+     +                 ICN(JVERT),STIFEL(1,1,IVERT,JVERT),
+     +                 ADD_VALUES,IFAIL)
+d200 2
+a201 2
+                  CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN(JVERT),
+     +                 STIFEL(1,1,IVERT,JVERT),ADD_VALUES,IFAIL)
+d204 3
+a206 3
+      write(6,*)ivert,jvert
+      CALL X04CAF('General',' ',Nofvar,Nofvar,stifel(1,1,ivert,jvert),
+     +            Nofvar,'Jacobian Matrix ',IFAIL)
+d208 2
+a209 2
+   37     CONTINUE
+      ENDIF
+@
+
+
+1.2
+log
+@working version using FD jacobian
+@
+text
+@d8 1
+a8 1
+C     $Id: setupRHS.F,v 1.1 1999/12/02 08:20:34 aldo Exp aldo $
+d67 1
+d75 1
+d126 6
+d135 6
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d8 1
+a8 1
+C     $Id$
+a14 1
+#include "include/finclude/viewer.h"
+d50 1
+d66 1
+a66 1
+      DOUBLE PRECISION VCN(12),VOLUME
+d73 1
+d95 2
+a96 1
+     +           NOFVERT,NOFVAR,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+d100 2
+a101 6
+      write(6,*)ielem
+      CALL X04CAF('General',' ',NOFVAR,Nofvert,VCZ,NOFVAR,
+     +            'Nodal values',IFAIL)
+      CALL X04CAF('General',' ',NOFVAR,Nofvert,NODRES,NOFVAR,
+     +            'Nodal update',IFAIL)
+      pause
+d107 4
+d113 1
+d128 2
+a129 2
+             CALL MODEL(VCN,VCDZ,NDIM,
+     +                  NOFVERT,NOFVAR,NEWRES,TSTEP,STIFEL,.FALSE.,
+d131 1
+d142 18
+d170 5
+d176 1
+@

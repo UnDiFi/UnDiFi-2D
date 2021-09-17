@@ -1,0 +1,379 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	97.11.29.18.28.50;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	97.11.29.18.08.10;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.11.29.17.26.58;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Sorts nodes according to a given rank
+@
+
+
+1.4
+log
+@Reverted to the original version
+@
+text
+@C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE SORTNOD(ICELNOD,NOFVERT,NELEM,FCELNOD,NODCODE,NPOIN,
+     +FNODCOD,IRANK,VCORG,NDIM,FCORG,ZROE,NOFVAR,FZROE,RWKSP)
+C
+C     .. This subroutine rearranges some global arrays
+C     according to a renumbering of the nodes defined
+C     through the rank array IRANK ..
+C
+      IMPLICIT NONE
+C
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NOFVERT,NELEM,NPOIN,NDIM,NOFVAR
+      LOGICAL FCELNOD,FNODCOD,FCORG,FZROE
+C
+C     .. Array Arguments ..
+C
+      INTEGER ICELNOD(NOFVERT,NELEM),NODCODE(NPOIN),IRANK(NPOIN)
+      DOUBLE PRECISION VCORG(NDIM,NPOIN),ZROE(NOFVAR,NPOIN),
+     &RWKSP(NPOIN) 
+C
+C ICELNOD -- Integer ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell
+C
+C     .. Local Scalars ..
+C
+      INTEGER IPOIN,IELEM,IVERT,IFAIL,I
+C
+C     .. External Functions ..
+C
+      DATA IFAIL /0/
+C
+      WRITE(NOUT,9990)
+C
+C     ... Sorts the nodal coordinates ...
+C
+      IF( FCORG )THEN
+      DO 9 I = 1 , NDIM
+         CALL DCOPY(NPOIN,VCORG(I,1),NDIM,RWKSP,1)
+         CALL M01EAF(RWKSP,1,NPOIN,IRANK,IFAIL)
+CXXX     CALL DPPERM(RWKSP,NPOIN,IRANK,IFAIL)
+         IF(IFAIL .GT. 0)THEN
+            WRITE(NOUT,9999)'M01EAF',IFAIL
+            STOP
+         ENDIF
+         CALL DCOPY(NPOIN,RWKSP,1,VCORG(I,1),NDIM)
+    9 CONTINUE
+      ENDIF
+C
+C     ... Sorts the solution vector ...
+C
+      IF( FZROE )THEN
+         DO 7 I = 1 , NOFVAR
+            CALL DCOPY(NPOIN,ZROE(I,1),NOFVAR,RWKSP,1)
+            CALL M01EAF(RWKSP,1,NPOIN,IRANK,IFAIL)
+CXXX        CALL DPPERM(RWKSP,NPOIN,IRANK,IFAIL)
+            IF(IFAIL .GT. 0)THEN
+               WRITE(NOUT,9999)'M01EAF',IFAIL
+               STOP
+            ENDIF
+         CALL DCOPY(NPOIN,RWKSP,1,ZROE(I,1),NOFVAR)
+    7 CONTINUE
+      ENDIF
+C
+C     .. modifies the cell to node pointer ...
+C
+      IF( FCELNOD )THEN
+         DO 100 IELEM = 1 , NELEM
+            DO 90 IVERT = 1 , NOFVERT
+               IPOIN = ICELNOD(IVERT,IELEM) 
+               ICELNOD(IVERT,IELEM) = IRANK( IPOIN )
+   90       CONTINUE
+  100    CONTINUE
+      ENDIF
+C
+C     .. Sorts the nodcode flag ..
+C
+      IF( FNODCOD )THEN
+         CALL M01EBF(NODCODE,1,NPOIN,IRANK,IFAIL)
+*        CALL IPPERM(NODCODE,NPOIN,IRANK,IFAIL)
+         IF(IFAIL .GT. 0)THEN
+            WRITE(NOUT,9999)'M01EAF',IFAIL
+         STOP
+         ENDIF
+      ENDIF
+C
+      WRITE(NOUT,9992)
+C
+      RETURN
+ 9990 FORMAT(/5X,'Mesh reordering in progress .... ',$)
+ 9992 FORMAT('done',/)
+ 9999 FORMAT(10X,A6,' RETURNED IFAIL = ',I2)
+      END
+@
+
+
+1.3
+log
+@Small bug fixed
+@
+text
+@d2 1
+d5 1
+a5 2
+     +                   FNODCOD,IRANK,VCORG,NDIM,FCORG,ZROE,NOFVAR,
+     +                   FZROE,RWKSP)
+d13 2
+d17 4
+d22 5
+a31 8
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+      LOGICAL FCELNOD,FCORG,FNODCOD,FZROE
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION RWKSP(NPOIN),VCORG(NDIM,NPOIN),ZROE(NOFVAR,NPOIN)
+      INTEGER ICELNOD(NOFVERT,NELEM),IRANK(NPOIN),NODCODE(NPOIN)
+C     ..
+d33 15
+a47 18
+      INTEGER I,IELEM,IFAIL,IPOIN,IVERT,NOUT
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DCOPY,M01EAF,M01EBF
+C     ..
+C     .. Data statements ..
+C
+      DATA IFAIL/0/
+C     ..
+C
+      WRITE (NOUT,FMT=9990)
+C
+C     Sorts the nodal coordinates ...
+C
+      IF (FCORG) THEN
+          DO 9 I = 1,NDIM
+              CALL DCOPY(NPOIN,VCORG(I,1),NDIM,RWKSP,1)
+              CALL M01EAF(RWKSP,1,NPOIN,IRANK,IFAIL)
+d49 6
+a54 8
+              IF (IFAIL.GT.0) THEN
+                  WRITE (NOUT,FMT=9999) 'M01EAF',IFAIL
+                  STOP
+
+              ENDIF
+
+              CALL DCOPY(NPOIN,RWKSP,1,VCORG(I,1),NDIM)
+    9     CONTINUE
+d57 1
+a57 1
+C     Sorts the solution vector ...
+d59 4
+a62 4
+      IF (FZROE) THEN
+          DO 7 I = 1,NOFVAR
+              CALL DCOPY(NPOIN,ZROE(I,1),NOFVAR,RWKSP,1)
+              CALL M01EAF(RWKSP,1,NPOIN,IRANK,IFAIL)
+d64 6
+a69 8
+              IF (IFAIL.GT.0) THEN
+                  WRITE (NOUT,FMT=9999) 'M01EAF',IFAIL
+                  STOP
+
+              ENDIF
+
+              CALL DCOPY(NPOIN,RWKSP,1,ZROE(I,1),NOFVAR)
+    7     CONTINUE
+d72 1
+a72 1
+C     modifies the cell to node pointer ...
+d74 7
+a80 7
+      IF (FCELNOD) THEN
+          DO 100 IELEM = 1,NELEM
+              DO 90 IVERT = 1,NOFVERT
+                  IPOIN = ICELNOD(IVERT,IELEM)
+                  ICELNOD(IVERT,IELEM) = IRANK(IPOIN)
+   90         CONTINUE
+  100     CONTINUE
+d83 1
+a83 1
+C     Sorts the nodcode flag ..
+d85 2
+a86 2
+      IF (FNODCOD) THEN
+          CALL M01EBF(NODCODE,1,NPOIN,IRANK,IFAIL)
+d88 4
+a91 6
+          IF (IFAIL.GT.0) THEN
+              WRITE (NOUT,FMT=9999) 'M01EAF',IFAIL
+              STOP
+
+          ENDIF
+
+d94 1
+a94 1
+      WRITE (NOUT,FMT=9992)
+d97 3
+a99 5
+
+ 9990 FORMAT (/,5X,'Mesh reordering in progress .... ')
+ 9992 FORMAT ('done',/)
+ 9999 FORMAT (10X,A6,' RETURNED IFAIL = ',I2)
+
+@
+
+
+1.2
+log
+@Reformatting and declarations using Toolpack1.2
+@
+text
+@d4 2
+a5 1
+     +FNODCOD,IRANK,VCORG,NDIM,FCORG,ZROE,NOFVAR,FZROE,RWKSP)
+d11 1
+a11 1
+C     IMPLICIT NONE
+d13 1
+a13 1
+C     INCLUDE 'IO'
+a14 2
+      INTEGER NOFVERT,NELEM,NPOIN,NDIM,NOFVAR
+      LOGICAL FCELNOD,FNODCOD,FCORG,FZROE
+a15 3
+      INTEGER ICELNOD(NOFVERT,NELEM),NODCODE(NPOIN),IRANK(NPOIN)
+      DOUBLE PRECISION VCORG(NDIM,NPOIN),ZROE(NOFVAR,NPOIN),
+     &RWKSP(NPOIN) 
+d21 15
+a35 1
+      INTEGER IPOIN,IELEM,IVERT,IFAIL,I
+d37 2
+a38 1
+      DATA IFAIL /0/
+d40 1
+a40 1
+      WRITE(NOUT,9990)
+d44 4
+a47 4
+      IF( FCORG )THEN
+      DO 9 I = 1 , NDIM
+         CALL DCOPY(NPOIN,VCORG(I,1),NDIM,RWKSP,1)
+         CALL M01EAF(RWKSP,1,NPOIN,IRANK,IFAIL)
+d49 8
+a56 6
+         IF(IFAIL .GT. 0)THEN
+            WRITE(NOUT,9999)'M01EAF',IFAIL
+            STOP
+         ENDIF
+         CALL DCOPY(NPOIN,RWKSP,1,VCORG(I,1),NDIM)
+    9 CONTINUE
+d61 4
+a64 4
+      IF( FZROE )THEN
+         DO 7 I = 1 , NOFVAR
+            CALL DCOPY(NPOIN,ZROE(I,1),NOFVAR,RWKSP,1)
+            CALL M01EAF(RWKSP,1,NPOIN,IRANK,IFAIL)
+d66 8
+a73 6
+            IF(IFAIL .GT. 0)THEN
+               WRITE(NOUT,9999)'M01EAF',IFAIL
+               STOP
+            ENDIF
+         CALL DCOPY(NPOIN,RWKSP,1,ZROE(I,1),NOFVAR)
+    7 CONTINUE
+d78 7
+a84 7
+      IF( FCELNOD )THEN
+         DO 100 IELEM = 1 , NELEM
+            DO 90 IVERT = 1 , NOFVERT
+               IPOIN = ICELNOD(IVERT,IELEM) 
+               ICELNOD(IVERT,IELEM) = IRANK( IPOIN )
+   90       CONTINUE
+  100    CONTINUE
+d89 2
+a90 2
+      IF( FNODCOD )THEN
+         CALL M01EBF(NODCODE,1,NPOIN,IRANK,IFAIL)
+d92 6
+a97 4
+         IF(IFAIL .GT. 0)THEN
+            WRITE(NOUT,9999)'M01EAF',IFAIL
+         STOP
+         ENDIF
+d100 1
+a100 1
+      WRITE(NOUT,9992)
+d103 5
+a107 3
+ 9990 FORMAT(/5X,'Mesh reordering in progress .... ',$)
+ 9992 FORMAT('done',/)
+ 9999 FORMAT(10X,A6,' RETURNED IFAIL = ',I2)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a1 1
+C ------------------------------ + ------------------------------
+d10 1
+a10 1
+      IMPLICIT NONE
+d12 1
+a12 5
+C     .. Commons ..
+C
+      INCLUDE 'IO'
+C
+C     .. Scalar Arguments ..
+a16 2
+C     .. Array Arguments ..
+C
+a24 2
+C     .. Local Scalars ..
+C
+a26 2
+C     .. External Functions ..
+C
+d31 1
+a31 1
+C     ... Sorts the nodal coordinates ...
+d46 1
+a46 1
+C     ... Sorts the solution vector ...
+d61 1
+a61 1
+C     .. modifies the cell to node pointer ...
+d72 1
+a72 1
+C     .. Sorts the nodcode flag ..
+@

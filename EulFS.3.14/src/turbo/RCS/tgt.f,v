@@ -1,0 +1,120 @@
+head	1.2;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	97.11.29.08.26.46;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Function for the Spalart-Allmaras model
+@
+
+
+1.2
+log
+@Polishing and declarations
+@
+text
+@C
+      DOUBLE PRECISION FUNCTION TGT(DU)
+*  ==============================================================
+*
+*
+*      FILENAME: tft2.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      turbulence model function
+*      (Spalart & Allmaras model: version)
+*
+*
+*
+*  ==============================================================
+
+c2345678
+      IMPLICIT NONE 
+      INCLUDE 'turb.com'
+
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION DU
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC MIN
+C     ..
+      TGT = MIN(0.1D0,DU/TST/TDXT)
+C     TGT=0.1D0
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a0 12
+
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)tgt.f      1.0.0.1   95/09/21        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tgt.f
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+d2 1
+a2 1
+       DOUBLE PRECISION FUNCTION TGT(DU)
+a15 2
+*      FILE HISTORY:
+*      ------------
+a16 2
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : April 97
+d23 2
+d26 5
+a30 1
+      TGT=MIN(0.1D0,DU/TST/TDXT)
+d33 1
+@

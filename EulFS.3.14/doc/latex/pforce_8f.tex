@@ -1,0 +1,129 @@
+\hypertarget{pforce_8f}{}\doxysection{src/euler/pforce.f File Reference}
+\label{pforce_8f}\index{src/euler/pforce.f@{src/euler/pforce.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{pforce_8f_aaafb3c5eddb250eb24805c499dcecac1}{P\+F\+O\+R\+CE}} (I\+C\+LR, I\+V\+E\+RT, V\+CN, N\+D\+IM, V\+CZ, N\+O\+F\+V\+AR, N\+O\+F\+V\+E\+RT, P\+R\+E\+S\+S\+U\+RE)
+\begin{DoxyCompactList}\small\item\em {\bfseries{P\+F\+O\+R\+CE}} \end{DoxyCompactList}\item 
+subroutine \mbox{\hyperlink{pforce_8f_a673058461a130553679e0f8bf16272c3}{P\+F\+O\+R\+C\+E\+Simpson}} (I\+C\+LR, I\+V\+E\+RT, V\+CN, N\+D\+IM, V\+CZ, N\+O\+F\+V\+AR, N\+O\+F\+V\+E\+RT, P\+R\+E\+S\+S\+U\+RE)
+\begin{DoxyCompactList}\small\item\em {\bfseries{P\+F\+O\+R\+C\+E\+Simpson}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{pforce_8f_aaafb3c5eddb250eb24805c499dcecac1}\label{pforce_8f_aaafb3c5eddb250eb24805c499dcecac1}} 
+\index{pforce.f@{pforce.f}!PFORCE@{PFORCE}}
+\index{PFORCE@{PFORCE}!pforce.f@{pforce.f}}
+\doxysubsubsection{\texorpdfstring{PFORCE()}{PFORCE()}}
+{\footnotesize\ttfamily subroutine P\+F\+O\+R\+CE (\begin{DoxyParamCaption}\item[{integer}]{I\+C\+LR,  }\item[{integer}]{I\+V\+E\+RT,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{integer}]{N\+D\+IM,  }\item[{double precision, dimension(nofvar,nofvert)}]{V\+CZ,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{external}]{P\+R\+E\+S\+S\+U\+RE }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{P\+F\+O\+R\+CE}} 
+
+\begin{DoxyParagraph}{Purpose\+:}
+P\+F\+O\+R\+CE computes the pressure force acting on a boundary face as the aritmetic mean of the face pressure values, ie. assuming linear variation of pressure; while this is o.\+k. for the I\+Ncompressible flow eqns., for C\+Ompressible flows one should compute the E\+X\+A\+CT integral of pressure which is a quadratic function 
+\end{DoxyParagraph}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+LR} & colour of the patch the boundary face belongs to \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+V\+E\+RT} & vertex (in local numbering) facing the boundary face ~\newline
+ \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & cartesian components of the scaled inward normals of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & nofvar values of the dependent variable in the nofvert vertices of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & number of degrees of freedom \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & number of vertices of the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+R\+E\+S\+S\+U\+RE} & subroutine used to compute pressure from the set of dependent variables \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the cartesian components of the pressure force acting on the current boundary face are stored in P\+R\+E\+S\+F(1\+:d,iclr) 
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+9 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/21 10\+:55\+:07 
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+subroutine \mbox{\hyperlink{pforce_8f_a673058461a130553679e0f8bf16272c3}{P\+F\+O\+R\+C\+E\+Simpson}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{pforce_8f_a673058461a130553679e0f8bf16272c3}\label{pforce_8f_a673058461a130553679e0f8bf16272c3}} 
+\index{pforce.f@{pforce.f}!PFORCESimpson@{PFORCESimpson}}
+\index{PFORCESimpson@{PFORCESimpson}!pforce.f@{pforce.f}}
+\doxysubsubsection{\texorpdfstring{PFORCESimpson()}{PFORCESimpson()}}
+{\footnotesize\ttfamily subroutine P\+F\+O\+R\+C\+E\+Simpson (\begin{DoxyParamCaption}\item[{integer}]{I\+C\+LR,  }\item[{integer}]{I\+V\+E\+RT,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{integer}]{N\+D\+IM,  }\item[{double precision, dimension(nofvar,nofvert)}]{V\+CZ,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{external}]{P\+R\+E\+S\+S\+U\+RE }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{P\+F\+O\+R\+C\+E\+Simpson}} 
+
+\begin{DoxyParagraph}{Purpose\+:}
+
+\end{DoxyParagraph}
+This routine computes the pressure force acting on a boundary face using Simpson\textquotesingle{}s rule which is exact when pressure is a quadratic function of the dependent variables 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+LR} & colour of the patch the boundary face belongs to \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+V\+E\+RT} & vertex (in local numbering) facing the boundary face ~\newline
+ \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & cartesian components of the scaled inward normals of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & nofvar values of the dependent variable in the nofvert vertices of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & number of degrees of freedom \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & number of vertices of the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+R\+E\+S\+S\+U\+RE} & subroutine used to compute pressure from the set of dependent variables \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the cartesian components of the pressure force acting on the current boundary face are stored in P\+R\+E\+S\+F(1\+:d,iclr) 
+\end{DoxyReturn}
+\begin{DoxyWarning}{Warning}
+The 3D version is un-\/implemented yet 
+\end{DoxyWarning}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+9 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/21 10\+:55\+:07 
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+subroutine \mbox{\hyperlink{pforce_8f_aaafb3c5eddb250eb24805c499dcecac1}{P\+F\+O\+R\+CE}} 
+\end{DoxySeeAlso}

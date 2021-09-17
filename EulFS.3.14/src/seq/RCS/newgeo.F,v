@@ -1,0 +1,1677 @@
+head	1.18;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.18
+	release3_13_0:1.18
+	release3_12_0:1.17
+	release3_11_0:1.17
+	release3_10_0:1.17
+	release3_8_0:1.17
+	release3_7_1:1.16
+	release3_7_0:1.15
+	release3_4_5:1.15
+	release3_4_4:1.13
+	release3_4_3:1.12
+	release3_4_2:1.9
+	release3_4_1:1.3
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.18
+date	2020.04.25.10.18.01;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2020.03.28.09.46.08;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2016.01.29.10.30.27;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2016.01.29.08.47.06;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2014.04.15.10.09.38;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.10.23.10.54.03;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2013.09.23.11.22.02;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2013.09.17.10.00.51;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.09.13.07.01.57;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.09.10.15.14.33;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.09.06.08.33.53;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.08.19.09.00.43;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.07.19.07.07.08;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.06.28.09.24.26;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.06.25.07.16.49;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2012.12.20.10.59.10;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2012.04.05.14.33.05;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@driver for the metrics in the ALE formulation
+@
+
+
+1.18
+log
+@fixed a bug: the matrix for the Laplace motion solver
+was not passed among the arguments
+@
+text
+@!> \par Purpose
+!>
+!> here in NEWGEO() we re-compute some grid metrics, more precisely:
+!>
+!> a) measures of the triangle/tetrahedra (LVOL) are stored in VOL(NELEM+1:2*NELEM)
+!>
+!> b) measures of the median dual control volumes (LMEDIAN) are stored in MEDIAN(NP+1:2*NP)
+!>
+!> c) face normals (LFACNOR) are overwritten on the current ones 
+!>
+!> d) cell to face pointers (LCELFAC) are overwritten on the current ones, but should not change
+!>        anyway, since it is assumed that the connectivity is un-changed 
+!>
+!> e) grid velocities LXYZDOT
+!>
+!>   this has to be done BEFORE calculating the residual i.e. before calling RHSFunction
+!>
+!>   in NEWGEO all metrics are updated at some time which is intermediate btw n and n+1 
+!>   the areas/volumes of the median dual CVs are however those at n+1 since these
+!>   are only needed to update the solution, not to compute the residual
+!>
+!> @@param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+!> @@param[in] ICELCEL Cell to cell pointer: \c ICELCEL(i,j) gives the element number that shares the face opposite the i-th vertex of the j-th element if 0 or > \c NELEM, that face is a boundary face
+!> @@param[in] PMAP Map for periodic nodes
+!> @@param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+!> @@param[in,out] FACNOR Cartesian components of the normals to a face, multiplied by the face area
+!> @@param[in,out] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+!> @@param[in,out] VMEDIAN area/volume of the median dual cells
+!> @@param[in,out] CORG Cartesian coordinates of the meshpoints; CORG(1,2*NP+1) stores the grid at time level 0, i.e. the fixed grid; new grid coordinates are put into CORG(1,NP+1) and the grid velocity is computed accordingly
+!> @@param[out] XYZDOT Cartesian components of the nodal grid velocities
+!> @@param[in] IBNDPTR Boundary informations: \c IBNDFAC(1,j) gives the element the j-th face belongs to; \c IBNDFAC(2,j) gives the local vertex number of element \c IBNDFAC(1,j) opposite the boundary face; \c IBNDFAC(3,j) gives the color of the boundary face
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NOFVERT nof boundary faces
+!> @@param[in] NELEM nof boundary faces
+!> @@param[in] NPOIN nof interior nodes in the mesh
+!> @@param[in] NGHOST nof ghost nodes in the mesh
+!> @@param[in] NPNOD nof periodic nodes in the mesh
+!> @@param[in] NFACE nof faces in the mesh
+!> @@param[in] NBFAC nof boundary faces
+!> @@param[in] NBINT nof inter-processor faces
+!> @@param[in] NHOLE nof holes in the mesh (should be 0 in 3D)
+!> @@param[in] TIME physical time to be reached, i.e. time \f$(n+1)\Delta t\f$.
+!>
+!>    Upon entry:
+!>
+!> \verbatim
+!>
+!>    LCORG       |---- n   ----| |---- XXX ----| |---- 0 ----|
+!>    LMEDIAN     |---- n   ----| |---- XXX ----| |---- n ----|
+!>    LVOL        |---- n   ----| |---- XXX ----| |----n-1----|
+!>    LFACNOR     |---- n   ----|
+!>
+!>    XXX means that the entry is irrelevant
+!> \endverbatim
+!>
+!>    Upon return:
+!>
+!> \verbatim
+!>
+!>    LCORG       |---- n+a ----| |---- n+1 ----| |---- 0 ----|
+!>    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+!>    LVOL        |---- n+a ----| |---- n+1 ----| |----n-1----|
+!>    LFACNOR     |---- n+a ----|
+!> \endverbatim
+!>
+!> where \c n stands for the time level and \c a is the \c ALFALE parameter which is set through \c -ale_grid_weight
+!>
+!> \author $Author: abonfi $
+!> \version $Revision: 1.17 $
+!> \date $Date: 2020/04/23 09:46:19 $
+!>
+      SUBROUTINE NEWGEO(MotionSolver,PetscMatC,NodalBcs,ICELNOD,ICELCEL,
+     2PMAP,ICELFAC,FACNOR,VOL,VMEDIAN,CORG,XYZDOT,IBNDPTR,NDIM,NOFVERT,
+     3NELEM,NPOIN,NGHOST,NPNOD,NFACE,NBFAC,NBINT,NHOLE,TIME)
+C
+C     $Id: newgeo.F,v 1.17 2020/04/23 09:46:19 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscksp.h"
+#include "petsc/finclude/petscviewer.h"
+#include "petsc/finclude/petscpc.h"
+      use petscpc
+      use petscksp
+C
+      IMPLICIT NONE
+C
+      INCLUDE "paramt.h"
+      INCLUDE "constants.h"
+      INCLUDE "time.h"
+      INCLUDE "time.com"
+      INCLUDE "conv.com"
+      INCLUDE "io.com"
+C
+      INTEGER NDIM,NOFVERT,NELEM,NPOIN,NGHOST,NPNOD,NFACE,NBFAC,NBINT,
+     2NHOLE
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION CORG(NDIM,*)
+      INTEGER ICELNOD(NOFVERT,NELEM),ICELCEL(NOFVERT,NELEM),PMAP(*)
+C
+      Mat              PetscMatC
+      IS, dimension(0:*) :: NodalBcs
+      KSP MotionSolver
+C
+      DOUBLE PRECISION FACNOR(NDIM,NFACE) ,VOL(NELEM), VMEDIAN(*), 
+     &XYZDOT(*)
+      INTEGER I,INDX,IFAIL
+      INTEGER ICELFAC(NOFVERT,NELEM),IBNDPTR(3,NBFAC)
+C
+      INTEGER NP,NITEMS,iw
+      DOUBLE PRECISION TNOW,maxdxyzdt(3),avgdxyzdt(3)
+      LOGICAL DEBUG
+      PARAMETER(DEBUG=.FALSE.)
+      CHARACTER*80 FNAME,GNAME,BNAME
+C
+      INTEGER IDAMAX
+      EXTERNAL IDAMAX
+      DOUBLE PRECISION DASUM
+      EXTERNAL DASUM
+C
+      DATA FNAME(1:14)/"grid000000.dat"/
+      DATA GNAME(1:14)/"step000000.dat"/
+      DATA BNAME(1:18)/"gridvel_000000.dat"/
+C
+      IFAIL = IBAK
+      NP = NPOIN+NGHOST+NPNOD
+C
+      IF(DEBUG)THEN
+         iw = 97
+         call print4check(corg,vol,vmedian,facnor,ndim,np,nelem,
+     &time,'After entering NEWgeo',iw)
+      ENDIF 
+!
+!     We read the grid velocity at all gridpoints whenever ALE_READ_GRIDVEL = .TRUE.
+!
+      IF(ALE_READ_GRIDVEL)THEN
+         WRITE(BNAME(9:14),FMT="(I6.6)")ITIM
+         CALL SOLZNE(BNAME(1:18),XYZDOT,NDIM,NP,"read")
+         IALE = 0 ! move the gridpoints using the grid velocities that have just been read
+         CALL DCOPY(NDIM*NP,CORG(1,1),1,CORG(1,NP+1),1) ! put grid at t=n into t=n+1
+         CALL DAXPY(NDIM*NP,DELT,XYZDOT,1,CORG(1,NP+1),1) ! update the grid at t=n+1
+      ENDIF
+C
+      IF(ALE_MOVE_GRID)THEN
+C
+C     Here we move the grid using ad-hoc subroutines, see grid_motion.f
+C
+C
+         IF(IALE.NE.0)
+     &   CALL MOVEXYZ(CORG(1,1+2*NP),CORG(1,NP+1),NDIM,NP,TIME) ! move the grid
+C                     ^              ^
+C                     |              |
+C                     |              |
+C
+C     this is the grid * this is the grid
+C     at t=0 i.e. the  * at time t=TIME i.e. n=n+1
+C     "fixed" grid     *
+C
+C
+C     compute the grid velocity as (x^{n+1}-x^n)/dt
+C
+         CALL DCOPY(NDIM*NP,CORG(1,NP+1),1,XYZDOT,1) ! XYZDOT := x^{n+1}
+         CALL DAXPY(NDIM*NP,MONE,CORG(1,1),1,XYZDOT,1) ! XYZDOT := x^{n+1} - x^n
+         CALL DSCAL(NDIM*NP,ONE/DELT,XYZDOT,1) ! XYZDOT := (x^{n+1}-x^n)/dt
+C
+         DO I = 1, NDIM
+            avgdxyzdt(I) = DASUM(NP,XYZDOT(I),NDIM)/NP
+            INDX = IDAMAX(NP,XYZDOT(I),NDIM)
+            INDX = (INDX-1)*NDIM+I 
+            maxdxyzdt(I) = ABS(XYZDOT(INDX))
+         ENDDO
+C
+         WRITE(NOUT,*)
+         WRITE(NOUT,*)' avg |b_x,b_y,b_z| = ',(avgdxyzdt(I),I=1,NDIM)
+         WRITE(NOUT,*)' max |b_x,b_y,b_z| = ',(maxdxyzdt(I),I=1,NDIM)
+         WRITE(NOUT,*)
+         WRITE(IOALE,*)TIME,(avgdxyzdt(I),I=1,NDIM),
+     &                      (maxdxyzdt(I),I=1,NDIM)
+!
+C
+      ELSEIF(ALE_LAPLACE_GRID)THEN
+C
+C     Here we move the grid by solving Laplace's equation
+C
+         WRITE(GNAME(5:10),FMT="(I6.6)")ITIM
+!
+!        Move the grid: this is only needed to compute the grid velocity
+!        the way the grid is move is hardwired into the code; see grid_motion.f
+!
+         IF(IALE.NE.0)
+     &   CALL MOVEXYZ(CORG(1,1+2*NP),CORG(1,NP+1),NDIM,NP,TIME) ! move the grid
+C                     ^              ^
+C                     |              |
+C                     |              |
+C
+C     this is the grid   this is the grid
+C     at t=0 i.e. the    at time t=TIME i.e. n=n+1
+C     "fixed" grid
+C
+C     compute the grid velocity as (x^{n+1}-x^n)/dt:
+C     this is only needed in order to have the grid velocity on all boundaries
+C
+         CALL DCOPY(NDIM*NP,CORG(1,NP+1),1,XYZDOT,1) ! XYZDOT := x^{n+1}
+         CALL DAXPY(NDIM*NP,MONE,CORG(1,1),1,XYZDOT,1) ! XYZDOT := x^{n+1} - x^n
+         CALL DSCAL(NDIM*NP,ONE/DELT,XYZDOT,1) ! XYZDOT := (x^{n+1}-x^n)/dt
+C
+C     solve Laplace's Eqn to get the grid velocity at all gridpoints  
+C
+         CALL GridDeformation(MotionSolver,PetscMatC,NodalBcs,NDIM,
+     2                        NOFVERT,NPOIN,NGHOST,NPNOD,NELEM,NBFAC,
+     3                        NFACE)
+!
+!     compute the average grid velocity once all velocities have been re-computed inside GridDeformation
+!
+         DO I = 1, NDIM
+            avgdxyzdt(I) = DASUM(NP,XYZDOT(I),NDIM)/NP
+            INDX = IDAMAX(NP,XYZDOT(I),NDIM)
+            INDX = (INDX-1)*NDIM+I 
+            maxdxyzdt(I) = ABS(XYZDOT(INDX))
+         ENDDO
+         WRITE(NOUT,*)
+         WRITE(NOUT,*)' avg |b_x,b_y,b_z| = ',(avgdxyzdt(I),I=1,NDIM)
+         WRITE(NOUT,*)' max |b_x,b_y,b_z| = ',(maxdxyzdt(I),I=1,NDIM)
+         WRITE(NOUT,*)
+         WRITE(IOALE,*)TIME,(avgdxyzdt(I),I=1,NDIM),
+     &                      (maxdxyzdt(I),I=1,NDIM)
+!
+!        we must now move the nodes again
+!
+         NITEMS = NDIM*NP
+!
+!        copy the grid at t=n into the location where the grid at t=n+1 will be stored
+!
+         CALL DCOPY(NITEMS,CORG(1,1),1,CORG(1,NP+1),1)
+C                                           ^
+C                                           |
+C                                           |
+C                                           |
+C                        now     this is the grid
+C                        at time t=TIME-DELT i.e. t=n*DELT
+!
+!        update using the grid velocity
+!
+         CALL DAXPY(NITEMS,DELT,XYZDOT,1,CORG(1,NP+1),1)
+!
+      ENDIF 
+C
+C    At this stage we have computed the mesh coordinates at time level n+1 i.e. t+dt
+C    now CORG(1,NP+1) stores the grid at time level n+1 
+C
+C
+      IF(DEBUG)THEN
+         call print4check(corg,vol,vmedian,facnor,ndim,np,nelem,
+     &time,'After updating the mesh coordinates ',iw)
+      ENDIF
+C
+C
+C
+C
+C
+      IF((ITIM/IFAIL)*IFAIL.EQ.ITIM)THEN
+            WRITE(GNAME(5:10),FMT="(I6.6)")ITIM
+            WRITE(6,*)'Writing mesh at time ',TIME,' in file = ',
+     &GNAME(1:12)
+            CALL GRIDPTS(NPOIN,NGHOST,NPNOD,NELEM,NBFAC,NBINT,NHOLE,
+     2             NOFVERT,NDIM,CORG(1,NP+1),ICELNOD,IBNDPTR, ! icn might use the periodic copy?
+     3             GNAME(1:14),"noname.dat","w") ! write the NEW grid
+C
+          WRITE(FNAME(5:10),FMT="(I6.6)")ITIM
+          CALL TECPLOT(FNAME(1:14),CORG(1,NP+1),NDIM,NP,ICELNOD,NOFVERT,
+     &                 NELEM,XYZDOT,NDIM)
+      ENDIF
+CC
+CC    LCORG       |---- n   ----| |---- n+1 ----| |---- 0 ----|
+CC                                       ^
+CC                                       |
+CC                                       +-------------- we have updated this one ONLY
+CC
+CC    LMEDIAN     |---- n   ----| |---- XXX ----| |---- n ----|
+CC    LVOL        |---- n   ----| |---- XXX ----| |----n-1----|
+CC    LFACNOR     |---- n   ----|
+CC
+C
+C
+! compute the face normals using the updated grid coordinates
+! i.e. those at time  "n+1"; this is actually required only to compute the volume
+! at time n+1
+!
+      CALL FF(ICELNOD,ICELCEL,ICELFAC,NOFVERT,NELEM,CORG(1,NP+1),NDIM,
+     +        NP,FACNOR,NFACE,NBFAC,NBINT)
+caldo
+!         CALL I4Mat_Print('General',' ',NOFVERT,NELEM,ICELFAC,
+!    +    NOFVERT,'New ICELFAC array ',IFAIL)
+!         CALL R8Mat_Print('General',' ',NDIM,NFACE,FACNOR,
+!    +            NDIM,'New face normals ',IFAIL)
+C
+C
+C     The volume of EACH triangular/tetrahedral element is computed and stored in VOL(NELEM+1:2*NELEM)
+C     this is at time level n+1
+C
+      CALL CMPVOL(ICELNOD,ICELFAC,NOFVERT,NELEM,
+     +            FACNOR,NFACE,CORG(1,NP+1),NDIM,NP,
+     +            VOL(NELEM+1),TIME)
+C
+C     this is the area/vol of the median dual cell at time level n+1
+C
+      CALL MEDIAN(VMEDIAN(NP+1),NPOIN,NGHOST,NPNOD,NP,VOL(NELEM+1),
+     &   ICELNOD,PMAP,NOFVERT,NELEM)
+CC
+CC    LCORG       |---- n   ----| |---- n+1 ----| |---- 0 ----|
+CC    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+CC    LVOL        |---- n   ----| |---- n+1 ----| |----n-1----|
+CC    LFACNOR     |---- n+1 ----|        ^
+CC                       ^               |
+CC                       +---------------+-------------- we have updated these three (LMEDIAN,LVOL,LFACNOR)
+CC
+      IF(DEBUG)THEN
+         call print4check(corg,vol,vmedian,facnor,ndim,np,nelem,
+     &time,'Before computing the mesh coordinates at tnow ',iw)
+      ENDIF
+C
+C     compute the coordinates of the grid to be used in the residual calculation
+C     at some intermediate time btw. n and n+1:
+C     x^{n+a} = a*x^n + (1-a)*x^{n+1}
+C
+      TNOW = ALFALE*(TIME-DELT)+(ONE-ALFALE)*TIME
+      CALL DSCAL(NDIM*NP,ALFALE,CORG(1,1),1)
+      CALL DAXPY(NDIM*NP,(ONE-ALFALE),CORG(1,NP+1),1,CORG(1,1),1)
+CC
+CC    LCORG       |---- n+a ----| |---- n+1 ----| |---- 0 ----|
+CC                       ^                
+CC                       |                
+CC                       +---------------+-------------- we have updated this one
+CC    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+CC    LVOL        |---- n   ----| |---- n+1 ----| |----n-1----|
+CC    LFACNOR     |---- n+1 ----|
+CC
+!
+!     compute the face normals at this intermediate grid location (n+a);
+!     the face normals are overwritten
+!
+      CALL FF(ICELNOD,ICELCEL,ICELFAC,NOFVERT,NELEM,CORG(1,1),NDIM,
+     +        NP,FACNOR,NFACE,NBFAC,NBINT)
+caldo
+!         CALL I4Mat_Print('General',' ',NOFVERT,NELEM,ICELFAC,
+!    +    NOFVERT,'New ICELFAC array ',IFAIL)
+!         CALL R8Mat_Print('General',' ',NDIM,NFACE,FACNOR,
+!    +            NDIM,'New face normals ',IFAIL)
+C
+C     The volume of EACH triangular/tetrahedral element is computed and stored in VOL(1:NELEM)
+C     notice that we do NOT compute the area/volume of the median dual cells at this intermediate time
+C
+      CALL CMPVOL(ICELNOD,ICELFAC,NOFVERT,NELEM,
+     +            FACNOR,NFACE,CORG(1,1),NDIM,NP,
+     +            VOL(1),TNOW)
+CC
+CC    LCORG       |---- n+a ----| |---- n+1 ----| |---- 0 ----|
+CC    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+CC    LVOL        |---- n+a ----| |---- n+1 ----| |---- n ----| |----n-1----|
+CC                       ^                
+CC                       |                
+CC                       +---------------+-------------- we have updated this one
+CC    LFACNOR     |---- n+a ----|
+CC                       ^                
+CC                       |                
+CC                       +---------------+-------------- we have updated this one
+CC
+      IF(DEBUG)THEN
+         call print4check(corg,vol,vmedian,facnor,ndim,np,nelem,
+     &time,'Before leaving NEWGEO ',iw)
+      ENDIF
+C
+C     VOL(1:NELEM) stores the areas/volumes at time n+a
+C     VOL(NELEM+1:2*NELEM) stores the areas/volumes at time n+1
+C     VOL(2*NELEM+3*NELEM) stores the areas/volumes at time n
+C     VOL(3*NELEM+4*NELEM) stores the areas/volumes at time n-1
+C
+      IF( GCLCHK .AND. ((ITIM/IFAIL)*IFAIL.EQ.ITIM) )THEN
+      WRITE(6,*)'Checking GCL'
+      CALL CHKGCL(ICELNOD,ICELFAC,FACNOR,XYZDOT,VOL,CORG,
+     2            NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NDIM,
+     3            itim)
+      ENDIF 
+C
+      RETURN
+      END
+@
+
+
+1.17
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.16 $
+!> \date $Date: 2020/03/28 09:46:08 $
+d72 2
+a73 2
+      SUBROUTINE NEWGEO(MotionSolver,NodalBcs,ICELNOD,ICELCEL,PMAP,
+     2ICELFAC,FACNOR,VOL,VMEDIAN,CORG,XYZDOT,IBNDPTR,NDIM,NOFVERT,
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.16 2020/03/28 09:46:08 abonfi Exp abonfi $
+d100 1
+a100 2
+!     Mat              A,B,PetscMatC
+!     Vec              X,RHS,dummy
+d208 3
+a210 2
+         CALL GridDeformation(MotionSolver,NodalBcs,NDIM,NOFVERT,NPOIN,
+     2                        NGHOST,NPNOD,NELEM,NBFAC,NFACE)
+@
+
+
+1.16
+log
+@renamed a call
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.15 $
+!> \date $Date: 2016/01/29 10:30:27 $
+d72 5
+a76 3
+      SUBROUTINE NEWGEO(ICELNOD,ICELCEL,PMAP,ICELFAC,FACNOR,VOL,
+     2VMEDIAN,CORG,XYZDOT,IBNDPTR,NDIM,NOFVERT,NELEM,NPOIN,NGHOST,
+     3NPNOD,NFACE,NBFAC,NBINT,NHOLE,TIME)
+d78 6
+a83 1
+C     $Id: newgeo.f,v 1.15 2016/01/29 10:30:27 abonfi Exp abonfi $
+d100 4
+d107 1
+a107 1
+      INTEGER I,INDX,IPOIN,IFAIL
+d209 2
+a210 2
+         CALL GridDeformation(NDIM,NOFVERT,NPOIN,NGHOST,NPNOD,NELEM,
+     2                     NBFAC,NFACE)
+@
+
+
+1.15
+log
+@We are now not only printing some average grid velocity, but
+also its maximum absolute value (using IDAMAX)
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.14 $
+!> \date $Date: 2016/01/29 08:47:06 $
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.14 2016/01/29 08:47:06 abonfi Exp abonfi $
+d280 1
+a280 1
+!         CALL X04EAF('General',' ',NOFVERT,NELEM,ICELFAC,
+d282 1
+a282 1
+!         CALL X04CAF('General',' ',NDIM,NFACE,FACNOR,
+d333 1
+a333 1
+!         CALL X04EAF('General',' ',NOFVERT,NELEM,ICELFAC,
+d335 1
+a335 1
+!         CALL X04CAF('General',' ',NDIM,NFACE,FACNOR,
+@
+
+
+1.14
+log
+@The DOTXYZ routine has been removed and replaced by BLAS calls
+Also the printout on ale.log has changed; now uses DASUM
+and returns some kind of average velocity, rather than the maximum grid velocity
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.13 $
+!> \date $Date: 2014/04/15 10:09:38 $
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.13 2014/04/15 10:09:38 abonfi Exp abonfi $
+d96 1
+a96 1
+      INTEGER I,IPOIN,IFAIL
+d100 1
+a100 1
+      DOUBLE PRECISION TNOW,dxyzdt(3)
+d105 2
+d156 4
+a159 1
+            dxyzdt(I) = DASUM(NP,XYZDOT(I),NDIM)/NP
+d161 1
+d163 2
+a164 1
+         WRITE(NOUT,*)' max |b_x,b_y,b_z| = ',(dxyzdt(I),I=1,NDIM)
+d166 2
+a167 1
+         WRITE(IOALE,*)TIME,(dxyzdt(I),I=1,NDIM)
+d204 4
+a207 1
+            dxyzdt(I) = DASUM(NP,XYZDOT(I),NDIM)/NP
+d210 2
+a211 1
+         WRITE(NOUT,*)' max |b_x,b_y,b_z| = ',(dxyzdt(I),I=1,NDIM)
+d213 2
+a214 1
+         WRITE(IOALE,*)TIME,(dxyzdt(I),I=1,NDIM)
+@
+
+
+1.13
+log
+@account for the third dimension in some printouts
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.12 $
+!> \date $Date: 2013/10/23 10:54:03 $
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.12 2013/10/23 10:54:03 abonfi Exp abonfi $
+d85 1
+a85 1
+C
+d96 1
+d99 2
+a100 2
+      INTEGER NP,IPOIN,IFAIL,NITEMS,iw
+      DOUBLE PRECISION TNOW
+d104 4
+d149 12
+a160 1
+         CALL DOTXYZ(CORG(1,1),CORG(1,NP+1),XYZDOT,NDIM,NP,TIME)
+a166 3
+!        CALL GRIDPTS(NPOIN,NGHOST,NPNOD,NELEM,NBFAC,NBINT,NHOLE,
+!    2             NOFVERT,NDIM,CORG(1,NP+1),ICELNOD,IBNDPTR,
+!    3             GNAME(1:14),"noname.dat","r") ! read the NEW grid
+d184 3
+a186 1
+         CALL DOTXYZ(CORG(1,1),CORG(1,NP+1),XYZDOT,NDIM,NP,TIME)
+d193 10
+a361 95
+!> \par Purpose
+!> 
+!> Compute the grid velocities as follows:
+!> \f[
+!> \mathbf{b} = \frac{\mathbf{x}^{n+1}-\mathbf{x}^n}{\Delta t}
+!> \f]
+!> @@param[in] XYZOLD Cartesian coordinates of the meshpoints at time level n
+!> @@param[in] XYZNEW Cartesian coordinates of the meshpoints at time level n+1
+!> @@param[out] XYZDOT Cartesian components of the nodal grid velocities
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NP should be = \c NPOIN+NGHOST+NPNOD
+!> @@param[in] TIME physical time to be reached, i.e. time \f$(n+1)\Delta t\f$.
+!> \author $Author: abonfi $
+!> \version $Revision: 1.12 $
+!> \date $Date: 2013/10/23 10:54:03 $
+      SUBROUTINE DOTXYZ(XYZOLD,XYZNEW,XYZDOT,NDIM,NP,TIME)
+      IMPLICIT NONE
+      INTEGER NDIM,NP
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION XYZOLD(NDIM,*),XYZNEW(NDIM,*) 
+      DOUBLE PRECISION XYZDOT(NDIM,*)
+      INCLUDE "constants.h"
+      INCLUDE "time.com"
+      INCLUDE "io.com"
+      INTEGER I,IPOIN,IFAIL
+      DOUBLE PRECISION HELP,dxyzdt(3),OMEGA
+      LOGICAL VERBOSE
+      PARAMETER (VERBOSE=.FALSE.)
+!     PARAMETER (VERBOSE=.TRUE.)
+
+      HELP = ONE/DELT
+      WRITE(NOUT,*)
+      WRITE(NOUT,*)' Computing velocities at t=',TIME
+      dxyzdt(1) = ZERO
+      dxyzdt(2) = ZERO
+      dxyzdt(3) = ZERO
+      DO IPOIN= 1,NP 
+         DO I= 1,NDIM 
+            XYZDOT(I,IPOIN) = (XYZNEW(I,IPOIN)-XYZOLD(I,IPOIN))*HELP
+            DXYZDT(I) = MAX(DXYZDT(I),ABS(XYZDOT(I,IPOIN)))
+         ENDDO
+      ENDDO
+      WRITE(NOUT,*)
+      WRITE(NOUT,*)' max |b_x,b_y,b_z| = ',(dxyzdt(I),I=1,NDIM)
+      WRITE(NOUT,*)
+      WRITE(IOALE,*)TIME,(dxyzdt(I),I=1,NDIM)
+      
+      IF(VERBOSE)THEN
+         CALL X04CAF('General',' ',NDIM,NP,XYZOLD,
+     +            NDIM,'Old nodal coordinates ',IFAIL)
+         CALL X04CAF('General',' ',NDIM,NP,XYZNEW,
+     +            NDIM,'New nodal coordinates ',IFAIL)
+         CALL X04CAF('General',' ',NDIM,NP,XYZDOT,
+     +            NDIM,'Grid velocities ',IFAIL)
+      ENDIF
+      RETURN
+      END
+      subroutine print4check(corg,vol,vmdc,facnor,ndim,np,nelem,
+     &t,title,iw) 
+      implicit none
+      integer ndim,np,nelem,iw
+      integer ie,ip,i,j,ef
+      double precision corg(ndim,*),vol(*),vmdc(*),facnor(ndim,*)
+      double precision t
+      character*(*) title
+      double precision xyz(3,3),volume(3),vi(3),vfacnor(3,3)
+      ie = nelem/3
+      ip = 2*np/3
+      ef = 100
+      write(iw,*)
+      write(iw,*)title,t
+      write(iw,*)
+      do i = 1,ndim
+         xyz(i,1) = corg(i,ip) ! n+1
+         xyz(i,2) = corg(i,np+ip) ! n+1
+         xyz(i,3) = corg(i,2*np+ip) ! n-1
+      enddo
+      vi(1) = vmdc(ip) ! n+1
+      vi(2) = vmdc(np+ip) ! n+1
+      vi(3) = vmdc(2*np+ip) ! n-1
+      volume(1) = vol(ie) ! n+1
+      volume(2) = vol(nelem+ie) ! n+1
+      volume(3) = vol(2*nelem+ie) ! n-1
+      write(iw,*)'Monitoring node ',ip
+      write(iw,*)'Coordinates are (1,2,3)'
+      do i = 1,ndim
+      write(iw,FMT="(3(F12.8,1X))")(xyz(i,j),j=1,3)
+      enddo 
+      write(iw,*)'Median dual cell volume is (1,2,3)'
+      write(iw,FMT="(3(F12.8,1X))")(vi(j),j=1,3)
+      write(iw,*)'Monitoring cell ',ie
+      write(iw,*)'Simplex volume is (1,2,3)'
+      write(iw,FMT="(3(F12.8,1X))")(volume(j),j=1,3)
+      return
+      end
+@
+
+
+1.12
+log
+@Now allows to read the grid velocities from a file
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.11 $
+!> \date $Date: 2013/09/23 11:22:02 $
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.11 2013/09/23 11:22:02 abonfi Exp abonfi $
+d326 1
+d328 1
+a328 1
+      IF( GCLCHK )THEN
+d350 2
+a351 2
+!> \version $Revision: 1.11 $
+!> \date $Date: 2013/09/23 11:22:02 $
+d362 1
+a362 1
+      DOUBLE PRECISION HELP,dxdt,dydt,OMEGA
+d370 3
+a372 2
+      dxdt = ZERO
+      dydt = ZERO
+d376 1
+a377 2
+         dxdt = MAX(dxdt,ABS(XYZDOT(1,IPOIN)))
+         dydt = MAX(dydt,ABS(XYZDOT(2,IPOIN)))
+d380 1
+a380 1
+      WRITE(NOUT,*)' max |b_x,b_y| = ',dxdt,dydt
+d382 1
+a382 1
+      WRITE(IOALE,*)TIME,dxdt,dydt
+@
+
+
+1.11
+log
+@now uses flag GCLCHK (set with -ale_check_gcl)
+to activate GCL checking
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.10 $
+!> \date $Date: 2013/09/17 10:00:51 $
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.10 2013/09/17 10:00:51 abonfi Exp abonfi $
+d102 1
+a102 1
+      CHARACTER*80 FNAME,GNAME
+d105 1
+d115 11
+d131 2
+a132 1
+         CALL MOVEXYZ(CORG(1,1+2*NP),CORG(1,NP+1),NDIM,NP,TIME) ! move the grid
+d158 2
+a159 1
+         CALL MOVEXYZ(CORG(1,1+2*NP),CORG(1,NP+1),NDIM,NP,TIME) ! move the grid
+d349 2
+a350 2
+!> \version $Revision: 1.10 $
+!> \date $Date: 2013/09/17 10:00:51 $
+@
+
+
+1.10
+log
+@re-organized the ALE stuff
+@
+text
+@d69 2
+a70 2
+!> \version $Revision: 1.9 $
+!> \date $Date: 2013/09/13 07:01:57 $
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.9 2013/09/13 07:01:57 abonfi Exp abonfi $
+d295 1
+a295 1
+CC    LVOL        |---- n+a ----| |---- n+1 ----| |----n-1----|
+d313 1
+a313 2
+!     IF((ITIM/IFAIL)*IFAIL.EQ.ITIM)THEN
+      IF( .FALSE. )THEN
+d335 2
+a336 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+@
+
+
+1.9
+log
+@the various kinds of grid motions have been moved to a separate file
+@
+text
+@d1 21
+d49 2
+a50 2
+!>    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+!>    LVOL        |---- n   ----| |---- n+1 ----| |---- n ----|
+d52 2
+d62 1
+a62 1
+!>    LVOL        |---- n+a ----| |---- n+1 ----| |---- n ----|
+d66 1
+a66 1
+!> where \c n stands for the time level and \c a is the ALFALE parameter which is set through \c -ale_grid_weight
+d69 2
+a70 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/09/10 15:14:33 $
+d76 1
+a76 1
+C     $Id: newgeo.f,v 1.8 2013/09/10 15:14:33 abonfi Exp abonfi $
+d98 1
+a98 1
+      INTEGER NP,IPOIN,IFAIL,NITEMS
+d100 2
+d109 5
+d115 4
+d124 3
+a126 3
+C     this is the grid   this is the grid
+C     at t=0 i.e. the    at time t=TIME i.e. n=n+1
+C     "fixed" grid
+d134 3
+d143 1
+d184 12
+a195 1
+C     now CORG(1,NP+1) stores the grid at time level n+1 
+d209 10
+a219 1
+C     Finds all faces of the mesh
+d222 1
+a222 1
+! i.e. those at time  "n+1" this is actually required only to compute the volume
+d241 1
+a241 1
+C     this is the area/vol of he median dual cell at time level n+1
+d245 12
+d259 1
+a259 1
+C
+d265 9
+d275 2
+a276 2
+!     compute the face normals at this intermediate grid location
+!     face normals are overwritten
+d287 1
+d292 16
+d323 15
+d380 38
+@
+
+
+1.8
+log
+@Added the motion of the piston
+@
+text
+@d46 2
+a47 2
+!> \version $Revision: 1.7 $
+!> \date $Date: 2013/09/06 08:33:53 $
+d53 1
+a53 1
+C     $Id: newgeo.f,v 1.7 2013/09/06 08:33:53 abonfi Exp abonfi $
+a266 306
+      RETURN
+      END
+!> \par Purpose
+!>
+!> Move the grid for the oscillating NACA:
+!> only the grid within an ellipse will be rigidly moved.
+!> Works only with one grid  (NP2355) when using -ale_grid move
+!> otherwise it Works with all grids  when using -ale_grid laplace
+!>
+!> @@param[in] XYZ0 the coordinates of the fixed grid
+!> @@param[out] XYZNEW the coordinates of the grid at time TIME
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NP number of gridpoints = NPOIN+NGHOST+NPNOD
+!> @@param[in] TIME the at the end of the current timestep
+      SUBROUTINE MOVEXYZ_3(XYZ0,XYZNEW,NDIM,NP,TIME)
+C
+      IMPLICIT NONE
+      INTEGER NDIM,NP
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION XYZ0(NDIM,*),XYZNEW(NDIM,*) 
+      INCLUDE "constants.h"
+      INCLUDE "time.com"
+      INTEGER I,IPOIN,IFAIL
+      DOUBLE PRECISION HELP,dxdt,dydt,OMEGA,x,y,aa,bb
+
+c
+      double precision cost,sint,xsi,eta,a0,da
+      double precision kappa,th0,deg2rad,th
+      parameter(aa=2.275d0,bb=1.7850d0)
+      double precision xy0(3)
+      DOUBLE PRECISION ellipse
+      ellipse(x,y) = (((x-0.5d0)/aa)**2)+((y/bb)**2)-1.d0
+c
+      deg2rad = pi/180.d0
+      a0=0.016d0*deg2rad
+      a0 = ZERO
+      da=2.51d0*deg2rad
+c
+      th0 = da
+      kappa = 0.0814d0
+c
+c     pitch and plunge
+c
+      xy0(1) = 0.5d0
+      xy0(2) = 0.d0
+      th = a0 + th0 * sin(2.d0*kappa*time)
+c
+      cost=cos(-th)
+      sint=sin(-th)
+C
+      WRITE(6,*)
+      WRITE(6,*)' Moving gridpoints at t=',TIME
+      WRITE(6,*)' theta =',th/deg2rad,' omega = ',2.d0*kappa
+c
+      do i = 1,NP
+         if(ellipse(xyz0(1,i),xyz0(2,i)).LT.ZERO)then
+!        if(.FALSE.)then
+            xsi = xyz0(1,i)-xy0(1)
+            eta = xyz0(2,i)-xy0(2)
+            xyznew(1,i) =  xy0(1) + xsi*cost-eta*sint
+            xyznew(2,i) =  xy0(2) + xsi*sint+eta*cost
+         else
+            xyznew(1,i) =  xyz0(1,i)
+            xyznew(2,i) =  xyz0(2,i)
+         endif
+      enddo
+
+      WRITE(6,*)
+!
+!     CALL X04CAF('General',' ',NDIM,NP,XYZ0,
+!    +            NDIM,'Fixed grid nodal coordinates ',IFAIL)
+!     CALL X04CAF('General',' ',NDIM,NP,XYZNEW,
+!    +            NDIM,'New nodal coordinates ',IFAIL)
+
+      RETURN
+      END
+!> \par Purpose
+!>
+!> Driver routine for moving the grid:
+!> the behaviour depends on the integer IALE
+!> which is stored in time.com
+!>
+!> @@param[in] XYZ0 the coordinates of the fixed grid
+!> @@param[out] XYZNEW the coordinates of grid at time TIME
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NP number of gridpoints = NPOIN+NGHOST+NPNOD
+!> @@param[in] TIME the at the end of the current timestep
+      SUBROUTINE MOVEXYZ(XYZ0,XYZNEW,NDIM,NP,TIME)
+C
+C
+      IMPLICIT NONE
+      INTEGER NDIM,NP
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION XYZ0(NDIM,*),XYZNEW(NDIM,*) 
+      INCLUDE "time.com"
+      GOTO(1,2,3,4)IALE
+      STOP 'IALE has a wrong value' 
+    1 CALL MOVEXYZ_1(XYZ0,XYZNEW,NDIM,NP,TIME)
+      RETURN
+    2 CALL MOVEXYZ_2(XYZ0,XYZNEW,NDIM,NP,TIME)
+      RETURN
+    3 CALL MOVEXYZ_3(XYZ0,XYZNEW,NDIM,NP,TIME)
+      RETURN
+    4 CALL MOVEXYZ_4(XYZ0,XYZNEW,NDIM,NP,TIME)
+      RETURN
+      END
+!> \par Purpose
+!>
+!> Deforms the grid for the vortex: deforming grid
+!>
+!> In particular, we consider a mesh which deforms according to the following mapping:
+!> \f{eqnarray*}{
+!> \left(x^{n+1}-x_0\right) &=& \left(x^0-x_0\right) \left[B_0+A_1\sin\left(\omega t\right)+B_1\cos\left(\omega t\right)\right] \\\
+!> \left(y^{n+1}-y_0\right) &=& \left(y^0-y_0\right) \left[B_0+A_1\sin\left(\omega t\right)+B_1\cos\left(\omega t\right)\right]
+!> \f}
+!>
+!> Point \f$x_0,y_0\f$ is set equal to the initial location of the vortex centre:
+!>
+!> the vortex centre is set using -ale_motion_origin [x0,y0,z0]
+!>
+!> one should use (x0,y0) = (0.5d0,0.5d0) for the scalar case
+!>
+!> one should use (x0,y0) = (0.d0,0.d0) for the compressible vortex case
+!>
+!> Moreover, we choose \f$B_0+B_1 = 1\f$ so that the grid is un-deformed at \f$t = 0\f$ and \f$t = T\f$ and \f$A_1 = 0\f$, for simplicity.
+!>
+!> \f$B_1 = 1/(3\pi)\f$.
+!>
+!> @@param[in] XYZ0 the coordinates of the fixed grid
+!> @@param[out] XYZNEW the coordinates of grid at time TIME
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NP number of gridpoints = NPOIN+NGHOST+NPNOD
+!> @@param[in] TIME the at the end of the current timestep
+      SUBROUTINE MOVEXYZ_2(XYZ0,XYZNEW,NDIM,NP,TIME)
+C
+C
+      IMPLICIT NONE
+      INTEGER NDIM,NP
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION XYZ0(NDIM,*),XYZNEW(NDIM,*) 
+      INCLUDE "constants.h"
+      INCLUDE "time.com"
+      INTEGER I,IPOIN,IFAIL
+      DOUBLE PRECISION HELP,OMEGA
+      DOUBLE PRECISION b0,b1,a1,x0,y0
+
+      x0 = XYZ_C(1)
+      y0 = XYZ_C(2)
+!
+!
+
+      HELP = ONE/DELT
+      OMEGA = TWO*PI/(ITSTEP*DELT)
+c
+      a1 = zero
+      b1 = one/(1.5d0*omega)
+      b0 = one-b1
+      help = (b0+a1*sin(omega*time)+b1*cos(omega*time))
+      WRITE(6,*)
+      WRITE(6,*)' Moving gridpoints at t=',TIME
+      WRITE(6,*)' omega = ',omega
+      DO IPOIN= 1,NP 
+         XYZNEW(1,IPOIN) = x0 + (XYZ0(1,IPOIN)-x0) * help ! caso scalare
+         XYZNEW(2,IPOIN) = y0 + (XYZ0(2,IPOIN)-y0) * help ! caso scalare
+      ENDDO
+      WRITE(6,*)
+!
+!     CALL X04CAF('General',' ',NDIM,NP,XYZ0,
+!    +            NDIM,'Fixed grid nodal coordinates ',IFAIL)
+!     CALL X04CAF('General',' ',NDIM,NP,XYZNEW,
+!    +            NDIM,'New nodal coordinates ',IFAIL)
+
+      RETURN
+      END
+!> \par Purpose
+!>
+!> Rigidly oscillates the grid horizontally (along x)
+!>
+!> \f{eqnarray*}{
+!> x^{n+1} &=& x^0 + a\, \int_{0}^{n\,\Delta t}\sin\left(\omega t\right)  \; \mathrm{d}t  \\\
+!> &=& x^0 + \frac{a}{\omega} \left[1-\cos\left(\omega \, n\,\Delta t\right)\right] \quad n = 0,1,...N
+!> \f}
+!> The period of the oscillation coincides with the total running time $T$ so that
+!> at time \f$ N\Delta t = T \f$ the grid will return to its initial position; it follows that
+!> \f$
+!> \omega = \frac{2\pi}{T} = \frac{2\pi}{N\Delta t} 
+!> \f$
+
+!>
+!> @@param[in] XYZ0 the coordinates of the fixed grid
+!> @@param[out] XYZNEW the coordinates of grid at time TIME
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NP number of gridpoints = NPOIN+NGHOST+NPNOD
+!> @@param[in] TIME the at the end of the current timestep
+      SUBROUTINE MOVEXYZ_1(XYZ0,XYZNEW,NDIM,NP,TIME)
+C
+C     the vortex: rigid motion
+C
+      IMPLICIT NONE
+      INTEGER NDIM,NP
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION XYZ0(NDIM,*),XYZNEW(NDIM,*) 
+      INCLUDE "constants.h"
+      INCLUDE "time.com"
+      INTEGER I,IPOIN,IFAIL
+      DOUBLE PRECISION HELP,dxdt,dydt,OMEGA,dx,dy,xp,yp
+      DOUBLE PRECISION b0,b1,a1
+      DOUBLE PRECISION U0
+
+
+
+      HELP = ONE/DELT
+      OMEGA = TWO*PI/(ITSTEP*DELT)
+      U0 = ONE
+c
+      dx = U0/OMEGA*(ONE-COS(OMEGA*TIME))
+!     dy = dx
+      dy = ZERO
+      WRITE(6,*)
+      WRITE(6,*)' Moving gridpoints at t=',TIME
+      WRITE(6,*)' dx,dy =',dx,dy,' omega = ',omega
+      DO IPOIN= 1,NP 
+         XYZNEW(1,IPOIN) = XYZ0(1,IPOIN) + dx ! rigid motion
+         XYZNEW(2,IPOIN) = XYZ0(2,IPOIN) + dy
+      ENDDO
+      WRITE(6,*)
+!
+!     CALL X04CAF('General',' ',NDIM,NP,XYZ0,
+!    +            NDIM,'Fixed grid nodal coordinates ',IFAIL)
+!     CALL X04CAF('General',' ',NDIM,NP,XYZNEW,
+!    +            NDIM,'New nodal coordinates ',IFAIL)
+
+      RETURN
+      END
+!> \par Purpose
+!>
+!> Move the grid for the piston see doi 10.1002/(SICI)1097-0363(19990815)30:7<865::AID-FLD870>3.0.CO;2-5
+!>
+!> The head of the piston moves according to the following equation:
+!>
+!> \f[
+!> x_{\mbox{piston}}/L = c + \frac{R}{L}\left[1-\cos\left(\omega^*t^*\right)\right] + 
+!> \left(\frac{R}{2L}\right)^2\left[1-\cos\left(2\omega^*t^*\right)\right]
+!> \f]
+!> where
+!> \f[
+!> t^* = t \frac{\sqrt{ R T^0 }}{L}
+!> \f]
+!> is the dimensionless time and the dimensionless frequency \f$\omega^*\f$ is:
+!> \f[
+!> \omega^* = \Omega \frac{L}{\sqrt{ R T^0 }}
+!> \f]
+!> the dimensional frequency is \f$\Omega\f$ = 100 Hz.
+!>
+!>
+!> The remeshing process is made by linear interpolation of node displacement between the
+!> fixed wall on the left and the moving wall on the right, i.e.
+!>
+!> \f[
+!> x_i\left(t\right) = \frac{x_i\left(t=0\right)}{x_{\mbox{piston}}\left(t=0\right)} \; x_{\mbox{piston}} \left(t\right)
+!> \f]
+!>
+!> @@param[in] XYZ0 the coordinates of the fixed grid
+!> @@param[out] XYZNEW the coordinates of the grid at time TIME
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NP number of gridpoints = NPOIN+NGHOST+NPNOD
+!> @@param[in] TIME the at the end of the current timestep
+      SUBROUTINE MOVEXYZ_4(XYZ0,XYZNEW,NDIM,NP,TIME)
+C
+      IMPLICIT NONE
+      INTEGER NDIM,NP
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION XYZ0(NDIM,*),XYZNEW(NDIM,*) 
+      INCLUDE "paramt.h"
+      INCLUDE "constants.h"
+      INCLUDE "time.com"
+      INCLUDE "stream.com"
+      INTEGER I,IPOIN,IFAIL
+      DOUBLE PRECISION HELP,alpha,OMEGA,r,c,h,l,xp,c1,c2
+      parameter(r=.03d0,c=r,h=.375,l=ONE,c1=r/l,c2=(HALF*r/l)**2)
+
+c
+c
+c
+      omega = 100.d0 * lref/uref
+      help = omega*TIME
+c
+C
+      WRITE(6,*)
+      WRITE(6,*)' Moving gridpoints at t=',TIME
+      WRITE(6,*)' omega = ',omega
+c
+      xp = c + c1*(ONE-cos(HELP))+ c2*(ONE-cos(TWO*HELP))
+      do i = 1,NP
+         alpha = xyz0(1,i)/c
+         xyznew(1,i) = alpha * xp
+         xyznew(2,i) = xyz0(2,i)
+      enddo
+
+      WRITE(6,*)
+!
+!     CALL X04CAF('General',' ',NDIM,NP,XYZ0,
+!    +            NDIM,'Fixed grid nodal coordinates ',IFAIL)
+!     CALL X04CAF('General',' ',NDIM,NP,XYZNEW,
+!    +            NDIM,'New nodal coordinates ',IFAIL)
+
+@
+
+
+1.7
+log
+@Updated Doxygen documentation
+@
+text
+@d46 2
+a47 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d53 1
+a53 1
+C     $Id: newgeo.f,v 1.6 2013/08/19 09:00:43 abonfi Exp abonfi $
+d362 1
+a362 1
+      GOTO(1,2,3)IALE
+d370 2
+d492 74
+@
+
+
+1.6
+log
+@now uses MOTION_ORIGIN_X for moving the mesh
+@
+text
+@d1 48
+d53 1
+a53 1
+C     $Id: newgeo.f,v 1.5 2013/07/19 07:07:08 abonfi Exp abonfi $
+a62 1
+C     Input arguments unchanged on exit
+a69 1
+C     Output arrays returned on exit
+a83 23
+C    Upon entry:
+C
+C    LCORG       |---- n   ----| |---- XXX ----| |---- 0 ----|
+C    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+C    LVOL        |---- n   ----| |---- n+1 ----| |---- n ----|
+C    LFACNOR     |---- n   ----|
+C
+C
+C    Upon return:
+C
+C    LCORG       |---- n+a ----| |---- n+1 ----| |---- 0 ----|
+C    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+C    LVOL        |---- n+a ----| |---- n+1 ----| |---- n ----|
+C    LFACNOR     |---- n+a ----|
+C
+C     New grid coordinates are put into CORG(1,NP+1) and
+C     the grid velocity is computed accordingly
+C
+C     
+C
+C     CORG(1,2*NP+1) stores the grid at time level 0, i.e. the fixed grid
+C
+C
+d269 7
+a275 1
+!> \details
+d277 1
+a277 1
+!> @@param[out] XYZ0 the coordinates of grid at time TIME
+a282 2
+C     This is for the oscillating NACA
+C
+d343 6
+a348 1
+!> \details
+d350 1
+a350 1
+!> @@param[out] XYZ0 the coordinates of grid at time TIME
+d371 22
+a392 1
+!> \details
+d394 1
+a394 1
+!> @@param[out] XYZ0 the coordinates of grid at time TIME
+a399 1
+C     the scalar vortex: deforming grid
+a413 2
+!     should use (x0,y0) = (HALF,HALF) for the scalar case
+!     should use (x0,y0) = (0.d0,0.d0) for the compressible vortex case
+d439 15
+a453 1
+!> \details
+d455 1
+a455 1
+!> @@param[out] XYZ0 the coordinates of grid at time TIME
+@
+
+
+1.5
+log
+@Added an integer flag IALE to choose the type of motion
+@
+text
+@d5 1
+a5 1
+C     $Id: newgeo.f,v 1.4 2013/06/28 09:24:26 abonfi Exp abonfi $
+d234 1
+a234 1
+      WRITE(IALE,*)TIME,dxdt,dydt
+d359 6
+a364 3
+!     PARAMETER(x0=ZERO,y0=ZERO)
+      PARAMETER(x0=HALF,y0=HALF) ! this is for the scalar case
+
+d407 1
+a407 1
+      DOUBLE PRECISION b0,b1,a1,x0,y0
+a409 2
+!     PARAMETER(x0=ZERO,y0=ZERO) ! this is for the compressible vortex
+      PARAMETER(x0=HALF,y0=HALF) ! this is for the scalar case
+@
+
+
+1.4
+log
+@preliminary testing of the Motion Solver
+@
+text
+@d5 1
+a5 1
+C     $Id: newgeo.f,v 1.3 2013/06/25 07:16:49 abonfi Exp abonfi $
+d29 1
+a29 1
+      INTEGER NP,IPOIN,IFAIL
+d71 6
+a76 9
+         IF((ITIM/IFAIL)*IFAIL.EQ.ITIM)THEN
+            WRITE(GNAME(5:10),FMT="(I6.6)")ITIM
+            WRITE(6,*)'Writing mesh at time ',TIME,' in file = ',
+     &GNAME(1:12)
+            CALL GRIDPTS(NPOIN,NGHOST,NPNOD,NELEM,NBFAC,NBINT,NHOLE,
+     2             NOFVERT,NDIM,CORG(1,NP+1),ICELNOD,IBNDPTR, ! icn might use the periodic copy?
+     3             GNAME(1:14),"noname.dat","w") ! write the NEW grid
+         ENDIF
+      ELSEIF(ALE_READ_GRID)THEN
+d81 14
+a94 4
+         CALL DCOPY(NP*NDIM,CORG(1,1),1,CORG(1,NP+1),1)
+         CALL MotionSolver(NDIM,NOFVERT,NPOIN,NGHOST,NPNOD,NELEM,NBFAC,
+     2                     NFACE)
+      ENDIF 
+d96 1
+a96 1
+C     now CORG(1,NP+1) stores the grid at time level n+1 
+d98 1
+a98 1
+C     compute the grid velocity as (x^{n+1}-x^n)/dt
+d100 22
+a121 1
+      CALL DOTXYZ(CORG(1,1),CORG(1,NP+1),XYZDOT,NDIM,NP,TIME)
+d123 1
+d126 7
+a168 1
+!     write(6,*)'alpha ALE = ',alfale
+a203 60
+!> \details
+!> @@param[in] XYZ0 the coordinates of the fixed grid
+!> @@param[out] XYZ0 the coordinates of grid at time TIME
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NP number of gridpoints = NPOIN+NGHOST+NPNOD
+!> @@param[in] TIME the at the end of the current timestep
+      SUBROUTINE MOVEXYZ_compressible(XYZ0,XYZNEW,NDIM,NP,TIME)
+      IMPLICIT NONE
+      INTEGER NDIM,NP
+      DOUBLE PRECISION TIME
+      DOUBLE PRECISION XYZ0(NDIM,*),XYZNEW(NDIM,*) 
+      INCLUDE "constants.h"
+      INCLUDE "time.com"
+      INTEGER I,IPOIN,IFAIL
+      DOUBLE PRECISION HELP,dxdt,dydt,OMEGA,dx,dy,xp,yp
+      DOUBLE PRECISION b0,b1,a1,x0,y0
+      DOUBLE PRECISION U0
+
+      PARAMETER(x0=HALF,y0=HALF)
+
+      HELP = ONE/DELT
+      OMEGA = TWO*PI/(ITSTEP*DELT)
+!     U0 = PI/REAL(ITSTEP)
+      U0 = ONE
+c     OMEGA = HALF*PI/(ITSTEP*DELT)
+c
+      dx = U0/OMEGA*(ONE-COS(OMEGA*TIME))
+      dy = dx
+      dy = ZERO
+      dxdt = dx/delt
+      dydt = dy/delt
+      a1 = zero
+      b1 = one/(1.5d0*omega)
+      b1 = -.125d0
+      b0 = one-b1
+      help = (b0+a1*sin(omega*time)+b1*cos(omega*time))
+      WRITE(6,*)
+      WRITE(6,*)' Moving gridpoints at t=',TIME
+      WRITE(6,*)' dx,dy =',dx,dy,' omega = ',omega
+!     WRITE(6,*)' dxdt,dydt =',dxdt,dydt
+!     help = (TWO-COS(OMEGA*TIME))!/PI
+      DO IPOIN= 1,NP 
+!        XYZNEW(1,IPOIN) = XYZ0(1,IPOIN) + dx ! rigid motion
+!        XYZNEW(2,IPOIN) = XYZ0(2,IPOIN) + dy
+!        XYZNEW(1,IPOIN) = XYZ0(1,IPOIN) * help ! caso scalare
+!        XYZNEW(2,IPOIN) = XYZ0(2,IPOIN) * help ! caso scalare
+         XYZNEW(1,IPOIN) = XYZ0(1,IPOIN) + (XYZ0(1,IPOIN)+HALF) * 
+     &   0.015d0 * sin(OMEGA*time) ! caso del vortice
+         XYZNEW(2,IPOIN) = XYZ0(2,IPOIN) + (XYZ0(2,IPOIN)) * 
+     &   0.015d0 * sin(OMEGA*time) ! caso del vortice
+      ENDDO
+      WRITE(6,*)
+!
+!     CALL X04CAF('General',' ',NDIM,NP,XYZ0,
+!    +            NDIM,'Fixed grid nodal coordinates ',IFAIL)
+!     CALL X04CAF('General',' ',NDIM,NP,XYZNEW,
+!    +            NDIM,'New nodal coordinates ',IFAIL)
+
+      RETURN
+      END
+d252 1
+a252 1
+      SUBROUTINE MOVEXYZ(XYZ0,XYZNEW,NDIM,NP,TIME)
+d322 71
+a392 1
+      SUBROUTINE MOVEXYZ_vortex(XYZ0,XYZNEW,NDIM,NP,TIME)
+d394 1
+a394 1
+C     the compressible vortex
+d407 2
+a408 2
+      PARAMETER(x0=ZERO,y0=ZERO)
+!     PARAMETER(x0=HALF,y0=HALF) ! this is for the scalar case
+d416 1
+a416 1
+      dy = dx
+a417 6
+      dxdt = dx/delt
+      dydt = dy/delt
+      a1 = zero
+      b1 = one/(1.5d0*omega)
+      b0 = one-b1
+      help = (b0+a1*sin(omega*time)+b1*cos(omega*time))
+a420 1
+!     help = (TWO-COS(OMEGA*TIME))!/PI
+d422 2
+a423 4
+!        XYZNEW(1,IPOIN) = XYZ0(1,IPOIN) + dx ! rigid motion
+!        XYZNEW(2,IPOIN) = XYZ0(2,IPOIN) + dy
+         XYZNEW(1,IPOIN) = x0 + (XYZ0(1,IPOIN)-x0) * help ! caso scalare
+         XYZNEW(2,IPOIN) = y0 + (XYZ0(2,IPOIN)-y0) * help ! caso scalare
+@
+
+
+1.3
+log
+@a wrong sign has been changed in the pitching motion
+@
+text
+@d5 1
+a5 1
+C     $Id: newgeo.f,v 1.2 2012/12/20 10:59:10 abonfi Exp abonfi $
+d62 1
+a62 1
+         CALL MOVEXYZ(CORG(1,1+2*NP),CORG(1,NP+1),NDIM,NP,TIME) ! move the grid and compute the grid velocity
+d81 6
+a86 3
+         CALL GRIDPTS(NPOIN,NGHOST,NPNOD,NELEM,NBFAC,NBINT,NHOLE,
+     2             NOFVERT,NDIM,CORG(1,NP+1),ICELNOD,IBNDPTR,
+     3             GNAME(1:14),"noname.dat","r") ! read the NEW grid
+@
+
+
+1.2
+log
+@added a variety of mesh movements
+@
+text
+@d5 1
+a5 1
+C     $Id: newgeo.f,v 1.1 2012/04/05 14:33:05 abonfi Exp abonfi $
+d130 1
+a130 1
+      write(6,*)'alpha ALE = ',alfale
+d156 2
+a157 1
+      IF((ITIM/IFAIL)*IFAIL.EQ.ITIM)THEN
+d297 1
+d309 2
+a310 2
+      cost=cos(th)
+      sint=sin(th)
+d319 2
+a320 2
+            xsi = xyz0(1,i)-0.5d0
+            eta = xyz0(2,i)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 2
+a3 2
+     2VMEDIAN,CORG,XYZDOT,NDIM,NOFVERT,NELEM,NPOIN,NGHOST,NPNOD,NFACE,
+     3NBFAC,NBINT,NHOLE,TIME)
+d5 1
+a5 1
+C     $Id:$
+d9 2
+d13 1
+d27 1
+a27 1
+      INTEGER ICELFAC(NOFVERT,NELEM)
+d30 1
+d32 2
+a33 2
+      DATA FNAME(1:13)/"grid00000.dat"/
+      DATA GNAME(1:12)/"step0000.dat"/
+d35 1
+a35 1
+      IFAIL = 100
+d38 15
+d56 5
+d62 17
+a78 1
+         CALL MOVEXYZ(CORG(1,1),CORG(1,NP+1),NDIM,NP,TIME) ! move the grid and compute the grid velocity
+d80 4
+a83 4
+         WRITE(GNAME(5:8),FMT="(I4.4)")ITIM
+         CALL RGRDPTS(NPOIN,NGHOST,NPNOD,NELEM,NBFAC,NBINT,NHOLE, ! read the NEW grid
+     +             NOFVERT,NDIM,CORG(1,NP+1),GNAME(1:12),
+     3             "noname.dat")
+d86 1
+d88 1
+d90 1
+a90 1
+      CALL DOTXYZ(CORG(1,1),CORG(1,NP+1),XYZDOT,NDIM,NP,TIME) ! compute the grid velocity
+d94 2
+a95 2
+          WRITE(FNAME(5:9),FMT="(I5.5)")ITIM
+          CALL TECPLOT(FNAME(1:13),CORG(1,NP+1),NDIM,NP,ICELNOD,NOFVERT,
+d101 4
+a104 7
+caldo
+!     CALL IINIT(NELEM*NOFVERT,0,ICELFAC,1)
+!     CALL X04CAF('General',' ',NDIM,NFACE,FACNOR,
+!    +            NDIM,'Old face normals ',IFAIL)
+!         CALL X04EAF('General',' ',NOFVERT,NELEM,ICELFAC,
+!    +    NOFVERT,'Old ICELFAC array ',IFAIL)
+caldo
+d106 1
+a106 1
+     +        NP,FACNOR,NFACE,NBFAC,NBINT) ! compute the face normals using the updated grid coordinates
+a112 2
+!     CALL SOLZNE(FNAME,CORG(1,NP+1),NDIM,NP,"write")
+!     write(6,*)nface,nbfac,nbint
+d115 1
+d119 3
+a121 1
+     +            VOL(NELEM+1))
+d126 37
+d165 7
+a171 1
+      SUBROUTINE MOVEXYZ(XYZOLD,XYZNEW,NDIM,NP,TIME)
+d175 1
+a175 1
+      DOUBLE PRECISION XYZOLD(NDIM,*),XYZNEW(NDIM,*) 
+d179 5
+a183 1
+      DOUBLE PRECISION HELP,dxdt,dydt,OMEGA
+d187 14
+a200 4
+      dydt = 1.00d0*DSIN(OMEGA*TIME)
+      dxdt = 1.00d0*DSIN(OMEGA*TIME)
+!     dydt = ZERO
+!     dxdt = ZERO
+d202 4
+a205 2
+      WRITE(6,*)' Moving gridpoints at t=',TIME,' b = ',dxdt,dydt
+      WRITE(6,*)' dx,dy =',dxdt*DELT,dydt*DELT
+d207 8
+a214 2
+         XYZNEW(1,IPOIN) = XYZOLD(1,IPOIN) + dxdt*DELT
+         XYZNEW(2,IPOIN) = XYZOLD(2,IPOIN) + dydt*DELT
+d217 3
+a219 2
+!     CALL X04CAF('General',' ',NDIM,NP,XYZOLD,
+!    +            NDIM,'Old nodal coordinates ',IFAIL)
+a221 2
+!     CALL X04CAF('General',' ',NDIM,NP,XYZDOT,
+!    +            NDIM,'Grid velocities ',IFAIL)
+d233 1
+d236 3
+d241 2
+a242 2
+      WRITE(6,*)
+      WRITE(6,*)' Computing velocities at t=',TIME
+d249 2
+a250 2
+         dxdt = MAX(dxdt,XYZDOT(1,IPOIN))
+         dydt = MAX(dydt,XYZDOT(2,IPOIN))
+d252 122
+d375 9
+a383 1
+      WRITE(6,*)' max b = ',dxdt,dydt
+d385 3
+a387 2
+!     CALL X04CAF('General',' ',NDIM,NP,XYZOLD,
+!    +            NDIM,'Old nodal coordinates ',IFAIL)
+a389 2
+!     CALL X04CAF('General',' ',NDIM,NP,XYZDOT,
+!    +            NDIM,'Grid velocities ',IFAIL)
+@

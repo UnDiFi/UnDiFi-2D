@@ -1,0 +1,14 @@
+C IBNDFAC -- Integer IBNDFAC(1:3,1:NBFAC)
+C            Boundary face pointer :
+C
+C          + IBNDFAC(1,ibfac) gives the global number of the
+C            element the ibfac-th face belongs to
+C
+C          + IBNDFAC(2,ibfac) gives the local number of the
+C            vertex opposite the ibfac-th boundary face, ie.
+C            its global node number is given by:
+C            ICELNOD(IBNDFAC(2,ibfac),IBNDFAC(1,ibfac))
+C
+C          + IBNDFAC(3,ibfac) gives the boundary color
+C            of the ibfac-th boundary face
+C

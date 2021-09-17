@@ -1,0 +1,542 @@
+head     1.7;
+access   simula;
+symbols  ;
+locks    ; strict;
+comment  @c @;
+
+
+1.7
+date     98.12.23.11.54.17;  author aldo;  state Exp;
+branches ;
+next     1.6;
+
+1.6
+date     98.12.12.18.41.13;  author aldo;  state Exp;
+branches ;
+next     1.5;
+
+1.5
+date     98.12.12.16.35.04;  author aldo;  state Exp;
+branches ;
+next     1.4;
+
+1.4
+date     98.11.07.09.01.00;  author aldo;  state Exp;
+branches ;
+next     1.3;
+
+1.3
+date     98.05.10.08.24.31;  author aldo;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     98.05.08.12.19.37;  author aldo;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     98.04.21.21.05.46;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@boundary conditions for inviscid walls
+@
+
+
+1.7
+log
+@*** empty log message ***
+@
+text
+@      SUBROUTINE WEAKBCI(A,RHS,dt,IBNDFAC,NBFAC,NDIM,NOFVERT,NOFVAR)
+C
+C#define PRINT
+C
+      IMPLICIT NONE
+C
+C
+C     $Id$
+C
+#include "finclude/petsc.h"
+#include "finclude/vec.h"
+#include "finclude/mat.h"
+C
+      Vec RHS,dt
+      Mat A
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd'
+      INTEGER LNV
+      PARAMETER(LNV=NMAX*NMAX*VMAX*VMAX)
+C
+      INCLUDE 'three'
+      INCLUDE 'nloc'
+      INCLUDE 'implicit.h'
+C
+      INTEGER I,J,IELEM,INODE,NBFAC,NDIM,NOFVERT,NOFVAR,LOC,IFAIL,
+     +IBC,IVERT,IBFAC,LOCA,LOCB,IADD,K,L,N
+      INTEGER IBNDFAC(3,NBFAC)
+C
+      DOUBLE PRECISION VCN(3*VMAX),VCP(3*VMAX),VCZ(NMAX*VMAX),
+     +VNOD(NMAX*VMAX),STIFC((VMAX-1)*(VMAX-1)*NMAX*NMAX),
+     +NODRES(NMAX*VMAX),WORK(400),tstep,work2(400)
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_I(4),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX)
+C
+      DOUBLE PRECISION DSTAK
+      COMMON /CSTAK/DSTAK(1)
+      INTEGER ISTAK(1)
+      EQUIVALENCE(ISTAK(1),DSTAK(1))
+C
+      DOUBLE PRECISION FLUXN(NMAX),S,ADIM,VOLUME
+C
+      INTEGER  ICYCL
+      EXTERNAL ICYCL
+      double precision dnrm2
+      EXTERNAL INVWLL,dnrm2
+C
+       call dinit(400,0.d0,WORK,1)
+       call dinit(400,0.d0,WORK2,1)
+C
+      DO 100 IBFAC = 1,NBFAC
+         IBC   = ICOLOR(IBNDFAC(3,IBFAC))
+         IF( IBC .NE. 4 )GOTO 100
+         IVERT = IBNDFAC(2,IBFAC)
+         IELEM = IBNDFAC(1,IBFAC)
+         CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,1,1,ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+
+C
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+C
+      CALL PARM2PRIM(NDIM,IELEM)
+C
+         DO 3 J = 1 , NDIM
+            I = ICYCL( IVERT + J , NOFVERT )
+            LOCA = (I-1)*NOFVAR+1
+            LOCB = (J-1)*NOFVAR+1
+            CALL DCOPY(NOFVAR,VCZ(LOCA),1,VNOD(LOCB),1)
+   3     CONTINUE
+C
+ 400  IF( NDIM .EQ.  2)THEN
+C
+C     normal to the boundary
+C
+          LOC = (IVERT-1)*NDIM+1
+C
+C     compute F(1)-F(boundary)
+C
+          CALL trapezium(VCN(LOC),VNOD,INVWLL,FLUXN,NDIM,NOFVAR)
+          CALL DINIT(NOFVAR*NOFVAR*4,0.d0,STIFC,1)
+          CALL DINIT(NOFVAR*NOFVAR*4,0.d0,WORK,1)
+#ifdef PRINT
+          write(6,*)'flux integral on element ',ielem
+          write(6,*)(fluxn(j),j=1,nofvar)
+#endif
+          CALL MATRX(NDIM,NOFVAR,STIFC,WORK,work2,VNOD,
+     +    VCN(LOC),NODRES)
+      ELSE
+          STOP 'Not yet 4 3D'
+      ENDIF
+C
+C     GOTO 999
+C999  CONTINUE
+C
+C    The flux integral over the element ( = dF/dZ grad(Z) )
+C    is modified by substracting the computed and adding
+C    the imposed flux through the boundary face ..
+C
+      tstep = abar * dnrm2(ndim,VCN(LOC),1)
+
+C
+      N=NOFVERT-1
+      DO 37 K= 1,N
+         I = ICYCL(IVERT+K,NOFVERT)
+         LOC = (I-1)*NOFVAR+1
+         LOCB= (K-1)*NOFVAR+1
+         CALL VecSetValues(RHS,NOFVAR,IDX_V(LOC),NODRES(LOCB),
+     +                     ADD_VALUES,IFAIL)
+         CALL VecSetValue(dt,ICN(I),tstep,
+     +                     ADD_VALUES,IFAIL)
+         IF( TIMEIMPL )THEN
+              DO 39 L= 1,N
+                  J = ICYCL(IVERT+L,NOFVERT)
+                  IADD = (((L-1)*N+K-1)*NOFVAR*NOFVAR) + 1
+                  CALL MatSetValuesBlocked(A,1,ICN(I),1,ICN(J),
+     +                                     STIFC(IADD),ADD_VALUES,IFAIL)
+   39         CONTINUE
+         ENDIF
+   37 CONTINUE
+C
+C     pause
+C     write(6,*)k,l,icn(i),icn(j),icn(ivert)
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFC(IADD),
+C    +NOFVAR,'Stiffness matrix ',IFAIL)
+C
+ 100  CONTINUE
+C
+      RETURN
+  564 FORMAT((E12.6,1X))
+      END
+C
+C
+      SUBROUTINE MATRX(NDIM,NOFVAR,STIFC,WORK,work2,VCZ,VCN,NODRES)
+
+      IMPLICIT NONE 
+
+      INTEGER NDIM,NOFVAR
+      INTEGER i,j,IVERT,ifail,IADD
+
+      DOUBLE PRECISION ONE_THIRD,ONE_SIXTH
+      PARAMETER(ONE_THIRD=1.d0/3.d0,ONE_SIXTH=1.d0/6.d0)
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NDIM,NDIM),VCZ(NOFVAR,NDIM),
+     +                 VCN(NDIM),NODRES(NOFVAR,NDIM)
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NDIM,NDIM),dZdU(25)
+      DOUBLE PRECISION WORK2(NOFVAR,NOFVAR,NDIM,NDIM)
+      DOUBLE PRECISION VDOTN(2),TEMPA,TEMPB
+      double precision wksp(4),temp(4,2),alpha
+      parameter(alpha=0.75d0)
+
+      DATA dZdU/25*0.d0/
+
+      call dinit(4,0.d0,wksp,1)
+      call dinit(8,0.d0,temp,1)
+
+
+      call GetdF4corrdU(vcz(1,1),vcn,ndim,nofvar,work(1,1,1,1))
+      call GetdF4corrdU(vcz(1,2),vcn,ndim,nofvar,work(1,1,2,2))
+
+
+      DO 8 j = 1,NOFVAR
+      DO 8 I = 1,NOFVAR
+         work2(I,j,1,1) = 0.5d0*alpha*work(i,j,1,1)
+         work2(I,j,1,2) = 0.5d0*(1.d0-alpha)*work(i,j,2,2)
+         work2(I,j,2,2) = 0.5d0*alpha*work(i,j,2,2)
+         work2(I,j,2,1) = 0.5d0*(1.d0-alpha)* work(i,j,1,1)
+    8 CONTINUE
+C
+      CALL DINIT(NOFVAR*NDIM,0.d0,NODRES,1)
+C
+C     compute nodal residuals as - \sum C_{i,j=1}^{d} Z_j
+C     the - sign is due to the fact that what we want to
+C     split is F(boundary) - F(1)
+C
+      do 29 i = 1,ndim
+         do 31 j = 1,ndim
+            call dgemv('N',nofvar,nofvar,-.5d0,work2(1,1,i,j),nofvar,
+     >                 vcz(1,j),1,1.d0,nodres(1,i),1)
+   31 CONTINUE
+      call daxpy(nofvar,1.d0,nodres(1,i),1,wksp,1)
+   29 CONTINUE
+#ifdef PRINT
+      write(6,*)'nodres '
+      write(6,*)(wksp(j),j=1,nofvar)
+#endif
+C
+C     transform the convection stiffness matrix into 
+C     conserved variables as C_{ij} := 2 C_{ij} dZdU(j)
+C
+      DO 9 IVERT = 1,NDIM
+	   IADD = (IVERT-1)*NOFVAR*NOFVAR+1
+          CALL MatdZdU(VCZ(1,IVERT),dZdU(IADD),NDIM,
+     +  NOFVAR)
+          DO 9 I = 1,NDIM
+             CALL DGEMM('No transpose','No transpose',NOFVAR,
+     >           NOFVAR,NOFVAR,+1.d0,WORK2(1,1,I,IVERT),NOFVAR,
+     >           dZdU(IADD),NOFVAR,0.d0,
+     >            STIFC(1,1,I,IVERT),NOFVAR)
+C     write(6,*)i,ivert
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFC(1,1,I,IVERT),
+C    +NOFVAR,'Stiffness matrix ',IFAIL)
+    9 CONTINUE
+c
+C
+C     test the stiffness matrix in conserved variables 
+C
+      call dinit(4,0.d0,wksp,1)
+      call dcopy(8,vcz,1,temp,1)
+      call parm_to_cons(temp,ndim,nofvar,2) 
+      do 19 i = 1,ndim
+         do 19 j = 1,ndim
+            call dgemv('N',nofvar,nofvar,1.d0,stifc(1,1,i,j),nofvar,
+     >                 temp(1,j),1,1.d0,wksp,1)
+   19 CONTINUE
+#ifdef PRINT
+      write(6,*)' nodres from conserved',(wksp(j),j=1,nofvar)
+      write(6,*)'node #1',(nodres(j,1),j=1,nofvar)
+      write(6,*)'node #2',(nodres(j,2),j=1,nofvar)
+      pause
+#endif
+
+      RETURN
+  564 FORMAT((E12.6,1X))
+      END
+@
+
+
+1.6
+log
+@improved linearization
+@
+text
+@d159 2
+a160 2
+      call GetdF2corrdU(vcz(1,1),vcn,ndim,nofvar,work(1,1,1,1))
+      call GetdF2corrdU(vcz(1,2),vcn,ndim,nofvar,work(1,1,2,2))
+a226 49
+
+      subroutine GetdF2corrdU(zroe,vn,ndim,nofvar,dFcorrdU)
+
+
+      implicit none
+      integer ndim,nofvar
+      double precision zroe(nofvar),vn(ndim),dFcorrdU(nofvar,nofvar)
+      double precision udotn
+
+      udotn = zroe(3)*vn(1)+zroe(4)*vn(2)
+      if(ndim.eq.3)udotn = udotn + zroe(5)*vn(3)
+
+      dFcorrdU(1,1) = udotn
+      dFcorrdU(1,2) = 0.d0
+      dFcorrdU(1,3) = vn(1)*zroe(1)
+      dFcorrdU(1,4) = vn(2)*zroe(1)
+
+      dFcorrdU(2,1) = 0.d0
+      dFcorrdU(2,2) = udotn
+      dFcorrdU(2,3) = zroe(2)*vn(1)
+      dFcorrdU(2,4) = zroe(2)*vn(2)
+
+      dFcorrdU(3,1) = 0.d0
+      dFcorrdU(3,2) = 0.d0
+      dFcorrdU(3,3) = udotn + zroe(3)*vn(1)
+      dFcorrdU(3,4) = zroe(3)*vn(2)
+
+      dFcorrdU(4,1) = 0.d0
+      dFcorrdU(4,2) = 0.d0
+      dFcorrdU(4,3) = zroe(4)*vn(1)
+      dFcorrdU(4,4) = udotn + zroe(4)*vn(2)
+
+      if(ndim.eq.3)then
+
+      dFcorrdU(1,5) = vn(3)*zroe(1)
+      dFcorrdU(2,5) = zroe(2)*vn(3)
+      dFcorrdU(3,5) = zroe(3)*vn(3)
+      dFcorrdU(4,5) = zroe(4)*vn(3)
+
+      dFcorrdU(5,1) = 0.d0
+      dFcorrdU(5,2) = 0.d0
+      dFcorrdU(5,3) = zroe(5)*vn(1)
+      dFcorrdU(5,4) = zroe(5)*vn(2)
+      dFcorrdU(5,5) = udotn + zroe(5)*vn(3)
+
+
+      endif
+      return
+      end
+@
+
+
+1.5
+log
+@smthg. has been changed, not much gain
+@
+text
+@d3 1
+d34 1
+a34 1
+     +NODRES(NMAX*VMAX),WORK(400),tstep
+d51 1
+d82 1
+a82 1
+          CALL SIMPSON(VCN(LOC),VNOD,INVWLL,FLUXN,NDIM,NOFVAR)
+d85 6
+a90 4
+caldo     write(6,*)ielem
+caldo     write(6,*)'flux integral'
+caldo     write(6,*)(fluxn(j),j=1,nofvar)
+          CALL MATRX(NDIM,NOFVAR,STIFC,WORK,VNOD,VCN(LOC),NODRES)
+d136 1
+a136 1
+      SUBROUTINE MATRX(NDIM,NOFVAR,STIFC,WORK,VCZ,VCN,NODRES)
+d148 1
+d150 2
+a151 1
+      double precision wksp(4),temp(4,2)
+a157 2
+      VDOTN(1) = VCZ(3,1)*VCN(1) + VCZ(4,1)*VCN(2)
+      VDOTN(2) = VCZ(3,2)*VCN(1) + VCZ(4,2)*VCN(2)
+d159 2
+a160 2
+      TEMPA = 1.d0/12.d0*(2.d0*VDOTN(1)+VDOTN(2))
+      TEMPB = 1.d0/12.d0*(2.d0*VDOTN(2)+VDOTN(1))
+d162 2
+a163 7
+c     DO 8 I = 1,NOFVAR
+c        WORK(I,I,1,1) = ONE_THIRD * VDOTN(1)
+c        WORK(I,I,1,2) = ONE_SIXTH * VDOTN(1)
+c        WORK(I,I,2,1) = ONE_SIXTH * VDOTN(2)
+c        WORK(I,I,2,2) = ONE_THIRD * VDOTN(2)
+c   8 CONTINUE
+c
+d165 4
+a168 4
+         WORK(I,I,1,1) = 3.d0/8.d0 * VDOTN(1)
+         WORK(I,I,1,2) = 1.d0/8.d0 * VDOTN(2)
+         WORK(I,I,2,1) = 1.d0/8.d0 * VDOTN(1)
+         WORK(I,I,2,2) = 3.d0/8.d0 * VDOTN(2)
+d170 1
+a170 9
+ 
+c
+c     DO 8 I = 1,NOFVAR
+c        WORK(I,I,1,1) = TEMPA
+c        WORK(I,I,1,2) = TEMPB
+c        WORK(I,I,2,1) = TEMPB
+c        WORK(I,I,2,2) = TEMPA
+c   8 CONTINUE
+c
+d179 1
+a179 1
+            call dgemv('N',nofvar,nofvar,-1.d0,work(1,1,i,j),nofvar,
+d184 4
+a187 2
+caldo write(6,*)(wksp(j),j=1,nofvar)
+caldo pause
+d198 1
+a198 1
+     >           NOFVAR,NOFVAR,+2.d0,WORK(1,1,I,IVERT),NOFVAR,
+d205 1
+d217 6
+a222 6
+caldo write(6,*)nofvar
+caldo write(6,*)(wksp(j),j=1,nofvar)
+c     write(6,*)(wksp(j),j=1,nofvar)
+caldo write(6,*)'node #1',(nodres(j,1),j=1,nofvar)
+caldo write(6,*)'node #2',(nodres(j,2),j=1,nofvar)
+c     pause
+d227 49
+@
+
+
+1.4
+log
+@Add automatic identification flag
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE WEAKBCI(A,RHS,IBNDFAC,NBFAC,NDIM,NOFVERT,NOFVAR)
+d13 1
+a13 1
+      Vec RHS
+d33 1
+a33 1
+     +NODRES(NMAX*VMAX),WORK((VMAX-1)*(VMAX-1)*NMAX*NMAX)
+d46 2
+a47 1
+      EXTERNAL INVWLL
+d49 2
+d61 4
+d83 3
+a85 3
+caldo       write(6,*)ielem
+caldo       write(6,*)'flux integral'
+caldo       write(6,*)(fluxn(j),j=1,nofvar)
+d88 1
+a88 1
+         STOP 'Not yet 4 3D'
+d98 2
+d108 2
+d128 1
+d137 1
+a137 1
+      INTEGER i,j,IVERT,ifail
+d143 1
+a143 1
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NDIM,NDIM),dZdU(5,5)
+d158 7
+a164 7
+C     DO 8 I = 1,NOFVAR
+C        WORK(I,I,1,1) = ONE_THIRD * VDOTN(1)
+C        WORK(I,I,1,2) = ONE_SIXTH * VDOTN(1)
+C        WORK(I,I,2,1) = ONE_SIXTH * VDOTN(2)
+C        WORK(I,I,2,2) = ONE_THIRD * VDOTN(2)
+C   8 CONTINUE
+C
+d166 4
+a169 4
+         WORK(I,I,1,1) = TEMPA
+         WORK(I,I,1,2) = TEMPB
+         WORK(I,I,2,1) = TEMPB
+         WORK(I,I,2,2) = TEMPA
+d171 9
+a179 1
+C
+d191 1
+a191 1
+caldo call daxpy(nofvar,1.d0,nodres(1,i),1,wksp,1)
+d194 1
+d200 3
+a202 1
+          CALL MatdZdU(VCZ(1,IVERT),dZdU,NDIM)
+d206 2
+a207 1
+     >           dZdU,5,0.d0,STIFC(1,1,I,IVERT),NOFVAR)
+d215 9
+a223 8
+caldo call dinit(4,0.d0,wksp,1)
+caldo call dcopy(8,vcz,1,temp,1)
+caldo call parm_to_cons(temp,ndim,nofvar,2) 
+caldo do 19 i = 1,ndim
+caldo    do 19 j = 1,ndim
+caldo       call dgemv('N',nofvar,nofvar,1.d0,stifc(1,1,i,j),nofvar,
+caldo>                 temp(1,j),1,1.d0,wksp,1)
+cal19 CONTINUE
+d225 1
+d228 1
+a228 1
+caldo pause
+d231 1
+@
+
+
+1.3
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d6 3
+@
+
+
+1.2
+log
+@Changed location of include files for PETSc Fortran
+@
+text
+@d6 3
+a8 3
+#include "include/petsc.h"
+#include "include/vec.h"
+#include "include/mat.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 3
+a8 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+@

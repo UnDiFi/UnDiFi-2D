@@ -1,0 +1,113 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    ; strict;
+comment  @c @;
+
+
+1.1
+date     98.12.02.09.22.10;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+C
+      SUBROUTINE LLIST(NR,NELEM,NOFVERT,ICELNOD,IA,JA,IWK,JWK,procid)
+C
+      IMPLICIT NONE
+C
+C     .. This routine creates the Compressed Sparse Row structure
+C        of the stiffness matrix, i.e. the arrays:
+C        ia(1:NR+1) and ja(1:NNZ)
+C        It has been adapted from one of the routines of the
+C        SparsKit package by Y. Saad ..
+C
+C
+C
+C
+C ICELNOD -- Integer ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell
+C
+C
+C JWK(1:NNZR) -- Integer workarray
+C
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NELEM,NOFVERT,NR,procid
+C     ..
+C     .. Array Arguments ..
+      INTEGER IA(NR+1),ICELNOD(NOFVERT,NELEM),IWK(NR),JA(*),JWK(*)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IELEM,II,ILAST,IROWST,J,JJ,K,KA,KB,KSAV,KSAVN,JAK
+C     ..
+      KSAV = IA(1)
+      IA(1) = 1
+      DO 101 J = 2,NR + 1
+          KSAVN = IA(J)
+          IA(J) = IA(J-1) + KSAV
+  101 KSAV = KSAVN
+      WRITE(6,*)'Elements in the matrix (NNZR) ',ia(NR+1)-ia(1),procid
+c
+      call iinit(ia(NR+1)-ia(1),0,ja,1)
+c
+c-----------------
+c main loop
+c-----------------
+c
+      DO 102 IELEM = 1,NELEM
+c
+c
+          DO 120 KA = 1,NOFVERT
+              II = ICELNOD(KA,IELEM)
+              if(ii.gt.nr)goto 120
+c
+c unpack row into jwk
+c
+              IROWST = IA(II)
+              ILAST = IA(II+1)-1
+c
+              DO 108 KB = 1,NOFVERT
+c
+c column number = jj
+c
+                  JJ = ICELNOD(KB,IELEM)
+c
+              DO 109 K = IROWST,ILAST
+                  JAK = JA(K)
+                  IF(JAK.EQ.0)THEN
+                     JA(K) = JJ
+                     GOTO 108
+                  ELSEIF(JAK.EQ.JJ)THEN
+                     GOTO 108
+                  ENDIF 
+  109         CONTINUE
+              WRITE(6,*)'Uh! Oh! ',II,JJ,IA(II+1)-IA(II)
+              WRITE(6,*)'Icelnod ',(icelnod(k,ielem),k=1,nofvert)
+              WRITE(6,*)(JA(K),K=IROWST,ILAST)
+  108         CONTINUE
+c
+c
+  120     CONTINUE
+c
+  102 CONTINUE
+c
+      WRITE(6,*)'Elements in the matrix (NNZR) ',ia(NR+1)-ia(1),procid
+c
+      RETURN
+
+      END
+@

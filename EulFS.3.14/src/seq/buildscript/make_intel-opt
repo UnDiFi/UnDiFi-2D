@@ -1,0 +1,12 @@
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.4.4
+export PETSC_ARCH=linux_intel-opt
+
+echo `which gcc`
+echo `which gfortran`
+
+echo $PETSC_DIR
+echo $PETSC_ARCH
+
+sleep 2
+
+make install

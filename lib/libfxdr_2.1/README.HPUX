@@ -1,0 +1,27 @@
+I don't have access to a modern HP system, so I can't
+check this configuration myself.  However, fxdr apparently
+doesn't compile out of the box on newer HP systems.  I
+received the following message:
+
+==================================================================
+
+Date: Thu, 11 Sep 1997 16:05:20 +0200
+Message-Id: <199709111405.AA273236720@utmfu3.math.utwente.nl>
+From: ijzerman <W.L.IJzerman@math.utwente.nl>
+To: dpierce@ucsd.edu
+Status: RO
+X-Status:
+
+Dear David Pierce,
+
+I downloaded the fxdr-package. To install it on HP-unix 9.0 or 10.0 I
+had to change the c89 in the default makefile to cc. Otherwise all
+kind of error occured with respect to the rpc.h files.
+
+Sincerely yours,
+
+Wilbert IJzerman
+
+==================================================================
+
+So, if this is the platform you are using, give this a try.

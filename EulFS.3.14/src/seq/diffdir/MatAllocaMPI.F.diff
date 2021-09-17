@@ -1,0 +1,32 @@
+7a8,9
+>       IMPLICIT NONE
+> C
+9c11
+< C     $Id: MatAllocaMPI.F,v 1.32 2016/11/11 08:56:11 abonfi Exp abonfi $
+---
+> C     $Id: MatAllocaMPI.F,v 1.33 2020/03/28 19:11:11 abonfi Exp $
+11a14
+> #include "petsc/finclude/petscsys.h"
+15,19d17
+<       use petscvec 
+<       use petscmat 
+<       use petscis 
+< C
+<       IMPLICIT NONE
+29c27
+< CCCCC#include "iset.com"
+---
+> #include "iset.com"
+46c44
+<       INTEGER IFAIL,NNZR,N,kspace,NERR,IOPT,LIS,LENIS
+---
+>       INTEGER IFAIL,N,kspace,NERR,IOPT
+173c171,172
+< C     Sets local to global mapping:
+---
+> C     Sets local to global mapping: this is required
+> C          by the MatSetValues[Blocked]() routines
+175c174
+<           CALL MatSetLocalToGlobalMapping(A,mapping,mapping,IFAIL) 
+---
+>       CALL MatSetLocalToGlobalMapping(A,mapping,mapping,IFAIL) 

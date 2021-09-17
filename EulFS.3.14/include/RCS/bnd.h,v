@@ -1,0 +1,190 @@
+head	1.6;
+access
+	abonfi;
+symbols
+	release3_14_0:1.6
+	release3_13_0:1.6
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.6
+	release3_4_4:1.6
+	release3_4_3:1.6
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.6;
+locks
+	abonfi:1.6; strict;
+comment	@ * @;
+
+
+1.6
+date	2013.01.25.08.18.05;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2004.02.27.14.46.09;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2003.08.08.03.52.40;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2003.08.08.03.45.16;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.12.10.27.52;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.12.01.14.47.25;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Includes for boundary data structure
+@
+
+
+1.6
+log
+@added support for boundaries with prescribed flux
+@
+text
+@C
+C     $Id: bnd.h,v 1.5 2004/02/27 14:46:09 abonfi Exp abonfi $
+C
+      INTEGER   NBTYPE    ,NCOLOR   ,MBODIES
+      PARAMETER(NBTYPE= 12,NCOLOR=50,MBODIES=NCOLOR)
+C
+C     NBTYPE is the number of boundary types currently implemented
+C     NCOLOR is the number of colours
+C     MBODIES is the max. number of bodies currently allowed
+C
+C     IF a NEW boundary type is add "src/blockdata.f" MUST
+C     be accordingly modified
+C
+C
+C     flags defining boundary conditions on boundary faces(edges) 
+C
+      INTEGER BC_TYPE_SUPS_INLET  ,BC_TYPE_SUBS_OUTLET ,
+     &        BC_TYPE_SUPS_OUTLET ,BC_TYPE_SLIP_FREE   ,
+     &        BC_TYPE_FAR_FIELD   ,BC_TYPE_NO_SLIP     ,
+     &        BC_TYPE_PROFILE     ,BC_TYPE_SUBS_INLET  ,
+     &        BC_TYPE_PERIODIC    ,BC_TYPE_X_SYMMETRY  ,
+     &        BC_TYPE_Y_SYMMETRY  ,BC_TYPE_Z_SYMMETRY  ,
+     &        BC_TYPE_PRESCRIBED_FLUX
+      PARAMETER(BC_TYPE_SUPS_INLET  = 1,BC_TYPE_SUBS_OUTLET = 2,
+     &          BC_TYPE_SUPS_OUTLET = 3,BC_TYPE_SLIP_FREE   = 4,
+     &          BC_TYPE_FAR_FIELD   = 5,BC_TYPE_NO_SLIP     = 6,
+     &          BC_TYPE_PROFILE     = 7,BC_TYPE_SUBS_INLET  = 8,
+     &          BC_TYPE_PERIODIC    = 0,BC_TYPE_X_SYMMETRY  = 9,
+     &          BC_TYPE_Y_SYMMETRY  =10,BC_TYPE_Z_SYMMETRY  =11,
+     &          BC_TYPE_PRESCRIBED_FLUX  =12)
+C
+      INTEGER BC_TYPE_MIRROR,BC_TYPE_FLUX
+      PARAMETER(BC_TYPE_MIRROR=102,BC_TYPE_FLUX=103)
+C
+C     BC_TYPE_MIRROR and BC_TYPE_WEAK are two different treatments for
+C     the inviscid wall bndry condition BC_TYPE_SLIP_FREE
+@
+
+
+1.5
+log
+@before introducing new bcs
+@
+text
+@d2 1
+a2 1
+C     $Id: bnd.h,v 1.4 2003/08/08 03:52:40 abonfi Exp abonfi $
+d4 2
+a5 2
+      INTEGER   NBTYPE   ,NCOLOR   , MBODIES
+      PARAMETER(NBTYPE= 8,NCOLOR=14,MBODIES=NCOLOR)
+d11 4
+d21 10
+a30 6
+     &        BC_TYPE_PERIODIC
+      PARAMETER(BC_TYPE_SUPS_INLET  = 1,BC_TYPE_SUBS_OUTLET =2,
+     &          BC_TYPE_SUPS_OUTLET = 3,BC_TYPE_SLIP_FREE   =4,
+     &          BC_TYPE_FAR_FIELD   = 5,BC_TYPE_NO_SLIP     =6,
+     &          BC_TYPE_PROFILE     = 7,BC_TYPE_SUBS_INLET  =8,
+     &          BC_TYPE_PERIODIC    = 0)
+d32 2
+a33 2
+C     if a new boundary type is add "src/blockdata.f" MUST
+C     be accordingly modified
+d35 2
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d2 1
+a2 1
+C     $Id: bnd.h,v 1.3 2003/08/08 03:45:16 abonfi Exp abonfi $
+d23 4
+@
+
+
+1.3
+log
+@beautyfied and add boundary flags
+@
+text
+@d2 1
+a2 1
+C     $Id:$
+d4 2
+a5 2
+      INTEGER   NBTYPE  ,NCOLOR, MBODIES
+      PARAMETER(NBTYPE=8,NCOLOR=14,MBODIES=NCOLOR)
+d22 1
+a22 1
+     &          BC_TYPE_PERIODIC    =10)
+@
+
+
+1.2
+log
+@MBODIES set equal to NCOLOR
+@
+text
+@d1 3
+d5 1
+a5 1
+      PARAMETER(NBTYPE=7,NCOLOR=14,MBODIES=NCOLOR)
+d11 12
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+      PARAMETER(NBTYPE=7,NCOLOR=14,MBODIES=10)
+@

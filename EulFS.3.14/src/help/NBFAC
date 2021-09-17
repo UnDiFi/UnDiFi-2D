@@ -1,0 +1,3 @@
+C      NBFAC   no. of processor owned boundary faces/edges;
+C              global number of boundary faces/edges 
+C              in the uni-processor case

@@ -1,0 +1,32 @@
+Routines for the Spalart-Allmaras turbulence model
+many routines were contributed by Renato Paciorri
+University of Rome La Sapienza
+
+Renato's model is classified as (SA-noft2)
+according to
+http://turbmodels.larc.nasa.gov/spalart.html
+since the ft2 function is omitted
+
+starting in 2008, the standard version has been
+replaced by that suggested in G.A.Ashford's thesis,
+which is classified as (SA-fv3) in
+http://turbmodels.larc.nasa.gov/spalart.html
+according to the website curator:
+"This form of the Spalart-Allmaras model came about as a result of e-mail exchanges 
+between the model developer and early implementers. 
+It was devised to prevent negative values of the source term, 
+and is not recommended because of unusual transition behavior at low Reynolds 
+numbers (see Spalart, P. R., AIAA 2000-2306, 2000). 
+Unfortunately, coding of this version still persists."
+
+in order to recover the original model (SA-noft2),
+we should co the correct revision of:
+tsc.f and tfv2.f
+
+
+sa7    coupled approach, compressible flows,
+       kinematic turbulent viscosity
+sa7b   coupled approach, compressible flows,
+       molecular turbulent viscosity
+sa8    coupled approach, INcompressible flows,
+       kinematic turbulent viscosity

@@ -1,0 +1,59 @@
+The package works on a Linux system I tried that uses the gnu compilers.
+However, the following message may be of interest to people running Linux
+with Nag Fortran90:
+
+===================================================================
+
+Date: Tue, 09 Sep 1997 19:13:22 +0200
+From: Axel vom Endt <Axel.vom.Endt@linmpi.mpg.de>
+Organization: MPI f. Aeronomie
+X-Mailer: Mozilla 3.01Gold (X11; I; Linux 2.0.25 i586)
+Mime-Version: 1.0
+To: dpierce@ucsd.edu
+Subject: fxdr
+Content-Type: multipart/mixed; boundary="------------1EE0A5BF2F6227C5175DD76D"
+Status: RO
+X-Status:
+
+This is a multi-part message in MIME format.
+
+--------------1EE0A5BF2F6227C5175DD76D
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Dera Mr. Pierce,
+
+Today I found your fxdr package and adopted it to my system, running
+Linux 2.0.25 and Nag Fortran90.
+
+If you are interested in the changes I made to your package, You will
+find the files attached.
+
+I had to move all *.F to *.f files since NAGf90 doesn't like any
+extension but .f or .f90 and I also had to delete all # preprocessor
+pragmas in test.f. Not very diffucult, though.
+
+Thank you very much for providing this package, you saved me a lot of
+time...
+
+All the best from Germany
+
+--
+Axel vom Endt                      Office: A2_95
+Max-Planck-Institut f. Aeronomie   Phone:  +49-(0)5556-979-481
+Postfach 20                        Fax:    +49-(0)5556-979-240
+D-37191 Katlenburg-Lindau          Email:  Axel.vom.Endt@linmpi.mpg.de
+
+===============================================================
+
+filename="Defines.linux"
+
+F77CMD = f90
+64_BIT_REALS = -r8
+CCCMD  = gcc
+F77OPTS =
+CCOPTS =
+AR = ar
+RANLIB = ranlib
+
+

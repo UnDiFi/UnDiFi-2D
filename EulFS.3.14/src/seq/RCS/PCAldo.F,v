@@ -1,0 +1,383 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2002.02.19.09.25.46;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2002.02.19.09.22.14;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2002.01.17.12.51.15;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.11.09.14.19.37;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@this is the same as -pc_type composite -pc_composite_pcs bjacobi,bjacobi
+-pc_composite_type multiplicative, BUT the factorization
+is re-used; thus saving time and memory
+@
+
+
+1.4
+log
+@changed Scalar into PetscScalar to comply to ver. 2.1.1
+@
+text
+@C
+C   $Id: PCAldo.F,v 1.3 2002/02/19 09:22:14 abonfi Exp abonfi $
+C
+
+!/***********************************************************************/
+!/*          Routines for a user-defined shell preconditioner           */
+!/***********************************************************************/
+
+!
+!   AldoPCSetUp - This routine sets up a user-defined
+!   preconditioner context.  
+!   this routine should be called ONLY ONCE
+!
+!
+!   Input Parameters:
+!   A  - matrix
+!   B  - preconditioner matrix
+!   x     - vector
+!
+!   Output Parameter:
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   The shell preconditioner is
+!   a modified block Jacobi method (P.Amodio)
+!
+      subroutine AldoPCSetUp(A,B,x,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+
+      Vec     x
+      Mat     A,B,Amat
+      integer ierr
+      integer lsize
+      double  precision info(MAT_INFO_SIZE)
+      PetscTruth flg
+
+!  Common block to store data for user-provided preconditioner 
+
+      PC  bjacobi
+      Vec work1,work2,x_local,w_local
+      common /mypcs2/ bjacobi,work1,work2,x_local,w_local,Amat
+      integer MY_PE
+      common /MPICOM/ MY_PE
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+c
+      INTEGER NR,NNZ,LWORK1,LWORK2,LWORK3
+      INTEGER ISTKGT
+      EXTERNAL ISTKGT
+C
+      call MatGetInfo(A,MAT_LOCAL,info,ierr)
+      nnz = info(MAT_INFO_NZ_ALLOCATED)
+      nr = info(MAT_INFO_ROWS_LOCAL)
+C
+      call PCCreate(PETSC_COMM_WORLD,bjacobi,ierr)
+      call PCSetType(bjacobi,PCBJACOBI,ierr)
+c
+c The vector must be set so that the preconditioner knows what type of 
+c vector to allocate if necessary.
+c
+      call PCSetVector(bjacobi,x,ierr)
+c
+c     create work vectors 
+c
+      call VecDuplicate(x,work1,ierr)
+      call VecDuplicate(x,work2,ierr)
+      call VecGetLocalSize(work2,lsize,ierr)
+      call VecCreateSeq(PETSC_COMM_SELF,lsize,w_local,ierr)
+      call VecDuplicate(w_local,x_local,ierr)
+c
+      B = A
+      Amat = A
+
+      end
+
+! ------------------------------------------------------------------- 
+!
+!   AldoPCApply - This routine demonstrates the use of a
+!   user-provided preconditioner.
+!
+!   Input Parameters:
+!   dummy - optional user-defined context, not used here
+!   x - input vector
+!
+!   Output Parameters:
+!   y - preconditioned vector
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   This code implements the .... preconditioner
+!
+      subroutine AldoPCApply(dummy,b,x,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscsles.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscksp.h"
+
+      INCLUDE "paramt.h"
+      INCLUDE "conv.com"
+      Vec     x,b
+      PetscScalar     x_array(1),w_array(1)
+      PetscOffset i_x,i_w
+      integer dummy,ierr,lsize
+      Mat A,ILU ,Amat,Pmat
+      MatStructure flag 
+      MatType type 
+      PCType method 
+      PC  subpc
+      KSP  myksp
+      real*8 rnorm,old_rnorm,rratio
+      SLES subsles(512)
+      double precision one,mone
+      parameter (one=1.d0,mone=-1.d0)
+      
+!  Common block to store data for user-provided preconditioner 
+      PC  bjacobi
+      Vec work1,work2,x_local,w_local
+      common /mypcs2/ bjacobi,work1,work2,x_local,w_local,Amat
+      integer its
+      integer MY_PE
+      common /MPICOM/ MY_PE
+      common /PROVA/ myksp,old_rnorm
+      integer rowsa,colsa,rowsb,colsb,iblock,nblocks
+
+c
+       call KSPGetResidualNorm(myksp,rnorm,ierr)
+       call KSPGetIterationNumber(myksp,its,ierr)
+       if(its.EQ.0)old_rnorm=0.d0
+       if(its.EQ.0)rratio=2.d0
+       if(rratio.GT.1.1d0)then
+       if(old_rnorm.EQ.0.d0)then
+          rratio = 2.
+                  else
+          rratio = old_rnorm/rnorm
+          endif
+       endif
+c         if(MY_PE.EQ.1)write(6,*)its,old_rnorm,rnorm,rratio
+c
+c     x_1 = bjacobi^{-1} b
+c
+      call PCApply(bjacobi,b,x,ierr)
+c
+!     if(rratio.GT.1.1d0)then
+      if(ITER.NE.17.AND.ITER.NE.18)then
+C
+C Gets the matrix associated with the linear system and possibly 
+C a different one associated with the preconditioner
+C
+      call PCGetOperators(bjacobi,A,Pmat,flag,ierr)
+c
+c     work1 = A*x_1
+c
+      call MatMult(A,x,work1,ierr)
+c
+c     work2 = b - A*x_1
+c
+      call VecWAXPY(mone,work1,b,work2,ierr)
+c
+c
+c     extract the local preconditioner on each block
+c
+      call PCBJacobiGetSubSLES(bjacobi,nblocks,
+     +                     MY_PE,subsles,ierr)
+c
+c     nblocks should be <= 512; in practice
+c     there is only one block per processor
+c
+      DO 10 iblock = 1, nblocks
+          call SLESGetPC(subsles(iblock),subpc,ierr)
+          call PCGetType(subpc,method,ierr)
+c
+c     extracts the (ILU(0)) factors of the diagonal
+c     portion of the parallel matrix
+c
+          call PCGetFactoredMatrix(subpc,ILU,ierr)
+c
+#if 0
+          call MatValid(ILU,flag,ierr)
+          call MatGetType(ILU,type,ierr)
+          call MatGetLocalSize(ILU,rowsb,colsb,ierr)
+          write(6,*)'MatValid of ILU says ',flag,PETSC_TRUE
+          write(6,*)'Type of ILU is ',type(1:10)
+      write(6,*)'rows/cols of ILU ',rowsb,colsb,my_pe
+#endif
+c
+   10 continue
+caldo
+      call VecGetArray(x,x_array,i_x,ierr)
+      call VecGetArray(work2,w_array,i_w,ierr)
+      call VecPlaceArray(x_local,x_array(i_x+1),ierr)
+      call VecPlaceArray(w_local,w_array(i_w+1),ierr)
+c
+c     if ILU is sequential (as it is) we cannot call 
+c     MatSolveAdd() with b,x,y being parallel vectors
+c     therefore we have to make a copy a local, sequential
+c     array
+c
+      call MatSolveAdd(ILU,w_local,x_local,x_local,ierr)
+      call VecRestoreArray(x,x_array,i_x,ierr)
+      call VecRestoreArray(work2,w_array,i_w,ierr)
+
+      else
+      if(MY_PE.EQ.1)write(6,*)its,rratio
+      endif
+      old_rnorm = rnorm
+
+      end
+c
+c
+      subroutine AldoSetup(dummy,ifail)
+c
+c     this routine has been set using PCSetSetUp
+c     the arguments of this routine CANNOT be changed
+c
+      implicit none
+c
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscsles.h"
+c
+      integer dummy,ifail
+      MatStructure flag
+      PCType method 
+      PC  subpc
+      SLES subsles(512)
+c
+      PC  bjacobi
+      Mat A
+      MatType type
+      Vec work1,work2,x_local,w_local
+      common /mypcs2/ bjacobi,work1,work2,x_local,w_local,A
+c
+      integer MY_PE
+      common /MPICOM/ MY_PE
+C
+      integer iblock,nblocks
+C
+C
+c Sets the matrix associated with the linear system and the
+c same one associated with the preconditioner. 
+c
+      call PCSetOperators(bjacobi,A,A,SAME_NONZERO_PATTERN,
+     &                     ifail)
+      call PCSetUp(bjacobi,ifail)
+C
+      return
+      end
+      SUBROUTINE PCAldoDestroy( IFAIL )
+C
+C
+      IMPLICIT NONE
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+C
+      INTEGER IFAIL 
+C
+C     preconditioner related stuff
+C
+      Mat  A
+      PC  asm,bjacobi
+      Vec work1,work2,x_local,w_local
+      common /mypcs2/ bjacobi,work1,work2,x_local,w_local,A
+C
+      call PCDestroy(bjacobi,IFAIL)
+      call VecDestroy(work1,IFAIL)
+      call VecDestroy(work2,IFAIL)
+      call VecDestroy(x_local,IFAIL)
+      call VecDestroy(w_local,IFAIL)
+C
+      RETURN
+      END
+@
+
+
+1.3
+log
+@alcune prove effettuate con Pierluigi
+@
+text
+@d2 1
+a2 1
+C   $Id: PCAldo.F,v 1.2 2002/01/17 12:51:15 abonfi Exp abonfi $
+d116 1
+a116 1
+      Scalar     x_array(1),w_array(1)
+@
+
+
+1.2
+log
+@Cmabiata Pmat in B
+@
+text
+@d2 1
+a2 1
+C   $Id: PCAldo.F,v 1.1 2001/11/09 14:19:37 abonfi Exp abonfi $
+d111 1
+d113 2
+d124 2
+d134 1
+d137 1
+d139 14
+d157 3
+d174 1
+d217 5
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+C   $Id: PCAldo.F,v 1.3 2001/10/25 08:16:34 abonfi Exp abonfi $
+d116 1
+a116 1
+      Mat A,ILU ,Amat,B
+d140 1
+a140 1
+      call PCGetOperators(bjacobi,A,B,flag,ierr)
+@

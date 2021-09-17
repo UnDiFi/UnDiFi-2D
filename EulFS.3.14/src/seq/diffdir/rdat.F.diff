@@ -1,0 +1,368 @@
+5c5
+< C     $Id: rdat.F,v 1.86 2020/04/16 14:45:46 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+6a7
+> C     $Id: rdat.F,v 1.86 2020/04/15 16:08:10 abonfi Exp $
+8,11d8
+< CCC#include "petsc/finclude/petscts.h"
+< CCC#include "petsc/finclude/petscviewer.h"
+< #include "petsc/finclude/petscsys.h"
+<       use petscsys 
+13c10,11
+<       IMPLICIT NONE
+---
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscviewer.h"
+83c81
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+91c89
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+101c99
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+111c109
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+127c125
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+143,145c141,142
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-dual_ts',
+<      &                           STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                          '-dual_ts',STRINGA,IFLAG,IERR)
+167,169c164,165
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-timestepping',
+<      &                           STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +'-timestepping',                      STRINGA,IFLAG,IERR)
+191,193c187,188
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-timestep',
+<      &                           STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +'-timestep',                      STRINGA,IFLAG,IERR)
+212,215c207,208
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,
+<      &                           '-characteristic_timestepping',
+<      &                           STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +     '-characteristic_timestepping',STRINGA,IFLAG,IERR)
+241c234
+<          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+250,252c243,244
+<          CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-nof_time_steps',
+<      &                           ITSTEP,IFLAG,IERR)
+---
+>          CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                      '-nof_time_steps',ITSTEP,IFLAG,IERR)
+260c252
+<          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+271c263
+<          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+280,282c272,273
+<          CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+<      &                           PETSC_NULL_CHARACTER,
+<      +                           '-mass_matrix_type',MMTYPE,IFLAG,IERR)
+---
+>          CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                      '-mass_matrix_type',MMTYPE,IFLAG,IERR)
+288c279
+<          CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+---
+>          CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+294c285
+<             CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+---
+>             CALL PetscOptionsGetString(PETSC_NULL_OBJECT,
+322c313
+<                CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+---
+>                CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+335c326
+<                CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+---
+>                CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+349c340
+<                CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+---
+>                CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+365c356
+<             CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+---
+>             CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+371c362
+<             CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+---
+>             CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+376c367
+<             CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>             CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+388c379
+<                CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+---
+>                CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,
+413c404
+<           CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetString(PETSC_NULL_OBJECT,
+444c435
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+457c448
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+464c455
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+480c471
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+487c478
+<       CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+492c483
+<       CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+496c487
+<       CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+502,504c493,494
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,
+<      &                           '-cfl_ramping_strategy',STRINGA,IFLAG,
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                           '-cfl_ramping_strategy',STRINGA,IFLAG,
+529c519
+<       CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+---
+>       CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,
+543c533
+<       CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+---
+>       CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,
+563,566c553,554
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,
+<      &                           '-slip_free_bc_type',STRINGA,IFLAG,
+<      &                           IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +     '-slip_free_bc_type',STRINGA,IFLAG,IERR)
+587,589c575,576
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,
+<      &                           '-equation',STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                           '-equation',STRINGA,IFLAG,IERR)
+631c618
+<           CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,
+643c630
+<           CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetString(PETSC_NULL_OBJECT,
+668c655
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+688,690c675,676
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-scalar_scheme',
+<      &                           STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +     '-scalar_scheme',STRINGA,IFLAG,IERR)
+752,753c738,739
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +PETSC_NULL_CHARACTER,     '-matrix_scheme',STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +     '-matrix_scheme',STRINGA,IFLAG,IERR)
+804c790
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+816,817c802,803
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +PETSC_NULL_CHARACTER,     '-data_dir',DATADIR,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +     '-data_dir',DATADIR,IFLAG,IERR)
+867,868c853,854
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +PETSC_NULL_CHARACTER,     '-restart_file',STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +     '-restart_file',STRINGA,IFLAG,IERR)
+896c882
+<       CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+---
+>       CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+906,907c892,893
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +PETSC_NULL_CHARACTER,     '-bc_type',STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +     '-bc_type',STRINGA,IFLAG,IERR)
+928c914
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+941c927
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+994,997c980
+< #include "petsc/finclude/petscsys.h"
+<       use petscsys 
+< C
+<       IMPLICIT NONE
+---
+>       IMPLICIT NONE 
+998a982
+> #include "petsc/finclude/petscsys.h"
+1022c1006
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+1043c1027
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+1078a1063
+>       IMPLICIT NONE 
+1081,1083d1065
+<       use petscsys 
+< C
+<       IMPLICIT NONE
+1103,1105c1085,1086
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-fluid',STRINGA,
+<      &                           IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                           '-fluid',STRINGA,IFLAG,IERR)
+1128,1130c1109,1110
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,
+<      &                           '-preconditioning',STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                           '-preconditioning',STRINGA,IFLAG,IERR)
+1148c1128
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+1177c1157
+<          CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+---
+>          CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+1203a1184
+>       IMPLICIT NONE 
+1206,1208d1186
+<       use petscsys 
+< C
+<       IMPLICIT NONE
+1229,1231c1207,1208
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-fluid',STRINGA,
+<      &                           IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                           '-fluid',STRINGA,IFLAG,IERR)
+1256,1258c1233,1234
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,
+<      &                           '-preconditioning',STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +         '-preconditioning',STRINGA,IFLAG,IERR)
+1278c1254
+<               CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>               CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+1303a1280
+>       IMPLICIT NONE 
+1306d1282
+<       use petscsys 
+1308d1283
+<       IMPLICIT NONE
+1332c1307
+<       CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+1335c1310
+<       CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+1338c1313
+<       CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+1347c1322
+<       CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+1353c1328
+<           CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,
+1356c1331
+<           CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+---
+>           CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+1366c1341
+<       CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+1377,1379c1352,1353
+<       CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+<      +                           PETSC_NULL_CHARACTER,'-turb_scheme',
+<      &                           STRINGA,IFLAG,IERR)
+---
+>       CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+>      +                           '-turb_scheme',STRINGA,IFLAG,IERR)
+1429a1404
+>       IMPLICIT NONE 
+1432d1406
+<       use petscsys 
+1434d1407
+<       IMPLICIT NONE
+1456c1429
+<       CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+---
+>       CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,

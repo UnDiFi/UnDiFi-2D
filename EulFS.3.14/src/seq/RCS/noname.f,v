@@ -1,0 +1,422 @@
+head	1.10;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.10
+	release3_13_0:1.10
+	release3_12_0:1.10
+	release3_11_0:1.10
+	release3_10_0:1.10
+	release3_8_0:1.10
+	release3_7_1:1.10
+	release3_7_0:1.9
+	release3_4_5:1.9
+	release3_4_4:1.9
+	release3_4_3:1.8
+	release3_4_2:1.8
+	release3_4_1:1.8
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.7
+	release3_3_3:1.7
+	release3_3_2:1.7
+	release3_3_1:1.7
+	release3_3_0:1.7;
+locks; strict;
+comment	@c @;
+
+
+1.10
+date	2020.03.28.09.42.33;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.01.30.17.16.04;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.06.04.15.31.32;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2012.04.11.10.42.23;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2012.04.03.12.07.47;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2009.10.13.08.13.31;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2004.12.20.14.41.46;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2002.09.14.09.02.43;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.11.08.11.47.56;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.10.20.08.35.16;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@this subroutine tries to provide a unified interface
+for the inviscid,turbulent and viscous components of the
+eqns. while at the same time keeping them in different routines
+@
+
+
+1.10
+log
+@renamed a call
+@
+text
+@      SUBROUTINE NONAME(IELEM,VCN,VCB,VCZ,ZTURB,NDIM,NOFVERT,NOFVAR,
+     +                 NTURB,VOLUME,PICARD,VISCOUS,COMPRESSIBLE,
+     +                 EulerModel,TurbulenceModel,NSModel,
+     +                 ScalarScheme,MatrixScheme,TModelScheme,
+     +                 NodRes,TSTEP,ELTMAT)
+C
+C     $Id: noname.f,v 1.9 2014/01/30 17:16:04 abonfi Exp abonfi $
+C
+C     this subroutine tries to provide a unified interface
+C     for the inviscid,turbulent and viscous components of the
+C     eqns. while at the same time keeping them in different routines
+C
+C     given the nodal values of the dependent vars.
+C     for the current cell
+C     the current subroutine will update
+C     -)NodRes
+C     -)ELTMAT
+C     -)TSTEP
+C
+      IMPLICIT NONE
+C
+      INCLUDE "time.h"
+      INCLUDE "time.com"
+      INCLUDE "flags.com"
+C
+C     input:
+C     -----
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,NTURB
+C
+      LOGICAL PICARD,VISCOUS,COMPRESSIBLE
+C
+      DOUBLE PRECISION ZTURB(*),VOLUME(*),
+     +VCZ(NOFVAR,NOFVERT),VCN(NDIM,NOFVERT),VCB(NDIM,NOFVERT)
+C
+      EXTERNAL EulerModel,TurbulenceModel,NSModel,
+     2ScalarScheme,MatrixScheme,TModelScheme
+C
+C     output:
+C     ------
+      DOUBLE PRECISION TSTEP(NOFVAR*NOFVERT),
+     +ELTMAT(NOFVAR,NOFVAR,NOFVERT,NOFVERT), NodRes(NOFVAR,NOFVERT)
+C
+C     local:
+C
+      DOUBLE PRECISION RWORK(10)
+      DOUBLE PRECISION viscl,visct
+      integer ifail
+C
+      CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,
+     +               VCZ,NOFVAR,VOLUME(1))
+C
+C     we would like to remove PARM2PRIM
+C
+      IF(COMPRESSIBLE)CALL PARM2PRIM(NDIM,IELEM)
+C
+C     EulerModel() will compute the nodal residual due
+C     to the inviscid terms of the equations, updating:
+C     -)NodRes
+C     -)ELTMAT
+C     -)TSTEP
+C     valid routines are:
+C     ------------------
+C     SCALAR     scalar convection
+C     EulerII    compressible Euler, Hyperbolic-Elliptic Splitting, supersonic 2D
+C     EulerIIbis compressible Euler, Hyperbolic-Elliptic Splitting, general
+C     EulerVII   compressible Euler, un-preconditioned, symmetrysing
+C                variables
+C     EulerVIII  incompressible Euler, un-preconditioned
+C     EulerIX    incompressible Euler, Hyperbolic-Elliptic Splitting, general
+C     EulerXI    compressible Euler, un-preconditioned, conserved variables
+C
+      CALL EulerModel(IELEM,VCN,VCB,VCZ,NDIM,NOFVERT,NOFVAR,
+     +                NTURB,NodRes,TSTEP,ELTMAT,VOLUME,PICARD,
+     +                ScalarScheme,MatrixScheme)
+C
+C
+caldo
+cxxxx call SCALAR2(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,-1,
+cxxxx+                  NodRes,TSTEP,ELTMAT,VOLUME,PICARD,
+cxxxx+                  SCALARSCHEME,MATRIXSCHEME)
+caldo
+      IF(VISCOUS)THEN 
+C
+C     TurbulenceModel() returns both laminar and turbulent 
+C     viscosity; in the coupled approach for RANS will
+C     also solve the turbulence transport equation
+C     valid routines are:
+C
+C     TDUMMY  scalar diffusion problems
+C     LAMINAR laminar flows
+C     EVALTSA Spalart-Allmaras model, segregated approach
+C     SCALAR2 solves an uncoupled advection equation
+C     SA7     Spalart-Allmaras model, compressible flow
+C             equations, coupled approach
+C     SA8     Spalart-Allmaras model, incompressible flow
+C             equations, coupled approach
+C
+C
+C     CALL TurbulenceModel(ZTURB,NTURB,NOFVERT,arg4,arg5,COMPRESSIBLE,
+C    1                     VISCL,VISCT)
+C
+      call TurbulenceModel(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,NTURB,
+     &                  NodRes,TSTEP,ELTMAT,VOLUME,PICARD,
+     &                  TModelScheme,MATRIXSCHEME,ZTURB,COMPRESSIBLE,
+     &                  VISCL,VISCT)
+C
+C     I wanted to test the FD jacobian for the viscous
+C     terms of the incompressible flow eqns.
+C     the set the flag TEST_JACOBIAN in setupRHS()
+C     in incompressible flow the diffusive terms are linear
+C     so PICARD and NEWTON should give the same results
+C     and they do!
+C     I need to set eltmat and nodres to 0.d0
+C
+!         write(6,*)ielem,viscl,visct
+!         CALL R8Mat_Print('General',' ',Nofvar,Nofvert,VCZ,
+!    +    Nofvar,'Nodal values Matrix inside noname ',IFAIL)
+!         CALL R8Mat_Print('General',' ',1,Nofvert,ZTURB,
+!    +    1,'v_t values Matrix inside noname ',IFAIL)
+!         CALL R8Mat_Print('General',' ',Nofvar,Nofvert,NodRes,
+!    +    Nofvar,'REsidual Matrix inside noname ',IFAIL)
+!         pause
+C
+cxxxx
+caldo call dinit ((nofvar*nofvert)**2,0.d0,eltmat,1)
+caldo call dinit ((nofvar*nofvert),0.d0,nodres,1)
+cxxxx
+C
+C     compute viscous fluxes
+C
+C     valid routines are:
+C
+C     VSFLX2 incompressible flows
+C     VSFLX4 compressible flows
+C     DIFF   scalar diffusion
+C
+C     write(6,*)ielem,viscl,visct
+      CALL NSModel(IELEM,VCZ,NodRes,TSTEP,NOFVAR,VCN,NDIM,
+     +             NOFVERT,VOLUME,ELTMAT,VISCL,VISCT,PICARD)
+      ENDIF
+C
+      IF( LAPLACE )THEN
+         CALL POISSON(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +                NTURB,NodRes,TSTEP,ELTMAT,VOLUME,.FALSE.)
+      ENDIF
+C
+C
+      RETURN
+      END
+@
+
+
+1.9
+log
+@VOLUME is now a F77 array
+@
+text
+@d7 1
+a7 1
+C     $Id: noname.f,v 1.8 2013/06/04 15:31:32 abonfi Exp abonfi $
+d116 1
+a116 1
+!         CALL X04CAF('General',' ',Nofvar,Nofvert,VCZ,
+d118 1
+a118 1
+!         CALL X04CAF('General',' ',1,Nofvert,ZTURB,
+d120 1
+a120 1
+!         CALL X04CAF('General',' ',Nofvar,Nofvert,NodRes,
+@
+
+
+1.8
+log
+@added support for Laplace's equation
+@
+text
+@d7 1
+a7 1
+C     $Id: noname.f,v 1.7 2012/04/11 10:42:23 abonfi Exp abonfi $
+d32 1
+a32 3
+      DOUBLE PRECISION VOLUME
+C
+      DOUBLE PRECISION ZTURB(*),
+d50 1
+a50 1
+     +               VCZ,NOFVAR,VOLUME)
+@
+
+
+1.7
+log
+@removed an argument in the call to LINEARIZE
+@
+text
+@d7 1
+a7 1
+C     $Id: noname.f,v 1.6 2012/04/03 12:07:47 abonfi Exp abonfi $
+d24 1
+d143 6
+@
+
+
+1.6
+log
+@changes needed to pass the grid velocity down to the lower level routines
+@
+text
+@d7 1
+a7 1
+C     $Id: noname.f,v 1.5 2009/10/13 08:13:31 abonfi Exp abonfi $
+d50 1
+a50 1
+      CALL LINEARIZE(IELEM,COMPRESSIBLE,LALE,VCN,VCB,NDIM,NOFVERT,
+@
+
+
+1.5
+log
+@Added support for choosing the scalar advection scheme in the Spalart-Allmaras model
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE NONAME(IELEM,VCN,VCZ,ZTURB,NDIM,NOFVERT,NOFVAR,
+d7 1
+a7 1
+C     $Id: noname.f,v 1.4 2004/12/20 14:41:46 aldo Exp abonfi $
+d22 3
+d34 1
+a34 1
+     +VCZ(NOFVAR,NOFVERT),VCN(NDIM,NOFVERT)
+d50 1
+a50 1
+      CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,
+d73 1
+a73 1
+      CALL EulerModel(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+@
+
+
+1.4
+log
+@add comments
+@
+text
+@d4 1
+a4 1
+     +                 ScalarScheme,MatrixScheme,
+d7 1
+a7 1
+C     $Id: noname.f,v 1.3 2002/09/14 09:02:43 abonfi Exp abonfi $
+d33 2
+a34 2
+      EXTERNAL EulerModel,TurbulenceModel,NSModel
+      EXTERNAL ScalarScheme,MatrixScheme
+d102 1
+a102 1
+     &                  SCALARSCHEME,MATRIXSCHEME,ZTURB,COMPRESSIBLE,
+@
+
+
+1.3
+log
+@supports coupled solution strategy for RANS
+@
+text
+@d7 1
+a7 1
+C     $Id: noname.f,v 1.2 2000/11/08 11:47:56 aldo Exp $
+d64 2
+a65 1
+C     EulerVII   compressible Euler, un-preconditioned
+d68 1
+d135 1
+@
+
+
+1.2
+log
+@removed duplicated declaration
+@
+text
+@d5 1
+a5 1
+     +                 RHS,TSTEP,ELTMAT)
+d7 1
+a7 1
+C     $Id: noname.f,v 1.1 2000/10/20 08:35:16 aldo Exp aldo $
+d13 7
+d38 2
+a39 2
+      DOUBLE PRECISION TSTEP(NOFVERT),
+     +ELTMAT(NOFVAR,NOFVAR,NOFVERT,NOFVERT), RHS(NOFVAR,NOFVERT)
+d43 1
+a43 1
+      DOUBLE PRECISION arg1,arg2,arg3,arg4,arg5
+d49 3
+d54 14
+d69 1
+a69 1
+     +                NTURB,RHS,TSTEP,ELTMAT,VOLUME,PICARD,
+a71 3
+caldo     CALL X04CAF('General',' ',Nofvar,Nofvert,RHS,
+caldo+    Nofvar,'REsidual Matrix inside noname ',IFAIL)
+caldo     pause
+d73 5
+d80 44
+a123 2
+      CALL TurbulenceModel(ZTURB,NTURB,NOFVERT,arg4,arg5,COMPRESSIBLE,
+     1                     VISCL,VISCT)
+d127 7
+a133 1
+      CALL NSModel(IELEM,VCZ,RHS,TSTEP,NOFVAR,VCN,NDIM,
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+C     $Id$
+a24 2
+C
+      DOUBLE PRECISION VOLUME
+@

@@ -1,0 +1,55 @@
+OBJS	= cxdrinit.o ixdrint.o initxdr.o cxdrint.o ixdrclose.o		\
+	  cxdrclose.o ixdrreal.o cxdrreal.o cxdrdouble.o 		\
+	  ixdrdouble.o ixdrrmat.o cxdrrmat.o ixdrdmat.o cxdrdmat.o 	\
+	  ixdrimat.o cxdrimat.o ixdrstring.o cxdrstring.o		\
+	  ixdrreal64.o cxdrreal64.o ixdrrmat64.o cxdrrmat64.o		\
+	  ixdrrewind.o cxdrrewind.o ixdrshort.o cxdrshort.o
+
+SRCS	= cxdrinit.c ixdrint.F initxdr.F cxdrint.c ixdrclose.F		\
+	  cxdrclose.c ixdrreal.F cxdrreal.c cxdrdouble.c 		\
+	  ixdrdouble.F ixdrrmat.F cxdrrmat.c ixdrdmat.F cxdrdmat.c 	\
+	  ixdrimat.F cxdrimat.c ixdrstring.F cxdrstring.c		\
+	  ixdrreal64.F cxdrreal64.c ixdrrewind.F cxdrrewind.c		\
+	  ixdrshort.F cxdrshort.F
+
+PLACE_FOR_LIBRARY = /.
+
+PLACE_FOR_HEADER  = /.
+
+PLACE_FOR_MANPAGE = /.
+
+.SUFFIXES: 
+.SUFFIXES: .c .o .F
+
+###########################################################################
+
+.c.o:
+	$(CCCMD) $(CCOPTS) -c $<
+
+.F.o:
+	$(F77CMD) $(F77OPTS) -c $<
+
+###########################################################################
+
+libfxdr.a: $(OBJS)
+	-rm libfxdr.a
+	$(AR) q libfxdr.a $(OBJS)
+	-$(RANLIB) libfxdr.a
+	@echo "Now do 'make test' to check the library"
+	
+test: libfxdr.a test.F
+	$(F77CMD) $(F77OPTS) -o test test.F -L. -lfxdr $(EXTRA_LIBS)
+	touch test_no_read.xdr
+	chmod -r test_no_read.xdr
+	./test
+	rm test_no_read.xdr
+
+clean:
+	-rm *.o test Makefile
+
+install:
+	cp libfxdr.a $(PLACE_FOR_LIBRARY)/libfxdr.a
+	cp fxdr.inc $(PLACE_FOR_HEADER)/fxdr.inc
+	cp fxdr.3f $(PLACE_FOR_MANPAGE)/fxdr.3f
+
+

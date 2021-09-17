@@ -1,0 +1,124 @@
+head	1.4;
+access;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.3
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2013.07.18.13.04.12;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.06.25.07.18.41;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.03.28.10.29.49;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.25.08.06.44;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@UNIT numbers for certain I/O operations
+@
+
+
+1.4
+log
+@the flag IALE has been renamed IOALE
+@
+text
+@      INTEGER      NOUT,IWUNIT,ITIM1,IHST1,IHST2,IHST3,IPROBE,
+     &IOALE,IHST4,IWEFLX
+      COMMON/IODEV/NOUT,IWUNIT,ITIM1,IHST1,IHST2,IHST3,IPROBE,
+     &IOALE,IHST4,IWEFLX
+C
+C	NOUT   is the OUTPUT device number where processor related
+C              info are written
+C	IWUNIT is the OUTPUT device number where global info are
+C              written
+C
+C       REM: the following units are set in blockdata
+C
+C       ITIM1 = 4  is the unit for timing
+C       IHST1 = 1  is the unit for convergence history
+C       IHST2 = 2  is the unit for convergence history
+C       IHST3 = 3  is the unit for convergence history
+C       IHST4 = 116  is the unit for the volume integral 
+C       IOALE  = 115 is dumps info on grid velocity
+C       IWEFLX  = 117 is dumps info on current through patches
+C
+@
+
+
+1.3
+log
+@a unit used to write the current flowing through the boundary patches
+@
+text
+@d2 1
+a2 1
+     &IALE,IHST4,IWEFLX
+d4 1
+a4 1
+     &IALE,IHST4,IWEFLX
+d18 1
+a18 1
+C       IALE  = 115 is dumps info on grid velocity
+@
+
+
+1.2
+log
+@added stuff needed to write the integral of the conservative variables to disk
+@
+text
+@d2 1
+a2 1
+     &IALE,IHST4
+d4 1
+a4 1
+     &IALE,IHST4
+d19 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+     &IALE
+d4 1
+a4 1
+     &IALE
+d17 1
+@

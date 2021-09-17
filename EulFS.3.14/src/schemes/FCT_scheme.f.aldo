@@ -1,0 +1,176 @@
+      SUBROUTINE FCT_SCHEME(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     +                      NODRES,CMAT,NDIM,NOFVERT,TIMEIMPL)
+C
+C
+C This routine computes the FCT scheme on one tetrahedron
+C
+C
+c Only linear timestepping has been implemented
+c
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ZERO,ONE,eps
+      PARAMETER (ZERO=0.D0,ONE=1.D0,eps=1.d-12)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION CELRES,SOURCE
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL TIMEIMPL
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ADVECTION(NDIM),CMAT(NOFVERT,NOFVERT),
+     +                 DT(NOFVERT),NODRES(NOFVERT),Q(NOFVERT),
+     +                 VCN(NDIM,NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION ALPH,DENOM,KPOS,PHILP,PHIP,S,SUM,TEMP,TEMPA,
+     +                 TEMPB,UIN,UOUT
+      INTEGER I,IVAR,IVERT,J,JVERT,POSI,TAG
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION K(4)
+      INTEGER POS(4)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,DNRM2
+      EXTERNAL DDOT,DNRM2
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL SETERR
+C     ..
+C
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,MAX
+C     ..
+      IF (SOURCE.NE.0.D0) CALL SETERR(
+     +                              33HPSI SCHEME - NON ZERO SOURCE TERM
+     +                                ,33,995,2)
+C
+      POSI = 0
+      TAG = 0
+      CELRES = ZERO
+      KPOS = ZERO
+      UIN = ZERO
+      UOUT = ZERO
+C
+C Loops over all vertices
+C
+      DO 10 IVERT = 1,NOFVERT
+c
+c Dotting advection speed with normal
+c
+          SUM = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)
+          K(IVERT) = SUM/NDIM
+c
+          CELRES = CELRES + Q(IVERT)*K(IVERT)
+c
+          IF (K(IVERT).GT.ZERO) THEN
+              POSI = POSI + 1
+              POS(POSI) = IVERT
+              KPOS = KPOS + K(IVERT)
+              UOUT = UOUT + K(IVERT)*Q(IVERT)
+
+          ELSE
+              UIN = UIN - K(IVERT)*Q(IVERT)
+              NODRES(IVERT) = ZERO
+          ENDIF
+c
+   10 CONTINUE
+C
+      IF (POSI.EQ.0) RETURN
+C
+C     if (abs(celres).lt.1.d-12)then
+C        alph=one
+C        goto 40
+C     endif
+C
+      UIN = UIN/KPOS
+      UOUT = UOUT/KPOS
+C
+      DENOM = ZERO
+      temp = one
+c ... Looping over downstream nodes
+      DO 32 I = 1,POSI
+          J = POS(I)
+          PHIP = -K(J)* (Q(J)-UIN)
+          PHILP = -K(J)/KPOS*CELRES
+          IF( PHILP*PHIP .LT. ZERO )THEN
+              TEMP = MAX(TEMP,ONE-PHILP/PHIP)
+          ELSE IF( PHILP*PHIP .GT. ZERO )THEN
+              IF( ABS(PHILP).LE.ABS(PHIP) )THEN
+                 TEMP = MAX(TEMP,ONE-PHILP/PHIP)
+              ELSE
+                 ALPH = ZERO
+                 GOTO 40
+              ENDIF
+          ELSE
+             TEMP = MAX(TEMP,ONE)
+          ENDIF
+              
+c         if(abs(philp).le.eps.and.abs(phip).le.eps) THEN
+c            temp  = max ( temp,1.d0)
+c            goto 32
+c         endif  
+c
+c         tempa = philp/phip
+c     if(tempa.ne.tempa)then
+c        write(6,*)ielem,celres,phip,philp
+c        pause
+c     endif
+c
+c
+   32 CONTINUE
+      if(abs(temp).le.eps)then
+         write(6,*)ielem,temp,celres,philp,phip,posi
+         pause
+      endif 
+      ALPH=ONE/(TEMP)
+   40 CONTINUE
+      if(alph.ne.alph)then
+         write(6,*)ielem,alph,celres
+         pause
+      endif
+c     alph=zero
+         
+      if(.not.(alph.ge.zero.and.alph.le.one))then
+         write(6,*)ielem,alph
+         pause
+      endif
+C     ALPH=ONE
+C
+C
+C Target tracking
+C
+      SUM = ZERO
+c ... Looping over downstream nodes
+      DO 30 I = 1,POSI
+          J = POS(I)
+          TEMPA = -K(J)* (Q(J)-UIN)
+          TEMPB = K(J)*(Q(J)-UOUT)
+c
+          NODRES(J) = TEMPA + ALPH*TEMPB
+c
+c Linear time-step for all the downstream nodes
+c
+          DT(J) = DT(J) + K(J)
+   30 CONTINUE
+c
+c     if(posi.eq.1.and.alph.ne.1.d0)then
+c        write(6,*)ielem,posi,alph,temp
+c        pause
+c     endif
+C
+C
+C ---------- Distribution of the source term using LDA ----------
+C
+      IF (TIMEIMPL) CALL SETERR(
+     +           52HPSI SCHEME IMPLICIT TIME INTEGRATION NOT IMPLEMENTED
+     +                          ,52,999,2)
+C
+      RETURN
+
+      END

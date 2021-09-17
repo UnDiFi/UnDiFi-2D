@@ -1,0 +1,24 @@
+DIRS=	euler\
+	geometry\
+	mpi\
+	util\
+	navier-stokes\
+	scalar\
+	schemes\
+	seq\
+	turbo\
+	util
+
+clean: 
+	@for dir in $(DIRS) ;\
+          do \
+          echo cleaning $$dir ;\
+          (cd $$dir; make -s clean) ;\
+          done; rm -f ../lib/$(PETSC_ARCH)/*.a seq/eulfs mpi/peulfs;\
+          find . -name "*.a" -exec rm {} \; 
+	@for dir in $(FSPL_DIR)/lib/* ;\
+          do \
+          echo cleaning $$dir; cd $$dir; rm -f *.a; \
+	  done
+
+

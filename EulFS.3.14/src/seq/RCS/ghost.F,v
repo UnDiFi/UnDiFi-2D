@@ -1,0 +1,2085 @@
+head	1.41;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.41
+	release3_13_0:1.41
+	release3_12_0:1.41
+	release3_11_0:1.41
+	release3_10_0:1.41
+	release3_8_0:1.41
+	release3_7_1:1.40
+	release3_7_0:1.39
+	release3_4_5:1.38
+	release3_4_4:1.37
+	release3_4_3:1.35
+	release3_4_2:1.34
+	release3_4_1:1.34
+	release3_4_0:1.33
+	release3_3_5:1.33
+	release3_3_4:1.32
+	release3_3_3:1.32
+	release3_3_2:1.32
+	release3_3_1:1.32
+	release3_3_0:1.31;
+locks; strict;
+comment	@c @;
+
+
+1.41
+date	2020.04.23.09.51.45;	author abonfi;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	2020.03.28.09.42.21;	author abonfi;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	2015.09.01.07.09.03;	author abonfi;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2014.03.21.13.35.15;	author abonfi;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2014.03.21.13.19.49;	author abonfi;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2013.09.17.09.57.31;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2013.06.07.15.30.07;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2013.05.02.10.52.32;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2013.01.26.11.48.03;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2012.04.03.12.07.47;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2010.10.04.12.17.38;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2009.06.11.08.51.02;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2008.02.22.11.04.15;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2007.11.14.10.14.35;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2007.02.20.08.57.07;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2005.09.09.08.47.41;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2003.08.08.03.37.30;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2002.10.25.06.03.39;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2002.09.27.16.08.24;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2002.09.14.08.57.44;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2002.09.09.16.57.03;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2000.11.14.16.47.34;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	99.12.27.09.15.26;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	99.12.09.10.14.00;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	99.12.06.12.11.36;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	99.12.03.20.29.02;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	99.11.25.07.42.45;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.09.03.11.05.58;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.08.19.15.59.13;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.08.11.18.15.12;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.12.23.11.51.27;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.12.02.09.20.34;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.08.21.09.47.43;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.12.03.19.54.35;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.31.42;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Ghost cell boundary conditions
+@
+
+
+1.41
+log
+@calls to MatSetValues and VecSetValues had to be modified
+following petsc release 3.8
+@
+text
+@      SUBROUTINE GHOST(BCSUB,BC_TYPE,ICELNOD,ICELFAC,VFACNOR,XYZDOT,VOL,
+     +                 ZROE,STIFEL,NODRES,NEWRES,VCZ,VCDZ,VCB,
+     +                 NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +                 IBNDFAC,NBFAC,PetscVecDT,PetscVecRHS,PetscMatA)
+C
+C     Purpose: far-field and inviscid wall boundary conditions;
+C              this routine creates a dummy element for each
+C              vertex of a boundary face
+C
+C
+C     $Id: ghost.F,v 1.40 2020/03/28 09:42:21 abonfi Exp abonfi $
+C
+C
+C
+CCCCCC#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec
+      use petscmat
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'implicit.h'
+C
+      INCLUDE 'dofs.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'newtoneps.com'
+      INCLUDE 'three.com'
+      INCLUDE 'time.com'
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE 
+C
+C
+      Vec PetscVecDT,PetscVecRHS
+      Mat PetscMatA
+C
+C#define PRINT
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER BC_TYPE,NBFAC,NDIM,NELEM,NOFVAR,NOFVERT,NPOIN,NGHOST,NPNOD
+C     ..
+C     .. Subroutine Arguments ..
+C
+      INTEGER ICELNOD(NOFVERT,NELEM),ICELFAC(NOFVERT,NELEM)
+      DOUBLE PRECISION VFACNOR(NDIM,*),XYZDOT(NDIM,*),VOL(NELEM),
+     +                 ZROE(NOFVAR,*),
+     3                 STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 NODRES(NOFVAR,NOFVERT),NEWRES(NOFVAR,NOFVERT),
+     +                 VCZ(NOFVAR,NOFVERT),VCDZ(NOFVAR,NOFVERT),
+     5                 VCB(NDIM,NOFVERT)
+      INTEGER IBNDFAC(3,NBFAC) 
+C     ..
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION VOLUME(MAXTIMLEVS+1),EPS
+      INTEGER IVERT,IBC,ICLR,IELEM,IFACE,N,IV,JV,
+     +        IFAIL,I,J,LOCA,LOCB,IVAR,JVAR
+      LOGICAL COMPRESSIBLE,PLASMA,LWK
+      INTEGER NERR,IOPT,NP
+      CHARACTER*72 ERRMSG
+      PARAMETER(NERR = 5, IOPT = 1)
+C
+      EXTERNAL BCSUB
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION VCN(3*MAXNOFVERT),WORK(MAXNOFVERT*MAXNOFVAR),
+     +TSTEP(MAXNOFVERT*MAXNOFVAR),DUMMY(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR)
+C
+C     VCN(1:NDIM,1:NOFVERT)
+C     VCZ(1:NDIM,1:NOFVERT)
+C     TSTEP(1:NOFVERT-1)
+C     NODRES(1:NOFVAR,1:NOFVERT-1)
+C     STIFEL(1:NOFVAR,1:NOFVAR,1:NOFVERT-1)
+C
+C
+      INTEGER ICN(VMAX)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,DNRM2,PRESSC
+      INTEGER ICYCL
+      EXTERNAL DDOT,DNRM2,ICYCL,PRESSC
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL CELPTR,DAXPY,DCOPY,DGEMV,DSWAP
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,IABS,REAL
+C     ..
+C     ..
+C     .. Statement Functions ..
+      INTEGER IDX
+C     ..
+C     ..
+C     .. Statement Function definitions ..
+C
+C
+      IDX(I,J,N) = (I-1)*N + J
+C     ..
+C
+C
+      COMPRESSIBLE = ABS(KAN) .EQ. 4
+      PLASMA = ABS(KAN) .EQ. 3
+      NP = NPOIN + NGHOST + NPNOD
+C
+      DO 100 IFACE = 1,NBFAC
+C
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+         ICLR = IBNDFAC(3,IFACE)
+C
+         IBC = ICOLOR(ICLR,1) ! colours for the mean flow equations
+C
+C     Do NOT apply (inviscid) boundary conditions if:
+C
+C     IBC = 1 supersonic inlet
+C     IBC = 3 supersonic outlet
+C     IBC = 6 viscous wall
+C     IBC = 7 prescribed velocity profile (maybe I should)
+C
+         IF (IBC.NE.BC_TYPE)GOTO 100
+C
+          CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+     +                VFACNOR, XYZDOT, NDIM, NOFVERT, NOFVAR, NP, ICN,
+     3                VCZ, VCN, VCB, VOLUME)
+C
+C
+      INCLUDE 'ptest.f'
+C
+         IF(IVERT.NE.NOFVERT)THEN
+            CALL DSWAP(NOFVAR,VCZ(1,IVERT),1,VCZ(1,NOFVERT),1)
+            LOCA = IDX(IVERT,1,NDIM)
+            LOCB = IDX(NOFVERT,1,NDIM)
+            CALL DSWAP(NDIM,VCN(LOCA),1,VCN(LOCB),1)
+            IF(LALE)CALL DSWAP(NDIM,VCB(1,IVERT),1,VCB(1,NOFVERT),1)
+            LOCA = ICN(NOFVERT)
+            ICN(NOFVERT) = ICN(IVERT)
+            ICN(IVERT) = LOCA
+            LWK = PFLAG(NOFVERT)
+            PFLAG(NOFVERT) = PFLAG(IVERT)
+            PFLAG(IVERT) = LWK
+         ENDIF
+C
+         IF (BC_TYPE.EQ.BC_TYPE_FAR_FIELD)
+     &   CALL DCOPY(NOFVAR,U_INFTY,1,VCZ(1,NOFVERT),1)
+C
+         CALL DINIT(NOFVAR*(NOFVERT-1),ZERO,TSTEP,1)
+C
+         CALL BCSUB(IELEM,VCN,VCZ,VCB,STIFEL,NODRES,TSTEP,
+     +             NDIM,NOFVERT,NOFVAR)
+C
+C     Here we compute the forces on the solid wall
+C
+         IF(NDIM.EQ.2)THEN
+             CALL PFORCESimpson(ICLR,NOFVERT,VCN,NDIM,VCZ,
+     +                          NOFVAR,NOFVERT,PRESSC)
+         ELSE
+             CALL PFORCE(ICLR,NOFVERT,VCN,NDIM,VCZ,NOFVAR,
+     +                   NOFVERT,PRESSC)
+      ENDIF
+C
+         IF(.NOT.TIMEIMPL)GOTO 50
+#if 0
+      do ivert=1,nofvert-1
+      write(6,*)ielem,ivert,ivert
+      CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFEL(1,1,IVERT,1),
+     +            Nofvar,'Picard matrix ',IFAIL)
+      enddo
+#endif
+         IF(NEWTON)THEN
+C
+C     Compute Jacobian by finite differences
+C
+           DO 15 IVERT = 1, NOFVERT-1
+            DO 15 IVAR = 1, NOFVAR
+             CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+             IF(COMPRESSIBLE)THEN
+                CALL PARM_TO_CONS(VCZ (1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+     &          IFAIL)
+                CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+     &          IFAIL)     
+             ELSEIF(PLASMA)THEN
+                CALL PARM_TO_CONS4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+     &          .FALSE.,IFAIL)
+                CALL PARM_TO_CONS4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &          .FALSE.,IFAIL)
+             ENDIF
+             EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),1.d0)*
+     +             SIGN(1.d0,VCZ(IVAR,IVERT))
+             VCDZ(IVAR,IVERT) = VCZ(IVAR,IVERT) + EPS
+             IF(COMPRESSIBLE)THEN
+                CALL CONS_TO_PARM(VCZ (1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+     &          IFAIL)
+                IF(IFAIL.NE.0)THEN
+                    WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(1)"
+                    CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                ENDIF  
+                CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+     &          IFAIL)
+                IF(IFAIL.NE.0)THEN
+                    WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(2)"
+                    CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                ENDIF   ! ifail
+             ELSEIF(PLASMA)THEN
+                CALL CONS_TO_PARM4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+     &           .FALSE.,IFAIL)
+                IF(IFAIL.NE.0)THEN
+                    WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(1)"
+                    CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                ENDIF
+                CALL CONS_TO_PARM4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &          .FALSE.,IFAIL)
+                IF(IFAIL.NE.0)THEN
+                    WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(2)"
+                    CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                ENDIF   ! ifail
+              ENDIF ! compressible or plasma
+C
+#if 0
+      CALL R8Mat_Print('General',' ',Nofvar,Nofvert,vcz(1,IVERT),
+     +            Nofvar,'Z ',IFAIL)
+      CALL R8Mat_Print('General',' ',Nofvar,Nofvert,vcdz(1,IVERT),
+     +            Nofvar,'DZ ',IFAIL)
+#endif
+C
+             CALL BCSUB(IELEM,VCN,VCDZ,VCB,DUMMY,NEWRES,WORK,
+     +                   NDIM,NOFVERT,NOFVAR)
+C
+C     The residual sent to vertex IVERT only depends
+C     on the node itself
+C
+             DO 15 JVAR = 1, NOFVAR
+                 STIFEL(JVAR,IVAR,IVERT,1) =
+     +           -(NEWRES(JVAR,IVERT)-NODRES(JVAR,IVERT))/EPS
+C
+   15      CONTINUE
+      ENDIF ! Newton
+C
+      IF( PERIODIC_MESH .AND. ANNULAR )
+     &CALL ROTATECIJ(STIFEL,NOFVAR,NOFVERT,NOFVERT-1,1)
+C
+      DO 25 IVERT = 1,NOFVERT-1 
+C
+C     This ugly copy is needed because MatSetValuesBlocked only
+C     allows 1D arrays or 2D matrices, not 4D matrices such as STIFEL
+C
+         CALL DCOPY(NOFVAR*NOFVAR,STIFEL(1,1,IVERT,1),1,DUMMY,1)
+#ifdef MPI
+         CALL MatSetValuesBlockedLocal(PetscMatA,1,ICN(IVERT),1,
+     +                                 ICN(IVERT),DUMMY,
+     +                                 ADD_VALUES,IFAIL)
+#else
+         CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,ICN(IVERT),
+     +                            DUMMY,ADD_VALUES,IFAIL)
+#endif
+#ifdef PRINT
+      write(6,*)ielem,ivert,ivert
+      CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFEL(1,1,IVERT,1),
+     +            Nofvar,'Jacobian ',IFAIL)
+#endif
+C
+   25 CONTINUE
+C
+C     insert rhs into PETSc vector
+C
+   50 CONTINUE
+C
+      INCLUDE 'rotaterhs2.f'
+C
+         CALL VecSetValuesBlocked(PetscVecDT,NOFVERT-1,ICN,TSTEP,
+     +                      ADD_VALUES,IFAIL)
+C
+C     This ugly copy is needed because VecSetValuesBlocked only
+C     allows 1D arrays
+C
+         CALL DCOPY(NOFVAR*(NOFVERT-1),NODRES,1,DUMMY,1)
+         CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT-1,ICN,DUMMY,
+     +                      ADD_VALUES,IFAIL)
+C
+  100 CONTINUE ! End loop over boundary faces
+      RETURN
+  105 FORMAT('CONS_TO_PARM failed when called from ',A10,' on PE # ',I4,
+     &1X,A3)
+      END
+@
+
+
+1.40
+log
+@renamed a call
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.39 2016/11/10 11:25:13 abonfi Exp abonfi $
+a13 2
+      IMPLICIT NONE
+C
+d15 1
+a15 1
+#include "petsc/finclude/petscsys.h"
+d18 2
+d21 1
+a21 2
+      Vec PetscVecDT,PetscVecRHS
+      Mat PetscMatA
+d38 2
+a39 1
+C#define PRINT
+d42 4
+a46 2
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE 
+d252 4
+d257 3
+a259 3
+          CALL MatSetValuesBlockedLocal(PetscMatA,1,ICN(IVERT),1,
+     +                                  ICN(IVERT),STIFEL(1,1,IVERT,1),
+     +                                  ADD_VALUES,IFAIL)
+d261 2
+a262 3
+          CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,ICN(IVERT),
+     +                             STIFEL(1,1,IVERT,1),
+     +                             ADD_VALUES,IFAIL)
+d280 6
+a285 1
+         CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT-1,ICN,NODRES,
+@
+
+
+1.39
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.38 2015/09/01 07:09:03 abonfi Exp abonfi $
+d172 1
+a172 1
+      CALL X04CAF('General',' ',Nofvar,Nofvar,STIFEL(1,1,IVERT,1),
+d226 1
+a226 1
+      CALL X04CAF('General',' ',Nofvar,Nofvert,vcz(1,IVERT),
+d228 1
+a228 1
+      CALL X04CAF('General',' ',Nofvar,Nofvert,vcdz(1,IVERT),
+d261 1
+a261 1
+      CALL X04CAF('General',' ',Nofvar,Nofvar,STIFEL(1,1,IVERT,1),
+@
+
+
+1.38
+log
+@Added the calculation of the pressure force on the wall
+when using mirror type bcs
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.37 2014/03/21 13:35:15 abonfi Exp abonfi $
+d17 3
+a19 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.37
+log
+@compilation error fix due to a missing include file
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.36 2014/03/21 13:19:49 abonfi Exp abonfi $
+d63 1
+a63 1
+      INTEGER IVERT,IBC,ICLOR,IELEM,IFACE,N,IV,JV,
+d86 1
+a86 1
+      DOUBLE PRECISION DDOT,DNRM2
+d88 1
+a88 1
+      EXTERNAL DDOT,DNRM2,ICYCL
+d116 1
+a116 1
+         ICLOR = IBNDFAC(3,IFACE)
+d118 1
+a118 1
+         IBC = ICOLOR(ICLOR,1) ! colours for the mean flow equations
+d157 10
+@
+
+
+1.36
+log
+@swaps the grid velocity in ALE calculations
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.35 2013/09/17 09:57:31 abonfi Exp abonfi $
+d37 1
+@
+
+
+1.35
+log
+@VOLUME has become an array so that cell volumes at the previous
+time instants can be stored
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.34 2013/06/07 15:30:07 abonfi Exp abonfi $
+d140 1
+@
+
+
+1.34
+log
+@the array ICOLOR included from bnd.com has changed
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.33 2013/05/02 10:52:32 abonfi Exp abonfi $
+d61 1
+a61 1
+      DOUBLE PRECISION VOLUME,EPS
+@
+
+
+1.33
+log
+@now includes dofs.com which stores the locations where the momentum
+components and energy can be found
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.32 2013/01/26 11:48:03 abonfi Exp abonfi $
+d117 1
+a117 1
+         IBC = ICOLOR(ICLOR)
+@
+
+
+1.32
+log
+@added support for an Argon plasma
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.31 2012/04/03 12:07:47 abonfi Exp $
+d28 1
+@
+
+
+1.31
+log
+@changes needed to pass the grid velocity down to the lower level routines
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.30 2011/09/16 07:19:48 abonfi Exp abonfi $
+d25 1
+a25 1
+      INCLUDE 'constants'
+d28 1
+a28 1
+      INCLUDE 'nloc'
+d35 1
+a39 1
+      INCLUDE 'three'
+d63 1
+a63 1
+      LOGICAL COMPRESSIBLE,LWK
+d107 1
+d174 6
+a179 1
+     &          IFAIL)
+d197 14
+a210 1
+             ENDIF ! compressible
+@
+
+
+1.30
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE GHOST(BCSUB,BC_TYPE,ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,
+     +                 STIFEL,NODRES,NEWRES,VCZ,VCDZ,
+d11 1
+a11 1
+C     $Id: ghost.F,v 1.29 2010/10/04 12:17:38 abonfi Exp abonfi $
+d50 1
+a50 1
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM),
+d52 1
+a52 1
+     +                 STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+d54 2
+a55 1
+     +                 VCZ(NOFVAR,NOFVERT),VCDZ(NOFVAR,NOFVERT)
+d126 4
+a129 3
+         CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL,
+     +   ZROE, VFACNOR, NDIM, NOFVERT, NOFVAR, NP, ICN,
+     +   VCZ, VCN, VOLUME)
+d151 1
+a151 1
+         CALL BCSUB(IELEM,VCN,VCZ,STIFEL,NODRES,TSTEP,
+d200 1
+a200 1
+             CALL BCSUB(IELEM,VCN,VCDZ,DUMMY,NEWRES,WORK,
+@
+
+
+1.29
+log
+@now supports inviscid wall boundary conditions
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.28 2009/06/11 13:10:58 abonfi Exp abonfi $
+d17 1
+a17 1
+#include "finclude/petsc.h"
+@
+
+
+1.28
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE GHOST(BC5,ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,
+d6 1
+a6 1
+C     Purpose: inviscid wall boundary conditions;
+d11 1
+a11 1
+C     $Id: ghost.F,v 1.27 2009/06/11 08:51:02 abonfi Exp abonfi $
+d45 1
+a45 1
+      INTEGER NBFAC,NDIM,NELEM,NOFVAR,NOFVERT,NPOIN,NGHOST,NPNOD
+d67 1
+a67 1
+      EXTERNAL BC5
+d123 1
+a123 1
+         IF (IBC.NE.BC_TYPE_FAR_FIELD)GOTO 100
+d144 2
+a145 1
+         CALL DCOPY(NOFVAR,U_INFTY,1,VCZ(1,NOFVERT),1)
+d149 1
+a149 1
+         CALL BC5(IELEM,VCN,VCZ,STIFEL,NODRES,TSTEP,
+d198 1
+a198 1
+             CALL BC5(IELEM,VCN,VCDZ,DUMMY,NEWRES,WORK,
+@
+
+
+1.27
+log
+@now passing NPNOD among the arguments of the call
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.26 2008/02/22 11:04:15 abonfi Exp abonfi $
+d17 3
+a19 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.26
+log
+@improved error checking when calling CONS_TO_PARM
+@
+text
+@d3 1
+a3 1
+     +                 NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,
+d11 1
+a11 1
+C     $Id: ghost.F,v 1.25 2007/11/14 10:14:35 abonfi Exp abonfi $
+d45 1
+a45 1
+      INTEGER NBFAC,NDIM,NELEM,NOFVAR,NOFVERT,NPOIN,NGHOST
+d63 1
+a63 1
+      INTEGER NERR,IOPT
+d106 1
+d126 1
+a126 1
+     +   ZROE, VFACNOR, NDIM, NOFVERT, NOFVAR, ICN,
+@
+
+
+1.25
+log
+@ROOT_MACHINE_EPS is now computed only once in the main
+and stored in common STCOM
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.24 2007/02/20 08:57:07 abonfi Exp abonfi $
+d41 2
+d63 3
+d166 4
+a169 2
+                CALL PARM_TO_CONS(VCZ (1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+                CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+d175 13
+a187 3
+                CALL CONS_TO_PARM(VCZ (1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+                CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+             ENDIF
+d244 2
+@
+
+
+1.24
+log
+@minor cosmetic changes
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.22 2005/09/09 08:47:41 abonfi Exp aldo $
+d34 1
+d57 1
+a57 1
+      DOUBLE PRECISION VOLUME,EPS,ROOT_MACHINE_EPS
+a100 1
+      ROOT_MACHINE_EPS=1.d-07
+@
+
+
+1.23
+log
+@an included common has been renamed
+@
+text
+@d4 1
+a4 1
+     +                 IBNDFAC,NBFAC,DT,RHS,A)
+d11 1
+a11 1
+C     $Id: ghost.F,v 1.22 2005/09/09 08:47:41 abonfi Exp abonfi $
+d21 2
+a22 2
+      Vec DT,RHS
+      Mat A
+d64 2
+a65 2
+      DOUBLE PRECISION VCN(3*VMAX),
+     +TSTEP(VMAX*MAXNOFVAR),DUMMY((MAXNOFVAR*VMAX)**2)
+d104 3
+d108 1
+a108 5
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+          ICLOR = IBNDFAC(3,IFACE)
+C
+          IBC = ICOLOR(ICLOR)
+d117 1
+a117 1
+          IF (IBC.NE.BC_TYPE_FAR_FIELD)GOTO 100
+d119 1
+a119 1
+      CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL,
+d125 12
+a136 14
+      IF(IVERT.NE.NOFVERT)THEN
+         CALL DSWAP(NOFVAR,VCZ(1,IVERT),1,VCZ(1,NOFVERT),1)
+         LOCA = IDX(IVERT,1,NDIM)
+         LOCB = IDX(NOFVERT,1,NDIM)
+         CALL DSWAP(NDIM,VCN(LOCA),1,VCN(LOCB),1)
+         LOCA = ICN(NOFVERT)
+         ICN(NOFVERT) = ICN(IVERT)
+         ICN(IVERT) = LOCA
+         LWK = PFLAG(NOFVERT)
+         PFLAG(NOFVERT) = PFLAG(IVERT)
+         PFLAG(IVERT) = LWK
+      ENDIF
+C
+      CALL DCOPY(NOFVAR,U_INFTY,1,VCZ(1,NOFVERT),1)
+d138 1
+a138 1
+      CALL DINIT(NOFVAR*(NOFVERT-1),ZERO,TSTEP,1)
+d140 1
+a140 2
+          CALL BC5(IELEM,VCN,VCZ,STIFEL,NODRES,TSTEP,
+     +NDIM,NOFVERT,NOFVAR)
+d142 2
+a143 1
+      INCLUDE 'rotaterhs2.f'
+d145 1
+a145 6
+      CALL VecSetValuesBlocked(DT,NOFVERT-1,ICN,TSTEP,
+     +                      ADD_VALUES,IFAIL)
+      CALL VecSetValuesBlocked(RHS,NOFVERT-1,ICN,NODRES,
+     +                      ADD_VALUES,IFAIL)
+C
+      IF(.NOT.TIMEIMPL)GOTO 100
+d153 1
+a153 1
+      IF(PICARD)GOTO 50
+d157 2
+a158 2
+      DO 15 IVERT = 1, NOFVERT-1
+          DO 15 IVAR = 1, NOFVAR
+d179 1
+a179 1
+             CALL BC5(IELEM,VCN,VCDZ,DUMMY,NEWRES,TSTEP,
+d189 2
+a190 5
+   15 CONTINUE
+C
+   50 CONTINUE
+C
+C     INCLUDE 'rotatecij3.f'
+d198 2
+a199 2
+          CALL MatSetValuesBlockedLocal(A,1,ICN(IVERT),1,ICN(IVERT),
+     +                                  STIFEL(1,1,IVERT,1),
+d202 1
+a202 1
+          CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN(IVERT),
+d214 11
+@
+
+
+1.22
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d11 1
+a11 1
+C     $Id: ghost.F,v 1.21 2003/08/08 03:37:30 abonfi Exp $
+d30 1
+a30 1
+      INCLUDE 'bnd'
+@
+
+
+1.21
+log
+@boundary types for faces(edges) have been made more descriptive
+@
+text
+@d3 1
+a3 1
+     +                 NELEM,NDIM,NOFVERT,NOFVAR,
+d11 1
+a11 2
+C     $Id: ghost.F,v 1.20 2002/10/25 06:03:39 abonfi Exp abonfi $
+C     $Header: /home0/crocco/abonfi/CFD_codes/EulFS.0.11.3/src/seq/RCS/ghost.F,v 1.20 2002/10/25 06:03:39 abonfi Exp abonfi $
+d33 1
+d42 1
+a42 1
+      INTEGER NBFAC,NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+d57 3
+a59 3
+      INTEGER I,IBC,ICLOR,IELEM,IFACE,N,
+     +        IFAIL,IVERT,J,LOCA,LOCB,IVAR,JVAR,JVERT
+      LOGICAL COMPRESSIBLE
+a72 1
+      logical swapped
+d120 1
+a120 1
+      CALL CELPTR(IELEM, ICELNOD, ICELFAC, VOL,
+d124 2
+d134 3
+d146 2
+a147 1
+caldo CALL VecSetValues(DT,NOFVERT-1,ICN,TSTEP,ADD_VALUES,IFAIL)
+d169 1
+a169 1
+                CALL PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+d176 1
+a176 1
+                CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+d200 6
+d217 1
+a217 1
+#if 0
+d225 1
+a225 1
+  100 CONTINUE
+@
+
+
+1.20
+log
+@add a flag when calling PARM_TO_CONS() and CONS_TO_PARM()
+@
+text
+@d11 2
+a12 2
+C     $Id: ghost.F,v 1.19 2002/09/27 16:08:24 abonfi Exp abonfi $
+C     $Header: /home0/crocco/abonfi/EulFS.0.11.3/src/seq/RCS/ghost.F,v 1.19 2002/09/27 16:08:24 abonfi Exp abonfi $
+d119 1
+a119 1
+          IF (IBC.NE.5)GOTO 100
+@
+
+
+1.19
+log
+@add a call to DINIT to initialize TSTEP
+@
+text
+@d11 2
+a12 2
+C     $Id: ghost.F,v 1.18 2002/09/14 08:57:44 abonfi Exp abonfi $
+C     $Header: /home0/crocco/abonfi/EulFS.0.11.3/src/seq/RCS/ghost.F,v 1.18 2002/09/14 08:57:44 abonfi Exp abonfi $
+a142 3
+      CALL X04CAF('General',' ',Nofvar,Nofvert-1,TSTEP,
+     +            Nofvar,'Timestep matrix ',IFAIL)
+      pause
+d164 2
+a165 2
+                CALL PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+d171 2
+a172 2
+                CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+@
+
+
+1.18
+log
+@now the timestep vector is dimensioned NOFVAR x NPOIN
+@
+text
+@d11 2
+a12 2
+C     $Id: ghost.F,v 1.17 2002/09/09 16:57:03 abonfi Exp abonfi $
+C     $Header: /home0/crocco/abonfi/EulFS.0.11.3/src/seq/RCS/ghost.F,v 1.17 2002/09/09 16:57:03 abonfi Exp abonfi $
+d137 2
+d143 3
+@
+
+
+1.17
+log
+@coupled approach for RANS
+@
+text
+@d11 2
+a12 2
+C     $Id: ghost.F,v 1.16 2000/11/14 16:47:34 aldo Exp abonfi $
+C     $Header: /home0/crocco/abonfi/EulFS.0.11.3/src/seq/RCS/ghost.F,v 1.16 2000/11/14 16:47:34 aldo Exp abonfi $
+d64 2
+a65 1
+      DOUBLE PRECISION VCN(3*VMAX),TSTEP(NMAX),DUMMY((NMAX*VMAX)**2)
+d140 3
+a142 1
+      CALL VecSetValues(DT,NOFVERT-1,ICN,TSTEP,ADD_VALUES,IFAIL)
+@
+
+
+1.16
+log
+@removed un-used include
+@
+text
+@d11 2
+a12 2
+C     $Id: ghost.F,v 1.15 2000/10/19 16:10:34 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/ghost.F,v 1.15 2000/10/19 16:10:34 aldo Exp aldo $
+d64 1
+a64 1
+      DOUBLE PRECISION VCN(12),TSTEP(4),DUMMY(400)
+@
+
+
+1.15
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d11 2
+a12 2
+C     $Id: ghost.F,v 1.14 1999/12/27 09:15:26 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/ghost.F,v 1.14 1999/12/27 09:15:26 aldo Exp aldo $
+a33 1
+      INCLUDE 'IO'
+@
+
+
+1.14
+log
+@FD computation of the jacobian
+@
+text
+@d11 2
+a12 2
+C     $Id: ghost.F,v 1.13 1999/12/09 10:14:00 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/ghost.F,v 1.13 1999/12/09 10:14:00 aldo Exp aldo $
+d19 2
+a20 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+@
+
+
+1.13
+log
+@now handles consistently the perturbation for
+compressible conservation variables
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE GHOST(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,
+d6 3
+a8 2
+C     This routine creates a dummy element for each
+C          vertex of a boundary face
+d11 2
+a12 2
+C     $Id: ghost.F,v 1.12 1999/12/06 12:11:36 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/ghost.F,v 1.12 1999/12/06 12:11:36 aldo Exp aldo $
+d61 2
+d137 2
+a138 7
+      IF(COMPRESSIBLE)THEN
+          CALL BC5VII(IELEM,VCN,VCZ,STIFEL,NODRES,TSTEP,
+     +                NDIM,NOFVERT,NOFVAR)
+      ELSE 
+          CALL BC5VIII(IELEM,VCN,VCZ,STIFEL,NODRES,TSTEP,
+     +                 NDIM,NOFVERT,NOFVAR)
+      ENDIF
+d144 1
+a144 1
+      IF(.NOT.TIMEIMPL)RETURN
+d152 1
+a152 15
+      IF(.NOT.PICARD)GOTO 50
+      DO 5 IVERT = 1,NOFVERT-1 
+C
+#ifdef MPI
+          CALL MatSetValuesBlockedLocal(A,1,ICN(IVERT),1,ICN(IVERT),
+     +                                  STIFEL(1,1,IVERT,1),ADD_VALUES,
+     +                                  IFAIL)
+#else
+          CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN(IVERT),
+     +                             STIFEL(1,1,IVERT,1),ADD_VALUES,IFAIL)
+#endif
+C
+    5 CONTINUE
+      GOTO 100
+   50 CONTINUE
+a158 1
+#if 1
+a162 1
+#endif
+a165 1
+#if 1
+a169 1
+#endif
+d178 1
+a178 7
+      IF(COMPRESSIBLE)THEN
+             CALL BC5VII(IELEM,VCN,VCDZ,DUMMY,NEWRES,TSTEP,
+     +                   NDIM,NOFVERT,NOFVAR)
+C
+      ELSE
+C
+             CALL BC5VIII(IELEM,VCN,VCDZ,DUMMY,NEWRES,TSTEP,
+a179 1
+      ENDIF
+d190 1
+@
+
+
+1.12
+log
+@working version using FD jacobian
+@
+text
+@d10 2
+a11 2
+C     $Id: ghost.F,v 1.11 1999/12/03 20:29:02 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/ghost.F,v 1.11 1999/12/03 20:29:02 aldo Exp aldo $
+d175 6
+d184 6
+@
+
+
+1.11
+log
+@major rewriting of the whole routine
+@
+text
+@d1 4
+a4 2
+      SUBROUTINE GHOST(NELEM,NPOIN,NFACE,NBFAC,NOFVERT,NDIM,NOFVAR,
+     +                 IBNDFAC,DT,RHS,A)
+d10 2
+a11 2
+C     $Id: ghost.F,v 1.10 1999/11/25 07:42:45 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.0/src/seq/RCS/ghost.F,v 1.10 1999/11/25 07:42:45 aldo Exp aldo $
+a33 1
+      INCLUDE 'projct.com'
+d42 1
+a42 1
+      INTEGER NBFAC,NDIM,NELEM,NFACE,NOFVAR,NOFVERT,NPOIN
+d45 7
+a53 4
+C     .. Scalars in Common ..
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+d56 1
+a56 1
+      DOUBLE PRECISION VOLUME
+d58 1
+a58 1
+     +        IFAIL,IVERT,J,LOCA,LOCB
+d62 1
+a62 2
+      DOUBLE PRECISION VCN(12),VCZ(20),TSTEP(4),NODRES(20),
+     +ELTMAT(75)
+d68 1
+a68 1
+C     ELTMAT(1:NOFVAR,1:NOFVAR,1:NOFVERT-1)
+d72 1
+a72 1
+      INTEGER ICN(VMAX),ISTAK(1)
+a84 2
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+a88 2
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+a95 1
+      DATA ELTMAT/75*ZERO/
+d98 1
+d118 2
+a119 3
+C
+      CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   DSTAK(LZROE), DSTAK(LFACNOR), NDIM, NOFVERT, NOFVAR, ICN,
+d123 1
+a123 3
+         LOCA = IDX(IVERT,1,NOFVAR)
+         LOCB = IDX(NOFVERT,1,NOFVAR)
+         CALL DSWAP(NOFVAR,VCZ(LOCA),1,VCZ(LOCB),1)
+d132 1
+a132 3
+      LOCA = IDX(NOFVERT,1,NOFVAR)
+      CALL DCOPY(NOFVAR,U_INFTY,1,VCZ(LOCA),1)
+C
+d135 1
+a135 1
+          CALL BC5VII(IELEM,VCN,VCZ,ELTMAT,NODRES,TSTEP,
+d138 1
+a138 1
+          CALL BC5VIII(IELEM,VCN,VCZ,ELTMAT,NODRES,TSTEP,
+d147 22
+a168 3
+c     write(6,*)'***************************'
+c     write(6,*)ielem
+c     write(6,*)'***************************'
+d170 34
+a203 1
+      DO 5 IVERT = 1,NOFVERT-1 
+d205 1
+a205 1
+          LOCA = IDX(IVERT,1,NOFVAR*NOFVAR)
+d209 2
+a210 1
+     +                                  ELTMAT(LOCA),ADD_VALUES,IFAIL)
+d213 7
+a219 1
+     +                             ELTMAT(LOCA),ADD_VALUES,IFAIL)
+d222 1
+a222 4
+c     write(6,*)icn(ivert)
+c     CALL X04CAF('General',' ',nofvar,nofvar,ELTMAT(LOCA),nofvar,
+c    +            'Matrix ',IFAIL)
+    5 CONTINUE
+@
+
+
+1.10
+log
+@minor cleanup
+@
+text
+@d2 1
+a2 1
+     +                 DT,RHS,A,MODEL,SCALARSCHEME,MATRIXSCHEME)
+d8 2
+a9 2
+C     $Id: ghost.F,v 1.9 1999/09/03 11:05:58 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/ghost.F,v 1.9 1999/09/03 11:05:58 aldo Exp aldo $
+d24 1
+d44 1
+a44 1
+      EXTERNAL MATRIXSCHEME,MODEL,SCALARSCHEME
+a46 1
+      INTEGER IV
+d52 3
+a54 4
+      DOUBLE PRECISION ANORMAN,TEMP,VOLUME
+      INTEGER DUMMYELEM,DUMMYFACE,DUMMYPOIN,I,IBC,ICLOR,IELEM,IFACE,
+     +        IFAIL,INODE,ITEMP,IVERT,J,K,KFACE,
+     +        LOCA,LOCB,LOCC,N
+d58 12
+a69 4
+      DOUBLE PRECISION VCN(3*VMAX),VCP(3*VMAX),VCZ(NMAX*VMAX),VECN(3),
+     +                 VECS(3),VECT(3),aux(25)
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_I(4),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX),ISTAK(1),IWORK(3)
+d72 1
+a72 1
+      DOUBLE PRECISION DDOT,DNRM2,PRESSC,PRESSI
+d74 1
+a74 1
+      EXTERNAL DDOT,DNRM2,PRESSC,PRESSI,ICYCL
+d77 1
+a77 2
+      EXTERNAL CELPTR,DAXPY,DCOPY,DGEMV,DSCTR,DSWAP,IGTHR,ISCTR,
+     +         LINEARIZE,PARM2PRIM,PFORCE
+a83 1
+      COMMON /GHOSTCOM/IV
+a90 4
+C     .. Data statements ..
+C
+      DATA VECN,VECS,VECT/9*ZERO/
+C     ..
+d97 1
+a97 1
+C     fictitious cell,node and face are created ..
+d99 1
+a99 3
+      DUMMYELEM = NELEM + 1
+      DUMMYPOIN = NPOIN + 1
+      DUMMYFACE = NFACE + 1
+d104 3
+a106 8
+          IDX_F(1) = 3*IFACE - 2
+          IDX_F(2) = 3*IFACE - 1
+          IDX_F(3) = 3*IFACE
+C
+          CALL IGTHR(3,ISTAK(LBNDFAC),IWORK,IDX_F)
+          IELEM = IWORK(1)
+          IVERT = IWORK(2)
+          ICLOR = IWORK(3)
+d117 1
+a117 2
+          IF (IBC.EQ.1 .OR. IBC.EQ.3 .OR. IBC.EQ.6 .OR. IBC.EQ.7) 
+     +GOTO 100
+a118 3
+          IF(IBC.EQ.4.AND.WBCTYP.EQ.1)GOTO 100
+C
+C     Return if using weak wall b.c.
+d124 49
+a172 291
+C     Need to reset ICN to 1 based indexing
+C
+          DO 9 IV= 1, NOFVERT
+             ICN(IV) = ICN(IV)+1
+    9     CONTINUE 
+C
+caldo     KFACE = ICF(IVERT)
+          loca = lcelfac+(ielem-1)*nofvert+ivert-1
+          KFACE = ABS(istak(loca))
+caldo     write(6,*)kface
+caldo     ANORMAN = DNRM2(NDIM,VCN(IDX(IVERT,1,NDIM)),1)
+C
+C     COMPRESSIBLE = .TRUE. when dealing with COMPRESSIBLE flows
+C
+          COMPRESSIBLE = (ABS(KAN).EQ.4)
+C
+C     COMPUTES THE GRADIENT OF THE VARIABLES
+C
+          CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +                   VOLUME)
+C
+C
+          IF (COMPRESSIBLE) CALL PARM2PRIM(NDIM,-IELEM)
+C
+C     copy the face normal into an array having a z component
+C
+          VECN(1) = VCN(IDX(IVERT,1,NDIM))
+          VECN(2) = VCN(IDX(IVERT,2,NDIM))
+          IF (NDIM.EQ.3) VECN(3) = VCN(IDX(IVERT,3,NDIM))
+C
+C     .. Compute the projectors ..
+C
+          GOTO (95,1,2,3,4,5,6) IBC + 1
+
+          STOP 'Incorrect IBC=? in subr. GHOST'
+
+   95     STOP 'Incorrect IBC=0 in subr. GHOST'
+
+    1     GOTO 100
+
+    2     IF (IABS(KAN).EQ.2) THEN
+              CALL PRJO2(ZAVG,VECN,PPOSZ,PNEGZ,PPOSU,PNEGU,NDIM,NOFVAR)
+
+          ELSEIF (IABS(KAN).EQ.4) THEN
+caldo         CALL PRJO4(VECN,VECS,VECT,NOFVAR)
+              STOP 'IBC=2 for KAN =4 is not any more implemented'
+
+          ELSE
+              STOP 'Incorrect KAN in subr. GHOST'
+
+          ENDIF
+
+          GOTO 70
+
+    3     GOTO 100
+C
+C     When on an inviscid wall compute the pressure force
+C
+    4     IF (IABS(KAN).EQ.2) THEN
+C     compute pressure force on the face
+              CALL PFORCE(ICLOR,IVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,
+     +                    PRESSI)
+C     compute projector
+           CALL PRJW2(ZAVG,VECN,PPOSZ,PNEGZ,PPOSU,PNEGU,NDIM,NOFVAR)
+#ifdef PRINT
+           write(6,*)ielem
+           CALL X04CAF('General',' ',nofvar,nofvar,pposz,nofvar,
+     +                 'Projector wall(parameter vector)',IFAIL)
+#endif
+
+          ELSEIF (IABS(KAN).EQ.4) THEN
+C     compute pressure force on the face
+              CALL PFORCE(ICLOR,IVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,
+     +                    PRESSC)
+C     compute projector
+           CALL PRJW4(ZAVG,VECN,PPOSZ,PNEGZ,PPOSU,PNEGU,NDIM,NOFVAR)
+#ifdef PRINT
+           write(6,*)ielem
+           CALL X04CAF('General',' ',nofvar,nofvar,pposz,nofvar,
+     +                 'Projector wall(parameter vector)',IFAIL)
+#endif
+c          CALL X04CAF('General',' ',nofvar,nofvar,pposu,nofvar,
+c    +                 'Projector wall(conserved variables)',IFAIL)
+c          CALL X04CAF('General',' ',nofvar,nofvar,pnegz,nofvar,
+c    +                 'Projector wall(parameter vector)',IFAIL)
+c          CALL X04CAF('General',' ',nofvar,nofvar,pnegu,nofvar,
+c    +                 'Projector wall(conserved variables)',IFAIL)
+
+          ELSE
+              STOP 'Incorrect KAN in subr. GHOST'
+
+          ENDIF
+
+          GOTO 70
+
+    5     IF (IABS(KAN).EQ.2) THEN
+C
+C
+           CALL PROJF8(ZAVG,VECN,PPOSZ,PNEGZ,PPOSU,PNEGU,
+     +                 NDIM,NOFVAR)
+#ifdef PRINT
+           write(6,*)ielem
+           CALL X04CAF('General',' ',nofvar,nofvar,pposz,nofvar,
+     +      'Projector far field ',IFAIL)
+#endif
+#ifdef DEBUG
+           write(6,*)ielem
+           CALL X04CAF('General',' ',nofvar,nofvar,pposz,nofvar,
+     +      'Projector (new formulation)',IFAIL)
+C          CALL X04CAF('General',' ',nofvar,nofvar,prjpos,nofvar,
+C    +      'Projector (new formulation)',IFAIL)
+C           pause
+C
+#endif
+C
+          ELSEIF (IABS(KAN).EQ.4) THEN
+C
+           CALL PROJF7(ZAVG,VECN,PPOSZ,PNEGZ,PPOSU,PNEGU,NDIM,
+     +                  NOFVAR)
+#ifdef PRINT
+           write(6,*)ielem
+           CALL X04CAF('General',' ',nofvar,nofvar,pposz,nofvar,
+     +                 'Projector far-field(parameter vector)',IFAIL)
+C          CALL X04CAF('General',' ',nofvar,nofvar,pposu,nofvar,
+C    +                 'Projector far-field(conserved variables)',IFAIL)
+#endif
+#ifdef DEBUG
+           CALL X04CAF('General',' ',nofvar,nofvar,pposz,nofvar,
+     +                 'Projector far-field(parameter vector)',IFAIL)
+           CALL X04CAF('General',' ',nofvar,nofvar,pposu,nofvar,
+     +                 'Projector far-field(conserved variables)',IFAIL)
+           CALL X04CAF('General',' ',nofvar,nofvar,pnegz,nofvar,
+     +                 'Projector far-field(parameter vector)',IFAIL)
+           CALL X04CAF('General',' ',nofvar,nofvar,pnegu,nofvar,
+     +                 'Projector far-field(conserved variables)',IFAIL)
+caldo       pause
+#endif
+C
+          ELSE
+              STOP 'Incorrect KAN in subr. GHOST'
+
+          ENDIF
+
+          GOTO 70
+
+    6     RETURN
+C
+   70     CONTINUE
+C
+C     The mirror node takes the NOFVERT-th position ..
+C
+C     The (NOFVERT-1) coord. and nodal values of the 
+C        boundary face are copied into ICN(1:(NOFVERT-1))
+C        hence the first (NOFVERT-1) cols. of the arrays
+C        VCP,VCZ,VCN remain unchanged
+C
+C     if IVERT != NOFVERT swap
+C        ICN(IVERT) with ICN(NOFVERT)
+C        VCP(IVERT) with VCP(NOFVERT)
+C        VCZ(IVERT) with VCZ(NOFVERT)
+C        so that node IVERT appears last
+C        the ghost node will then be overwritten onto the
+C        NOFVERT-th position while
+C        the nodes of the current face will then be stored in
+C        the first (NOFVERT-1) positions of the arrays ICN,VCP,VCZ
+C
+          IF (IVERT.NE.NOFVERT) THEN
+              ITEMP = ICN(IVERT)
+              ICN(IVERT) = ICN(NOFVERT)
+              ICN(NOFVERT) = ITEMP
+              CALL DSWAP(NOFVAR,VCZ((IVERT-1)*NOFVAR+1),1,
+     +                   VCZ((NOFVERT-1)*NOFVAR+1),1)
+caldo         CALL DSWAP(NDIM,VCP((IVERT-1)*NDIM+1),1,
+caldo+                   VCP((NOFVERT-1)*NDIM+1),1)
+          ENDIF
+C
+C     ghost node ..
+C
+          ICN(NOFVERT) = DUMMYPOIN
+C
+          VOLUME = ONE
+          DSTAK(LVOL+DUMMYELEM-1) = ONE
+C
+C     set indexing
+C
+          IDX_F(1) = IDX(DUMMYELEM,1,NOFVERT)
+          IDX_F(2) = IDX(DUMMYELEM,2,NOFVERT)
+          IDX_F(3) = IDX(DUMMYELEM,3,NOFVERT)
+          IDX_F(4) = IDX(DUMMYELEM,4,NOFVERT)
+C
+          IDX_V(1) = IDX(DUMMYPOIN,1,NOFVAR)
+          IDX_V(2) = IDX(DUMMYPOIN,2,NOFVAR)
+          IDX_V(3) = IDX(DUMMYPOIN,3,NOFVAR)
+          IDX_V(4) = IDX(DUMMYPOIN,4,NOFVAR)
+          IDX_V(5) = IDX(DUMMYPOIN,5,NOFVAR)
+C
+caldo     IDX_P(1) = IDX(DUMMYPOIN,1,NDIM)
+caldo     IDX_P(2) = IDX(DUMMYPOIN,2,NDIM)
+caldo     IDX_P(3) = IDX(DUMMYPOIN,3,NDIM)
+C
+          IDX_I(1) = IDX(DUMMYELEM,1,NOFVERT)
+          IDX_I(2) = IDX(DUMMYELEM,2,NOFVERT)
+          IDX_I(3) = IDX(DUMMYELEM,3,NOFVERT)
+          IDX_I(4) = IDX(DUMMYELEM,4,NOFVERT)
+C
+          LOCA = IDX(NOFVERT,1,NOFVAR)
+          LOCC = IDX(NOFVERT,1,NDIM)
+C
+C    ICELNOD(1:NOFVERT,DUMMYELEM)
+C
+C            1
+C            2
+C            3
+C            4
+C
+C
+caldo     TEMP = -REAL(NDIM)/ (ANORMAN*ANORMAN)
+C
+C Looping over the vertices of the boundary face (outer loop)
+C
+C        For each node on the boundary face a dummy cell is created
+C
+          DO 50 IV = 1,NOFVERT - 1
+C
+C       .. Boundary node is IV in local numbering, INODE in global ..
+C
+              INODE = ICN(IV)
+C
+              ICF(IV) = KFACE
+              ICF(NOFVERT) = -KFACE
+C
+              ICF(ICYCL(IV+1,NOFVERT-1)) = DUMMYFACE
+              IF (NDIM.EQ.3) ICF(ICYCL(IV+2,NOFVERT-1)) = DUMMYFACE
+C
+C
+caldo         CALL DCOPY(NDIM,VCP((IV-1)*NDIM+1),1,
+caldo+                   VCP((NOFVERT-1)*NDIM+1),1)
+C
+caldo         CALL DAXPY(NDIM,TEMP,VCN((IVERT-1)*NDIM+1),1,
+caldo+                   VCP((NOFVERT-1)*NDIM+1),1)
+C
+C
+C
+              LOCB = IDX(IV,1,NOFVAR)
+C
+C       .. Nodal values of the ghost node ..
+C
+              IF (IBC.EQ.4) GOTO 43
+C
+C
+C     compute Z(DUMMYPOIN) = P^{+} Z_{\infty} + P^{-} Z_{b}
+C
+C
+              CALL DGEMV('No Transpose',NOFVAR,NOFVAR,ONE,PPOSZ,nofvar,
+     +                   U_INFTY,1,ZERO,VCZ(LOCA),1)
+              CALL DGEMV('No Transpose',NOFVAR,NOFVAR,ONE,PNEGZ,nofvar,
+     +                   VCZ(LOCB),1,ONE,VCZ(LOCA),1)
+C             write(6,*)(vcz(loca+i),i=0,nofvar-1)
+C
+              GOTO 39
+C
+C  ... Wall b.c. treatment
+C
+   43         CONTINUE
+              CALL DGEMV('No Transpose',NOFVAR,NOFVAR,ONE,PNEGZ,nofvar,
+     +                   VCZ(LOCB),1,ZERO,VCZ(LOCA),1)
+C             write(6,*)(vcz(loca+i),i=0,nofvar-1)
+C
+   39         CONTINUE
+C
+C       set:
+C
+C             ICELNOD(1:NOFVERT,DUMMYCELL)
+C             ICELFAC(1:NOFVERT,DUMMYCELL)
+C             FACNOR(1:NDIM,DUMMYFACE)
+C             CORG(1:NDIM,DUMMYPOIN)
+C             ZROE(1:NOFVAR,DUMMYPOIN)
+C
+C
+C
+              CALL ISCTR(NOFVERT,ICN,IDX_I,ISTAK(LCELNOD))
+              CALL ISCTR(NOFVERT,ICF,IDX_F,ISTAK(LCELFAC))
+caldo         CALL DSCTR(NDIM,VCP(LOCC),IDX_P,DSTAK(LCORG))
+              CALL DSCTR(NOFVAR,VCZ(LOCA),IDX_V,DSTAK(LZROE))
+C
+C                  if(ibc.eq.5)pause
+C
+              CALL MODEL(DUMMYELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +                   DT,RHS,A,SCALARSCHEME,MATRIXSCHEME)
+C
+   50     CONTINUE
+a174 1
+C
+a175 1
+
+a176 1
+C
+@
+
+
+1.9
+log
+@new porjectors, also changed call to CELPTR
+@
+text
+@d8 2
+a9 2
+C     $Id: ghost.F,v 1.8 1999/08/19 15:59:13 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/ghost.F,v 1.8 1999/08/19 15:59:13 aldo Exp aldo $
+a38 6
+C
+      common/debug/ielem,ivert,iclor 
+C
+C
+C
+C
+a122 1
+C         if(ibc.eq.4)goto 100
+d126 4
+a154 10
+C         if(ibc.eq.4)then
+C            j = 0 
+C            do 45 i= 1,nofvert
+C               if(i.eq.ivert)goto 45
+C               j = j+1
+C         call dcopy(nofvar,vcz((i-1)*nofvar+1),1,aux((j-1)*nofvar+1),1)
+C  45        continue
+C         CALL linearize(IELEM,COMPRESSIBLE,VCN,NDIM,ndim,aux,NOFVAR,
+C    +               VOLUME)
+C         endif
+@
+
+
+1.8
+log
+@Projectors are now computed differently; only the face
+normal is now required
+@
+text
+@d8 2
+a9 2
+C     $Id: ghost.F,v 1.7 1999/08/11 18:15:12 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.5/src/seq/RCS/ghost.F,v 1.7 1999/08/11 18:15:12 aldo Exp aldo $
+d33 1
+d40 1
+d66 1
+a66 1
+     +                 VECS(3),VECT(3)
+d129 1
+a129 1
+          if(ibc.eq.4)goto 100
+d133 3
+a136 4
+          CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,1,1,ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+C
+d143 5
+a147 2
+          KFACE = ICF(IVERT)
+          ANORMAN = DNRM2(NDIM,VCN(IDX(IVERT,1,NDIM)),1)
+d158 11
+a176 2
+caldo     CALL ORTHOBASE(IVERT,VECN,VECS,VECT,VCP,NDIM,NOFVERT)
+C
+d211 5
+a242 1
+caldo         CALL PRJFF2(VECN,VECS,VECT,NOFVAR)
+a243 2
+C     a test to check an alternative way to compute the
+C     projectors
+d247 5
+d253 1
+a254 2
+     +      'Projector (old formulation)',IFAIL)
+           CALL X04CAF('General',' ',nofvar,nofvar,prjpos,nofvar,
+d256 3
+a258 1
+            pause
+d270 2
+a271 2
+           CALL X04CAF('General',' ',nofvar,nofvar,pposu,nofvar,
+     +                 'Projector far-field(conserved variables)',IFAIL)
+a321 1
+C
+@
+
+
+1.7
+log
+@a test to check an alternative way to compute the projectors
+@
+text
+@d8 2
+a9 2
+C     $Id: ghost.F,v 1.6 1998/12/23 11:51:27 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.5/src/seq/RCS/ghost.F,v 1.6 1998/12/23 11:51:27 aldo Exp aldo $
+d35 1
+a66 4
+caldo
+      DOUBLE PRECISION prjpos(25),prjneg(25)
+      external matsplitviii
+caldo
+d75 1
+a75 2
+     +         LINEARIZE,ORTHOBASE,PARM2PRIM,PFORCE,PRJFF2,PRJFF4,PRJO2,
+     +         PRJO4,PRJW2,PRJW4
+d162 1
+a162 1
+          CALL ORTHOBASE(IVERT,VECN,VECS,VECT,VCP,NDIM,NOFVERT)
+d175 1
+a175 1
+              CALL PRJO2(VECN,VECS,VECT,NOFVAR)
+d178 2
+a179 1
+              CALL PRJO4(VECN,VECS,VECT,NOFVAR)
+d197 1
+a197 1
+              CALL PRJW2(VECN,VECS,VECT,NOFVAR)
+d204 12
+a215 1
+              CALL PRJW4(VECN,VECS,VECT,NOFVAR)
+d225 1
+a225 1
+              CALL PRJFF2(VECN,VECS,VECT,NOFVAR)
+d230 8
+a237 6
+C          CALL PROJECTOR(VECN,MatSplitVIII,PRJPOS,PRJNEG,NDIM,NOFVAR)
+C          CALL X04CAF('General',' ',nofvar,nofvar,pposz,5,
+C    +      'Projector (old formulation)',IFAIL)
+C           CALL X04CAF('General',' ',nofvar,nofvar,prjpos,nofvar,
+C    +      'Projector (new formulation)',IFAIL)
+C           pause
+d239 1
+a240 1
+
+d242 22
+a263 2
+              CALL PRJFF4(VECN,VECS,VECT,NOFVAR)
+
+d298 2
+a299 2
+              CALL DSWAP(NDIM,VCP((IVERT-1)*NDIM+1),1,
+     +                   VCP((NOFVERT-1)*NDIM+1),1)
+d323 3
+a325 3
+          IDX_P(1) = IDX(DUMMYPOIN,1,NDIM)
+          IDX_P(2) = IDX(DUMMYPOIN,2,NDIM)
+          IDX_P(3) = IDX(DUMMYPOIN,3,NDIM)
+d343 1
+a343 1
+          TEMP = -REAL(NDIM)/ (ANORMAN*ANORMAN)
+d362 2
+a363 2
+              CALL DCOPY(NDIM,VCP((IV-1)*NDIM+1),1,
+     +                   VCP((NOFVERT-1)*NDIM+1),1)
+d365 2
+a366 2
+              CALL DAXPY(NDIM,TEMP,VCN((IVERT-1)*NDIM+1),1,
+     +                   VCP((NOFVERT-1)*NDIM+1),1)
+d380 1
+a380 1
+              CALL DGEMV('No Transpose',NOFVAR,NOFVAR,ONE,PPOSZ,5,
+d382 1
+a382 1
+              CALL DGEMV('No Transpose',NOFVAR,NOFVAR,ONE,PNEGZ,5,
+d384 1
+d391 1
+a391 1
+              CALL DGEMV('No Transpose',NOFVAR,NOFVAR,ONE,PNEGZ,5,
+d393 1
+d409 1
+a409 1
+              CALL DSCTR(NDIM,VCP(LOCC),IDX_P,DSTAK(LCORG))
+d412 1
+a424 46
+C
+      SUBROUTINE ORTHOBASE(I,VCN,VCS,VCT,VCP,NDIM,NOFVERT)
+
+
+
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ONE
+      PARAMETER (ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER I,NDIM,NOFVERT
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION VCN(3),VCP(NDIM,NOFVERT),VCS(3),VCT(3)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION SNORM,TNORM
+      INTEGER IDIM,J,K
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DNRM2
+      INTEGER ICYCL
+      EXTERNAL DNRM2,ICYCL
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL CROSS_PROD,DSCAL
+C     ..
+      J = ICYCL(I+1,NOFVERT)
+      K = ICYCL(I+2,NOFVERT)
+C
+      DO 8 IDIM = 1,NDIM
+          VCS(IDIM) = VCP(IDIM,K) - VCP(IDIM,J)
+    8 CONTINUE
+C
+      CALL CROSS_PROD(VCN,VCS,VCT)
+C
+      SNORM = ONE/DNRM2(3,VCS,1)
+      TNORM = ONE/DNRM2(3,VCT,1)
+C
+      CALL DSCAL(3,SNORM,VCS,1)
+      CALL DSCAL(3,TNORM,VCT,1)
+C
+      RETURN
+
+      END
+@
+
+
+1.6
+log
+@inviscid wall b.c. are skipped
+@
+text
+@d8 2
+a9 2
+C     $Id$
+C     $Header: ghost.F,v 1.5 98/12/02 09:20:34 aldo Exp $
+d66 4
+d218 12
+@
+
+
+1.5
+log
+@fixed a problem with the EQUIVALENCE on solaris
+@
+text
+@d9 1
+a9 1
+C     $Header$
+d127 1
+a127 1
+caldo     if(ibc.eq.4)goto 100
+@
+
+
+1.4
+log
+@Add automatic identification flag
+@
+text
+@d9 1
+a88 3
+      EQUIVALENCE (IWORK(1),IELEM)
+      EQUIVALENCE (IWORK(2),IVERT)
+      EQUIVALENCE (IWORK(3),ICLOR)
+d114 3
+@
+
+
+1.3
+log
+@PETSc version
+@
+text
+@d8 3
+@
+
+
+1.2
+log
+@Bug fixed in the calling sequence for PFORCE
+@
+text
+@a0 3
+CC
+CC------------------------------+------------------------------
+CC
+d2 1
+a2 1
+     +                 MODEL,SCALARSCHEME,MATRIXSCHEME)
+d11 3
+d15 2
+d123 1
+d132 6
+d141 1
+a141 1
+C        COMPRESSIBLE = .TRUE. when dealing with COMPRESSIBLE flows
+d185 1
+a185 1
+C     .. When on an inviscid wall compute the pressure force
+d225 1
+a225 1
+C        The mirror node takes the NOFVERT-th position ..
+d227 1
+a227 1
+C        The (NOFVERT-1) coord. and nodal values of the 
+a228 1
+C
+d232 1
+a232 1
+C        if IVERT != NOFVERT swap
+d253 1
+a253 1
+C        .. ghost node ..
+d260 1
+a260 1
+C  set indexing
+d347 5
+a351 5
+C            ICELNOD(1:NOFVERT,DUMMYCELL)
+C            ICELFAC(1:NOFVERT,DUMMYCELL)
+C            FACNOR(1:NDIM,DUMMYFACE)
+C            CORG(1:NDIM,DUMMYPOIN)
+C            ZROE(1:NOFVAR,DUMMYPOIN)
+a353 4
+C       set ICELNOD(1:NOFVERT,DUMMYELEM)
+C       set ICELFAC(1:NOFVERT,DUMMYELEM)
+C       set CORG(1:NDIM,DUMMYPOIN)
+C       set ZROE(1:NOFVAR,DUMMYPOIN)
+d362 1
+a362 1
+     +                   SCALARSCHEME,MATRIXSCHEME)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d179 4
+a182 1
+              CALL PFORCE(IVERT,NDIM,NOFVERT,PRESSI)
+d186 4
+a189 1
+              CALL PFORCE(IVERT,NDIM,NOFVERT,PRESSC)
+@

@@ -1,0 +1,27 @@
+22c22
+< !  $Id: MotionSolver.F,v 1.6 2020/03/28 09:42:28 abonfi Exp abonfi $
+---
+> !  $Id: MotionSolver.F,v 1.6 2020/03/28 09:42:28 abonfi Exp $
+23a24,25
+>       IMPLICIT NONE
+> C
+25,26c27,29
+< CCC#include "petsc/finclude/petscvec.h"
+< CCC#include "petsc/finclude/petscmat.h"
+---
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+28c31
+< CCC#include "petsc/finclude/petscis.h"
+---
+> #include "petsc/finclude/petscis.h"
+31,32d33
+<       use petscpc
+<       use petscksp
+34d34
+<       IMPLICIT NONE
+46a47
+> #include "iset.com"
+53d53
+<       IS, dimension(0:*) :: NodalBcs

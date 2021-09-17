@@ -1,0 +1,603 @@
+head	1.19;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.19
+	release3_13_0:1.19
+	release3_12_0:1.19
+	release3_11_0:1.19
+	release3_10_0:1.19
+	release3_8_0:1.19
+	release3_7_1:1.18
+	release3_7_0:1.18
+	release3_4_5:1.17
+	release3_4_4:1.17
+	release3_4_3:1.17
+	release3_4_2:1.17
+	release3_4_1:1.17
+	release3_4_0:1.15
+	release3_3_5:1.15
+	release3_3_4:1.15
+	release3_3_3:1.15
+	release3_3_2:1.15
+	release3_3_1:1.15
+	release3_3_0:1.14;
+locks; strict;
+comment	@c @;
+
+
+1.19
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2013.06.06.10.34.38;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2013.06.04.15.37.04;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2013.01.26.11.30.51;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2002.02.19.09.25.46;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.10.26.15.28.44;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.06.23.16.48.48;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.06.09.16.28.01;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.11.05.20.38.37;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.11.17.18.48.37;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.02.10.08.53.46;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.05.10.32.51;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Set EXPLICIT boundary conditions for the turbulence equation
+@
+
+
+1.19
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@C
+      SUBROUTINE RHSBC5( RHS, NodalBcs )
+C
+C     This routine sets the boundary conditions in the
+C     "EXPLICIT" residual for the turbulence equation ..
+C
+C     $Id: rhsbc5.F,v 1.18 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscis.h"
+      use petscvec
+      use petscis
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+C
+C
+C
+C
+      Vec RHS
+      IS, dimension(0:*) :: NodalBcs
+      PetscOffset RHS_I,IDX_I
+C
+      INTEGER I
+C
+C
+      INTEGER IPOIN,NI,IFAIL,ROWBGN,ROWEND
+      PetscScalar RHS_V(1)
+      INTEGER IDX_V(1)
+C
+C
+C    EXPLICIT Treatment of no-slip wall nodes
+C
+C
+      CALL VecGetOwnerShipRange(RHS,ROWBGN,ROWEND,IFAIL)
+      CALL VecGetArray(RHS,RHS_V,RHS_I,IFAIL)
+      CALL ISGetIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+      CALL ISGetSize(NodalBcs(NoSlipNodes),NI,IFAIL)
+C
+      DO 1000 I= 1 , NI
+C
+          IPOIN = IDX_V( IDX_I+I )-ROWBGN
+          RHS_V(RHS_I+IPOIN+1) = ZERO
+C
+ 1000 CONTINUE
+C
+      CALL ISRestoreIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+C
+C
+C
+      CALL ISGetIndices(NodalBcs(FreestreamTurbulence),IDX_V,IDX_I,
+     &                  IFAIL)
+      CALL ISGetSize(NodalBcs(FreestreamTurbulence),NI,IFAIL)
+C
+      DO 2000 I= 1 , NI
+C
+          IPOIN = IDX_V( IDX_I+I )-ROWBGN
+          RHS_V(RHS_I+IPOIN+1) = ZERO
+C
+ 2000 CONTINUE
+C
+      CALL ISRestoreIndices(NodalBcs(FreestreamTurbulence),IDX_V,IDX_I,
+     &                      IFAIL)
+      CALL VecRestoreArray(RHS,RHS_V,RHS_I,IFAIL)
+C
+      RETURN
+      END 
+@
+
+
+1.18
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d2 1
+a2 1
+      SUBROUTINE RHSBC5( RHS )
+d7 1
+a7 1
+C     $Id: rhsbc5.F,v 1.17 2013/06/06 10:34:38 abonfi Exp abonfi $
+a9 3
+      IMPLICIT NONE
+C
+#include "petsc/finclude/petscsys.h"
+d12 4
+d20 1
+a21 1
+#include "iset.com"
+d26 1
+d42 2
+a43 2
+      CALL ISGetIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+      CALL ISGetSize(NoSlipNodes,NI,IFAIL)
+d52 1
+a52 1
+      CALL ISRestoreIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+d56 3
+a58 2
+      CALL ISGetIndices(FreestreamTurbulence,IDX_V,IDX_I,IFAIL)
+      CALL ISGetSize(FreestreamTurbulence,NI,IFAIL)
+d67 2
+a68 1
+      CALL ISRestoreIndices(FreestreamTurbulence,IDX_V,IDX_I,IFAIL)
+@
+
+
+1.17
+log
+@now includes bnd.h
+@
+text
+@d7 1
+a7 1
+C     $Id: rhsbc5.F,v 1.16 2013/06/04 15:37:04 abonfi Exp abonfi $
+d12 3
+a14 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.16
+log
+@removed the RCS Header
+@
+text
+@d7 1
+a7 1
+C     $Id: rhsbc5.F,v 1.15 2013/01/26 11:30:51 abonfi Exp abonfi $
+d17 2
+a25 2
+C
+      INCLUDE 'constants.h'
+@
+
+
+1.15
+log
+@changed the name of included header/common files
+@
+text
+@d7 1
+a7 2
+C     $Id: rhsbc5.F,v 1.14 2011/09/16 07:19:48 abonfi Exp abonfi $
+C     $Header: /home/abonfi/CFD_codes/EulFS.3.3.1/src/seq/RCS/rhsbc5.F,v 1.14 2011/09/16 07:19:48 abonfi Exp abonfi $
+@
+
+
+1.14
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.13 2009/06/11 13:10:58 abonfi Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.3.1.0/src/seq/RCS/rhsbc5.F,v 1.13 2009/06/11 13:10:58 abonfi Exp abonfi $
+d26 1
+a26 1
+      INCLUDE 'constants'
+@
+
+
+1.13
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.12 2002/02/19 09:25:46 abonfi Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.0.15.0/src/seq/RCS/rhsbc5.F,v 1.12 2002/02/19 09:25:46 abonfi Exp abonfi $
+d13 1
+a13 1
+#include "finclude/petsc.h"
+@
+
+
+1.12
+log
+@changed Scalar into PetscScalar to comply to ver. 2.1.1
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.11 2000/10/26 15:28:44 aldo Exp abonfi $
+C     $Header: /home1/navier/abonfi/EulFS.0.10.13/src/seq/RCS/rhsbc5.F,v 1.11 2000/10/26 15:28:44 aldo Exp abonfi $
+d13 3
+a15 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscis.h"
+@
+
+
+1.11
+log
+@working parallel version
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.10 2000/10/19 16:10:34 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/rhsbc5.F,v 1.10 2000/10/19 16:10:34 aldo Exp aldo $
+d32 1
+a32 1
+      Scalar RHS_V(1)
+@
+
+
+1.10
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.9 2000/06/23 16:48:48 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/rhsbc5.F,v 1.9 2000/06/23 16:48:48 aldo Exp aldo $
+d31 1
+a31 1
+      INTEGER IPOIN,NI,IFAIL
+d39 1
+d46 1
+a46 1
+          IPOIN = IDX_V( IDX_I+I )
+d60 1
+a60 1
+          IPOIN = IDX_V( IDX_I+I )
+@
+
+
+1.9
+log
+@now imposes strongly the freestream value of the turbulent
+quantity
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.8 2000/06/09 16:28:01 aldo Exp $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.5/src/seq/RCS/rhsbc5.F,v 1.8 2000/06/09 16:28:01 aldo Exp $
+d14 2
+a15 2
+#include "include/finclude/vec.h"
+#include "include/finclude/is.h"
+@
+
+
+1.8
+log
+@now including index sets in common iset.com
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.7 1999/11/05 20:38:37 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.5/src/seq/RCS/rhsbc5.F,v 1.7 1999/11/05 20:38:37 aldo Exp aldo $
+d50 15
+a65 1
+      CALL ISRestoreIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+@
+
+
+1.7
+log
+@solved bug by using IS instead of integer
+@
+text
+@d7 2
+a8 2
+C     $Id: rhsbc5.F,v 1.6 1998/11/17 18:48:37 aldo Exp caspur $
+C     $Header: /usr/users/caspur/EulFS.0.9.7/src/seq/RCS/rhsbc5.F,v 1.6 1998/11/17 18:48:37 aldo Exp caspur $
+d18 3
+a20 5
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/COMISET/SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+@
+
+
+1.6
+log
+@using Index Sets to address no-slip nodes
+@
+text
+@d7 2
+a8 2
+C     $Id$
+C     $Header$
+d15 1
+a15 1
+#include "include/finclude/viewer.h"
+d18 6
+a23 1
+      INCLUDE 'iset.com'
+d34 1
+a34 1
+      DOUBLE PRECISION RHS_V(1)
+a36 6
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"vec.before",
+C    +                         VIEWER_STDOUT_SELF,IFAIL) 
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +                     VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IFAIL)
+C
+C     CALL VecView(RHS,VIEWER_STDOUT_SELF,IFAIL)
+a53 2
+C
+C
+@
+
+
+1.5
+log
+@Add automatic identification flag
+@
+text
+@d2 1
+a3 3
+      SUBROUTINE RHSBC5( NPOIN, NDIM, RHS, 
+     +                   IX, Y, NODCODE) 
+C
+d8 1
+d18 1
+d21 1
+a23 2
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+d25 1
+a25 1
+      INTEGER NPOIN,NDIM
+a26 1
+      INTEGER NODCODE(NPOIN),IX(*)
+d28 3
+a30 2
+      INTEGER IPOIN,ICODE,NI,IFAIL
+      DOUBLE PRECISION Y(*)
+a40 1
+      NI=0 
+d42 3
+a44 1
+      DO 1000 IPOIN = 1 , NPOIN
+d46 1
+a46 1
+      ICODE = NODCODE( IPOIN )
+d48 2
+a49 1
+C     viscous wall ..
+a50 5
+      IF( ICODE .EQ. 1000 )THEN
+              NI=NI+1
+              IX(NI) = IPOIN-1
+      ENDIF
+C
+a51 2
+      CALL DINIT(NI,ZERO,Y,1)
+      CALL VecSetValues(RHS,NI,IX,Y,INSERT_VALUES,IFAIL)
+d53 2
+a54 2
+      CALL VecAssemblyBegin(RHS,IFAIL)
+      CALL VecAssemblyEnd(RHS,IFAIL)
+a55 4
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"vec.output",
+C    +                         VIEWER_STDOUT_SELF,IFAIL) 
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +                     VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IFAIL)
+a56 1
+C     CALL VecView(RHS,VIEWER_STDOUT_SELF,IFAIL)
+a57 4
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL)
+C     write(6,*)s 
+C
+C
+a58 6
+C     write(6,*)'VecSetValues has returned ',ifail
+C     write(6,*)ipoin,ni,(y(i),i=1,ni),(ix(i),i=1,ni)
+C     write(6,*)'VecSetValues has returned ',ifail
+C     write(6,*)'VecAssemblyBegin has returned ',ifail
+C     write(6,*)'VecAssemblyEnd has returned ',ifail
+C     write(6,*)'Leaving SETBC1'
+a59 2
+C
+C
+@
+
+
+1.4
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d9 3
+@
+
+
+1.3
+log
+@Unused variables removed
+@
+text
+@d11 3
+a13 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/viewer.h"
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@d27 1
+a27 1
+      INTEGER IPOIN,ICODE,NI,IDIM,i,IFAIL
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a1 1
+C ------------------------------ + ------------------------------
+d3 5
+a7 1
+      SUBROUTINE SETBC4A( NR, RHS, NODCODE )
+d11 23
+a33 4
+C     This routine applies the boundary conditions to the
+C     r.h.s. of the turbulence equations.
+C     Dirichlet boundary conditions are set on no-slip
+C     solid wall boundary nodes,
+d35 1
+d37 1
+d39 1
+a39 1
+      INTEGER NR
+d41 1
+a41 2
+      DOUBLE PRECISION RHS(*)
+      INTEGER NODCODE(*)
+d43 25
+a67 1
+      INTEGER INODE
+a69 3
+      DO 1 INODE = 1 , NR
+         IF(  NODCODE(INODE) .EQ. 1000 )RHS(INODE) = 0.D0
+    1 CONTINUE
+d71 8
+a78 1
+      END
+@

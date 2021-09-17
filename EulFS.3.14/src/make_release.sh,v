@@ -1,0 +1,105 @@
+head	1.3;
+access;
+symbols;
+locks
+	abonfi:1.3; strict;
+comment	@# @;
+
+
+1.3
+date	2013.07.15.16.43.25;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.06.04.11.54.07;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.02.05.08.05.06;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@A script used to check in a new release with rcs
+@
+
+
+1.3
+log
+@there are now *.F files in folder chemistry
+@
+text
+@for dir in seq euler navier-stokes util geometry schemes scalar turbo chemistry mpi
+do
+	cd $dir
+	echo `pwd`
+	if [ $dir = "schemes" ]
+	then
+ 		rcs -n$1: *.[f,F,c] Makefile
+	elif [ $dir = "chemistry" ]
+	then
+	 	rcs -n$1: *.[F,f] *.f90 Makefile
+	elif [ $dir = "mpi" ]
+	then
+	 	rcs -n$1: makefile
+	elif [ $dir = "seq" ]
+	then
+	 	rcs -n$1: *.[f,F] makefile make_*
+	else
+ 		rcs -n$1: *.[f,F] Makefile
+	fi
+	cd ..
+done
+cd ../include
+echo `pwd`
+rcs -n$1: *.com *.h *.inc
+@
+
+
+1.2
+log
+@fixed a problem with the chemistry dir
+@
+text
+@d10 1
+a10 1
+	 	rcs -n$1: *.f *.f90 Makefile
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+for dir in seq euler navier-stokes util geometry schemes scalar turbo chemistry
+d4 1
+a6 1
+		echo `pwd`
+d8 9
+d18 1
+a18 14
+		if [ $dir = "chemistry" ]
+		then
+			echo `pwd`
+	 	rcs -n$1: *.[f,f90] Makefile
+		else
+			if [ $dir = "seq" ]
+			then
+				echo `pwd`
+			 	rcs -n$1: *.[f,F] makefile
+			else
+			echo `pwd`
+ 			rcs -n$1: *.[f,F] Makefile
+			fi
+		fi
+d24 1
+a24 2
+rcs -n$1: *.[com,h,inc]
+cd -
+@

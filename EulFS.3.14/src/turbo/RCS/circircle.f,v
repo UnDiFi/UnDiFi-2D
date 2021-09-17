@@ -1,0 +1,68 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute the circumcirlce of a triangle
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION FUNCTION CIRCIRCLE(A,B,C)
+
+C   Subject 1.04: How do I generate a circle through three points?
+
+C   Let the three given points be a, b, c.  Use _0 and _1 to represent
+C   x and y coordinates. The coordinates of the center p=(p_0,p_1) of
+C   the circle determined by a, b, and c are:
+
+
+
+C     .. Function Arguments ..
+      DOUBLE PRECISION A(2),B(2),C(2)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION R2,TEMPA,TEMPB,TEMPC,TEMPD,TEMPE,TEMPF,TEMPG
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION P(2)
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+      TEMPA = B(1) - A(1)
+      TEMPB = B(2) - A(2)
+      TEMPC = C(1) - A(1)
+      TEMPD = C(2) - A(2)
+
+      TEMPE = TEMPA* (A(1)+B(1)) + TEMPB* (A(2)+B(2))
+      TEMPF = TEMPC* (A(1)+C(1)) + TEMPD* (A(2)+C(2))
+
+      TEMPG = 2.D0* (TEMPA* (C(2)-B(2))-TEMPB* (C(1)-B(1)))
+
+      P(1) = (TEMPD*TEMPE-TEMPB*TEMPF)/TEMPG
+      P(2) = (TEMPA*TEMPF-TEMPC*TEMPE)/TEMPG
+
+C   If G is zero then the three points are collinear and no finite-radius
+C   circle through them exists.  Otherwise, the radius of the circle is:
+
+      R2 = (A(1)-P(1))**2 + (A(2)-P(2))**2
+      CIRCIRCLE = SQRT(R2)
+
+      RETURN
+
+      END
+@

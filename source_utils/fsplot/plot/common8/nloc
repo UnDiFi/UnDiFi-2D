@@ -1,0 +1,12 @@
+      INTEGER     LCORG,LZROE,LCELNOD,LBNDPTR,LCELCEL
+      COMMON/NLOC/LCORG,LZROE,LCELNOD,LBNDPTR,LCELCEL
+C
+C	********** BE CAREFUL **********
+C
+C	If you modify the NLOC common, you have to modify the
+C	same common in the routines "ShowMemoryMap", "vide"
+C       and "blockdata" where it is NOT included. 
+C	Also, if you add a table, modify NTBL accordingly
+C	in the common ALLOC (also in "blockdata")
+C       and the array TABNAME in the routine
+C	ShowMemoryMap.

@@ -1,0 +1,2 @@
+NBINT          no. of inter-processor faces/edges on the current processor;
+               0 in the uni-processor case

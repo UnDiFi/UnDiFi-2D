@@ -1,0 +1,162 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.11.25.10.39.41;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@projector for constant pressure b.c. (incompressible)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+      SUBROUTINE PRJO2(ZROE,VN,PPOSZ,PNEGZ,PPOSU,PNEGU,NDIM,NOFVAR)
+C
+C     Compute projectors for inviscid wall boundary conditions
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants'
+C
+C#define DEBUG
+C
+#ifdef DEBUG
+      INTEGER ifail,lwork,ipiv(25)
+      LOGICAL WARNA
+      parameter(lwork=5)
+      DOUBLE PRECISION temp(25),work(lwork)
+#endif
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NOFVAR,NDIM
+C
+C     .. Array Arguments ..
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+      DOUBLE PRECISION VN(NDIM),PPOSU(NOFVAR,NOFVAR),
+     +PNEGU(NOFVAR,NOFVAR),PPOSZ(NOFVAR,NOFVAR),PNEGZ(NOFVAR,NOFVAR),
+     +ZROE(NOFVAR)
+C
+C     .. Local Scalars ..
+C
+      INTEGER i,j
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION WORK1(25)
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+C
+C     .. Data Statements ..
+C
+C     .. Executable Statements ..
+C
+      PNEGZ(1,1) = ZERO
+      PNEGZ(1,2) = ZERO
+      PNEGZ(1,3) = ZERO
+C
+      PNEGZ(2,1) = ZERO
+      PNEGZ(2,2) = ONE
+      PNEGZ(2,3) = ZERO
+C
+      PNEGZ(3,1) = ZERO
+      PNEGZ(3,2) = ZERO
+      PNEGZ(3,3) = ONE
+C
+      PPOSZ(1,1) = ONE
+      PPOSZ(1,2) = ZERO
+      PPOSZ(1,3) = ZERO
+C
+      PPOSZ(2,1) = ZERO
+      PPOSZ(2,2) = ZERO
+      PPOSZ(2,3) = ZERO
+C
+      PPOSZ(3,1) = ZERO
+      PPOSZ(3,2) = ZERO
+      PPOSZ(3,3) = ZERO
+C
+C   needed for compatibility with the compressible solver ..
+C
+      PNEGU(1,1) = ZERO
+      PNEGU(1,2) = ZERO
+      PNEGU(1,3) = ZERO
+C
+      PNEGU(2,1) = ZERO
+      PNEGU(2,2) = ONE
+      PNEGU(2,3) = ZERO
+C
+      PNEGU(3,1) = ZERO
+      PNEGU(3,2) = ZERO
+      PNEGU(3,3) = ONE
+C
+      PPOSU(1,1) = ONE
+      PPOSU(1,2) = ZERO
+      PPOSU(1,3) = ZERO
+C
+      PPOSU(2,1) = ZERO
+      PPOSU(2,2) = ZERO
+      PPOSU(2,3) = ZERO
+C
+      PPOSU(3,1) = ZERO
+      PPOSU(3,2) = ZERO
+      PPOSU(3,3) = ZERO
+C
+      IF(NDIM.EQ.2)RETURN
+C
+      PNEGZ(1,4) = ZERO
+      PNEGZ(2,4) = ZERO
+      PNEGZ(3,4) = ZERO
+C
+      PNEGZ(4,1) = ZERO
+      PNEGZ(4,2) = ZERO
+      PNEGZ(4,3) = ZERO
+      PNEGZ(4,4) = ONE
+C
+      PPOSZ(1,4) = ZERO
+      PPOSZ(2,4) = ZERO
+      PPOSZ(3,4) = ZERO
+C
+      PPOSZ(4,1) = ZERO
+      PPOSZ(4,2) = ZERO
+      PPOSZ(4,3) = ZERO
+      PPOSZ(4,4) = ZERO
+C
+      PNEGU(1,4) = ZERO
+      PNEGU(2,4) = ZERO
+      PNEGU(3,4) = ZERO
+C
+      PPOSU(1,4) = ZERO
+      PPOSU(2,4) = ZERO
+      PPOSU(3,4) = ZERO
+C
+      PNEGU(4,1) = ZERO
+      PNEGU(4,2) = ZERO
+      PNEGU(4,3) = ZERO
+      PNEGU(4,4) = ONE
+C
+      PPOSU(4,1) = ZERO
+      PPOSU(4,2) = ZERO
+      PPOSU(4,3) = ZERO
+      PPOSU(4,4) = ZERO
+C
+C
+      RETURN
+      END
+@

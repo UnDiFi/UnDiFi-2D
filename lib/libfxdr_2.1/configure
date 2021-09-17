@@ -1,0 +1,56 @@
+#!/bin/sh
+
+if test $# -eq 0; then
+	un=`uname -a`
+	un1=`echo $un | awk ' { print substr($1,1,4) }'`
+	un5=`echo $un | awk ' { print $5 }'`
+	un6=`echo $un | awk ' { print $6 }'`
+	if test $un1 = "HP-U"; then
+		sys=hpux
+	elif test $un1 = "Linu"; then
+		sys=linux
+	elif test $un1 = "IRIX"; then
+		sys=irix
+	elif test $un1 = "ULTR"; then
+		sys=ultrix
+	elif test $un1 = "AIX"; then
+		sys=aix
+	elif test $un1 = "OSF1"; then
+		sys=osf1
+	elif test $un1 = "SunO"; then
+		sys=sun
+		echo "Note: on a Sun, you must link your application programs"
+		echo "with the system nsl library in addition to the fxdr"
+		echo "library.  So, for example, you would add the following"
+		echo "to the end of your compile command:"
+		echo "    -L/usr/local/lib -lfxdr -lnsl"
+		echo " "
+	elif test $un5 = "CRAY"; then
+		if test $un6 = "T3E"; then
+			sys=unicos_t3e
+		else
+			sys=unicos
+		fi
+	else
+		echo "I can't figure out what kind of system this is,"
+		echo "or I just may not be set up to handle it."
+		echo "Try invoking configure with one of the following"
+		echo "arguments, if appropriate:"
+		echo "     hpux irix ultrix osf1 unicos aix linux"
+		exit
+	fi
+else
+	sys=$1
+fi
+
+if test ! -r Defines.$sys; then 
+	echo "I don't know how to handle system $sys"
+	echo "Please see the README file for configuring for an unsupported"
+	echo "system.  Or, you can just try 'make unsupported' and hope it"
+	echo "works!"
+	exit
+fi
+
+cat Defines.$sys Makefile.tmpl > Makefile
+echo "Configured a Makefile for $sys"
+echo "Now type \"make\""

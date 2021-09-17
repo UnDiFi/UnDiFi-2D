@@ -1,0 +1,68 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.02.09.17.34.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute laminar viscosity in the nodes
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE CALCVI(VISCL,ZROE,NDIM,NOFVAR,NPOIN)
+
+      IMPLICIT NONE
+
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'constants'
+      INCLUDE 'stream.com'
+
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR,NPOIN
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION VISCL(NPOIN),ZROE(NOFVAR,NDIM)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION KINETIC
+      DOUBLE PRECISION ASQR,DENSINV
+      INTEGER IPOIN
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION SUTHERLAW
+      EXTERNAL SUTHERLAW
+C     ..
+      DO 1 IPOIN = 1,NPOIN
+C
+          DENSINV = ONE/ (ZROE(1,IPOIN)*ZROE(1,IPOIN))
+          KINETIC = ZROE(3,IPOIN)*ZROE(3,IPOIN) +
+     +              ZROE(4,IPOIN)*ZROE(4,IPOIN)
+          IF (NDIM.EQ.3) KINETIC = KINETIC + ZROE(5,IPOIN)*ZROE(5,IPOIN)
+          KINETIC = HALF*KINETIC*DENSINV
+          ASQR = GM1* (ZROE(2,IPOIN)/ZROE(1,IPOIN)-KINETIC)
+C
+C         kinematic viscosity
+C
+          VISCL(IPOIN) = SUTHERLAW(M_INFTY,ASQR,SQRT(ASQR))*DENSINV
+C
+    1 CONTINUE
+      RETURN
+
+      END
+@

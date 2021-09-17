@@ -1,0 +1,876 @@
+head	1.13;
+access
+	tesistim;
+symbols
+	release3_14_0:1.13
+	release3_13_0:1.13
+	release3_12_0:1.13
+	release3_11_0:1.13
+	release3_10_0:1.13
+	release3_8_0:1.13
+	release3_7_1:1.13
+	release3_7_0:1.12
+	release3_4_5:1.12
+	release3_4_4:1.6
+	release3_4_3:1.6
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.4
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.13
+date	2020.03.28.09.51.14;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2015.09.01.07.10.22;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2015.08.31.15.32.19;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2015.07.02.17.19.54;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2015.07.02.16.29.44;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2015.07.02.15.38.24;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2015.07.02.15.03.31;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.05.09.11.48.00;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.01.26.11.34.48;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.01.24.17.58.56;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2012.12.20.10.31.03;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.10.04.12.43.27;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Inviscid wall boundary conditions using the ghost cell approach
+@
+
+
+1.13
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE BC4VII(IELEM,VCN,VCZ,VCB,KPOS,NODRES,TSTEP,NDIM,
+     +                  NOFVERT,NOFVAR)
+C
+C     $Id: bc4vii.F,v 1.12 2015/09/01 07:10:22 abonfi Exp abonfi $
+C
+CCCCC#define PRINT
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute inviscid wall boundary conditions for compressible
+C     flows (ghost cell approach)
+C     here we use conserved variables
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'implicit.h'
+      include 'bnd.h'
+      include 'dofs.com'
+      include 'stream.com'
+      include 'time.com'
+      include 'three.com'
+C
+      INTEGER MAXNORDER,MAXORDSQR,LENA,LENB
+      PARAMETER(MAXNORDER=5,MAXORDSQR=MAXNORDER*MAXNORDER)
+      PARAMETER(LENA=MAXNOFEQN*MAXNOFEQN,LENB=LENA*(MAXNOFVERT-1))
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVAR,NOFVERT
+C
+C     On entry:
+C     --------
+C     IELEM  current boundary element
+C     NDIM   dimension of the space (2 or 3)
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION KPOS(NOFVAR,NOFVAR,*),
+     +                 NODRES(NOFVAR,*),TSTEP(NOFVAR,*),
+     +                 VCN(NDIM,NOFVERT),VCZ(NOFVAR,*),VCB(NDIM,NOFVERT)
+C
+C     On entry:
+C     --------
+C     VCN(1:NDIM,1:NOFVERT) cartesian components of the normals 
+C                           to the element sides/faces
+C                           the normal to the boundary face need
+C                           to be stored in VCN(1:NDIM,NOFVERT)
+C     VCZ(1:NOFVAR,1:NOFVERT) dependent variables in the vertices
+C                           of the current (IELEM) element
+C                           the freestream values need
+C                           to be stored in VCZ(1:NOFVAR,NOFVERT)
+C     Upon return:
+C     -----------
+C     KPOS(1:NOFVAR,1:NOFVAR,1:NOFVERT-1) positive inflow parameters
+C                   in the NOFVERT-1 vertices of the boundary face
+C     NODRES(1:NOFVAR,1:NOFVERT-1) nodal residual due to the incoming
+C                   characteristics in the NOFVERT-1 vertices 
+C                   of the boundary face
+C     TSTEP(NOFVAR,1:NOFVERT) contribution to the time-step in the
+C                   vertices of the current element
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION HELP,VOLUME,ALPHA
+      DOUBLE PRECISION ddot,DNRM2
+      INTEGER IFAIL,IVAR,IVERT,I,J,ILOCA,NORDER,NOFEQN,IADD
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION KMAT(MAXORDSQR),KNEG(MAXORDSQR),
+     >                 VLEFT(MAXORDSQR),VRIGHT(MAXORDSQR),
+     +                 WNEG(MAXNORDER),WPOS(MAXNORDER),WR(MAXNORDER),
+     >                 DUDZ(LENA),
+     4                 TEMPB(MAXNOFVAR*MAXNOFVAR), ! a bit of extra room
+     +                 DZDU(LENB),VARRAY(MAXNOFVAR),
+     7                 CG7(MAXNOFEQN,MAXNOFEQN)
+C
+C
+C#define PRINT
+C
+      DATA DUDZ/LENA*ZERO/
+      DATA DZDU/LENB*ZERO/
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DCOPY,DGEMM,LINEARIZE,MATSPLITVII,DDOT
+C     ..
+C     here the averaged state is computed using the states of the boundary
+C     cell including the vertex which is opposite to the bndry face
+C
+      NOFEQN = NDIM+2
+      NORDER = NOFEQN
+      VOLUME = ONE
+C
+      CALL DINIT(NOFVERT*(NOFVAR**2),ZERO,KPOS,1)
+C
+      DO 50 IVERT = 1, (NOFVERT-1) ! loop over the d vertices of the bndry face
+#ifdef PRINT
+         write(6,*)'ivert = ',ivert
+         CALL R8Mat_Print('General',' ',nofvar,nofvert,vcz,
+     +nofvar,'vcz matrix (before)',IFAIL)
+         CALL R8Mat_Print('General',' ',ndim,nofvert,vcn,
+     +ndim,'vcn matrix ',IFAIL)
+#endif
+C
+C     compute the starred state and put it into VCZ(*,NOFVERT): this is needed to compute the averaged state 
+C
+         CALL CALCPZ2(VCZ(1,IVERT),NDIM,CG7,MAXNOFEQN,VCN(1,NOFVERT))
+         CALL DGEMV('No',NOFEQN,NOFEQN,ONE,CG7,MAXNOFEQN,VCZ(1,IVERT),1,
+     &              ZERO,VCZ(1,NOFVERT),1)
+C
+         CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,
+     2                  NOFVAR,VOLUME)
+C
+         CALL PARM2PRIM(NDIM,IELEM)
+C
+         CALL MATSPLITXI(IELEM,NDIM,NORDER,VCN(1,NOFVERT),TEMPB,NORDER,
+     +                KMAT,KPOS(1,1,IVERT),KNEG,VLEFT,VRIGHT,NORDER,WR,
+     +                WPOS,WNEG,.TRUE.)
+C
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NOfeqn,NOfeqn,CG7,
+     +MAXNOFEQN,'CG7 matrix ',IFAIL)
+      CALL R8Mat_Print('General',' ',nofvar,nofvert,vcz,
+     +nofvar,'vcz matrix ',IFAIL)
+      CALL R8Mat_Print('General',' ',nofvar,nofvar,KPOS(1,1,IVERT),
+     +nofvar,'K(+) matrix ',IFAIL)
+      CALL R8Mat_Print('General',' ',norder,norder,kneg,
+     +norder,'K(-) matrix ',IFAIL)
+      pause 
+#endif
+C
+C     timestep
+C
+         IF( CHAR_TIMESTEPPING )THEN
+            HELP = ZERO
+            DO IVAR = 1,NORDER 
+               HELP = MAX(HELP,WPOS(IVAR))
+            ENDDO 
+         ELSE ! "standard" implementation
+            HELP = ZERO
+            DO IVAR = 1, NORDER
+               HELP = HELP + WPOS(IVAR) 
+            ENDDO
+         ENDIF
+         DO 4 IVAR = 1,NORDER
+             TSTEP(IVAR,IVERT) = HELP
+    4    CONTINUE
+C
+C
+C     Compute transformation matrices
+C
+         CALL PARM2CONS(ZAVG,DUDZ,NOFEQN,NDIM)
+!     write(12,*)ielem,(DUDZ(iadd),iadd=1,NOFEQN*NOFEQN)
+C
+C     compute tempA : = (dU/dZ) x (I-CG7)
+C
+         CALL DINIT(NOFEQN,ZERO,VARRAY,1)
+         CALL DCOPY(NDIM,VCN(1,NOFVERT),1,VARRAY(IX),1)
+         HELP = DNRM2(NDIM,VARRAY(IX),1)
+         CALL DSCAL(NDIM,ONE/HELP,VARRAY(IX),1) ! make n a unit vector and store in varray
+         ALPHA = TWO * DDOT(NDIM,VCZ(IX,IVERT),1,VARRAY(IX),1)
+         IF(LALE)THEN
+            ALPHA = ALPHA - VCZ(1,IVERT) * 
+     &              DDOT(NDIM,VCB(1,IVERT),1,VARRAY(IX),1)
+         ENDIF
+C
+C     compute tempB := - Kpos x (dU/dZ) 
+C
+         CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,MONE, 
+     +           KPOS(1,1,IVERT),NOFEQN,DUDZ,NOFEQN,ZERO,TEMPB,NOFEQN)
+C
+C     compute
+C
+         CALL DGEMV('No',NOFEQN,NOFEQN,ALPHA,TEMPB,NOFEQN,VARRAY,1,
+     &           ZERO,NODRES(1,IVERT),1)
+C
+C
+!     write(11,*)ielem,((KPOS(i,j,1),j=1,NOFVAR),i=1,NOFVAR)
+!     write(16,*)ielem,(tempb(iadd),iadd=1,NOFEQN*NOFEQN)
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NOFEQN,NOFEQN,DUDZ,
+     +NOFEQN,'dU/dZ ',IFAIL)
+      CALL R8Mat_Print('General',' ',NOFEQN,NOFEQN,TEMPB,
+     +NOFEQN,'- K x dudZ ',IFAIL)
+      CALL R8Mat_Print('General',' ',nofvar,nofvert,NODRES,
+     +nofvar,'nodres matrix ',IFAIL)
+#endif
+C
+      IF(.NOT.TIMEIMPL)GOTO 50
+C
+C     K(+) := K(+) * 2. * (dZ/dU)(ivert)
+C
+!     DO 55 IVERT = 1,NOFVERT - 1
+          ILOCA = (IVERT-1)*NOFEQN*NOFEQN+1
+          IF(PICARD) THEN
+C
+C     compute dZdU(ivert)
+          CALL MatdZdU(VCZ(1,IVERT),DZDU(ILOCA),NDIM,NOFEQN)
+          CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,-TWO,TEMPB,NOFEQN,
+     +               DZDU(ILOCA),NOFEQN,ZERO,KPOS(1,1,IVERT),
+     +               NOFVAR)
+          ENDIF
+#ifdef PRINT
+       write(6,*)ivert,TIMEIMPL,PICARD,NEWTON
+      CALL R8Mat_Print('General',' ',nofvar,nofvar,kpos(1,1,ivert),
+     +nofvar,'kpos matrix ',IFAIL)
+      write(6,*)'IE = ',ielem,' iv = ',ivert
+      pause 
+#endif
+   50 CONTINUE ! end loop over vertices
+C
+      RETURN
+
+      END
+!     cg5(3,1) = -2 * l * (l * u + m * v + w * n)
+!     cg5(3,3) = 2 * l ** 2
+!     cg5(3,4) = 2 * l * m
+!     cg5(3,5) = 2 * l * n
+!     cg5(4,1) = -2 * m * (l * u + m * v + w * n)
+!     cg5(4,3) = 2 * l * m
+!     cg5(4,4) = 2 * m ** 2
+!     cg5(4,5) = 2 * n * m
+!     cg5(5,1) = -2 * n * (l * u + m * v + w * n)
+!     cg5(5,3) = 2 * l * n
+!     cg5(5,4) = 2 * n * m
+!     cg5(5,5) = 2 * n ** 2
+C
+      SUBROUTINE CALCPZ2(Z,NDIM,CG7,LDA,AN)
+C
+C
+C#define PRINT
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute inviscid wall boundary conditions for compressible
+C     flows (ghost cell approach)
+C     here we use conserved variables
+C
+      include 'paramt.h'
+      include 'constants.h'
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NDIM,LDA
+      DOUBLE PRECISION CG7(LDA,*),AN(*),Z(*)
+      DOUBLE PRECISION L,M,N,ANN
+C
+      L = AN(1)
+      M = AN(2)
+      IF(NDIM.EQ.3)THEN
+         N = AN(3)
+      ELSE
+         N = ZERO
+      ENDIF
+      ANN = ONE/SQRT(L*L+M*M+N*N)
+      L = L*ANN
+      M = M*ANN
+      N = N*ANN
+C
+      cg7(1,1) = ONE
+      cg7(1,2) = ZERO
+      cg7(1,3) = ZERO
+      cg7(1,4) = ZERO
+C
+      cg7(2,1) = ZERO
+      cg7(2,2) = ONE
+      cg7(2,3) = ZERO
+      cg7(2,4) = ZERO
+C
+      cg7(3,1) = ZERO
+      cg7(3,2) = ZERO
+      cg7(3,3) = ONE - TWO * l ** 2
+      cg7(3,4) = -TWO * l * m
+C
+      cg7(4,1) = ZERO
+      cg7(4,2) = ZERO
+      cg7(4,3) = cg7(3,4)
+      cg7(4,4) = ONE - TWO * m ** 2
+C
+      IF(NDIM.EQ.2)RETURN
+C
+      cg7(1,5) = ZERO
+      cg7(2,5) = ZERO
+      cg7(3,5) = -TWO * l * n
+      cg7(4,5) = -TWO * n * m
+C
+      cg7(5,1) = ZERO
+      cg7(5,2) = ZERO
+      cg7(5,3) = -TWO * l * n
+      cg7(5,4) = -TWO * n * m
+      cg7(5,5) = ONE - TWO * n ** 2
+C
+      RETURN
+      END
+C
+      SUBROUTINE CALCPZ(Z,NDIM,CG7,LDA,AN)
+C
+C
+C#define PRINT
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute inviscid wall boundary conditions for compressible
+C     flows (ghost cell approach)
+C     here we use conserved variables
+C
+      include 'paramt.h'
+      include 'constants.h'
+      INCLUDE 'pfcgas.com'
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NDIM,LDA
+      DOUBLE PRECISION CG7(LDA,*),AN(*),Z(*)
+      DOUBLE PRECISION L,M,N,ANN,HELP,CNST
+C
+      L = AN(1)
+      M = AN(2)
+      IF(NDIM.EQ.3)THEN
+         N = AN(3)
+      ELSE
+         N = ZERO
+      ENDIF
+      ANN = ONE/SQRT(L*L+M*M+N*N)
+      L = L*ANN
+      M = M*ANN
+      N = N*ANN
+C
+      HELP = Z(3)*L+Z(4)*M
+      IF(NDIM.EQ.3)HELP = HELP + Z(5)*N
+C
+      CNST = TWO * GM1 * HELP
+C
+      cg7(1,1) = ONE
+      cg7(1,2) = ZERO
+      cg7(1,3) = ZERO
+      cg7(1,4) = ZERO
+C
+      cg7(2,1) = -CNST * HELP / (Z(1)*Z(1))
+      cg7(2,2) = ONE
+      cg7(2,3) = CNST * L / z(1)
+      cg7(2,4) = CNST * M / z(1)
+C
+      cg7(3,1) = TWO / z(1) * l * HELP
+      cg7(3,2) = ZERO
+      cg7(3,3) = ONE - TWO * l ** 2
+      cg7(3,4) = -TWO * l * m
+C
+      cg7(4,1) = TWO / z(1) * m * HELP
+      cg7(4,2) = ZERO
+      cg7(4,3) = -TWO * l * m
+      cg7(4,4) = ONE - TWO * m ** 2
+C
+      IF(NDIM.EQ.2)RETURN
+C
+      cg7(1,5) = ZERO
+      cg7(2,5) = CNST * N / z(1)
+      cg7(3,5) = -TWO * l * n
+      cg7(4,5) = -TWO * n * m
+C
+      cg7(5,1) = TWO / z(1) * n * HELP
+      cg7(5,2) = ZERO
+      cg7(5,3) = -TWO * l * n
+      cg7(5,4) = -TWO * n * m
+      cg7(5,5) = ONE - TWO * n ** 2
+C
+      RETURN
+      END
+@
+
+
+1.12
+log
+@unused stuff has been removed
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.11 2015/08/31 15:32:19 abonfi Exp abonfi $
+d103 1
+a103 1
+         CALL X04CAF('General',' ',nofvar,nofvert,vcz,
+d105 1
+a105 1
+         CALL X04CAF('General',' ',ndim,nofvert,vcn,
+d125 1
+a125 1
+      CALL X04CAF('General',' ',NOfeqn,NOfeqn,CG7,
+d127 1
+a127 1
+      CALL X04CAF('General',' ',nofvar,nofvert,vcz,
+d129 1
+a129 1
+      CALL X04CAF('General',' ',nofvar,nofvar,KPOS(1,1,IVERT),
+d131 1
+a131 1
+      CALL X04CAF('General',' ',norder,norder,kneg,
+d185 1
+a185 1
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,DUDZ,
+d187 1
+a187 1
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPB,
+d189 1
+a189 1
+      CALL X04CAF('General',' ',nofvar,nofvert,NODRES,
+d209 1
+a209 1
+      CALL X04CAF('General',' ',nofvar,nofvar,kpos(1,1,ivert),
+@
+
+
+1.11
+log
+@added the grid velocity term
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.10 2015/07/02 17:19:54 abonfi Exp abonfi $
+a231 82
+      SUBROUTINE CALCPZ3(Z,NDIM,CG7,LDA,AN)
+C
+C
+C#define PRINT
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute inviscid wall boundary conditions for compressible
+C     flows (ghost cell approach)
+C     here we use conserved variables
+C
+      include 'paramt.h'
+      include 'constants.h'
+      INCLUDE 'pfcgas.com'
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NDIM,LDA
+      DOUBLE PRECISION CG7(LDA,*),AN(*),Z(*)
+      DOUBLE PRECISION L,M,N,ANN
+C
+      L = AN(1)
+      M = AN(2)
+      IF(NDIM.EQ.3)THEN
+         N = AN(3)
+      ELSE
+         N = ZERO
+      ENDIF
+      ANN = ONE/SQRT(L*L+M*M+N*N)
+      L = L*ANN
+      M = M*ANN
+      N = N*ANN
+C
+      cg7(1,1) = ONE
+      cg7(1,2) = ZERO
+      cg7(1,3) = ZERO
+      cg7(1,4) = ZERO
+C
+      cg7(2,1) = -0.4D1 * (-dble(2 * z(3) * z(4) * l * m) - dble(2 * z(3
+     #) * z(5) * l * n) - dble(2 * z(4) * z(5) * n * m) + GAM
+     # * dble(z(3) ** 2) * dble(l ** 2) + GAM * dble(z(4) ** 
+     #2) * dble(m ** 2) + GAM * dble(z(5) ** 2) * dble(n ** 2
+     #) - dble(z(3) ** 2 * l ** 2) - dble(z(4) ** 2 * m ** 2) - dble(z(5
+     #) ** 2 * n ** 2) + TWO * dble(z(3)) * GAM * dble(z(4)
+     #) * dble(l) * dble(m) + TWO * dble(z(3)) * GAM * dble
+     #(z(5)) * dble(l) * dble(n) + TWO * dble(z(4)) * GAM *
+     # dble(z(5)) * dble(n) * dble(m)) / dble(z(1) ** 2)
+      cg7(2,2) = ONE
+      cg7(2,3) = 0.4D1 * (GAM - 0.1D1) * dble(l) * dble(z(3) 
+     #* l + z(4) * m + z(5) * n) / dble(z(1))
+      cg7(2,4) = 0.4D1 * (GAM - 0.1D1) * dble(m) * dble(z(3) 
+     #* l + z(4) * m + z(5) * n) / dble(z(1))
+C
+      cg7(3,1) = TWO / z(1) * l * (z(3) * l + z(4) * m + z(5) * n)
+      cg7(3,2) = ZERO
+      cg7(3,3) = ONE - TWO * l ** 2
+      cg7(3,4) = -TWO * l * m
+C
+      cg7(4,1) = TWO / z(1) * m * (z(3) * l + z(4) * m + z(5) * n)
+      cg7(4,2) = ZERO
+      cg7(4,3) = -TWO * l * m
+      cg7(4,4) = ONE - TWO * m ** 2
+C
+      IF(NDIM.EQ.2)RETURN
+C
+      cg7(1,5) = ZERO
+      cg7(2,5) = 0.4D1 * (GAM - 0.1D1) * dble(n) * dble(z(3) 
+     #* l + z(4) * m + z(5) * n) / dble(z(1))
+      cg7(3,5) = -TWO * l * n
+      cg7(4,5) = -TWO * n * m
+C
+      cg7(5,1) = TWO / z(1) * n * (z(3) * l + z(4) * m + z(5) * n)
+      cg7(5,2) = ZERO
+      cg7(5,3) = -TWO * l * n
+      cg7(5,4) = -TWO * n * m
+      cg7(5,5) = ONE - TWO * n ** 2
+C
+      RETURN
+      END
+
+@
+
+
+1.10
+log
+@working version, somewhat simplified wrt 1.6;
+the implicit matrix is incorrect, though
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.9 2015/07/02 16:29:44 abonfi Exp abonfi $
+d166 4
+@
+
+
+1.9
+log
+@unused stuff has been removed
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.8 2015/07/02 15:38:24 abonfi Exp abonfi $
+d6 1
+a6 1
+#define PRINT
+d162 3
+a164 3
+         CALL DCOPY(NDIM,VCN(1,IVERT),1,VARRAY(IX),1)
+         HELP = DNRM2(NDIM,VCN(1,IVERT),1)
+         CALL DSCAL(NDIM,ONE/HELP,VARRAY(IX),1)
+a165 4
+         write(6,*)ielem,(varray(j),j=1,NOFEQN),DNRM2(NDIM,VARRAY(IX),1)
+     &,alpha
+         write(6,*)ielem,"1",(HELP*varray(j),j=1,NOFEQN)
+         write(6,*)ielem,"2",(vcn(j,ivert),j=1,ndim)
+d172 2
+a176 1
+C     K(+) := dU/dV * K(+) is stored in TEMPB(1:NOFEQN,1:NOFEQN)
+@
+
+
+1.8
+log
+@printout modified
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.7 2015/07/02 15:03:31 abonfi Exp abonfi $
+d79 1
+a79 1
+     +                 DZDU(LENB),TEMPA(MAXNOFEQN**2),VARRAY(MAXNOFVAR),
+a152 9
+!        DO J = 1, NOFEQN
+!           DO I = 1, NOFEQN
+!              IF(J.EQ.I)THEN
+!                 CG7(i,J) = ONE-CG7(I,J)
+!              ELSE 
+!                 CG7(i,J) =    -CG7(I,J)
+!              ENDIF 
+!           ENDDO
+!        ENDDO
+a160 2
+!        CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,DUDZ,NOFEQN,
+!    +           CG7,MAXNOFEQN,ZERO,TEMPA,NOFEQN)
+d163 2
+a164 2
+         ALPHA = DNRM2(NDIM,VCN(1,IVERT),1)
+         CALL DSCAL(NDIM,ONE/ALPHA,VARRAY(IX),1)
+d166 4
+a169 2
+!        write(6,*)ielem,(varray(j),j=1,NOFEQN),DNRM2(NDIM,VARRAY(IX),1)
+!    &,alpha
+a185 2
+!     CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPA,
+!    +NOFEQN,'dU/dZ * (I - P_Z) ',IFAIL)
+@
+
+
+1.7
+log
+@Re-written trying to simplify the algebra
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.6 2013/05/09 11:48:00 abonfi Exp abonfi $
+d195 2
+a196 2
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPA,
+     +NOFEQN,'dU/dZ * (I - P_Z) ',IFAIL)
+d198 1
+a198 1
+     +NOFEQN,'- K x dudZ x (I-P_Z) matrix ',IFAIL)
+@
+
+
+1.6
+log
+@characteristic timestepping
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.5 2013/01/29 14:33:34 abonfi Exp abonfi $
+d6 1
+a6 1
+CCCC#define PRINT
+d20 1
+d69 2
+a70 2
+      DOUBLE PRECISION HELP,VOLUME
+      DOUBLE PRECISION ddot
+d79 1
+a79 1
+     +                 DZDU(LENB),TEMPA(MAXNOFEQN**2),
+d108 3
+a110 1
+C     compute the starred state
+d133 1
+d153 9
+a161 9
+         DO J = 1, NOFEQN
+            DO I = 1, NOFEQN
+               IF(J.EQ.I)THEN
+                  CG7(i,J) = ONE-CG7(I,J)
+               ELSE 
+                  CG7(i,J) =    -CG7(I,J)
+               ENDIF 
+            ENDDO
+         ENDDO
+d170 9
+a178 2
+         CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,DUDZ,NOFEQN,
+     +           CG7,MAXNOFEQN,ZERO,TEMPA,NOFEQN)
+d180 1
+a180 1
+C     compute tempB := - Kpos x tempA 
+d183 1
+a183 1
+     +           KPOS(1,1,IVERT),NOFEQN,TEMPA,NOFEQN,ZERO,TEMPB,NOFEQN)
+d185 1
+a185 1
+         CALL DGEMV('No',NOFEQN,NOFEQN,ONE,TEMPB,NOFEQN,VCZ(1,IVERT),1,
+@
+
+
+1.5
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.4 2013/01/26 11:34:48 abonfi Exp abonfi $
+d68 1
+a68 1
+      DOUBLE PRECISION SUM,VOLUME
+d98 2
+a99 1
+      DO 50 IVERT = 1, (NOFVERT-1)
+d101 2
+a102 2
+      write(6,*)'ivert = ',ivert
+      CALL X04CAF('General',' ',nofvar,nofvert,vcz,
+d104 1
+a104 1
+      CALL X04CAF('General',' ',ndim,nofvert,vcn,
+d134 11
+a144 1
+         SUM = ZERO
+d146 1
+a146 1
+             SUM = SUM + WPOS(IVAR)
+a147 1
+         TSTEP(1,IVERT) = SUM
+a209 3
+#endif
+!  55 CONTINUE
+#ifdef PRINT
+@
+
+
+1.4
+log
+@changed the name of an header file;
+defined a new parameter
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.3 2013/01/24 17:58:56 abonfi Exp abonfi $
+d239 1
+d391 1
+@
+
+
+1.3
+log
+@parameters used to dimension local arrays have been changed
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.2 2012/12/20 10:31:03 abonfi Exp abonfi $
+d17 1
+a17 1
+      include 'constants'
+d24 1
+a24 1
+      INTEGER MAXNORDER,MAXORDSQR,LENA
+d26 1
+a26 1
+      PARAMETER(LENA=MAXNOFEQN*MAXNOFEQN)
+d78 1
+a78 1
+     +                 DZDU(LENA*(MAXNOFVERT-1)),TEMPA(MAXNOFEQN**2),
+d85 1
+a85 1
+      DATA DZDU/192*ZERO/
+@
+
+
+1.2
+log
+@now passing the grid velocity among the arguments of the call
+@
+text
+@d4 1
+a4 1
+C     $Id: bc4vii.F,v 1.1 2010/10/04 12:43:27 abonfi Exp abonfi $
+d84 2
+a85 1
+      DATA DUDZ,DZDU/100*ZERO/
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE BC4VII(IELEM,VCN,VCZ,KPOS,NODRES,TSTEP,NDIM,NOFVERT,
+     +                  NOFVAR)
+d4 1
+a4 1
+C     $Id: bc5vii.F,v 1.10 2009/06/11 09:43:33 abonfi Exp $
+d21 2
+a22 1
+      include 'three'
+d44 1
+a44 1
+     +                 VCN(NDIM,NOFVERT),VCZ(NOFVAR,*)
+d110 2
+a111 1
+         CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+@

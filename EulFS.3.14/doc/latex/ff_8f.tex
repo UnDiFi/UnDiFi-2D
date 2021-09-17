@@ -1,0 +1,66 @@
+\hypertarget{ff_8f}{}\doxysection{src/geometry/ff.f File Reference}
+\label{ff_8f}\index{src/geometry/ff.f@{src/geometry/ff.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{ff_8f_ae955a6c79944513b1c4da9b2507078c6}{FF}} (I\+C\+E\+L\+N\+OD, I\+C\+E\+L\+C\+EL, I\+C\+E\+L\+F\+AC, N\+O\+F\+V\+E\+RT, N\+E\+L\+EM, C\+O\+RG, N\+D\+IM, N\+P\+O\+IN, F\+A\+C\+N\+OR, N\+F\+A\+CE, N\+B\+F\+AC, N\+B\+I\+NT)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{ff_8f_ae955a6c79944513b1c4da9b2507078c6}\label{ff_8f_ae955a6c79944513b1c4da9b2507078c6}} 
+\index{ff.f@{ff.f}!FF@{FF}}
+\index{FF@{FF}!ff.f@{ff.f}}
+\doxysubsubsection{\texorpdfstring{FF()}{FF()}}
+{\footnotesize\ttfamily subroutine FF (\begin{DoxyParamCaption}\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+N\+OD,  }\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+C\+EL,  }\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+F\+AC,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{double precision, dimension(ndim,npoin)}]{C\+O\+RG,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{double precision, dimension(ndim,nface)}]{F\+A\+C\+N\+OR,  }\item[{integer}]{N\+F\+A\+CE,  }\item[{integer}]{N\+B\+F\+AC,  }\item[{integer}]{N\+B\+I\+NT }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the faces of the mesh; one face normal (its {\ttfamily N\+D\+IM} cartesian components) is stored for each edge/face shared by two elements i.\+e. the normals of the inner (shared) faces are N\+OT duplicated; the pointer {\ttfamily I\+C\+E\+L\+F\+A\+C(i,j)} is used to address the faces of a cell and know whether it is pointing inside or outside
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+N\+OD} & Cell to node pointer\+: {\ttfamily I\+C\+E\+L\+N\+O\+D(i,j)} gives the global node number of the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+C\+EL} & Cell to cell pointer\+: {\ttfamily I\+C\+E\+L\+C\+E\+L(i,j)} gives the element number that shares the face opposite the i-\/th vertex of the j-\/th element if 0 or $>$ {\ttfamily N\+E\+L\+EM}, that face is a boundary face \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+F\+AC} & Cell to face pointer\+: {\ttfamily I\+C\+E\+L\+F\+A\+C(i,j)} gives the global face number of the face opposite the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em C\+O\+RG} & Cartesian coordinates of the meshpoints \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & nof interior nodes in the mesh \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em F\+A\+C\+N\+OR} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+F\+A\+CE} & nof faces in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+B\+F\+AC} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+B\+I\+NT} & nof inter-\/processor faces\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+11 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:45\+:59 
+\end{DoxyParagraph}

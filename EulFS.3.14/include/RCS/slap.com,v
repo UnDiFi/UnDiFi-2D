@@ -1,0 +1,30 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the SLAP library
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER LIGW
+      PARAMETER(LIGW=20)
+      INTEGER IGWK(LIGW),NSAVE,ISYM,ITOL,ITMAX,ITER
+      COMMON /COMSLAP_I/ IGWK,NSAVE,ISYM,ITOL,ITMAX,ITER
+      DOUBLE PRECISION TOL,ERR
+      COMMON /COMSLAP_R/ TOL,ERR
+@

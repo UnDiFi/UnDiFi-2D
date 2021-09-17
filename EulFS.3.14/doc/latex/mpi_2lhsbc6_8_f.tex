@@ -1,0 +1,43 @@
+\hypertarget{mpi_2lhsbc6_8_f}{\section{src/mpi/lhsbc6.F File Reference}
+\label{mpi_2lhsbc6_8_f}\index{src/mpi/lhsbc6.\-F@{src/mpi/lhsbc6.\-F}}
+}
+{\ttfamily \#include \char`\"{}finclude/petscsys.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscvec.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscmat.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscis.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}iset.\-com\char`\"{}}\\*
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{mpi_2lhsbc6_8_f_aac4e6876ab489778238e3e82d24dceaa}{isothwall} (\hyperlink{ibc2_8com_ad2108d58343608772fff791c23da58f5}{A}, X, \hyperlink{bnd_8com_a4842eb20d87380d011dd06416621e6aa}{I\-B\-G\-N}, N\-D\-I\-M, N\-O\-F\-V\-A\-R, C\-O\-M\-P\-R\-E\-S\-S\-I\-B\-L\-E)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{mpi_2lhsbc6_8_f_aac4e6876ab489778238e3e82d24dceaa}{\index{mpi/lhsbc6.\-F@{mpi/lhsbc6.\-F}!isothwall@{isothwall}}
+\index{isothwall@{isothwall}!mpi/lhsbc6.F@{mpi/lhsbc6.\-F}}
+\subsubsection[{isothwall}]{\setlength{\rightskip}{0pt plus 5cm}subroutine isothwall (
+\begin{DoxyParamCaption}
+\item[{}]{A, }
+\item[{double precision, dimension($\ast$)}]{X, }
+\item[{integer}]{I\-B\-G\-N, }
+\item[{integer}]{N\-D\-I\-M, }
+\item[{integer}]{N\-O\-F\-V\-A\-R, }
+\item[{logical}]{C\-O\-M\-P\-R\-E\-S\-S\-I\-B\-L\-E}
+\end{DoxyParamCaption}
+)}}\label{mpi_2lhsbc6_8_f_aac4e6876ab489778238e3e82d24dceaa}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em A} & is the P\-E\-T\-Sc jacobian matrix \\
+\hline
+\mbox{\tt in}  & {\em X} & is the F\-O\-R\-T\-R\-A\-N vector of C\-O\-N\-S\-E\-R\-V\-E\-D variables \\
+\hline
+\mbox{\tt in}  & {\em I\-B\-G\-N} & the order of the system to be solved \\
+\hline
+\mbox{\tt in}  & {\em N\-D\-I\-M} & the dimension of the space \\
+\hline
+\mbox{\tt in}  & {\em N\-O\-F\-V\-A\-R} & nof degrees of freedom within each gridpoint \\
+\hline
+\mbox{\tt in}  & {\em C\-O\-M\-P\-R\-E\-S\-S\-I\-B\-L\-E} & is currently unused \\
+\hline
+\end{DoxyParams}

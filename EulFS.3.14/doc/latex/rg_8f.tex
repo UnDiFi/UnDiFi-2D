@@ -1,0 +1,72 @@
+\hypertarget{rg_8f}{}\doxysection{src/util/rg.f File Reference}
+\label{rg_8f}\index{src/util/rg.f@{src/util/rg.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{rg_8f_a8942cae6319671cdf7ba91a0ba689cc9}{rg}} (nm, n, a, wr, wi, matz, z, iv1, fv1, ierr)
+\item 
+subroutine \mbox{\hyperlink{rg_8f_aba120d9bbf60938700210c16106cdf2f}{balanc}} (nm, n, a, low, igh, scale)
+\item 
+subroutine \mbox{\hyperlink{rg_8f_a88904eee0d26b87d49e5ff3f8f4fa6d1}{balbak}} (nm, n, low, igh, scale, m, z)
+\item 
+subroutine \mbox{\hyperlink{rg_8f_a0a5595f19cd351dc283c4be4ffd1096e}{cdiv}} (ar, ai, br, bi, cr, ci)
+\item 
+subroutine \mbox{\hyperlink{rg_8f_a721848a66951298977535e93e3ad353b}{elmhes}} (nm, n, low, igh, a, int)
+\item 
+subroutine \mbox{\hyperlink{rg_8f_a3937bdfec6d2fc2a7c998388d12eab4f}{eltran}} (nm, n, low, igh, a, int, z)
+\item 
+subroutine \mbox{\hyperlink{rg_8f_a629b9c03a461254bd4d5b1c36efbc2dd}{hqr}} (nm, n, low, igh, h, wr, wi, ierr)
+\item 
+subroutine \mbox{\hyperlink{rg_8f_ae4440094f77fe6b409524b1c869bedb9}{hqr2}} (nm, n, low, igh, h, wr, wi, z, ierr)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{rg_8f_aba120d9bbf60938700210c16106cdf2f}\label{rg_8f_aba120d9bbf60938700210c16106cdf2f}} 
+\index{rg.f@{rg.f}!balanc@{balanc}}
+\index{balanc@{balanc}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{balanc()}{balanc()}}
+{\footnotesize\ttfamily subroutine balanc (\begin{DoxyParamCaption}\item[{integer}]{nm,  }\item[{integer}]{n,  }\item[{double precision, dimension(nm,n)}]{a,  }\item[{integer}]{low,  }\item[{integer}]{igh,  }\item[{double precision, dimension(n)}]{scale }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{rg_8f_a88904eee0d26b87d49e5ff3f8f4fa6d1}\label{rg_8f_a88904eee0d26b87d49e5ff3f8f4fa6d1}} 
+\index{rg.f@{rg.f}!balbak@{balbak}}
+\index{balbak@{balbak}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{balbak()}{balbak()}}
+{\footnotesize\ttfamily subroutine balbak (\begin{DoxyParamCaption}\item[{integer}]{nm,  }\item[{integer}]{n,  }\item[{integer}]{low,  }\item[{integer}]{igh,  }\item[{double precision, dimension(n)}]{scale,  }\item[{integer}]{m,  }\item[{double precision, dimension(nm,m)}]{z }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{rg_8f_a0a5595f19cd351dc283c4be4ffd1096e}\label{rg_8f_a0a5595f19cd351dc283c4be4ffd1096e}} 
+\index{rg.f@{rg.f}!cdiv@{cdiv}}
+\index{cdiv@{cdiv}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{cdiv()}{cdiv()}}
+{\footnotesize\ttfamily subroutine cdiv (\begin{DoxyParamCaption}\item[{double precision}]{ar,  }\item[{double precision}]{ai,  }\item[{double precision}]{br,  }\item[{double precision}]{bi,  }\item[{double precision}]{cr,  }\item[{double precision}]{ci }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{rg_8f_a721848a66951298977535e93e3ad353b}\label{rg_8f_a721848a66951298977535e93e3ad353b}} 
+\index{rg.f@{rg.f}!elmhes@{elmhes}}
+\index{elmhes@{elmhes}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{elmhes()}{elmhes()}}
+{\footnotesize\ttfamily subroutine elmhes (\begin{DoxyParamCaption}\item[{integer}]{nm,  }\item[{integer}]{n,  }\item[{integer}]{low,  }\item[{integer}]{igh,  }\item[{double precision, dimension(nm,n)}]{a,  }\item[{integer, dimension(igh)}]{int }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{rg_8f_a3937bdfec6d2fc2a7c998388d12eab4f}\label{rg_8f_a3937bdfec6d2fc2a7c998388d12eab4f}} 
+\index{rg.f@{rg.f}!eltran@{eltran}}
+\index{eltran@{eltran}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{eltran()}{eltran()}}
+{\footnotesize\ttfamily subroutine eltran (\begin{DoxyParamCaption}\item[{integer}]{nm,  }\item[{integer}]{n,  }\item[{integer}]{low,  }\item[{integer}]{igh,  }\item[{double precision, dimension(nm,igh)}]{a,  }\item[{integer, dimension(igh)}]{int,  }\item[{double precision, dimension(nm,n)}]{z }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{rg_8f_a629b9c03a461254bd4d5b1c36efbc2dd}\label{rg_8f_a629b9c03a461254bd4d5b1c36efbc2dd}} 
+\index{rg.f@{rg.f}!hqr@{hqr}}
+\index{hqr@{hqr}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{hqr()}{hqr()}}
+{\footnotesize\ttfamily subroutine hqr (\begin{DoxyParamCaption}\item[{integer}]{nm,  }\item[{integer}]{n,  }\item[{integer}]{low,  }\item[{integer}]{igh,  }\item[{double precision, dimension(nm,n)}]{h,  }\item[{double precision, dimension(n)}]{wr,  }\item[{double precision, dimension(n)}]{wi,  }\item[{integer}]{ierr }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{rg_8f_ae4440094f77fe6b409524b1c869bedb9}\label{rg_8f_ae4440094f77fe6b409524b1c869bedb9}} 
+\index{rg.f@{rg.f}!hqr2@{hqr2}}
+\index{hqr2@{hqr2}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{hqr2()}{hqr2()}}
+{\footnotesize\ttfamily subroutine hqr2 (\begin{DoxyParamCaption}\item[{integer}]{nm,  }\item[{integer}]{n,  }\item[{integer}]{low,  }\item[{integer}]{igh,  }\item[{double precision, dimension(nm,n)}]{h,  }\item[{double precision, dimension(n)}]{wr,  }\item[{double precision, dimension(n)}]{wi,  }\item[{double precision, dimension(nm,n)}]{z,  }\item[{integer}]{ierr }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{rg_8f_a8942cae6319671cdf7ba91a0ba689cc9}\label{rg_8f_a8942cae6319671cdf7ba91a0ba689cc9}} 
+\index{rg.f@{rg.f}!rg@{rg}}
+\index{rg@{rg}!rg.f@{rg.f}}
+\doxysubsubsection{\texorpdfstring{rg()}{rg()}}
+{\footnotesize\ttfamily subroutine rg (\begin{DoxyParamCaption}\item[{integer}]{nm,  }\item[{integer}]{n,  }\item[{double precision, dimension(nm,n)}]{a,  }\item[{double precision, dimension(n)}]{wr,  }\item[{double precision, dimension(n)}]{wi,  }\item[{integer}]{matz,  }\item[{double precision, dimension(nm,n)}]{z,  }\item[{integer, dimension(n)}]{iv1,  }\item[{double precision, dimension(n)}]{fv1,  }\item[{integer}]{ierr }\end{DoxyParamCaption})}
+

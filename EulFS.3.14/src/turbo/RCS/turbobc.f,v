@@ -1,0 +1,314 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	98.02.10.08.56.23;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.02.09.17.34.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute production and destruction terms on no-slip nodes
+@
+
+
+1.2
+log
+@Bug fixed with the computation of production and
+destruction terms
+@
+text
+@      SUBROUTINE TURBOBC(NPOIN,NELEM,NBFAC,NDIM,NOFVERT,NOFVAR,
+     +                   IADJ,IFRST,IHTRS,PROD,DEST,
+     +                   IBNDFAC,LVISCL)
+C
+C     Compute production+destruction terms for
+C     wall boundary nodes for the Spalart-Allmaras model
+C     on no-slip wall there is balance between the diffusion
+C     term and the sum of both production and destruction terms
+C
+C     On a no-slip surface: Diff+Prod+Destr=0
+C
+C     We are interested in the sum of Prod+Destr
+C
+C
+      IMPLICIT NONE
+C
+C
+      INCLUDE 'paramt.h'
+C
+C
+      INCLUDE 'constants'
+      INCLUDE 'nloc'
+      INCLUDE 'three'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd'
+      INCLUDE 'flags.com'
+      INCLUDE 'turb.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'implicit.h'
+      INCLUDE 'IO'
+C
+C
+C     Sets residual and local timestep to zero
+C
+C     .. Parameters ..
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN,NBFAC,LVISCL
+C     ..
+C     .. Array Arguments ..
+      INTEGER IADJ(*),IFRST(*),IHTRS(*),IBNDFAC(3,NBFAC)
+      DOUBLE PRECISION PROD(*),DEST(*)
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TV,VI,VOLUME
+C
+C     In a boundary layer Prod = Diff and Destr = -4 Diff
+C     this is just to give PROD and DIFF two different values
+C     in practice we need only their sum
+C
+C
+      DOUBLE PRECISION ALPHA,BETA,TEMP
+      PARAMETER(ALPHA=1.0d0/3.d0,BETA=-1.d0-ALPHA) 
+      INTEGER I,IELEM,IFAIL,ISTKGT,IVERT,J,IFACE,ILAST,
+     +        JBGN,JEND,IPOIN,JFRST,JLAST,KVERT,IBC
+      LOGICAL COMPRESSIBLE
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION TSTEP(VMAX),NODRES(VMAX),
+     +                 STIFC(VMAX*VMAX),STIFD(VMAX*VMAX),VCN(3*VMAX),
+     +                 VCP(3*VMAX),VCZ(NMAX*VMAX),VISCT(VMAX),
+     +                 VISCL(VMAX)
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX),ISTAK(1),KCN(VMAX)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,DNRM2
+      integer icycl 
+      EXTERNAL DDOT,DNRM2
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL CELPTR,DGTHR,DINIT,LINEARIZE,PARM2PRIM,
+     +         TDIFF,VISCO
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS,MAX,SIGN,SQRT
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C     ..
+C
+      COMPRESSIBLE = (KAN.EQ.4)
+C
+      CALL DINIT(NPOIN,ZERO,PROD,1) 
+      CALL DINIT(NPOIN,ZERO,DEST,1)
+C
+C     Loops over no-slip wall nodes
+C
+      DO 110 I = 1,NPOIN6
+C
+          JBGN = IFRST(I) 
+          JEND = IFRST(I+1) -1
+          IPOIN = IHTRS(I) 
+C         write(6,*)'node ',ipoin
+C
+          DO 90 J = JBGN,JEND
+C
+          IF (TIMEIMPL) THEN
+              CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+              CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFD,1)
+          ENDIF
+C
+C         loop over the elements surrounding wall nodes
+C
+          IELEM = IADJ(J)
+C         write(6,*)'		element ',ielem
+C
+          CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,NELEM,1,ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+C
+C     COMPUTES THE GRADIENT OF THE flow VARIABLES
+C
+C         CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+C    +                   VOLUME)
+C
+C         IF (COMPRESSIBLE) CALL PARM2PRIM(NDIM,IELEM)
+C
+C     set a cell to node pointer with 1 based indexing
+C
+          DO 7 IVERT = 1,NOFVERT
+             KCN(IVERT)=ICN(IVERT)+1
+    7     CONTINUE
+C
+C     retrieve turbulent and laminar viscosity and store in VCZ
+C
+          CALL DGTHR(NOFVERT,DSTAK(LTURB),VISCT,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LVISCL),VISCL,KCN)
+C
+C     COMPUTES THE GRADIENT OF THE turbulent viscosity
+C
+          CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VISCT,1,VOLUME)
+C
+C
+          TV = ZERO
+          VI = ZERO
+          DO 10 IVERT = 1, NOFVERT
+              TV = TV + VISCT(IVERT) 
+              VI = VI + VISCL(IVERT) 
+   10     CONTINUE
+C
+          TV = TV/NOFVERT
+          VI = VI/NOFVERT
+C
+C     Diffusion term
+C
+          CALL DINIT(NOFVERT,ZERO,NODRES,1)
+C
+          CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,VISCT,NODRES,TSTEP,VCN,
+     +               STIFD,NDIM,NOFVERT,VOLUME)
+C
+C     Non conservative diffusion term
+C
+          CALL TDIFF(IELEM,TCB2*REINV/TPR1,VISCT,NODRES,TSTEP,VCN,STIFD,
+     +               NDIM,NOFVERT,VOLUME)
+C
+          DO 19 IVERT = 1, NOFVERT
+             IF( KCN(IVERT) .EQ. IPOIN )THEN
+                 TEMP = NODRES(IVERT)
+C                write(6,*)'		',temp
+                 PROD(IPOIN) = PROD(IPOIN) + ALPHA * TEMP
+                 DEST(IPOIN) = PROD(IPOIN) + BETA * TEMP
+             ENDIF
+   19     CONTINUE
+C
+   90 CONTINUE
+C
+  110 CONTINUE
+C     goto 81
+C
+C     loop over boundary bodies
+C
+C     write(6,*)'nbfac ',nbfac
+      DO 80 IFACE = 1, NBFAC
+C
+              IELEM = IBNDFAC(1,IFACE)
+              KVERT = IBNDFAC(2,IFACE)
+              IBC = ICOLOR(IBNDFAC(3,IFACE))
+              IF( IBC .NE. 6 )GOTO 80
+C
+              IF (TIMEIMPL) THEN
+                  CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+                  CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFD,1)
+              ENDIF
+C
+C
+          CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,NELEM,1,ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+C
+C     set a cell to node pointer with 1 based indexing
+C
+          DO 17 IVERT = 1,NOFVERT
+             KCN(IVERT)=ICN(IVERT)+1
+   17     CONTINUE
+C
+C     retrieve turbulent and laminar viscosity and store in VCZ
+C
+          CALL DGTHR(NOFVERT,DSTAK(LTURB),VISCT,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LVISCL),VISCL,KCN)
+C
+C     COMPUTES THE GRADIENT OF THE turbulent viscosity
+C
+          CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VISCT,1,VOLUME)
+C
+          TV = ZERO
+          VI = ZERO
+          DO 12 IVERT = 1, NOFVERT
+              TV = TV + VISCT(IVERT) 
+              VI = VI + VISCL(IVERT) 
+   12     CONTINUE
+C
+          TV = TV/NOFVERT
+          VI = VI/NOFVERT
+C
+C     Diffusion term
+C
+C
+          CALL DINIT(NOFVERT,ZERO,NODRES,1)
+C
+          CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,VISCT,NODRES,TSTEP,VCN,
+     +               STIFD,NDIM,NOFVERT,VOLUME)
+C
+C     Non conservative diffusion term
+C
+          CALL TDIFF(IELEM,TCB2*REINV/TPR1,VISCT,NODRES,TSTEP,VCN,STIFD,
+     +               NDIM,NOFVERT,VOLUME)
+C
+C     the diffusion term (TEMP) to be sent to each of the 
+C     wall boundary nodes is equal that sent to the node 
+C     opposite the boundary face (KVERT)
+C
+          TEMP = NODRES(KVERT)
+          DO 29 I= 1, (NOFVERT-1)
+             IVERT = ICYCL(KVERT+I,NOFVERT) 
+             IPOIN = KCN(IVERT)
+C         write(6,*)'		',ipoin
+             PROD(IPOIN) = PROD(IPOIN) +ALPHA * TEMP
+             DEST(IPOIN) = DEST(IPOIN) +BETA * TEMP
+   29     CONTINUE
+C         write(6,*)'		',temp
+C
+C         end loop over the no-slip wall faces
+C
+   80     CONTINUE
+C
+   81     CONTINUE
+C     do i= 1,npoin6
+C        IPOIN = IHTRS(I) 
+C        write(6,*)ipoin,prod(ipoin)
+C     enddo
+C     stop
+ 
+      RETURN
+
+  200 FORMAT (5X,'Error on scalar residual in ELEM # ',I6,/,12X,'true',
+     +       17X,'computed',14X,'error',/,3 (10X,D12.5))
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d91 3
+d168 2
+a169 3
+                 PROD(IPOIN) = ALPHA * TEMP
+                 PROD(IPOIN) = TEMP
+                 DEST(IPOIN) = BETA * TEMP
+d176 1
+a245 1
+             PROD(IPOIN) = PROD(IPOIN) +TEMP
+d254 6
+@

@@ -1,0 +1,3032 @@
+head	1.61;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.61
+	release3_13_0:1.61
+	release3_12_0:1.61
+	release3_11_0:1.61
+	release3_10_0:1.61
+	release3_8_0:1.61
+	release3_7_1:1.60
+	release3_7_0:1.60
+	release3_4_5:1.59
+	release3_4_4:1.59
+	release3_4_3:1.59
+	release3_4_2:1.59
+	release3_4_1:1.59
+	release3_4_0:1.58
+	release3_3_5:1.57
+	release3_3_4:1.57
+	release3_3_3:1.57
+	release3_3_2:1.57
+	release3_3_0:1.56
+	release3_3_1:1.57;
+locks
+	abonfi:1.61; strict;
+comment	@c @;
+
+
+1.61
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.60;
+
+1.60
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.59;
+
+1.59
+date	2013.06.07.15.30.07;	author abonfi;	state Exp;
+branches;
+next	1.58;
+
+1.58
+date	2013.05.15.10.33.02;	author abonfi;	state Exp;
+branches;
+next	1.57;
+
+1.57
+date	2013.01.26.11.48.03;	author abonfi;	state Exp;
+branches;
+next	1.56;
+
+1.56
+date	2013.01.24.07.33.41;	author abonfi;	state Exp;
+branches;
+next	1.55;
+
+1.55
+date	2012.04.03.12.07.47;	author abonfi;	state Exp;
+branches;
+next	1.54;
+
+1.54
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.53;
+
+1.53
+date	2010.10.04.12.23.03;	author abonfi;	state Exp;
+branches;
+next	1.52;
+
+1.52
+date	2009.10.13.08.13.31;	author abonfi;	state Exp;
+branches;
+next	1.51;
+
+1.51
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.50;
+
+1.50
+date	2009.06.11.08.54.42;	author abonfi;	state Exp;
+branches;
+next	1.49;
+
+1.49
+date	2008.02.22.11.00.38;	author abonfi;	state Exp;
+branches;
+next	1.48;
+
+1.48
+date	2006.11.28.10.59.47;	author abonfi;	state Exp;
+branches;
+next	1.47;
+
+1.47
+date	2006.11.27.09.41.01;	author abonfi;	state Exp;
+branches;
+next	1.46;
+
+1.46
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.45;
+
+1.45
+date	2005.10.22.11.03.52;	author abonfi;	state Exp;
+branches;
+next	1.44;
+
+1.44
+date	2005.09.09.08.47.41;	author abonfi;	state Exp;
+branches;
+next	1.43;
+
+1.43
+date	2005.07.17.19.07.09;	author aldo;	state Exp;
+branches;
+next	1.42;
+
+1.42
+date	2004.08.22.17.51.49;	author aldo;	state Exp;
+branches;
+next	1.41;
+
+1.41
+date	2004.03.18.02.28.31;	author aldo;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	2003.08.08.03.37.30;	author abonfi;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	2002.11.02.16.00.06;	author abonfi;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	2002.10.25.06.02.17;	author abonfi;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2002.09.14.09.04.14;	author abonfi;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2002.02.19.09.19.00;	author abonfi;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2001.10.08.15.48.37;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2001.07.19.09.55.54;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2001.07.04.06.50.31;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2000.11.22.14.39.13;	author aldo;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2000.11.16.13.05.19;	author aldo;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2000.10.25.10.24.02;	author aldo;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2000.10.20.08.36.40;	author aldo;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2000.09.22.11.59.56;	author aldo;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2000.08.17.09.14.36;	author aldo;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2000.08.17.08.48.07;	author aldo;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2000.08.12.10.18.58;	author aldo;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2000.06.23.16.40.17;	author aldo;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	99.12.27.09.20.01;	author aldo;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	99.12.18.13.09.00;	author aldo;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	99.12.09.10.26.17;	author aldo;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	99.12.03.21.29.57;	author aldo;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	99.12.02.08.40.18;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	99.11.25.08.37.46;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	99.11.05.21.00.25;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	99.09.17.08.29.34;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	99.09.03.11.07.30;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	99.03.19.10.56.02;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	98.12.23.11.53.06;	author aldo;	state Exp;
+branches
+	1.12.1.1;
+next	1.11;
+
+1.11
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	98.08.13.13.17.57;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.07.23.16.59.38;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.05.17.08.51.17;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.04.21.21.02.52;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.03.16.17.12.35;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.02.15.33.14;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.01.22.05.56;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.12.01.15.40.42;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.00.28;	author aldo;	state Exp;
+branches;
+next	;
+
+1.12.1.1
+date	99.09.15.14.48.06;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute nodal residuals
+@
+
+
+1.61
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     1                  NELEM,NFACE,NBFAC,ZROE,PetscDT,PetscRHS,PetscA,
+     2                  SCALARSCHEME,MATRIXSCHEME,TModelScheme,
+     3                  EulerModel,NSModel,TurbulenceModel)
+C
+C     This routine computes the NODal RESidual, i.e. it
+C     assembles the r.h.s. (PetscRHS), the nodal timestep (PetscDT)
+C     and the matrix (A)
+C
+C
+C     $Id: nodres.F,v 1.60 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C#define DEBUG
+C#define SKIP_BNDRY_VFLUX
+C#define SKIP_BNDRY_WFLUX
+C#define SKIP_BNDRY_FFLUX
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscmat
+      use petscvec
+C
+      IMPLICIT NONE
+C
+C     Scalar Arguments ..
+C
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NPNOD,NELEM,NFACE,NBFAC,
+     &NTURB
+C
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NPOIN   no. of interior (processor owned) meshpoints; 
+C             global number of meshpoints in the uni-processor case
+C     NGHOST  no. of ghost meshpoints on the current processor; 
+C             0 the uni-processor case
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+C     NFACE   number of edges/faces in the mesh for the current 
+C             processor (multi-processor case) or global number 
+C             of edges/faces in the mesh (uni-processor case).
+C     NBFAC   no. of processor owned boundary faces/edges;
+C             global number of boundary faces/edges
+C             in the uni-processor case.
+C
+C     PETSc stuff
+C
+      Mat PetscA
+      Vec PetscDT,PetscRHS
+      DOUBLE PRECISION ZROE(NOFVAR*NPOIN)
+      PetscOffset VEC_I
+      PetscLogDouble t1beg,t1elapsed,t2beg,t2elapsed
+      PetscLogDouble t3beg,t3elapsed 
+      PetscScalar VEC_V(1),         s1
+      integer ivar
+#ifdef DEBUG
+      PetscTruth flg
+      PetscScalar s1,s2
+#endif
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bctype.h'
+      INCLUDE 'datatype.h'
+      INCLUDE 'time.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'constants.h'
+C
+      INCLUDE 'visco.com'
+      INCLUDE 'time.com'
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+      INCLUDE 'bnd.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'ibc2.com'
+      INCLUDE 'ibc8.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'io.com'
+      INTEGER MY_PE 
+      COMMON/MPICOM/MY_PE
+C
+C     External Arguments ..
+C
+      EXTERNAL EulerModel,NSModel,TurbulenceModel,
+     >         ScalarScheme,MatrixScheme,TModelScheme
+C
+C     External Subroutines ..
+C
+      EXTERNAL BVSFLX2,BVSFLX4,BC5VII,BC5VIII,BC28VII,BC28VIII,BC4VII
+      EXTERNAL BC5VII4Ar,BC28VII4Ar
+C
+C     Local Scalars ..
+C
+      INTEGER ifail,ICLR,IUNIT,IDIM
+      INTEGER ISTKGT
+      INTEGER LWORK(7)
+      LOGICAL LFLAG(2)
+      double precision s
+C
+C     Sets residual and local timestep to ZERO
+C
+#ifdef DEBUG
+      call VecValid(PetscDT,flg,iFAIL)
+       if (flg .ne. PETSC_TRUE) then
+          if (MY_PE .eq. 0) then
+             write(6,*) 'Corrupted vector DT!'
+          endif
+          STOP
+          SETERRQ(1,' ',IFAIL)
+       endif
+      CALL VecSet(PetscDT,ZERO,IFAIL)
+      call VecValid(PetscRHS,flg,iFAIL)
+       if (flg .ne. PETSC_TRUE) then
+          if (MY_PE .eq. 0) then
+             write(6,*) 'Corrupted vector RHS!'
+          endif
+          STOP
+          SETERRQ(1,' ',IFAIL)
+       endif
+#endif
+C
+      CALL VecSet(PetscRHS,ZERO,IFAIL)
+C
+C     set ghost values to zero
+C     note that VecSet only sets values belonging to the
+C          owning processor 
+C     it is necessary to set the ghost point values using
+C     the LOCAL representation
+C
+      CALL VecGetArray(PetscRHS,vec_v,vec_i,IFAIL) 
+      CALL DINIT(NGHOST*NOFVAR,0.d0,vec_v(vec_i+NPOIN*NOFVAR+1),1)
+      CALL VecRestoreArray(PetscRHS,vec_v,vec_i,IFAIL) 
+C
+C     get local representation of the time-step vector
+C     and set ghost values to 0.d0
+C
+      CALL VecGetArray(PetscDT,vec_v,vec_i,IFAIL)
+      CALL DINIT(NGHOST*NOFVAR,ZERO,vec_v(vec_i+NPOIN*NOFVAR+1),1)
+      CALL VecRestoreArray(PetscDT,vec_v,vec_i,IFAIL)
+C
+C     Set entries of the matrix to 0.d0
+C     observe that at the first iteration the memory has not been allocated yet !
+C
+      IF( TIMEIMPL ) THEN
+          CALL MatZeroEntries(PetscA,IFAIL)
+          IF(IFAIL.NE.0)THEN
+             WRITE(NOUT,*)'MatZeroEntries has ret = ',IFAIL
+          ENDIF
+      ENDIF
+c
+#ifdef DEBUG
+         CALL VecNorm(PetscRHS,NORM_2,s1,IFAIL)
+      IF(MY_PE.EQ.0)THEN
+         write(32,*)'RHS norm before all calculations ',s1
+!        write(32,*)'A   norm before all calculations ',s2
+      ENDIF
+#endif
+c
+      CALL DINIT(3*(MBODIES+1),ZERO,PRESF,1)
+      CALL DINIT(3*(MBODIES+1),ZERO,VISCF,1)
+C     
+      CALL PetscTime(t1beg,IFAIL)
+C
+C     the hybrid model has been removed
+C
+      LWORK(1) = ISTKGT((NOFVAR*NOFVERT)**2,KIND_REAL8) ! jacobian matrix
+      LWORK(2) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! nodal residual
+      LWORK(3) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! perturbed nodal residual
+      LWORK(4) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! nodal values
+      LWORK(5) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! perturbed nodal values
+      LWORK(6) = ISTKGT(NDIM*NOFVERT*NTIMLEVS,KIND_REAL8) ! grid velocities
+      CALL DINIT((NOFVAR*NOFVERT)**2,ZERO,DSTAK(LWORK(1)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(2)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(3)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(4)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(5)),1) 
+      CALL DINIT(NDIM*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(6)),1) 
+C
+      CALL SetupRHS(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     +              DSTAK(LXYZDOT),DSTAK(LVOL),ZROE,DSTAK(LTURB),
+     +              DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +              DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +              NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,NTURB,
+     +              PetscDT,PetscRHS,PetscA,
+     +              ScalarScheme,MatrixScheme,TModelScheme,
+     +              EulerModel,NSModel,TurbulenceModel)
+C
+      CALL ISTKRL(6)
+C
+      CALL PetscTime(t2beg,IFAIL)
+      t1elapsed = t2beg-t1beg
+C
+C     If a scalar problem goto 50
+C
+      IF(ABS(KAN).EQ.1)GOTO 50
+C
+      IF(RAD_EQUI)THEN
+         LWORK(1) = ISTKGT((NOFVAR+NCL)/2,KIND_INTEGER)
+         LWORK(2) = ISTKGT(NOFVAR*NCL,KIND_REAL8)
+         CALL CIRCUM_AV(DSTAK(LCLA),ISTAK(LCLJA),ISTAK(LCLIA),
+     &                  ISTAK(LCLDEG),DSTAK(LCLRC),DSTAK(LZROE),
+     &                  DSTAK(LCLZB),DSTAK(LWORK(2)),NOFVAR,NCL,LCLDA)
+         CALL ISRE(DSTAK(LCLRC),DSTAK(LCLZB),NOFVAR,NCL)
+         CALL TRANS(DSTAK(LCLZB),NOFVAR,NCL,NOFVAR*NCL,
+     &              ISTAK(LWORK(1)),(NOFVAR+NCL)/2,IFAIL)
+         CALL ISTKRL(2)
+      ENDIF
+C
+C     Apply Boundary Conditions for the inviscid fluxes
+C
+      LWORK(1) = ISTKGT((NOFVAR*NOFVERT)**2,KIND_REAL8)
+      LWORK(2) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+      LWORK(3) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+      LWORK(4) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+      LWORK(5) = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+      LWORK(6) = ISTKGT(NDIM*NOFVERT*NTIMLEVS,KIND_REAL8) ! grid velocities
+C
+C     it is important to set the nodal residual to ZERO
+C     otherwise we run into troubles with coupled RANS: this
+C     is because non-zero values previously computed would be re-inserted
+C     into the RHS vector
+C
+      CALL DINIT((NOFVAR*NOFVERT)**2,ZERO,DSTAK(LWORK(1)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(2)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(3)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(4)),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(5)),1) 
+      CALL DINIT(NDIM*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORK(6)),1) 
+C
+#ifdef SKIP_BNDRY_FFLUX
+      write(6,*)"skipping inviscid far-field fluxes  !!!!!"
+#else
+C
+C     Far-field boundary conditions
+C
+      IF    ( ABS(KAN) .EQ. 2 )THEN ! INcompressible flow equations
+         CALL GHOST(BC5VIII,BC_TYPE_FAR_FIELD,ISTAK(LCELNOD),
+     +           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LXYZDOT),
+     3           DSTAK(LVOL),ZROE,
+     +           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA)
+      ELSEIF( ABS(KAN) .EQ. 4 )THEN ! Compressible flow equations
+         CALL GHOST(BC5VII,BC_TYPE_FAR_FIELD,ISTAK(LCELNOD),
+     +           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LXYZDOT),
+     3           DSTAK(LVOL),ZROE,
+     +           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA)
+      ELSEIF( KAN .EQ. -3)THEN !Plasma flow equations
+         CALL GHOST(BC5VII4AR,BC_TYPE_FAR_FIELD,ISTAK(LCELNOD),
+     +           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LXYZDOT),
+     3           DSTAK(LVOL),ZROE,
+     +           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA)          
+      ELSE 
+          STOP 'INVALID KAN IN SUBROUTINE NODRES'
+      ENDIF
+caldo
+C
+C     Inflow-outflow boundary conditions
+C
+      IF(IBCTYPE.EQ.BC_TYPE_WEAK)THEN
+caldo
+         IF    ( ABS(KAN) .EQ. 2 )THEN ! INCompressible flow equations
+           CALL GHOST2(BC28VIII,ISTAK(LCELNOD),ISTAK(LCELFAC),
+     +           DSTAK(LFACNOR),DSTAK(LXYZDOT),DSTAK(LVOL),ZROE,
+     &           DSTAK(LCORG),DSTAK(LCLRC),DSTAK(LCLZB),
+     +           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +           ISTAK(LBNDFAC),NBFAC,ISTAK(LKLIST),DSTAK(LVLIST),
+     +           PetscDT,PetscRHS,PetscA)
+         ELSEIF( ABS(KAN) .EQ. 4 )THEN ! Compressible flow equations
+           CALL GHOST2(BC28VII,ISTAK(LCELNOD),ISTAK(LCELFAC),
+     +           DSTAK(LFACNOR),DSTAK(LXYZDOT),DSTAK(LVOL),ZROE,
+     &           DSTAK(LCORG),DSTAK(LCLRC),DSTAK(LCLZB),
+     +           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +           ISTAK(LBNDFAC),NBFAC,ISTAK(LKLIST),DSTAK(LVLIST),
+     +           PetscDT,PetscRHS,PetscA)
+         ELSEIF( KAN .EQ. -3)THEN !Plasma flow equations
+           CALL GHOST2(BC28VII4Ar,ISTAK(LCELNOD),ISTAK(LCELFAC),
+     +           DSTAK(LFACNOR),DSTAK(LXYZDOT),DSTAK(LVOL),ZROE,
+     &           DSTAK(LCORG),DSTAK(LCLRC),DSTAK(LCLZB),
+     +           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +           ISTAK(LBNDFAC),NBFAC,ISTAK(LKLIST),DSTAK(LVLIST),
+     +           PetscDT,PetscRHS,PetscA)
+         ELSE 
+           STOP 'INVALID KAN IN SUBROUTINE NODRES'
+         ENDIF
+caldo
+      ENDIF ! IBCTYPE
+caldo
+#endif
+#ifdef SKIP_BNDRY_WFLUX
+      write(6,*)"skipping inviscid wall fluxes  !!!!!"
+#else
+C
+C     weak type inviscid wall boundary conditions
+C
+C     mirror type inviscid wall boundary conditions
+C     currently implemented for compressible flows only
+C
+      IF(SLIP_FREE_BC_TYPE.EQ.BC_TYPE_MIRROR)THEN
+         IF(ABS(KAN).EQ.4)THEN 
+         CALL GHOST(BC4VII,BC_TYPE_SLIP_FREE,ISTAK(LCELNOD),
+     2           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LXYZDOT),
+     3           DSTAK(LVOL),ZROE,
+     3           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     5           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     6           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA)
+         ELSEIF(ABS(KAN).EQ.2)THEN 
+            STOP 'Mirror bcs not yet available for Incompressible flows'
+!        CALL GHOST(BC4VII,BC_TYPE_SLIP_FREE,ISTAK(LCELNOD),
+!    2           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LXYZDOT),
+!    3           DSTAK(LVOL),ZROE,
+!    3           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+!    +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+!    5           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+!    6           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA)
+         ELSEIF( KAN .EQ. -3)THEN 
+            STOP 'Mirror bcs not yet available for Plasma'
+         ELSE
+            STOP 'DO NOT KNOW WHAT TO DO (1)'
+         ENDIF
+C
+C     weak wall boundary conditions for inviscid walls
+C
+      ELSEIF(SLIP_FREE_BC_TYPE.EQ.BC_TYPE_FLUX)THEN
+         LFLAG(1) = (ABS(KAN).EQ.4) ! Compressible perfect gas
+         LFLAG(2) = (ABS(KAN).EQ.3) ! Compressible plasma (Argon)
+         CALL WEAKBC(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     2           DSTAK(LXYZDOT),DSTAK(LVOL),ZROE,
+     3           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     5           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     6           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA,
+     7           LFLAG(1))
+      ELSE
+            WRITE(6,*)SLIP_FREE_BC_TYPE
+            STOP 'DO NOT KNOW WHAT TO DO (2)'
+      ENDIF
+C
+      CALL PetscTime(t3beg,IFAIL)
+      t2elapsed = t3beg-t2beg
+#endif
+C
+C     Apply boundary conditions for the viscous terms
+C
+#ifdef SKIP_BNDRY_VFLUX
+      write(6,*)"skipping boundary viscous fluxes  !!!!!"
+#else
+      IF    ( KAN .EQ. 2 )THEN
+         CALL BNDVFLX(BVSFLX2,ISTAK(LCELNOD),ISTAK(LCELFAC),
+     +                DSTAK(LFACNOR),DSTAK(LXYZDOT),DSTAK(LVOL),ZROE,
+     3                DSTAK(LTURB),
+     +                DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +                DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +                NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +                NTURB,ISTAK(LBNDFAC),NBFAC,TurbulenceModel,
+     +                PetscDT,PetscRHS,PetscA)
+      ELSEIF( KAN .EQ. 4 )THEN
+         CALL BNDVFLX(BVSFLX4,ISTAK(LCELNOD),ISTAK(LCELFAC),
+     +                DSTAK(LFACNOR),DSTAK(LXYZDOT),DSTAK(LVOL),ZROE,
+     3                DSTAK(LTURB),
+     +                DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +                DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     +                NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +                NTURB,ISTAK(LBNDFAC),NBFAC,TurbulenceModel,
+     +                PetscDT,PetscRHS,PetscA)
+      ENDIF 
+#endif
+C
+C     release workarrays
+C
+      CALL ISTKRL(6)
+C
+      CALL PetscTime(t3elapsed,IFAIL)
+      t3elapsed = t3elapsed-t3beg
+C
+C
+C     write aerodynamic coefficients
+C
+      DO 33 ICLR = 0, NCOLOR
+C
+C     Skip the current color unless slip/no-slip body
+C
+         IF( MCOLOR(ICLR) .NE. 0 .AND.
+     +     ( ICOLOR(ICLR,1) .EQ. BC_TYPE_SLIP_FREE .OR. 
+     2       ICOLOR(ICLR,1) .EQ. BC_TYPE_NO_SLIP ) )THEN
+C
+      IUNIT = IMUNIT(ICLR)
+C
+C     Write Fx(pressure) Fx(skin) Fy(pressure) Fy(skin)
+C
+      WRITE(IUNIT,2100)NITER,(PRESF(IDIM,ICLR),VISCF(IDIM,ICLR),
+     +              IDIM=1,3),ITIM
+C
+      ENDIF
+   33 CONTINUE
+   50 CONTINUE
+C
+C     write timings:
+C
+      WRITE(ITIM1,*)NITER,T1ELAPSED,T2ELAPSED,T3ELAPSED
+C
+      RETURN
+ 2100 FORMAT(I6,1X,3(1X,E20.14,1X,E12.6),1X,I6)
+C
+C
+      END
+@
+
+
+1.60
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d11 1
+a11 3
+      IMPLICIT NONE
+C
+C     $Id: nodres.F,v 1.59 2013/06/07 15:30:07 abonfi Exp abonfi $
+a17 1
+#include "petsc/finclude/petscsys.h"
+d20 4
+d109 1
+a109 1
+      INTEGER LWORK(7),LWORKF 
+a429 3
+ 2000 FORMAT(/,1X,
+     &'COMPUTATION OF THE RESIDUAL AND MATRIX ASSEMBLY',
+     &/,1X,48('=')/)
+@
+
+
+1.59
+log
+@the array ICOLOR included from bnd.com has changed
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.58 2013/05/15 10:33:02 abonfi Exp abonfi $
+d20 3
+a22 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.58
+log
+@chenged PetscGetTime into PetscTime to comply with Petsc revision 3.4.0
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.57 2013/01/26 11:48:03 abonfi Exp abonfi $
+d410 2
+a411 2
+     +     ( ICOLOR(ICLR) .EQ. BC_TYPE_SLIP_FREE .OR. 
+     2       ICOLOR(ICLR) .EQ. BC_TYPE_NO_SLIP ) )THEN
+@
+
+
+1.57
+log
+@added support for an Argon plasma
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.55 2012/04/03 12:07:47 abonfi Exp abonfi $
+d174 1
+a174 1
+      CALL PetscGetTime(t1beg,IFAIL)
+d202 1
+a202 1
+      CALL PetscGetTime(t2beg,IFAIL)
+d365 1
+a365 1
+      CALL PetscGetTime(t3beg,IFAIL)
+d399 1
+a399 1
+      CALL PetscGetTime(t3elapsed,IFAIL)
+@
+
+
+1.56
+log
+@fixed a wrong comment
+@
+text
+@d102 1
+d109 1
+d264 8
+d299 9
+d321 3
+d334 10
+a343 7
+         CALL GHOST(BC4VII,BC_TYPE_SLIP_FREE,ISTAK(LCELNOD),
+     2           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LXYZDOT),
+     3           DSTAK(LVOL),ZROE,
+     3           DSTAK(LWORK(1)),DSTAK(LWORK(2)),DSTAK(LWORK(3)),
+     +           DSTAK(LWORK(4)),DSTAK(LWORK(5)),DSTAK(LWORK(6)),
+     5           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     6           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA)
+d348 1
+a348 2
+C     mirror type inviscid wall boundary conditions
+C     currently implemented for compressible flows only
+d351 2
+d359 1
+a359 1
+     7           (ABS(KAN).EQ.4))
+@
+
+
+1.55
+log
+@changes needed to pass the grid velocity down to the lower level routines
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.54 2011/09/16 07:19:48 abonfi Exp abonfi $
+d244 2
+d266 3
+d322 3
+@
+
+
+1.54
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.53 2010/10/04 12:23:03 abonfi Exp abonfi $
+d107 1
+a107 1
+      INTEGER LWORKA,LWORKB,LWORKC,LWORKD,LWORKE,LWORKF 
+d176 12
+a187 10
+      LWORKA = ISTKGT((NOFVAR*NOFVERT)**2,KIND_REAL8) ! jacobian matrix
+      LWORKB = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! nodal residual
+      LWORKC = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! perturbed nodal residual
+      LWORKD = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! nodal values
+      LWORKE = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8) ! perturbed nodal values
+      CALL DINIT((NOFVAR*NOFVERT)**2,ZERO,DSTAK(LWORKA),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKB),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKC),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKD),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKE),1) 
+d190 3
+a192 3
+     +              DSTAK(LVOL),ZROE,DSTAK(LTURB),
+     +              DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +              DSTAK(LWORKD),DSTAK(LWORKE),
+d198 1
+a198 1
+      CALL ISTKRL(5)
+d208 2
+a209 2
+         LWORKA = ISTKGT((NOFVAR+NCL)/2,KIND_INTEGER)
+         LWORKB = ISTKGT(NOFVAR*NCL,KIND_REAL8)
+d212 1
+a212 1
+     &                  DSTAK(LCLZB),DSTAK(LWORKB),NOFVAR,NCL,LCLDA)
+d215 1
+a215 1
+     &              ISTAK(LWORKA),(NOFVAR+NCL)/2,IFAIL)
+d221 6
+a226 5
+      LWORKA = ISTKGT((NOFVAR*NOFVERT)**2,KIND_REAL8)
+      LWORKB = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+      LWORKC = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+      LWORKD = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+      LWORKE = ISTKGT(NOFVAR*NOFVERT*NTIMLEVS,KIND_REAL8)
+d233 6
+a238 5
+      CALL DINIT((NOFVAR*NOFVERT)**2,ZERO,DSTAK(LWORKA),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKB),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKC),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKD),1) 
+      CALL DINIT(NOFVAR*NOFVERT*NTIMLEVS,ZERO,DSTAK(LWORKE),1) 
+d244 6
+a249 5
+      IF    ( ABS(KAN) .EQ. 2 )THEN
+      CALL GHOST(BC5VIII,BC_TYPE_FAR_FIELD,ISTAK(LCELNOD),ISTAK(LCELFAC)
+     +           ,DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+     +           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +           DSTAK(LWORKD),DSTAK(LWORKE),
+d252 6
+a257 5
+      ELSEIF( ABS(KAN) .EQ. 4 )THEN
+      CALL GHOST(BC5VII,BC_TYPE_FAR_FIELD,ISTAK(LCELNOD),ISTAK(LCELFAC),
+     +           DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+     +           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +           DSTAK(LWORKD),DSTAK(LWORKE),
+d266 1
+a266 1
+         IF    ( ABS(KAN) .EQ. 2 )THEN
+d268 4
+a271 4
+     +           DSTAK(LFACNOR),DSTAK(LVOL),ZROE,DSTAK(LCORG),
+     &           DSTAK(LCLRC),DSTAK(LCLZB),
+     +           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +           DSTAK(LWORKD),DSTAK(LWORKE),
+d275 1
+a275 1
+         ELSEIF( ABS(KAN) .EQ. 4 )THEN
+d277 4
+a280 4
+     +           DSTAK(LFACNOR),DSTAK(LVOL),ZROE,DSTAK(LCORG),
+     &           DSTAK(LCLRC),DSTAK(LCLZB),
+     +           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +           DSTAK(LWORKD),DSTAK(LWORKE),
+d300 4
+a303 3
+     2           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+     3           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     4           DSTAK(LWORKD),DSTAK(LWORKE),
+d308 4
+a311 3
+     2           ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+     3           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     4           DSTAK(LWORKD),DSTAK(LWORKE),
+d320 3
+a322 3
+     2           DSTAK(LVOL),ZROE,
+     3           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     4           DSTAK(LWORKD),DSTAK(LWORKE),
+d342 7
+a348 6
+     +                DSTAK(LFACNOR),DSTAK(LVOL),ZROE,DSTAK(LTURB),
+     +                DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +                DSTAK(LWORKD),DSTAK(LWORKE),NELEM,
+     +                NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,NTURB,
+     +                ISTAK(LBNDFAC),NBFAC,TurbulenceModel,PetscDT,
+     +                PetscRHS,PetscA)
+d351 7
+a357 6
+     +                DSTAK(LFACNOR),DSTAK(LVOL),ZROE,DSTAK(LTURB),
+     +                DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +                DSTAK(LWORKD),DSTAK(LWORKE),NELEM,
+     +                NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,NTURB,
+     +                ISTAK(LBNDFAC),NBFAC,TurbulenceModel,PetscDT,
+     +                PetscRHS,PetscA)
+d363 1
+a363 1
+      CALL ISTKRL(5)
+@
+
+
+1.53
+log
+@now support inviscid wall boundary conditions based upon
+the ghost cell approach
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.52 2009/10/13 08:13:31 abonfi Exp abonfi $
+d20 1
+a20 1
+#include "finclude/petsc.h"
+@
+
+
+1.52
+log
+@Added support for choosing the scalar advection scheme in the Spalart-Allmaras model
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.51 2009/06/11 13:10:58 abonfi Exp abonfi $
+d101 1
+a101 1
+      EXTERNAL BVSFLX2,BVSFLX4,BC5VII,BC5VIII,BC28VII,BC28VIII
+d241 2
+a242 2
+      CALL GHOST(BC5VIII,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     +           DSTAK(LVOL),ZROE,
+d248 2
+a249 2
+      CALL GHOST(BC5VII,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     +           DSTAK(LVOL),ZROE,
+d291 18
+d310 12
+a321 7
+      CALL WEAKBC(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     +           DSTAK(LVOL),ZROE,
+     +           DSTAK(LWORKA),DSTAK(LWORKB),DSTAK(LWORKC),
+     +           DSTAK(LWORKD),DSTAK(LWORKE),
+     +           NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +           ISTAK(LBNDFAC),NBFAC,PetscDT,PetscRHS,PetscA,
+     +           (ABS(KAN).EQ.4))
+d388 1
+a388 1
+ 2100 FORMAT(I6,1X,6(1X,E12.6),1X,I6)
+@
+
+
+1.51
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d3 1
+a3 1
+     2                  SCALARSCHEME,MATRIXSCHEME,
+d13 1
+a13 1
+C     $Id: nodres.F,v 1.50 2009/06/11 08:54:42 abonfi Exp abonfi $
+d97 1
+a97 1
+     >         ScalarScheme,MatrixScheme
+d193 2
+a194 2
+     +              ScalarScheme,MatrixScheme,EulerModel,NSModel,
+     +              TurbulenceModel)
+@
+
+
+1.50
+log
+@added NPNOD among the arguments of the call
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.49 2008/02/22 11:00:38 abonfi Exp abonfi $
+d20 3
+a22 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.49
+log
+@added preprocessor flags for debugging
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     1                  NFACE,NBFAC,ZROE,PetscDT,PetscRHS,PetscA,
+d13 1
+a13 1
+C     $Id: nodres.F,v 1.48 2006/11/28 10:59:47 abonfi Exp abonfi $
+d26 2
+a27 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC,NTURB
+d58 2
+a59 1
+      PetscScalar VEC_V(1)
+d69 3
+a72 1
+      INCLUDE 'constants'
+d74 1
+d84 1
+a84 1
+      INCLUDE 'nloc'
+a89 1
+      INCLUDE 'implicit.h'
+a162 4
+!        CALL MatNorm(PetscA,NORM_FROBENIUS,s2,IFAIL)
+!         IF(IFAIL.NE.0)THEN
+!            WRITE(NOUT,*)'MatNorm has ret = ',IFAIL
+!         ENDIF
+d174 1
+a174 1
+C     for the hybrid model ......
+d176 5
+a180 13
+caldo IF( DECOMP .EQ. 4 .OR. DECOMP .EQ. 5 )THEN
+caldo     LWORKF = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+caldo     LCHPSI = ISTKGT(NPOIN+NGHOST,KIND_INTEGER)
+caldo     CALL CHPSI(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),NELEM,
+caldo&               ZROE,NPOIN+NGHOST,DSTAK(LWORKF),
+caldo&               DSTAK(LFACNOR),NDIM,NOFVERT,NOFVAR,ISTAK(LCHPSI))
+caldo ENDIF
+C
+      LWORKA = ISTKGT((NOFVAR*NOFVERT)**2,KIND_REAL8)
+      LWORKB = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+      LWORKC = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+      LWORKD = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+      LWORKE = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+d182 4
+a185 4
+      CALL DINIT(NOFVAR*NOFVERT,ZERO,DSTAK(LWORKB),1) 
+      CALL DINIT(NOFVAR*NOFVERT,ZERO,DSTAK(LWORKC),1) 
+      CALL DINIT(NOFVAR*NOFVERT,ZERO,DSTAK(LWORKD),1) 
+      CALL DINIT(NOFVAR*NOFVERT,ZERO,DSTAK(LWORKE),1) 
+d191 1
+a191 1
+     +              NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,NTURB,
+a196 1
+caldo IF( DECOMP .EQ. 4 .OR. DECOMP .EQ. 5 ) CALL ISTKRL(2)
+a215 3
+#ifdef SKIP_BNDRY_FFLUX
+      write(6,*)"skipping inviscid far-field fluxes  !!!!!"
+#else
+d220 19
+a238 4
+      LWORKB = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+      LWORKC = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+      LWORKD = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+      LWORKE = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+d245 1
+a245 1
+     +           NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,
+d252 1
+a252 1
+     +           NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,
+d266 1
+a266 1
+     +           NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,
+d275 1
+a275 1
+     +           NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,
+d296 1
+a296 1
+     +           NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,
+d311 1
+a311 2
+     +                DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+     3                DSTAK(LTURB),
+d313 2
+a314 2
+     +                DSTAK(LWORKD),DSTAK(LWORKE),
+     +                NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,NTURB,
+d319 1
+a319 2
+     +                DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+     3                DSTAK(LTURB),
+d321 2
+a322 2
+     +                DSTAK(LWORKD),DSTAK(LWORKE),
+     +                NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,NTURB,
+d351 1
+a351 1
+     +              IDIM=1,NDIM)
+d365 1
+a365 1
+ 2100 FORMAT(I6,1X,6(1X,E12.6))
+@
+
+
+1.48
+log
+@I had to split declarations of PETSc variables on multiple
+lines; I suspect a bug in the GNU Fortran 95 (GCC) 4.1.1 compiler
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.47 2006/11/27 09:41:01 abonfi Exp abonfi $
+d16 3
+d60 1
+d104 1
+d126 2
+a128 1
+#endif
+a146 1
+C
+d148 1
+d150 6
+a155 1
+      IF( TIMEIMPL ) CALL MatZeroEntries(PetscA,IFAIL)
+d157 11
+d176 7
+a182 7
+      IF( DECOMP .EQ. 4 .OR. DECOMP .EQ. 5 )THEN
+          LWORKF = ISTKGT(NOFVAR*NOFVERT,KIND_REAL8)
+          LCHPSI = ISTKGT(NPOIN+NGHOST,KIND_INTEGER)
+          CALL CHPSI(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),NELEM,
+     &               ZROE,NPOIN+NGHOST,DSTAK(LWORKF),
+     &               DSTAK(LFACNOR),NDIM,NOFVERT,NOFVAR,ISTAK(LCHPSI))
+      ENDIF
+d189 5
+d205 1
+a205 1
+      IF( DECOMP .EQ. 4 .OR. DECOMP .EQ. 5 ) CALL ISTKRL(2)
+a208 2
+#if 1
+C     write(6,*)"pippo !!!!!"
+d225 3
+d257 1
+a257 1
+      IF    ( ABS(KAN) .EQ. 2 )THEN
+d266 1
+a266 1
+      ELSEIF( ABS(KAN) .EQ. 4 )THEN
+d275 3
+a277 3
+      ELSE 
+          STOP 'INVALID KAN IN SUBROUTINE NODRES'
+      ENDIF
+d279 1
+a279 1
+      ENDIF
+d281 4
+d299 1
+d303 3
+a305 2
+#if 1
+C     write(6,*)"pippo !!!!!"
+a329 1
+#endif
+@
+
+
+1.47
+log
+@Now uses a FORMAT to dump the aero forces
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.46 2005/12/27 11:49:19 abonfi Exp abonfi $
+d52 2
+a53 1
+      PetscLogDouble t1beg,t1elapsed,t2beg,t2elapsed,t3beg,t3elapsed 
+d55 3
+d103 9
+d113 8
+d122 1
+@
+
+
+1.46
+log
+@an included common has been renamed
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.45 2005/10/22 11:03:52 abonfi Exp abonfi $
+d294 1
+a294 1
+      WRITE(IUNIT,*)NITER,(PRESF(IDIM,ICLR),VISCF(IDIM,ICLR),
+d309 1
+@
+
+
+1.45
+log
+@implemented c-lines
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.44 2005/09/09 08:47:41 abonfi Exp abonfi $
+d70 1
+a70 1
+      INCLUDE 'bnd'
+@
+
+
+1.44
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.43 2005/07/17 19:07:09 aldo Exp abonfi $
+d72 1
+d167 12
+d209 2
+a210 1
+     +           DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+d218 2
+a219 1
+     +           DSTAK(LFACNOR),DSTAK(LVOL),ZROE,
+@
+
+
+1.43
+log
+@changes require to upgrade to petsc-2.3.0
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.42 2004/08/22 17:51:49 aldo Exp aldo $
+d149 1
+a149 1
+     +              NELEM,NDIM,NOFVERT,NOFVAR,NTURB,
+a153 1
+C
+d179 1
+a179 1
+     +           NELEM,NDIM,NOFVERT,NOFVAR,
+d186 1
+a186 1
+     +           NELEM,NDIM,NOFVERT,NOFVAR,
+d199 1
+a199 1
+     +           NELEM,NDIM,NOFVERT,NOFVAR,
+d207 1
+a207 1
+     +           NELEM,NDIM,NOFVERT,NOFVAR,
+d224 1
+a224 1
+     +           NELEM,NDIM,NOFVERT,NOFVAR,
+d241 1
+a241 1
+     +                NELEM,NDIM,NOFVERT,NOFVAR,NTURB,
+d250 1
+a250 1
+     +                NELEM,NDIM,NOFVERT,NOFVAR,NTURB,
+@
+
+
+1.42
+log
+@renamed PETSc variables
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.41 2004/03/18 02:28:31 aldo Exp aldo $
+d98 2
+a99 2
+      CALL VecSet(ZERO,PetscDT,IFAIL)
+      CALL VecSet(ZERO,PetscRHS,IFAIL)
+@
+
+
+1.41
+log
+@data types are now included from datatype.h
+@
+text
+@d2 1
+a2 1
+     1                  NFACE,NBFAC,ZROE,DT,RHS,A,
+d7 1
+a7 1
+C     assembles the r.h.s. (RHS), the nodal timestep (DT)
+d13 1
+a13 1
+C     $Id: nodres.F,v 1.40 2003/08/08 03:37:30 abonfi Exp aldo $
+d48 2
+a49 2
+      Mat A
+      Vec DT,RHS
+a51 1
+      PetscTruth flg
+d92 1
+a92 2
+      INTEGER IELEM,ifail,ICLR,IUNIT,IDIM
+      DOUBLE PRECISION S
+d98 2
+a99 2
+      CALL VecSet(ZERO,DT,IFAIL)
+      CALL VecSet(ZERO,RHS,IFAIL)
+d107 1
+a107 1
+      CALL VecGetArray(RHS,vec_v,vec_i,IFAIL) 
+d109 1
+a109 1
+      CALL VecRestoreArray(RHS,vec_v,vec_i,IFAIL) 
+d114 1
+a114 1
+      CALL VecGetArray(DT,vec_v,vec_i,IFAIL)
+d116 1
+a116 1
+      CALL VecRestoreArray(DT,vec_v,vec_i,IFAIL)
+d121 1
+a121 1
+      IF( TIMEIMPL ) CALL MatZeroEntries(A,IFAIL)
+d150 1
+a150 1
+     +              DT,RHS,A,
+d181 1
+a181 1
+     +           ISTAK(LBNDFAC),NBFAC,DT,RHS,A)
+d188 1
+a188 1
+     +           ISTAK(LBNDFAC),NBFAC,DT,RHS,A)
+d202 1
+a202 1
+     +           DT,RHS,A)
+d210 1
+a210 1
+     +           DT,RHS,A)
+d226 1
+a226 1
+     +           ISTAK(LBNDFAC),NBFAC,DT,RHS,A,
+d243 2
+a244 1
+     +                ISTAK(LBNDFAC),NBFAC,TurbulenceModel,DT,RHS,A)
+d252 2
+a253 1
+     +                ISTAK(LBNDFAC),NBFAC,TurbulenceModel,DT,RHS,A)
+@
+
+
+1.40
+log
+@boundary types for faces(edges) have been made more descriptive
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.39 2002/11/02 16:00:06 abonfi Exp abonfi $
+d59 1
+d134 2
+a135 2
+          LWORKF = ISTKGT(NOFVAR*NOFVERT,4)
+          LCHPSI = ISTKGT(NPOIN+NGHOST,2)
+d141 5
+a145 5
+      LWORKA = ISTKGT((NOFVAR*NOFVERT)**2,4)
+      LWORKB = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKC = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKD = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKE = ISTKGT(NOFVAR*NOFVERT,4)
+d171 5
+a175 5
+      LWORKA = ISTKGT((NOFVAR*NOFVERT)**2,4)
+      LWORKB = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKC = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKD = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKE = ISTKGT(NOFVAR*NOFVERT,4)
+@
+
+
+1.39
+log
+@bux fig in DINIT for the timestep vector
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.38 2002/10/25 06:02:17 abonfi Exp abonfi $
+d161 2
+d235 2
+d254 1
+d259 1
+d272 2
+a273 2
+     +     ( ICOLOR(ICLR) .EQ. BC_SLIP_FREE .OR. 
+     2       ICOLOR(ICLR) .EQ. BC_NO_SLIP ) )THEN
+@
+
+
+1.38
+log
+@re-implemented strong bcs for inlet/outlet
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.37 2002/09/14 09:04:14 abonfi Exp $
+d116 1
+a116 1
+      CALL DINIT(NGHOST*NOFVAR,ZERO,vec_v(vec_i+NPOIN+1),1)
+@
+
+
+1.37
+log
+@the timestep vector is now dimensioned NOFVAR x NPOIN
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.36 2002/02/19 09:19:00 abonfi Exp abonfi $
+d58 1
+d192 1
+d195 2
+a196 2
+      CALL GHOST2(BC28VIII,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     +           DSTAK(LVOL),ZROE,
+d203 2
+a204 2
+      CALL GHOST2(BC28VII,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     +           DSTAK(LVOL),ZROE,
+d214 1
+@
+
+
+1.36
+log
+@changed Scalar into PetscScalar to comply with PETSc 2.1.1
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.35 2001/10/08 15:48:37 abonfi Exp abonfi $
+d115 1
+a115 1
+      CALL DINIT(NGHOST,ZERO,vec_v(vec_i+NPOIN+1),1)
+@
+
+
+1.35
+log
+@changed PLog into PetscLog to comply with PETSC 2.1.0
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.34 2001/07/19 09:55:54 abonfi Exp abonfi $
+d54 1
+a54 1
+      Scalar VEC_V(1)
+@
+
+
+1.34
+log
+@changes made necessary when inflow/outflow boundary conditions have
+been changed as of version 0.10.13
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.33 2001/07/04 06:50:31 abonfi Exp abonfi $
+d53 1
+a53 1
+      PLogDouble t1beg,t1elapsed,t2beg,t2elapsed,t3beg,t3elapsed 
+@
+
+
+1.33
+log
+@add a call to ghost2
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.32 2000/11/22 14:39:13 aldo Exp abonfi $
+d71 1
+d198 2
+a199 1
+     +           ISTAK(LBNDFAC),NBFAC,DT,RHS,A)
+d206 2
+a207 1
+     +           ISTAK(LBNDFAC),NBFAC,DT,RHS,A)
+@
+
+
+1.32
+log
+@minor changes
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.31 2000/11/16 13:05:19 aldo Exp aldo $
+d86 1
+a86 1
+      EXTERNAL BVSFLX2,BVSFLX4,BC5VII,BC5VIII
+d189 21
+@
+
+
+1.31
+log
+@some changes concerning the UNITs for writing aerodynamic data
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.30 2000/11/15 09:15:09 aldo Exp aldo $
+d52 1
+a73 1
+caldo INCLUDE 'nboun.com'
+d120 1
+a120 3
+      IF( TIMEIMPL )THEN
+         CALL MatZeroEntries(A,IFAIL)
+      ENDIF
+d153 1
+d160 1
+a160 1
+C     If a scalar problem goto 20
+d162 1
+a162 1
+      IF(NOFVAR.EQ.1)GOTO 20
+a230 2
+   20 CONTINUE
+      IF(NOFVAR.EQ.1)GOTO 50
+d238 1
+a238 1
+         IF( MCOLOR(ICLR) .EQ. 0 .OR. .NOT.
+d240 1
+a240 1
+     2       ICOLOR(ICLR) .EQ. BC_NO_SLIP ) )GOTO 33
+d249 1
+@
+
+
+1.30
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.29 2000/10/25 10:24:02 aldo Exp aldo $
+a236 2
+      IUNIT = 40
+C
+a238 1
+C
+d242 2
+a243 1
+     +     ( ICOLOR(ICLR) .EQ. 4 .OR. ICOLOR(ICLR) .EQ. 6 ) )GOTO 33
+d245 1
+a245 1
+      IUNIT = IUNIT + 1
+@
+
+
+1.29
+log
+@initialising ghost values to 0.d0
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.28 2000/10/20 08:36:40 aldo Exp aldo $
+d73 1
+a73 1
+      INCLUDE 'nboun.com'
+d75 1
+a75 1
+      INCLUDE 'IO'
+d259 1
+a259 1
+      WRITE(44,*)NITER,T1ELAPSED,T2ELAPSED,T3ELAPSED
+@
+
+
+1.28
+log
+@now passing TurbulenceModel, EulerModel and NSModel
+among the arguments
+@
+text
+@d13 1
+a13 1
+C     $Id: nodres.F,v 1.27 2000/09/22 11:59:56 aldo Exp aldo $
+d99 17
+@
+
+
+1.27
+log
+@simply moved a statement
+@
+text
+@d2 3
+a4 2
+     +                  NFACE,NBFAC,ZROE,DT,RHS,A,
+     2                  MODEL,SCALARSCHEME,MATRIXSCHEME)
+d13 1
+a13 1
+C     $Id: nodres.F,v 1.26 2000/08/17 09:14:36 aldo Exp abonfi $
+d18 2
+a19 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+d81 2
+a82 1
+      EXTERNAL Model,ScalarScheme,MatrixScheme
+d135 2
+a136 1
+     +              ScalarScheme,MatrixScheme,Model)
+d197 1
+a197 1
+     +                ISTAK(LBNDFAC),NBFAC,DT,RHS,A)
+d205 1
+a205 1
+     +                ISTAK(LBNDFAC),NBFAC,DT,RHS,A)
+@
+
+
+1.26
+log
+@add among the arguments of the call the array
+where the residual has to be evaluated; this
+is done to be able to use the PETSc TS component
+in a future release
+@
+text
+@d12 1
+a12 1
+C     $Id: nodres.F,v 1.25 2000/08/17 08:48:07 aldo Exp aldo $
+d20 25
+a76 25
+C
+C     Scalar Arguments ..
+C
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC,NTURB
+C
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NPOIN   no. of interior (processor owned) meshpoints; 
+C             global number of meshpoints in the uni-processor case
+C     NGHOST  no. of ghost meshpoints on the current processor; 
+C             0 the uni-processor case
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+C     NFACE   number of edges/faces in the mesh for the current 
+C             processor (multi-processor case) or global number 
+C             of edges/faces in the mesh (uni-processor case).
+C     NBFAC   no. of processor owned boundary faces/edges;
+C             global number of boundary faces/edges
+C             in the uni-processor case.
+@
+
+
+1.25
+log
+@removed all message passing stuff, now in ApplicationFunction
+done for release 0.10.9
+@
+text
+@d2 1
+a2 1
+     +                  NFACE,NBFAC,DT,RHS,A,
+d12 1
+a12 1
+C     $Id: nodres.F,v 1.24 2000/08/12 10:18:58 aldo Exp aldo $
+d24 1
+d88 1
+a88 1
+      INTEGER IELEM,ifail,ICLR,IUNIT,IDIM,bs
+d117 1
+a117 1
+     &               DSTAK(LZROE),NPOIN+NGHOST,DSTAK(LWORKF),
+d128 1
+a128 1
+     +              DSTAK(LVOL),DSTAK(LZROE),DSTAK(LTURB),
+d155 1
+a155 1
+     +           DSTAK(LVOL),DSTAK(LZROE),
+d162 1
+a162 1
+     +           DSTAK(LVOL),DSTAK(LZROE),
+d175 1
+a175 1
+     +           DSTAK(LVOL),DSTAK(LZROE),
+d189 1
+a189 1
+     +                DSTAK(LFACNOR),DSTAK(LVOL),DSTAK(LZROE),
+d197 1
+a197 1
+     +                DSTAK(LFACNOR),DSTAK(LVOL),DSTAK(LZROE),
+@
+
+
+1.24
+log
+@bug fixed with the correct dimension for LCHPSI
+@
+text
+@d12 1
+a12 1
+C     $Id: nodres.F,v 1.23 2000/06/23 16:40:17 aldo Exp aldo $
+d23 1
+a23 1
+      Vec DT,RHS,DT_local,RHS_local
+a96 1
+#ifdef MPI
+a97 35
+C     get local representation of the r.h.s. vector
+C
+      CALL VecGhostGetLocalForm(RHS,RHS_local,IFAIL)
+      CALL VecGhostGetLocalForm(DT,DT_local,IFAIL)
+C     
+C     we need to set the BlockSize on the local representation
+C     of the vector ONLY as long as it is not defined yet
+C
+      CALL VecGetBlockSize(RHS_local,bs,IFAIL)
+      IF(BS.NE.NOFVAR)CALL VecSetBlockSize(RHS_local,NOFVAR,IFAIL)
+C
+C     set ghost values to zero
+C     note that VecSet only sets values belonging to the
+C          owning processor 
+C     it is necessary to set the ghost point values using
+C     the LOCAL representation
+C
+      CALL VecGetArray(RHS_local,VEC_V,VEC_I,IFAIL) 
+      CALL DINIT(NGHOST*NOFVAR,ZERO,VEC_V(VEC_I+NPOIN*NOFVAR+1),1)
+      CALL VecRestoreArray(RHS_local,VEC_V,VEC_I,IFAIL) 
+      CALL VecGetArray(DT_local,VEC_V,VEC_I,IFAIL) 
+      CALL DINIT(NGHOST,ZERO,VEC_V(VEC_I+NPOIN+1),1)
+      CALL VecRestoreArray(DT_local,VEC_V,VEC_I,IFAIL) 
+C
+#else
+C
+C     for the uniprocessor case local and global numbering 
+C     are the same, maybe the following assignement
+C     is already done in VecGhostGetLocalForm(), controlla!
+C
+      RHS_local=RHS
+      DT_local=DT
+C
+#endif
+C
+d131 1
+a131 1
+     +              DT_local,RHS_local,A,
+d158 1
+a158 1
+     +           ISTAK(LBNDFAC),NBFAC,DT_local,RHS_local,A)
+d165 1
+a165 1
+     +           ISTAK(LBNDFAC),NBFAC,DT_local,RHS_local,A)
+d178 1
+a178 1
+     +           ISTAK(LBNDFAC),NBFAC,DT_local,RHS_local,A,
+d193 1
+a193 1
+     +                ISTAK(LBNDFAC),NBFAC,DT_local,RHS_local,A)
+d201 1
+a201 1
+     +                ISTAK(LBNDFAC),NBFAC,DT_local,RHS_local,A)
+a211 42
+C
+C     Must assembly RHS now since a call to MatSetValues(INSERT_VALUES)
+C     might follow in RHSBC4 
+C
+      CALL VecAssemblyBegin(RHS,IFAIL)
+      CALL VecAssemblyEnd(RHS,IFAIL)
+C
+C update ghost values
+C
+#ifdef MPI
+C
+      CALL VecGhostUpdateBegin(RHS,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateEnd(RHS,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+C
+#endif
+C
+C     Apply b.c. to the nodal residual
+C
+      IF(NOFVAR.EQ.1)THEN
+         CALL RHSBC1(RHS)
+      ELSE
+         CALL RHSBC4(DSTAK(LZROE),RHS,NDIM,(ABS(KAN).EQ.4))
+      ENDIF
+C
+      CALL VecAssemblyBegin(DT,IFAIL)      
+      CALL VecAssemblyEnd(DT,IFAIL)      
+C
+#ifdef MPI
+C
+      CALL VecGhostUpdateBegin(DT,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateEnd(DT,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+C
+      CALL VecGhostRestoreLocalForm(RHS,RHS_local,IFAIL)
+      CALL VecGhostRestoreLocalForm(DT,DT_local,IFAIL)
+C
+#endif
+C
+      IF( TIMEIMPL )THEN
+          CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+          CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+      ENDIF
+C
+@
+
+
+1.23
+log
+@add the hybrid model and modified calling sequence to RHSBC4
+@
+text
+@d12 1
+a12 1
+C     $Id: nodres.F,v 1.22 1999/12/27 09:20:01 aldo Exp aldo $
+d150 1
+a150 1
+          LCHPSI = ISTKGT(NPOIN,2)
+d152 2
+a153 2
+     &               DSTAK(LZROE),NPOIN,DSTAK(LWORKF),DSTAK(LFACNOR),
+     &               NDIM,NOFVERT,NOFVAR,ISTAK(LCHPSI))
+@
+
+
+1.22
+log
+@FD computation of the jacobian
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+     +                  NBFAC,DT,RHS,A,Model,ScalarScheme,MatrixScheme)
+d12 1
+a12 1
+C     $Id: nodres.F,v 1.21 1999/12/18 13:09:00 aldo Exp aldo $
+d32 1
+d49 2
+a50 2
+      integer my_pe 
+      common/MPICOM/my_pe
+d54 1
+a54 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+d90 1
+a90 1
+      INTEGER LWORKA,LWORKB,LWORKC,LWORKD,LWORKE 
+d140 1
+d146 10
+d163 1
+a163 1
+     +              DSTAK(LVOL),DSTAK(LZROE),
+d166 1
+a166 1
+     +              NELEM,NDIM,NOFVERT,NOFVAR,
+d171 1
+d225 1
+d228 1
+a228 1
+     +                NELEM,NDIM,NOFVERT,NOFVAR,
+d233 1
+d236 1
+a236 1
+     +                NELEM,NDIM,NOFVERT,NOFVAR,
+d269 1
+a269 1
+         CALL RHSBC4(RHS)
+a283 1
+C
+@
+
+
+1.21
+log
+@minor changes
+@
+text
+@d1 2
+a2 3
+C
+      SUBROUTINE NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,
+     +                  DT,RHS,A,Model,ScalarScheme,MatrixScheme)
+d11 1
+a11 1
+C     $Id: nodres.F,v 1.20 1999/12/09 10:26:17 aldo Exp aldo $
+a46 2
+      integer nghost 
+      common/trash/nghost
+d52 22
+a73 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC
+d77 5
+a81 1
+      EXTERNAL Model,ScalarScheme,MatrixScheme,BVSFLX2,BVSFLX4
+d87 2
+a88 2
+      integer istkgt 
+      integer lworka,lworkb,lworkc,lworkd,lworke 
+d174 9
+a182 1
+      CALL GHOST(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+d188 3
+a190 1
+C
+d301 1
+a301 1
+      write(44,*)niter,t1elapsed,t2elapsed,t3elapsed
+@
+
+
+1.20
+log
+@changed calling sequence for GHOST and WEAKBC
+@
+text
+@d12 1
+a12 1
+C     $Id: nodres.F,v 1.19 1999/12/03 21:29:57 aldo Exp aldo $
+d140 2
+a144 4
+C     note: it is necessary to call GHOST(...,NPOIN+NGHOST,..)
+C           in the parallel case, since a DUMMYPOINT is created
+C           in the routine
+C
+a158 1
+      CALL ISTKRL(5)
+a162 6
+      LWORKA = ISTKGT((NOFVAR*NOFVERT)**2,4)
+      LWORKB = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKC = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKD = ISTKGT(NOFVAR*NOFVERT,4)
+      LWORKE = ISTKGT(NOFVAR*NOFVERT,4)
+C
+a169 1
+      CALL ISTKRL(5)
+d177 6
+a182 2
+         CALL BNDVFLX(BVSFLX2,ISTAK(LBNDFAC),NBFAC,NELEM,NPOIN,
+     +                NDIM,NOFVERT,NOFVAR,DT_local,RHS_local,A)
+d184 6
+a189 2
+         CALL BNDVFLX(BVSFLX4,ISTAK(LBNDFAC),NBFAC,NELEM,NPOIN,
+     +                NDIM,NOFVERT,NOFVAR,DT_local,RHS_local,A)
+d192 4
+a277 31
+CCC       call vecnorm(dt,NORM_2,S,IFAIL)
+CCCC      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+CCCC      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+C
+CCCC      call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCCC      write(6,*)'Norma matrice before ghost A ',S,my_pe
+C
+CCCC      CALL VecAssemblyBegin(rhs,IFAIL)
+CCCC      CALL VecAssemblyEnd(rhs,IFAIL) 
+C
+CCCC      call vecnorm(rhs,NORM_2,S,IFAIL)
+CCCC      write(6,*)'Norma rhs before ghost A ',S,my_pe
+CCC       write(6,*)'Norma dt ',S,my_pe
+CCC       call vecnorm(rhs,NORM_2,S,IFAIL)
+CCC       write(6,*)'Norma rhs ',S,my_pe
+CCC       call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCC       write(6,*)'Norma matrice A ',S,my_pe
+caldo
+CCC#ifdef DEBUG
+CCCcall VecDestroy(RHS,ifail)
+CCCwrite(6,*)'VecDestroy rhs returned ',ifail,' on pe ',my_pe
+CCCcall VecDestroy(dt,ifail)
+CCCwrite(6,*)'VecDestroy dt returned ',ifail,' on pe ',my_pe
+CCCif(my_pe.eq.0)write(6,*)'Opening file ...'
+CCCCALL ViewerASCIIOpen(PETSC_COMM_WORLD,'mat.output',
+CCC+                         MY_viewer,IFAIL)
+CCCCALL MatView(A,MY_viewer,IFAIL)
+CCCif(my_pe.eq.0)write(6,*)'Done writing file ...'
+CCCstop 
+CCC#endif
+caldo
+@
+
+
+1.19
+log
+@now handles scalar problems as well
+@
+text
+@d12 1
+a12 1
+C     $Id: nodres.F,v 1.18 1999/12/02 08:40:18 aldo Exp aldo $
+d26 1
+a64 1
+      Scalar VEC_V(1)
+d148 16
+a163 2
+      CALL GHOST(NELEM,NPOIN+nghost,NFACE,NBFAC,NOFVERT,
+     +           NDIM,NOFVAR,ISTAK(LBNDFAC),DT_local,RHS_local,A)
+a164 1
+C     weak type wall boundary conditions
+d166 14
+a179 2
+      CALL WEAKBC(A,RHS_local,DT_local,ISTAK(LBNDFAC),
+     +            NBFAC,NDIM,NOFVERT,NOFVAR,(ABS(KAN).EQ.4))
+@
+
+
+1.18
+log
+@major changes to handle FD jacobians
+@
+text
+@d12 1
+a12 1
+C     $Id: nodres.F,v 1.16 1999/11/05 21:00:25 aldo Exp aldo $
+a18 1
+#include "include/finclude/viewer.h"
+d140 2
+d172 2
+d191 5
+a195 1
+      CALL RHSBC4(RHS)
+d216 2
+d238 1
+@
+
+
+1.17
+log
+@New BARI version........
+@
+text
+@a8 1
+C#define BARI
+a59 5
+#ifdef BARI
+      INTEGER iflag,lflag,istkgt
+      external NL_scheme,N_scheme,LDASys_scheme,NSys_scheme,istkgt
+      save lflag
+#endif
+d66 2
+a118 5
+c
+c     Loops over cells to compute fluctuation
+c     it is NOT possible to put the 100 loop
+c     inside the subroutine Model since this is also
+c     called by subroutine ghost
+d122 13
+a134 37
+#ifdef BARI
+caldo if(iter.eq.1)then
+      lflag = istkgt(nelem,2) 
+      call TRACKING(dstak(lZROE),NOFVAR,NDIM,NPOIN,istak(lCELNOD),
+     +              NOFVERT,NELEM,istak(lFLAG))
+caldo endif
+#endif
+C
+      DO 100 IELEM = 1 , NELEM
+C
+#ifdef BARI
+C
+         iflag = istak(lflag+ielem-1)
+C
+         if( iflag .eq. 1 )then
+C supersonic
+         CALL EulerII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,NL_scheme,LDASys_scheme)
+         elseif( iflag .eq. -1 )then
+C shock cells
+         CALL EulerIIbis(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,NL_scheme,NSys_scheme)
+         elseif( iflag .eq. 0 )then
+C subsonic
+         CALL EulerVII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,NL_scheme,LDASys_scheme)
+         else
+            write(6,*)'flag is ',iflag,' for ielem = ',ielem
+            stop
+         endif 
+#else
+C
+         CALL Model(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,ScalarScheme,MatrixScheme)
+#endif
+ 
+  100 CONTINUE
+d136 1
+a136 3
+#ifdef BARI
+      call istkrl(1)
+#endif 
+d148 1
+a148 2
+     +           NDIM,NOFVAR,DT_local,RHS_local,A,
+     +           Model,ScalarScheme,MatrixScheme) 
+d152 1
+a152 1
+      IF(WBCTYP.EQ.1)CALL WEAKBC(A,RHS_local,DT_local,ISTAK(LBNDFAC),
+@
+
+
+1.16
+log
+@replaced DOUBLE PRECISION with Scalar
+@
+text
+@d9 1
+d13 1
+a13 1
+C     $Id: nodres.F,v 1.15 1999/09/17 08:29:34 aldo Exp aldo $
+d61 5
+d131 8
+d141 22
+d165 1
+d169 4
+d188 2
+a189 2
+Cxxx  CALL WEAKBC(A,RHS_local,DT_local,ISTAK(LBNDFAC),
+Cxxx +            NBFAC,NDIM,NOFVERT,NOFVAR,(ABS(KAN).EQ.4))
+@
+
+
+1.15
+log
+@Now calling VecSetBlockSize on the local representation
+of the RHS vector
+@
+text
+@d12 1
+a12 1
+C     $Id: nodres.F,v 1.12 1998/12/23 11:53:06 aldo Exp aldo $
+d27 1
+a27 3
+Caldo
+      Viewer my_viewer
+Caldo
+d65 1
+a65 1
+      DOUBLE PRECISION VEC_V(1)
+@
+
+
+1.14
+log
+@changed VecGhost___LocalRepresentation into VecGhost___LocalForm
+(PETSc 2.0.24) also add PetscGetTime()
+@
+text
+@d5 5
+d14 1
+d21 2
+d26 4
+a29 2
+C
+C
+d35 1
+d41 1
+d52 2
+a53 2
+C
+      PLogDouble t1beg,t1elapsed,t2beg,t2elapsed,t3beg,t3elapsed 
+a60 1
+      INTEGER Istkgt
+d65 3
+a67 5
+      INTEGER IELEM,NNZR,ifail,ICLR,IUNIT,IDIM,N,LOCV,MY_PE
+      DOUBLE PRECISION S,dnrm2
+      DOUBLE PRECISION INFO(MAT_INFO_SIZE),VEC_V(1)
+C
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IFAIL)
+d76 1
+a76 4
+caldo CALL VecGhostUpdateBegin(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+caldo CALL VecGhostUpdateBegin(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+caldo CALL VecGhostUpdateEnd(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+caldo CALL VecGhostUpdateEnd(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+a77 5
+#endif
+C
+C     get local numbering
+C
+#ifdef MPI
+d80 6
+a91 1
+C     
+d111 1
+a141 5
+          CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+          CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+C
+CCC       call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCC       write(6,*)'Norma matrice before ghost A ',S
+a146 7
+          CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+          CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+C
+CCC       call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCC       write(6,*)'Norma matrice after ghost A ',S
+
+C
+a186 2
+   30 CONTINUE
+C
+a203 2
+CCC       call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCC       write(6,*)'Norma matrice A ',S
+d238 31
+@
+
+
+1.13
+log
+@sort of shock tracking included, following
+DePalma, Pascazio, Napolitano
+VERY EXPERIMENTAL
+@
+text
+@a16 1
+      Vec V,Y
+d41 2
+a51 3
+      EXTERNAL EulerVII,EulerII,NL_scheme,NSys_scheme,
+     +LDASys_scheme,N_scheme
+C
+d54 1
+a54 2
+      INTEGER IELEM,NNZR,ifail,ICLR,IUNIT,IDIM,N,LOCV,MY_PE,lflag,
+     +iflag
+d77 2
+a78 2
+      CALL VecGhostGetLocalRepresentation(RHS,RHS_local,IFAIL)
+      CALL VecGhostGetLocalRepresentation(DT,DT_local,IFAIL)
+d98 1
+a98 1
+C     is already done in VecGhostGetLocalRepresentation(), controlla!
+d102 1
+d117 3
+a119 5
+
+      lflag = istkgt(nelem,2) 
+      call TRACKING(dstak(lZROE),NOFVAR,NDIM,NPOIN,istak(lCELNOD),
+     +              NOFVERT,NELEM,istak(lFLAG))
+     
+d122 4
+a125 1
+         iflag = istak(lflag+ielem-1)
+d127 2
+a128 1
+         if( iflag .eq. -1 )then
+d130 4
+a133 2
+         CALL EulerVII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,NL_scheme,LDASys_scheme)
+d135 2
+a136 1
+         elseif( iflag .eq. -10 )then
+d138 2
+a139 2
+         CALL EulerVII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,NL_scheme,NSys_scheme)
+a140 19
+         elseif( iflag .eq. 1 .or. iflag .eq. 10 )then
+C
+         CALL EulerII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,N_scheme,MatrixScheme)
+C
+         else
+            write(6,*)'iflag = ',iflag
+C
+         endif
+C
+corig    CALL Model(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+corig+              DT_local,RHS_local,A,ScalarScheme,MatrixScheme)
+C 
+  100 CONTINUE
+C
+      call istkrl(1)
+C
+C     Apply Boundary Conditions for the inviscid fluxes
+C
+d145 2
+a146 3
+C note: it is necessary to call GHOST(...,NPOIN+NGHOST,..)
+C       in the parallel case, since a DUMMYPOINT is created
+C       in the routine
+d148 3
+d152 1
+a152 4
+      CALL WEAKBC(A,RHS_local,DT_local,ISTAK(LBNDFAC),
+     +           NBFAC,NDIM,NOFVERT,NOFVAR,(ABS(KAN).EQ.4))
+caldo CALL WEAKBCI(A,RHS,dt,ISTAK(LBNDFAC),NBFAC,NDIM,NOFVERT,NOFVAR)
+caldo CALL WEAKBCIb(A,RHS,dt,ISTAK(LBNDFAC),NBFAC,NDIM,NOFVERT,NOFVAR)
+d154 6
+d170 2
+a171 1
+C     Apply boundary conditions on dirichlet nodes ..
+a172 2
+C  32 continue
+C
+d199 2
+a200 2
+      CALL VecGhostUpdateBegin(dt,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateEnd(dt,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+d202 2
+a203 2
+      CALL VecGhostRestoreLocalRepresentation(RHS,RHS_local,IFAIL)
+      CALL VecGhostRestoreLocalRepresentation(DT,DT_local,IFAIL)
+d211 2
+d232 1
+a232 1
+     +IDIM=1,NDIM)
+d235 4
+@
+
+
+1.12
+log
+@modified b.c. for inviscid walls, some cleanup
+@
+text
+@d7 1
+a7 1
+C     $Id$
+d51 3
+d56 2
+a57 1
+      INTEGER IELEM,NNZR,ifail,ICLR,IUNIT,IDIM,N,LOCV,MY_PE
+d119 4
+d126 25
+a150 3
+         CALL Model(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +              DT_local,RHS_local,A,ScalarScheme,MatrixScheme)
+ 
+d152 2
+@
+
+
+1.12.1.1
+log
+@minor changes
+@
+text
+@a4 5
+C     This routine computes the NODal RESidual, i.e. it
+C     assembles the r.h.s. (RHS), the nodal timestep (DT)
+C     and the matrix (A)
+C
+C
+d7 1
+a7 1
+C     $Id: nodres.F,v 1.12 1998/12/23 11:53:06 aldo Exp aldo $
+a8 1
+C#define DEBUG
+a14 2
+C     PETSc stuff
+C
+d17 1
+d19 1
+a19 1
+      PLogDouble t1beg,t1elapsed,t2beg,t2elapsed,t3beg,t3elapsed 
+a25 1
+C     FORTRAN stack
+a30 1
+C
+a40 2
+      integer my_pe 
+      common/MPICOM/my_pe
+d48 1
+d53 5
+a57 3
+      INTEGER IELEM,ifail,ICLR,IUNIT,IDIM,bs
+      DOUBLE PRECISION S
+      DOUBLE PRECISION VEC_V(1)
+d66 6
+a71 1
+C     get local representation of the r.h.s. vector
+d73 1
+a73 5
+      CALL VecGhostGetLocalForm(RHS,RHS_local,IFAIL)
+      CALL VecGhostGetLocalForm(DT,DT_local,IFAIL)
+C     
+C     we need to set the BlockSize on the local representation
+C     of the vector ONLY as long as it is not defined yet
+d75 3
+a77 2
+      CALL VecGetBlockSize(RHS_local,bs,IFAIL)
+      IF(BS.NE.NOFVAR)CALL VecSetBlockSize(RHS_local,NOFVAR,IFAIL)
+d84 1
+d97 1
+a97 1
+C     is already done in VecGhostGetLocalForm(), controlla!
+a100 1
+C
+a102 1
+C     Set entries of the matrix to 0.d0
+d115 1
+a115 3
+C     
+      CALL PetscGetTime(t1beg,IFAIL)
+C
+a122 3
+      CALL PetscGetTime(t2beg,IFAIL)
+      t1elapsed = t2beg-t1beg
+C
+a123 4
+C     note: it is necessary to call GHOST(...,NPOIN+NGHOST,..)
+C           in the parallel case, since a DUMMYPOINT is created
+C           in the routine
+C
+d129 3
+a131 1
+C     weak type wall boundary conditions
+a132 2
+Cxxx  CALL WEAKBC(A,RHS_local,DT_local,ISTAK(LBNDFAC),
+Cxxx +            NBFAC,NDIM,NOFVERT,NOFVAR,(ABS(KAN).EQ.4))
+d134 4
+a137 2
+      CALL PetscGetTime(t3beg,IFAIL)
+      t2elapsed = t3beg-t2beg
+d149 3
+a151 2
+      CALL PetscGetTime(t3elapsed,IFAIL)
+      t3elapsed = t3elapsed-t3beg
+d172 2
+d179 2
+a180 2
+      CALL VecGhostUpdateBegin(DT,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateEnd(DT,ADD_VALUES,SCATTER_REVERSE,IFAIL) 
+d182 2
+a183 2
+      CALL VecGhostRestoreLocalForm(RHS,RHS_local,IFAIL)
+      CALL VecGhostRestoreLocalForm(DT,DT_local,IFAIL)
+d210 1
+a210 1
+     +              IDIM=1,NDIM)
+a213 4
+C     write timings:
+C
+      write(44,*)niter,t1elapsed,t2elapsed,t3elapsed
+C
+a220 17
+CCC       call vecnorm(dt,NORM_2,S,IFAIL)
+CCCC      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+CCCC      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+C
+CCCC      call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCCC      write(6,*)'Norma matrice before ghost A ',S,my_pe
+C
+CCCC      CALL VecAssemblyBegin(rhs,IFAIL)
+CCCC      CALL VecAssemblyEnd(rhs,IFAIL) 
+C
+CCCC      call vecnorm(rhs,NORM_2,S,IFAIL)
+CCCC      write(6,*)'Norma rhs before ghost A ',S,my_pe
+CCC       write(6,*)'Norma dt ',S,my_pe
+CCC       call vecnorm(rhs,NORM_2,S,IFAIL)
+CCC       write(6,*)'Norma rhs ',S,my_pe
+CCC       call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCC       write(6,*)'Norma matrice A ',S,my_pe
+@
+
+
+1.11
+log
+@Add automatic identification flag
+@
+text
+@d134 4
+a137 1
+caldo CALL WEAKBCI(A,RHS,ISTAK(LBNDFAC),NBFAC,NDIM,NOFVERT,NOFVAR)
+a167 7
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"vec.output",
+C    +                         VIEWER_STDOUT_SELF,IFAIL) 
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +                     VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IFAIL)
+C
+C     CALL VecView(RHS,VIEWER_STDOUT_SELF,IFAIL)
+C
+a218 36
+C     CALL MatNorm(A,NORM_FROBENIUS,S,IFAIL)
+C     write(6,*)'Norma of A ',S
+C
+C     LOCV = ISTKGT(NOFVAR*NPOIN,4)
+C     CALL VecCreateSeq(MPI_COMM_SELF,NOFVAR*NPOIN,Y,IFAIL)
+C     CALL VecCreateSeqWithArray(MPI_COMM_SELF,NOFVAR*NPOIN,
+C    +DSTAK(LOCV),V,IFAIL)
+C     CALL DCOPY(NOFVAR*NPOIN,DSTAK(LZROE),1,DSTAK(LOCV),1) 
+C     write(6,*)'Norma z ',dnrm2(NOFVAR*NPOIN,DSTAK(LZROE),1)
+C     CALL VecNorm(V,NORM_2,S,IFAIL)
+C     write(6,*)'Norma v ',S
+C     CALL MatMult(A,V,Y,IFAIL)
+C     CALL VecNorm(Y,NORM_2,S,IFAIL)
+C     write(6,*)'Norma A*z ',S
+C     CALL VecDestroy(Y,IFAIL)
+C     CALL VecDestroy(V,IFAIL)
+C     CALL ISTKRL(1)
+C
+C     CALL MatGetInfo(A,MAT_LOCAL,INFO,IFAIL)
+C
+C     write(6,*)'number of global rows and columns',info(1),info(2)
+C     write(6,*)'number of local rows and columns',info(3),info(4)
+C     write(6,*)'block size',info(5)
+C     write(6,*)'number of nonzeros',info(6),info(7),info(8)
+C     write(6,*)'memory allocated',info(9)
+C     write(6,*)'number of matrix assemblies',info(10)
+C     write(6,*)'number of mallocs during MatSetValues()',info(11)
+C     write(6,*)'fill ratio for LU/ILU',info(12),info(13)
+C     write(6,*)'number of mallocs during factorization',info(14)
+C
+C
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"mat.output",
+C    +                         VIEWER_STDOUT_SELF,IFAIL) 
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +                     VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IFAIL)
+C     CALL MatView(A,VIEWER_STDOUT_SELF,IFAIL)
+@
+
+
+1.10
+log
+@ghost values are set to 0.d0 without message passing and
+removed unused parameters in the call to rhsbc4
+@
+text
+@d7 3
+a19 1
+C     Parameters ..
+@
+
+
+1.9
+log
+@parallel version using pre-processor directives
+@
+text
+@d15 1
+d51 1
+a51 2
+      INTEGER IELEM,NNZR,ifail,ICLR,IUNIT,IDIM,N,LOCV,LIWORK,
+     +LRWORK,LEN,MY_PE
+d53 1
+a53 1
+      DOUBLE PRECISION INFO(MAT_INFO_SIZE)
+d64 4
+a67 8
+C     set ghost values to zero
+C     note that VecSet only sets values belonging to the
+C          owning processor 
+C
+      CALL VecGhostUpdateBegin(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateBegin(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(RHS,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(DT,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+d76 15
+d94 2
+a95 1
+C     are the same
+d170 1
+a170 4
+      LEN = NOFVAR*NPOIN1 + NDIM*(NPOIN6+NPOIN7)
+      IF( LEN .EQ. 0 )GOTO 30
+      LIWORK = ISTKGT(LEN,2) 
+      LRWORK = ISTKGT(LEN,4) 
+d172 1
+a172 4
+      CALL RHSBC4(NPOIN, NDIM, NOFVAR, RHS_local, ISTAK(LIWORK),
+     +                DSTAK(LRWORK), LEN, ISTAK(LNODCOD))
+C
+      CALL ISTKRL(2)
+a174 4
+C
+C     IF( PERIODIC_MESH) THEN
+C        CALL RHSBC6( NOFVAR, RHS, DT )
+C     ENDIF
+@
+
+
+1.8
+log
+@Periodic boundary conditions disabled
+@
+text
+@d13 1
+a13 1
+      Vec DT,RHS
+d36 2
+d51 1
+a51 1
+     +LRWORK,LEN
+d55 2
+d62 28
+d101 1
+a101 1
+c
+d105 1
+a105 1
+     +              DT,RHS,A,ScalarScheme,MatrixScheme)
+d111 8
+a118 2
+      CALL GHOST(NELEM,NPOIN,NFACE,NBFAC,NOFVERT,
+     +           NDIM,NOFVAR,DT,RHS,A,Model,ScalarScheme,MatrixScheme) 
+d126 1
+a126 1
+     +                NDIM,NOFVERT,NOFVAR,DT,RHS,A)
+d129 1
+a129 1
+     +                NDIM,NOFVERT,NOFVAR,DT,RHS,A)
+d139 11
+a149 2
+      CALL VecAssemblyBegin(RHS,IFAIL)      
+      CALL VecAssemblyEnd(RHS,IFAIL)      
+d163 1
+a163 1
+      CALL RHSBC4(NPOIN, NDIM, NOFVAR, RHS, ISTAK(LIWORK),
+d177 10
+a186 2
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL)
+C     write(6,*)'Norma RHS dopo setbc ',S
+@
+
+
+1.7
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d123 3
+a125 3
+      IF( PERIODIC_MESH) THEN
+         CALL RHSBC6( NOFVAR, RHS, DT )
+      ENDIF
+@
+
+
+1.6
+log
+@call to new b.c. for inviscid walls
+@
+text
+@d7 4
+a10 4
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/viewer.h"
+@
+
+
+1.5
+log
+@now handles periodic meshes
+@
+text
+@d75 1
+a75 1
+  100 CONTINUE ! end loop on cells
+d82 2
+d152 1
+@
+
+
+1.4
+log
+@call to SETRHSBC4 inserted
+@
+text
+@a52 5
+C     External Functions ..
+C
+C
+C     Executable Statements ..
+C
+a75 2
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL)
+C     write(6,*)'Norma RHS dopo Model',S
+a80 2
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL)
+C     write(6,*)'Norma RHS dopo Ghost',S
+a90 2
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL)
+C     write(6,*)'Norma RHS dopo bndvflx',S
+d118 1
+d121 4
+d131 29
+a159 2
+      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL) 
+a197 38
+C
+C     write aerodynamic coefficients
+C
+      IUNIT = 40
+C
+      DO 33 ICLR = 0, NCOLOR
+C
+C
+C     Skip the current color unless slip/no-slip body
+C
+         IF( MCOLOR(ICLR) .EQ. 0 .OR. .NOT.
+     +     ( ICOLOR(ICLR) .EQ. 4 .OR. ICOLOR(ICLR) .EQ. 6 ) )GOTO 33
+C
+      IUNIT = IUNIT + 1
+C
+C     PLIFT = PRESF(1,ICLR)*FLOWDIR(2) - PRESF(2,ICLR)*FLOWDIR(1)
+C     VLIFT = VISCF(1,ICLR)*FLOWDIR(2) - VISCF(2,ICLR)*FLOWDIR(1)
+C     PDRAG =-PRESF(1,ICLR)*FLOWDIR(1) - PRESF(2,ICLR)*FLOWDIR(2)
+C    &      - PRESF(3,ICLR)*FLOWDIR(3)
+C     VDRAG =-VISCF(1,ICLR)*FLOWDIR(1) - VISCF(2,ICLR)*FLOWDIR(2)
+C    &      - VISCF(3,ICLR)*FLOWDIR(3)
+C
+C     CDP  = PDRAG * ANFACT
+C     CDV  = VDRAG * ANFACT
+C     CLP  = PLIFT * ANFACT
+C     CLV  = VLIFT * ANFACT
+C
+C     WRITE(IUNIT,*)NITER,CDP,CDV,CLP,CLV
+C
+      WRITE(IUNIT,*)NITER,(PRESF(IDIM,ICLR),VISCF(IDIM,ICLR),
+     +IDIM=1,NDIM)
+C
+   33 CONTINUE
+C
+      RETURN
+ 2000 FORMAT(/,1X,
+     &'COMPUTATION OF THE RESIDUAL AND MATRIX ASSEMBLY',
+     &/,1X,48('=')/)
+@
+
+
+1.3
+log
+@PETSc version
+@
+text
+@a27 1
+      common /datav/ nviscn
+d33 1
+d39 1
+a39 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,NVISCN
+d48 2
+a49 1
+      INTEGER IELEM,NNZR,ifail,ICLR,IUNIT,IDIM,N,LOCV,LIWORK,LRWORK
+d108 1
+a108 1
+C     might follow in SETBC1 
+d120 4
+a123 2
+      LIWORK = ISTKGT(2*NVISCN,2) 
+      LRWORK = ISTKGT(2*NVISCN,4) 
+d125 2
+a126 2
+      CALL SETBC1(NPOIN, NELEM, NDIM, NOFVAR, RHS,
+     +            ISTAK(LIWORK), DSTAK(LRWORK), ISTAK(LNODCOD) )
+d129 1
+@
+
+
+1.2
+log
+@Now handles the computation of the aerodynamic forces
+for multiple bodies; aerodynamic coefficients are left to
+the end users, write forces components instead
+@
+text
+@d2 2
+d5 1
+a5 2
+      SUBROUTINE NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+     +                  NBFAC,Model,ScalarScheme,MatrixScheme)
+d7 8
+a14 1
+      IMPLICIT NONE
+d16 1
+a16 1
+C     .. Parameters ..
+d20 1
+a22 1
+C     .. Commons ..
+d28 1
+d37 1
+a37 1
+C     .. Scalar Arguments ..
+d39 1
+a39 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC
+d41 1
+a41 1
+C     .. External Arguments ..
+d43 1
+d46 1
+a46 1
+C     .. Local Scalars ..
+d48 3
+a50 2
+      INTEGER IELEM,NNZR,ifail,ICLR,IUNIT,IDIM
+      DOUBLE PRECISION CLP,CLV,CDP,CDV
+d52 1
+a52 1
+C     .. External Functions ..
+a53 1
+      INTEGER NNZERO
+d55 1
+a55 1
+C     .. Executable Statements ..
+d59 2
+a60 2
+      CALL DINIT(NPOIN+1,ZERO,DSTAK(LDTLIN),1)
+      CALL DINIT(NOFVAR*(NPOIN+1),ZERO,DSTAK(LRESID),1)
+d63 1
+a63 2
+         NNZR = NNZERO( ISTAK(LIACSR), NPOIN )
+         CALL DINIT(NNZR*NOFVAR*NOFVAR,ZERO,DSTAK(LACSR),1)
+a73 1
+c
+d77 1
+a77 1
+     +ScalarScheme,MatrixScheme)
+d80 2
+d86 3
+a88 1
+     +           NDIM,NOFVAR,Model,ScalarScheme,MatrixScheme) 
+d94 1
+a94 1
+     +                NDIM,NOFVERT,NOFVAR,NOFVAR)
+d97 1
+a97 1
+     +                NDIM,NOFVERT,NOFVAR,NOFVAR)
+d99 4
+d104 1
+a104 1
+C     .. Apply boundary conditions on dirichlet nodes ..
+d106 66
+a171 2
+      CALL SETBC1(NPOIN, NELEM, NDIM, NOFVAR, DSTAK(LRESID), 
+     +            ISTAK(LNODCOD) )
+a172 2
+*     CALL DTIME(D2)
+*     WRITE(NOUT,3000)D2(1) - D1(1)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d11 1
+d20 1
+d38 1
+a38 1
+      INTEGER IELEM,NNZR,ifail
+d57 2
+a58 2
+      CALL DINIT(3,ZERO,PRESF,1)
+      CALL DINIT(3,ZERO,VISCF,1)
+a79 1
+C     goto 33
+a86 1
+   33 continue
+d96 1
+a96 11
+      PLIFT = PRESF(1)*FLOWDIR(2) - PRESF(2)*FLOWDIR(1)
+      VLIFT = VISCF(1)*FLOWDIR(2) - VISCF(2)*FLOWDIR(1)
+      PDRAG =-PRESF(1)*FLOWDIR(1) - PRESF(2)*FLOWDIR(2)
+     &      - PRESF(3)*FLOWDIR(3)
+      VDRAG =-VISCF(1)*FLOWDIR(1) - VISCF(2)*FLOWDIR(2)
+     &      - VISCF(3)*FLOWDIR(3)
+C
+      CDP  = PDRAG * ANFACT
+      CDV  = VDRAG * ANFACT
+      CLP  = PLIFT * ANFACT
+      CLV  = VLIFT * ANFACT
+d98 30
+a127 1
+      WRITE(9,*)NITER,CDP,CDV,CLP,CLV
+a132 1
+C000  FORMAT(//' time spent ',F5.2,' sec.')
+a133 1
+C
+@

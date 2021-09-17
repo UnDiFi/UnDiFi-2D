@@ -1,0 +1,3 @@
+NFACE     number of edges/faces in the mesh for the current 
+          processor or global number of edges/faces in the mesh
+          

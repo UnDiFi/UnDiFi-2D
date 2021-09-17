@@ -1,0 +1,24 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2009.06.11.13.10.01;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Apply boundary conditions on the nodal residual (RHS array)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@@

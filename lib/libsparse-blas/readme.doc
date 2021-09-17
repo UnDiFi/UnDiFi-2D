@@ -1,0 +1,77 @@
+                                  SPARSE BLAS
+
+This floppy contains 17 *.FOR and 4 *.IN files.  They comprise the FORTRAN
+source code for the Sparse BLAS.  The files are
+
+        REALMAIN.FOR    Main program for certification of Real version
+        REALTSUB.FOR    Test Subroutines for certification of Real version
+        REALBLAS.FOR    Real version of sparse BLAS subroutines
+        DOUBMAIN.FOR    Main program for certification of D. P. version
+        DOUBTSUB.FOR    Test Subroutines for certification of D. P. version
+        DOUBBLAS.FOR    D. P. version of sparse BLAS subroutines
+        COMPMAIN.FOR    Main program for certification of Complex version
+        COMPTSUB.FOR    Test Subroutines for certification of Complex version
+        COMPBLAS.FOR    Complex version of sparse BLAS subroutines
+        CP16MAIN.FOR    Main program for certification of Complex*16 version
+        CP16TSUB.FOR    Test Subroutines for certification of Complex*16 version
+        CP16BLAS.FOR    Complex*16 version of sparse BLAS subroutines
+        SBLAS0.FOR      Other BLAS or BLAS-like routines required in the
+                        certification of Real BLAS.
+        DBLAS0.FOR      Other BLAS or BLAS-like routines required in the
+                        certification of D. P. BLAS.
+        CBLAS0.FOR      Other BLAS or BLAS-like routines required in the
+                        certification of Complex BLAS.
+        ZBLAS0.FOR      Other BLAS or BLAS-like routines required in the
+                        certification of Complex*16 BLAS.
+        IBLAS0.FOR      Other BLAS or BLAS-like routines required in all
+                        certification programs.
+        REAL.IN         Input dataset for Real certification
+        DOUBLE.IN       Input dataset for Double Precision certification
+        COMPLEX.IN      Input dataset for Complex certification
+        COMPLX16.IN     Input dataset for Complex*16 certification
+
+To certify Real version compile and link
+
+        REALMAIN.FOR+REALTSUB.FOR+REALBLAS.FOR+SBLAS0.FOR+IBLAS0.FOR
+
+execute with REAL.IN.
+
+To certify Double Precision version compile and link
+
+        DOUBMAIN.FOR+DOUBTSUB.FOR+DOUBBLAS.FOR+DBLAS0.FOR+IBLAS0.FOR
+
+execute with DOUBLE.IN
+
+To certify Complex version compile and link
+
+        COMPMAIN.FOR+COMPTSUB.FOR+COMPBLAS.FOR+CBLAS0.FOR+IBLAS0.FOR
+
+execute with COMPLEX.IN.
+
+To certify Complex*16 version compile and link
+
+        CP16MAIN.FOR+CP16TSUB.FOR+CP16BLAS.FOR+ZBLAS0.FOR+IBLAS0.FOR
+
+execute with COMPLX16.IN.
+
+
+The following table indicates which versions have executed on what machines
+
+                        REAL    D.P.    COMPLEX   COMPLEX*16
+
+CDC ???                   *       *         *        -na-
+CONVEX C1                 *       *         *          * 
+Cray X-MP                 *       *         *          *
+IBM 3081                  *       *         *          * 
+IBM PC XT
+  Microsoft Fort. v. 4.0  *       *         *      passed with no optimization
+                                                   failed with optimization
+  Leahy v.                *       *       failed      failed
+MicroVax                  *       *         *          *
+SCS-40                    *       *         *          *
+SUN 3/260                 *       *         *      failed due to unsatisfied
+                                                   external reference dealing
+                                                   with logical operators for
+                                                   COMPLEX*16 numbers
+VAX 780                   *       *         *          *
+

@@ -1,0 +1,13 @@
+la struttuta e' la seguente
+
+
+                     +---> RHSFunction() calcola RHS e assembla la matrice
+                     |
+                     |
+main() ---> myTS()  -+
+                     |
+                     |
+                     +---> Update() risolve il sistema lineare
+
+
+MatAllocaMPI crea la matrice parallela

@@ -1,0 +1,236 @@
+      SUBROUTINE LSSYS_SCHEME(MATRIXSPLITTER,W,NODRES,TSTEP,STIFC,
+     +                         NORDER,NDOF,NOFVERT,VCN,NDIM,DFGHDU,
+     +                         LDJ,CELRES,SOURCE,IELEM,MATRIX_ASSEMBLY)
+C
+C     $Id: LSSys_scheme.F,v 1.3 2020/03/28 09:49:28 abonfi Exp $
+C     
+C     Only one of the following can be defined
+C
+CCCC#define FSPL_USE_PETSC_KERNELS
+#define FSPL_USE_LAPACK
+C
+C
+C NORDER                is the order of the system to solve for, i.e.
+C                       the order of the matrix dFGHdU.
+C FrstEq                is the first among the NDOF variable which
+C                       appears into the system of order NORDER.
+C IELEM                 is the current element.
+C dFGHdU(LDJ,*) is the Jacobian Matrix of the system.
+C LDJ                   is the leading dimension of dFGHdU.
+C W                  stores by columns the NORDER variables of the
+C                       NOFVERT vertices.
+C LNODRES                   is the leading dimension of W.
+C CELRES[1:2*NORDER]  OUT Real
+C CELRES[1:NORDER]    stores the residual computed by the Matrix scheme
+C                       as \sum K_j U_j (explicit part of the scheme)
+C CELRES[NORDER+1:2*NORDER]
+C                       stores the residual computed by the Matrix scheme
+C                       as \sum C_{ij} U_j (implicit part of the scheme)
+C MatrixSplitter        is the procedure used to compute the eigenvector
+C                       decomposition of the matrix dFGHdU.
+C TSTEP                 is the nodal timestep.
+C DU(NDOF,*)               is the nodal residual.
+C
+C
+C
+C This routine computes the LDA system scheme on one tetrahedron
+C
+C
+      IMPLICIT NONE
+      INCLUDE 'paramt.h'
+      INCLUDE 'flags.com'
+C
+      INTEGER LWORK
+      PARAMETER(LWORK=2*NMAX)
+C
+C
+cnag  EXTERNAL F07ADF,F07AEF,DSCAL
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ZERO,ONE
+      PARAMETER (ZERO=0.D0,ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER IELEM,LDJ,NDIM,NOFVERT,NDOF,NORDER
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DFGHDU(LDJ,*),NODRES(NDOF,NOFVERT),
+     +                 TSTEP(NDOF,NOFVERT),SOURCE(*),
+     +                 CELRES(*),STIFC(NDOF,NDOF,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NDOF,NOFVERT)
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL MATRIXSPLITTER
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION SUM,TEMP
+      INTEGER I,INFO,IROW,IVAR,IVERT,J,JCOL,IADDR,JADDR,NSQR
+      LOGICAL LFLAG
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION K(NMAX*NMAX*VMAX),KNEG(NMAX*NMAX*VMAX),
+     +BETA(NMAX,NMAX,VMAX),KPOS(NMAX*NMAX*4),SUM_K_POS(NMAX*NMAX),
+     +WORK(LWORK),VLEFT(NMAX*NMAX),VRIGHT(NMAX*NMAX),WKSP1(NMAX),
+     +WKSP2(NMAX,NMAX),WNEG(NMAX),WPOS(NMAX),WR(NMAX)
+      INTEGER IPIV(NMAX)
+C     ..
+C     .. External Functions ..
+      LOGICAL NULLMAT,UNITMAT
+      EXTERNAL NULLMAT,UNITMAT
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DGEMM,DGEMV,DGETRF,DGETRS,DINIT,DSCAL,MATSUM,R8Mat_Print
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DABS
+C     ..
+caldo DO 1 J = 1,NMAX
+caldo     DO 1 I = 1,NMAX
+caldo         SUM_K_POS(I,J) = ZERO
+caldo CONTINUE
+C
+      NSQR = NORDER*NORDER
+      CALL DINIT(NMAX*NMAX,ZERO,SUM_K_POS,1)
+C
+C residual = - fluctuation
+      DO 3 I = 1,2*NDOF
+          CELRES(I) = ZERO
+    3 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+          CALL DINIT(NMAX,ZERO,WKSP1,1)
+          CALL DINIT(NMAX*NMAX,ZERO,WKSP2,1)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C       .. Loop over the vertices of the element ..
+C
+      DO 10 IVERT = 1,NOFVERT
+C
+          IADDR = (IVERT-1)*NSQR+1
+C
+C       .. The matrix is split into its positive and negative parts
+C
+C       Numerically or Analitically ..
+C
+          CALL MATRIXSPLITTER(IELEM,NDIM,NORDER,VCN(1,IVERT),DFGHDU,LDJ,
+     +                        K(IADDR),KPOS(IADDR),
+     +                        KNEG(IADDR),VLEFT,VRIGHT,NORDER,WR,WPOS,
+     +                        WNEG,.TRUE.)
+C
+C       The positive jacobians are accumulated in SUM_K_POS ..
+C
+caldo     DO 15 JCOL = 1,NORDER
+caldo         DO 15 IROW = 1,NORDER
+caldo             SUM_K_POS(IROW,JCOL) = SUM_K_POS(IROW,JCOL) +
+caldo+                                   KPOS(IROW,JCOL,IVERT)
+cal15     CONTINUE
+C         CALL DAXPY(NSQR,ONE,KPOS(IADDR),1,SUM_K_POS,1)
+C
+C       Timestep ..
+C
+          DO 32 IVAR = 1,NORDER
+              TSTEP(IVAR,IVERT) = TSTEP(IVAR,IVERT) + WPOS(IVAR)
+   32     CONTINUE
+C
+C       the residual is computes as Sum_j K(j) * U(j) ..
+C
+         CALL DGEMV('N',NORDER,NORDER,ONE,K(IADDR),NORDER,W(1,IVERT),1,
+     +   ONE,CELRES,1)
+C
+caldo     DO 11 I = 1,NORDER
+caldo         SUM = ZERO
+caldo         DO 13 J = 1,NORDER
+caldo             SUM = SUM + K(I,J,IVERT)*W(J,IVERT)
+cal13         CONTINUE
+caldo         CELRES(I) = CELRES(I) + SUM
+cal11     CONTINUE
+C
+   10 CONTINUE
+C
+C
+C       .. Loop again over all vertices to compute the distribution
+C               matrices (overwritten on KPOS)  ..
+C
+      DO 30 IVERT = 1,NOFVERT
+          IADDR = (IVERT-1)*NSQR+1
+C
+C     compute the distribution matrices as B_i =  K^+ (\sum K^+)^{-1}
+C
+          DO 43 I = 1,NORDER
+              DO 43 J = 1,NORDER
+C     transpose
+                  BETA(I,J,IVERT) = K(IADDR+(I-1)*NORDER+J-1)
+   43     CONTINUE
+
+caldo
+caldo         CALL R8Mat_Print('G',' ',NORDER,NORDER,beta(1,1,ivert),NMAX,
+caldo+                    'Beta matrix',INFO)
+caldo
+C
+C       NODRES(IVERT) = -BETA(IVERT)*CELRES
+C
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,KPOS(1,1,IVERT),NMAX,CELRES,
+cblas+   1,ZERO,WKSP,1)
+C
+          DO 23 I = 1,NORDER
+              SUM = ZERO
+              DO 21 J = 1,NORDER
+                  SUM = SUM + BETA(I,J,IVERT)*(CELRES(J)+SOURCE(J))
+   21         CONTINUE
+              NODRES(I,IVERT) = -SUM
+   23     CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+          IF (ICHECK.NE.0) THEN
+C
+C       .. Sum up the distribution matrices ..
+C
+              CALL MATSUM(WKSP2,NMAX,BETA(1,1,IVERT),NMAX,NORDER,NORDER)
+C
+          ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C
+   30 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      include 'test1.inc'
+C
+C --------------- Debugging code ends here ---------------
+C
+      IF (.NOT.MATRIX_ASSEMBLY) RETURN
+C
+C     .. Assembling the element stiffness matrix for the LDA scheme ..
+C
+      DO 31 J = 1,NOFVERT
+      JADDR = (J-1)*NSQR+1
+C
+          DO 31 I = 1,NOFVERT
+C
+C     ... C_{ij}^{LDA} = - Delta_i^{+} K_j
+C         Delta_i^{+} had been overwritten onto KPOS
+C
+              CALL DGEMM('N','N',NORDER,NORDER,NORDER,-ONE,BETA(1,1,I),
+     +             NMAX,K(JADDR),NORDER,ZERO,STIFC(1,1,I,J),NDOF)
+C
+   31 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      include 'test2.inc'
+C
+C --------------- Debugging code ends here ---------------
+C
+      RETURN
+
+      END

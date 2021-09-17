@@ -1,0 +1,124 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.20.55;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@INTEGER SCATTER
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE ISCTR ( NZ, X, INDX, Y )
+C
+C     ==================================================================
+C     ==================================================================
+C     ====  ISCTR -- INTEGER SCATTER                                   ====
+C     ==================================================================
+C     ==================================================================
+C
+C     PURPOSE
+C     -------
+C
+C         ISCTR SCATTERS THE COMPONENTS OF 
+C             A SPARSE VECTOR  X  STORED IN COMPRESSED FORM  (X,INDX) 
+C         INTO 
+C             SPECIFIED COMPONENTS OF A INTEGER VECTOR  Y  
+C             IN FULL STORAGE FORM.
+C
+C         ONLY THE ELEMENTS OF  Y  WHOSE INDICES ARE LISTED IN  INDX 
+C         ARE MODIFIED.  THE VALUES IN  INDX  MUST BE DISTINCT TO
+C         ALLOW CONSISTENT VECTOR OR PARALLEL EXECUTION.
+C
+C         ALTHOUGH DISTINCT INDICES WILL ALLOW VECTOR OR PARALLEL
+C         EXECUTION, MOST COMPILERS FOR HIGH-PERFORMANCE MACHINES WILL
+C         BE UNABLE TO GENERATE BEST POSSIBLE CODE WITHOUT SOME 
+C         MODIFICATION, SUCH AS COMPILER DIRECTIVES, TO THIS CODE.
+C
+C     ARGUMENTS
+C     ---------
+C
+C     INPUT ...
+C
+C         NZ      INTEGER     NUMBER OF ELEMENTS TO BE SCATTERED FROM 
+C                             COMPRESSED FORM.
+C         X       INTEGER        ARRAY CONTAINING THE VALUES TO BE 
+C                             SCATTERED FROM COMPRESSED FORM INTO FULL 
+C                             STORAGE FORM.
+C         INDX    INTEGER     ARRAY CONTAINING THE INDICES OF THE VALUES
+C                             TO BE SCATTERED FROM COMPRESSED FORM.  
+C                             IT IS ASSUMED THAT THE ELEMENTS IN  INDX 
+C                             ARE DISTINCT.
+C
+C     OUTPUT ...
+C
+C         Y       INTEGER        ARRAY WHOSE ELEMENTS SPECIFIED BY  INDX
+C                             HAVE BEEN SET TO THE CORRESPONDING 
+C                             ENTRIES OF  X.  ONLY THE ELEMENTS  
+C                             CORRESPONDING TO THE INDICES IN  INDX
+C                             HAVE BEEN MODIFIED.
+C
+C     SPARSE BASIC LINEAR ALGEBRA SUBPROGRAM
+C
+C     FORTRAN VERSION WRITTEN OCTOBER 1984
+C     ROGER G GRIMES, BOEING COMPUTER SERVICES
+C
+C     ==================================================================
+C
+C     -------------
+C     ... ARGUMENTS
+C     -------------
+C
+      INTEGER             NZ, INDX (*)
+C
+      INTEGER             X (*), Y (*)
+C
+C     -------------------
+C     ... LOCAL VARIABLES
+C     -------------------
+C
+      INTEGER             I
+C
+C     ==================================================================
+C
+      IF  ( NZ .LE. 0 )  RETURN
+C
+      DO 10 I = 1, NZ
+          Y(INDX(I)) = X(I)
+   10 CONTINUE
+C
+      RETURN
+      END
+@

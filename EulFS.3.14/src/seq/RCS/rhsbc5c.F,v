@@ -1,0 +1,262 @@
+head	1.7;
+access
+	tesistim;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.7
+	release3_11_0:1.7
+	release3_10_0:1.7
+	release3_8_0:1.7
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.5
+	release3_4_4:1.5
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.4
+	release3_3_0:1.3;
+locks; strict;
+comment	@c @;
+
+
+1.7
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.06.06.10.34.38;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.01.26.11.30.51;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2002.09.14.09.06.54;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@applies bcs to the rhs of the turbulence
+transport eqn when a coupled solution strategy for RANS
+is adopted
+@
+
+
+1.7
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE RHSBC5C( RHS, ROWBGN, NodalBcs )
+C
+C     $Id: rhsbc5c.F,v 1.6 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C
+C     This routine sets the boundary conditions in the
+C     "EXPLICIT" residual for the turbulence equation ..
+C
+#include "petsc/finclude/petscis.h"
+      use petscis
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+C
+      IS, dimension(0:*) :: NodalBcs
+C
+      PetscOffset RHS_I,IDX_I
+C
+      INTEGER I
+C
+      DOUBLE PRECISION RHS(*)
+C
+      INTEGER IPOIN,NI,IFAIL,ROWBGN
+      PetscScalar RHS_V(1)
+      INTEGER IDX_V(1)
+C
+C
+C    EXPLICIT Treatment of no-slip wall nodes
+C
+C
+      CALL ISGetIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+      CALL ISGetSize(NodalBcs(NoSlipNodes),NI,IFAIL)
+C
+      DO 1000 I= 1 , NI
+C
+          IPOIN = IDX_V( IDX_I+I )-ROWBGN  +1
+c         write(6,*)ipoin,RHS(IPOIN)
+          RHS(IPOIN) = ZERO
+C
+ 1000 CONTINUE
+C
+      CALL ISRestoreIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+C
+C
+C
+      CALL ISGetIndices(NodalBcs(FreestreamTurbulence),IDX_V,IDX_I,
+     &                  IFAIL)
+      CALL ISGetSize(NodalBcs(FreestreamTurbulence),NI,IFAIL)
+C
+      DO 2000 I= 1 , NI
+C
+          IPOIN = IDX_V( IDX_I+I )-ROWBGN  +1
+          RHS(IPOIN) = ZERO
+C
+ 2000 CONTINUE
+C
+      CALL ISRestoreIndices(NodalBcs(FreestreamTurbulence),IDX_V,IDX_I,
+     &                      IFAIL)
+C
+      RETURN
+      END
+@
+
+
+1.6
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE RHSBC5C( RHS, ROWBGN )
+d3 1
+a3 1
+C     $Id: rhsbc5c.F,v 1.5 2013/06/06 10:34:38 abonfi Exp abonfi $
+d9 3
+d14 1
+a14 4
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscis.h"
+C
+d17 1
+d19 1
+a19 3
+#include "iset.com"
+C
+C
+a22 2
+      INCLUDE 'constants.h'
+C
+d35 2
+a36 2
+      CALL ISGetIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+      CALL ISGetSize(NoSlipNodes,NI,IFAIL)
+d46 1
+a46 1
+      CALL ISRestoreIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+d50 3
+a52 2
+      CALL ISGetIndices(FreestreamTurbulence,IDX_V,IDX_I,IFAIL)
+      CALL ISGetSize(FreestreamTurbulence,NI,IFAIL)
+d61 2
+a62 2
+      CALL ISRestoreIndices(FreestreamTurbulence,IDX_V,IDX_I,IFAIL)
+cxxxx CALL VecRestoreArray(RHS,RHS_V,RHS_I,IFAIL)
+@
+
+
+1.5
+log
+@now includes bnd.h
+@
+text
+@d3 1
+a3 1
+C     $Id: rhsbc5c.F,v 1.4 2013/01/26 11:30:51 abonfi Exp abonfi $
+d11 3
+a13 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.4
+log
+@changed the name of included header/common files
+@
+text
+@d3 1
+a3 1
+C     $Id: rhsbc5c.F,v 1.3 2011/09/16 07:19:48 abonfi Exp abonfi $
+d16 1
+@
+
+
+1.3
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d3 1
+a3 1
+C     $Id: rhsbc5c.F,v 1.2 2009/06/11 13:10:58 abonfi Exp abonfi $
+d23 1
+a23 1
+      INCLUDE 'constants'
+@
+
+
+1.2
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d3 1
+a3 1
+C     $Id: rhsbc5c.F,v 1.1 2002/09/14 09:06:54 abonfi Exp abonfi $
+d11 1
+a11 1
+#include "finclude/petsc.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+C     $Id: rhsbc5.F,v 1.12 2002/02/19 09:25:46 abonfi Exp abonfi $
+d11 3
+a13 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscis.h"
+@

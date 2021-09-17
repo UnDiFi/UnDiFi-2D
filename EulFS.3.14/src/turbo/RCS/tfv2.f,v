@@ -1,0 +1,248 @@
+head	1.6;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.6
+	release3_13_0:1.6
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.5
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.4
+	release3_3_0:1.3;
+locks; strict;
+comment	@c @;
+
+
+1.6
+date	2020.02.05.15.03.28;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2015.05.11.07.23.56;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.01.26.12.01.29;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.08.18.14.18.57;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.06.03.08.00.55;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches
+	1.1.1.1;
+next	;
+
+1.1.1.1
+date	2011.05.06.15.07.42;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Function for the Spalart-Allmaras model
+@
+
+
+1.6
+log
+@unused declaration removed
+@
+text
+@!> \brief \b TFV2
+!> \par Purpose
+!>
+!> compute the function \f$ f_{v_2} = \frac{1}{\left(1+\chi/c_{v_2}\right)^3} \f$
+!> (Spalart & Allmaras model: version: SA-fv3)
+!>
+!>
+!> @@param[in] TCHI is \f$ \tilde{\nu}/\nu \f$
+!> \author $Author: abonfi $
+!> \version $Revision: 1.5 $
+!> \date $Date: 2015/05/11 07:23:56 $
+      DOUBLE PRECISION FUNCTION TFV2(TCHI)
+c2345678
+      IMPLICIT NONE
+      INCLUDE 'turb.com'
+      INCLUDE 'constants.h'
+      DOUBLE PRECISION TCHI
+
+C     new version from the Ashford's thesis; this is also known as the SA-fv3 variant of the model
+C
+      TFV2=ONE/(ONE+TCHI/TCV2)**3
+      RETURN
+      END
+!> \brief \b TFV2SA
+!> \par Purpose
+!>
+!> compute the function \f$ f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)} \f$
+!> (Spalart & Allmaras model: version: SA)
+!>
+!>
+!> @@param[in] TCHI is \f$ \tilde{\nu}/\nu \f$
+!> \author $Author: abonfi $
+!> \version $Revision: 1.5 $
+!> \date $Date: 2015/05/11 07:23:56 $
+      DOUBLE PRECISION FUNCTION TFV2SA(TCHI)
+c2345678
+      IMPLICIT NONE
+      INCLUDE 'turb.com'
+      INCLUDE 'constants.h'
+      DOUBLE PRECISION TCHI
+      DOUBLE PRECISION TFV1
+C
+      TFV2SA=ONE-TCHI/(ONE+TCHI*TFV1(TCHI))
+      RETURN
+      END
+@
+
+
+1.5
+log
+@added the standard version of the fv2 function for the SA model
+@
+text
+@d10 2
+a11 2
+!> \version $Revision: 1.14 $
+!> \date $Date: 2013/08/22 15:10:57 $
+a17 1
+      DOUBLE PRECISION TFV1
+d33 2
+a34 2
+!> \version $Revision: 1.14 $
+!> \date $Date: 2013/08/22 15:10:57 $
+@
+
+
+1.4
+log
+@changed the name of included files
+@
+text
+@d1 18
+d20 1
+a20 9
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       $Id: tfv2.f,v 1.3 2000/08/18 14:18:57 aldo Exp abonfi $
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+d22 15
+a36 22
+       DOUBLE PRECISION FUNCTION TFV2(TCHI)
+*  ==============================================================
+*
+*
+*      FILENAME: tfv2.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      turbulence model function
+*      (Spalart & Allmaras model: version)
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : April 97
+*
+*  ==============================================================
+
+a42 2
+
+C     new version from the Ashford's thesis
+d44 1
+a44 2
+      TFV2=ONE/(ONE+TCHI/TCV2)**3
+
+@
+
+
+1.3
+log
+@bux fixed: ONE was not initialised; add IMPLICIT NONE
+@
+text
+@d6 1
+a6 1
+C       $Id$
+d37 1
+a37 1
+      INCLUDE 'constants'
+@
+
+
+1.2
+log
+@Model upgrade according to the suggestions in Ashford's PhD thesis
+@
+text
+@d6 1
+a6 3
+C       @@(#)tfv2.f      1.0.0.1   95/08/29        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tsc.f
+C
+d35 1
+d37 1
+a40 1
+C     TFV2=1.0d+0-TCHI/(1.0d+0+TCHI*TFV1(TCHI))
+d42 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d41 3
+a43 1
+      TFV2=1.0d+0-TCHI/(1.0d+0+TCHI*TFV1(TCHI))
+@
+
+
+1.1.1.1
+log
+@now including constants from an include file;
+this is the original SA model
+@
+text
+@a36 1
+      INCLUDE 'constants.h'
+d41 1
+a41 1
+      TFV2=ONE-TCHI/(ONE+TCHI*TFV1(TCHI))
+@

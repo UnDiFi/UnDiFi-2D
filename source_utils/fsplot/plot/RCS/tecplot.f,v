@@ -1,0 +1,380 @@
+head	1.4;
+access
+	abonfi;
+symbols;
+locks
+	abonfi:1.4; strict;
+comment	@c @;
+
+
+1.4
+date	2019.10.14.08.49.26;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2012.01.10.07.45.55;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.09.14.07.35.10;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.15.37.28;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine to write a TecPlot file
+@
+
+
+1.4
+log
+@before re-naming the variables
+@
+text
+@      SUBROUTINE TECPLOT(FILENAME,POINT,NDIM,NPOIN,ICELNOD,NOFVERT,
+     &                   NELEM,Z,NOFVAR)
+C
+      IMPLICIT NONE
+C
+C This routine writes a tecplot formatted file
+C
+      INCLUDE 'constants'
+      INCLUDE 'IO'
+C
+C     .. Scalar Arguments ..
+C
+      CHARACTER*(*) FILENAME
+      INTEGER NDIM,NPOIN,NELEM,NOFVERT,NOFVAR
+C
+C     .. Array Arguments ..
+C
+      DOUBLE PRECISION  POINT,Z
+      INTEGER   ICELNOD
+      DIMENSION POINT(NDIM,1),Z(NOFVAR,1),ICELNOD(NOFVERT,1)
+C
+C     .. Local Scalars ..
+C
+      CHARACTER*13  Elementtype
+      CHARACTER*256  VarString
+      CHARACTER*6   STRNG
+      INTEGER*4 Debug,Vlength,IPOIN,IELEM,IFREQ
+      INTEGER*4 J,LastChar,IVAR,NDOF
+      INTEGER*4 GridOnly,SolutionOnly,Full,FileType
+      PARAMETER(GridOnly=1,SolutionOnly=2,Full=0)
+      CHARACTER*8 FTYPE(0:2)
+      DATA FTYPE/'FULL    ','GRID    ','SOLUTION'/
+C
+C     .. Local Arrays ..
+C
+C     .. External Subroutines ..
+C
+C     .. External Functions ..
+C
+C
+C     .. Intrinsic Functions ..
+C
+      INTRINSIC INDEX,MAX0
+C
+C     .. Executable Statements ..
+C
+C...Set defaults
+C
+      FileType = SolutionOnly 
+      FileType = GridOnly 
+      FileType = FULL 
+      IF(FileType.EQ.Full)THEN
+         NDOF = NOFVAR+NDIM
+      ELSEIF(FileType.EQ.SolutionOnly)THEN
+         NDOF = NOFVAR
+      ELSEIF(FileType.EQ.GridOnly)THEN
+         NDOF = NDIM
+      ELSE
+         WRITE(6,*)'Unknown FileType ',FileType
+         CALL EXIT(1)
+      ENDIF
+      IF( NDIM .EQ. 2 )THEN
+        Elementtype = 'FETRIANGLE'
+      ELSE
+        Elementtype = 'FETETRAHEDRON'
+      ENDIF
+      STRNG(1:6) = " Z(xx)"
+      Vlength = 0
+      IF(FileType.EQ.Full.OR.FileType.EQ.GridOnly)THEN ! solution only
+         IF( NDIM .EQ. 2 )THEN
+           VarString = 'X Y'
+           Vlength = 3
+         ELSE
+           VarString = 'X Y Z'
+           Vlength = 5
+         ENDIF
+      ENDIF
+      IF(FileType.EQ.Full.OR.FileType.EQ.SolutionOnly)THEN
+         IF    ( NOFVAR .GT. 5 )THEN
+           DO IVAR = 1, NOFVAR
+              WRITE(STRNG(4:5),FMT="(I2.2)")IVAR
+              VarString = VarString(1:Vlength) // STRNG
+              Vlength = Vlength + 6
+           ENDDO
+         ELSEIF( NOFVAR .EQ. 1 )THEN
+           VarString = VarString(1:Vlength) // ' Z(1)' 
+           Vlength = Vlength + 5
+         ELSEIF( NOFVAR .EQ. 2 )THEN
+            VarString = VarString(1:Vlength) // ' Z(1) Z(2)' 
+           Vlength = Vlength + 10
+         ELSEIF( NOFVAR .EQ. 3 )THEN
+            VarString = VarString(1:Vlength) // ' p u v' 
+           Vlength = Vlength + 6
+         ELSEIF( NOFVAR .EQ. 4 )THEN
+           VarString = VarString(1:Vlength) // ' Z(1) Z(2) Z(3) Z(4)'
+           Vlength = Vlength + 20
+         ELSEIF( NOFVAR .EQ. 5 )THEN
+           VarString = VarString(1:Vlength) // 
+     &' Z(1) Z(2) Z(3) Z(4) Z(5)'
+           Vlength = Vlength + 25
+         ELSE
+           WRITE(6,*)"Uh Oh! I don't know what to do with NOFVAR = ",
+     &NOFVAR
+           CALL EXIT(1)
+         ENDIF
+      ENDIF
+C
+      LastChar = INDEX(filename,CHAR(32))
+C
+      WRITE(6,155)
+C
+C       tecplot formatted interface
+C
+C       Opening the tecplot file
+C
+      OPEN(3,FILE=filename,STATUS='UNKNOWN')
+C
+C       writing the nodes
+C
+      IFREQ = MAX0( NPOIN/20 , 1 )
+      WRITE(6,165)
+      WRITE(3,*)'TITLE = "Full grid"'
+      WRITE(3,*)'VARIABLES = ',VarString(1:Vlength)
+!     WRITE(3,*)'FILETYPE = ',FTYPE(FileType)
+      WRITE(3,120)'"sampletext"',NPOIN,NELEM,elementtype
+ 120  FORMAT("ZONE T=",A,", DATAPACKING=POINT, NODES=",I7,
+     2", ELEMENTS=",I8,", ZONETYPE=",A)
+C
+      WRITE(3,FMT="(A4,$)")'DT=('
+      DO IVAR = 1,NDOF
+         WRITE(3,FMT="(A7,$)")'DOUBLE '
+      ENDDO
+      WRITE(3,*)')'
+C
+      IF(FileType.EQ.Full)THEN
+         DO IPOIN = 1,NPOIN
+           IF((IPOIN/IFREQ)*IFREQ .EQ. IPOIN)WRITE(*,111)
+           WRITE(3,*)(POINT(J,IPOIN),J=1,NDIM),(Z(J,IPOIN),J=1,NOFVAR)
+         ENDDO
+      ELSEIF(FileType.EQ.SolutionOnly)THEN
+         DO IPOIN = 1,NPOIN
+           IF((IPOIN/IFREQ)*IFREQ .EQ. IPOIN)WRITE(*,111)
+           WRITE(3,*)(Z(J,IPOIN),J=1,NOFVAR)
+         ENDDO
+      ELSEIF(FileType.EQ.GridOnly)THEN
+         DO IPOIN = 1,NPOIN
+           IF((IPOIN/IFREQ)*IFREQ .EQ. IPOIN)WRITE(*,111)
+           WRITE(3,*)(POINT(J,IPOIN),J=1,NDIM)
+         ENDDO
+      ENDIF
+C
+      WRITE(6,175)
+C
+C       writing the elements
+C
+      IFREQ = MAX0( NELEM/20 , 1 )
+      IF(FileType.EQ.Full.OR.FileType.EQ.GridOnly)THEN ! solution only
+         WRITE(6,170)
+         DO 2 IELEM = 1 , NELEM
+           IF((IELEM/IFREQ)*IFREQ .EQ. IELEM)WRITE(*,111)
+           WRITE(3,*)(ICELNOD(J,IELEM),J=1,NOFVERT)
+    2    CONTINUE
+         WRITE(6,175)
+      ENDIF
+      WRITE(6,185)FILENAME
+C
+      CLOSE(3)
+C
+*     WRITE(6,180)
+C
+      RETURN
+C
+  111 FORMAT('.',$)
+* 111 FORMAT('x')
+! 135 FORMAT(5X,'Writing the coordinates ... ')
+! 140 FORMAT(5X,'IFMT = ',I2,' MUST be 1 or 2')
+! 145 FORMAT(5X,'Writing the variables ... ')
+  155 FORMAT(5X,'I am writing the Tecplot file ... ',/)
+  165 FORMAT(5X,'Writing nodes ',$)
+  170 FORMAT(5X,'Writing elements ',$)
+  175 FORMAT(' done !',/)
+! 180 FORMAT(5X,'Tecplot file WRITTEN',/)
+  185 FORMAT(/,5X,'Tecplot file WRITTEN to ... ',A60/)
+! 999 FORMAT(5X,A6,' has returned an error message, IFAIL = ',I2)
+      END
+@
+
+
+1.3
+log
+@a number of extra arguments have been added rather than
+put in common
+@
+text
+@d24 1
+a24 1
+      CHARACTER*11  Elementtype
+d28 5
+a32 1
+      INTEGER*4 J,LastChar,IVAR
+d49 13
+a61 1
+      STRNG(1:6) = " Z(xx)"
+d63 1
+a63 3
+        VarString = 'X Y'
+        Vlength = 3
+        Elementtype = 'TRIANGLE'
+d65 41
+a105 28
+        VarString = 'X Y Z'
+        Vlength = 5
+        Elementtype = 'TETRAHEDRON'
+      ENDIF
+      IF    ( NOFVAR .GT. 5 )THEN
+        DO IVAR = 1, NOFVAR
+        WRITE(STRNG(4:5),FMT="(I2.2)")IVAR
+        VarString = VarString(1:Vlength) // STRNG
+        Vlength = Vlength + 6
+        ENDDO
+      ELSEIF( NOFVAR .EQ. 1 )THEN
+        VarString = VarString(1:Vlength) // ' Z(1)' 
+        Vlength = Vlength + 5
+      ELSEIF( NOFVAR .EQ. 2 )THEN
+         VarString = VarString(1:Vlength) // ' Z(1) Z(2)' 
+        Vlength = Vlength + 10
+      ELSEIF( NOFVAR .EQ. 3 )THEN
+         VarString = VarString(1:Vlength) // ' p u v' 
+        Vlength = Vlength + 6
+      ELSEIF( NOFVAR .EQ. 4 )THEN
+        VarString = VarString(1:Vlength) // ' Z(1) Z(2) Z(3) Z(4)'
+        Vlength = Vlength + 20
+      ELSEIF( NOFVAR .EQ. 5 )THEN
+        VarString = VarString(1:Vlength) // ' Z(1) Z(2) Z(3) Z(4) Z(5)'
+        Vlength = Vlength + 25
+      ELSE
+        WRITE(6,*)"Uh Oh! I don't know what to do with NOFVAR = ",NOFVAR
+        CALL EXIT(1)
+d122 1
+a122 1
+      WRITE(3,*)'TITLE = Full grid'
+d124 5
+a128 2
+      WRITE(3,*)'ZONE T="sampletext",F=FEPOINT,ET=',elementtype,
+     1', N=',NPOIN,',E=',NELEM
+d130 1
+a130 1
+      DO IVAR = 1,NOFVAR+NDIM
+d134 18
+a151 5
+      DO 1 IPOIN = 1,NPOIN
+        IF((IPOIN/IFREQ)*IFREQ .EQ. IPOIN)WRITE(*,111)
+        WRITE(3,*)(POINT(J,IPOIN),J=1,NDIM),(Z(J,IPOIN),J=1,NOFVAR)
+    1 CONTINUE
+C     WRITE(3,*)
+d157 8
+a164 6
+      WRITE(6,170)
+      DO 2 IELEM = 1 , NELEM
+        IF((IELEM/IFREQ)*IFREQ .EQ. IELEM)WRITE(*,111)
+        WRITE(3,*)(ICELNOD(J,IELEM),J=1,NOFVERT)
+    2 CONTINUE
+      WRITE(6,175)
+d175 3
+a177 3
+  135 FORMAT(5X,'Writing the coordinates ... ')
+  140 FORMAT(5X,'IFMT = ',I2,' MUST be 1 or 2')
+  145 FORMAT(5X,'Writing the variables ... ')
+d182 1
+a182 1
+  180 FORMAT(5X,'Tecplot file WRITTEN',/)
+d184 1
+a184 1
+  999 FORMAT(5X,A6,' has returned an error message, IFAIL = ',I2)
+@
+
+
+1.2
+log
+@dimensions of the arrays are in common until now
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE TECPLOT(FILENAME,POINT,ICELNOD,Z)
+a8 3
+      INCLUDE 'mesh_i4'
+      INCLUDE 'int_flags'
+      INCLUDE 'dim_flags'
+d14 1
+d20 1
+a20 1
+      DIMENSION POINT(DIM,1),Z(NOFVAR,1),ICELNOD(NOFVERT,1)
+d46 1
+a46 1
+      IF( DIM .EQ. 2 )THEN
+d100 1
+a100 1
+      DO IVAR = 1,NOFVAR+DIM
+d106 1
+a106 1
+        WRITE(3,*)(POINT(J,IPOIN),J=1,DIM),(Z(J,IPOIN),J=1,NOFVAR)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d25 3
+a27 2
+      CHARACTER*11      Elementtype
+      CHARACTER*30      VarString
+d29 1
+a29 1
+      INTEGER*4 J,LastChar
+d46 1
+d56 8
+a63 2
+      IF    ( NOFVAR .EQ. 1 )THEN
+	VarString = VarString(1:Vlength) // ' Z(1)' 
+d66 1
+a66 1
+	VarString = VarString(1:Vlength) // ' Z(1) Z(2)' 
+d69 1
+a69 1
+	VarString = VarString(1:Vlength) // ' p u v' 
+d78 2
+a79 2
+	WRITE(6,*)"Uh Oh! I don't know what to do with NOFVAR = ",NOFVAR
+	STOP
+d98 7
+a104 2
+      WRITE(3,*)'ZONE F=FEPOINT,ET=',elementtype,',N=',NPOIN,
+     1  ',E=',NELEM
+d109 1
+a109 1
+      WRITE(3,*)
+@

@@ -1,0 +1,2 @@
+C      NOFVERT number of vertices per element (=NDIM+1, since
+C              only triangles or tetrahedra are allowed)

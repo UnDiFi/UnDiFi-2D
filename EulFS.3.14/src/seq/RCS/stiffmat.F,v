@@ -1,0 +1,683 @@
+head     1.11;
+access   simula;
+symbols  ;
+locks    aldo:1.11; strict;
+comment  @c @;
+
+
+1.11
+date     98.12.02.09.21.40;  author aldo;  state Exp;
+branches ;
+next     1.10;
+
+1.10
+date     98.11.25.17.01.42;  author aldo;  state Exp;
+branches ;
+next     1.9;
+
+1.9
+date     98.11.07.09.01.00;  author aldo;  state Exp;
+branches ;
+next     1.8;
+
+1.8
+date     98.08.07.13.23.13;  author aldo;  state Exp;
+branches ;
+next     1.7;
+
+1.7
+date     98.05.17.08.51.17;  author aldo;  state Exp;
+branches ;
+next     1.6;
+
+1.6
+date     98.05.10.08.24.31;  author aldo;  state Exp;
+branches ;
+next     1.5;
+
+1.5
+date     98.04.07.12.52.21;  author aldo;  state Exp;
+branches ;
+next     1.4;
+
+1.4
+date     98.02.10.08.53.46;  author aldo;  state Exp;
+branches ;
+next     1.3;
+
+1.3
+date     98.01.07.13.34.41;  author aldo;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     98.01.05.10.32.51;  author aldo;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     98.01.01.22.12.32;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Stiffness matrix
+@
+
+
+1.11
+log
+@
+@
+text
+@C
+C
+C
+C STIFMAT  : is the driver for allocating memory and building the
+C            stiffness matrix
+C
+C
+      SUBROUTINE STIFMAT(A,B,NDIM,NOFVERT,NBLK,NELEM,NR,NGHOST)
+C
+      IMPLICIT NONE
+C
+C     This routine creates the Compressed Sparse Row structure
+C        of the stiffness matrix, i.e. the arrays:
+C        ia(1:NR+1) and ja(1:NNZ)
+C
+C     $Id$
+C     $Header: stiffmat.F,v 1.10 98/11/25 17:01:42 aldo Exp $
+C
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/viewer.h"
+#include "include/finclude/is.h"
+C
+      INCLUDE 'nloc'
+      INCLUDE 'constants'
+      INCLUDE 'verbose.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'IO'
+      INCLUDE 'implicit.h'
+      INCLUDE 'mapping.com'
+C
+C
+C     .. Petsc Arrays ..
+C     ..
+      Mat A,B
+      Vec degree,local1,local2,local3,d_nnz,o_nnz
+C     .. Scalar Arguments ..
+      INTEGER NBLK,NDIM,NELEM,NOFVERT,NR,NGHOST
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+      integer my_pe
+C     ..
+C     .. Local Scalars ..
+      INTEGER IFAIL,LDEGREE,NNZR,N
+#ifdef MPI
+      INTEGER ROWBGN,ROWEND,I,J,LINDX,D_NZ,O_NZ,lghost,LD_NNZ,LO_NNZ
+      double precision degmin,degmax,dnnzr,sum1,sum2,sum3
+#endif
+      LOGICAL VERBOSE
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+      DOUBLE PRECISION INFO(MAT_INFO_SIZE)
+C     ..
+C     .. External Functions ..
+      INTEGER ISTKGT,ISTKST
+      EXTERNAL ISTKGT,ISTKST
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DINIT,IINIT,ISTKRL,STIFSIZE
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+      common/mpicom/my_pe
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+C     ..
+C
+C     ------ Allocate space for the stiffness matrix -------
+C
+      VERBOSE = (IVERBOSE.GT.0)
+      VERBOSE = .TRUE.
+C
+#ifdef MPI
+C
+      LGHOST = ISTKGT(NGHOST,2)
+      CALL GetIdx(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+      CALL VecCreateGhost(PETSC_COMM_WORLD,NR,PETSC_DECIDE,
+     +                    NGHOST,ISTAK(lghost),degree,IFAIL)
+      CALL VecCreateGhost(PETSC_COMM_WORLD,NR,PETSC_DECIDE,
+     +                    NGHOST,ISTAK(lghost),d_nnz,IFAIL)
+      CALL VecCreateGhost(PETSC_COMM_WORLD,NR,PETSC_DECIDE,
+     +                    NGHOST,ISTAK(lghost),o_nnz,IFAIL)
+      CALL ISTKRL(1)
+C
+      CALL VecGhostGetLocalRepresentation(degree,local1,ifail)
+      CALL VecGhostGetLocalRepresentation(d_nnz,local2,ifail)
+      CALL VecGhostGetLocalRepresentation(o_nnz,local3,ifail)
+      CALL STIFmpi(ISTAK(LCELNOD),ISTAK(LCELCEL),
+     +              ISTAK(LNODCOD),local1,local2,local3,
+     +NDIM,NOFVERT,NELEM,NR,NNZR,NOUT,VERBOSE)
+      CALL VecAssemblyBegin(degree,ifail) 
+      CALL VecAssemblyEnd(degree,ifail) 
+      CALL VecAssemblyBegin(d_nnz,ifail) 
+      CALL VecAssemblyEnd(d_nnz,ifail) 
+      CALL VecAssemblyBegin(o_nnz,ifail) 
+      CALL VecAssemblyEnd(o_nnz,ifail) 
+      CALL VecGhostUpdateBegin(degree,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateEnd(degree,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateBegin(d_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateEnd(d_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateBegin(o_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateEnd(o_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecSum(degree,dnnzr,ifail)
+      CALL VecSum(d_nnz,sum2,ifail)
+      CALL VecSum(o_nnz,sum3,ifail)
+      if(my_pe.eq.0)write(6,*)'nnzr= ',int(dnnzr),nnzr
+      if(my_pe.eq.0)write(6,*)'nnzr= ',int(dnnzr),sum2,sum3,sum2+sum3
+      LD_NNZ = ISTKGT(NR,2)
+      LO_NNZ = ISTKGT(NR,2)
+      CALL CopyPETScVecToInteger(local2,ISTAK(LD_NNZ))
+      CALL CopyPETScVecToInteger(local3,ISTAK(LO_NNZ))
+      CALL VecGhostRestoreLocalRepresentation(degree,local1,ifail)
+      CALL VecGhostRestoreLocalRepresentation(d_nnz,local2,ifail)
+      CALL VecGhostRestoreLocalRepresentation(o_nnz,local3,ifail)
+      CALL VecDestroy(d_nnz,ifail)
+      CALL VecDestroy(o_nnz,ifail)
+C
+#else
+      LDEGREE = ISTKGT(NR+1,2)
+C
+C     STIFSIZE finds the number of non zero entries (NNZR)
+C     of the stiffness matrix and returns in DEGREE(i) the number
+C     of non zero entries in the i-th row of the stiffness matrix ..
+C
+      CALL STIFSIZE(ISTAK(LCELNOD),ISTAK(LDEGREE),ISTAK(LCELCEL),
+     +              ISTAK(LNODCOD),NDIM,NOFVERT,NELEM,NR,NNZR,NOUT,
+     +              VERBOSE)
+C
+#endif
+C
+      N=NR*NBLK
+C
+#ifdef MPI
+C
+      d_NZ = nnzr/(nr+nghost)
+      o_NZ = nnzr/nr - d_NZ
+caldo write(6,*)'proc. ',my_pe,d_nz,o_nz,nnzr
+      IF( NBLK .EQ. 1 )THEN
+ccccc CALL MatCreateMPIAIJ(PETSC_COMM_WORLD,NR,NR,PETSC_DECIDE,
+caldo+  PETSC_DECIDE,PETSC_DEFAULT_INTEGER,PETSC_NULL_INTEGER,
+caldo+  PETSC_DEFAULT_INTEGER,PETSC_NULL_INTEGER,A,IFAIL)
+      CALL MatCreateMPIAIJ(PETSC_COMM_WORLD,NR,NR,PETSC_DECIDE,
+     +  PETSC_DECIDE,PETSC_DEFAULT_INTEGER,ISTAK(LD_NNZ),
+     +  PETSC_DEFAULT_INTEGER,ISTAK(LO_NNZ),A,IFAIL)
+      ELSE
+          CALL MatCreateMPIBAIJ(PETSC_COMM_WORLD,NBLK,N,N,PETSC_DECIDE,
+     +                          PETSC_DECIDE,d_nz+1,PETSC_NULL_INTEGER,
+     +                          o_nz+1,PETSC_NULL_INTEGER,A,IFAIL)
+      ENDIF
+C
+C     create Local to Global mapping
+C
+      CALL MatGetOwnershipRange(A,ROWBGN,ROWEND,IFAIL)
+C
+C     note that N = ROWEND-ROWBGN
+C
+C     the indexing is blocked of block size NBLK
+C
+      LINDX = ISTKGT((NR+NGHOST),2)
+C
+C     mapping for the processor owned (or local)  rows
+C
+      J = 0
+      DO 55 I = ROWBGN,ROWEND-1,NBLK
+         ISTAK(LINDX+J) = I/NBLK
+         J = J + 1
+   55 CONTINUE
+C
+C     mapping for ghost rows: GetIdx copies the ghost locations 
+C                             into the array INDX and sets the
+C                             0-based indexing 
+C
+      CALL GetIdx(NGHOST,1,ISTAK(LTZX),ISTAK(LINDX+NR))
+C
+      CALL ISLocalToGlobalMappingCreate(PETSC_COMM_WORLD,NR+NGHOST,
+     &                                  ISTAK(LINDX),mapping,IFAIL)
+C     free LINDX
+      CALL ISTKRL(1)
+C
+C     Sets local to global mapping: this is required
+C          by the MatSetValues[Blocked]() routine 
+C
+      IF(NBLK.EQ.1)THEN
+          CALL MatSetLocalToGlobalMapping(A,mapping,IFAIL) 
+      ELSE
+          CALL MatSetLocalToGlobalMappingBlocked(A,mapping,IFAIL) 
+      ENDIF
+C
+#else
+C
+      IF( NBLK .EQ. 1 )THEN
+          CALL MatCreateSeqAIJ(MPI_COMM_SELF,NR,NR,NNZR/NR,
+     +                         ISTAK(LDEGREE),A,IFAIL)
+      ELSE
+          CALL MatCreateSeqBAIJ(MPI_COMM_SELF,NBLK,N,N,NNZR/NR,
+     +                          ISTAK(LDEGREE),A,IFAIL)
+      ENDIF
+C
+#endif
+C
+C     Blocks to be inserted in A will be COLUMN ORIENTED
+C
+      CALL MatSetOption(A,MAT_COLUMN_ORIENTED,IFAIL) 
+      CALL MatZeroEntries(A,IFAIL)
+C
+C     Create matrix for turbulence equation
+C
+      IF( TURBULENT )THEN 
+#ifdef MPI
+      stop 'Not implemented yet' 
+#else
+      CALL MatCreateSeqAIJ(MPI_COMM_SELF,NR,NR,NNZR/NR,
+     +                     ISTAK(LDEGREE),B,IFAIL)
+#endif
+      CALL MatSetOption(B,MAT_COLUMN_ORIENTED,IFAIL) 
+      CALL MatZeroEntries(B,IFAIL)
+      ENDIF
+C
+C     free DEGREE
+C
+#ifndef MPI
+      CALL ISTKRL(1)
+#endif
+C
+      CALL MatGetInfo(A,MAT_LOCAL,INFO,IFAIL)
+      WRITE(NOUT,346)' Flow equation matrix'
+C
+      WRITE(NOUT,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_COLUMNS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +            INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +            INFO(MAT_INFO_MEMORY)
+C
+      IF( .NOT. TURBULENT )RETURN
+C
+      CALL MatGetInfo(B,MAT_LOCAL,INFO,IFAIL)
+      WRITE(NOUT,346)' Turbulence equation matrix'
+      WRITE(NOUT,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_COLUMNS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +            INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +            INFO(MAT_INFO_MEMORY)
+C
+C
+      RETURN
+C
+  346 FORMAT(10X,5("*"),A)
+  347 FORMAT(10X,'Number of rows and columns    ',2(I6,1X),/,
+     +       10X,'Block size                    ',I2,/,
+     +       10X,'Number of allocated  nonzeros ',I12,/,
+     +       10X,'Memory allocated              ',F16.0)
+C
+      END  
+@
+
+
+1.10
+log
+@naming of I/O devices has changed
+@
+text
+@d17 1
+a17 1
+C     $Header$
+d22 1
+d38 1
+d44 1
+d49 2
+a50 1
+      INTEGER ROWBGN,ROWEND,I,J,LINDX
+a60 4
+#ifdef PARCH_linux
+      INTEGER INITXDR
+      EXTERNAL INITXDR
+#endif
+d67 1
+a74 2
+      LDEGREE = ISTKGT(NR+1,2)
+C
+d78 48
+d134 1
+d140 3
+d144 6
+a149 3
+          CALL MatCreateMPIAIJ(PETSC_COMM_WORLD,NR,NR,PETSC_DECIDE,
+     +                         PETSC_DECIDE,NNZR/NR,PETSC_NULL_INTEGER,
+     +                         NNZR/NR,PETSC_NULL_INTEGER,A,IFAIL)
+d152 2
+a153 2
+     +                          PETSC_DECIDE,NNZR/NR,PETSC_NULL_INTEGER,
+     +                          NNZR/NR,PETSC_NULL_INTEGER,A,IFAIL)
+d226 1
+d228 1
+@
+
+
+1.9
+log
+@Add automatic identification flag
+@
+text
+@d17 1
+d51 1
+a51 1
+      INTEGER ISTAK(1),INDXA(1),INDXB(1),ILOC(2)
+a139 16
+C     sets another mapping which is not Blocked, to be
+C     used for MatZeroRowsLocal()
+C
+      LINDX = ISTKGT(NR*NBLK,2)
+C
+      J = 0
+      DO 57 I = ROWBGN,ROWEND-1
+         ISTAK(LINDX+J) = I
+         J = J + 1
+   57 CONTINUE
+C
+      CALL ISLocalToGlobalMappingCreate(PETSC_COMM_WORLD,NR*NBLK,
+     &                                  ISTAK(LINDX),RowMapping,IFAIL)
+C     free LINDX
+      CALL ISTKRL(1)
+C
+d175 1
+a175 1
+      WRITE(6,346)' Flow equation matrix'
+d177 1
+a177 1
+      WRITE(6,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+d186 2
+a187 2
+      WRITE(6,346)' Turbulence equation matrix'
+      WRITE(6,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+a201 10
+C     write(6,*)'number of global rows and columns',info(1),info(2)
+C     write(6,*)'number of local rows and columns',info(3),info(4)
+C     write(6,*)'block size',info(5)
+C     write(6,*)'number of nonzeros',info(6),info(7),info(8)
+C     write(6,*)'memory allocated',info(9)
+C     write(6,*)'number of matrix assemblies',info(10)
+C     write(6,*)'number of mallocs during MatSetValues()',info(11)
+C     write(6,*)'fill ratio for LU/ILU',info(12),info(13)
+C     write(6,*)'number of mallocs during factorization',info(14)
+
+@
+
+
+1.8
+log
+@parallel version
+@
+text
+@d12 7
+a22 4
+C
+C     This routine creates the Compressed Sparse Row structure
+C        of the stiffness matrix, i.e. the arrays:
+C        ia(1:NR+1) and ja(1:NNZ)
+@
+
+
+1.7
+log
+@Periodic boundary conditions disabled
+@
+text
+@d8 1
+a8 1
+      SUBROUTINE STIFMAT(A,B,NDIM,NOFVERT,NBLK,NELEM,NR)
+d15 1
+d17 1
+a17 1
+C     .. This routine creates the Compressed Sparse Row structure
+d27 1
+d34 1
+a34 1
+      INTEGER NBLK,NDIM,NELEM,NOFVERT,NR
+d41 2
+a42 4
+#ifdef PARCH_linux
+      INTEGER IXDRS,IC,PPOIN
+#else
+      INCLUDE 'iset.com'
+a82 1
+C     deal with periodic nodes, if any
+d84 35
+a118 23
+C     write(6,*)nnzr
+C     IF( .NOT. PERIODIC_MESH )GOTO 33
+Cifdef PARCH_linux
+C     IXDRS = INITXDR('file004.dat','r')
+C     CALL XDRINT(IXDRS,PPOIN)
+C     DO 4 IC = 1,2
+C        ILOC(IC) = ISTKGT(PPOIN,2)
+C        CALL XDRIMAT(IXDRS,PPOIN,ISTAK(ILOC(IC)))
+C   4 CONTINUE
+C     CALL XDRCLOSE(IXDRS)
+C     CALL PDEG(ISTAK(LDEGREE),ISTAK(ILOC(1)),ISTAK(ILOC(2)),
+C    +          PPOIN,NNZR)
+C     CALL ISTKRL(2)
+Celse
+C     CALL ISGetIndices(PeriodicNodesA,INDXA,ILOC(1),IFAIL)
+C     CALL ISGetIndices(PeriodicNodesB,INDXB,ILOC(2),IFAIL)
+C     CALL PDEG(ISTAK(LDEGREE),INDXA(ILOC(1)+1),INDXB(ILOC(2)+1),
+C    +          PPOIN,NNZR)
+C     CALL ISRestoreIndices(PeriodicNodesA,INDXA,ILOC(1),IFAIL)
+C     CALL ISRestoreIndices(PeriodicNodesB,INDXB,ILOC(2),IFAIL)
+Cendif
+C  33 CONTINUE
+C     write(6,*)nnzr
+d120 33
+a152 1
+      N=NR*NBLK
+d155 2
+a156 2
+      CALL MatCreateSeqAIJ(MPI_COMM_SELF,NR,NR,NNZR/NR,
+     +                     ISTAK(LDEGREE),A,IFAIL)
+d158 2
+a159 2
+      CALL MatCreateSeqBAIJ(MPI_COMM_SELF,NBLK,N,N,NNZR/NR,
+     +                     ISTAK(LDEGREE),A,IFAIL)
+d162 2
+d172 3
+d177 1
+@
+
+
+1.6
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d85 23
+a107 23
+      write(6,*)nnzr
+      IF( .NOT. PERIODIC_MESH )GOTO 33
+#ifdef PARCH_linux
+      IXDRS = INITXDR('file004.dat','r')
+      CALL XDRINT(IXDRS,PPOIN)
+      DO 4 IC = 1,2
+         ILOC(IC) = ISTKGT(PPOIN,2)
+         CALL XDRIMAT(IXDRS,PPOIN,ISTAK(ILOC(IC)))
+    4 CONTINUE
+      CALL XDRCLOSE(IXDRS)
+      CALL PDEG(ISTAK(LDEGREE),ISTAK(ILOC(1)),ISTAK(ILOC(2)),
+     +          PPOIN,NNZR)
+      CALL ISTKRL(2)
+#else
+      CALL ISGetIndices(PeriodicNodesA,INDXA,ILOC(1),IFAIL)
+      CALL ISGetIndices(PeriodicNodesB,INDXB,ILOC(2),IFAIL)
+      CALL PDEG(ISTAK(LDEGREE),INDXA(ILOC(1)+1),INDXB(ILOC(2)+1),
+     +          PPOIN,NNZR)
+      CALL ISRestoreIndices(PeriodicNodesA,INDXA,ILOC(1),IFAIL)
+      CALL ISRestoreIndices(PeriodicNodesB,INDXB,ILOC(2),IFAIL)
+#endif
+   33 CONTINUE
+      write(6,*)nnzr
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d12 3
+a14 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/viewer.h"
+@
+
+
+1.4
+log
+@Unused variables removed
+@
+text
+@d39 5
+d47 1
+a47 1
+      INTEGER ISTAK(1)
+d53 4
+d83 26
+d175 1
+a175 1
+      END
+@
+
+
+1.3
+log
+@Printout reformatted
+@
+text
+@d38 1
+a38 2
+      DOUBLE PRECISION BNDAV
+      INTEGER IBAND,IFAIL,LDEGREE,LIWK2,ML,MU,NNZ,NNZR,N
+@
+
+
+1.2
+log
+@Allocates matrix for the turbulence equation
+@
+text
+@d88 1
+d104 1
+a104 1
+      CALL MatZeroEntries(A,IFAIL)
+d106 15
+a120 9
+      write(6,*)'number of global rows and columns',info(1),info(2)
+      write(6,*)'number of local rows and columns',info(3),info(4)
+      write(6,*)'block size',info(5)
+      write(6,*)'number of nonzeros',info(6),info(7),info(8)
+      write(6,*)'memory allocated',info(9)
+      write(6,*)'number of matrix assemblies',info(10)
+      write(6,*)'number of mallocs during MatSetValues()',info(11)
+      write(6,*)'fill ratio for LU/ILU',info(12),info(13)
+      write(6,*)'number of mallocs during factorization',info(14)
+a121 2
+CXXX  IF (LJACSR.EQ.1) LJACSR = ISTKGT(NNZR,2)
+CXXX  CALL IINIT(NNZR,0,ISTAK(LJACSR),1)
+d123 1
+a123 26
+CXXX  NNZ = NNZR*NBLK*NBLK
+CXXX  IF (LACSR.EQ.1) LACSR = ISTKGT(NNZ,4)
+CXXX  CALL DINIT(NNZ,ZERO,DSTAK(LACSR),1)
+C
+C     .. Allocate workspace for the subsequent call to CSRFMT ..
+C
+CXXX  LIWK1 = ISTKGT(NR,2)
+CXXX  LIWK2 = ISTKGT(NNZR,2)
+CXXX  CALL IINIT(NR,0,ISTAK(LIWK1),1)
+CXXX  CALL IINIT(NNZR,0,ISTAK(LIWK2),1)
+C
+C     ... Builds the structure of the matrix in
+C         CSR format, i.e. constructs IACSR and JACSR ...
+C
+CXXX  CALL CSRFMT(NR,NELEM,NOFVERT,ISTAK(LCELNOD),ISTAK(LDEGREE),
+CXXX +            ISTAK(LJACSR),ISTAK(LIWK1),ISTAK(LIWK2))
+C
+C     .. Free the workspace just allocated and
+C        allocate workspace for the subsequnt call to CSORT ..
+C
+CXXX  CALL ISTKRL(2)
+CXXX  LIWK1 = ISTKGT(2*NNZR,2)
+CXXX  CALL IINIT(2*NNZR,0,ISTAK(LIWK1),1)
+C
+C     ... sorts the columns of A so that binary searches can
+C         used to find the column indexes ...
+d125 15
+a139 29
+CXXX  CALL CSORT(NR,DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LDEGREE),
+CXXX +           ISTAK(LIWK1),.FALSE.)
+CXXX  SORTED = .TRUE.
+C
+C     ... Free the integer workspace ...
+C
+CXXX  CALL ISTKRL(1)
+C
+C     Note that the routine to compute the bandwidth requires
+C     the columns to be ordered
+C
+CXXX  CALL BANDWIDTH(NR,ISTAK(LJACSR),ISTAK(LDEGREE),ML,MU,IBAND,BNDAV)
+CXXX  IF (IVERBOSE.GT.0) WRITE (NOUT,FMT=100) ML,MU,IBAND,BNDAV
+C
+C     Rearrange nodal numberering in order to reduce the bandwidth:
+C     only Gibbs-Pool-Stockmayer algorithm is currently
+C     implemented
+C
+CXXX  IF (IREORD.NE.0) THEN
+CXXX      CALL REORDER(NR,NNZR,NBLK,NELEM,NDIM,NOFVERT,IREORD)
+CXXX      REORDERING = .TRUE.
+CXXX  ENDIF
+C
+C     CALL PRTMT(NR,NR,DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LDEGREE),
+C    1DSTAK(LRESID),"--",title,key,type,205,job,14)
+C
+      RETURN
+
+  100 FORMAT (15X,'BANDWIDTH (L,U,MAX,AVG)',3 (2X,I6),2X,F12.1)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d8 1
+a8 1
+      SUBROUTINE STIFMAT(A,NDIM,NOFVERT,NBLK,NELEM,NR)
+d23 1
+d30 1
+a30 1
+      Mat A
+d67 2
+a68 2
+C     .. STIFSIZE finds the number of non zero entries (NNZR)
+C     of the stiffness matrix and returns in IACSR(i) the number
+d88 9
+@

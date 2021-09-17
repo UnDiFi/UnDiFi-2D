@@ -1,0 +1,44 @@
+head	1.1;
+access;
+symbols;
+locks
+	abonfi:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2021.02.02.10.33.20;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@run the sequential and parallel versions of eulfs
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@cd $1
+echo "**********************************************************"
+echo Running testcase:
+echo $1
+echo "**********************************************************"
+pwd
+cp .petscrc ${HOME}
+echo "********************"
+echo running sequential version
+echo "********************"
+${SEQ_CODE} -itmax ${ITMAX} -linearization ${SNES} -data_dir ${DATA_DIR} > out.seq
+cut -c5-9 -c32- convhst.l2 > tmp.seq 
+echo "********************"
+echo running parallel version
+echo "********************"
+${MPIRUN} -np ${NUM_PROCS} ${MPI_CODE} -itmax ${ITMAX} -linearization ${SNES} -data_dir ${DATA_DIR}np${NUM_PROCS}/ > out.mpi
+echo $1 >> ${HOME}/differences
+cut -c5-9 -c32- convhst.l2 > tmp.mpi 
+diff tmp.seq tmp.mpi >> ${HOME}/differences
+@

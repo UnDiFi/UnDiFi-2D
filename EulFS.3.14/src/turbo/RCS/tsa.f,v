@@ -1,0 +1,79 @@
+head	1.1;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2000.09.22.12.45.25;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute the eddy viscosity for the SpalartAllmaras model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION FUNCTION EDDY(VISCT,NTURB,DENSIT,VISCL,NOFVERT)
+C
+C     RETURNS a cell-averaged value of the turbulent viscosity
+C     computed using the Spalart-Allmaras model
+C
+
+      IMPLICIT NONE
+C     .. Scalar Arguments ..
+      INTEGER NOFVERT,NTURB
+      DOUBLE PRECISION DENSIT,VISCL 
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION VISCT(NTURB,*)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I
+      DOUBLE PRECISION TVI,TCHI
+C
+      DOUBLE PRECISION TFV1
+      EXTERNAL TFV1
+C     ..
+      TVI = 0.D0
+      DO 1 I = 1,NOFVERT
+          TVI = TVI + VISCT(1,I)
+    1 CONTINUE
+      TVI = TVI/NOFVERT
+      TVI = MAX(0.d0,TVI)
+      TCHI = (DENSIT*TVI)/VISCL
+      EDDY = DENSIT*TVI*TFV1(TCHI)
+
+      RETURN
+
+      END
+@

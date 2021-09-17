@@ -1,0 +1,148 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.04.07.12.48.15;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@plot corresponding periodic nodes
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE GRPER(IFUNCT,ICELNOD,NELEM,NPOIN,XY,DX,Y,DY,DZ,ISetA,
+     +                 ISetB,SCALE,TEXT)
+C
+C     IMPLICIT NONE
+C
+C     THIS ROUTINE IS AN INTERFACE BETWEEN THE QUADTREE LIBRARY
+C     AND THE GRAFICV3 LIBRARY
+C
+      DOUBLE PRECISION XY
+      REAL SCALE,XMIN,XMAX,YMIN,YMAX
+      REAL DX,Y,DY,DZ
+      INTEGER IFUNCT,LDX,LDY,NELEM,NPOIN,ICELNOD
+      DIMENSION XY(2,NPOIN),SCALE(4),ICELNOD(3,*)
+      REAL A7,A8,A9
+      REAL*4 XP,YP
+      REAL XX(3),YY(3)
+      CHARACTER*(*) TEXT
+      INTEGER I,IPNT,IELEM,PPOIN
+      INTEGER ISetA(*),ISetB(*)
+C
+C*********************************************************************
+C
+C
+C
+C*********************************************************************
+C
+      CHARACTER MESG*80
+C
+C*********************************************************************
+C
+      IF (IFUNCT.EQ.0) THEN
+          GOTO 100
+
+      ELSEIF (IFUNCT.EQ.1) THEN
+          GOTO 200
+
+      ELSEIF (IFUNCT.EQ.2) THEN
+          RETURN
+
+      ELSEIF (IFUNCT.LT.0) THEN
+          GOTO 300
+
+      ELSE
+          RETURN
+
+      ENDIF
+C
+C*****INITIALIZE AND CALCULATE SCALES AND AUXILIARY TEXT
+C
+  100 XMIN = XY(1,1)
+      XMAX = XY(1,1)
+      YMIN = XY(2,1)
+      YMAX = XY(2,1)
+C
+      DO 110 IPNT = 1,NPOIN
+C
+          XMIN = MIN(XMIN,XY(1,IPNT))
+          XMAX = MAX(XMAX,XY(1,IPNT))
+          YMIN = MIN(YMIN,XY(2,IPNT))
+          YMAX = MAX(YMAX,XY(2,IPNT))
+C
+  110 CONTINUE
+C
+      SCALE(1) = XMIN
+      SCALE(2) = XMAX
+      SCALE(3) = YMIN
+      SCALE(4) = YMAX
+C
+      TEXT = 'L N S'
+C
+      RETURN
+C
+C*****PLOT THE IMAGE
+C
+  200 CONTINUE
+C
+      DO 3 IELEM = 1,NELEM
+          DO 4 I = 1,3
+              IPNT = ICELNOD(I,IELEM)
+              XX(I) = SNGL(XY(1,IPNT))
+              YY(I) = SNGL(XY(2,IPNT))
+    4     CONTINUE
+          CALL GRPLY2(XX,YY,3)
+
+
+    3 CONTINUE
+
+      IXDRS = INITXDR('file004.dat','r')
+
+      CALL XDRINT(IXDRS,PPOIN)
+      CALL XDRIMAT(IXDRS,PPOIN,ISetA)
+      CALL XDRIMAT(IXDRS,PPOIN,ISetB)
+
+      CALL XDRCLOSE(IXDRS)
+
+      CALL GRCOLR(1)
+
+      DO I = 1,PPOIN
+         IA = ISetA(I)
+         XX(1) = XY(1,IA)
+         YY(1) = XY(2,IA)
+         CALL GRMOV2(XX(1),YY(1))
+         IB = ISetB(I)
+         XX(2) = XY(1,IB)
+         YY(2) = XY(2,IB)
+         CALL GRDRW2(XX(2),YY(2))
+      ENDDO
+C
+C
+      RETURN
+C
+C*****SPECIAL OPTIONS
+C
+C.....C.....NOT SUPPORTED
+C
+C300  CALL GRMESG('No special Options are currently supported ')
+C
+  300 CONTINUE
+C
+          CALL GRMESG('No Options are currently supported ')
+C
+      RETURN
+C
+      END
+@

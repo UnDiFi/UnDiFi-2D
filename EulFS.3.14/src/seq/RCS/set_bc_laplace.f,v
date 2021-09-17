@@ -1,0 +1,70 @@
+head	1.2;
+access;
+symbols
+	release3_4_1:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2013.06.04.16.08.13;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.06.04.15.31.06;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Sets boundary conditions for Laplace's equation
+@
+
+
+1.2
+log
+@sets boundary conditions on boundary nodes only
+@
+text
+@      subroutine set_bc_laplace(np,xyz,ndim,zroe,ndof,nodecode)
+!
+!     $Id: set_bc_laplace.f,v 1.1 2013/06/04 15:31:06 abonfi Exp abonfi $
+!
+!
+      implicit none
+      include 'constants.h'
+      integer np,ndim,ndof
+      double precision xyz(ndim,*),zroe(ndof,*)
+      integer nodecode(*)
+      integer ipoin,ivar
+      write(6,*)'Setting dirichlet bcs for laplace' 
+      do ipoin = 1,np
+         if( nodecode(ipoin) .NE. 0 )then
+            zroe(ndof,ipoin) = xyz(1,ipoin)**2-xyz(2,ipoin)**2
+         else
+            zroe(ndof,ipoin) = ZERO
+         endif
+      enddo
+      return 
+      end 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      subroutine set_bc_laplace(np,xyz,ndim,zroe,ndof)
+d3 1
+a3 1
+!     $Id:$
+d7 1
+d10 1
+d14 5
+a18 1
+         zroe(ndof,ipoin) = xyz(1,ipoin)**2-xyz(2,ipoin)**2
+@

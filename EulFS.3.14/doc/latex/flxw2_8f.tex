@@ -1,0 +1,68 @@
+\hypertarget{flxw2_8f}{}\doxysection{src/euler/flxw2.f File Reference}
+\label{flxw2_8f}\index{src/euler/flxw2.f@{src/euler/flxw2.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{flxw2_8f_a245ac15d2bc8ad010b753696fa6236db}{F\+L\+X\+W2}} (N\+D\+IM, N\+O\+F\+V\+AR, N\+O\+F\+V\+E\+RT, S\+T\+I\+FC, W\+O\+RK, W\+O\+R\+K2, V\+CZ, V\+CB, V\+CN, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, P\+I\+C\+A\+RD)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{flxw2_8f_a245ac15d2bc8ad010b753696fa6236db}\label{flxw2_8f_a245ac15d2bc8ad010b753696fa6236db}} 
+\index{flxw2.f@{flxw2.f}!FLXW2@{FLXW2}}
+\index{FLXW2@{FLXW2}!flxw2.f@{flxw2.f}}
+\doxysubsubsection{\texorpdfstring{FLXW2()}{FLXW2()}}
+{\footnotesize\ttfamily subroutine F\+L\+X\+W2 (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{double precision, dimension(nofvar,nofvar,nofvert,nofvert)}]{S\+T\+I\+FC,  }\item[{double precision, dimension(ndim+1,ndim+1,nofvert-\/1)}]{W\+O\+RK,  }\item[{double precision, dimension(ndim+1,ndim+1,nofvert-\/1,nofvert-\/1)}]{W\+O\+R\+K2,  }\item[{double precision, dimension(nofvar,ndim)}]{V\+CZ,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CB,  }\item[{double precision, dimension(ndim)}]{V\+CN,  }\item[{double precision, dimension(nofvar,ndim)}]{N\+O\+D\+R\+ES,  }\item[{logical}]{P\+I\+C\+A\+RD }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+compute inviscid wall b.\+c.\textquotesingle{}s for compressible flows\+: weak approach
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices of a cell (=N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em S\+T\+I\+FC} & the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em W\+O\+RK} & work array \\
+\hline
+\mbox{\texttt{ in}}  & {\em W\+O\+R\+K2} & work array \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & nodal values in the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CB} & grid velocity at all N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & N\+D\+IM components of the normal to the boundary \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+D\+R\+ES} & nodal residual \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+I\+C\+A\+RD} & .T\+R\+UE. if the jacobian matrix has to be assembled In two-\/dimensional flows we use\+:\\
+\hline
+\end{DoxyParams}
+\begin{eqnarray*} R_1 &:=& R_1 + \frac{\alpha}{2} F_1 + \frac{1-\alpha}{2} F_2 \\ R_2 &:=& R_2 + \frac{\alpha}{2} F_2 + \frac{1-\alpha}{2} F_1 \end{eqnarray*} In three-\/dimensional flows we use\+:
+
+\begin{eqnarray*} R_1 &:=& R_1 + \frac{\alpha}{3} F_1 + \frac{1-\alpha}{6} F_2 + \frac{1-\alpha}{6} F_3 \\ R_2 &:=& R_2 + \frac{\alpha}{3} F_2 + \frac{1-\alpha}{6} F_3 + \frac{1-\alpha}{6} F_1 \\ R_3 &:=& R_3 + \frac{\alpha}{3} F_3 + \frac{1-\alpha}{6} F_1 + \frac{1-\alpha}{6} F_2 \end{eqnarray*}
+
+$\alpha$ is hardwired to 3/4 \begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+10 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}

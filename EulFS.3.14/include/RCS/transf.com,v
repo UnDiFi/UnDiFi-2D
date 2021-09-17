@@ -1,0 +1,83 @@
+head	1.3;
+access;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_1:1.3
+	release3_3_0:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2013.01.26.12.40.07;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.01.25.07.56.04;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2008.07.16.11.53.05;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@arrays in labeled common COMTRX
+@
+
+
+1.3
+log
+@changed the nof entries in DZDU
+@
+text
+@      DOUBLE PRECISION DUDV(MAX_NOFVAR_SQR*MAXTIMLEVS),DZDU(192),
+     1                 DVDZ(MAX_NOFVAR_SQR*MAXTIMLEVS)
+      COMMON/COMTRX/DUDV,DVDZ,DZDU
+C
+C     transformation matrices:
+C     DUDV from characteristic/symmetrizing to conserved
+C     DZDU from conserved to parameter vector
+C     DVDZ from parameter vector to characteristic/symmetrizing
+C
+@
+
+
+1.2
+log
+@arrays are now dimentioned using parameters (except for DZDU)
+@
+text
+@d1 1
+a1 1
+      DOUBLE PRECISION DUDV(MAX_NOFVAR_SQR*MAXTIMLEVS),DZDU(100),
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 1
+      DOUBLE PRECISION DUDV(36),DZDU(100),DVDZ(36)
+@

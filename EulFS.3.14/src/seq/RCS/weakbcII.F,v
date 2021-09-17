@@ -1,0 +1,530 @@
+head     1.2;
+access   simula;
+symbols  ;
+locks    ; strict;
+comment  @c @;
+
+
+1.2
+date     98.11.07.09.01.00;  author aldo;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     98.04.21.21.05.46;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@boundary conditions for inviscid walls
+with minimization using Lagrange multipliers
+@
+
+
+1.2
+log
+@Add automatic identification flag
+@
+text
+@      SUBROUTINE BOUND(IELEM,IBNDFAC,IBNDCEL,VCZ,VCP,VCN,NDIM,NOFVAR,
+     +NOFVERT,NBFAC,VOLUME)
+C
+      IMPLICIT NONE
+C
+C
+C   This routine applies the boundary condition to the IELEM-th
+C      element ..
+C      The flux balance over the element IELEM is corrected
+C      with the boundary conditions
+C      Then the gradient of the dependent variables is modified
+C      so that the quasi linear form matches the corrected
+C      flux balance ..
+C      from a suggestion by T.J. Barth
+      INTEGER NDIM,NOFVAR,NOFVERT,NBFAC
+      DOUBLE PRECISION VOLUME
+C
+C
+C     $Id$
+C
+C
+      include 'paramt.h'
+C
+C
+      INCLUDE 'IO'
+      include 'bnd.h'
+      INCLUDE 'bnd'
+      INCLUDE 'constants'
+C
+C
+      INTEGER IELEM
+C
+C
+      INTEGER IBNDFAC(3,NBFAC),IBNDCEL(*)
+C
+C
+      INTEGER FSTFAC,LSTFAC,IVERT,IBFAC,IBC,I,J,IDIM,
+     1IVAR,INOD1,INOD2
+      DOUBLE PRECISION TEMP
+      DOUBLE PRECISION VCZ(NOFVAR,NOFVERT),VCP(NDIM,NOFVERT),
+     +                 VCN(NDIM,NOFVERT)
+C
+C
+      DOUBLE PRECISION FLUXN(5),FLUXA(5),VNOR(3,3),VNOD(5,3)
+      INTEGER IFACNOD(3)
+C
+C    FLUXA assembles the corrections due to the
+C       boundary conditions ..
+C    VNOD stores the variables of the vertices of
+C       the boundary face .. 
+C
+C
+      INTEGER  ICYCL
+      EXTERNAL ICYCL
+      DOUBLE PRECISION DNRM2,DSCAL
+      EXTERNAL         DNRM2,DSCAL
+C
+C
+      EXTERNAL INVWLL
+C
+C
+      DATA VNOD,VNOR /24*0.D0/
+C
+      IF( IBNDCEL(IELEM) .EQ. 0 )RETURN
+C
+      DO 10 IVAR = 1 , NOFVAR
+         FLUXA(IVAR) = 0.D0
+   10 CONTINUE
+C
+C     FSTFAC = IBNDCEL(IELEM)
+C     IF( IELEM .NE. NBELEM )THEN
+C        LSTFAC = IBNDCEL(IELEM+1) - 1
+C     ELSE
+C        LSTFAC = NBFAC
+C     ENDIF
+C
+      FSTFAC = IBNDCEL(IELEM)
+      LSTFAC = IBNDCEL(IELEM)
+C
+C    Loop over the boundary faces of element IELEM ..
+C
+C       the NOFVAR variables of the DIM vertices of the
+C       face are stored in VNOD 
+C
+      DO 1 IBFAC = FSTFAC , LSTFAC
+         IBC   = ICOLOR(IBNDFAC(3,IBFAC))
+         IVERT = IBNDFAC(2,IBFAC)
+         DO 3 J = 1 , NDIM
+            I = ICYCL( IVERT + J , NOFVERT )
+            IFACNOD(J) = I
+            DO 7 IVAR = 1 , NOFVAR
+               VNOD(IVAR,J) = VCZ(IVAR,I)
+   7        CONTINUE
+   3     CONTINUE
+C
+C     Discrminates among the various boundary conditions ..
+C
+         GOTO(5,100,200,300,400,500),IBC+1
+         WRITE(NOUT,*)'No such B.C. type ',IBC
+         STOP
+C
+   5     GOTO 1
+C
+ 100     GOTO 1
+C
+ 200     GOTO 1
+C
+ 300     GOTO 1 ! No boundary condition is applied
+C
+ 400     continue
+         IF( NDIM .EQ. 2 )THEN ! Inviscid wall
+C           IF( KAN .EQ. 2 )THEN
+            CALL SIMPSON(VCN(1,IVERT),VNOD,INVWLL,FLUXN,NDIM,NOFVAR)
+CCC         ELSE
+CCC         CALL SIMPSON(VNOR,VNOD,INVWLL,FLUXN)
+CCC         ENDIF
+         ELSE
+            STOP 'Not for 3D yet' 
+CCC         IF( KAN .EQ. 2 )THEN
+CCC         CALL SURFINT(VNOR,VNOD,NOFVAR,3,INVWLLINCO,FLUXN)
+CCC         ELSE
+CCC         CALL SURFINT(VNOR,VNOD,NOFVAR,3,INVWLL,FLUXN)
+CCC         ENDIF
+         ENDIF
+         GOTO 999
+C
+ 500     GOTO 1
+C
+C
+C
+ 999  CONTINUE
+C
+C    The flux integral over the element ( = dF/dZ grad(Z) )
+C    is modified by substracting the computed and adding
+C    the imposed flux through the boundary face ..
+C
+C    FLUXA stores the corrected flux
+C
+        DO 9 IVAR = 1 , NOFVAR
+           FLUXA(IVAR) = FLUXA(IVAR) + FLUXN(IVAR)
+   9    CONTINUE
+   1  CONTINUE
+C
+C    The modified flux integral is matched by a modified
+C    gradient through a least squares minimization ..
+C
+      if(ibc.eq.4)
+     +CALL LAGMUL(IELEM,FLUXA,NDIM,NOFVAR,VOLUME)
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE LAGMUL(IELEM,BFLUX,NDIM,NOFVAR,VOLUME)
+C
+C#define DEBUG
+C
+      IMPLICIT NONE
+C
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+      INTEGER LWORK
+      PARAMETER(LWORK=320)
+C
+C
+      INCLUDE 'flags.com'
+      INCLUDE 'three'
+      INCLUDE 'IO'
+C
+C
+      INTEGER IELEM,NDIM,NOFVAR
+C
+C     BFLUX is the correction to be add to the flux balance
+C           so that the boundary condition is taken into account
+C
+      DOUBLE PRECISION BFLUX(5)
+C
+C
+      DOUBLE PRECISION TEMP1,TEMP2,TEMP3,TEMP4,TEMP5,TEMP6,
+     +Z1SQR,Z2SQR,Z3SQR,Z4SQR,Z5SQR,SUM,ADIM
+      integer I,J,IDIM,IVAR
+C
+ 
+      INTEGER IFAIL
+      DOUBLE PRECISION VOLUME
+ 
+C
+C
+      DOUBLE PRECISION dFdZt(5,5,3),AAtBBtCCt(5,5),WORK(LWORK),
+     +RHS(5),GRAD_PARM_CORR(5,5)
+      INTEGER IPIV(5)
+C
+#ifdef DEBUG 
+      DOUBLE PRECISION WKSP(5,5),WKSP1(5),WKSP2(5)
+#endif 
+C
+C
+      DATA IFAIL /0/
+C
+      ADIM=REAL(NDIM)
+C
+#ifdef DEBUG 
+      CALL DSCAL(25,ZERO,WKSP,1)
+      CALL DSCAL(5,ZERO,WKSP1,1)
+      CALL DSCAL(5,ZERO,WKSP2,1)
+#endif 
+C
+C     .. Assembling the matrix dFdZt ..
+C
+      dFdZt(1,1,1) = ZAVG(3)
+      dFdZt(1,2,1) = ZERO
+      dFdZt(1,3,1) = GM1OG * ZAVG(2)
+      dFdZt(1,4,1) = ZERO
+      dFdZt(1,5,1) = ZERO
+C
+      dFdZt(2,1,1) = ZERO
+      dFdZt(2,2,1) = ZAVG(3)
+      dFdZt(2,3,1) = GM1OG * ZAVG(1)
+      dFdZt(2,4,1) = ZERO
+      dFdZt(2,5,1) = ZERO
+C
+      dFdZt(3,1,1) = ZAVG(1)
+      dFdZt(3,2,1) = ZAVG(2)
+      dFdZt(3,3,1) = GP1OG * ZAVG(3)
+      dFdZt(3,4,1) = ZAVG(4)
+      dFdZt(3,5,1) = ZAVG(5)
+C
+      dFdZt(4,1,1) = ZERO
+      dFdZt(4,2,1) = ZERO
+      dFdZt(4,3,1) =-GM1OG * ZAVG(4)
+      dFdZt(4,4,1) = ZAVG(3)
+      dFdZt(4,5,1) = ZERO
+C
+      dFdZt(5,1,1) = ZERO
+      dFdZt(5,2,1) = ZERO
+      dFdZt(5,3,1) =-GM1OG * ZAVG(5)
+      dFdZt(5,4,1) = ZERO
+      dFdZt(5,5,1) = ZAVG(3)
+C
+C     .. Assembling the matrix dGdZt ..
+C
+      dFdZt(1,1,2) = ZAVG(4)
+      dFdZt(1,2,2) = ZERO
+      dFdZt(1,3,2) = ZERO
+      dFdZt(1,4,2) = GM1OG * ZAVG(2)
+      dFdZt(1,5,2) = ZERO
+C
+      dFdZt(2,1,2) = ZERO
+      dFdZt(2,2,2) = ZAVG(4)
+      dFdZt(2,3,2) = ZERO
+      dFdZt(2,4,2) = GM1OG * ZAVG(1)
+      dFdZt(2,5,2) = ZERO
+C
+      dFdZt(3,1,2) = ZERO
+      dFdZt(3,2,2) = ZERO
+      dFdZt(3,3,2) = ZAVG(4)
+      dFdZt(3,4,2) =-GM1OG * ZAVG(3)
+      dFdZt(3,5,2) = ZERO
+C
+      dFdZt(4,1,2) = ZAVG(1)
+      dFdZt(4,2,2) = ZAVG(2)
+      dFdZt(4,3,2) = ZAVG(3)
+      dFdZt(4,4,2) = GP1OG * ZAVG(4)
+      dFdZt(4,5,2) = ZAVG(5)
+C
+      dFdZt(5,1,2) = ZERO
+      dFdZt(5,2,2) = ZERO
+      dFdZt(5,3,2) = ZERO
+      dFdZt(5,4,2) =-GM1OG * ZAVG(5)
+      dFdZt(5,5,2) = ZAVG(4)
+C
+C     .. Assembling the matrix dHdZt ..
+C
+      dFdZt(1,1,3) = ZAVG(5)
+      dFdZt(1,2,3) = ZERO
+      dFdZt(1,3,3) = ZERO
+      dFdZt(1,4,3) = ZERO
+      dFdZt(1,5,3) = GM1OG * ZAVG(2)
+C
+      dFdZt(2,1,3) = ZERO
+      dFdZt(2,2,3) = ZAVG(5)
+      dFdZt(2,3,3) = ZERO
+      dFdZt(2,4,3) = ZERO
+      dFdZt(2,5,3) = GM1OG * ZAVG(1)
+C
+      dFdZt(3,1,3) = ZERO
+      dFdZt(3,2,3) = ZERO
+      dFdZt(3,3,3) = ZAVG(5)
+      dFdZt(3,4,3) = ZERO
+      dFdZt(3,5,3) =-GM1OG * ZAVG(3)
+C
+      dFdZt(4,1,3) = ZERO
+      dFdZt(4,2,3) = ZERO
+      dFdZt(4,3,3) = ZERO
+      dFdZt(4,4,3) = ZAVG(5)
+      dFdZt(4,5,3) =-GM1OG * ZAVG(4)
+C
+      dFdZt(5,1,3) = ZAVG(1)
+      dFdZt(5,2,3) = ZAVG(2)
+      dFdZt(5,3,3) = ZAVG(3)
+      dFdZt(5,4,3) = ZAVG(4)
+      dFdZt(5,5,3) = GP1OG * ZAVG(5)
+C
+C     .. Assembling the matrix dFdZ*dFdZt+dGdZ*dGdZt+dHdZ*dHdZt ..
+C
+      TEMP1 = ( GP1OG + (ADIM-ONE) ) * ZAVG(1) + GM1OG * ZAVG(2)
+      TEMP2 = ( GP1OG + (ADIM-ONE) ) * ZAVG(2) + GM1OG * ZAVG(1)
+C
+      Z1SQR = ZAVG(1)*ZAVG(1)
+      Z2SQR = ZAVG(2)*ZAVG(2)
+      Z3SQR = ZAVG(3)*ZAVG(3)
+      Z4SQR = ZAVG(4)*ZAVG(4)
+      Z5SQR = ZAVG(5)*ZAVG(5)
+      TEMP3 = Z3SQR + Z4SQR + Z5SQR
+C
+      TEMP4 = GINV * ( GAM - TWO + GINV )
+      TEMP5 = GINV * ( GAM + TWO + GINV ) + ADIM - ONE
+      TEMP6 = 4.D0 * GINV + ADIM - TWO
+C
+      AAtBBtCCt(1,1) = ADIM * Z1SQR + TEMP3
+      AAtBBtCCt(1,2) = ADIM * ZAVG(1) * ZAVG(2)
+      AAtBBtCCt(1,3) = ZAVG(3) * TEMP1
+      AAtBBtCCt(1,4) = ZAVG(4) * TEMP1
+      AAtBBtCCt(1,5) = ZAVG(5) * TEMP1
+C
+      AAtBBtCCt(2,1) = AAtBBtCCt(1,2)
+      AAtBBtCCt(2,2) = ADIM * Z2SQR + TEMP3
+      AAtBBtCCt(2,3) = ZAVG(3) * TEMP2
+      AAtBBtCCt(2,4) = ZAVG(4) * TEMP2
+      AAtBBtCCt(2,5) = ZAVG(5) * TEMP2
+C
+      AAtBBtCCt(3,1) = AAtBBtCCt(1,3)
+      AAtBBtCCt(3,2) = AAtBBtCCt(2,3)
+      AAtBBtCCt(3,3) = TEMP4 * ( Z1SQR + Z2SQR ) +
+     &TEMP5 * Z3SQR + (ONE+TEMP4) * (Z4SQR+Z5SQR)
+      AAtBBtCCt(3,4) = ZAVG(3)*ZAVG(4) * TEMP6
+      AAtBBtCCt(3,5) = ZAVG(3)*ZAVG(5) * TEMP6
+C
+      AAtBBtCCt(4,1) = AAtBBtCCt(1,4)
+      AAtBBtCCt(4,2) = AAtBBtCCt(2,4)
+      AAtBBtCCt(4,3) = AAtBBtCCt(3,4)
+      AAtBBtCCt(4,4) = TEMP4 * ( Z1SQR + Z2SQR ) +
+     &TEMP5 * Z4SQR + (ONE+TEMP4) * (Z3SQR+Z5SQR)
+      AAtBBtCCt(4,5) = ZAVG(4)*ZAVG(5) * TEMP6
+C
+      AAtBBtCCt(5,1) = AAtBBtCCt(1,5)
+      AAtBBtCCt(5,2) = AAtBBtCCt(2,5)
+      AAtBBtCCt(5,3) = AAtBBtCCt(3,5)
+      AAtBBtCCt(5,4) = AAtBBtCCt(4,5)
+      AAtBBtCCt(5,5) = TEMP4 * ( Z1SQR + Z2SQR ) +
+     &TEMP5 * Z5SQR + (ONE+TEMP4) * (Z3SQR+Z4SQR)
+C
+#ifdef DEBUG 
+      do 89 i = 1 , Ndim 
+C     Shouldnt it be ZERO
+         CALL DGEMM('T','N',NOFVAR,NOFVAR,NOFVAR,1.D0,dFdZt(1,1,i),5,
+     +   dFdZt(1,1,i),5,ONE,WKSP,5)
+   89 continue
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,WKSP,5,
+     +'Through multiplications ',IFAIL)
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,AAtBBtCCt,5,
+     +'Analitical expression ',IFAIL)
+      CALL X04CAF('General',' ',NOFVAR,NDIM,GRAD_PARM,NMAX,
+     +'Original gradient ',IFAIL)
+#endif 
+C
+   78 CONTINUE
+C
+      IF(ICHECK.NE.0)CALL CHECK(IELEM,NDIM,NOFVAR)
+C
+      CALL DSYTRF('U',NOFVAR,AAtBBtCCt,5,IPIV,WORK,LWORK,IFAIL)
+      IF(IFAIL.NE.0)THEN
+         WRITE(NOUT,9999)'DSYTRF',IFAIL
+         STOP
+      ENDIF
+      DO 3 IVAR = 1 , NOFVAR
+         RHS(IVAR) = - BFLUX(IVAR)
+    3 CONTINUE
+      CALL DSYTRS('U',NOFVAR,1,AAtBBtCCt,5,IPIV,RHS,5,IFAIL)
+      IF(IFAIL.NE.0)THEN
+         WRITE(NOUT,9999)'DSYTRF',IFAIL
+         STOP
+      ENDIF
+C
+C     Computes the correcting gradient ..
+C
+      DO 10 IDIM = 1 , NDIM
+         DO 14 IVAR = 1 , NOFVAR
+            SUM = ZERO
+            DO 12 J = 1 , NOFVAR
+               SUM = SUM + dFdZt(IVAR,J,IDIM) * RHS(J)
+   12       CONTINUE
+            SUM = SUM / VOLUME
+            GRAD_PARM_CORR(IVAR,IDIM) = SUM
+            GRAD_PARM(IVAR,IDIM) = GRAD_PARM(IVAR,IDIM) - SUM
+   14    CONTINUE
+   10 CONTINUE
+C
+#ifdef DEBUG 
+      CALL X04CAF('General',' ',NOFVAR,NDIM,GRAD_PARM_CORR,5,
+     +'Correction ',IFAIL)
+      CALL X04CAF('General',' ',NOFVAR,NDIM,GRAD_PARM,5,
+     +'Corrected gradient ',IFAIL)
+      write(6,*)ielem
+C
+      DO 62 IVAR = 1 , NOFVAR
+         WKSP1(IVAR) = DivFluX(IVAR)*VOLUME + BFLUX(IVAR)
+   62 CONTINUE
+C
+      DO 11 IDIM = 1 , NDIM
+         CALL DGEMV( 'T' , NOFVAR , NOFVAR , VOLUME , dFdZt(1,1,IDIM) ,
+     +   5, GRAD_PARM(1,IDIM) ,  1, ONE , WKSP2 ,  1)
+  11  CONTINUE
+C
+      WRITE(6,*)'Corrected flux balance (have you set ICHECK<>0 ? )'
+      WRITE(6,*)(WKSP1(IVAR),IVAR=1,NOFVAR)
+      WRITE(6,*)'Quasi-Linear form of the corrected flux balance'
+      WRITE(6,*)(WKSP2(IVAR),IVAR=1,NOFVAR)
+#endif 
+C
+C     .. Computes the gradient of the primitive variables
+C        from the gradient of the parameter vector ..
+C
+C     CALL X04CAF('General',' ',NOFVAR,NDIM,GRAD_PRIM,5,
+C    +            'dV before GARDPRIM ',IFAIL)
+C     CALL GRADPRIM(IELEM,NDIM,NOFVAR)
+C     CALL X04CAF('General',' ',NOFVAR,NDIM,GRAD_PRIM,5,
+C    +            'dV after GARDPRIM ',IFAIL)
+C
+      IF(ICHECK.NE.0)THEN
+         DO 64 IVAR =  1, NOFVAR
+            DivFluX(IVAR) = DivFluX(IVAR) + BFLUX(IVAR)/VOLUME
+   64    CONTINUE
+      ENDIF
+C
+      RETURN
+ 9999 FORMAT(5X,'Routine ',A6,' has returned IFAIL = ',I2)
+      END
+C
+C
+      SUBROUTINE INVWLL( DIM , VNOR , Z , F )
+C
+C    .. INVISCID WALL boundary condition ..
+C
+      IMPLICIT NONE
+C
+      INTEGER DIM
+      DOUBLE PRECISION VNOR(*),Z(*),F(*)
+      DOUBLE PRECISION VDOTN
+C
+C    | rho U_n         |    | 0   |
+C    | rho U_n H       |  - | 0   |
+C    | rho U_n U + p n |    | p n |
+C
+      VDOTN      = VNOR(1)*Z(3) + VNOR(2)*Z(4)
+      IF(DIM.EQ.3)VDOTN = VDOTN + VNOR(3)*Z(5)
+C
+      F(1) = VDOTN * Z(1)
+      F(2) = VDOTN * Z(2)
+      F(3) = VDOTN * Z(3)
+      F(4) = VDOTN * Z(4)
+      IF(DIM.EQ.3)F(5) = VDOTN * Z(5)
+C
+      RETURN
+      END
+C
+
+      SUBROUTINE SUBWII(IBNDCEL,IBNDFAC,NELEM,NBFAC)
+      IMPLICIT NONE
+
+      INTEGER NELEM,NBFAC,I,IELEM
+
+      INTEGER IBNDCEL(NELEM),IBNDFAC(3,NBFAC)
+
+      CALL IINIT(NELEM,0,IBNDCEL,1) 
+
+      DO 1 I = 1,NBFAC
+         IELEM = IBNDFAC(1,I)
+         IBNDCEL(IELEM) = I
+    1 CONTINUE
+
+      RETURN 
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 3
+d15 2
+a17 1
+      IMPLICIT NONE
+d19 1
+a19 2
+      INTEGER NDIM,NOFVAR,NOFVERT,NBFAC
+      DOUBLE PRECISION VOLUME
+@

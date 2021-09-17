@@ -1,0 +1,35 @@
+-equation Euler
+-fluid compressible
+-preconditioning No
+-nondimensionalisation external
+#
+#-scalar_scheme NL
+#-matrix_scheme B
+#
+-scalar_scheme N
+-matrix_scheme N
+#
+#-scalar_scheme LDA
+#-matrix_scheme LDA
+#
+-itmax 1
+-ibak 200
+-cfl 0.5
+-timestepping explicit
+-timestep local
+-cflmax 1.
+-linearization picard
+#
+#
+# flow conditions
+#
+# Mach = 0.63
+# 2 degrees of incidence
+#
+-freestream_Mach_number 20.0
+-flow_angles -1.,0.,0.
+-bc_type weak
+-colors -1,5,5,4,5,-1,-1,-1,-1,-1,0,-1,-1,-1
+-data_dir ./
+-restart_file file003.dat
+#

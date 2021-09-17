@@ -1,0 +1,122 @@
+\hypertarget{flxale_8f}{}\doxysection{src/euler/flxale.f File Reference}
+\label{flxale_8f}\index{src/euler/flxale.f@{src/euler/flxale.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{flxale_8f_af7d9e25db2af30fe0d70b6b9e34d4ce5}{aleflux}} (ndim, nofvert, ndof, vcn, vcb, vcz, fluxale, \mbox{\hyperlink{test_8for_a9bc57b8dbe7c3e1b9db72b918a1b6bab}{test}})
+\item 
+subroutine \mbox{\hyperlink{flxale_8f_a56332a68a27124eaf0a29e398bc4e077}{intale}} (z, ndof, b, vn, ndim, flux)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{flxale_8f_af7d9e25db2af30fe0d70b6b9e34d4ce5}\label{flxale_8f_af7d9e25db2af30fe0d70b6b9e34d4ce5}} 
+\index{flxale.f@{flxale.f}!aleflux@{aleflux}}
+\index{aleflux@{aleflux}!flxale.f@{flxale.f}}
+\doxysubsubsection{\texorpdfstring{aleflux()}{aleflux()}}
+{\footnotesize\ttfamily subroutine aleflux (\begin{DoxyParamCaption}\item[{integer}]{ndim,  }\item[{integer}]{nofvert,  }\item[{integer}]{ndof,  }\item[{double precision, dimension(ndim,nofvert)}]{vcn,  }\item[{double precision, dimension(ndim,nofvert)}]{vcb,  }\item[{double precision, dimension(ndof,nofvert)}]{vcz,  }\item[{double precision, dimension(ndof)}]{fluxale,  }\item[{logical}]{test }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the A\+LE flux balance over a cell by calculating the integral of the A\+LE flux\+:
+
+\[ F_n^{ALE} = - \left(\mathbf{b}\cdot\mathbf{n}\right) \left(\begin{array}{c} \rho \\\ \rho E \\\ \rho \mathbf{u} \end{array} \right) = - \frac{1}{2} \left(\mathbf{b}\cdot\mathbf{n}\right) \left( \frac{\partial U}{\partial Z} \right) Z \] over the {\ttfamily d+1} sides/faces of the simplex
+
+the calculation of the A\+LE flux balance is needed when using the A\+LE approach that is alternative to Deconinck\textquotesingle{}s approach
+
+Assuming that $Z$ and $\mathbf{b}$ vary linearly in space and since $\frac{\partial U}{\partial Z}$ ia also linear in $Z$, the A\+LE flux is a cubic function of the space coordinates and can therefore be integrated exactly using Simpson\textquotesingle{}s rule
+
+Performing the integration in 2D, we get\+: \[ I = I_{12} + I_{23} + I_{31} = \frac{1}{24} \, \sum_{i=1}^{3} \left(\frac{\partial U}{\partial Z}\right)_i \left[ \sum_{j=1}^{3} c_{ij} Z_j \right] \]
+
+where the entries $c_{ij}$ of the symmetric matrix $C$ are\+:
+
+\[ C = \left( \begin{array}{ccc} 3\left(b_1^{n_3} + b_1^{n_2} \right) + b_2^{n_3} + b_3^{n_2} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & 3\left(b_2^{n_3}+b_2^{n_1}\right) + b_1^{n_3} + b_3^{n_1} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & 3\left(b_3^{n_1}+b_3^{n_2}\right) + b_2^{n_1} + b_1^{n_2} \end{array} \right) \quad = \quad \left( \begin{array}{ccc} -2\,b_1^{n_1} + c_{12} + c_{13} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & -2\,b_2^{n_2} + c_{21} + c_{23} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & -2\,b_3^{n_3} + c_{13} + c_{23} \end{array} \right) \] The following notation has been used\+: \[ b_i^{n_j} = \mathbf{b}_i\cdot\mathbf{n}_j \] where the subscripts address the vertices of a cell; we have also used the fact that\+: \[ \sum_j \mathbf{n}_j = 0 \quad \rightarrow \quad \sum_j b_i^{n_j} = 0 \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & the nof vertices of the simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+OF} & the nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & the N\+D\+IM cartesian component of the (N\+O\+F\+V\+E\+RT) inward face normals, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CB} & the N\+D\+IM cartesian component of the grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & the N\+D\+OF dofs of the dependent variable within the N\+O\+F\+V\+E\+RT vertices of the cell \\
+\hline
+\mbox{\texttt{ out}}  & {\em F\+L\+U\+X\+A\+LE} & is the A\+LE flux through the face \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+E\+ST} & set to .T\+R\+UE. when using the {\ttfamily -\/check} runtime option\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+5 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000001}{Bug}}]This routine does N\+OT work yet in 3D \end{DoxyRefDesc}
+\mbox{\Hypertarget{flxale_8f_a56332a68a27124eaf0a29e398bc4e077}\label{flxale_8f_a56332a68a27124eaf0a29e398bc4e077}} 
+\index{flxale.f@{flxale.f}!intale@{intale}}
+\index{intale@{intale}!flxale.f@{flxale.f}}
+\doxysubsubsection{\texorpdfstring{intale()}{intale()}}
+{\footnotesize\ttfamily subroutine intale (\begin{DoxyParamCaption}\item[{double precision, dimension(ndof)}]{z,  }\item[{integer}]{ndof,  }\item[{double precision, dimension(ndim)}]{b,  }\item[{double precision, dimension(ndim)}]{vn,  }\item[{integer}]{ndim,  }\item[{double precision, dimension(ndof)}]{flux }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the A\+LE flux at a point in space in the direction $\mathbf{n}$
+
+The A\+LE flux is computed as follows\+:
+
+\[ F_n^{ALE} = - \left(\mathbf{b}\cdot\mathbf{n}\right) \left(\begin{array}{c} \rho \\\ \rho E \\\ \rho \mathbf{u} \end{array} \right) = - \frac{1}{2} \left(\mathbf{b}\cdot\mathbf{n}\right) \left( \frac{\partial U}{\partial Z} \right) Z \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Z} & the N\+D\+OF dofs of the dependent variable \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+OF} & the nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em B} & the N\+D\+IM cartesian components of the grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em VN} & the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ out}}  & {\em F\+L\+UX} & is the A\+LE flux $F_n^{ALE}$\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+5 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}

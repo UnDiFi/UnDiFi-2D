@@ -1,0 +1,56 @@
+\hypertarget{mmio_8f}{}\doxysection{src/util/mmio.f File Reference}
+\label{mmio_8f}\index{src/util/mmio.f@{src/util/mmio.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{mmio_8f_a7c7c2ee0e7d033d040f6f3f00f9fec54}{mmread}} (iunit, rep, field, symm, rows, cols, nnz, nnzmax, indx, jndx, ival, rval, cval)
+\item 
+subroutine \mbox{\hyperlink{mmio_8f_ad529b334386416dae426a42593811d2f}{mminfo}} (iunit, rep, field, symm, rows, cols, nnz)
+\item 
+subroutine \mbox{\hyperlink{mmio_8f_ac872e38671b951e714e79f5b13079517}{mmwrite}} (ounit, rep, field, symm, rows, cols, nnz, indx, jndx, ival, rval, cval)
+\item 
+subroutine \mbox{\hyperlink{mmio_8f_a5252f673c089ad7c91af73d17396c927}{lowerc}} (string, pos, len)
+\item 
+subroutine \mbox{\hyperlink{mmio_8f_a9966f3671be2812156357db640e1027f}{getwd}} (word, string, slen, start, next, wlen)
+\item 
+subroutine \mbox{\hyperlink{mmio_8f_af3dd3142e8c429373d87d917cedb1aa7}{countwd}} (string, slen, start, count)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{mmio_8f_af3dd3142e8c429373d87d917cedb1aa7}\label{mmio_8f_af3dd3142e8c429373d87d917cedb1aa7}} 
+\index{mmio.f@{mmio.f}!countwd@{countwd}}
+\index{countwd@{countwd}!mmio.f@{mmio.f}}
+\doxysubsubsection{\texorpdfstring{countwd()}{countwd()}}
+{\footnotesize\ttfamily subroutine countwd (\begin{DoxyParamCaption}\item[{character$\ast$($\ast$)}]{string,  }\item[{integer}]{slen,  }\item[{integer}]{start,  }\item[{integer}]{count }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mmio_8f_a9966f3671be2812156357db640e1027f}\label{mmio_8f_a9966f3671be2812156357db640e1027f}} 
+\index{mmio.f@{mmio.f}!getwd@{getwd}}
+\index{getwd@{getwd}!mmio.f@{mmio.f}}
+\doxysubsubsection{\texorpdfstring{getwd()}{getwd()}}
+{\footnotesize\ttfamily subroutine getwd (\begin{DoxyParamCaption}\item[{character$\ast$($\ast$)}]{word,  }\item[{character$\ast$($\ast$)}]{string,  }\item[{integer}]{slen,  }\item[{integer}]{start,  }\item[{integer}]{next,  }\item[{integer}]{wlen }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mmio_8f_a5252f673c089ad7c91af73d17396c927}\label{mmio_8f_a5252f673c089ad7c91af73d17396c927}} 
+\index{mmio.f@{mmio.f}!lowerc@{lowerc}}
+\index{lowerc@{lowerc}!mmio.f@{mmio.f}}
+\doxysubsubsection{\texorpdfstring{lowerc()}{lowerc()}}
+{\footnotesize\ttfamily subroutine lowerc (\begin{DoxyParamCaption}\item[{character$\ast$($\ast$)}]{string,  }\item[{integer}]{pos,  }\item[{integer}]{len }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mmio_8f_ad529b334386416dae426a42593811d2f}\label{mmio_8f_ad529b334386416dae426a42593811d2f}} 
+\index{mmio.f@{mmio.f}!mminfo@{mminfo}}
+\index{mminfo@{mminfo}!mmio.f@{mmio.f}}
+\doxysubsubsection{\texorpdfstring{mminfo()}{mminfo()}}
+{\footnotesize\ttfamily subroutine mminfo (\begin{DoxyParamCaption}\item[{integer}]{iunit,  }\item[{character}]{rep,  }\item[{character}]{field,  }\item[{character}]{symm,  }\item[{integer}]{rows,  }\item[{integer}]{cols,  }\item[{integer}]{nnz }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mmio_8f_a7c7c2ee0e7d033d040f6f3f00f9fec54}\label{mmio_8f_a7c7c2ee0e7d033d040f6f3f00f9fec54}} 
+\index{mmio.f@{mmio.f}!mmread@{mmread}}
+\index{mmread@{mmread}!mmio.f@{mmio.f}}
+\doxysubsubsection{\texorpdfstring{mmread()}{mmread()}}
+{\footnotesize\ttfamily subroutine mmread (\begin{DoxyParamCaption}\item[{integer}]{iunit,  }\item[{character}]{rep,  }\item[{character}]{field,  }\item[{character}]{symm,  }\item[{integer}]{rows,  }\item[{integer}]{cols,  }\item[{integer}]{nnz,  }\item[{integer}]{nnzmax,  }\item[{integer, dimension($\ast$)}]{indx,  }\item[{integer, dimension($\ast$)}]{jndx,  }\item[{integer, dimension($\ast$)}]{ival,  }\item[{double precision, dimension($\ast$)}]{rval,  }\item[{complex, dimension($\ast$)}]{cval }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mmio_8f_ac872e38671b951e714e79f5b13079517}\label{mmio_8f_ac872e38671b951e714e79f5b13079517}} 
+\index{mmio.f@{mmio.f}!mmwrite@{mmwrite}}
+\index{mmwrite@{mmwrite}!mmio.f@{mmio.f}}
+\doxysubsubsection{\texorpdfstring{mmwrite()}{mmwrite()}}
+{\footnotesize\ttfamily subroutine mmwrite (\begin{DoxyParamCaption}\item[{integer}]{ounit,  }\item[{}]{rep,  }\item[{}]{field,  }\item[{}]{symm,  }\item[{integer}]{rows,  }\item[{integer}]{cols,  }\item[{integer}]{nnz,  }\item[{integer, dimension($\ast$)}]{indx,  }\item[{integer, dimension($\ast$)}]{jndx,  }\item[{integer, dimension($\ast$)}]{ival,  }\item[{double precision, dimension($\ast$)}]{rval,  }\item[{complex, dimension($\ast$)}]{cval }\end{DoxyParamCaption})}
+

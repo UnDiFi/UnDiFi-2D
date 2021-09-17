@@ -1,0 +1,53 @@
+#
+#  2D flow past a Cylinder
+#
+-equation Euler
+-nondimensionalisation external
+-fluid compressible
+-freestream_Mach_number 2.0
+-preconditioning t
+#
+-scalar_scheme LW2
+-matrix_scheme LWT
+#-scalar_scheme LDA
+#-matrix_scheme LDA
+#-matrix_scheme B
+#
+#
+-time_accurate
+-nof_time_steps 501
+-time_step_size 0.0016
+-timestepping explicit
+-timestep global
+#-ale
+#-ale_grid move
+##-ale_grid_motion_type 1
+#-ale_grid_motion_type 2
+#-ale_motion_origin 0.,0.,0.
+-dual_ts No
+-itmax 1
+-ibak 5
+-ivcnvg 2
+-cfl 1.
+-cflmax 1.
+-tolerance -10.
+#
+# options for preconditioner
+#
+#-pc_factor_levels 2
+#-pc_factor_mat_ordering_type rcm
+#
+# flow conditions
+#
+-flow_angles 1.0,0.0,0.
+#
+#-colors -1,4,3,4,5,-1,-1,-1,-1,-1,0,0,0
+-colors -1,4,2,4,1,-1,-1,-1,-1,-1,0,-1,-1
+-bc_type weak
+-outlet_static_pressure .80357142857142857142
+-data_dir ./
+-restart_file ./file003.dat
+#
+#
+#-options_table
+#-options_left

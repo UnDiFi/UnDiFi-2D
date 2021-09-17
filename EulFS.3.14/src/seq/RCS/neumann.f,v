@@ -1,0 +1,109 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.01.01.22.10.22;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Neumann boundary conditions
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE NEUMANN(ICELNOD,NOFVERT,IBNDFAC,NBFAC,INODCOD)
+C
+C     .. boundary conditions for potential flow:
+C        Neumann/Dirichlet
+C        BCTYPE = 1 ---> Dirichlet
+C        BCTYPE = 3 ---> Neumann
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd'
+      INCLUDE 'IO'
+C
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NBFAC,NOFVERT
+C     ..
+C     .. Array Arguments ..
+      INTEGER IBNDFAC(3,NBFAC),ICELNOD(NOFVERT,*),INODCOD(*)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IELEM,IERR,IFACE,INODE,ITEMP,IVERT,JVERT,KVERT
+C     ..
+C     .. External Functions ..
+      INTEGER ICYCL
+      EXTERNAL ICYCL
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC IABS
+C     ..
+C     .. Data statements ..
+C
+      DATA IERR/0/
+C     ..
+C
+      DO 2 IFACE = 1,NBFAC
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+          ITEMP = ICOLOR(IBNDFAC(3,IFACE))
+c
+          IF (.NOT. (ITEMP.EQ.1.OR.ITEMP.EQ.3)) THEN
+              WRITE (NOUT,FMT=*) 'Error in Neumann: edge ',IFACE,
+     +          ' type ',ITEMP
+              IERR = 1
+          ENDIF
+c
+c     .. boundaries colored 3 are Neumann boundaries:
+c        Neumann nodes are given a negative nodcode ..
+c
+          IF (ITEMP.NE.3) GOTO 2
+          DO 1 JVERT = 1,NOFVERT - 1
+              KVERT = ICYCL(IVERT+JVERT,NOFVERT)
+              INODE = ICELNOD(KVERT,IELEM)
+              INODCOD(INODE) = -IABS(INODCOD(INODE))
+    1     CONTINUE
+    2 CONTINUE
+      IF (IERR.NE.0) STOP
+C
+C     .. This loop is needed to reset to a positive value
+C        the nodcode of dirichlet nodes which might be shared
+C        between a Dirichlet and a Neumann face ..
+C
+      DO 4 IFACE = 1,NBFAC
+          IELEM = IBNDFAC(1,IFACE)
+          IVERT = IBNDFAC(2,IFACE)
+          ITEMP = ICOLOR(IBNDFAC(3,IFACE))
+c
+          IF (ITEMP.NE.1) GOTO 4
+c
+c     .. Nodes on a Dirichlet face have "priority"
+c        on Neumann nodes ..
+c
+          DO 5 JVERT = 1,NOFVERT - 1
+              KVERT = ICYCL(IVERT+JVERT,NOFVERT)
+              INODE = ICELNOD(KVERT,IELEM)
+              INODCOD(INODE) = IABS(INODCOD(INODE))
+    5     CONTINUE
+    4 CONTINUE
+
+C
+      RETURN
+
+      END
+@

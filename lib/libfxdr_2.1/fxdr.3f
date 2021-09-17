@@ -1,0 +1,342 @@
+.TH FXDR 3F local
+
+fxdr: a library to interface the XDR routines to FORTRAN.
+.PP
+The FXDR library is a set of FORTRAN routines which provide an interface
+to the XDR routines which already exist (almost certainly) on your workstation
+or mainframe.  I.e., it provides an easy and convenient way to
+use the XDR ability of your computer from FORTRAN.
+.PP
+If you use the FXDR routines in your FORTRAN codes
+to write out your binary data files, then you can move those data files 
+around to any of the different machines you use, and the data will be 
+read in correctly within the precision limits of XDR and your machine
+(generally, about 1 part in 10**7 for 32-bit single precision numbers and
+1 part in 10**15 for 64-bit double precision numbers).  
+.PP
+.SH ROUTINES:
+.PP
+.I integer function INITXDR( filename, mode, return_on_error )
+.EX
+	character*(*) 	filename	(an input)
+	character*1	mode		(an input; 'r', 'w', or 'a')
+	logical		return_on_error	(an input)
+.EE
+initializes an XDR file
+for reading (if mode='r'), writing (if mode='w'), or appending (if mode='a').
+Returns the XDR file ID ('ixdrs'), which is greater than or
+equal to zero; or, if an error is encountered
+and return_on_error is .TRUE., returns an error code that
+is less than zero.
+If logical argument return_on_error is .FALSE., then any fxdr
+routines (including this one!) that encounter errors accessing this file 
+(for example, trying to read past an end of file, or reading in
+a different number of array elements than was originally
+written to the file) will print out an error message and stop.
+This is similar to what Fortran does, so for the most
+Fortran-like behavior set return_on_error to .FALSE..
+If logical argument return_on_error is .TRUE., then
+any fxdr routines (including this one!) that encounter errors will 
+NOT stop, but instead return a value
+that is less than 0 to the calling routine.
+.PP
+.I INTEGER FUNCTION IXDRINT( ixdrs, ival ):
+Read or write a FORTRAN integer.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the value.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRREAL( ixdrs, sval ):
+Read or write a FORTRAN 'real' using 32 bits in the XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the value.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRDOUBLE( ixdrs, dval ):
+Read or write a FORTRAN 'double precision' using 64 bits in
+the XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the value.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRREAL64( ixdrs, fval ):
+Read or write a FORTRAN 'real' using 64 bits in the XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the value.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRSTRING( ixdrs, string ):
+Read or write a FORTRAN "character*(*)".
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the string.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRIMAT( ixdrs, nels, iarray ):
+Read or write an array of FORTRAN integers.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the array.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRRMAT( ixdrs, nels, sarray ):
+Read or write an array of FORTRAN 'real' using 32 bits for
+each element in the XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the array.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRDMAT( ixdrs, nels, darray ):
+Read or write an array of FORTRAN 'double precision' using 64 bits for
+each element in the XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the array.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRRMAT64( ixdrs, nels, sarray ):
+Read or write an array of FORTRAN 'real' using 64 bits for
+each element in the XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when reading or writing the array.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRREWIND( ixdrs ):
+Rewind an XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when rewinding.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.I INTEGER FUNCTION IXDRCLOSE( ixdrs ):
+Close an XDR file.
+If INITXDR was called with return_on_error=.TRUE., then
+a return value less than 0 indicates an error was encountered
+when closing the file.
+If INITXDR was called with return_on_error=.FALSE., then
+this routine will print and error message and stop if
+an error is encountered.
+.PP
+.SH USEAGE:
+You just replace your FORTRAN unformatted binary write statements with
+calls to the appropriate FXDR library routine.
+For most Fortran-like behavior, set the return_on_error argument
+to INITXDR (the third argument) to .FALSE. -- this will make the
+routines print out an error message and halt if an error is
+encountered. 
+If you want to handle error messages yourself, then set
+the return_on_error argument
+to INITXDR (the third argument) to .TRUE., and check the
+returned values from the XDR routines; they will be less than
+zero if an error is encountered.
+A list of error codes is in 'fxdr.inc', which you also need
+to include in your source code if you are using 'implicit none'.
+.PP
+Example to write data:
+.EX
+	Replace	
+		parameter (nx=80,ny=100)
+		real	coeffs(nx,ny)
+		open(ilun, file='test_data', form='unformatted')
+		write(ilun) coeffs
+
+	With
+		parameter (nx=80,ny=100)
+		real	coeffs(nx,ny)
+		ixdrs = initxdr('test_data.xdr', 'w', .FALSE.)
+		ierr  = ixdrrmat( ixdrs, nx*ny, coeffs )
+.EE
+.PP
+Pretty easy, eh?  To read in that same data:
+.EX
+	Replace
+		open(ilun, file='test_data', form='unformatted')
+		read(ilun) coeffs
+
+	With
+		ixdrs = initxdr('test_data.xdr', 'r', .FALSE.)
+		ierr  = ixdrrmat( ixdrs, nx*ny, coeffs )
+.EE
+Note that the call to the FXDR routine is EXACTLY THE SAME whether you
+are reading or writing; whether you actually read or write is determined
+by whether you called the 'initxdr' routine with a 'r' or 'w' as the
+second argument.  This is opposite FORTRAN, where the call to open the
+file is exactly the same whether you are reading or writing, but you 
+call different routines ('read' or 'write') to accomplish the one you want.
+.PP
+.I More detail on using the FXDR library
+To use the FXDR library you first open the XDR-format file using the 'initxdr'
+routine.  This routine returns an integer which is the ID number which all 
+the XDR routines will use to indicate which XDR file you want to work with.
+The first argument to 'initxdr' is the name of the file, the second 
+argument is either 'r', 'w', or 'a' for reading, writing, or appending, and the third
+is a logical that you set to .TRUE. if you want to do your own error
+handling (by testing if the return value of functions is less than 0),
+and .FALSE. if you want the Fortran-like behavior of printing an
+error message and halting if an error is encountered:
+.EX
+	character*(*) filename
+	character*1   mode
+	integer       id
+	id = initxdr( filename, mode, .FALSE. )
+.EE
+Then you replace both your 'read' and 'write' calls with a call to one of
+the following integer functions:
+.EX
+Name	  Bits	FORTRAN type of argument
+--------- ----  --------------------------------------------------------
+ixdrdouble 64    double precision floating point number
+ixdrdmat   64    array of double precision floating point numbers
+ixdrint    32    integer
+ixdrimat   32    array of integers
+ixdrreal   32    single precision floating point number
+ixdrrmat   32    array of single precision floating point numbers
+ixdrreal64 64    single precision floating point number
+ixdrrmat64 64    array of single precision floating point numbers
+ixdrstring n/a   character*(*)
+.EE
+The 'Bits' column shows how many significant bits are saved in the XDR file.
+.PP
+The scaler (i.e., single value, not array) functions all take exactly two 
+parameters:
+.EX
+	1) the xdr file ID, which was the integer returned by the 
+	   'initxdr' call.
+
+	2) the variable to either read or write.
+.EE
+The array functions all take exactly three parameters:
+.EX
+	1) the xdr file ID, which was the integer returned by the 
+	   'initxdr' call.
+
+	2) The TOTAL number of elements in the array.
+
+	3) the array to either read or write.
+.EE
+If initxdr was called with the third argument (return_on_error) to
+be .FALSE., then these functions print out an error message and halt
+if they encounter an error.
+If  initxdr was called with the third argument (return_on_error) to
+be .TRUE., then these routines return an error code that is less than
+zero if they encounter an error.
+A list of error codes is in 'fxdr.inc'.
+.PP
+.SH PRECISION
+It is IMPORTANT to understand that the precision referred to above (for
+example, the 'single' precision of routine 'xdrreal' or the 'double'
+precision of routine 'xdrdouble') is SET BY YOUR COMPILER, not
+by the FXDR library.  This matters, because different compilers
+have different default precisions (as in, number of bits) associated
+with the names 'single', 'double', etc.  At the time of writing this, 
+this makes the biggest difference when moving XDR files between Crays and
+workstations such as Suns, HPs, or DECs, because by defalt the Cray FORTRAN
+compiler uses a 'single' precision of 64 bits and a 'double' precision
+of 128 bits, while the Sun, HP, and DEC use a 'single' precision of 32
+bits and a 'double' precision of 64 bits.  (You might get a similar effect
+on a workstation if you compile with a flag such as '-r8' which instructs
+the compiler to make all 'single precision' variables default to 8 bytes 
+[64 bits] of precision).
+.PP
+The upshot is that if you use a Cray to write a FORTRAN single precision 
+floating point number into an XDR file using routine "ixdrreal", only 32 
+bits of the original 64 bits will be written.  But, you can't use routine 
+"ixdrdouble" to write all 64 bits correctly, because that routine expects 
+to be passed a FORTRAN double precision floating point variable, not a 
+single precision variable.  
+.PP
+To get around this, there is a set of special routines which take 'single 
+precision' variables as defined by the FORTRAN compiler and write them 
+out with 64 bits (these are the 'ixdrreal64' and 'ixdrrmat64' routines). To
+read these in on a workstation where a real is only 32 bits, you should 
+use the 'ixdrdouble' or 'ixdrdmat' routines and supply a *double* precision 
+floating point variable to receive the 64 bits of valid data.  (To read
+these in on a Cray, you just use the same routine which wrote the data out
+in the first place--'ixdrreal64' or 'ixdrrmat64').
+.PP
+.I To sum up:
+.PP
+	Write SINGLE PRECISION values on a Cray (or workstation with 
+	64 bit FORTRAN reals) with 'ixdrreal64' or 'ixdrrmat64', then 
+	read them into DOUBLE PRECISION values on a regular workstation 
+	with a call to 'ixdrdouble' or 'ixdrdmat'.
+.PP
+	Write DOUBLE PRECISION values on a workstation with 'ixdrdouble'
+	or 'ixdrdmat', then read them into SINGLE PRECISION values on
+	a Cray (or workstation with 64 bit FORTRAN reals) with a call 
+	to 'ixdrreal64' or 'ixdrrmat64'.
+.PP
+Note that even workstations which are 64-bit machines, such as the
+DEC Alpha and the SGI Power machines, generally do NOT have a FORTRAN
+"real" be 64 bits by default -- they stick to 32 bits.
+.PP
+.I PRECISION PART II.
+Unfortunately, that's not all you should know about precision.  There is
+also the problem that Crays (at the moment--new Crays might change this) 
+use a completely different scheme for representing numbers internally than
+do workstations.  Crays use "Cray floating point format" (duh) while 
+workstations use "IEEE floating point format".  Well, the underlying XDR 
+libraries which FXDR calls *always* use IEEE floating point format, so if
+you always work on a workstation then everything is fine and please ignore
+this paragraph despite the fact that you've already read a lot of it.  If 
+you work on Crays, though, you need to be aware that putting data into an 
+XDR file and then immediately reading it back in WILL NOT leave you with 
+exactly the same floating point number which you started with.  It will 
+likely be different in the last bit position or so.  This is a tiny difference,
+and to put it into perspective, the Cray compiler will itself do things
+to your code (and warn you that it is doing them) which can change your 
+results this much, for the sake of making the code run faster.  However
+if you just can't live with losing a bit of precision in your numbers then
+please erase this library and for God's sake start drinking decaffinated
+coffee.
+.PP
+.SH Linking with the FXDR library
+OK, you've written your FORTRAN program with calls to the FXDR library--now
+how do you get it to compile correctly?
+.PP
+Well, here would be a typical command line:
+.EX
+	f77 niftyprogram.F -I/usr/local/include -L/usr/local/lib -lfxdr
+.EE
+the "-lfxdr" tells the compiler to link with the library named "libfxdr.a";
+the "-L/usr/local/lib" tells the compiler to look for "libfxdr.a" in 
+directory "/usr/local/lib".  This is the default place to install the 
+library.  If you put the library somewhere else instead, then you will
+have to substitute the place where you put "libfxdr.a" in for "/usr/local/lib"
+in the typical command line given above.
+The "-I/usr/local/include" tells the compiler to look for file "fxdr.inc"
+in directory "/usr/local/include".  This is only needed if you want
+to use the FXDR error codes by name, or if you usually use 'implicit none'
+if your Fortran code and want to have all the xdr routines defined
+properly.
+
+.SH Author
+David Pierce, Scripps Institution of Oceanography, Climate Research
+Division.  E-mail "dpierce@ucsd.edu".
+

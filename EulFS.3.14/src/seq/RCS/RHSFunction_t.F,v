@@ -1,0 +1,751 @@
+head	1.20;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.20
+	release3_13_0:1.20
+	release3_12_0:1.20
+	release3_11_0:1.20
+	release3_10_0:1.20
+	release3_8_0:1.19
+	release3_7_1:1.18
+	release3_7_0:1.18
+	release3_4_5:1.17
+	release3_4_4:1.17
+	release3_4_3:1.17
+	release3_4_2:1.17
+	release3_4_1:1.16
+	release3_4_0:1.16
+	release3_3_5:1.15
+	release3_3_4:1.15
+	release3_3_3:1.15
+	release3_3_2:1.15
+	release3_3_1:1.15
+	release3_3_0:1.14;
+locks; strict;
+comment	@c @;
+
+
+1.20
+date	2020.04.24.06.01.52;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2013.06.28.09.07.53;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2013.05.15.10.33.02;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2013.01.26.11.49.51;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2009.06.11.08.57.23;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2006.11.28.10.59.47;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2005.10.22.11.05.56;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2005.09.09.08.47.41;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2002.02.19.09.19.00;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2001.11.09.14.22.38;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2001.10.08.15.38.25;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.10.26.15.14.52;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.10.25.10.23.08;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.08.18.13.55.34;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.08.12.08.45.04;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@RHSFunction for the turbulence model
+to be registered within the TS component of PETSc
+@
+
+
+1.20
+log
+@now passing the Petsc matrix and time-step
+among the arguments of the call
+@
+text
+@      subroutine RHSFunction_t(ts,t,global_dt,global_in,global_out,
+     &                         B,dummy,NodalBcs)
+C
+C     This subroutine is "registered" in TSSetRHSFunction
+C     the calling sequence CANNOT be changed
+C
+C     global_in  is the vector value where the function is evaluated
+C     global_out is the function value
+C     global_out = RHSFunction(global_in)
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscts.h"
+      use petscts
+      use petscvec
+      use petscmat
+C
+      implicit none
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'datatype.h'
+      INCLUDE 'conv.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'flags.com'
+C
+      PetscLogDouble tbeg,tend
+      INTEGER MY_PE
+C
+C  Input/output parameters:
+      TS               ts
+      IS, dimension(0:*) :: NodalBcs
+      double precision t
+      Vec              global_in
+      Vec              global_out
+      integer          dummy(*)
+      Mat              B
+      Vec              global_dt
+C
+C  Local variables:
+      Vec              local_in
+      Vec              local_out
+      Vec              local_dt
+      integer          ifail,NDIM,NTURB,NPOIN,NGHOST,
+     &                 LINDX,IADDR,NPNOD
+#ifdef MPI
+      integer          bs
+#endif
+      PetscOffset i_x
+      PetscScalar x_array(1)
+C
+cxxx  COMMON/MYTSCOM/A,B,C,global_dt
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+
+      INTEGER  ISTKGT
+      EXTERNAL ISTKGT
+C
+      NDIM      =dummy( 1)
+      NTURB    = dummy( 4)
+      NPOIN    = dummy( 5)
+      NGHOST   = dummy( 6)
+      NPNOD    = dummy(10)
+C
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+C     Get ready for local function computations
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+C
+#ifdef MPI
+C
+C     update the ghost regions with correct values from the owning process
+C
+      CALL VecGhostUpdateBegin(global_in,INSERT_VALUES,
+     &                         SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(global_in,INSERT_VALUES,
+     &                       SCATTER_FORWARD,IFAIL)
+C
+      CALL VecGhostGetLocalForm(global_out,local_out,IFAIL)
+      CALL VecGetBlockSize(local_out,bs,IFAIL)
+      IF(BS.NE.NTURB.AND.BS.GT.1)
+     +CALL VecSetBlockSize(local_out,NTURB,IFAIL)
+C
+C     get local representation of the r.h.s. vector
+C
+      CALL VecGhostGetLocalForm(global_in,local_in,IFAIL)
+      CALL VecGetBlockSize(local_in,bs,IFAIL)
+      IF(BS.NE.NTURB.AND.BS.GT.1)
+     +CALL VecSetBlockSize(local_in,NTURB,IFAIL)
+C
+C     get local representation of the time-step vector
+C
+      CALL VecGhostGetLocalForm(global_dt,local_dt,IFAIL)
+C
+#else
+C
+C     for the uniprocessor case local and global numbering 
+C     are the same, maybe the following assignement
+C     is already done in VecGhostGetLocalForm(), controlla!
+C
+      local_out=global_out
+      local_in=global_in
+      local_dt=global_dt
+C
+#endif
+C
+C     Update periodic nodes
+C
+      LINDX = ISTKGT(NTURB*NPNOD,KIND_INTEGER)
+      IADDR = LTURB+NTURB*(NPOIN+NGHOST)
+      CALL UPDTP(DSTAK(LTURB),DSTAK(IADDR),
+     &NTURB,NPOIN,NGHOST,ISTAK(LPMAP),ISTAK(LINDX),NPNOD,.FALSE.)
+      CALL ISTKRL(1)
+C
+C     **********************************************************
+C
+C     BUILD_RHS = .TRUE.
+C     BUILD_JAC = .NOT. BUILD_RHS
+C
+C
+!     ICOUNT=ICOUNT+1
+C
+      CALL PetscTime(tbeg,IFAIL)
+      CALL VecGetArray(local_in,x_array,i_x,IFAIL) 
+      CALL ApplicationFunction_t(B,x_array(i_x+1),local_out,local_dt,
+     &                           dummy,IFAIL)
+      CALL VecRestoreArray(local_in,x_array,i_x,IFAIL) 
+      CALL PetscTime(tend,IFAIL)
+#if 0
+C
+C     Set the time step at the initial iteration;
+C     rather than a timestep, this is Dt/V
+C
+      CALL TSGetTimeStepNumber(ts,iter,IFAIL)
+      IF( iter .eq. 0 )THEN
+          CALL TSSetTimeStep(ts,cfl*dtmin,IFAIL)
+C         WRITE(6,*)'Initial time step has been set to ',cfl*dtmin
+C     ELSE
+C         WRITE(6,*)'TS iter',iter,'time step is ',dtmin
+      ENDIF
+#endif
+C
+C     **********************************************************
+C
+C     Must assembly RHS now since a call to MatSetValues(INSERT_VALUES)
+C     might follow in RHSBC5
+
+      CALL VecAssemblyBegin(global_out,IFAIL)
+      CALL VecAssemblyEnd(global_out,IFAIL)
+C
+C update ghost values
+C
+#ifdef MPI
+C
+      CALL VecGhostUpdateBegin(global_out,ADD_VALUES,
+     &                         SCATTER_REVERSE,IFAIL) 
+      CALL VecGhostUpdateEnd(global_out,ADD_VALUES,
+     &                         SCATTER_REVERSE,IFAIL) 
+#endif
+C
+C
+C     Apply b.c. to the nodal residual
+C     this must be done AFTER the contributions from the other procs.
+C     have been assembled
+C
+      CALL RHSBC5(global_out,NodalBcs)
+C
+      CALL VecAssemblyBegin(global_dt,IFAIL)      
+      CALL VecAssemblyEnd(global_dt,IFAIL)      
+C
+#ifdef MPI
+C
+      CALL VecGhostRestoreLocalForm(global_out,local_out,IFAIL)
+      CALL VecGhostRestoreLocalForm(global_dt,local_dt,IFAIL)
+C
+      CALL VecGhostUpdateBegin(global_dt,ADD_VALUES,SCATTER_REVERSE,
+     &IFAIL) 
+      CALL VecGhostUpdateEnd(global_dt,ADD_VALUES,SCATTER_REVERSE,
+     &IFAIL) 
+C
+#endif
+C
+C
+      RETURN
+      END
+@
+
+
+1.19
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@d1 2
+a2 1
+      subroutine RHSFunction_t(ts,t,global_in,global_out,dummy,NodalBcs)
+d38 2
+a41 1
+      Mat              A,B,C
+d53 1
+a53 2
+      Vec              global_dt
+      COMMON/MYTSCOM/A,B,C,global_dt
+@
+
+
+1.18
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d1 1
+a1 1
+      subroutine RHSFunction_t(ts,t,global_in,global_out,dummy)
+a9 3
+      implicit none
+C
+#include "petsc/finclude/petscsys.h"
+d13 5
+d32 1
+d175 1
+a175 1
+      CALL RHSBC5(global_out)
+a191 3
+C
+  100 FORMAT(4(F12.5,1X))
+  235 FORMAT (E10.4,1X,1(I4,1X),6(E10.4,1X))
+@
+
+
+1.17
+log
+@added a third matrix in MYTSCOM
+@
+text
+@d12 4
+a15 4
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscts.h"
+@
+
+
+1.16
+log
+@chenged PetscGetTime into PetscTime to comply with Petsc revision 3.4.0
+@
+text
+@d36 1
+a36 1
+      Mat              A,B
+d49 1
+a49 1
+      COMMON/MYTSCOM/A,B,global_dt
+@
+
+
+1.15
+log
+@changed the name of an included header file
+@
+text
+@d129 1
+a129 1
+      CALL PetscGetTime(tbeg,IFAIL)
+d134 1
+a134 1
+      CALL PetscGetTime(tend,IFAIL)
+@
+
+
+1.14
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d18 1
+a18 1
+      INCLUDE 'constants'
+d22 1
+a22 1
+      INCLUDE 'nloc'
+@
+
+
+1.13
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d12 1
+a12 1
+#include "finclude/petsc.h"
+@
+
+
+1.12
+log
+@split definitions on different lines
+@
+text
+@d12 4
+a15 4
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscts.h"
+@
+
+
+1.11
+log
+@I had to split declarations of PETSc variables on multiple
+lines; I suspect a bug in the GNU Fortran 95 (GCC) 4.1.1 compiler
+@
+text
+@d37 2
+a38 1
+      Vec              local_in,local_out,local_dt
+@
+
+
+1.10
+log
+@updating values in the periodic nodes
+@
+text
+@d31 2
+a32 1
+      Vec              global_in,global_out,global_dt
+d38 1
+d47 1
+@
+
+
+1.9
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d37 1
+a37 1
+      integer          icount,ifail,NDIM,NTURB,NPOIN,NGHOST,
+d39 3
+a43 2
+      SAVE icount
+      DATA icount/0/
+d112 2
+a113 2
+      IADDR = LZROE+NTURB*(NPOIN+NGHOST)
+      CALL UPDTP(DSTAK(LZROE),DSTAK(IADDR),
+d123 1
+a123 1
+      ICOUNT=ICOUNT+1
+@
+
+
+1.8
+log
+@changed Scalar into PetscScalar to comply with PETSc 2.1.1
+@
+text
+@d20 1
+d22 1
+d37 4
+a40 4
+      integer          bs,i,icount,ifail,NDIM,NTURB,NPOIN,NGHOST
+      PetscOffset i_rhs,i_x
+      PetscTruth LFLAG
+      PetscScalar rhs_array(1),x_array(1)
+d45 15
+d65 1
+d108 7
+@
+
+
+1.7
+log
+@unused common removed
+@
+text
+@d38 1
+a38 1
+      Scalar rhs_array(1),x_array(1)
+@
+
+
+1.6
+log
+@changed PLog into PetscLog to comply with PETSC 2.1.0
+@
+text
+@d23 1
+a23 2
+      PetscLogDouble TBEGALL,Telapsed,tbeg,tend
+      COMMON/TIMING/TBEGALL,Telapsed
+a24 1
+      COMMON/MPICOM/MY_PE
+@
+
+
+1.5
+log
+@bug fixed with VecGhostRestoreLocalForm
+/
+@
+text
+@d23 1
+a23 1
+      PLogDouble TBEGALL,Telapsed,tbeg,tend
+@
+
+
+1.4
+log
+@the initialisation of the ghost values has been moved eslewhere
+@
+text
+@d66 2
+a67 1
+      IF(BS.NE.NTURB)CALL VecSetBlockSize(local_out,NTURB,IFAIL)
+d73 2
+a74 1
+      IF(BS.NE.NTURB)CALL VecSetBlockSize(local_in,NTURB,IFAIL)
+d98 1
+d137 1
+a137 5
+C
+      CALL VecGhostUpdateBegin(global_dt,ADD_VALUES,SCATTER_REVERSE,
+     &IFAIL) 
+      CALL VecGhostUpdateEnd(global_dt,ADD_VALUES,SCATTER_REVERSE,
+     &IFAIL) 
+a138 1
+#endif
+d141 2
+d144 1
+a144 1
+      CALL RHSBC5(local_out)
+d151 1
+a151 1
+      CALL VecGhostRestoreLocalForm(local_out,global_out,IFAIL)
+d153 5
+@
+
+
+1.3
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@a74 1
+C     and set ghost values to 0.d0
+a76 13
+      CALL VecGetArray(local_dt,x_array,i_x,IFAIL)
+      CALL DINIT(NGHOST,ZERO,x_array(i_x+NPOIN+1),1)
+      CALL VecRestoreArray(local_dt,x_array,i_x,IFAIL)
+C
+C     set ghost values to zero
+C     note that VecSet only sets values belonging to the
+C          owning processor 
+C     it is necessary to set the ghost point values using
+C     the LOCAL representation
+C
+      CALL VecGetArray(local_out,rhs_array,i_rhs,IFAIL) 
+      CALL DINIT(NGHOST*NTURB,0.d0,rhs_array(i_rhs+NPOIN*NTURB+1),1)
+      CALL VecRestoreArray(local_out,rhs_array,i_rhs,IFAIL) 
+@
+
+
+1.2
+log
+@major rewriting for release 0.10.9
+@
+text
+@d13 3
+a15 3
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/ts.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 4
+d18 1
+a21 2
+      INCLUDE 'geo.com'
+      INCLUDE 'var.com'
+d31 2
+a32 6
+      Vec              global_in,global_out
+      Vec              local_in,local_out
+      integer          dummy
+C
+C     global_in is the vector value where the function is evaluated
+C     global_out is the function value
+a33 1
+
+d35 3
+a37 4
+      Vec              local_out
+      Mat              A
+      integer          bs,i,icount,ifail,iter
+      double precision tmp,dnrm2,dtmin
+d44 7
+d57 11
+a69 1
+      CALL VecGhostGetLocalForm(global_out,local_out,IFAIL)
+d72 1
+a72 5
+      IF(BS.NE.NTURB.AND.NTURB.GT.1)
+     >CALL VecSetBlockSize(local_in,NTURB,IFAIL)
+C     
+C     we need to set the BlockSize on the local representation
+C     of the vector ONLY as long as it is not defined yet
+d74 7
+a80 3
+      CALL VecGetBlockSize(local_out,bs,IFAIL)
+      IF(BS.NE.NTURB.AND.NTURB.GT.1)
+     >CALL VecSetBlockSize(local_out,NTURB,IFAIL)
+d100 1
+d107 2
+a108 2
+      BUILD_RHS = .TRUE.
+      BUILD_JAC = .NOT. BUILD_RHS
+d110 1
+a110 1
+      CALL VecGetArray(local_in,x_array,i_x,IFAIL) 
+a111 1
+      ICOUNT=ICOUNT+1
+d113 4
+a116 1
+      CALL ApplicationFunction_t(A,x_array(i_x+1),local_out,dtmin,IFAIL)
+d118 1
+a118 2
+C
+      CALL VecRestoreArray(local_in,x_array,i_x,IFAIL) 
+d126 3
+a128 3
+          WRITE(6,*)'Initial time (T) step has been set to ',cfl*dtmin
+      ELSE
+          WRITE(6,*)'TS iter',iter,'time step is ',dtmin
+d130 1
+d134 3
+a136 3
+C     Must assembly global_out now since a call to MatSetValues(INSERT_VALUES)
+C     might follow in RHSBC4 
+C
+d144 6
+a149 1
+      CALL VecGhostUpdateBegin(global_out,ADD_VALUES,SCATTER_REVERSE,
+d151 1
+a151 1
+      CALL VecGhostUpdateEnd(global_out,ADD_VALUES,SCATTER_REVERSE,
+d156 3
+a158 1
+CXXXX CALL VecGhostRestoreLocalForm(RHS,local_out,IFAIL)
+d160 2
+a161 1
+C     Apply b.c. to the nodal residual
+d163 1
+a163 1
+      CALL RHSBC5(global_out)
+d165 2
+a166 16
+C     CALL VecValid(global_out,LFLAG,IFAIL)
+C     write(6,*)'VecValid ',LFLAG,PETSC_TRUE
+C     pause 
+C
+C     Compute residual norms
+C
+      IF(NTURB.GT.1)THEN
+          DO 24 I= 1,NTURB
+              CALL VecStrideNorm(global_out,I-1,NORM_2,RESL2(I),IFAIL)
+              CALL VecStrideNorm(global_out,I-1,NORM_INFINITY,RESMAX(I),
+     &                       IFAIL)
+   24     CONTINUE
+      ELSE
+          CALL VecNorm(global_out,NORM_2,RESL2(1),IFAIL)
+          CALL VecNorm(global_out,NORM_INFINITY,RESMAX(1),IFAIL)
+      ENDIF
+d168 1
+a168 1
+C     write elapsed time, no. of function evaluations, residual
+a169 5
+      IF(MY_PE.EQ.0)THEN 
+         CALL PetscGetTime(Telapsed,IFAIL)
+         WRITE(9,235)Telapsed-TBegAll,ICOUNT,
+     &   (RESL2(I),I=1,NTURB),tend-tbeg
+      ENDIF
+@

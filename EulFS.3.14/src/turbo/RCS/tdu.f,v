@@ -1,0 +1,95 @@
+head	1.1;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Function for the Spalart-Allmaras model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)tfv1.f      1.0.0.1   95/09/21        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tdu.f
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+       DOUBLE PRECISION FUNCTION TDU(UX,UY,UZ)
+*  ==============================================================
+*
+*
+*      FILENAME: tdu.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      function that compute the module difference between the volcity
+*      vector in the trip point (if trip point is on wall velocity 
+*      in trip point is zero) end the velocity vector in a flowfield
+*      point 
+*      (Spalart & Allmaras model: 2D mgship version)
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : April 97
+*
+*  ==============================================================
+
+c2345678
+      DOUBLE PRECISION UX,UY,UZ,UXT,UYT,UZT
+C
+C     (UXT,UYT,UZT) is the velocity at trip point 
+C
+      UXT=0.
+      UYT=0.
+      UZT=0. 
+      TDU=SQRT( (UXT-UX)**2+(UYT-UY)**2+(UZT-UZ)**2 )
+      RETURN
+      END
+@

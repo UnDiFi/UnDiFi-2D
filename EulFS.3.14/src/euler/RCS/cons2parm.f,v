@@ -1,0 +1,196 @@
+head	1.4;
+access
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.3
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.01.26.11.39.21;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.10.13.13.19.00;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.12.27.09.28.14;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@transformation matrix from parameter vector to conserved variables
+@
+
+
+1.4
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@      SUBROUTINE CONS2PARM(ZROE,dZdU,NDIM,NOFVAR)
+      ENTRY MatdZdU(ZROE,dZdU,NDIM,NOFVAR)
+C
+      IMPLICIT NONE
+      INCLUDE 'constants.h' 
+      INCLUDE 'pfcgas.com'
+C
+      INTEGER NDIM,NOFVAR
+      DOUBLE PRECISION ZROE(NOFVAR),dZdU(NOFVAR,*)
+      DOUBLE PRECISION Z1INV,Z1SQRINV,KINETIC
+C
+C     Assembles the dZdU matrix ...
+C
+      Z1INV = ONE/ZROE(1)
+      Z1SQRINV = Z1INV*Z1INV
+C
+      KINETIC = ZROE(3)*ZROE(3) + ZROE(4)*ZROE(4)
+      IF (NDIM.EQ.3) KINETIC = KINETIC + ZROE(5)*ZROE(5)
+      KINETIC = HALF*KINETIC*Z1SQRINV
+C
+      dZdU(1,1) = HALF*Z1INV
+C
+      dZdU(2,1) = (GM1*KINETIC-HALF*Z1INV*ZROE(2))*Z1INV
+      dZdU(2,2) = GAM*Z1INV
+      dZdU(2,3) = -GM1*ZROE(3)*Z1SQRINV
+      dZdU(2,4) = -GM1*ZROE(4)*Z1SQRINV
+C
+      dZdU(3,1) = -HALF*ZROE(3)*Z1SQRINV
+      dZdU(3,3) = Z1INV
+C
+      dZdU(4,1) = -HALF*ZROE(4)*Z1SQRINV
+      dZdU(4,4) = Z1INV
+C
+      IF (NDIM.EQ.2) RETURN
+C
+      dZdU(2,5) = -GM1*ZROE(5)*Z1SQRINV
+      dZdU(5,1) = -HALF*ZROE(5)*Z1SQRINV
+      dZdU(5,5) = Z1INV
+C
+      RETURN
+
+      END
+@
+
+
+1.3
+log
+@changed the name of an header file
+@
+text
+@d6 1
+@
+
+
+1.2
+log
+@unified with dZdU
+@
+text
+@d5 1
+a5 1
+      INCLUDE 'constants' 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE CONS2PARM(ZROE,DZDU,NOFVAR,NDIM)
+a3 3
+C     $Id$
+C     $Header$
+C
+d5 1
+d7 3
+a9 5
+C     transformation matrix from conserved variables to
+C     parameter vector
+C
+C
+C
+a12 15
+C     .. Parameters ..
+      DOUBLE PRECISION ZERO,HALF,ONE,TWO,GAM,GM1,GOGM1,GINV,GM1OG,GP1OG
+      PARAMETER (ZERO=0.00d0,HALF=0.5d0,ONE=1.00d0,TWO=2.00d0,
+     +          GAM=1.40d0,GM1=GAM-ONE,GOGM1=GAM/GM1,GINV=ONE/GAM,
+     +          GM1OG=GM1*GINV,GP1OG= (GAM+ONE)*GINV)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DZDU(NOFVAR,NOFVAR),ZROE(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION KINETIC,Z1INV,Z1SQRINV
+C     ..
+d20 12
+a31 19
+      DZDU(1,1) = HALF*Z1INV
+      DZDU(1,2) = ZERO
+      DZDU(1,3) = ZERO
+      DZDU(1,4) = ZERO
+C
+      DZDU(2,1) = (GM1*KINETIC-HALF*Z1INV*ZROE(2))*Z1INV
+      DZDU(2,2) = GAM*Z1INV
+      DZDU(2,3) = -GM1*ZROE(3)*Z1SQRINV
+      DZDU(2,4) = -GM1*ZROE(4)*Z1SQRINV
+C
+      DZDU(3,1) = -HALF*ZROE(3)*Z1SQRINV
+      DZDU(3,2) = ZERO
+      DZDU(3,3) = Z1INV
+      DZDU(3,4) = ZERO
+C
+      DZDU(4,1) = -HALF*ZROE(4)*Z1SQRINV
+      DZDU(4,4) = Z1INV
+      DZDU(4,2) = ZERO
+      DZDU(4,3) = ZERO
+d35 3
+a37 10
+      DZDU(1,5) = ZERO
+      DZDU(2,5) = -GM1*ZROE(5)*Z1SQRINV
+      DZDU(3,5) = ZERO
+      DZDU(4,5) = ZERO
+C
+      DZDU(5,1) = -HALF*ZROE(5)*Z1SQRINV
+      DZDU(5,2) = ZERO
+      DZDU(5,3) = ZERO
+      DZDU(5,4) = ZERO
+      DZDU(5,5) = Z1INV
+@

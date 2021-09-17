@@ -1,0 +1,4 @@
+for i in `ls *.[f,F]`
+do
+	diff $i $FSPL_DIR/../EulFS.0.11.0/src/turbo/$i
+done

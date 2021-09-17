@@ -1,0 +1,168 @@
+head	1.5;
+access
+	abonfi;
+symbols
+	release3_14_0:1.5
+	release3_13_0:1.5
+	release3_12_0:1.5
+	release3_11_0:1.5
+	release3_10_0:1.5
+	release3_8_0:1.5
+	release3_7_1:1.5
+	release3_7_0:1.5
+	release3_4_5:1.5
+	release3_4_4:1.5
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.4
+	release3_3_0:1.3;
+locks; strict;
+comment	@ * @;
+
+
+1.5
+date	2013.08.21.07.56.05;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.01.26.12.36.02;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.01.25.08.17.01;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2004.12.20.14.45.22;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.12.10.27.52;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@general purpose parameters
+@
+
+
+1.5
+log
+@added Doxygen documentation
+@
+text
+@!> \par Purpose
+!> 
+!> Define some parameters to be used for statically dimensioned arrays
+!> \verbatim 
+!>    NMAX is the maximum number of variables currently allowed
+!>    VMAX is the maximum number of vertices  currently allowed
+!>    MAXNOFEQN is the maximum number of mean flow equations
+!>    MAXNOFVAR same as NMAX
+!>    MAXNOFVERT is the max number of vertices = d+1 (= VMAX)
+!> \endverbatim 
+!>    \author $Author: abonfi $
+!>    \version $Revision: 1.8 $
+!>    \date $Date: 2013/08/20 14:48:46 $
+!> \warning MAXNOFVAR = MAXNOFEQN + no of turbulence eqn
+!
+!     $Id: paramt.h,v 1.4 2013/01/26 12:36:02 abonfi Exp abonfi $
+!
+      INTEGER NMAX,VMAX,MAXNOFEQN,MAXNOFVAR,MAXNOFVERT,MAX_NOFVERT_SQR
+      INTEGER MAX_NOFVAR_SQR,MAXTIMLEVS
+!
+      PARAMETER(NMAX=8,VMAX=4,MAXNOFVAR=NMAX,MAXNOFEQN=NMAX)
+      PARAMETER(MAXNOFVERT=VMAX,MAX_NOFVAR_SQR=MAXNOFVAR*MAXNOFVAR)
+      PARAMETER(MAX_NOFVERT_SQR=MAXNOFVERT*MAXNOFVERT,MAXTIMLEVS=3)
+!
+!       
+@
+
+
+1.4
+log
+@changed comments so that can be handled in f90 as well
+MAXNOFVAR has been increased to 8 to handle Argon
+@
+text
+@d1 14
+d16 1
+a16 1
+!     $Id: paramt.h,v 1.3 2013/01/25 08:17:01 abonfi Exp abonfi $
+a24 7
+!     NMAX is the maximum number of variables currently allowed
+!     VMAX is the maximum number of vertices  currently allowed
+!     MAXNOFEQN is the maximum number of mean flow equations
+!     MAXNOFVAR same as NMAX
+!     MAXNOFVERT is the max number of vertices = d+1 (= VMAX)
+!
+!     REM MAXNOFVAR = MAXNOFEQN + no of turbulence eqn
+@
+
+
+1.3
+log
+@minor reformatting
+@
+text
+@d1 7
+a7 7
+C
+C     $Id$
+C
+      INTEGER NMAX,VMAX,MAXNOFEQN,MAXNOFVAR,MAXNOFVERT,
+     &MAX_NOFVERT_SQR,MAX_NOFVAR_SQR,MAXTIMLEVS
+C
+      PARAMETER(NMAX=6,VMAX=4,MAXNOFVAR=NMAX,MAXNOFEQN=5)
+d10 9
+a18 9
+C
+C     NMAX is the maximum number of variables currently allowed
+C     VMAX is the maximum number of vertices  currently allowed
+C     MAXNOFEQN is the maximum number of mean flow equations
+C     MAXNOFVAR same as NMAX
+C     MAXNOFVERT is the max number of vertices = d+1 (= VMAX)
+C
+C     REM MAXNOFVAR = MAXNOFEQN + no of turbulence eqn
+C       
+@
+
+
+1.2
+log
+@just before adding a few ones
+@
+text
+@d2 8
+a9 3
+      INTEGER NMAX,VMAX,MAXNOFEQN,MAXNOFVAR,MAXNOFVERT
+      PARAMETER(NMAX=6,VMAX=4,MAXNOFVAR=NMAX,MAXNOFEQN=5,
+     &MAXNOFVERT=VMAX)
+d18 1
+a18 1
+C
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 3
+a4 2
+      INTEGER NMAX,VMAX
+      PARAMETER(NMAX=6,VMAX=4)
+d8 6
+@

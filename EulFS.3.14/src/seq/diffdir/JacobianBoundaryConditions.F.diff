@@ -1,0 +1,76 @@
+7d6
+< !> @param[in] NodalBcs is the PETSc IS that addresses nodal bcs
+10,11c9
+<       SUBROUTINE JacobianBoundaryConditions(ts,U,A,X,RHS,NodalBcs,
+<      &                                      NDIM,NOFVAR)
+---
+>       SUBROUTINE JacobianBoundaryConditions(ts,U,A,X,RHS,NDIM,NOFVAR)
+13a12,13
+>       IMPLICIT NONE
+> C
+18c18
+< C     $Id: JacobianBoundaryConditions.F,v 1.26 2019/01/28 08:51:36 abonfi Exp abonfi $
+---
+> C     $Id: JacobianBoundaryConditions.F,v 1.26 2019/01/28 08:51:36 abonfi Exp $
+21,23c21,23
+< CCCC#include "petsc/finclude/petscvec.h"
+< CCCC#include "petsc/finclude/petscmat.h"
+< CCCC#include "petsc/finclude/petscis.h"
+---
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+> #include "petsc/finclude/petscis.h"
+25,27d24
+<       use petscts
+< C
+<       IMPLICIT NONE
+47,50c44,47
+< !     INTEGER ISTAK(1)
+< !     DOUBLE PRECISION DSTAK(1)
+< !     COMMON/CSTAK/DSTAK
+< !     EQUIVALENCE (ISTAK(1),DSTAK(1))
+---
+>       INTEGER ISTAK(1)
+>       DOUBLE PRECISION DSTAK(1)
+>       COMMON/CSTAK/DSTAK
+>       EQUIVALENCE (ISTAK(1),DSTAK(1))
+57d53
+<       INCLUDE 'iset.h'
+63c59
+<       IS, dimension(0:*) :: NodalBcs 
+---
+> #include "iset.com"
+76,79c72,75
+<       CALL MatZeroRowsIS(A,NodalBcs(SupersonicVariables),ONE,
+<      &                   PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+<       CALL MatZeroRowsIS(A,NodalBcs(NoSlipVelocities),ONE,
+<      &                   PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+---
+>       CALL MatZeroRowsIS(A,SupersonicVariables,ONE,PETSC_NULL_OBJECT,
+>      &                   PETSC_NULL_OBJECT,IFAIL)
+>       CALL MatZeroRowsIS(A,NoSlipVelocities,ONE,PETSC_NULL_OBJECT,
+>      &                   PETSC_NULL_OBJECT,IFAIL)
+81,84c77,80
+<          CALL MatZeroRowsIS(A,NodalBcs(NoSlipNodes),ONE,
+<      &                      PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+<          CALL MatZeroRowsIS(A,NodalBcs(FreestreamTurbulence),ONE,
+<      &                      PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+---
+>          CALL MatZeroRowsIS(A,NoSlipNodes,ONE,PETSC_NULL_OBJECT,
+>      &                   PETSC_NULL_OBJECT,IFAIL)
+>          CALL MatZeroRowsIS(A,FreestreamTurbulence,ONE,PETSC_NULL_OBJECT
+>      &                   ,PETSC_NULL_OBJECT,IFAIL)
+90,91c86,87
+<           CALL MatZeroRowsIS(A,NodalBcs(Isothermal),ONE,
+<      &                       PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+---
+>           CALL MatZeroRowsIS(A,Isothermal,ONE,PETSC_NULL_OBJECT,
+>      &                   PETSC_NULL_OBJECT,IFAIL)
+108c104
+<           CALL Isothwall(A,x_array(i_x+1),NodalBcs,IBGN,NDIM,NOFVAR,
+---
+>           CALL Isothwall(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,
+120c116
+<           CALL SETBC4LAPLACE(A,X,RHS,U,NodalBcs)
+---
+>           CALL SETBC4LAPLACE(A,X,RHS,U)

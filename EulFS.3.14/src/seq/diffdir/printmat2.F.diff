@@ -1,0 +1,22 @@
+4c4,6
+< C     $Id: printmat2.F,v 1.8 2020/03/28 09:42:37 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: printmat2.F,v 1.8 2020/03/28 09:42:37 abonfi Exp $
+6,7c8,10
+< CCCC#include "petsc/finclude/petscvec.h"
+< CCCC#include "petsc/finclude/petscmat.h"
+---
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+10c13
+< CCCC#include "petsc/finclude/petscis.h"
+---
+> #include "petsc/finclude/petscis.h"
+12,15d14
+<               use petscpc
+<               use petscksp
+< C
+<       IMPLICIT NONE

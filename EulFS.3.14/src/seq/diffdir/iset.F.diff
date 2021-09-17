@@ -1,0 +1,59 @@
+1c1
+<       SUBROUTINE ISET(NodalBcs, IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+---
+>       SUBROUTINE ISET(IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+5c5
+< C     $Id: iset.F,v 1.35 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: iset.F,v 1.35 2016/11/10 11:25:13 abonfi Exp $
+35a36,38
+>       IMPLICIT NONE
+> C
+> #include "petsc/finclude/petscsys.h"
+38,41d40
+<       use petscvec
+<       use petscis
+< C
+<       IMPLICIT NONE
+45,46d43
+<       INCLUDE 'iset.h'
+< C
+53a51
+> #include "iset.com"
+77,78d74
+<       IS, dimension(0:*) :: NodalBcs 
+< C
+138c134
+<      +PETSC_COPY_VALUES,NodalBcs(NoSlipVelocities),IFAIL)
+---
+>      +PETSC_COPY_VALUES,NoSlipVelocities,IFAIL)
+207,208c203
+<      &                     PETSC_COPY_VALUES,NodalBcs(Isothermal),
+<      &                     IFAIL)
+---
+>      &                     PETSC_COPY_VALUES,Isothermal,IFAIL)
+258c253
+<      +                         NodalBcs(SupersonicNodes),IFAIL)
+---
+>      +                         SupersonicNodes,IFAIL)
+261c256
+<      +    PETSC_COPY_VALUES,NodalBcs(SupersonicVariables),IFAIL)
+---
+>      +    PETSC_COPY_VALUES,SupersonicVariables,IFAIL)
+315,316c310
+<      &                     PETSC_COPY_VALUES,NodalBcs(MotionSolverBCS),
+<      &                     IFAIL)
+---
+>      &                     PETSC_COPY_VALUES,MotionSolverBCS,IFAIL)
+362,363c356
+<      &                     PETSC_COPY_VALUES,NodalBcs(Dirichlet4Poisson)
+<      &                    ,IFAIL)
+---
+>      &                     PETSC_COPY_VALUES,Dirichlet4Poisson,IFAIL)
+402,403c395
+<      &                     PETSC_COPY_VALUES,NodalBcs(HangingNodes),
+<      &                     IFAIL)
+---
+>      &                     PETSC_COPY_VALUES,HangingNodes,IFAIL)
+427a420
+>  2100 FORMAT(' BOUNDARY TYPE ',A,' is NOT currently implemented')

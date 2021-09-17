@@ -1,0 +1,506 @@
+head	1.15;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.15
+	release3_13_0:1.15
+	release3_12_0:1.15
+	release3_11_0:1.15
+	release3_10_0:1.15
+	release3_8_0:1.15
+	release3_7_1:1.14
+	release3_7_0:1.14
+	release3_4_5:1.13
+	release3_4_4:1.13
+	release3_4_3:1.13
+	release3_4_2:1.13
+	release3_4_1:1.13
+	release3_4_0:1.13
+	release3_3_5:1.13
+	release3_3_4:1.13
+	release3_3_3:1.13
+	release3_3_2:1.13
+	release3_3_1:1.13
+	release3_3_0:1.12;
+locks; strict;
+comment	@c @;
+
+
+1.15
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.01.26.11.51.20;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.01.04.10.53.41;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2012.08.09.07.22.42;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.12.10.18.01.12;	author simula;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.04.21.21.04.34;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.03.16.17.12.35;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.03.02.17.26.55;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.01.16.17.58.09;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@this rouine was written to check the correctness of
+the Picard linearization, i.e. that rhs = - A*z
+this should be true up to machine accuracy for the
+incompressible solver and almost true, due to
+the linearization, for the compressible solver.
+It is no longer true on far field boundaries
+due to the presence of a "source" term in the r.h.s
+@
+
+
+1.15
+log
+@changes required by petsc release 3.8
+@
+text
+@      subroutine testlhs(A,ZRoe,RHS,Y,V,NODCODE,NPOIN,NOFVAR)
+C
+C
+C     this rouine was written to check the correctness of
+C     the Picard linearization, i.e. that
+C     rhs = - A*z
+C     this should be true up to machine accuracy
+C     It is no longer true on far field boundaries
+C     due to the presence of a "source" term in the r.h.s 
+C
+C     $Id: test.F,v 1.14 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec
+      use petscmat
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants.h'
+C
+      INTEGER NOFVAR,NPOIN
+      INTEGER I,J,IFAIL
+      INTEGER NODCODE(NPOIN)
+      Mat A
+      Vec RHS,VecY,VecV,ZRoe
+      DOUBLE PRECISION Y(NOFVAR,NPOIN),V(NOFVAR,NPOIN)
+      DOUBLE PRECISION ERR,dnrm2
+      integer istkgt
+      integer istak(1)
+      double precision dstak(1)
+      common/cstak/dstak
+      equivalence(istak(1),dstak(1))
+      character*5 file(4)
+      data file /'ftn22','ftn23','ftn24','ftn25'/
+C
+C     Create VecV to store a cop of RHS
+C
+      CALL VecCreateSeqWithArray(MPI_COMM_SELF,NOFVAR,NPOIN*NOFVAR,
+     +                           V,VecV,IFAIL)
+      WRITE(6,*)'VecCreateSeqWithArray has ret IFAIL = ',IFAIL
+C
+C     copy rhs into V
+C
+      CALL VecCopy(RHS,VecV,IFAIL)
+      WRITE(6,*)'VecCopy has ret IFAIL = ',IFAIL
+C
+C     create a vector y to store A*Zroe
+C
+      CALL VecCreateSeqWithArray(MPI_COMM_SELF,NOFVAR,NPOIN*NOFVAR,
+     +                           Y,VecY,IFAIL)
+      WRITE(6,*)'VecCreateSeqWithArray has ret IFAIL = ',IFAIL
+C
+C     compute y = A*v, should be equal to -RHS
+C
+      CALL MatMult(A,ZRoe,VecY,IFAIL)
+      WRITE(6,*)'MatMult has ret IFAIL = ',IFAIL
+C     CALL VecNorm(VecY,NORM_2,ERR,IFAIL)
+C     write(6,*)' y = A * z ',ERR 
+
+C
+      WRITE(6,FMT=*)'Writing test output to ftn22'
+C
+      DO 1 I = 1, NPOIN
+         WRITE(22,*)'Node # ',I,' Code # ',NODCODE(I)
+C        WRITE(22,100)(Y(J,I),J=1,NOFVAR)
+         DO 1 J = 1, NOFVAR
+         WRITE(22,100)Y(J,I),V(J,I),Y(J,I)+V(J,I)
+    1 CONTINUE
+C
+C     Do 2 I = 1, NOFVAR 
+C        CALL DCOPY(NPOIN,Y(I,1),NOFVAR,Z,1)
+C     CALL SOLZNE(file(I),Z,1,NPOIN,'w')
+C   2 CONTINUE
+C
+C     Uncomment the following if you want to have
+C     y = rhs - A*z
+C
+      CALL VecAXPY(VecY,ONE,VecV,IFAIL)
+      WRITE(6,*)'VecAXPY has ret IFAIL = ',IFAIL
+      CALL VecNorm(VecY,NORM_2,ERR,IFAIL)
+      WRITE(6,*)'VecNorm has ret IFAIL = ',IFAIL
+      write(6,*)'norm of RHS - C*z ',ERR 
+C
+      CALL VecDestroy(VecV,IFAIL)
+      CALL VecDestroy(VecY,IFAIL)
+      STOP 
+C
+      RETURN
+  100 FORMAT(4(E14.8,1X))
+      END
+@
+
+
+1.14
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@a2 2
+      IMPLICIT NONE
+C
+d11 1
+a11 1
+C     $Id: test.F,v 1.13 2013/01/26 11:51:20 abonfi Exp abonfi $
+a13 1
+#include "petsc/finclude/petscsys.h"
+d16 5
+@
+
+
+1.13
+log
+@removed the RCS Header ID
+@
+text
+@d13 1
+a13 1
+C     $Id: test.F,v 1.12 2013/01/04 10:53:41 abonfi Exp abonfi $
+d16 3
+a18 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.12
+log
+@upgrade to petsc-3.3: ghosted entries are now addressed by block indices
+also changed some library calls
+@
+text
+@d13 1
+a13 2
+C     $Id: test.F,v 1.11 2012/08/09 07:22:42 abonfi Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.3.3.0/src/seq/RCS/test.F,v 1.11 2012/08/09 07:22:42 abonfi Exp abonfi $
+@
+
+
+1.11
+log
+@call to VecAXPY has changed due to the upgrade to the latest PETSc version
+@
+text
+@d13 2
+a14 2
+C     $Id: test.F,v 1.10 2011/09/16 07:19:48 abonfi Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.3.2.3/src/seq/RCS/test.F,v 1.10 2011/09/16 07:19:48 abonfi Exp abonfi $
+d39 2
+a40 2
+      CALL VecCreateSeqWithArray(MPI_COMM_SELF,NPOIN*NOFVAR,V,VecV,
+     +                           IFAIL)
+d50 2
+a51 2
+      CALL VecCreateSeqWithArray(MPI_COMM_SELF,NPOIN*NOFVAR,Y,VecY,
+     +                           IFAIL)
+@
+
+
+1.10
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d13 2
+a14 2
+C     $Id: test.F,v 1.9 2009/06/11 13:10:58 abonfi Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.3.1.0/src/seq/RCS/test.F,v 1.9 2009/06/11 13:10:58 abonfi Exp abonfi $
+d20 1
+d41 1
+d46 1
+d52 1
+d57 1
+d68 1
+a68 1
+         WRITE(22,100)Y(J,I),V(J,I)
+d79 2
+a80 1
+      CALL VecAXPY(1.d0,RHS,VecY,IFAIL)
+d82 1
+@
+
+
+1.9
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d13 2
+a14 2
+C     $Id: test.F,v 1.8 2000/10/19 16:10:34 aldo Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.0.15.0/src/seq/RCS/test.F,v 1.8 2000/10/19 16:10:34 aldo Exp abonfi $
+d17 1
+a17 1
+#include "finclude/petsc.h"
+@
+
+
+1.8
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d13 2
+a14 2
+C     $Id: test.F,v 1.7 1998/12/10 18:01:12 simula Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/test.F,v 1.7 1998/12/10 18:01:12 simula Exp aldo $
+d17 3
+a19 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.7
+log
+@arguments list has changed
+@
+text
+@d13 2
+a14 2
+C     $Id$
+C     $Header$
+d18 2
+a19 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+@
+
+
+1.6
+log
+@Add automatic identification flag
+@
+text
+@d1 1
+a1 1
+      subroutine testlhs(A,Z,RHS,Y,V,NODCODE,NPOIN,NOFVAR)
+d9 1
+a9 3
+C     this should be true up to machine accuracy for the
+C     incompressible solver and almost true, due to
+C     the linearization, for the compressible solver.
+d14 1
+d25 2
+a26 2
+      Vec RHS,VecY,VecV
+      DOUBLE PRECISION Z(NOFVAR,NPOIN),Y(NOFVAR,NPOIN),V(NOFVAR,NPOIN)
+d28 1
+a28 2
+      integer ixdrs,ia,ib,loca,locb,np
+      integer initxdr,istkgt
+d36 1
+a36 1
+C     make a copy of Z into VecZ
+a39 1
+      CALL DCOPY(NPOIN*NOFVAR,Z,1,V,1)
+d41 1
+a41 1
+      CALL VecNorm(VecV,NORM_2,ERR,IFAIL)
+d43 1
+a43 1
+C     check Z and V are identical
+d45 1
+a45 1
+      write(6,*)'should be the same',dnrm2(NPOIN*NOFVAR,Z,1),ERR 
+a46 2
+C     create a vector y to store A*v
+C
+d52 3
+a54 3
+      CALL MatMult(A,VecV,VecY,IFAIL)
+      CALL VecNorm(VecY,NORM_2,ERR,IFAIL)
+      write(6,*)' y = A * z ',ERR 
+d57 1
+a57 2
+C     Uncomment the following if you want to have
+C     y = rhs - A*z
+a58 33
+C     CALL VecAXPY(1.d0,RHS,VecY,IFAIL)
+C     CALL VecNorm(VecY,NORM_2,ERR,IFAIL)
+C     write(6,*)'norm of RHS - C*z ',ERR 
+C
+C     copy rhs into V
+C
+      CALL VecCopy(RHS,VecV,IFAIL)
+C
+      goto 13
+C
+      ixdrs = initxdr('file004.dat','r')
+      call xdrint(ixdrs,np)
+      loca = istkgt(np,2) 
+      locb = istkgt(np,2) 
+      call xdrimat(ixdrs,np,istak(loca))
+      call xdrimat(ixdrs,np,istak(locb))
+      call xdrclose(ixdrs)
+      do 31 i = 0,np-1
+         ia = istak(loca+i)
+         ib = istak(locb+i)
+         WRITE(23,*)'Node # ',Ia,' l.h.s. -------- r.h.s.' 
+         DO 21 J = 1, NOFVAR
+         WRITE(23,100)Y(J,Ia),V(J,Ia)
+   21 CONTINUE
+         WRITE(23,*)'Node # ',Ib,' l.h.s. -------- r.h.s.' 
+         DO 31 J = 1, NOFVAR
+         WRITE(23,100)Y(J,Ib),V(J,Ib)
+   31 CONTINUE
+      call istkrl(2) 
+C
+      stop 
+   13 continue 
+C
+d65 1
+d71 7
+@
+
+
+1.5
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d3 3
+d15 1
+a16 1
+      IMPLICIT NONE
+@
+
+
+1.4
+log
+@skip test for periodic nodes
+@
+text
+@d15 3
+a17 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+@
+
+
+1.3
+log
+@now handles periodic nodes
+@
+text
+@d70 1
+a70 1
+C     goto 13
+@
+
+
+1.2
+log
+@fixed bug in the routine name (test-->testlhs)
+@
+text
+@d26 6
+d69 26
+a94 1
+
+d101 4
+a104 4
+      Do 2 I = 1, NOFVAR 
+         CALL DCOPY(NPOIN,Y(I,1),NOFVAR,Z,1)
+      CALL SOLZNE(file(I),Z,1,NPOIN,'w')
+    2 CONTINUE
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      subroutine test(A,Z,RHS,Y,V,NODCODE,NPOIN,NOFVAR)
+@

@@ -1,0 +1,28 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the SPARSKIT2 library
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER IPAR(16)
+      DOUBLE PRECISION FPAR(16)
+      COMMON /COMSKIT_I/ IPAR
+      COMMON /COMSKIT_R/ FPAR
+@

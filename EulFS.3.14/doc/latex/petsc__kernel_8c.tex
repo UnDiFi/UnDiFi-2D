@@ -1,0 +1,107 @@
+\hypertarget{petsc__kernel_8c}{}\doxysection{src/schemes/petsc\+\_\+kernel.c File Reference}
+\label{petsc__kernel_8c}\index{src/schemes/petsc\_kernel.c@{src/schemes/petsc\_kernel.c}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}petsc.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_adcae5d203b6c187412cfb29bb85be9ec}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+2}} (Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_aaeb5f135070544b64a012ab91a8e4488}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+3}} (Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_ac260d99aeaf4999f867c34fa4ce6eaf7}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+4}} (Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_a94ed936676c09ae9426734f81aa74ca2}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+5}} (Mat\+Scalar $\ast$, Petsc\+Int $\ast$, Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_afb82e1bb70898919f1320e985b364914}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+6}} (Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_a451dfde86511ca0263547aa493b106f1}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+7}} (Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_a806892b1dd6eb8fe34a2b9b2e0c8dddd}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+9}} (Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_a6ab3196e1e8ed24e074da8ccadc3ff5a}{Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+15}} (Mat\+Scalar $\ast$, Petsc\+Int $\ast$, Mat\+Scalar $\ast$, Petsc\+Real, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_ad9cda0edd296fa86b13d93e6829de7f9}{Petsc\+L\+I\+N\+P\+A\+C\+Kgefa}} (Mat\+Scalar $\ast$, Petsc\+Int, Petsc\+Int $\ast$, Petsc\+Bool, Petsc\+Bool $\ast$)
+\item 
+Petsc\+Error\+Code \mbox{\hyperlink{petsc__kernel_8c_acf03a000f6caeb2ff2f11f27e60e5e6e}{Petsc\+L\+I\+N\+P\+A\+C\+Kgedi}} (Mat\+Scalar $\ast$, Petsc\+Int, Petsc\+Int $\ast$, Mat\+Scalar $\ast$)
+\item 
+int \mbox{\hyperlink{petsc__kernel_8c_a285ff01d82bb98765112b1a77a57c5b0}{solven\+\_\+}} (int $\ast$n, Mat\+Scalar $\ast$mat)
+\item 
+void \mbox{\hyperlink{petsc__kernel_8c_ac826847898d5289c149d88a31f0a84ed}{setsolven\+\_\+}} (int $\ast$ierr)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{petsc__kernel_8c_a6ab3196e1e8ed24e074da8ccadc3ff5a}\label{petsc__kernel_8c_a6ab3196e1e8ed24e074da8ccadc3ff5a}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_15@{PetscKernel\_A\_gets\_inverse\_A\_15}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_15@{PetscKernel\_A\_gets\_inverse\_A\_15}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_15()}{PetscKernel\_A\_gets\_inverse\_A\_15()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+15 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Int $\ast$}]{,  }\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_adcae5d203b6c187412cfb29bb85be9ec}\label{petsc__kernel_8c_adcae5d203b6c187412cfb29bb85be9ec}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_2@{PetscKernel\_A\_gets\_inverse\_A\_2}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_2@{PetscKernel\_A\_gets\_inverse\_A\_2}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_2()}{PetscKernel\_A\_gets\_inverse\_A\_2()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+2 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_aaeb5f135070544b64a012ab91a8e4488}\label{petsc__kernel_8c_aaeb5f135070544b64a012ab91a8e4488}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_3@{PetscKernel\_A\_gets\_inverse\_A\_3}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_3@{PetscKernel\_A\_gets\_inverse\_A\_3}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_3()}{PetscKernel\_A\_gets\_inverse\_A\_3()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+3 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_ac260d99aeaf4999f867c34fa4ce6eaf7}\label{petsc__kernel_8c_ac260d99aeaf4999f867c34fa4ce6eaf7}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_4@{PetscKernel\_A\_gets\_inverse\_A\_4}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_4@{PetscKernel\_A\_gets\_inverse\_A\_4}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_4()}{PetscKernel\_A\_gets\_inverse\_A\_4()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+4 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_a94ed936676c09ae9426734f81aa74ca2}\label{petsc__kernel_8c_a94ed936676c09ae9426734f81aa74ca2}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_5@{PetscKernel\_A\_gets\_inverse\_A\_5}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_5@{PetscKernel\_A\_gets\_inverse\_A\_5}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_5()}{PetscKernel\_A\_gets\_inverse\_A\_5()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+5 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Int $\ast$}]{,  }\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_afb82e1bb70898919f1320e985b364914}\label{petsc__kernel_8c_afb82e1bb70898919f1320e985b364914}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_6@{PetscKernel\_A\_gets\_inverse\_A\_6}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_6@{PetscKernel\_A\_gets\_inverse\_A\_6}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_6()}{PetscKernel\_A\_gets\_inverse\_A\_6()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+6 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_a451dfde86511ca0263547aa493b106f1}\label{petsc__kernel_8c_a451dfde86511ca0263547aa493b106f1}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_7@{PetscKernel\_A\_gets\_inverse\_A\_7}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_7@{PetscKernel\_A\_gets\_inverse\_A\_7}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_7()}{PetscKernel\_A\_gets\_inverse\_A\_7()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+7 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_a806892b1dd6eb8fe34a2b9b2e0c8dddd}\label{petsc__kernel_8c_a806892b1dd6eb8fe34a2b9b2e0c8dddd}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscKernel\_A\_gets\_inverse\_A\_9@{PetscKernel\_A\_gets\_inverse\_A\_9}}
+\index{PetscKernel\_A\_gets\_inverse\_A\_9@{PetscKernel\_A\_gets\_inverse\_A\_9}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscKernel\_A\_gets\_inverse\_A\_9()}{PetscKernel\_A\_gets\_inverse\_A\_9()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+Kernel\+\_\+\+A\+\_\+gets\+\_\+inverse\+\_\+\+A\+\_\+9 (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Real}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_acf03a000f6caeb2ff2f11f27e60e5e6e}\label{petsc__kernel_8c_acf03a000f6caeb2ff2f11f27e60e5e6e}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscLINPACKgedi@{PetscLINPACKgedi}}
+\index{PetscLINPACKgedi@{PetscLINPACKgedi}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscLINPACKgedi()}{PetscLINPACKgedi()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+L\+I\+N\+P\+A\+C\+Kgedi (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Int}]{,  }\item[{Petsc\+Int $\ast$}]{,  }\item[{Mat\+Scalar $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_ad9cda0edd296fa86b13d93e6829de7f9}\label{petsc__kernel_8c_ad9cda0edd296fa86b13d93e6829de7f9}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!PetscLINPACKgefa@{PetscLINPACKgefa}}
+\index{PetscLINPACKgefa@{PetscLINPACKgefa}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{PetscLINPACKgefa()}{PetscLINPACKgefa()}}
+{\footnotesize\ttfamily Petsc\+Error\+Code Petsc\+L\+I\+N\+P\+A\+C\+Kgefa (\begin{DoxyParamCaption}\item[{Mat\+Scalar $\ast$}]{,  }\item[{Petsc\+Int}]{,  }\item[{Petsc\+Int $\ast$}]{,  }\item[{Petsc\+Bool}]{,  }\item[{Petsc\+Bool $\ast$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_ac826847898d5289c149d88a31f0a84ed}\label{petsc__kernel_8c_ac826847898d5289c149d88a31f0a84ed}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!setsolven\_@{setsolven\_}}
+\index{setsolven\_@{setsolven\_}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{setsolven\_()}{setsolven\_()}}
+{\footnotesize\ttfamily void setsolven\+\_\+ (\begin{DoxyParamCaption}\item[{int $\ast$}]{ierr }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{petsc__kernel_8c_a285ff01d82bb98765112b1a77a57c5b0}\label{petsc__kernel_8c_a285ff01d82bb98765112b1a77a57c5b0}} 
+\index{petsc\_kernel.c@{petsc\_kernel.c}!solven\_@{solven\_}}
+\index{solven\_@{solven\_}!petsc\_kernel.c@{petsc\_kernel.c}}
+\doxysubsubsection{\texorpdfstring{solven\_()}{solven\_()}}
+{\footnotesize\ttfamily int solven\+\_\+ (\begin{DoxyParamCaption}\item[{int $\ast$}]{n,  }\item[{Mat\+Scalar $\ast$}]{mat }\end{DoxyParamCaption})}
+

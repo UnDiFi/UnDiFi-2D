@@ -1,0 +1,12 @@
+cd $1
+echo "**********************************************************"
+echo Running testcase:
+echo $1
+echo "**********************************************************"
+pwd
+cp .petscrc ${HOME}
+echo "********************"
+echo running ${SEQ_CODE} on PETSC_ARCH = ${PETSC_ARCH}
+echo "********************"
+${SEQ_CODE} -itmax ${ITMAX} -linearization ${SNES} -data_dir ${DATA_DIR} > out.${PETSC_ARCH}
+cut -c1-10,32- convhst.l2 > convhst.${PETSC_ARCH} 

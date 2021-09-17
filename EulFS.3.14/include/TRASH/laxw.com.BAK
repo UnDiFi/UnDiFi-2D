@@ -1,0 +1,6 @@
+      DOUBLE PRECISION DTVOL
+      COMMON/LAXW/DTVOL
+c
+c     this is the term dt/Vol
+c     of the time-accurate Lax-Wendroff scheme 
+c

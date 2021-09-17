@@ -1,0 +1,413 @@
+head	1.4;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.3
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2014.04.15.10.08.13;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.09.23.07.28.19;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.09.17.10.01.18;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2012.12.20.11.04.45;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@checks that the GCL is verified on a cell basis
+@
+
+
+1.4
+log
+@fixed a bug due to insufficient length of VCZ
+@
+text
+@!> \par Purpose
+!>
+!> Checks the GCL on a cell basis when the following runtime option is set:
+!> \verbatim
+!> -ale_check_gcl
+!> \endverbatim
+!> and writes some statistics to file \c volXXXXX.log where \c XXXXX is the iteration number.
+!>
+!> In particular, we dump to file:
+!> 1. the current iteration \c ITER
+!> 2. \f$T_e|^{n+1}-|T_e|^n\f$
+!> 3. \f$ \left(\nabla \cdot \mathrm{b} \right) |T_e| \Delta t \f$
+!> 4. The ratio btw. items 2 and 3 which should be 1 as long as Eq.(1) is satisfied to machine accuracy
+!> 5. \f$ |T_e|^{n+\alpha}\f$
+!> 6. \f$ |T_e|^{n+1}\f$
+!> 7. \f$|T_e|^n\f$
+!> 8. \f$|T_e|^{n-1}\f$
+!>
+!> To be more precise, we check that:
+!> \f[
+!> \frac{\mathrm{d}|T_e|}{\mathrm{d}t} = \frac{|T_e|^{n+1}-|T_e|^n}{\Delta t} = 
+!> \nabla \cdot \mathbf{b}\, |T_e|^{n+\alpha} = \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{b}_j \cdot \mathbf{n}_j^{n+\alpha} \quad\quad \mbox{(1)}
+!> \f]
+!> where:
+!> \f[
+!> \mathbf{b} = \frac{\mathbf{x}^{n+1}-\mathbf{x}^{n}}{\Delta t}
+!> \f]
+!> and the cell normals \f$\mathbf{n}_j^{n+\alpha}\f$ are computed using the geometry at some intermediate time:
+!> \f[
+!> \mathbf{x}^{n+\alpha} = \alpha \mathbf{x}^{n} + \left(1-\alpha\right) \mathbf{x}^{n+1}
+!> \f]
+!> where \f$\alpha = {\tt ALFALE}\f$ is a constant which is set using the runtime option
+!> \verbatim
+!> -ale_grid_weight ALFALE
+!> \endverbatim
+!> It may be readily verified that only the choice \f$\alpha = 0.5\f$ makes Eq.(1) an identity.
+!>
+!>
+!> @@param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+!> @@param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+!> @@param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+!> @@param[in] XYZDOT Cartesian components of the nodal grid velocities
+!> @@param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+!> @@param[in] ZROE nodal values of the dependent variable
+!> @@param[in] NELEM nof boundary faces
+!> @@param[in] NPOIN nof interior nodes in the mesh
+!> @@param[in] NGHOST nof ghost nodes in the mesh
+!> @@param[in] NPNOD nof periodic nodes in the mesh
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NOFVERT nof boundary faces
+!> @@param[in] NOFVAR nof dofs
+!> @@param[in] ITER physical time iteration counter
+!> \author $Author: abonfi $
+!> \version $Revision: 1.3 $
+!> \date $Date: 2013/09/23 07:28:19 $
+      SUBROUTINE CHKGCL(ICELNOD,ICELFAC,VFACNOR,XYZDOT,VOL,ZROE,
+     2                   NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     3                   ITER)
+C
+      IMPLICIT NONE
+C
+C     $Id: chkgcl.f,v 1.3 2013/09/23 07:28:19 abonfi Exp abonfi $
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'flags.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'time.com'
+      INCLUDE 'three.com'
+C
+C
+      INTEGER NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,NELEM,iter
+      INTEGER ICELNOD(NOFVERT,NELEM),ICELFAC(NOFVERT,NELEM)
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM), ZROE(NOFVAR,*),
+     2                 XYZDOT(NDIM,*)
+C
+C
+      integer I,J
+ 
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+C
+      INTEGER IELEM,NP
+      INTEGER IFAIL
+      DOUBLE PRECISION EPS,DVDT,DIVB
+C
+C     ..
+C     .. Local Arrays ..
+      INTEGER ICN(MAXNOFVERT)
+      DOUBLE PRECISION VCN(3*MAXNOFVERT),VOLUME(MAXTIMLEVS+1)
+      DOUBLE PRECISION VCZ(MAXNOFVAR*MAXNOFVERT*MAXTIMLEVS),
+     &VCB(3*MAXNOFVERT)
+      DOUBLE PRECISION DIV,volnew,volold,tnew,tnow,told,taux
+      CHARACTER*31 stringa
+C
+C
+C     Some initializations ....
+C
+      stringa = "nodal coordinates of cell 00000"
+      stringa = "vol00000.log"
+C
+      NP = NPOIN + NGHOST + NPNOD
+C
+      write(stringa(4:8),FMT="(I5.5)")iter
+C
+      tnew =  itim*delt
+      tnow =  tnew-delt
+      told =  tnow-delt
+      taux = alfale*told+(ONE-ALFALE)*tnew
+C
+      OPEN(125,FILE=stringa(1:12))
+      write(125,FMT=55)tnew,tnow,taux,tnew,tnow,told
+C
+      DO 2000 IELEM = 1,NELEM
+C
+          write(stringa(27:31),FMT="(I5.5)")ielem
+C
+          CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC,  VOL, ZROE,
+     +                VFACNOR, XYZDOT, NDIM, NOFVERT, NOFVAR, NP, ICN,
+     3                VCZ, VCN, VCB, VOLUME)
+C
+          volnew = VOLUME(2)
+          volold = VOLUME(3)
+          DVDT = VOLNEW-VOLOLD
+          DIVB = DIV(NDIM,NOFVERT,VCN,VCB)*DELT
+C
+!         do i= 1,ndim
+!            write(125,*)i,(vcb(i+(j-1)*ndim),j=1,nofvert)
+!         enddo
+          write(125,FMT=50)ielem,dvdt,divb,dvdt/divb,(volume(i),i=1,4) 
+C
+C
+ 2000 CONTINUE ! end loop over elements
+      WRITE(6,*)
+      CLOSE(125)
+      RETURN
+   55 FORMAT('Cell no.; V(',F11.4,')-V(',F11.4,'); div(b)*dt;  dvdt/div(
+     &b)'4(1X,('V(',F11.4,')')))
+   50 FORMAT(I6,7(1X,E12.5))
+      END
+@
+
+
+1.3
+log
+@Added Doxygen documentation and re-formatted the output
+@
+text
+@d12 1
+a12 1
+!> 3. \f$ \left(\nabla \cdot \mathrm{b} \right) \Delta t \f$
+d54 2
+a55 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d62 1
+a62 1
+C     $Id: chkgcl.f,v 1.2 2013/09/17 10:01:18 abonfi Exp abonfi $
+d91 1
+a91 1
+      INTEGER ICN(MAXNOFVERT),NODES(MAXNOFVERT)
+d93 2
+a94 1
+      DOUBLE PRECISION VCZ(MAXNOFVAR,MAXNOFVERT),VCB(3*MAXNOFVERT)
+a97 1
+      DATA NODES/1,2,3,4/
+d129 3
+@
+
+
+1.2
+log
+@VOLUME is now an array so that cell volumes at the previous
+time levels can be stored
+@
+text
+@d1 55
+d58 1
+a58 1
+     3                   iter)
+d62 1
+a62 3
+C     $Id: chkgcl.f,v 1.1 2012/12/20 11:04:45 abonfi Exp abonfi $
+C
+C     Here we check the GCL on a cell basis
+a76 15
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+C
+C
+C     ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell
+a80 3
+C     FACNOR(1:NDIM,1:NFACE)  cartesian components
+C                             of the NFACE faces/edges
+C
+d85 1
+a85 1
+      INTEGER JVAR,IVAR,IVERT,JVERT,JV,IELEM,NP
+a88 2
+C     ICN stores the vertices of the current element (0-based indexing)
+C
+d94 1
+a94 4
+      DOUBLE PRECISION DIV,tarea,x(MAXNOFVERT),y(MAXNOFVERT),volnew,
+     &volold
+      LOGICAL COMPRESSIBLE
+      DOUBLE PRECISION area
+a103 1
+      COMPRESSIBLE = ABS(KAN) .EQ. 4
+d108 5
+d114 1
+d124 3
+a126 3
+          volnew = VOL(IELEM+NELEM)
+          volold = VOL(IELEM+2*NELEM)
+          DVDT = (VOL(IELEM+NELEM)-VOL(IELEM+2*NELEM))
+d129 1
+a129 11
+!         do i = 1,nofvert
+!            x(i) = vcz(1,i)
+!            y(i) = vcz(2,i)
+!         enddo
+!         tarea = AREA(X,Y,nofvert,NODES)
+C
+!         write(125,*)ielem,tarea,volume 
+!     CALL X04CAF('General',' ',NDIM,NOFVERT,VCZ,
+!    +            NDIM,stringa,IFAIL)
+!     write(6,*)ielem,tarea,volold,volnew,volume,vol(ielem) 
+          write(125,*)ielem,dvdt,divb,dvdt/divb 
+d136 3
+a138 95
+      END
+      FUNCTION AREA(X,Y,NB,NODES)
+      DOUBLE PRECISION AREA
+      INTEGER NB,NODES(NB)
+      DOUBLE PRECISION X(1),Y(1)
+C
+C***********************************************************
+C
+C                                               ROBERT RENKA
+C                                       OAK RIDGE NATL. LAB.
+C                                             (615) 576-5139
+C
+C   GIVEN A SEQUENCE OF NB POINTS IN THE PLANE, THIS
+C FUNCTION COMPUTES THE AREA BOUNDED BY THE CLOSED POLY-
+C GONAL CURVE WHICH PASSES THROUGH THE POINTS IN THE
+C SPECIFIED ORDER.  EACH SIMPLE CLOSED CURVE IS POSITIVELY
+C ORIENTED (BOUNDS POSITIVE AREA) IF AND ONLY IF THE POINTS
+C ARE SPECIFIED IN COUNTERCLOCKWISE ORDER.  THE LAST POINT
+C OF THE CURVE IS TAKEN TO BE THE FIRST POINT SPECIFIED, AND
+C THUS THIS POINT NEED NOT BE SPECIFIED TWICE.  HOWEVER, ANY
+C POINT MAY BE SPECIFIED MORE THAN ONCE IN ORDER TO DEFINE A
+C MULTIPLY CONNECTED DOMAIN.
+C   THE AREA OF A TRIANGULATION MAY BE COMPUTED BY CALLING
+C AREA WITH VALUES OF NB AND NODES DETERMINED BY SUBROUTINE
+C BNODES.
+C
+C INPUT PARAMETERS -   X,Y - N-VECTORS OF COORDINATES OF
+C                            POINTS IN THE PLANE FOR N .GE.
+C                            NB.  NODE I HAS COORDINATES
+C                            (X(I),Y(I)) FOR I = 1, 2, ...,
+C                            N.
+C
+C                       NB - LENGTH OF NODES.
+C
+C                    NODES - VECTOR OF NODE INDICES IN THE
+C                            RANGE 1 TO N DEFINING THE
+C                            POLYGONAL CURVE.
+C
+C INPUT PARAMETERS ARE NOT ALTERED BY THIS FUNCTION.
+C
+C OUTPUT PARAMETER -  AREA - SIGNED AREA BOUNDED BY THE
+C                            POLYGONAL CURVE DEFINED
+C                            ABOVE.
+C
+C MODULES REFERENCED BY AREA - NONE
+C
+C***********************************************************
+C
+      INTEGER NNB,ND,I
+      DOUBLE PRECISION A,X0,Y0,DX1,DY1,DX2,DY2
+C
+C LOCAL PARAMETERS -
+C
+C NNB =     LOCAL COPY OF NB
+C ND =      ELEMENT OF NODES
+C I =       DO-LOOP AND NODES INDEX
+C A =       PARTIAL SUM OF SIGNED (AND DOUBLED) TRIANGLE
+C             AREAS
+C X0,Y0 =   X(NODES(1)), Y(NODES(1))
+C DX1,DY1 = COMPONENTS OF THE VECTOR NODES(1)-NODES(I) FOR
+C             I = 2, 3, ..., NB-1
+C DX2,DY2 = COMPONENTS OF THE VECTOR NODES(1)-NODES(I) FOR
+C             I = 3, 4, ..., NB
+C
+      NNB = NB
+      A = 0.D0
+      IF (NNB.LT.3) GOTO 2
+C
+C INITIALIZATION
+C
+      ND = NODES(1)
+      X0 = X(ND)
+      Y0 = Y(ND)
+      ND = NODES(2)
+      DX1 = X(ND) - X0
+      DY1 = Y(ND) - Y0
+C
+C LOOP ON TRIANGLES (NODES(1),NODES(I),NODES(I+1)),
+C   I = 2, 3, ..., NB-1, ADDING TWICE THEIR SIGNED
+C   AREAS TO A
+C
+      DO 1 I = 3,NNB
+          ND = NODES(I)
+          DX2 = X(ND) - X0
+          DY2 = Y(ND) - Y0
+          A = A + DX1*DY2 - DX2*DY1
+          DX1 = DX2
+          DY1 = DY2
+    1 CONTINUE
+C
+C A CONTAINS TWICE THE SIGNED AREA OF THE REGION
+C
+    2 AREA = A/2.D0
+      RETURN
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+C     $Id: chkflx2.f,v 1.1 2010/05/15 08:18:23 abonfi Exp abonfi $
+d59 1
+a59 1
+      DOUBLE PRECISION VCN(3*MAXNOFVERT),VOLUME
+@

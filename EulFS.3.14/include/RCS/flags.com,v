@@ -1,0 +1,182 @@
+head	1.6;
+access
+	abonfi;
+symbols
+	release3_14_0:1.6
+	release3_13_0:1.6
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.6
+	release3_4_4:1.6
+	release3_4_3:1.6
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_1:1.4
+	release3_3_0:1.4;
+locks; strict;
+comment	@# @;
+
+
+1.6
+date	2013.06.04.14.38.31;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.03.28.10.29.49;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.01.25.08.01.51;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.08.17.11.14.46;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.03.21.08.39.26;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for general purpose flags
+@
+
+
+1.6
+log
+@added a flag that enables solving Poisson/Laplace's equation
+@
+text
+@      INTEGER       ISCHEME,JSCHEME,KSCHEME,ICHECK,KAN,DECOMP,IBCTYPE,
+     &              SLIP_FREE_BC_TYPE
+      LOGICAL TURBULENT,SEGREGATED,COUPLED,LTSQR,LDUMP(5),LREAD(2),
+     &LAPLACE
+C
+C     $Id: flags.com,v 1.5 2013/03/28 10:29:49 abonfi Exp abonfi $
+C
+      COMMON/CFLAGS/ISCHEME,JSCHEME,KSCHEME,ICHECK,KAN,DECOMP,IBCTYPE,
+     &SLIP_FREE_BC_TYPE,TURBULENT,SEGREGATED,COUPLED,LTSQR,LDUMP,LREAD,
+     3LAPLACE
+!23456789012345678901234567890123456789012345678901234567890123456789012
+C
+C	ISCHEME	scalar scheme
+C	JSCHEME	system scheme
+C	KSCHEME	scalar scheme for turbulence transport eqn
+C	ICHECK  if <> 0 some tests are performed
+C	KAN:	Type of analysis
+C	DECOMP
+C       IBCTYPE
+C       SLIP_FREE_BC_TYPE
+C       TURBULENT = .TRUE. when using a turbulence model
+C       SEGREGATED
+C       LDUMP(1) = .TRUE. when using -dump_nodal_residual
+C       LDUMP(2) = .TRUE. when using -dump_pseudo_timestep
+C       LDUMP(3) = .TRUE. when using -dump_jacobian_matrix
+C       LDUMP(4) = .TRUE. when using -dump_boundary_fluxes
+C       LDUMP(5) = .TRUE. when using -dump_integral
+C       LREAD(1) = .TRUE. when reading inflow profiles
+C       LREAD(2) = .TRUE. when a bflux000.dat file should be read
+C
+@
+
+
+1.5
+log
+@added stuff needed to write the integral of the conservative variables to disk
+@
+text
+@d3 2
+a4 1
+      LOGICAL TURBULENT,SEGREGATED,COUPLED,LTSQR,LDUMP(5),LREAD(2)
+d6 1
+a6 1
+C     $Id: flags.com,v 1.4 2013/01/25 08:01:51 abonfi Exp abonfi $
+d9 3
+a11 2
+     &SLIP_FREE_BC_TYPE,TURBULENT,SEGREGATED,COUPLED,LTSQR,LDUMP,LREAD
+     
+@
+
+
+1.4
+log
+@added support for dumping certain vectors or matrices
+@
+text
+@d3 1
+a3 1
+      LOGICAL TURBULENT,SEGREGATED,COUPLED,LTSQR,LDUMP(4),LREAD(2)
+d5 1
+a5 1
+C     $Id:$
+d19 1
+a19 1
+C       TURBULENT
+d25 1
+@
+
+
+1.3
+log
+@various general purpose flags
+@
+text
+@d1 3
+a3 2
+      INTEGER       ISCHEME,JSCHEME,ICHECK,KAN,DECOMP,IBCTYPE
+      LOGICAL TURBULENT,SEGREGATED,COUPLED,PERIODIC_MESH,LTSQR
+d7 2
+a8 2
+      COMMON/CFLAGS/ISCHEME,JSCHEME,ICHECK,KAN,DECOMP,IBCTYPE,
+     +              TURBULENT,SEGREGATED,COUPLED,PERIODIC_MESH,LTSQR
+d13 1
+d17 10
+@
+
+
+1.2
+log
+@add a flag for periodic meshes
+@
+text
+@d1 2
+a2 2
+      INTEGER       ISCHEME,JSCHEME,ICHECK,KAN,DECOMP
+      LOGICAL TURBULENT,PERIODIC_MESH
+d4 4
+a7 2
+      COMMON/CFLAGS/ISCHEME,JSCHEME,ICHECK,KAN,DECOMP,TURBULENT,
+     +PERIODIC_MESH
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+      LOGICAL TURBULENT
+d4 2
+a5 1
+      COMMON/CFLAGS/ISCHEME,JSCHEME,ICHECK,KAN,DECOMP,TURBULENT
+@

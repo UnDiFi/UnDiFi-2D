@@ -1,0 +1,5 @@
+#ifdef PETSC_HAVE_FORTRAN_CAPS
+#define subroutinename_ SUBROUTINENAME
+#elif !defined(PETSC_HAVE_FORTRAN_UNDERSCORE) && !defined(FORTRANDOUBLEUNDERSCORE)
+#define subroutinename_ subroutinename
+#endif

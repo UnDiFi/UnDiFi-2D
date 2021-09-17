@@ -1,0 +1,38 @@
+1,2c1,2
+<       SUBROUTINE BNDRY_ISET(NodalBcs, IDX, IBNDFAC, NBFAC, ICELNOD,
+<      &NOFVERT, NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, NPNOD, NELEM )
+---
+>       SUBROUTINE BNDRY_ISET(IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+>      &NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, NPNOD, NELEM )
+4c4
+< C     $Id: bndry_iset.F,v 1.3 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: bndry_iset.F,v 1.3 2016/11/10 11:25:13 abonfi Exp $
+20a21
+>       IMPLICIT NONE
+21a23,24
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+23,24c26
+<       use petscis
+<       IMPLICIT NONE
+---
+> C
+27,29d28
+< C
+< C
+< C
+36c35
+<       IS, dimension(0:*) :: NodalBcs
+---
+> #include "iset.com"
+52c51
+<       INTEGER IPOIN,NI,IFAIL,IBC,IVERT,I,ICLR,IFACE,IELEM
+---
+>       INTEGER IPOIN,NI,IFAIL,IBC,J,IVERT,I,ICLR,IFACE,IELEM
+55d53
+< C
+105c103
+<      &                        NodalBcs(IBC),IFAIL)
+---
+>      &                        bndrynodes(IBC),IFAIL)

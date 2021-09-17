@@ -1,0 +1,65 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.23.16;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@return length of the string
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      integer function lenstr(s)
+c-----------------------------------------------------------------------
+c return length of the string S
+c-----------------------------------------------------------------------
+      character*(*) s
+      integer len
+      intrinsic len
+      integer n
+c----------------------------------------------------------------------- 
+      n = len(s)
+10    continue
+        if (s(n:n).eq.' ') then
+          n = n-1
+          if (n.gt.0) go to 10
+        end if
+      lenstr = n
+c
+      return
+c--------end-of-pspltm--------------------------------------------------
+c-----------------------------------------------------------------------
+      end
+@

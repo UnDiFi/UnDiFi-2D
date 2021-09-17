@@ -1,0 +1,87 @@
+head	1.1;
+access
+	abonfi;
+symbols;
+locks
+	aldo:1.1; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.15.37.28;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine that reads in the problem dimensions
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE WKSPCE
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+C
+C     .. Commons ..
+C
+      INCLUDE 'mesh_i4'
+      INCLUDE 'int_flags'
+      INCLUDE 'dim_flags'
+      INCLUDE 'IO'
+      INCLUDE 'es.h'
+C
+C     .. Scalar Arguments ..
+C
+C
+C     .. Array Arguments ..
+C
+C
+C     .. Local Scalars ..
+C
+      INTEGER NBFAC
+      EQUIVALENCE(NBFAC,nBoundaryFaces)
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      INTEGER  INITXDR
+      EXTERNAL INITXDR
+C
+C     .. Intrinsic Functions ..
+C
+C     .. Executable Statements ..
+C
+C     .. Reading info from the mesh file ..
+C
+      ixdrs(1) = INITXDR( filename(1) , 'r' )
+C
+      CALL XDRINT( ixdrs(1) , DIM )
+      CALL XDRINT( ixdrs(1) , NPOIN )
+      CALL XDRINT( ixdrs(1) , NELEM )
+      CALL XDRINT( ixdrs(1) , NBFAC )
+      CALL XDRINT( ixdrs(1) , NHOLE )
+C
+      NOFVERT = DIM + 1
+C
+C     .. Solution file ..
+C
+      ixdrs(2) = INITXDR( filename(2) , 'r' )
+      CALL XDRINT( ixdrs(2) , NPOIN )
+      CALL XDRINT( ixdrs(2) , NOFVAR )
+C
+      RETURN
+      END
+@

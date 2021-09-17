@@ -1,0 +1,7 @@
+*
+* list or directives to convert double precision LAPACK calls
+* to their single precision equivalents.
+*
+EQUIV(DGETRF)=SGETRF
+EQUIV(DGETRS)=SGETRS
+EQUIV(DGETRI)=SGETRI

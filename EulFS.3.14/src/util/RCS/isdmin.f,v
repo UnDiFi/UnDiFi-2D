@@ -1,0 +1,62 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.21.19;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Finds the index of a vector where the smallest absolute value occurs
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER FUNCTION ISDMIN( N , X , INCI )
+      IMPLICIT NONE
+
+      INTEGER I,N,INCI
+
+      REAL*8 X(N)
+      REAL*8 XMIN,ABS
+
+      ISDMIN = 1
+      XMIN = ABS(X(1))
+      DO I = 2 , N , INCI
+         IF (ABS(X(I)) .LT. XMIN)THEN
+          ISDMIN = I
+          XMIN = ABS(X(I))
+         ENDIF
+      ENDDO
+      RETURN
+      END
+@

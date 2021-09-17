@@ -1,0 +1,169 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.12.18.18.53.42;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@scheme for ghost cells
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE OneDSys_scheme(MatrixSplitter,W,DW,DT,STIFC,NORDER,
+     +NOFVERT,VCN,NDIM,dFGHdU,LDJ,RESIDUAL,IELEM,TIMEIMPL)
+C
+      IMPLICIT NONE
+C
+C ----------------------------------- + -----------------------------------
+C
+C NORDER                is the order of the system to solve for, i.e.
+C                       the order of the matrix JacobianMatrix.
+C FrstEq                is the first among the NOFVAR variable which
+C                       appears into the system of order NORDER.
+C IELEM                 is the current element.
+C JacobianMatrix(LDJ,*) is the Jacobian Matrix of the system.
+C LDJ                   is the leading dimension of JacobianMatrix.
+C W                  stores by columns the NORDER variables of the
+C                       NOFVERT vertices.
+C LDQ                   is the leading dimension of W.
+C RESIDUAL              stores the NORDER residual of the system.
+C MatrixSplitter        is the procedure used to compute the eigenvector 
+C                       decomposition of the matrix JacobianMatrix.
+C DT                 is the nodal timestep.
+C DU(5,*)               is the nodal residual.
+C
+C ----------------------------------- + -----------------------------------
+C
+C     This routine applies a 1D matrix scheme to a boundary cell ..
+C
+      include 'paramt.h'
+      include 'bnd.h'
+      include 'flags.com'
+      include 'stream.com'
+      INTEGER IVERT 
+      COMMON /GHOSTCOM/ IVERT
+C
+C
+      EXTERNAL  MatrixSplitter
+C
+C
+      INTEGER	NDIM,NOFVERT,NORDER,IELEM,LDJ
+      LOGICAL TIMEIMPL
+C
+C
+      DOUBLE PRECISION dFGHdU(LDJ,*),W(NORDER,NOFVERT),
+     &RESIDUAL(2*NORDER),DT(NOFVERT),DW(NORDER,NOFVERT),
+     +VCN(NDIM,NOFVERT),STIFC(NORDER,NORDER,NOFVERT,NOFVERT)
+C
+C
+      INTEGER	IVAR,ifail
+      DOUBLE PRECISION TEMP1
+      DOUBLE PRECISION ZERO,ONE
+      PARAMETER(ZERO=0.D0,ONE=1.D0)
+C
+C
+      DOUBLE PRECISION KPOS(NMAX,NMAX,VMAX),KNEG(NMAX,NMAX,VMAX),
+     &                 KMAT(NMAX,NMAX),WKSP(NMAX)
+      DOUBLE PRECISION VLEFT(NMAX,NMAX),VRIGHT(NMAX,NMAX),
+     &                 WR(NMAX),WPOS(NMAX),WNEG(NMAX)
+C
+C
+      EXTERNAL  DSCAL,DGEMV
+C
+C
+      CALL DINIT(2*NORDER,ZERO,RESIDUAL,1)
+C
+C     attento ad azzerare DW nella routine chiamante
+C
+C     The matrix is split into its positive and negative parts
+C
+C     Numerically or Analitically ..
+C
+      CALL MatrixSplitter(IELEM,NDIM,NORDER,VCN(1,IVERT),
+     +   dFGHdU,LDJ,KMAT,KPOS(1,1,IVERT),
+     2   KNEG(1,1,IVERT),VLEFT,VRIGHT,NMAX,WR,WPOS,WNEG,.TRUE.)
+C
+C	.. Boundary node ..
+C
+C     W(IVERT) := U(IVERT)-U(*)
+C
+      DO 35 IVAR = 1 , NORDER
+         Wr(IVAR) = W(IVAR,IVERT)
+         W(IVAR,IVERT) = W(IVAR,IVERT) - W(IVAR,NOFVERT)
+   35 CONTINUE
+C
+C	.. DW(IVERT) = -KPOS(IVERT)*[U(b)-U(*)]
+C
+      CALL DGEMV('N',NORDER,NORDER,-ONE,KPOS(1,1,IVERT),NMAX,
+     &   W(1,IVERT),1,ZERO,DW(1,IVERT),1)
+C
+      DO 33 IVAR = 1, NORDER
+         DT(IVERT) = DT(IVERT) + WPOS(IVAR)
+   33 CONTINUE
+C
+      do 7  IVAR = 1,Norder
+    7 WR(IVAR) = WR(IVAR) - U_INFTY(IVAR)
+      call dgemv('N',NORDER,NORDER,-ONE,KPOS(1,1,IVERT),NMAX,
+     +           WR(1),1,ZERO,WNEG(1),1)
+C
+      DO 39 IVAR = 1, NORDER
+         write(6,*)dw(ivar,ivert),wneg(ivar),ivert
+   39 CONTINUE
+      pause
+C
+C
+      IF(ICHECK.NE.0)THEN
+C
+C	.. The residual is computed as KMAT * [U(1)-U(2)]
+C		and stored in RESIDUAL
+C
+         CALL DGEMV('N',NORDER,NORDER,ONE,KMAT,NMAX,
+     &              W(1,IVERT),1,ZERO,RESIDUAL,1)
+C
+         CALL DCOPY(NORDER,DW(1,IVERT),1,WKSP,1)
+         CALL DSCAL(NORDER,-ONE,WKSP,1)
+C
+C       .. The outgoing residual is add to WKSP
+C
+          CALL DGEMV('N',NORDER,NORDER,ONE,KNEG(1,1,IVERT),NMAX,
+     &               W(1,IVERT),1,ONE,WKSP,1)
+C
+          DO IVAR =  1, NORDER
+            TEMP1 = WKSP(IVAR) - RESIDUAL(IVAR)
+            IF(DABS(TEMP1).GT.1.D-14)THEN
+               WRITE(6,*)'1-D matrix scheme, elem ',IELEM,' var # ',
+     +         IVAR,' computed ',WKSP(IVAR),' "true" ',RESIDUAL(IVAR),
+     +         WKSP(IVAR)/RESIDUAL(IVAR)
+            ENDIF
+          ENDDO
+C
+      ENDIF
+C
+      IF( .NOT. TIMEIMPL )RETURN
+C
+C     C_{ii} = C_{ii} - K_i^{+}
+C
+      CALL MATSUB(STIFC(1,1,IVERT,IVERT),NORDER,
+     &KPOS(1,1,IVERT),NMAX,NORDER,NORDER)
+C
+C     compute the "implicit" residual as \C_{ii}(\U_i-\U_j)
+C
+      IF( ICHECK .NE. 0 )THEN
+         CALL DCOPY(NORDER,RESIDUAL,1,RESIDUAL(NORDER+1),1)
+      ENDIF
+C
+      RETURN
+      END
+@

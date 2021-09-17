@@ -1,0 +1,134 @@
+head	1.3;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2016.12.09.13.31.37;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.01.26.12.01.29;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Diffusion term for the Spalart-Allmaras model
+@
+
+
+1.3
+log
+@unused stuff removed
+@
+text
+@C
+C
+      SUBROUTINE TDIFF(IELEM,EPS,W,NODRES,DT,VCN,DMAT,
+     &NDIM,NOFVERT,VOLUME)
+C
+      IMPLICIT NONE
+C
+C     NON conservative Diffusion term: TCB2 / TPR1 * (\nabla u)**2
+C     from the Spalart-Allmaras model
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'three.com'
+C
+      INTEGER IELEM,NDIM,NOFVERT
+      DOUBLE PRECISION DT(NOFVERT),NODRES(NOFVERT),W(NOFVERT),
+     +DMAT(NOFVERT,NOFVERT),VCN(NDIM,NOFVERT),VOLUME 
+      DOUBLE PRECISION EPS
+      DOUBLE PRECISION TEMP
+      INTEGER I
+      DOUBLE PRECISION GRADNRM
+      DOUBLE PRECISION d1(4),d2
+      common /diffune/d1,d2
+C
+C     Executable Statements ..
+C
+C     potrebbe essere piu` appropriato ricalcolare il
+C     gradiente ed aggiungere la parte implicita
+C
+      GRADNRM = GRAD_PARM(1,1)**2 + GRAD_PARM(1,2)**2
+     +        + GRAD_PARM(1,3)**2
+C
+      TEMP = EPS * GRADNRM * VOLUME / NOFVERT
+      d2 = temp
+C
+      DO 2 i = 1 , NOFVERT
+CXXXX    NODRES(I) = NODRES(I) - TEMP
+         NODRES(I) = NODRES(I) + TEMP
+    2 CONTINUE
+C
+      RETURN
+      END
+C
+@
+
+
+1.2
+log
+@changed the name of included files
+@
+text
+@d3 1
+a3 1
+      SUBROUTINE TDIFF(IELEM,EPSILON,W,NODRES,DT,VCN,DMAT,
+a11 1
+C
+d14 1
+a14 1
+      INTEGER IELEM,IVAR,NDIM,NOFVERT,NOFVAR
+d17 1
+a17 1
+      DOUBLE PRECISION EPSILON
+d19 1
+a19 1
+      INTEGER i,j
+d32 1
+a32 1
+      TEMP = EPSILON * GRADNRM * VOLUME / NOFVERT
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d13 1
+a13 1
+      INCLUDE 'three'
+@

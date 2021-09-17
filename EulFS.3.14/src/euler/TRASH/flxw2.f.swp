@@ -1,0 +1,64 @@
+C
+      SUBROUTINE FLXW2(NDIM,NOFVAR,NOFVERT,STIFC,WORK,WORK2,
+     +                 VCZ,VCN,NODRES,PICARD)
+
+      IMPLICIT NONE 
+
+      INTEGER NDIM,NOFVAR,NOFVERT
+      INTEGER i,j,IVERT,ifail,IADD,k,l,jvert
+
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +VCZ(NOFVAR,NDIM),VCN(NDIM),NODRES(NOFVAR,NDIM)
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NOFVERT-1)
+      DOUBLE PRECISION WORK2(NOFVAR,NOFVAR,NOFVERT-1,NOFVERT-1)
+      double precision FLUX(16)
+      double precision alpha,CNST,beta
+      parameter(alpha=0.75d0)
+      DOUBLE PRECISION ZERO,HALF,ONE,TWO
+C
+      PARAMETER (ZERO = 0.00d0 , HALF = 0.5d0 , ONE = 1.00d0 , 
+     . TWO = 2.00d0 )
+
+      LOGICAL PICARD 
+C
+      DO 2 IVERT = 1,NOFVERT
+         IADD = (IVERT-1)*NOFVAR+1
+         CALL INVWLLI(NDIM,VCN,VCZ(1,IVERT),FLUX(IADD))
+    2 CONTINUE
+C
+      CALL DINIT(NOFVAR*(NOFVERT-1),ZERO,NODRES,1)
+      BETA = (1.-ALPHA)/REAL(NDIM-1)/REAL(NDIM)
+      DO 5 IVERT = 1,NOFVERT-1
+         DO 7 JVERT = 1,NOFVERT-1
+            IADD = (JVERT-1)*NOFVAR+1
+            IF(JVERT.EQ.IVERT)THEN
+               CNST = ALPHA/NDIM
+            ELSE
+               CNST = BETA
+            ENDIF
+            CALL DAXPY(NOFVAR,CNST,FLUX(IADD),1,NODRES(1,IVERT),1)
+    7    CONTINUE
+    5 CONTINUE
+C
+      IF(.NOT.PICARD)RETURN
+
+      DO 3 IVERT = 1,NOFVERT-1
+      call GetdF2corrdU(vcz(2,IVERT),vcn,ndim,nofvar,work(1,1,IVERT))
+    3 CONTINUE 
+
+      DO 8 I = 1,NOFVERT-1
+         DO 8 j = 1,NOFVERT-1
+            if( j.eq.i )then
+                CNST = alpha / real(ndim)
+            else
+                CNST = beta
+            endif
+            DO 8 l = 1,NOFVAR
+               DO 8 k = 1,NOFVAR
+caldo             STIFC(k,l,i,j) = 0.5d0*CNST*work(k,l,j)
+                  STIFC(k,l,i,j) = CNST*work(k,l,j)
+    8 CONTINUE
+
+      RETURN
+  564 FORMAT((E12.6,1X))
+      END

@@ -1,0 +1,100 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.51.39;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@A version of DGEMV that uses loop unrolling
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      subroutine MY_GEMV(TRANS, M, N, ALPHA, A,  LDA,  X,  INCX,
+     +                   BETA, Y, INCY )
+
+      DOUBLE       PRECISION ALPHA, BETA
+
+      INTEGER      INCX, INCY, LDA, M, N
+
+      CHARACTER*1  TRANS
+
+      DOUBLE       PRECISION A( LDA, * ), X( * ), Y( * )
+
+
+      IF( M .NE. N )STOP 'M MUST = N in MY_GEMV'
+
+      GOTO(2,3,4,5)M-1
+
+      STOP 'M out of range in MY_GEMV'
+
+    2 CONTINUE
+
+      Y(1) = ALPHA*(A(1,1)*X(1)+A(1,2)*X(2)) + BETA*Y(1) 
+      Y(2) = ALPHA*(A(2,1)*X(1)+A(2,2)*X(2)) + BETA*Y(2) 
+      RETURN 
+
+    3 CONTINUE
+
+      Y(1) = ALPHA*(A(1,1)*X(1)+A(1,2)*X(2)+A(1,3)*X(3)) + BETA*Y(1) 
+      Y(2) = ALPHA*(A(2,1)*X(1)+A(2,2)*X(2)+A(2,3)*X(3)) + BETA*Y(2) 
+      Y(3) = ALPHA*(A(3,1)*X(1)+A(3,2)*X(2)+A(3,3)*X(3)) + BETA*Y(3) 
+      RETURN 
+
+    4 CONTINUE
+
+      Y(1) = ALPHA*(A(1,1)*X(1)+A(1,2)*X(2)+A(1,3)*X(3)+A(1,4)*X(4))
+     &+ BETA*Y(1) 
+      Y(2) = ALPHA*(A(2,1)*X(1)+A(2,2)*X(2)+A(2,3)*X(3)+A(2,4)*X(4)) 
+     &+ BETA*Y(2) 
+      Y(3) = ALPHA*(A(3,1)*X(1)+A(3,2)*X(2)+A(3,3)*X(3)+A(3,4)*X(4)) 
+     &+ BETA*Y(3) 
+      Y(4) = ALPHA*(A(4,1)*X(1)+A(4,2)*X(2)+A(4,3)*X(3)+A(4,4)*X(4)) 
+     &+ BETA*Y(4) 
+      RETURN 
+    5 CONTINUE
+
+      Y(1) = ALPHA*(A(1,1)*X(1)+A(1,2)*X(2)+A(1,3)*X(3)+A(1,4)*X(4)+
+     &              A(1,5)*X(5)) + BETA*Y(1) 
+      Y(2) = ALPHA*(A(2,1)*X(1)+A(2,2)*X(2)+A(2,3)*X(3)+A(2,4)*X(4)+ 
+     &              A(2,5)*X(5)) + BETA*Y(2) 
+      Y(3) = ALPHA*(A(3,1)*X(1)+A(3,2)*X(2)+A(3,3)*X(3)+A(3,4)*X(4)+ 
+     &              A(3,5)*X(5)) + BETA*Y(3) 
+      Y(4) = ALPHA*(A(4,1)*X(1)+A(4,2)*X(2)+A(4,3)*X(3)+A(4,4)*X(4)+ 
+     &              A(4,5)*X(5)) + BETA*Y(4) 
+      Y(5) = ALPHA*(A(5,1)*X(1)+A(5,2)*X(2)+A(5,3)*X(3)+A(5,4)*X(4)+ 
+     &              A(5,5)*X(5)) + BETA*Y(5) 
+      RETURN
+      END 
+@

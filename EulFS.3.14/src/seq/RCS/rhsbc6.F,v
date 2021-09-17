@@ -1,0 +1,158 @@
+head	1.3;
+access;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.2
+	release3_7_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.03.16.17.12.35;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@modifies r.h.s. for periodic nodes
+@
+
+
+1.3
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE RHSBC6( NOFVAR, RHS, DT ) 
+C
+C     This routine sets the periodic boundary conditions in the
+C     "EXPLICIT" residual ..
+C
+CCCCC#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/is.h"
+      use petscvec
+      use petscis
+C
+      IMPLICIT NONE
+C
+      Vec RHS,DT
+      VecScatter PeriodicScatter
+C
+      INCLUDE 'iset.com'
+C
+      INTEGER NOFVAR
+C
+C
+      INTEGER IFAIL,na,nb
+
+      CALL VecScatterCreate(RHS,PeriodicSetA,RHS,PeriodicSetB,
+     +                      PeriodicScatter,IFAIL) 
+C
+C     nodal residuals of nodes in PeriodicSetB are updated
+C     with nodal residuals from nodes in PeriodicSetA.
+C
+      CALL VecScatterBegin(RHS,RHS,ADD_VALUES,SCATTER_FORWARD,
+     +                     PeriodicScatter,IFAIL) 
+      CALL VecScatterEnd(RHS,RHS,ADD_VALUES,SCATTER_FORWARD,
+     +                   PeriodicScatter,IFAIL) 
+C
+C     nodal residuals of nodes in PeriodicSetB are copied
+C     onto nodal residuals in nodes in PeriodicSetA.
+C
+      CALL VecScatterBegin(RHS,RHS,INSERT_VALUES,SCATTER_REVERSE,
+     +                     PeriodicScatter,IFAIL) 
+      CALL VecScatterEnd(RHS,RHS,INSERT_VALUES,SCATTER_REVERSE,
+     +                   PeriodicScatter,IFAIL) 
+      CALL VecScatterDestroy(PeriodicScatter,IFAIL)
+C
+C     done with residuals, do with timestep 
+C
+      CALL VecScatterCreate(DT,PeriodicNodesA,DT,PeriodicNodesB,
+     +                      PeriodicScatter,IFAIL) 
+C
+C     nodal timestep of nodes in PeriodicNodesB are updated
+C     with nodal residuals from nodes in PeriodicNodesA.
+C
+      CALL VecScatterBegin(DT,DT,ADD_VALUES,SCATTER_FORWARD,
+     +                     PeriodicScatter,IFAIL) 
+      CALL VecScatterEnd(DT,DT,ADD_VALUES,SCATTER_FORWARD,
+     +                   PeriodicScatter,IFAIL) 
+C
+C     nodal timestep of nodes in PeriodicNodesB are copied
+C     onto nodal residuals in nodes in PeriodicNodesA.
+C
+      CALL VecScatterBegin(DT,DT,INSERT_VALUES,SCATTER_REVERSE,
+     +                     PeriodicScatter,IFAIL) 
+      CALL VecScatterEnd(DT,DT,INSERT_VALUES,SCATTER_REVERSE,
+     +                   PeriodicScatter,IFAIL) 
+      CALL VecScatterDestroy(PeriodicScatter,IFAIL)
+C
+      RETURN
+C
+C     write(6,*)ipoin,ni,(y(i),i=1,ni),(ix(i),i=1,ni)
+C     write(6,*)'VecSetValues has returned ',ifail
+C     write(6,*)'VecAssemblyBegin has returned ',ifail
+C     write(6,*)'VecAssemblyEnd has returned ',ifail
+C     write(6,*)'Leaving SETBC1'
+C
+C     write(6,*)'VecScatterCreate has returned ',ifail
+C     write(6,*)'VecScatterDestroy has returned ',ifail
+C     write(6,*)'VecScatterEnd has returned ',ifail
+C     write(6,*)'VecScatterBegin has returned ',ifail
+C     write(6,*)'VecScatterEnd has returned ',ifail
+C     write(6,*)'VecScatterBegin has returned ',ifail
+C     CALL ISGetSize(PeriodicSetA,na,ifail)
+C     CALL ISGetSize(PeriodicSetB,nb,ifail)
+C     write(6,*)na,nb
+C     CALL VecGetSize(RHS,nb,ifail)
+C     write(6,*)nb
+      END 
+@
+
+
+1.2
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@a0 2
+C
+C
+d6 1
+a6 3
+      IMPLICIT NONE
+C
+#include "include/finclude/petsc.h"
+d9 4
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 3
+a12 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/is.h"
+@

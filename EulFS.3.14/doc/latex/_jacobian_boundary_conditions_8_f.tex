@@ -1,0 +1,37 @@
+\hypertarget{_jacobian_boundary_conditions_8_f}{}\doxysection{src/seq/\+Jacobian\+Boundary\+Conditions.F File Reference}
+\label{_jacobian_boundary_conditions_8_f}\index{src/seq/JacobianBoundaryConditions.F@{src/seq/JacobianBoundaryConditions.F}}
+{\ttfamily \#include \char`\"{}petsc/finclude/petscsys.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}petsc/finclude/petscts.\+h\char`\"{}}\newline
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{_jacobian_boundary_conditions_8_f_a31a37d05875285d781e604bf311451a8}{Jacobian\+Boundary\+Conditions}} (ts, U, A, X, R\+HS, Nodal\+Bcs, N\+D\+IM, N\+O\+F\+V\+AR)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{_jacobian_boundary_conditions_8_f_a31a37d05875285d781e604bf311451a8}\label{_jacobian_boundary_conditions_8_f_a31a37d05875285d781e604bf311451a8}} 
+\index{JacobianBoundaryConditions.F@{JacobianBoundaryConditions.F}!JacobianBoundaryConditions@{JacobianBoundaryConditions}}
+\index{JacobianBoundaryConditions@{JacobianBoundaryConditions}!JacobianBoundaryConditions.F@{JacobianBoundaryConditions.F}}
+\doxysubsubsection{\texorpdfstring{JacobianBoundaryConditions()}{JacobianBoundaryConditions()}}
+{\footnotesize\ttfamily subroutine Jacobian\+Boundary\+Conditions (\begin{DoxyParamCaption}\item[{}]{ts,  }\item[{}]{U,  }\item[{}]{A,  }\item[{}]{X,  }\item[{}]{R\+HS,  }\item[{dimension(0\+:$\ast$)}]{Nodal\+Bcs,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em ts} & the P\+E\+T\+Sc timestepping context, currently a dummy argument \\
+\hline
+\mbox{\texttt{ in}}  & {\em U} & is the P\+E\+T\+Sc vector of C\+O\+N\+S\+E\+R\+V\+ED variables \\
+\hline
+\mbox{\texttt{ in}}  & {\em A} & is the P\+E\+T\+Sc jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em X} & is the P\+E\+T\+Sc unknown vector \\
+\hline
+\mbox{\texttt{ in}}  & {\em R\+HS} & is the P\+E\+T\+Sc rhs vector \\
+\hline
+\mbox{\texttt{ in}}  & {\em Nodal\+Bcs} & is the P\+E\+T\+Sc IS that addresses nodal bcs \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & is the nof dofs in each gridpoint \\
+\hline
+\end{DoxyParams}

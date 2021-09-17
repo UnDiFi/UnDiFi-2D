@@ -1,0 +1,57 @@
+head	1.1;
+access
+	abonfi;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks
+	abonfi:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	98.08.12.10.21.18;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@pointers related to the computation of the trip
+term in the Spalart-Allmaras model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER NTRIP,LOCTIA,LOCTJA,LOCTRP,LOCDXT,LOCTST,LTTD,LTTI
+C
+C     NTRIP number of trip points 
+C     LTNTRP pointer to the linear list of trip point indexes
+C     LOCTIA,LOCTJA pointers to the linked-list storing 
+C                   the elements sharing the trip points
+C
+      COMMON /TRIPCOM/ NTRIP,LOCTIA,LOCTJA,LOCTRP,LOCDXT,LOCTST,
+     +LTTD,LTTI
+C
+C     CHARACTER*80 TRIPFILE
+C
+@

@@ -1,0 +1,115 @@
+head	1.3;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_3:1.3
+	release3_3_2:1.3
+	release3_3_1:1.3
+	release3_3_0:1.3;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2000.07.31.12.45.58;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.11.29.09.26.20;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.22.49;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Sutherland's law
+@
+
+
+1.3
+log
+@changed to allow for two different nondimensionalisations
+of the governing equations
+@
+text
+@      DOUBLE PRECISION FUNCTION SUTHERLAW(DUMMY,ABAR,ASQR)
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'suther.com'
+C
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION ABAR,ASQR,DUMMY
+C     ..
+C     .. Local Scalars ..
+C     ..
+      SUTHERLAW = C1*ASQR*ABAR*C4/(C2*ASQR+C3)
+C
+      RETURN
+
+      END
+@
+
+
+1.2
+log
+@Declarations set using Toolpack
+@
+text
+@d1 1
+a1 1
+      DOUBLE PRECISION FUNCTION SUTHERLAW(M_INFTY,ABAR,ASQR)
+d5 1
+d8 1
+a8 1
+      DOUBLE PRECISION ABAR,ASQR,M_INFTY
+a10 1
+      DOUBLE PRECISION TEMP
+d12 1
+a12 2
+      TEMP = M_INFTY*M_INFTY
+      SUTHERLAW = 1.404D0* (M_INFTY*TEMP)*ABAR*ASQR/ (TEMP*ASQR+0.404D0)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      DOUBLE PRECISION FUNCTION SUTHERLAW( M_INFTY, ABAR, ASQR )
+d5 5
+a9 1
+      DOUBLE PRECISION M_INFTY,ABAR,ASQR
+d11 1
+a11 1
+C
+d13 1
+a13 1
+      SUTHERLAW = 1.404D0*(M_INFTY*TEMP)*ABAR*ASQR/(TEMP*ASQR+0.404D0)
+d16 1
+@

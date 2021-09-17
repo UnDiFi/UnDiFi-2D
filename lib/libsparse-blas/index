@@ -1,0 +1,93 @@
+file	sparse-blas/readme
+for	overview of sparse-blas
+
+file	sparse-blas/paper.tr
+for	troff source for sparse BLAS paper
+
+file	sparse-blas/paper2.tr
+for	troff source for sparse BLAS model implementation paper
+
+file	sparse-blas/realblas.f
+for	source code for real sparse BLAS model implementation
+prec	single
+
+file	sparse-blas/realmain.f
+for	main program for real sparse BLAS test program
+prec	single
+
+file	sparse-blas/realtsub.f
+for	test routines for real sparse BLAS test program
+prec	single
+
+file	sparse-blas/sblas0.f
+for	more routines for real sparse BLAS test program
+prec	single
+
+file	sparse-blas/real.in
+for	sample data set for real sparse BLAS test program
+prec	single
+
+file	sparse-blas/doubblas.f
+for	source code for double precision sparse BLAS model implementation
+prec	double
+
+file	sparse-blas/doubmain.f
+for	main program for double precision sparse BLAS test program
+prec	double
+
+file	sparse-blas/doubtsub.f
+for	test routines for double precision sparse BLAS test program
+prec	double
+
+file	sparse-blas/dblas0.f
+for	more routines for double precision sparse BLAS test program
+prec	double
+
+file	sparse-blas/double.in
+for	sample data set for double precision sparse BLAS test program
+prec	double
+
+file	sparse-blas/compblas.f
+for	source code for complex sparse BLAS model implementation
+prec	complex
+
+file	sparse-blas/compmain.f
+for	main program for complex sparse BLAS test program
+prec	complex
+
+file	sparse-blas/comptsub.f
+for	test routines for complex sparse BLAS test program
+prec	complex
+
+file	sparse-blas/cblas0.f
+for	more routines for complex sparse BLAS test program
+prec	complex
+
+file	sparse-blas/complex.in
+for	sample data set for complex sparse BLAS test program
+prec	complex
+
+file	sparse-blas/cp16blas.f
+for	source code for complex*16 sparse BLAS model implementation
+prec	double complex
+
+file	sparse-blas/cp16main.f
+for	main program for complex*16 sparse BLAS test program
+prec	double complex
+
+file	sparse-blas/cp16tsub.f
+for	test routines for complex*16 sparse BLAS test program
+prec	double complex
+
+file	sparse-blas/zblas0.f
+for	more routines for complex*16 sparse BLAS test program
+prec	double complex
+
+file	sparse-blas/complx16.in
+for	sample data set for complex*16 sparse BLAS test program
+prec	double complex
+
+file	sparse-blas/iblas0.f
+for	blas-like routines for all sparse BLAS test programs
+prec	double complex
+

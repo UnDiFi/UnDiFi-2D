@@ -1,0 +1,36 @@
+2c2,4
+<       SUBROUTINE LHSBC5( B, NodalBcs )
+---
+>       SUBROUTINE LHSBC5( B )
+> C
+>       IMPLICIT NONE
+9c11
+< C     $Id: lhsbc5.F,v 1.19 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: lhsbc5.F,v 1.19 2016/11/10 11:25:13 abonfi Exp $
+11a14
+> #include "petsc/finclude/petscsys.h"
+14,17d16
+<       use petscmat
+<       use petscis
+< C
+<       IMPLICIT NONE
+21d19
+<       INCLUDE "iset.h"
+22a21
+> #include "iset.com"
+24d22
+<       IS, dimension(0:*) :: NodalBcs
+29,35c27,30
+< C     zero-out rows of nodes where no-slip and free-stream nodal bcs
+< C     apply
+< C
+<       CALL MatZeroRowsIS(B,NodalBcs(NoSlipNodes),ONE,PETSC_NULL_VEC,
+<      &                   PETSC_NULL_VEC,IFAIL)
+<       CALL MatZeroRowsIS(B,NodalBcs(FreestreamTurbulence),ONE,
+<      &                   PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+---
+>       CALL MatZeroRowsIS(B,NoSlipNodes,ONE,PETSC_NULL_OBJECT,
+>      &                   PETSC_NULL_OBJECT,IFAIL)
+>       CALL MatZeroRowsIS(B,FreestreamTurbulence,ONE,PETSC_NULL_OBJECT,
+>      &                   PETSC_NULL_OBJECT,IFAIL)

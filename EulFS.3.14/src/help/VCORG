@@ -1,0 +1,2 @@
+C       CORG(1:NDIM,1:NPOIN+NGHOST)  cartesian coordinates 
+C                                    of the meshpoints

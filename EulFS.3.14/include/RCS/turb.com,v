@@ -1,0 +1,200 @@
+head	1.5;
+access
+	abonfi;
+symbols
+	release3_14_0:1.5
+	release3_13_0:1.5
+	release3_12_0:1.5
+	release3_11_0:1.5
+	release3_10_0:1.5
+	release3_8_0:1.5
+	release3_7_1:1.5
+	release3_7_0:1.5
+	release3_4_5:1.5
+	release3_4_4:1.5
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@# @;
+
+
+1.5
+date	2013.01.25.08.15.43;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2001.09.21.07.05.52;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.08.11.14.11.21;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.12.10.22.08;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the turbulent suff
+@
+
+
+1.5
+log
+@TCT1 is now set to 10, rather than 1
+@
+text
+@C///////////////////////////////////////////////////////////////////////
+C     $Id: turb.com,v 1.4 2001/09/21 07:05:52 abonfi Exp abonfi $
+C///////////////////////////////////////////////////////////////////////
+
+      DOUBLE PRECISION TCB1,TCB2,TPR,TPR1,TK,TCW1,TCW2,TCW3,TCV1,TCV2,
+     &        TCT1,TCT2,TCT3,TCT4,TDXT,TST
+      INTEGER TTFLAG,TTELEM
+C
+C**************************************************************
+C
+C Set Turbulence model parameters
+C
+C
+C*************************************************************
+      PARAMETER( TCB1 = 0.1355d0, TCB2 = 0.622d0, TPR = 0.9d0,
+     1TPR1 = 2.d0/3.d0, TK = 0.41d0, 
+     2TCW1 = TCB1/TK**2 + (1.0+TCB2)/TPR1, TCW2 = 0.3d0,
+     3TCW3 = 2.d0, TCV1 = 7.1d0, TCV2 = 5.d0, TCT1 = 10.,
+     4TCT2 = 2.0, TCT3 = 1.2, TCT4 = 0.5)
+
+      COMMON  / TURBPAR / TDXT,TST,TTFLAG,TTELEM
+
+C     Variable name            Comment
+C     TCB1                     Calibration constants (Spalart & Allmaras model)
+C     TCB2                     Calibration constants (Spalart & Allmaras model)
+C     TCW1                     Calibration constants (Spalart & Allmaras model)
+C     TCW2                     Calibration constants (Spalart & Allmaras model)
+C     TCW3                     Calibration constants (Spalart & Allmaras model)
+C     TCV1                     Calibration constants (Spalart & Allmaras model)
+C     TCT1                     Calibration constants (Spalart & Allmaras model)
+C     TCT2                     Calibration constants (Spalart & Allmaras model)
+C     TCT3                     Calibration constants (Spalart & Allmaras model)
+C     TCT4                     Calibration constants (Spalart & Allmaras model)
+C     TPR                      Turbulent Prandtl number (conducibility comp.)
+C     TPR1                     Turbulent Prandtl number (diffusion term comp.)
+C     TK                       Von Karman constant
+C     TTFLAG                   Flag for trip term activation
+C     TELEM                    cell used to compute the vorticity TST
+C
+C
+C     Variable name            Comment
+C     TTD                      TRIP POINT DISTANCE
+C     TST                      VORTICITY MODULE IN TRIP POINT
+C     TDXT                     Avg. mesh spacing at trip point
+@
+
+
+1.4
+log
+@the number of variables in common has been reduced
+@
+text
+@d2 1
+a2 1
+C     $Id:$
+d18 1
+a18 1
+     3TCW3 = 2.d0, TCV1 = 7.1d0, TCV2 = 5.d0, TCT1 = 1.,
+@
+
+
+1.3
+log
+@add the element TELEM close to the trip point; this is
+used to compute the vorticity at the trip point
+@
+text
+@d2 1
+a2 1
+
+d8 14
+a21 3
+      COMMON  / TURBPAR / TCB1,TCB2,TPR,TPR1,TK,TCW1,TCW2,TCW3,TCV1,
+     &                    TCV2,TCT1,TCT2,TCT3,TCT4,TDXT,TST,
+     2                    TTFLAG,TTELEM
+@
+
+
+1.2
+log
+@removed unused variables, add new ones coming from
+a modification of the Spalart-Allmaras model suggested
+in A.Ashford PhD thesis
+@
+text
+@d7 1
+a7 1
+      INTEGER TTFLAG
+d9 2
+a10 1
+     &                    TCV2,TCT1,TCT2,TCT3,TCT4,TDXT,TST,TTFLAG
+d27 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a2 4
+C       Identification Keywords:
+
+C       @@(#)turb.com   1.0.0.0 21/08/94  95/08/21        12:00:00
+
+d5 3
+a7 3
+      DOUBLE PRECISION TCB1,TCB2,TPR,TPR1,TK,TCW1,TCW2,TCW3,TCV1,
+     &        TCT1,TCT2,TCT3,TCT4,TDXT
+      INTEGER           TNTRIP,TTFLAG
+d9 1
+a9 1
+     &                    TCT1,TCT2,TCT3,TCT4,TDXT,TNTRIP,TTFLAG
+a25 1
+C     TNTRIP                   element number where trip point is
+a26 5
+C     COMMON  / TURBVRBL / TS,TVI,
+C    &                     VI,TD,
+C    &                     TTD,TST,VISCLAM,RHO,RSTAB
+      DOUBLE PRECISION TST
+      COMMON  / TURBVRBL / TST
+a28 4
+C     TS                       vorticity module
+C     VI                       molecular viscosity
+C     TVI                      turbulent viscosity (cinematic)??
+C     TD                       NEAREST WALL DISTANCE
+d31 1
+a31 9
+C     VISCLAM                  LAMINAR VISCOSITY 
+C     RHO                      density
+C     RSTAB                    CFL parameter
+
+      COMMON  / TNAMEFILE / FILE12,FILE13
+      CHARACTER*80 FILE12,FILE13
+C     Variable name            Comment
+C     FILE12                   Input FILE NAME with turbulent viscosity
+C     FILE13                   Output FILE NAME with turbulent viscosity
+@

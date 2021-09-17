@@ -1,0 +1,21 @@
+11c11,13
+< C     $Id: nodres.F,v 1.60 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: nodres.F,v 1.60 2016/11/10 11:25:13 abonfi Exp $
+17a20
+> #include "petsc/finclude/petscsys.h"
+20,23d22
+<       use petscmat
+<       use petscvec
+< C
+<       IMPLICIT NONE
+109c108
+<       INTEGER LWORK(7)
+---
+>       INTEGER LWORK(7),LWORKF 
+429a429,431
+>  2000 FORMAT(/,1X,
+>      &'COMPUTATION OF THE RESIDUAL AND MATRIX ASSEMBLY',
+>      &/,1X,48('=')/)

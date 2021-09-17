@@ -1,0 +1,60 @@
+\hypertarget{my_t_s_8_f}{}\doxysection{src/seq/my\+TS.F File Reference}
+\label{my_t_s_8_f}\index{src/seq/myTS.F@{src/seq/myTS.F}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{my_t_s_8_f_aceb7dc9e29f1866f26763aadf7495517}{my\+TS}} (Z\+R\+OE, V\+I\+S\+CT, Petsc\+Matrix, Nodal\+Bcs, I\+W\+O\+RK)
+\item 
+subroutine \mbox{\hyperlink{my_t_s_8_f_a8dffd0883a3b978d39b4f4154a9584a3}{trimadd}} (fname, it, outfname, len)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{my_t_s_8_f_aceb7dc9e29f1866f26763aadf7495517}\label{my_t_s_8_f_aceb7dc9e29f1866f26763aadf7495517}} 
+\index{myTS.F@{myTS.F}!myTS@{myTS}}
+\index{myTS@{myTS}!myTS.F@{myTS.F}}
+\doxysubsubsection{\texorpdfstring{myTS()}{myTS()}}
+{\footnotesize\ttfamily subroutine my\+TS (\begin{DoxyParamCaption}\item[{}]{Z\+R\+OE,  }\item[{}]{V\+I\+S\+CT,  }\item[{dimension($\ast$)}]{Petsc\+Matrix,  }\item[{dimension (0\+:$\ast$)}]{Nodal\+Bcs,  }\item[{integer, dimension($\ast$)}]{I\+W\+O\+RK }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+My own time stepping routine; both for steady and un-\/steady
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em Z\+R\+OE} & is the P\+E\+T\+Sc vec that stores the dependent variables \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em V\+I\+S\+CT} & is the P\+E\+T\+Sc vec that stores the turbulent variable(s) \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em Petsc\+Matrix(1,2,3)} & are P\+E\+T\+Sc Mats that store\+: (1) the Jacobian matrix of the mean flow equations; (2) the Jacobian matrix of\\
+\hline
+\mbox{\texttt{ in}}  & {\em Nodal\+Bcs} & is an un-\/used integer \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+W\+O\+RK} & is an integer work array used to pass some mesh information\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+52 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/04/24 06\+:03\+:28 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{my_t_s_8_f_a8dffd0883a3b978d39b4f4154a9584a3}\label{my_t_s_8_f_a8dffd0883a3b978d39b4f4154a9584a3}} 
+\index{myTS.F@{myTS.F}!trimadd@{trimadd}}
+\index{trimadd@{trimadd}!myTS.F@{myTS.F}}
+\doxysubsubsection{\texorpdfstring{trimadd()}{trimadd()}}
+{\footnotesize\ttfamily subroutine trimadd (\begin{DoxyParamCaption}\item[{character$\ast$($\ast$)}]{fname,  }\item[{integer}]{it,  }\item[{character$\ast$($\ast$)}]{outfname,  }\item[{integer}]{len }\end{DoxyParamCaption})}
+

@@ -1,0 +1,20 @@
+27c27
+<       double precision Tstar,esqr,sigma
+---
+>       double precision Tstar,esqr,sigma,ohmheat2
+31,32c31,32
+< !     parameter(verbose=.TRUE.)
+<       parameter(verbose=.FALSE.)
+---
+> !      parameter(verbose=.TRUE.)
+>      parameter(verbose=.FALSE.)
+84a85,87
+>       if(verbose)then
+>        write(6,*)'Temperature=',T
+>       endif
+95a99
+>       ohmheat2 = sigma*esqr
+100a105
+>       ohmheat2 = ohmheat2 * PHIREF**2/(LREFP*RREFP*UREFP**3)
+103a109
+>          write(6,*)'OHMHEAT2 ADIM=',ohmheat2

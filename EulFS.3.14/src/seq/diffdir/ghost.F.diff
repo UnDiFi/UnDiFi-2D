@@ -1,0 +1,261 @@
+0a1,26
+> !> @param[in] BCSUB is the SUBROUTINE used to discretize the boundary condition
+> !> @param[in] BC_TYPE is the boundary condition type; i.e. one of those in $FSPL_DIR/include/bnd.h
+> !> @param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+> !> @param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+> !> @param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+> !> @param[in] XYZDOT the cartesian components of the grid velocity
+> !> @param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+> !> @param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+> !> @param[in,out] STIFEL elemental stiffness matrix
+> !> @param[in,out] NODRES 
+> !> @param[in,out] NEWRES 
+> !> @param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCDZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+> !> @param[in] NELEM is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+> !> @param[in] NPOIN nof interior nodes in the mesh
+> !> @param[in] NGHOST nof ghost nodes in the mesh
+> !> @param[in] NPNOD nof periodic nodes in the mesh
+> !> @param[in] NDIM dimension of the space
+> !> @param[in] NOFVERT number of vertices per element (=NDIM+1, since only triangles or tetrahedra are allowed)
+> !> @param[in] NOFVAR number of variables (degrees of freedom) in each meshpoint
+> !> @param[in] IBNDFAC bndry face pointer
+> !> @param[in] NBFAC number of boundary faces
+> !> @param[in,out] PetscVecDT Petsc Vec where time-step is stored
+> !> @param[in,out] PetscVecRHS Petsc Vec where the nodal residual is stored
+> !> @param[in,out] PetscMatA Petsc Mat where the implicit matrix is stored
+11c37
+< C     $Id: ghost.F,v 1.40 2020/03/28 09:42:21 abonfi Exp abonfi $
+---
+> C     $Id: ghost.F,v 1.42 2020/04/19 13:00:04 abonfi Exp $
+13a40,41
+>       IMPLICIT NONE
+> C
+15c43
+< CCCCCC#include "petsc/finclude/petscsys.h"
+---
+> #include "petsc/finclude/petscsys.h"
+18,19d45
+<       use petscvec
+<       use petscmat
+21c47,48
+<       IMPLICIT NONE
+---
+>       Vec PetscVecDT,PetscVecRHS
+>       Mat PetscMatA
+38,40c65
+<       INTEGER MY_PE
+<       COMMON/MPICOM/MY_PE 
+< C
+---
+> C#define PRINT
+42,43d66
+<       Vec PetscVecDT,PetscVecRHS
+<       Mat PetscMatA
+45d67
+< C#define PRINT
+46a69,70
+>       INTEGER MY_PE
+>       COMMON/MPICOM/MY_PE 
+131c155
+<           CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+---
+>          CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+137a162,167
+> C     Here we swap LOCAL arrays VCN,VCZ,VCB so that the vertex facing the boundary face
+> C     is stored last, i.e. VCN(*,NOFVERT) and so on.
+> C     It is NOT possible to do it once and for all, i.e. in a
+> C     pre-processing phase, because a boundary element might have
+> C     two boundary faces and, therefore, two different vertices facing a boundary face
+> C
+159a190,206
+> C        BCSUB returns NOFVERT-1 blocks in the
+> C        first column of STIFEL(1,1,:,1)
+> !   STIFEL è una matrice quadridimensionale
+> !   double precision STIFEL (bs,bs,nvt,nvt) 
+> !   dove (nell'esempio qui sotto)
+> !   bs = NOFVAR = 2, nvt = NOFVERT = 3
+> !   ---------------------------------
+> !   |  1.   3. |   -.  -.|   -.   -.|
+> !   |  2.   4. |   -.  -.|   -.   -.| 
+> !   ---------------------------------
+> !   |  5.   7. |   -.  -.|   -.   -.| 
+> !   |  6.   8. |   -.  -.|   -.   -.| 
+> !   ---------------------------------
+> !   |  -.    -.|   -.  -.|   -.   -.| 
+> !   |  -.    -.|   -.  -.|   -.   -.| 
+> !   ---------------------------------
+> C
+168c215
+<       ENDIF
+---
+>          ENDIF ! NDIM
+177a225,227
+> C
+> C     where is NEWTON stored?
+> C
+182,213c232,275
+<            DO 15 IVERT = 1, NOFVERT-1
+<             DO 15 IVAR = 1, NOFVAR
+<              CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+<              IF(COMPRESSIBLE)THEN
+<                 CALL PARM_TO_CONS(VCZ (1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+<      &          IFAIL)
+<                 CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+<      &          IFAIL)     
+<              ELSEIF(PLASMA)THEN
+<                 CALL PARM_TO_CONS4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+<      &          .FALSE.,IFAIL)
+<                 CALL PARM_TO_CONS4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+<      &          .FALSE.,IFAIL)
+<              ENDIF
+<              EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),1.d0)*
+<      +             SIGN(1.d0,VCZ(IVAR,IVERT))
+<              VCDZ(IVAR,IVERT) = VCZ(IVAR,IVERT) + EPS
+<              IF(COMPRESSIBLE)THEN
+<                 CALL CONS_TO_PARM(VCZ (1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+<      &          IFAIL)
+<                 IF(IFAIL.NE.0)THEN
+<                     WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(1)"
+<                     CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+<                 ENDIF  
+<                 CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.,
+<      &          IFAIL)
+<                 IF(IFAIL.NE.0)THEN
+<                     WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(2)"
+<                     CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+<                 ENDIF   ! ifail
+<              ELSEIF(PLASMA)THEN
+<                 CALL CONS_TO_PARM4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+---
+> C     The residual sent to vertex IVERT only depends
+> C     on the node itself; is this really true?
+> C
+>             DO IVERT = 1, NOFVERT-1 ! loop over the vertices of the bndry face
+>                DO IVAR = 1, NOFVAR ! loop over variables
+>                   CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+>                   IF(COMPRESSIBLE)THEN
+>                      CALL PARM_TO_CONS(VCZ (1,IVERT),NDIM,NOFVAR,1,
+>      &                                 .FALSE.,IFAIL)
+>                      CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+>      &                                 .FALSE.,IFAIL)
+>                   ELSEIF(PLASMA)THEN
+>                      CALL PARM_TO_CONS4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+>      &                             .FALSE.,IFAIL)
+>                      CALL PARM_TO_CONS4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+>      &                             .FALSE.,IFAIL)
+>                   ENDIF
+>                   EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),ONE)*
+>      +              SIGN(ONE,VCZ(IVAR,IVERT))
+>                   VCDZ(IVAR,IVERT) = VCZ(IVAR,IVERT) + EPS
+>                   IF(COMPRESSIBLE)THEN
+>                      CALL CONS_TO_PARM(VCZ (1,IVERT),NDIM,NOFVAR,1,
+>      &                                 .FALSE.,IFAIL)
+>                      IF(IFAIL.NE.0)THEN
+>                         WRITE(ERRMSG(1:64),FMT=105)
+>      &                  'GHOST_____',MY_PE,"(1)"
+>                         CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+>                      ENDIF ! IFAIL
+>                      CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+>      &                              .FALSE.,IFAIL)
+>                      IF(IFAIL.NE.0)THEN
+>                         WRITE(ERRMSG(1:64),FMT=105)
+>      &                  'GHOST_____',MY_PE,"(2)"
+>                         CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+>                      ENDIF   ! ifail
+>                   ELSEIF(PLASMA)THEN
+>                      CALL CONS_TO_PARM4Ar(VCZ (1,IVERT),NDIM,NOFVAR,1,
+>      &                                    .FALSE.,IFAIL)
+>                         IF(IFAIL.NE.0)THEN
+>                            WRITE(ERRMSG(1:64),FMT=105)
+>      &                      'GHOST_____',MY_PE,"(1)"
+>                            CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+>                         ENDIF ! IFAIL
+>                      CALL CONS_TO_PARM4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+215,225c277,282
+<                 IF(IFAIL.NE.0)THEN
+<                     WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(1)"
+<                     CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+<                 ENDIF
+<                 CALL CONS_TO_PARM4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+<      &          .FALSE.,IFAIL)
+<                 IF(IFAIL.NE.0)THEN
+<                     WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',MY_PE,"(2)"
+<                     CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+<                 ENDIF   ! ifail
+<               ENDIF ! compressible or plasma
+---
+>                         IF(IFAIL.NE.0)THEN
+>                            WRITE(ERRMSG(1:64),FMT=105)
+>      &                     'GHOST_____',MY_PE,"(2)"
+>                            CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+>                         ENDIF   ! ifail
+>                   ENDIF ! compressible or plasma
+234c291
+<              CALL BCSUB(IELEM,VCN,VCDZ,VCB,DUMMY,NEWRES,WORK,
+---
+>                   CALL BCSUB(IELEM,VCN,VCDZ,VCB,DUMMY,NEWRES,WORK,
+240,241c297,298
+<              DO 15 JVAR = 1, NOFVAR
+<                  STIFEL(JVAR,IVAR,IVERT,1) =
+---
+>                   DO JVAR = 1, NOFVAR
+>                        STIFEL(JVAR,IVAR,IVERT,1) =
+244,245c301,304
+<    15      CONTINUE
+<       ENDIF ! Newton
+---
+>                   ENDDO ! JVAR
+>                ENDDO ! IVAR
+>             ENDDO ! IVERT
+>          ENDIF ! Newton
+247c306
+<       IF( PERIODIC_MESH .AND. ANNULAR )
+---
+>          IF( PERIODIC_MESH .AND. ANNULAR )
+250d308
+<       DO 25 IVERT = 1,NOFVERT-1 
+251a310,318
+> C Insert blocks one at a time
+> C
+>          DO IVERT = 1,NOFVERT-1
+> #ifdef PRINT
+>             write(6,*)'Subroutine GHOST; IELEM = ',ielem,
+>      &                ' IVERT = ',ivert
+>             CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+>      +            STIFEL(1,1,IVERT,1),Nofvar,'Jacobian ',IFAIL)
+> #endif
+253c320
+<           CALL MatSetValuesBlockedLocal(PetscMatA,1,ICN(IVERT),1,
+---
+>             CALL MatSetValuesBlockedLocal(PetscMatA,1,ICN(IVERT),1,
+255c322
+<      +                                  ADD_VALUES,IFAIL)
+---
+>      &                                  ADD_VALUES,IFAIL)
+257,264c324,326
+<           CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,ICN(IVERT),
+<      +                             STIFEL(1,1,IVERT,1),
+<      +                             ADD_VALUES,IFAIL)
+< #endif
+< #ifdef PRINT
+<       write(6,*)ielem,ivert,ivert
+<       CALL R8Mat_Print('General',' ',Nofvar,Nofvar,STIFEL(1,1,IVERT,1),
+<      +            Nofvar,'Jacobian ',IFAIL)
+---
+>             CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,
+>      +                             ICN(IVERT),STIFEL(1,1,IVERT,1),
+>      &                             ADD_VALUES,IFAIL)
+267c329
+<    25 CONTINUE
+---
+>          ENDDO ! IVERT
+269c331
+< C     insert rhs into PETSc vector
+---
+> C     Insert nodal residual(s) and time-step into the Petsc Vecs 
+271c333
+<    50 CONTINUE
+---
+>    50    CONTINUE

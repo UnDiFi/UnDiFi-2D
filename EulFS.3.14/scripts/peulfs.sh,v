@@ -1,0 +1,113 @@
+head	1.1;
+access;
+symbols;
+locks
+	abonfi:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2021.02.02.10.35.08;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@runs mpiseq.sh on selected testcases
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#
+# A sh script to compare the sequential and parallel of the code
+# differences are sent to ${HOME}/differences
+# this script runs mpiseq.sh
+#
+#
+export ITMAX=8
+export SNES=newton
+export SEQ_CODE=eulfs11
+export MPI_CODE=${HOME}/bin/peulfs11
+export MPIHOME=${HOME}/mpich
+export MPIRUN=${MPIHOME}/bin/mpirun
+#
+export NUM_PROCS=2
+export DATA_DIR=${HOME}/grids/2D/aerofoils/naca0012/euler/NP2355/
+#
+# start executing........
+#
+echo running on `uname -a` `date` > ${HOME}/differences
+#
+export TCASE=${HOME}/testcases/2D/1aA
+sh mpiseq.sh ${TCASE}
+#
+export TCASE=${HOME}/testcases/2D/1aB
+sh mpiseq.sh ${TCASE}
+#
+export TCASE=${HOME}/testcases/2D/1bB/LDA
+sh mpiseq.sh ${TCASE}
+#
+export TCASE=${HOME}/testcases/2D/1bE/LDA
+sh mpiseq.sh ${TCASE}
+#
+export TCASE=${HOME}/testcases/2D/1bF/LDA
+sh mpiseq.sh ${TCASE}
+#
+export DATA_DIR=${HOME}/grids/2D/aerofoils/naca0012/navier/jcc/
+export NUM_PROCS=4
+#
+export TCASE=${HOME}/testcases/2D/2aC/jcc/LDA/newton/
+sh mpiseq.sh ${TCASE}
+#
+export TCASE=${HOME}/testcases/2D/2aG/
+sh mpiseq.sh ${TCASE}
+#
+export DATA_DIR=${HOME}/grids/3D/wings/onemoreNACA/
+export NUM_PROCS=2
+#
+export TCASE=${HOME}/testcases/3D/compressible.euler/onemoreNACA
+sh mpiseq.sh ${TCASE}
+#
+#
+export DATA_DIR=${HOME}/grids/2D/fplate/laminar/Re_5E+5/coarse/
+export NUM_PROCS=4
+#
+export TCASE=${HOME}/testcases/2D/compressible.ns/lbl5e5/
+sh mpiseq.sh ${TCASE}
+#
+# this is used to test the subsonic inflow/outflow b.c.
+#
+export DATA_DIR=${HOME}/grids/2D/blades/naca/
+export NUM_PROCS=3
+#
+export TCASE=${HOME}/testcases/2D/compressible.euler/nacaper/test3/
+sh mpiseq.sh ${TCASE}
+#
+# this is used to test the turbulent/compressible flows
+#
+export DATA_DIR=${HOME}/grids/2D/aerofoils/rae2822/navier/jcc/
+export NUM_PROCS=3
+#
+export TCASE=${HOME}/testcases/2D/compressible.ns/rae/
+sh mpiseq.sh ${TCASE}
+#
+# this is used to test scalar problems (advection-diffusion)
+#
+export DATA_DIR=${HOME}/grids/2D/scalar/advdiff/21x21/
+export NUM_PROCS=4
+#
+export TCASE=${HOME}/testcases/2D/scalar/tcase3
+sh mpiseq.sh ${TCASE}
+#
+# this is used to test scalar problems (advection)
+#
+export DATA_DIR=${HOME}/grids/2D/scalar/advdiff/41x41/
+export NUM_PROCS=4
+#
+export TCASE=${HOME}/testcases/2D/scalar/tcase5
+sh mpiseq.sh ${TCASE}
+@

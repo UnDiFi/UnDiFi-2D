@@ -1,0 +1,897 @@
+head	1.9;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.9
+	release3_13_0:1.9
+	release3_12_0:1.9
+	release3_11_0:1.9
+	release3_10_0:1.9
+	release3_8_0:1.9
+	release3_7_1:1.9
+	release3_7_0:1.8
+	release3_4_5:1.8
+	release3_4_4:1.8
+	release3_4_3:1.8
+	release3_4_2:1.8
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.7
+	release3_3_3:1.7
+	release3_3_2:1.7
+	release3_3_1:1.6
+	release3_3_0:1.6;
+locks; strict;
+comment	@c @;
+
+
+1.9
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.08.22.11.50.12;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2012.12.20.10.33.01;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.10.04.12.40.37;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.08.24.10.11.37;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.01.18.18.57.04;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.04.07.12.55.04;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.31.42;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Analytical matrix splitting for Unsteady Euler eqns. in symmetrizing variables
+@
+
+
+1.9
+log
+@renamed subroutine call
+@
+text
+@!> \par Purpose
+!>
+!> Compute positive and negative inflow parameters when the equations are
+!> written in Euler symmetrising variables; the split matrices. i.e. \c KPOS and \c KNEG are:
+!> \f[
+!> \tilde{K}_{\mathbf{n}}^{\pm} = \frac{1}{d}
+!> \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm}  \tilde{L}_{\mathbf{n}} = \frac{1}{d}
+!>  \left( \begin{array}{ccc}
+!>  {\lambda_{0}}^{\pm} & 0 & \mathbf{0} \\\
+!>  0 &
+!>  \frac{1}{2} \left( \lambda_+^{\pm} + \lambda_-^{\pm} \right) &
+!>  \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n}^t \\\
+!>  0 &
+!>  \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n} &
+!>  \lambda_0^{\pm} I +
+!>  \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \mathbf{n} \mathbf{n}
+!>  \end{array} \right)
+!> \f]
+!>
+!> Matrix \c KMAT \f$ = \tilde{K}_{\mathbf{n}} = \tilde{K}_{\mathbf{n}}^+ + \tilde{K}_{\mathbf{n}}^-  \f$ is:
+!> \f[
+!> \tilde{K}_{\mathbf{n}} = \frac{1}{d}
+!> \left(   \begin{array}{ccc}
+!>    u_n & 0 & \mathbf{0}^t \\\
+!>    0 & u_n & a \mathbf{n}^t \\\
+!>    \mathbf{0} & a \mathbf{n} & u_n I_{d \times d}
+!>    \end{array} \right)
+!> \f]
+!> The left \c RIGHT and \c LEFT eigenvector matrices are:
+!> \f[
+!> \tilde{R}_{\mathbf{n}} = \left( \begin{array}{ccccc}
+!> 1 &0 & 0 & 0 & 0 \\\
+!> 0& 0 & 1 & 1 & 0 \\\
+!> 0& \mathbf{s} & \mathbf{n} & -\mathbf{n} & \mathbf{t} \\\
+!> \end{array} \right)
+!> \quad \mbox{and} \quad
+!> \tilde{L}_{\mathbf{n}} = \left( \begin{array}{ccc}
+!> 1& 0 & 0 \\\
+!> 0& 0 & \mathbf{s}^t \\\
+!> 0& \frac{1}{2} & \frac{1}{2} \mathbf{n}^t  \\\
+!> 0& \frac{1}{2} &-\frac{1}{2} \mathbf{n}^t  \\\
+!> 0& 0 & \mathbf{t}^t
+!> \end{array} \right).
+!> \f]
+!
+!> @@param[in] IELEM the current simplicial element
+!> @@param[in] NDIM the dimension of the space
+!> @@param[in] NORDER the order of the system to be solved
+!> @@param[in] VECN the NDIM cartesian component of the inward face normal, scaled by its measure
+!> @@param[in] JacobianMatrix is the jacobian matrix
+!> @@param[in] LDJ leading dimension of the jacobian matrix
+!> @@param[out] KMAT  the jacobian matrix times the face normal 
+!> @@param[out] KPOS is the "positive" part of the jacobian matrix
+!> @@param[out] KNEG is the "negative" part of the jacobian matrix
+!> @@param[out] VLEFT is the left eigenvector matrix of the jacobian matrix, i.e. \f$ \tilde{L}_{\mathbf{n}} \f$
+!> @@param[out] VRIGHT is the right eigenvector matrix of the jacobian matrix, i.e. \f$ \tilde{R}_{\mathbf{n}} \f$
+!> @@param[in] LDA is the leading dimension of the matrices KMAT, KPOS, KNEG, VLEFT, VRIGHT
+!> @@param[out] WR are the eigenvalues of the jacobian matrix: \f$ \lambda_0, \lambda_0, \lambda_+, \lambda_-, \lambda_0 \f$
+!> @@param[out] LPOS are the positive eigenvalues of the jacobian matrix: \f$ \lambda_k^+ \f$
+!> @@param[out] LNEG are the negative eigenvalues of the jacobian matrix: \f$ \lambda_k^- \f$
+!> @@param[in] EIGENDECO .TRUE. if the eigenvector decomposition of the matrix is needed, if .FALSE. only the KMAT matrix is computed
+!
+!> \author $Author: abonfi $
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/22 11:50:12 $
+!> \warning When the pre-processor flag FSPL_USE_DEBUG is defined,
+!> the analyical expression for \f$ K^{\pm} \f$ is compared with
+!> the one obtained as \f$ R \Lambda^{\pm} L \f$. Should only be used for debugging purposes
+!> \warning The eigenvectors VLEFT and VRIGHT are only computed when the pre-processor flag FSPL_USE_DEBUG is defined 
+!> \bug Does NOT support moving grids
+!
+      SUBROUTINE MatSplitVII(IELEM,NDIM,NORDER,VECN,
+     +JacobianMatrix,LDJ,KMAT,KPOS,KNEG,VLEFT,VRIGHT,LDA,
+     +WR,LPOS,LNEG,EIGENDECO)
+C
+C     $Id: matsplVII.F,v 1.8 2013/08/22 11:50:12 abonfi Exp abonfi $
+C
+C
+C#define FSPL_USE_DEBUG
+C
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+      INCLUDE 'pfcgas.com'
+      INCLUDE 'three.com'
+      INCLUDE 'flags.com'
+C
+C
+      INTEGER IELEM,NDIM,NORDER,LDA,LDJ
+      LOGICAL EIGENDECO
+C
+      DOUBLE PRECISION VECN(NDIM)
+      DOUBLE PRECISION JacobianMatrix(LDJ,*)
+      DOUBLE PRECISION KMAT(LDA,*),KPOS(LDA,*),KNEG(LDA,*),
+     +VLEFT(LDA,*),VRIGHT(LDA,*),WR(*),LPOS(*),LNEG(*)
+C
+      INTEGER I,J,K,IDIM,JDIM,IFAIL
+      DOUBLE PRECISION l,m,n,U_dot_M,AREAINV,AREA
+      DOUBLE PRECISION FSPSLP,FSPSLN,FSMSLP,FSMSLN,APLUS,AMINS,NX,NY,NZ
+C
+#ifdef FSPL_USE_DEBUG
+C
+      DOUBLE PRECISION VECM(3),VECS(3),VECT(3)
+      DOUBLE PRECISION WKSPA(4,4),WKSPB(4,4)
+      DOUBLE PRECISION WKSPC(4,4),WKSPD(4,4)
+      DOUBLE PRECISION WORK1(4,4),WORK2(4,4)
+      DOUBLE PRECISION KPLUS(4,4),KMINS(4,4)
+      INTEGER TABLE(3,3),INDX
+      DOUBLE PRECISION SURF,SUM1,SUM2,TEMP1,Nxyz,Sxyz,Txyz
+      LOGICAL LFLAG
+#endif
+C
+      DOUBLE PRECISION DDOT,DNRM2
+      INTEGER  ISDMIN
+      LOGICAL  NULLMAT,UNITMAT
+      EXTERNAL ISDMIN,DDOT,DNRM2,NULLMAT,UNITMAT
+C
+      INTRINSIC DSQRT
+C
+      DATA l,m,n / 3*ZERO /
+#ifdef FSPL_USE_DEBUG
+      DATA (table(1,j),j=1,3) / 1,0,0 /
+      DATA (table(2,j),j=1,3) / 0,1,0 /
+      DATA (table(3,j),j=1,3) / 0,0,1 /
+      DATA LFLAG / .FALSE. /
+#endif
+C
+C     Executable Statements ..
+C
+C     U_dot_M is the dot product between the velocity vector
+C          and the face normal ..
+C
+      l = VECN(1)/NDIM
+      m = VECN(2)/NDIM
+      U_dot_M = UAVG(3) * l + UAVG(4) * m
+      IF( NDIM .EQ. 3 )THEN
+           n = VECN(3)/NDIM
+           U_dot_M = U_dot_M + UAVG(5) * n
+      ENDIF
+C
+C     Jacobian Matrix for symmetrizing variables ..
+C
+      KMAT(1,1) = U_dot_M
+      KMAT(1,2) = ABAR*l
+      KMAT(1,3) = ABAR*m
+C
+      KMAT(2,1) = KMAT(1,2)
+      KMAT(2,2) = U_dot_M
+      KMAT(2,3) = ZERO
+C
+      KMAT(3,1) = KMAT(1,3)
+      KMAT(3,2) = ZERO
+      KMAT(3,3) = U_dot_M
+C
+      IF( NDIM .NE. 3 )GOTO 7
+      KMAT(1,4) = ABAR*n
+      KMAT(2,4) = ZERO
+      KMAT(3,4) = ZERO
+      KMAT(4,1) = KMAT(1,4)
+      KMAT(4,2) = ZERO
+      KMAT(4,3) = ZERO
+      KMAT(4,4) = U_dot_M
+C
+    7 IF( EIGENDECO .EQV. .FALSE. )RETURN
+C
+C     Some useful constants ..
+C
+      AREA = VECN(1)*VECN(1)+VECN(2)*VECN(2)
+      IF( NDIM .EQ. 3 ) AREA=AREA + VECN(3)*VECN(3)
+      AREA = SQRT(AREA)
+      AREAINV = ONE/AREA
+      AREA = AREA/NDIM
+C
+C     Eigenvalues ..
+C
+      U_dot_M = U_dot_M / AREA
+C
+      WR(1) = AREA * U_dot_M
+      WR(2) = AREA * ( U_dot_M + ABAR )
+      WR(3) = AREA * ( U_dot_M - ABAR )
+      WR(4) = AREA * U_dot_M
+C
+C    Positive and negative eigenvalues ..
+C
+      DO 12 IDIM = 1 , NORDER
+         LPOS(IDIM) = HALF * (WR(IDIM) + ABS(WR(IDIM)) )
+         LNEG(IDIM) = HALF * (WR(IDIM) - ABS(WR(IDIM)) )
+   12 CONTINUE
+C
+#ifdef FSPL_USE_DEBUG
+C
+      IF( NDIM .EQ. 2 )THEN
+         VECM(1) = VECN(1)*AREAINV
+         VECM(2) = VECN(2)*AREAINV
+         VECM(3) = ZERO
+         VECS(1) = - VECM(2)
+         VECS(2) = VECM(1)
+         VECS(3) = ZERO
+         VECT(1) = ZERO
+         VECT(2) = ZERO
+         VECT(3) =  ONE
+      ELSE
+         VECM(1) = VECN(1)*AREAINV
+         VECM(2) = VECN(2)*AREAINV
+         VECM(3) = VECN(3)*AREAINV
+         INDX = ISDMIN(NDIM,VECM,1)
+         VECS(1) = table(2,INDX) * VECM(3) - table(3,INDX) * VECM(2)
+         VECS(2) = table(3,INDX) * VECM(1) - table(1,INDX) * VECM(3)
+         VECS(3) = table(1,INDX) * VECM(2) - table(2,INDX) * VECM(1)
+         SURF = ONE/DNRM2(NDIM,VECS,1)
+         VECS(1) = VECS(1)*SURF
+         VECS(2) = VECS(2)*SURF
+         VECS(3) = VECS(3)*SURF
+         CALL CROSS_PROD( VECM , VECS , VECT )
+      ENDIF
+C
+C     Left Eigenvectors ..
+C
+      VLEFT(1,1) = ZERO
+      VLEFT(2,1) = HALF
+      VLEFT(3,1) = HALF
+      VLEFT(4,1) = ZERO
+C
+C     Right Eigenvectors ..
+C
+      VRIGHT(1,1) = ZERO
+      VRIGHT(1,2) = ONE
+      VRIGHT(1,3) = ONE
+      VRIGHT(1,4) = ZERO
+C
+      DO 10 JDIM = 1 , NDIM
+C
+         IDIM = JDIM + 1
+         Nxyz = VECM(JDIM)
+         Sxyz = VECS(JDIM)
+         Txyz = VECT(JDIM)
+C
+C     Left Eigenvectors ..
+C
+         VLEFT(1,IDIM) = Sxyz
+         VLEFT(2,IDIM) = HALF * Nxyz
+         VLEFT(3,IDIM) =-HALF * Nxyz
+         VLEFT(4,IDIM) = Txyz
+C
+C     Right Eigenvectors ..
+C
+         VRIGHT(IDIM,1) = Sxyz
+         VRIGHT(IDIM,2) = Nxyz
+         VRIGHT(IDIM,3) =-Nxyz
+         VRIGHT(IDIM,4) = Txyz
+C
+   10 CONTINUE
+C
+C    Test if the product of the two eigenvectors equals the
+C    identity matrix: VRIGHT*VLEFT = Identity
+C
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,ONE,VRIGHT,LDA,
+     +                 VLEFT,LDA,0.D0,WORK1,4)
+            IF( UNITMAT(WORK1,NORDER,NORDER,4,1.D-15) .EQV. .FALSE. )
+     +      THEN
+                CALL R8Mat_Print('G',' ',NORDER,NORDER,WORK1,4,
+     +                      'L*R = Identity matrix ????',IFAIL)
+            PAUSE
+            ENDIF
+C
+C     compute VRIGHT * LAMBDA(+/-) * VLEFT
+C
+      DO 15 J = 1 , NORDER
+         DO 15 I = 1 , NORDER
+            SUM1 = ZERO
+            SUM2 = ZERO
+            DO 13 K = 1 , NORDER
+               TEMP1= VRIGHT(I,K) * VLEFT(K,J)
+               SUM1 = SUM1 + TEMP1* LPOS(K)
+               SUM2 = SUM2 + TEMP1* LNEG(K)
+   13       CONTINUE
+            KPLUS(I,J) = SUM1
+            KMINS(I,J) = SUM2
+   15 CONTINUE
+C
+#endif
+C
+      NX = VECN(1) * AREAINV
+      NY = VECN(2) * AREAINV
+      IF( NDIM .EQ. 3 )NZ = VECN(3) * AREAINV
+C
+      FSPSLP = LPOS(2)+LPOS(3)
+CXXX  FSMSLP = LPOS(2)+LPOS(3) !!! previous bug
+      FSMSLP = LPOS(2)-LPOS(3)
+      FSPSLN = LNEG(2)+LNEG(3)
+      FSMSLN = LNEG(2)-LNEG(3)
+      APLUS = HALF*FSPSLP - LPOS(1)
+      AMINS = HALF*FSPSLN - LNEG(1)
+C
+      KPOS(1,1) = HALF * FSPSLP
+      KPOS(1,2) = HALF * FSMSLP * NX
+      KPOS(1,3) = HALF * FSMSLP * NY
+C
+      KPOS(2,1) = KPOS(1,2)
+      KPOS(2,2) = LPOS(1) + APLUS * NX * NX
+      KPOS(2,3) = APLUS * NX * NY
+C
+      KPOS(3,1) = KPOS(1,3)
+      KPOS(3,2) = KPOS(2,3)
+      KPOS(3,3) = LPOS(1) + APLUS * NY * NY
+C
+C
+C
+      KNEG(1,1) = HALF * FSPSLN
+      KNEG(1,2) = HALF * FSMSLN * NX
+      KNEG(1,3) = HALF * FSMSLN * NY
+C
+      KNEG(2,1) = KNEG(1,2)
+      KNEG(2,2) = LNEG(1) + AMINS * NX * NX
+      KNEG(2,3) = AMINS * NX * NY
+C
+      KNEG(3,1) = KNEG(1,3)
+      KNEG(3,2) = KNEG(2,3)
+      KNEG(3,3) = LNEG(1) + AMINS * NY * NY
+C
+C
+      IF(NDIM.EQ.3)THEN
+C
+          KPOS(1,4) = HALF * FSMSLP * NZ
+          KPOS(2,4) = APLUS * NX * NZ
+          KPOS(3,4) = APLUS * NY * NZ
+C
+          KPOS(4,1) = KPOS(1,4)
+          KPOS(4,2) = KPOS(2,4)
+          KPOS(4,3) = KPOS(3,4)
+          KPOS(4,4) = LPOS(1) + APLUS * NZ * NZ
+C
+          KNEG(1,4) = HALF * FSMSLN * NZ
+          KNEG(2,4) = AMINS * NX * NZ
+          KNEG(3,4) = AMINS * NY * NZ
+C
+          KNEG(4,1) = KNEG(1,4)
+          KNEG(4,2) = KNEG(2,4)
+          KNEG(4,3) = KNEG(3,4)
+          KNEG(4,4) = LNEG(1) + AMINS * NZ * NZ
+C
+      ENDIF
+C
+#ifdef FSPL_USE_DEBUG
+C
+      DO 32 I =  1, NORDER
+         DO 32 J =  1, NORDER
+            WORK1(I,J) = KPOS(I,J)-KPLUS(I,J)
+            WORK2(I,J) = KNEG(I,J)-KMINS(I,J)
+   32 CONTINUE
+      IF( NULLMAT(WORK1,NORDER,NORDER,4,1.D-15) .EQV. .FALSE. .OR.
+     +    NULLMAT(WORK2,NORDER,NORDER,4,1.D-15) .EQV. .FALSE. )THEN
+         WRITE(6,*)ielem
+         WRITE(6,*)NULLMAT(WORK1,NORDER,NORDER,4,1.D-15)
+         WRITE(6,*)NULLMAT(WORK2,NORDER,NORDER,4,1.D-15)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KPOS,LDA,
+     +               'true positive matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KPLUS,4,
+     +               'analytical positive matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,WORK1,4,
+     +               'error positive matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KNEG,LDA,
+     +               'true negative matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KMINS,4,
+     +               'analytical negative matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,WORK2,4,
+     +               'error negative matrix',IFAIL)
+         PAUSE
+      ENDIF
+C
+C     test if the positive and negative matrices
+C     sum up to the jacobian matrix 
+C
+      DO 30 I =  1, NORDER
+            DO 30 J =  1, NORDER
+               WORK1(I,J) = (KPOS(I,J)+KNEG(I,J))
+               WORK2(I,J) = WORK1(I,J)-KMAT(I,J)
+   30 CONTINUE
+      LFLAG = ( .NOT. NULLMAT(WORK2,NORDER,NORDER,4,1.D-15) )
+C
+      IF( LFLAG .EQV. .TRUE. )THEN
+C
+            LFLAG = .FALSE.
+C
+            WRITE(6,*)'Element # ',IELEM
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,KMAT,LDA,
+     +                  'Jacobian matrix',IFAIL)
+            WRITE(6,*)(WR(I),I=1,NORDER)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VLEFT,LDA,
+     +                  'LEFT eigenvectors',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VRIGHT,LDA,
+     +                  'RIGHT eigenvectors',IFAIL)
+C
+C     compute L*K and K*R
+C
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,ONE,VLEFT,LDA,
+     +                 KMAT,LDA,ZERO,WKSPA,4)
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,ONE,KMAT,LDA,
+     +                 VRIGHT,LDA,ZERO,WKSPB,4)
+C
+C     compute R*\Lambda and L*\Lambda 
+C
+            DO 8 I =  1, NORDER
+               DO 8 J =  1, NORDER
+                  WKSPC(I,J) = WR(I)*VLEFT(I,J)
+                  WKSPD(I,J) = WR(J)*VRIGHT(I,J)
+    8       CONTINUE
+C
+C     test if L*K = \Lambda*L and K*R = R*\Lambda 
+C
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPA,4,'LEFT*A ',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPC,4,'lambda*LEFT',
+     +                  IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPB,4, 'A*RIGHT',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPD,4, 'RIGHT*lambda',
+     +                  IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,KMAT,LDA,
+     +                  'Original matrix',IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,WORK1,4,
+     +                  'Reassembled matrix',IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,WORK2,4,
+     +                  'Error matrix',IFAIL)
+            PAUSE
+      ENDIF
+#endif
+C
+      RETURN
+      END
+@
+
+
+1.8
+log
+@Improved Doxygen documentation
+@
+text
+@d65 1
+a65 1
+!> \date $Date: 2013/08/20 14:48:46 $
+d76 1
+a76 1
+C     $Id: matsplVII.F,v 1.7 2013/01/29 14:33:34 abonfi Exp abonfi $
+d264 1
+a264 1
+                CALL X04CAF('G',' ',NORDER,NORDER,WORK1,4,
+d359 1
+a359 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KPOS,LDA,
+d361 1
+a361 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KPLUS,4,
+d363 1
+a363 1
+         CALL X04CAF('G',' ',NORDER,NORDER,WORK1,4,
+d365 1
+a365 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KNEG,LDA,
+d367 1
+a367 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KMINS,4,
+d369 1
+a369 1
+         CALL X04CAF('G',' ',NORDER,NORDER,WORK2,4,
+d389 1
+a389 1
+            CALL X04CAF('G',' ',NORDER,NORDER,KMAT,LDA,
+d392 1
+a392 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VLEFT,LDA,
+d394 1
+a394 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VRIGHT,LDA,
+d414 2
+a415 2
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPA,4,'LEFT*A ',IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPC,4,'lambda*LEFT',
+d417 2
+a418 2
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPB,4, 'A*RIGHT',IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPD,4, 'RIGHT*lambda',
+d420 1
+a420 1
+            CALL X04CAF('General',' ',NORDER,NORDER,KMAT,LDA,
+d422 1
+a422 1
+            CALL X04CAF('General',' ',NORDER,NORDER,WORK1,4,
+d424 1
+a424 1
+            CALL X04CAF('General',' ',NORDER,NORDER,WORK2,4,
+@
+
+
+1.7
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@d1 1
+a1 17
+!> \brief
+!> Compute posive and negative inflow parameters when the equations are
+!> written in Euler symmetrising variables
+!> \f{equation}{
+!> \tilde{A}_{\mathbf{n}}^{\pm} =
+!> \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm}  \tilde{L}_{\mathbf{n}} =
+!> \f}
+CC!>  \left( \begin{array}{c|cc}
+CC!>  \lambda_0^{\pm} & 0 & \mathbf{0} \\ \hline
+CC!>  0 &
+CC!>  \frac{1}{2} \left( \lambda_+^{\pm} + \lambda_-^{\pm} \right) &
+CC!>  \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n}^t \\
+CC!>  0 &
+CC!>  \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n} &
+CC!>  \lambda_0^{\pm} I +
+CC!>  \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \mathbf{n} \mathbf{n}
+CC!>  \end{array} \right)
+d3 16
+d20 52
+a71 1
+!> \copydetails MatSplitIX()
+d76 1
+a76 1
+C     $Id: matsplVII.F,v 1.6 2012/12/20 10:33:01 abonfi Exp abonfi $
+a77 3
+C     when the pre-processor flag FSPL_USE_DEBUG is defined
+C     compare the analyical expresion for \K^{\pm} with
+C     the one obtained as R \Lambda^{\pm} L.
+@
+
+
+1.6
+log
+@first Doxygen support
+@
+text
+@d25 1
+a25 1
+C     $Id: matsplVII.F,v 1.5 2010/10/04 12:40:37 abonfi Exp abonfi $
+d39 1
+@
+
+
+1.5
+log
+@minor changes
+@
+text
+@d1 20
+d24 2
+a25 1
+C     $Id: matsplVII.F,v 1.4 2002/08/24 10:11:37 abonfi Exp $
+a32 16
+C
+C************************************************************
+C
+C     NORDER: is the order of the system to be solved (INPUT)
+C     VECN:   is the face normal (INPUT)
+C     KMAT:   the jacobian matrix times the face normal (OUTPUT)
+C     KPOS:   is the "positive" part of the jacobian matrix (OUTPUT)
+C     KNEG:   is the "negative" part of the jacobian matrix (OUTPUT)
+C     VLEFT:  is left eigenvector matrix of the jacobian matrix (OUTPUT)
+C     VRIGHT: is right eigenvector matrix of the jacobian matrix (OUTPUT)
+C     LD:     is the leading dimension of the previous matrices
+C     WR:     eigenvalues of the jacobian matrix (OUTPUT)
+C     LPOS:   positive eigenvalues of the jacobian matrix (OUTPUT)
+C     LNEG:   negative eigenvalues of the jacobian matrix (OUTPUT)
+C
+C************************************************************
+@
+
+
+1.4
+log
+@add the identifier for rcs
+@
+text
+@d4 1
+d6 1
+a6 3
+C     $Id:$
+C
+C     when the pre-processor flag PETSC_USE_DEBUG is defined
+d10 2
+d32 1
+d34 1
+a34 1
+      INCLUDE 'three'
+a36 1
+      INCLUDE 'constants'
+d206 1
+a206 1
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,VRIGHT,LDA,
+d345 1
+a345 1
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,VLEFT,LDA,
+d347 1
+a347 1
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,KMAT,LDA,
+@
+
+
+1.3
+log
+@DEBUGging now OFF
+@
+text
+@d5 3
+a7 1
+C     define the pre-processor flag DEBUG if you wish to
+a10 1
+C#define DEBUG
+d49 1
+a50 1
+#ifdef DEBUG
+d69 1
+a69 1
+#ifdef DEBUG
+d138 1
+a138 1
+#ifdef DEBUG
+d292 1
+a292 1
+#ifdef DEBUG
+@
+
+
+1.2
+log
+@debugger options now working
+@
+text
+@d9 1
+a9 1
+#define DEBUG
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 6
+a9 1
+
+d14 1
+a14 1
+C     VNOR:   is the face normal (INPUT)
+a28 2
+C     .. Parameters ..
+C
+a30 2
+C     .. Commons ..
+C
+a33 2
+C     .. Parameters ..
+C
+a35 2
+C     .. Scalar Arguments ..
+C
+d39 1
+a39 3
+C     .. Array Arguments ..
+C
+      DOUBLE PRECISION VECN(*),VECS(3),VECT(3)
+a43 2
+C     .. Local Scalars ..
+C
+d45 1
+a45 3
+      LOGICAL LFLAG
+      DOUBLE PRECISION l,m,n,U_dot_M,Nxyz,Sxyz,Txyz,AREAINV,AREA,
+     &SUM1,SUM2,TEMP1
+a47 1
+C     .. Local Arrays ..
+d50 1
+d55 3
+a59 5
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+d62 2
+a63 4
+      LOGICAL  NULLMAT
+      EXTERNAL ISDMIN,DDOT,DNRM2,NULLMAT
+C
+C     .. Intrinsic Functions ..
+d67 7
+a73 1
+C     .. Data Statements ..
+d75 1
+a75 1
+      DATA LFLAG,l,m,n / .FALSE.,3*ZERO /
+d77 1
+a77 3
+C     .. Executable Statements ..
+C
+C     .. U_dot_M is the dot product between the velocity vector
+d88 1
+a88 2
+C
+C     .. Jacobian Matrix for symmetrizing variables ..
+d93 1
+a93 2
+      KMAT(1,4) = ABAR*n
+*
+d97 1
+a97 2
+      KMAT(2,4) = ZERO
+*
+d101 4
+a105 1
+*
+d111 1
+a111 1
+      IF( EIGENDECO .EQV. .FALSE. )RETURN
+d113 1
+a113 1
+C       .. Some useful constants ..
+d121 1
+a121 1
+C    .. Eigenvalues ..
+d130 1
+a130 1
+C    .. Positive and negative eigenvalues ..
+d139 26
+a164 1
+C    .. Left Eigenvectors ..
+d171 1
+a171 1
+C    .. Right Eigenvectors ..
+d181 1
+a181 1
+         Nxyz = VECN(JDIM)*AREAINV
+d185 1
+a185 1
+C    .. Left Eigenvectors ..
+d192 1
+a192 1
+C    .. Right Eigenvectors ..
+d201 13
+a213 1
+C     .. compute VRIGHT * LAMBDA(+/-) * VLEFT
+a267 6
+C     IF(aflag)THEN
+C     CALL X04CAF('G',' ',NORDER,NORDER,KNEG,LDA,
+C    +'true negative matrix',IFAIL)
+C     CALL X04CAF('G',' ',NORDER,NORDER,KPOS,LDA,
+C    +'true positive matrix',IFAIL)
+C     ENDIF
+d318 4
+a321 2
+      IF(ICHECK.EQ.2)THEN
+         DO 30 I =  1, NORDER
+d325 2
+a326 4
+               IF( DABS(WORK2(I,J)) .GT. 1.D- 14)LFLAG = .TRUE.
+   30    CONTINUE
+C
+      ENDIF
+d334 1
+a334 1
+     +      'Jacobian matrix',IFAIL)
+d337 1
+a337 1
+     +      'LEFT eigenvectors',IFAIL)
+d339 4
+a342 1
+     +      'RIGHT eigenvectors',IFAIL)
+d344 1
+a344 1
+     +      KMAT,LDA,ZERO,WKSPA,4)
+d346 6
+a351 3
+     +      VRIGHT,LDA,ZERO,WKSPB,4)
+            DO I =  1, NORDER
+               DO J =  1, NORDER
+d354 7
+a360 6
+               ENDDO
+            ENDDO
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPA,4, 'LEFT*A ',IFAIL)
+ 
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPC,4, 'lambda*LEFT',
+     +      IFAIL)
+a361 1
+ 
+d363 1
+a363 1
+     +      IFAIL)
+d365 1
+a365 1
+     +      'Original matrix',IFAIL)
+d367 1
+a367 1
+     +      'Reassembled matrix',IFAIL)
+d369 1
+a369 8
+     +      'Error matrix',IFAIL)
+C
+C    .. Test if VRIGHT*VLEFT = Identity ..
+C
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,VRIGHT,LDA,
+     +      VLEFT,LDA,0.D0,WORK1,4)
+            CALL X04CAF('G',' ',NORDER,NORDER,WORK1,4,
+     +      'Identity matrix ????',IFAIL)
+@

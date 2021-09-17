@@ -1,0 +1,68 @@
+\hypertarget{_motion_solver_8_f}{}\doxysection{src/seq/\+Motion\+Solver.F File Reference}
+\label{_motion_solver_8_f}\index{src/seq/MotionSolver.F@{src/seq/MotionSolver.F}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{_motion_solver_8_f_a39d11c44bc6f5ff0b4da1e9fbe9b3917}{Grid\+Deformation}} (Motion\+Solver, Petsc\+MatC, Nodal\+B\+CS, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+P\+O\+IN, N\+G\+H\+O\+ST, N\+P\+N\+OD, N\+E\+L\+EM, N\+B\+F\+AC, N\+F\+A\+CE)
+\begin{DoxyCompactList}\small\item\em the Motion solver\+: given the grid velocities at all boundaries, solves Laplace\textquotesingle{}s equation to get the grid velocites at all interior gridpoints \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{_motion_solver_8_f_a39d11c44bc6f5ff0b4da1e9fbe9b3917}\label{_motion_solver_8_f_a39d11c44bc6f5ff0b4da1e9fbe9b3917}} 
+\index{MotionSolver.F@{MotionSolver.F}!GridDeformation@{GridDeformation}}
+\index{GridDeformation@{GridDeformation}!MotionSolver.F@{MotionSolver.F}}
+\doxysubsubsection{\texorpdfstring{GridDeformation()}{GridDeformation()}}
+{\footnotesize\ttfamily subroutine Grid\+Deformation (\begin{DoxyParamCaption}\item[{}]{Motion\+Solver,  }\item[{}]{Petsc\+MatC,  }\item[{dimension(0\+:$\ast$)}]{Nodal\+B\+CS,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{integer}]{N\+G\+H\+O\+ST,  }\item[{integer}]{N\+P\+N\+OD,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{integer}]{N\+B\+F\+AC,  }\item[{integer}]{N\+F\+A\+CE }\end{DoxyParamCaption})}
+
+
+
+the Motion solver\+: given the grid velocities at all boundaries, solves Laplace\textquotesingle{}s equation to get the grid velocites at all interior gridpoints 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Motion\+Solver} & \\
+\hline
+\mbox{\texttt{ in}}  & {\em Petsc\+MatC} & \\
+\hline
+\mbox{\texttt{ in}}  & {\em Nodal\+Bcs} & \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & number of vertices per element (=N\+D\+I\+M+1), since only triangles or tetrahedra are allowed) \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & nof of interior (processor owned) meshpoints; global number of meshpoints in the uni-\/processor case \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+G\+H\+O\+ST} & nof of ghost meshpoints on the current processor; 0 the uni-\/processor case \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+N\+OD} & nof of periodic meshpoints on the current processor \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & nof of processor owned elements (triangles/tetrahedra); global number of elements in the uni-\/processor case \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+B\+F\+AC} & nof of processor owned boundary faces/edges; global number of boundary faces/edges in the uni-\/processor case. \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+F\+A\+CE} & number of edges/faces in the mesh for the current processor (multi-\/processor case) or global number of edges/faces in the mesh (uni-\/processor case). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+8 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/04/24 06\+:04\+:41 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+The subroutine C\+\_\+\+D\+I\+S\+T\+IJ is un-\/optimized and will be V\+E\+RY slow on large meshes 
+
+This subroutine is un-\/tested in 3D 
+\end{DoxyWarning}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000009}{Bug}}]This subroutine is N\+OT yet working in parallel \end{DoxyRefDesc}

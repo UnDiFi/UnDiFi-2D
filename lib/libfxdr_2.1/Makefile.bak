@@ -1,0 +1,46 @@
+F77CMD = cf77
+CCCMD  = c89
+RANLIB = echo
+AR = bld
+CPP = /usr/lib/gpp
+OBJS	= cxdrinit.o xdrint.o initxdr.o cxdrint.o xdrclose.o	\
+	  cxdrclose.o xdrreal.o cxdrreal.o cxdrdouble.o 	\
+	  xdrdouble.o xdrrmat.o cxdrrmat.o xdrdmat.o cxdrdmat.o \
+	  xdrimat.o cxdrimat.o xdrstring.o cxdrstring.o		\
+	  xdrreal64.o cxdrreal64.o xdrrmat64.o cxdrrmat64.o
+
+SRCS	= cxdrinit.c xdrint.F initxdr.F cxdrint.c xdrclose.F	\
+	  cxdrclose.c xdrreal.F cxdrreal.c cxdrdouble.c 	\
+	  xdrdouble.F xdrrmat.F cxdrrmat.c xdrdmat.F cxdrdmat.c \
+	  xdrimat.F cxdrimat.c xdrstring.F cxdrstring.c		\
+	  xdrreal64.F cxdrreal64.c
+
+.SUFFIXES: 
+.SUFFIXES: .c .o .F
+
+###########################################################################
+
+.c.o:
+	$(CCCMD) $(CCOPTS) -c $<
+
+.F.o:
+	$(F77CMD) $(F77OPTS) -c $<
+
+###########################################################################
+
+libfxdr.a: $(OBJS)
+	-rm libfxdr.a
+	$(AR) q libfxdr.a $(OBJS)
+	-$(RANLIB) libfxdr.a
+	cp libfxdr.a $(HOME)/lib
+	
+test: $(OBJS) test.F
+	$(F77CMD) $(F77OPTS) -o test test.F -L. -lfxdr
+	./test
+
+clean:
+	-rm *.o test Makefile
+
+tar:
+	@echo "Remember to make clean before making tar!"
+	cd .. ; tar cvf fxdr_0.9.tar fxdr_0.9

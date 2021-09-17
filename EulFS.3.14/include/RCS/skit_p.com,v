@@ -1,0 +1,29 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the SPARSKIT2 preconditioners
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER IMETH,NWK,IPRE,LFIL
+      DOUBLE PRECISION DROPTOL,PERMTOL,ALPH
+      COMMON / comskit / 
+     1        IMETH,NWK,IPRE,LFIL,
+     2        DROPTOL,PERMTOL,ALPH
+@

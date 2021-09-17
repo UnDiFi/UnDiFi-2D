@@ -1,0 +1,945 @@
+head	1.27;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.27
+	release3_13_0:1.27
+	release3_12_0:1.27
+	release3_11_0:1.27
+	release3_10_0:1.27
+	release3_8_0:1.27
+	release3_7_1:1.26
+	release3_7_0:1.26
+	release3_4_5:1.24
+	release3_4_4:1.24
+	release3_4_3:1.24
+	release3_4_2:1.24
+	release3_4_1:1.22
+	release3_4_0:1.20
+	release3_3_5:1.19
+	release3_3_4:1.19
+	release3_3_3:1.19
+	release3_3_2:1.19
+	release3_3_1:1.19
+	release3_3_0:1.19;
+locks; strict;
+comment	@c @;
+
+
+1.27
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2019.01.28.08.51.36;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2013.07.16.13.14.19;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2013.06.25.14.30.55;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2013.06.06.10.34.38;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2013.06.04.15.23.27;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2013.05.15.10.33.02;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2012.08.09.07.28.46;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2012.03.21.10.40.37;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2009.06.11.13.10.01;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2008.06.10.10.12.06;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2005.07.17.19.07.09;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2004.12.20.14.40.39;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2004.02.27.15.46.46;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2002.10.25.06.02.17;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2002.09.14.08.53.39;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2002.02.19.09.19.00;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2001.10.08.15.38.25;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2001.07.19.09.55.54;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2001.05.24.10.24.09;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.10.26.15.13.28;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.10.20.09.45.10;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.08.18.14.00.29;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.08.14.15.32.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@driver routine for modifying the stiffness matrix
+to account for various types of boundary conditions
+@
+
+
+1.27
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@!> \details
+!> @@param[in] ts the PETSc timestepping context, currently a dummy argument
+!> @@param[in] U is the PETSc vector of CONSERVED variables
+!> @@param[in] A is the PETSc jacobian matrix
+!> @@param[in] X is the PETSc unknown vector
+!> @@param[in] RHS is the PETSc rhs vector
+!> @@param[in] NodalBcs is the PETSc IS that addresses nodal bcs
+!> @@param[in] NDIM the dimension of the space
+!> @@param[in] NOFVAR is the nof dofs in each gridpoint
+      SUBROUTINE JacobianBoundaryConditions(ts,U,A,X,RHS,NodalBcs,
+     &                                      NDIM,NOFVAR)
+C
+C
+C     N.B.: upon entry U contains the vector of CONSERVED
+C           variables
+C
+C
+C     $Id: JacobianBoundaryConditions.F,v 1.26 2019/01/28 08:51:36 abonfi Exp abonfi $
+C
+#include "petsc/finclude/petscsys.h"
+CCCC#include "petsc/finclude/petscvec.h"
+CCCC#include "petsc/finclude/petscmat.h"
+CCCC#include "petsc/finclude/petscis.h"
+#include "petsc/finclude/petscts.h"
+      use petscts
+C
+      IMPLICIT NONE
+C
+      Mat A
+      Vec rhs
+      Vec X ! vector of the unkwnouns
+      Vec U
+      TS ts
+      PetscLogDouble telapsed,tbeg,tend
+      PetscScalar x_array(1)
+      PetscOffset i_x
+#ifdef DEBUG
+      integer      is_array(1)
+      PetscOffset i_is
+      integer maxcols
+      parameter(maxcols=130)
+      double precision vals(maxcols)
+      INTEGER i,j,k,icol(maxcols),irow(5),lda,nrows,ncols
+#endif
+      INTEGER NDIM,NOFVAR
+      INTEGER IFAIL,IBGN,IEND
+!     INTEGER ISTAK(1)
+!     DOUBLE PRECISION DSTAK(1)
+!     COMMON/CSTAK/DSTAK
+!     EQUIVALENCE (ISTAK(1),DSTAK(1))
+C     ..
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'bctype.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'ibc8.com'
+C
+      IS, dimension(0:*) :: NodalBcs 
+C
+C
+      INTEGER ISTKGT
+      EXTERNAL ISTKGT
+C
+      CALL PetscTime(tbeg,IFAIL)
+C
+C     the stiffness matrix has to be modified
+C     to account for boundary conditions .. 
+C
+C     Note that the Index Sets address rows by GLOBAL number
+C
+      CALL MatZeroRowsIS(A,NodalBcs(SupersonicVariables),ONE,
+     &                   PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+      CALL MatZeroRowsIS(A,NodalBcs(NoSlipVelocities),ONE,
+     &                   PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+      IF(TURBULENT.AND.COUPLED)THEN
+         CALL MatZeroRowsIS(A,NodalBcs(NoSlipNodes),ONE,
+     &                      PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+         CALL MatZeroRowsIS(A,NodalBcs(FreestreamTurbulence),ONE,
+     &                      PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+      ENDIF
+C
+C     ``strong'' boundary conditions for isothermal wall
+C
+      IF(IADIA.NE.0)THEN
+          CALL MatZeroRowsIS(A,NodalBcs(Isothermal),ONE,
+     &                       PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+          call VecGetOwnerShipRange(U,ibgn,iend,ifail)
+          call VecGetArray(U,x_array,i_x,ifail)
+C
+C     Flush assembly (because of MatSetValues inside Isothwall)
+C
+          CALL MatAssemblyBegin(A,MAT_FLUSH_ASSEMBLY,IFAIL)
+          IF(IFAIL.NE.0)THEN
+             WRITE(6,*)' MatAssemblyBegin has ret ',IFAIL
+             CALL EXIT(IFAIL)
+          ENDIF
+          CALL MatAssemblyEnd(A,MAT_FLUSH_ASSEMBLY,IFAIL)
+          IF(IFAIL.NE.0)THEN
+             WRITE(6,*)' MatAssemblyEnd has ret ',IFAIL
+             CALL EXIT(IFAIL)
+          ENDIF
+C
+          CALL Isothwall(A,x_array(i_x+1),NodalBcs,IBGN,NDIM,NOFVAR,
+     $         (ABS(KAN).EQ.4))
+          call VecRestoreArray(U,x_array,i_x,ifail)
+C
+C     Final assembly (because of MatSetValues inside lhsbc)
+C
+          CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+          CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+      ENDIF
+C
+C
+      IF( LAPLACE ) THEN 
+          CALL SETBC4LAPLACE(A,X,RHS,U,NodalBcs)
+      ENDIF
+caldo
+      CALL PetscTime(tend,IFAIL)
+      telapsed=tend-tbeg
+C
+C
+      RETURN
+      END
+@
+
+
+1.26
+log
+@removed unused variables
+@
+text
+@d7 1
+d10 2
+a11 1
+      SUBROUTINE JacobianBoundaryConditions(ts,U,A,X,RHS,NDIM,NOFVAR)
+a13 2
+      IMPLICIT NONE
+C
+d18 1
+a18 1
+C     $Id: JacobianBoundaryConditions.F,v 1.25 2016/11/10 11:25:13 abonfi Exp abonfi $
+d21 3
+a23 3
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscis.h"
+d25 3
+d47 4
+a50 4
+      INTEGER ISTAK(1)
+      DOUBLE PRECISION DSTAK(1)
+      COMMON/CSTAK/DSTAK
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+d57 1
+d63 1
+a63 1
+#include "iset.com"
+d76 4
+a79 4
+      CALL MatZeroRowsIS(A,SupersonicVariables,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+      CALL MatZeroRowsIS(A,NoSlipVelocities,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+d81 4
+a84 4
+         CALL MatZeroRowsIS(A,NoSlipNodes,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+         CALL MatZeroRowsIS(A,FreestreamTurbulence,ONE,PETSC_NULL_OBJECT
+     &                   ,PETSC_NULL_OBJECT,IFAIL)
+d90 2
+a91 2
+          CALL MatZeroRowsIS(A,Isothermal,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+d108 1
+a108 1
+          CALL Isothwall(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,
+d120 1
+a120 1
+          CALL SETBC4LAPLACE(A,X,RHS,U)
+@
+
+
+1.25
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d18 1
+a18 1
+C     $Id: JacobianBoundaryConditions.F,v 1.24 2013/07/16 13:14:19 abonfi Exp abonfi $
+d43 1
+a43 1
+      INTEGER IFAIL,IBGN,IEND,LWORK(2),I,J,K,NITEMS,N
+@
+
+
+1.24
+log
+@strong symmetry bcs have been REMOVED
+@
+text
+@d18 1
+a18 1
+C     $Id: JacobianBoundaryConditions.F,v 1.23 2013/06/25 14:30:55 abonfi Exp abonfi $
+d20 5
+a24 5
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscis.h"
+#include "finclude/petscts.h"
+@
+
+
+1.23
+log
+@applies boundary conditions for the electric potential
+@
+text
+@d18 1
+a18 1
+C     $Id: JacobianBoundaryConditions.F,v 1.22 2013/06/06 10:34:38 abonfi Exp abonfi $
+a81 7
+C
+C     ``strong'' symmetry boundary conditions
+C
+C     CALL MatZeroRowsIS(A,XSymmetry,ONE,IFAIL)
+      CALL MatZeroRowsIS(A,YSymmetry,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+C     CALL MatZeroRowsIS(A,ZSymmetry,ONE,IFAIL)
+@
+
+
+1.22
+log
+@now includes bnd.h
+@
+text
+@d3 1
+a3 1
+!> @@param[in] x is the PETSc vector of CONSERVED variables
+d5 2
+d9 1
+a9 1
+      SUBROUTINE JacobianBoundaryConditions(ts,x,A,NDIM,NOFVAR)
+d14 1
+a14 1
+C     N.B.: upon entry X contains the vector of CONSERVED
+d18 1
+a18 1
+C     $Id: JacobianBoundaryConditions.F,v 1.21 2013/06/04 15:23:27 abonfi Exp abonfi $
+d28 2
+a29 1
+      Vec X
+d95 2
+a96 2
+          call VecGetOwnerShipRange(x,ibgn,iend,ifail)
+          call VecGetArray(x,x_array,i_x,ifail)
+d113 1
+a113 1
+          call VecRestoreArray(X,x_array,i_x,ifail)
+d123 1
+a123 2
+          CALL MatZeroRowsIS(A,Dirichlet4Poisson,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+@
+
+
+1.21
+log
+@removed support for strong boundary conditions
+and added support for Laplace's equation
+@
+text
+@d16 1
+a16 1
+C     $Id: JacobianBoundaryConditions.F,v 1.20 2013/05/15 10:33:02 abonfi Exp abonfi $
+a46 3
+#include "iset.com"
+C
+C
+d50 1
+d56 3
+a126 48
+C     some debugging stuff follows
+C
+#if DEBUG
+C
+      call ISGetIndices(Internal_inflow,is_array,i_is,IFAIL)
+      call ISGetSize(Internal_inflow,Nrows,IFAIL)
+C
+C     outermost loop on inflow nodes
+C
+C     lda equals the no. of incoming characteristics, hence
+C     the number of rows that need to be modified
+C     once again, this is currently implemented ONLY for compressible flows
+C
+      lda = ndim + 1
+      DO 1 I = 1, Nrows, lda
+C
+C     row (and column) pointers (0-based indexing) for the NOFVAR eqns.
+C
+         irow(1) = is_array(i_is + I) -IBGN
+         irow(2) = is_array(i_is + I+1) -IBGN
+         irow(3) = is_array(i_is + I+2) -IBGN
+         IF(NDIM.EQ.3)irow(4) = is_array(i_is + I+3) -IBGN
+C
+C        1-based (FORTRAN) indexing
+C
+C
+C        write(6,*)irow(1),i1,i2,i3,i4
+C        write(6,*)x(i1)
+C        write(6,*)x(i2)
+C        write(6,*)x(i3)
+C        write(6,*)x(i4)
+C        pause
+C
+         do j = 1,lda
+         call MatGetRow(A,irow(j),ncols,icol,vals,IFAIL)
+         if(j.eq.lda)then
+         write(6,*)irow(j),(icol(k),k=1,ncols)
+c        write(6,*)irow(j)
+         write(6,*)(vals(k),k=1,ncols)
+         endif
+         call MatRestoreRow(A,irow(j),ncols,icol,vals,IFAIL)
+         enddo 
+         pause
+C
+    1 CONTINUE 
+C
+      CALL ISRestoreIndices(Internal_inflow,is_array,i_is,IFAIL)
+#endif
+@
+
+
+1.20
+log
+@chenged PetscGetTime into PetscTime to comply with Petsc revision 3.4.0
+@
+text
+@d16 1
+a16 1
+C     $Id: JacobianBoundaryConditions.F,v 1.19 2012/08/09 07:28:46 abonfi Exp abonfi $
+d25 1
+d40 2
+a41 1
+      INTEGER IFAIL,IBGN,IEND
+d44 1
+d58 3
+a116 1
+C     ``strong'' boundary conditions for subsonic inflow-outflow
+d118 2
+a119 4
+      IF(IBCTYPE.EQ.BC_TYPE_STRONG)THEN
+          CALL MatZeroRowsIS(A,CnstPressure,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+          CALL MatZeroRowsIS(A,Internal_inflow,ONE,PETSC_NULL_OBJECT,
+a120 19
+C
+          call VecGetOwnerShipRange(x,ibgn,iend,ifail)
+          call VecGetArray(x,x_array,i_x,ifail)
+C
+C     Flush assembly (because of MatSetValues inside Isothwall)
+C
+caldo     CALL MatAssemblyBegin(A,MAT_FLUSH_ASSEMBLY,IFAIL)
+caldo     CALL MatAssemblyEnd(A,MAT_FLUSH_ASSEMBLY,IFAIL)
+C
+          CALL lhsbc2(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,(ABS(KAN).EQ.4))
+          CALL lhsbc0(A,x_array(i_x+1),DSTAK(LVLIST),
+     +               IBGN,NDIM,NOFVAR,(ABS(KAN).EQ.4))
+          call VecRestoreArray(X,x_array,i_x,ifail)
+C
+C     Final assembly (because of MatSetValues inside lhsbc)
+C
+          CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+          CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+d122 1
+@
+
+
+1.19
+log
+@added Doxygen comments
+@
+text
+@d16 1
+a16 1
+C     $Id: JacobianBoundaryConditions.F,v 1.18 2012/03/21 10:40:37 abonfi Exp abonfi $
+d55 1
+a55 1
+      CALL PetscGetTime(tbeg,IFAIL)
+d138 1
+a138 1
+      CALL PetscGetTime(tend,IFAIL)
+@
+
+
+1.18
+log
+@changed calls to PETSc functions to upgrade to petsc release 3.2
+@
+text
+@d1 6
+d9 1
+d16 1
+a16 1
+C     $Id: JacobianBoundaryConditions.F,v 1.17 2011/09/16 07:19:48 abonfi Exp abonfi $
+d47 1
+a47 1
+      INCLUDE 'constants'
+d52 1
+a52 1
+      INCLUDE 'nloc'
+@
+
+
+1.17
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.16 2009/06/11 13:10:01 abonfi Exp abonfi $
+d55 4
+a58 2
+      CALL MatZeroRowsIS(A,SupersonicVariables,ONE,IFAIL)
+      CALL MatZeroRowsIS(A,NoSlipVelocities,ONE,IFAIL)
+d60 4
+a63 2
+         CALL MatZeroRowsIS(A,NoSlipNodes,ONE,IFAIL)
+         CALL MatZeroRowsIS(A,FreestreamTurbulence,ONE,IFAIL)
+d69 2
+a70 1
+      CALL MatZeroRowsIS(A,YSymmetry,ONE,IFAIL)
+d76 2
+a77 2
+          CALL MatZeroRowsIS(A,Isothermal,ONE,IFAIL)
+!         SETERRQ(1,'MatZeroRowsIS has ret ',IFAIL)
+d107 4
+a110 2
+          CALL MatZeroRowsIS(A,CnstPressure,ONE,IFAIL)
+          CALL MatZeroRowsIS(A,Internal_inflow,ONE,IFAIL)
+@
+
+
+1.16
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.15 2008/06/10 10:12:06 abonfi Exp abonfi $
+d11 1
+a11 1
+#include "finclude/petsc.h"
+@
+
+
+1.15
+log
+@take care of MatAssembly when setting isothermal bcs
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.14 2005/07/17 19:07:09 aldo Exp abonfi $
+d11 5
+a15 5
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscts.h"
+@
+
+
+1.14
+log
+@changes require to upgrade to petsc-2.3.0
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.13 2004/12/20 14:40:39 aldo Exp aldo $
+d72 1
+d75 14
+d92 5
+d107 8
+a114 2
+      CALL    lhsbc2(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,(ABS(KAN).EQ.4))
+      CALL    lhsbc0(A,x_array(i_x+1),DSTAK(LVLIST),
+d116 7
+a122 1
+      call VecRestoreArray(X,x_array,i_x,ifail)
+a126 7
+C     Final assembly
+C
+      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+C
+@
+
+
+1.13
+log
+@Y-simmetry bcs implemented
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.12 2004/02/27 15:46:46 abonfi Exp abonfi $
+d21 3
+a23 1
+      PetscScalar      x_array(1)
+a24 1
+      PetscOffset i_x
+d30 1
+d55 2
+a56 2
+      CALL MatZeroRows(A,SupersonicVariables,ONE,IFAIL)
+      CALL MatZeroRows(A,NoSlipVelocities,ONE,IFAIL)
+d58 2
+a59 2
+         CALL MatZeroRows(A,NoSlipNodes,ONE,IFAIL)
+         CALL MatZeroRows(A,FreestreamTurbulence,ONE,IFAIL)
+d64 3
+a66 3
+C     CALL MatZeroRows(A,XSymmetry,ONE,IFAIL)
+      CALL MatZeroRows(A,YSymmetry,ONE,IFAIL)
+C     CALL MatZeroRows(A,ZSymmetry,ONE,IFAIL)
+d71 1
+a71 1
+          CALL MatZeroRows(A,Isothermal,ONE,IFAIL)
+d82 2
+a83 2
+          CALL MatZeroRows(A,CnstPressure,ONE,IFAIL)
+          CALL MatZeroRows(A,Internal_inflow,ONE,IFAIL)
+d104 1
+a104 1
+#if 0
+@
+
+
+1.12
+log
+@re-implemented isothermal wall boundary conditions
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.11 2002/10/25 06:02:17 abonfi Exp aldo $
+d60 6
+@
+
+
+1.11
+log
+@re-implemented strong bcs for inlet/outlet
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.10 2002/09/14 08:53:39 abonfi Exp abonfi $
+d60 11
+a75 1
+          CALL MatZeroRows(A,Isothermal,ONE,IFAIL)
+a78 2
+          IF(IADIA.NE.0)
+     &CALL Isothwall(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,(ABS(KAN).EQ.4))
+@
+
+
+1.10
+log
+@add support for coupled solution strategy
+for RANS
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.9 2002/02/19 09:19:00 abonfi Exp abonfi $
+d40 1
+d44 1
+d59 11
+a69 10
+#if 0
+      CALL MatZeroRows(A,CnstPressure,ONE,IFAIL)
+      CALL MatZeroRows(A,Internal_inflow,ONE,IFAIL)
+      CALL MatZeroRows(A,Isothermal,ONE,IFAIL)
+#endif
+C
+#if 0
+      call VecGetOwnerShipRange(x,ibgn,iend,ifail)
+      call VecGetArray(x,x_array,i_x,ifail)
+      IF(IADIA.NE.0)
+d72 1
+a72 1
+      CALL    lhsbc0(A,x_array(i_x+1),DSTAK(LPTOT),
+d75 1
+a75 1
+#endif
+@
+
+
+1.9
+log
+@changed Scalar into PetscScalar to comply with PETSc 2.1.1
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.8 2001/10/08 15:38:25 abonfi Exp abonfi $
+d53 4
+@
+
+
+1.8
+log
+@changed PLog into PetscLog to comply with PETSC 2.1.0
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.7 2001/07/19 09:55:54 abonfi Exp abonfi $
+d21 1
+a21 1
+      Scalar      x_array(1)
+@
+
+
+1.7
+log
+@changes made necessary when inflow/outflow boundary conditions have
+been changed as of version 0.10.13
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.6 2001/05/24 10:24:09 abonfi Exp abonfi $
+d20 1
+a20 1
+      PLogDouble telapsed,tbeg,tend
+@
+
+
+1.6
+log
+@allows specifying an inlet profile
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.5 2000/11/15 09:15:09 aldo Exp abonfi $
+a39 1
+caldo INCLUDE 'implicit.h'
+a40 1
+caldo INCLUDE 'verbose.com'
+d53 2
+a55 1
+      CALL MatZeroRows(A,CnstPressure,ONE,IFAIL)
+d57 1
+d59 1
+d68 1
+@
+
+
+1.5
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.4 2000/10/26 15:13:28 aldo Exp aldo $
+d31 2
+d40 1
+a40 1
+      INCLUDE 'implicit.h'
+d42 1
+a42 1
+      INCLUDE 'verbose.com'
+d44 1
+d64 2
+a65 1
+      CALL    lhsbc0(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,(ABS(KAN).EQ.4))
+@
+
+
+1.4
+log
+@add some debugging stuff
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.3 2000/10/20 09:45:10 aldo Exp aldo $
+a41 1
+      INCLUDE 'IO'
+@
+
+
+1.3
+log
+@changed to comply to PETSc.2.0.29
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.2 2000/08/18 14:00:29 aldo Exp aldo $
+d22 1
+d24 5
+d61 2
+a62 2
+      CALL CnstPress(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,(ABS(KAN).EQ.4))
+      CALL    Inflow(A,x_array(i_x+1),IBGN,NDIM,NOFVAR,(ABS(KAN).EQ.4))
+d72 50
+@
+
+
+1.2
+log
+@minor changes
+@
+text
+@d9 1
+a9 1
+C     $Id: JacobianBoundaryConditions.F,v 1.1 2000/08/14 15:32:39 aldo Exp $
+d12 4
+a15 4
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/is.h"
+#include "include/finclude/ts.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d9 1
+a9 1
+C     $Id$
+d24 1
+a24 1
+      INTEGER IFAIL
+d38 2
+d51 1
+d54 3
+a56 3
+     &    CALL Isothwall(A,x_array(i_x+1),NDIM,NOFVAR,(ABS(KAN).EQ.4))
+          CALL CnstPress(A,x_array(i_x+1),NDIM,NOFVAR,(ABS(KAN).EQ.4))
+          CALL    Inflow(A,x_array(i_x+1),NDIM,NOFVAR,(ABS(KAN).EQ.4))
+d58 2
+@

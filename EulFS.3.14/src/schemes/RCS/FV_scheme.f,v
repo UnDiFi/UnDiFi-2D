@@ -1,0 +1,355 @@
+head	1.6;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.6
+	release3_13_0:1.6
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.6
+	release3_4_4:1.6
+	release3_4_3:1.6
+	release3_4_2:1.6
+	release3_4_1:1.5
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.6
+date	2013.08.22.15.10.57;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.06.11.09.03.03;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2003.12.08.16.11.38;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2003.12.08.15.44.03;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2003.12.08.15.08.54;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@FS version of the scalar FV scheme 1995(1996) VKI version
+@
+
+
+1.6
+log
+@Improved Doxygen documentation
+@
+text
+@!> \par Purpose
+!>
+!> This routine computes the scalar version of the Finite Volume (FV) scheme on one 
+!> triangle (2D) or tetrahedron (3D)
+!>
+!> @@param[in] IELEM the current simplicial element
+!> @@param[in] VCN the NDIM cartesian component of the inward face normal to all NOFVERT vertices, scaled by its measure
+!> @@param[in] ADVECTION the NDIM cartesian component of the advection speed
+!> @@param[out] CELRES the elemental residual
+!> @@param[in] SOURCE the volume integral of the elemental source term
+!> @@param[in] Q the NOFVERT values of the dependent variable
+!> @@param[in,out] DT elemental contribution to the (inverse of the) time step
+!> @@param[out] NODRES the signals sent to each of the NOFVERT vertices
+!> @@param[out] BETA the distribution matrices
+!> @@param[out] STIFC the elemental contribution to the implicit matrix (computed only if MATRIX_ASSEMBLY is true)
+!> @@param[in] NDIM is the dimension of the space
+!> @@param[out] NOFVERT is number of vertices of the simplicial elements (= NDIM+1)
+!> @@param[in] MATRIX_ASSEMBLY when set == .TRUE. the STIFC matrix will be assembled
+!>
+      SUBROUTINE FV_scheme(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     &                     NODRES,BETA,STIFC,NDIM,NOFVERT,
+     &                     MATRIX_ASSEMBLY)
+C
+C     $Id: FV_scheme.f,v 1.5 2013/01/24 07:46:33 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C
+      include 'paramt.h'
+      include 'constants.h'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER IELEM,NDIM,NOFVERT
+      DOUBLE PRECISION CELRES,SOURCE
+      LOGICAL MATRIX_ASSEMBLY
+C
+C     .. Array Arguments ..
+C
+      DOUBLE PRECISION VCN(NDIM,NOFVERT),ADVECTION(NDIM),DT(NOFVERT),
+     &NODRES(NOFVERT),BETA(NOFVERT),STIFC(NOFVERT,NOFVERT),Q(NOFVERT)
+C
+C     .. Local Scalars ..
+C
+      INTEGER INODE,IVERT,IVAR,I,J,Ni,Nj
+      DOUBLE PRECISION EdgeRes,dK,DENOM
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION K(MAXNOFVERT)
+C
+C     .. External Functions ..
+C
+      DOUBLE PRECISION DDOT
+      EXTERNAL         DDOT
+C
+C     .. Intrinsic Functions ..
+C
+      INTRINSIC DBLE
+C
+C     .. Executable Statements ..
+C
+      CELRES = ZERO  ! residual = - fluctuation
+      DENOM = ONE/REAL(NOFVERT)
+C
+      IF(MATRIX_ASSEMBLY)CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+C
+      DO 10 IVERT = 1 , NOFVERT
+c
+c Dotting advection speed with normal
+c
+        K(IVERT) = DDOT( NDIM , VCN(1,IVERT) , 1 , ADVECTION , 1 ) 
+     &  / REAL(NDIM)
+C
+   10 CONTINUE
+C
+C     .. Loop over the edges of the element ..
+C
+      DO 15 I = 1 , NOFVERT
+        DO 15 J = I+1 , NOFVERT
+C
+c Dotting advection speed with edge normal
+c
+          dK = K(J) - K(I)
+C
+C here we compute \phi_{ji} = (k_j-k_i)^+ (u_j-u_i)
+C
+          EdgeRes = dK * ( Q(J) - Q(I) ) * DENOM
+c
+          CELRES = CELRES + EdgeRes
+c
+          IF( dK .GT. ZERO )THEN
+            DT(J) = DT(J) + dK*DENOM
+            NODRES(J) = NODRES(J) - EdgeRes
+            IF(MATRIX_ASSEMBLY)STIFC(J,I) = STIFC(J,I) + dK*DENOM
+          ELSE
+            DT(I) = DT(I) - dK*DENOM
+            NODRES(I) = NODRES(I) - EdgeRes
+            IF(MATRIX_ASSEMBLY)STIFC(I,J) = STIFC(I,J) - dK*DENOM
+          ENDIF
+C
+C
+   15 CONTINUE ! End loop over the edges
+C
+      IF(MATRIX_ASSEMBLY)THEN
+        DO 7 I = 1, NOFVERT
+           DO 9 J = 1,NOFVERT
+              IF(J.EQ.I)GOTO 9
+              STIFC(I,I) = STIFC(I,I) - STIFC(I,J)
+    9      CONTINUE
+    7   CONTINUE
+      ENDIF
+C
+      RETURN
+      END
+C
+@
+
+
+1.5
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@d1 19
+a19 1
+!> \copydetails LDA_SCHEME()
+d24 1
+a24 1
+C     $Id: FV_scheme.f,v 1.4 2009/06/11 09:03:03 abonfi Exp abonfi $
+a27 2
+!> This routine computes the Finite Volume scheme on one 
+!> triangle (2D) or tetrahedron (3D)
+@
+
+
+1.4
+log
+@added BETA among the arguments of the call
+@
+text
+@d1 4
+a4 2
+      SUBROUTINE FV_scheme(IELEM,VCN,ADVECTION,RESIDUAL,
+     1SOURCE,Q,DT,NODRES,BETA,STIFC,NDIM,NOFVERT,TIMEIMPL)
+d6 1
+a6 1
+C     $Id: FV_scheme.f,v 1.3 2003/12/08 16:11:38 aldo Exp $
+d10 2
+a11 2
+C This routine computes the Finite Volume scheme on one 
+C triangle (2D) or tetrahedron (3D)
+d14 1
+a14 1
+      include 'constants'
+d19 2
+a20 1
+      DOUBLE PRECISION RESIDUAL,SOURCE
+d24 2
+a25 2
+      DOUBLE PRECISION VCN(NDIM,NOFVERT),ADVECTION(1),DT(NOFVERT),
+     +NODRES(NOFVERT),BETA(NOFVERT),STIFC(NOFVERT,NOFVERT),Q(NOFVERT)
+a30 1
+      LOGICAL TIMEIMPL
+d34 1
+a34 1
+      DOUBLE PRECISION K(4)
+d47 1
+a47 1
+      RESIDUAL = ZERO  ! residual = - fluctuation
+d50 1
+a50 1
+      IF(TIMEIMPL)CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+d74 1
+a74 1
+          RESIDUAL = RESIDUAL + EdgeRes
+d79 1
+a79 1
+            IF(TIMEIMPL)STIFC(J,I) = STIFC(J,I) + dK*DENOM
+d83 1
+a83 1
+            IF(TIMEIMPL)STIFC(I,J) = STIFC(I,J) - dK*DENOM
+d89 1
+a89 1
+      IF(TIMEIMPL)THEN
+@
+
+
+1.3
+log
+@fix problem with Picard iteration: wasn't computing
+the cii coefficients
+@
+text
+@d2 1
+a2 1
+     1SOURCE,Q,DT,NODRES,STIFC,NDIM,NOFVERT,TIMEIMPL)
+d4 1
+a4 1
+C     $Id: FV_scheme.f,v 1.2 2003/12/08 15:44:03 aldo Exp aldo $
+d22 1
+a22 1
+     +NODRES(NOFVERT),STIFC(NOFVERT,NOFVERT),Q(NOFVERT)
+@
+
+
+1.2
+log
+@2003 version
+@
+text
+@d4 1
+a4 1
+C     $Id:$
+d48 2
+d68 2
+a74 1
+c           INODE = Nj
+a78 1
+c           INODE = Ni
+d87 9
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 4
+a4 2
+      SUBROUTINE FV_scheme(KWAVE , IELEM , ADVECTION , RESIDUAL ,
+     1SOURCE , DTLIN , DU )
+d11 2
+a12 6
+      include 'paramt'
+      include 'common8/constants'
+      include 'common8/cell'
+      include 'common8/three'
+      include 'common8/int_flags'
+      include 'common8/dim_flags'
+d16 2
+a17 2
+      INTEGER	IELEM,KWAVE
+      DOUBLE PRECISION	RESIDUAL,SOURCE
+d21 2
+a22 1
+      DOUBLE PRECISION ADVECTION(1),DTLIN(1),DU(5,1)
+d27 2
+a28 1
+      DOUBLE PRECISION EdgeRes,dK
+d41 1
+a41 1
+      INTRINSIC	DBLE
+d46 1
+d52 2
+a53 1
+        K(IVERT) = DDOT( DIM , VCN(1,IVERT) , 1 , ADVECTION , 1 ) / ADIM
+a54 5
+        INODE = ICN(IVERT)
+*       DTLIN(INODE) = DTLIN(INODE) + DMAX1(ZERO,K(IVERT))
+c
+c       RESIDUAL = RESIDUAL + Q(IVERT) * K(IVERT)
+c
+d57 1
+a57 1
+C	.. Loop over the edges of the element ..
+a60 2
+          Ni = ICN(I)
+          Nj = ICN(J)
+d66 1
+a66 1
+          EdgeRes = dK * ( Q(J) - Q(I) ) / ANOFVERT
+d71 4
+a74 2
+            INODE = Nj
+            DTLIN(INODE) = DTLIN(INODE) + dK/ANOFVERT
+d76 4
+a79 2
+            INODE = Ni
+            DTLIN(INODE) = DTLIN(INODE) - dK/ANOFVERT
+a81 2
+          DO 22 IVAR = 1 , NOFVAR
+   22       DU(IVAR,INODE) = DU(IVAR,INODE) - R(IVAR,KWAVE) * EdgeRes
+@

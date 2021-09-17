@@ -1,0 +1,87 @@
+head	1.1;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Function for the Spalart-Allmaras model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)tfv2.f      1.0.0.1   95/09/21        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tft2.f
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+       REAL*8 FUNCTION TFT2(TCHI)
+*  ==============================================================
+*
+*
+*      FILENAME: tft2.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      turbulence model function
+*      (Spalart & Allmaras model: 2D mgship version)
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : April 97
+*
+*  ==============================================================
+
+c2345678
+      INCLUDE 'turb.com'
+      DOUBLE PRECISION TCHI
+      TFT2=TCT3*EXP(-TCT4*TCHI**2)
+      RETURN
+      END
+@

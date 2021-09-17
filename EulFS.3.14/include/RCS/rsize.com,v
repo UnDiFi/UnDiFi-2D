@@ -1,0 +1,50 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2000.08.15.11.53.46;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.09.02.08.15.04;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@calling argument for ISTKGT (PORT routine)
+@
+
+
+1.2
+log
+@minor changes
+@
+text
+@      INTEGER IREAL
+CCC#ifdef PARCH_t3e 
+CCCPARAMETER(IREAL=3)
+CCC#else
+      PARAMETER(IREAL=4)
+CCC#endif
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 5
+a6 5
+#ifdef PARCH_t3e 
+      PARAMETER(IREAL = 2)
+#else
+      PARAMETER(IREAL = 4)
+#endif
+@

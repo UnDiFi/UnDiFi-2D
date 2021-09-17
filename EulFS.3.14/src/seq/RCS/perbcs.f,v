@@ -1,0 +1,81 @@
+head	1.1;
+access
+	abonfi;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2000.12.08.12.49.54;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@read mapping for periodic nodes
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE PERBCS(NPNOD,MAP,IXDRS)
+C
+C     This routine reads the meshpoints, mesh connectivity
+C     and boundary structure ..
+C
+C     $Id$
+C
+      IMPLICIT NONE
+C
+      INCLUDE'verbose.com'
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+      INCLUDE'io.com'
+C
+C MAP -- Integer MAP(1:NPNOD)
+C
+C     maps the NPNOD periodic nodes onto the interior and ghost
+C     nodes; 1<=MAP(1:NPNOD)<=NPOIN+NGHOST
+C
+C     .. Scalar Arguments ..
+      INTEGER NPNOD,IXDRS
+C     ..
+C     .. Array Arguments ..
+      INTEGER MAP(NPNOD)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IFAIL
+C     ..
+C     .. External Subroutines ..
+      INTEGER IXDRCLOSE,IXDRIMAT
+      EXTERNAL IXDRCLOSE,IXDRIMAT
+      EXTERNAL X04CAF,X04EAF
+C     ..
+C     .. Data statements ..
+      DATA IFAIL/0/
+C     ..
+C
+C     Reading periodic nodes ..
+C
+      WRITE (NOUT,FMT=2000) MY_PE,NPNOD
+
+ 2000 FORMAT (/,/,' PERIODIC NODES',10X,'ON PROCESSOR ',I3,/,1X,
+     +       15 ('='),/,10X,
+     +       'NUMBER OF PERIODIC NODES   (NPOIN)=',I6,/)
+C
+C
+      IFAIL = IXDRIMAT(IXDRS,NPNOD,MAP)
+caldo CALL X04EAF('General',' ',1,NPNOD,
+caldo+            MAP,1,'Periodic nodes',IFAIL)
+C
+      IFAIL = IXDRCLOSE(IXDRS)
+C
+      RETURN
+
+      END
+@

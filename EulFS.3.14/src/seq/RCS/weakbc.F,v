@@ -1,0 +1,2418 @@
+head	1.38;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.38
+	release3_13_0:1.38
+	release3_12_0:1.38
+	release3_11_0:1.38
+	release3_10_0:1.38
+	release3_8_0:1.37
+	release3_7_1:1.36
+	release3_7_0:1.35
+	release3_4_5:1.34
+	release3_4_4:1.34
+	release3_4_3:1.32
+	release3_4_2:1.31
+	release3_4_1:1.31
+	release3_4_0:1.30
+	release3_3_5:1.30
+	release3_3_4:1.29
+	release3_3_3:1.29
+	release3_3_2:1.28
+	release3_3_1:1.28
+	release3_3_0:1.26;
+locks
+	abonfi:1.38; strict;
+
+
+1.38
+date	2020.04.23.17.28.17;	author abonfi;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2020.04.23.09.51.45;	author abonfi;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2020.03.28.09.42.56;	author abonfi;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2014.04.18.09.22.06;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2014.03.21.12.15.38;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2013.09.17.09.57.31;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2013.06.07.15.30.07;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2013.05.03.10.53.05;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2013.02.06.07.57.38;	author tesistim;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2013.01.29.08.47.05;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2013.01.26.11.48.03;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2012.12.20.11.12.17;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2012.04.11.10.42.23;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2012.04.03.12.10.15;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2011.09.16.07.13.37;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2011.04.14.10.16.16;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2009.06.11.08.23.22;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2008.02.22.11.04.15;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2007.11.14.10.14.35;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2007.11.14.09.39.34;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2005.09.09.08.47.41;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2004.08.23.20.04.17;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2002.10.25.06.03.39;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2002.09.14.09.04.14;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.03.24.15.14.05;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	99.12.27.09.21.45;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.12.09.10.14.00;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.12.06.12.12.34;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.12.05.18.53.53;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.12.04.10.36.42;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	99.09.03.11.12.10;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.08.19.16.01.56;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.02.17.17.06.28;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.01.18.18.54.28;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.12.23.11.53.44;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Weak wall boundary conditions
+@
+
+
+1.38
+log
+@bug fixed: DINIT had to be DCOPY
+@
+text
+@!> @@param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+!> @@param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+!> @@param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+!> @@param[in] XYZDOT the cartesian components of the grid velocity
+!> @@param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+!> @@param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+!> @@param[in,out] STIFEL elemental stiffness matrix
+!> @@param[in,out] NODRES 
+!> @@param[in,out] NEWRES 
+!> @@param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+!> @@param[out] VCDZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+!> @@param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+!> @@param[in] NELEM is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+!> @@param[in] NPOIN nof interior nodes in the mesh
+!> @@param[in] NGHOST nof ghost nodes in the mesh
+!> @@param[in] NPNOD nof periodic nodes in the mesh
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NOFVERT number of vertices per element (=NDIM+1, since only triangles or tetrahedra are allowed)
+!> @@param[in] NOFVAR number of variables (degrees of freedom) in each meshpoint
+!> @@param[in] IBNDFAC
+!> @@param[in] NBFAC number of bndry faces
+!> @@param[in,out] PetscVecDT Petsc Vec where time-step is stored
+!> @@param[in,out] PetscVecRHS Petsc Vec where the nodal residual is stored
+!> @@param[in,out] PetscMatA Petsc Mat where the implicit matrix is stored
+!> @@param[in] LFLAG
+      SUBROUTINE WEAKBC(ICELNOD,ICELFAC,VFACNOR,XYZDOT,VOL,ZROE,STIFEL,
+     +                  NODRES,NEWRES,VCZ,VCDZ,VCB,NELEM,NPOIN,NGHOST,
+     +                  NPNOD,NDIM,NOFVERT,NOFVAR,IBNDFAC,NBFAC,
+     4                  PetscVecDT,PetscVecRHS,PetscMatA,LFLAG)
+ 
+C
+C#define PRINT
+C#define DEBUG
+C     weakly imposes boundary conditions:
+C     1) slip-free (inviscid) wall boundary condition
+C     2) prescribed flux
+C
+C     $Id: weakbc.F,v 1.37 2020/04/23 09:51:45 abonfi Exp abonfi $
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec
+      use petscmat
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'implicit.h'
+C
+C     PETSc stuff
+C
+      Vec PetscVecRHS,PetscVecDT
+      Mat PetscMatA
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+C
+      INCLUDE 'io.com'
+      INCLUDE 'dofs.com'
+      INCLUDE 'bnd.com'
+      INCLUDE 'chorin.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'newtoneps.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'time.com'
+      INCLUDE 'three.com'
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+#ifdef DEBUG
+      COMMON/MYBUG/ICLR
+#endif
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+      INTEGER NELEM,NPOIN,NGHOST,NPNOD,NBFAC,NDIM,NOFVERT,NOFVAR
+      INTEGER I,J,IELEM,LOC,IFAIL,IPOS,LAST,IADDR,NM1,
+     +IBC,IBFAC,LOCA,LOCB,K,L,N,LWORK1,LWORK2,ICLR
+C
+C
+      LOGICAL LFLAG(*)
+      LOGICAL COMPRESSIBLE,PLASMA
+      INTEGER IDX
+C
+      INTEGER ICELNOD(NOFVERT,NELEM),ICELFAC(NOFVERT,NELEM),
+     2IBNDFAC(3,NBFAC)
+      DOUBLE PRECISION VFACNOR(NDIM,*),XYZDOT(NDIM,*),VOL(NELEM),
+     2ZROE(NOFVAR,*),STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT), 
+     3NODRES(NOFVAR,NOFVERT),NEWRES(NOFVAR,NOFVERT),VCZ(NOFVAR,NOFVERT),
+     4VCDZ(NOFVAR,NOFVERT),VCB(NDIM,NOFVERT)
+C
+C
+C
+C
+C     NODRES(1:NOFVAR,1:NOFVERT) is used to accumulate the
+C         nodal residual in conserved variables and scatter
+C         it to the PetscVecRHS PETSc vector
+C     NEWRES(1:NOFVAR,1:NOFVERT) same as NODRES, but for the
+C         perturbed dependent variable (only Newton iteration)
+C     TSTEP(1:NOFVERT) is used to accumulate the timestep
+C         and then scatter it to the PETSc vector PetscVecDT
+C
+C
+      DOUBLE PRECISION VCN(3*VMAX),TSTEP,
+     &DUMMY(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR)
+      INTEGER ICN(VMAX)
+C
+      INTEGER NERR,IOPT
+      CHARACTER*72 ERRMSG
+      PARAMETER(NERR = 5, IOPT = 1)
+C
+      DOUBLE PRECISION VOLUME(MAXTIMLEVS+1),EPS
+      LOGICAL LWK
+C
+      INTEGER  IVAR,JVAR,IVERT,JVERT,IV,JV,NP
+      INTEGER  ICYCL,ISTKGT
+      EXTERNAL ICYCL,ISTKGT
+      DOUBLE PRECISION DNRM2
+      EXTERNAL DNRM2,PRESSI,PRESSC,PRESS4Ar
+C
+      IDX(I,J,N) = (I-1)*N + J
+C
+      NP = NPOIN + NGHOST + NPNOD
+      NM1 = NOFVERT-1
+C
+      COMPRESSIBLE = LFLAG(1)
+      PLASMA = LFLAG(2)
+C
+      LWORK1 = ISTKGT((NOFVERT*NOFVAR)**2,4)
+      LWORK2 = ISTKGT((NOFVERT*NOFVAR)**2,4)
+C
+!      CALL R8Mat_Print('General',' ',NOFVAR,NBFLX(2),DSTAK(LBNDFLX(2)),
+!     +            NOFVAR,'bndry pointer ',IFAIL)
+C
+      DO 100 IBFAC = 1,NBFAC
+          ICLR = IBNDFAC(3,IBFAC)
+          IBC = ICOLOR(ICLR,1) ! colours for the mean flow equations
+          IF( .NOT.((IBC .EQ.  BC_TYPE_SLIP_FREE) .OR.
+     1              (IBC .EQ.  BC_TYPE_PRESCRIBED_FLUX)))GOTO 100
+          IVERT = IBNDFAC(2,IBFAC)
+          IELEM = IBNDFAC(1,IBFAC)
+C
+C
+          CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+     +                VFACNOR, XYZDOT, NDIM, NOFVERT, NOFVAR, NP, ICN,
+     3                VCZ, VCN, VCB, VOLUME)
+C
+C 
+      INCLUDE 'ptest.f'
+C
+          CALL LINEARIZE(-IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,
+     +    NOFVAR,VOLUME(1))
+C
+          IF(COMPRESSIBLE)CALL PARM2PRIM(NDIM,IELEM)
+          IF(PLASMA)CALL PARM2PRIM4Ar(NDIM,IELEM) !!< da cambiare
+C
+C     Put the vertex opposite the boundary face in the last position
+C
+          IF(IVERT.NE.NOFVERT)THEN
+              CALL DSWAP(NOFVAR,VCZ(1,IVERT),1,VCZ(1,NOFVERT),1)
+              LOCA = IDX(IVERT,1,NDIM)
+              LOCB = IDX(NOFVERT,1,NDIM)
+              CALL DSWAP(NDIM,VCN(LOCA),1,VCN(LOCB),1)
+              IF(LALE)CALL DSWAP(NDIM,VCB(1,IVERT),1,VCB(1,NOFVERT),1)
+              LOCA = ICN(NOFVERT)
+              ICN(NOFVERT) = ICN(IVERT)
+              ICN(IVERT) = LOCA
+              LWK = PFLAG(NOFVERT)
+              PFLAG(NOFVERT) = PFLAG(IVERT)
+              PFLAG(IVERT) = LWK
+          ENDIF
+C
+C     normal to the boundary
+C
+          LOC = (NM1)*NDIM+1
+C
+          CALL DINIT((NOFVAR*NOFVERT)**2,ZERO,STIFEL,1)
+C
+          IF( IBC. EQ. BC_TYPE_PRESCRIBED_FLUX)THEN 
+C
+C         retrieve the prescribed flux
+C
+              CALL BINSRC(IBFAC,ISTAK(LBNDFLX(2)),NBFLX(2),IPOS,LAST)
+              IF(IPOS.EQ.0)THEN
+                  WRITE(NOUT,*)'Cannot find matching bndry face in weakb
+     &c; iface= ',IBFAC
+                  CALL I4Mat_Print('General',' ',3,NBFAC,ISTAK(LBNDFAC),
+     +            3,'bndry pointer ',IFAIL)
+                  WRITE(6,*)(ISTAK(I),I=LBNDFLX(2),
+     &                                  LBNDFLX(2)+NBFLX(2)-1)
+                  CALL EXIT(IPOS)
+              ELSE
+                  IF(.NOT.(IPOS.GT.0.AND.IPOS.LE.NBFLX(2)))THEN
+                      write(6,*)ipos
+                  ENDIF
+              ENDIF ! ipos
+              IADDR = (IPOS-1)*NOFVAR + LBNDFLX(1) ! should be nofeqn ?!?!
+!             write(6,*)ibfac,' bndry face is ',ipos
+!             write(6,*)(DSTAK(ipos),ipos=iaddr,iaddr+nofvar-1)
+              IF(COMPRESSIBLE)THEN
+                  CALL FLXB4(NDIM,NOFVAR,NOFVERT,STIFEL,DSTAK(IADDR),
+     +                       DSTAK(LWORK2),VCZ,VCB,VCN(LOC),NODRES,
+     &                       PICARD)
+              ELSE
+                  STOP 'Unimplemented feature BC_TYPE_PRESCRIBED_FLUX in
+     &subr. weakbc'
+              ENDIF ! on COMPRESSIBLE
+          ELSE ! slip-free boundary condition
+              IF(COMPRESSIBLE)THEN
+                  CALL FLXW4(NDIM,NOFVAR,NOFVERT,STIFEL,DSTAK(LWORK1),
+     +                       DSTAK(LWORK2),VCZ,VCB,VCN(LOC),NODRES,
+     &                       PICARD)
+                  IF(NDIM.EQ.2)THEN
+                      CALL PFORCESimpson(ICLR,NOFVERT,VCN,NDIM,VCZ,
+     +                                   NOFVAR,NOFVERT,PRESSC)
+                  ELSE
+                      CALL PFORCE(ICLR,NOFVERT,VCN,NDIM,VCZ,NOFVAR,
+     +                            NOFVERT,PRESSC)
+                  ENDIF 
+              ELSEIF(PLASMA)THEN
+                  CALL FLXW44Ar(NDIM,NOFVAR,NOFVERT,STIFEL,
+     +                          DSTAK(LWORK1),DSTAK(LWORK2),VCZ,
+     +                          VCN(LOC),NODRES,PICARD)
+                  IF(NDIM.EQ.2)THEN
+                      CALL PFORCESimpson(ICLR,NOFVERT,VCN,NDIM,VCZ,
+     +                                   NOFVAR,NOFVERT,PRESS4Ar)
+                  ELSE
+                      CALL PFORCE(ICLR,NOFVERT,VCN,NDIM,VCZ,NOFVAR,
+     +                            NOFVERT,PRESS4Ar)
+                  ENDIF 
+              ELSE ! Incomprimibile
+                  CALL FLXW2(NDIM,NOFVAR,NOFVERT,STIFEL,DSTAK(LWORK1),
+     +                       DSTAK(LWORK2),VCZ,VCB,VCN(LOC),NODRES,
+     &                       PICARD)
+                  CALL PFORCE(ICLR,NOFVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,
+     +                        PRESSI)
+              ENDIF ! on COMPRESSIBLE
+          ENDIF ! on IBC
+C
+#if 0
+          do k=1,nofvert-1
+              do l=1,nofvert-1
+                  CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,STIFEL
+     +            (1,1,k,l),NOFVAR,'Picard matrix for wall b.c. ',IFAIL)
+              enddo
+          enddo
+#endif
+C
+          IF(COMPRESSIBLE.OR.PLASMA)THEN
+              TSTEP = ABAR * DNRM2(NDIM,VCN(LOC),1) ! should be sqrt(dnrm2)
+          ELSE
+              TSTEP = BETA * DNRM2(NDIM,VCN(LOC),1)
+          ENDIF
+C
+          IF(.NOT.TIMEIMPL)GOTO 50 ! Explicit timestepping
+          IF(NEWTON)THEN
+C 
+C     Compute Jacobian by finite differences
+C
+          DO 15 IVERT = 1, NM1
+              DO 25 IVAR = 1, NOFVAR
+                  CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+C
+                  IF(COMPRESSIBLE)THEN
+                      CALL PARM_TO_CONS( VCZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                   .FALSE.,IFAIL)
+                      CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                   .FALSE.,IFAIL)
+                  ELSEIF(PLASMA)THEN ! modificare qui
+                      CALL PARM_TO_CONS4Ar( VCZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                   .FALSE.,IFAIL)
+                      CALL PARM_TO_CONS4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                   .FALSE.,IFAIL)
+                  ENDIF
+C
+                  EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),ONE)*
+     +            SIGN(ONE,VCZ(IVAR,IVERT))
+                  VCDZ(IVAR,IVERT) = VCZ(IVAR,IVERT) + EPS
+C
+                  IF(COMPRESSIBLE)THEN
+                      CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                  .FALSE.,IFAIL)
+                      IF(IFAIL.NE.0)THEN
+                         WRITE(ERRMSG(1:64),FMT=105)'WEAKBC____',
+     &                                              MY_PE,"(1)"
+                         CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                      ENDIF   ! ifail
+                      CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                  .FALSE.,IFAIL)
+                      IF(IFAIL.NE.0)THEN
+                         WRITE(ERRMSG(1:64),FMT=105)'WEAKBC____',
+     &                                              MY_PE,"(2)"
+                         CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                      ENDIF   ! ifail
+                  ELSEIF(PLASMA)THEN ! modificare qui
+                      CALL CONS_TO_PARM4Ar(VCZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                     .FALSE.,IFAIL)
+                      IF(IFAIL.NE.0)THEN
+                         WRITE(ERRMSG(1:64),FMT=105)'WEAKBC____',
+     &                                              MY_PE,"(1)"
+                         CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+                      ENDIF   ! ifail
+                      CALL CONS_TO_PARM4Ar(VCDZ(1,IVERT),NDIM,NOFVAR,1,
+     &                                     .FALSE.,IFAIL)
+                      IF(IFAIL.NE.0)THEN
+                         WRITE(ERRMSG(1:64),FMT=105)'WEAKBC____',
+     &                                              MY_PE,"(2)"
+                         CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+ 
+                      ENDIF
+                  ENDIF
+C
+                  IF( IBC. EQ. BC_TYPE_PRESCRIBED_FLUX)THEN 
+                      IF(COMPRESSIBLE)THEN
+                          CALL FLXB4(NDIM,NOFVAR,NOFVERT,DUMMY,
+     2                               DSTAK(IADDR),DSTAK(LWORK2),VCDZ,
+     3                               VCN(LOC),NEWRES,.FALSE.)
+                      ELSE
+                         STOP ' Unimplemented feature'
+                      ENDIF
+                  ELSE ! inviscid wall bndry conditions
+                      IF(COMPRESSIBLE)THEN
+                          CALL FLXW4(NDIM,NOFVAR,NOFVERT,DUMMY,
+     2                               DSTAK(LWORK1),DSTAK(LWORK2),VCDZ,
+     3                               VCB,VCN(LOC),NEWRES,.FALSE.)
+                      ELSEIF(PLASMA)THEN
+                          CALL FLXW44Ar(NDIM,NOFVAR,NOFVERT,DUMMY, 
+     2                               DSTAK(LWORK1),DSTAK(LWORK2),VCDZ, 
+     3                               VCN(LOC),NEWRES,.FALSE.) ! modifica
+                      ELSE ! incomprimibile
+                          CALL FLXW2(NDIM,NOFVAR,NOFVERT,DUMMY,
+     2                               DSTAK(LWORK1),DSTAK(LWORK2),VCDZ,
+     3                               VCB,VCN(LOC),NEWRES,.FALSE.)
+                      ENDIF
+                  ENDIF
+#if 0
+                  CALL R8Mat_Print('General',' ',NOFVAR,NOFVert,nodres,
+     +            NOFVAR,'nodres for wall b.c. ',IFAIL)
+                  CALL R8Mat_Print('General',' ',NOFVAR,NOFVert,newres,
+     +            NOFVAR,'newres for wall b.c. ',IFAIL)
+#endif
+C
+                  DO JVAR = 1, NOFVAR
+                      DO JVERT = 1, NM1
+                          STIFEL(JVAR,IVAR,JVERT,IVERT) = -(NEWRES
+     +                    (JVAR,JVERT)-NODRES(JVAR,JVERT))/EPS
+                      ENDDO
+                  ENDDO
+C
+   25        CONTINUE
+   15     CONTINUE
+         ENDIF ! Newton
+C
+          IF( PERIODIC_MESH .AND. ANNULAR )
+     &    CALL ROTATECIJ(STIFEL,NOFVAR,NOFVERT,NM1,NM1)
+C
+C
+         N = NM1*NOFVAR
+         DO IV = 1, NM1
+            DO JV = 1, NM1
+               DO JVAR = 1, NOFVAR
+                  DO IVAR = 1, NOFVAR
+                     K = (IV-1)*NOFVAR+IVAR
+                     L = (JV-1)*NOFVAR+JVAR
+                     IADDR = (L-1)*N+K
+                     DUMMY(IADDR) = STIFEL(IVAR,JVAR,IV,JV)
+                  ENDDO ! IVAR
+               ENDDO ! JVAR
+#if 0
+               IF(IBC.EQ.IBC)THEN
+                  WRITE(6,*)IV,JV
+                  CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,
+     +            STIFEL(1,1,IV,JV),NOFVAR,'STIFEL ',ifail)
+               ENDIF
+#endif
+            ENDDO ! JV
+         ENDDO ! I
+C
+C     Add the element diffusion stiffness matrix to the global one
+C
+C     call MatSetValuesBlocked only once per boundary face
+C
+#ifdef MPI
+         CALL MatSetValuesBlockedLocal(PetscMatA,NM1,ICN,NM1,
+     +                     ICN,DUMMY,ADD_VALUES,IFAIL)
+#else
+         CALL MatSetValuesBlocked(PetscMatA,NM1,ICN,NM1,ICN,
+     +                     DUMMY,ADD_VALUES,IFAIL)
+#endif
+
+C
+   50     CONTINUE
+C
+      INCLUDE 'rotaterhs2.f'
+C
+C
+C     This ugly copy is needed because VecSetValuesBlocked only
+C     allows 1D arrays
+C
+          CALL DCOPY(NM1*NOFVAR,NODRES,1,DUMMY,1)
+          CALL VecSetValuesBlocked(PetscVecRHS,NM1,ICN,DUMMY,
+     +    ADD_VALUES, IFAIL)
+C
+C         insert the scalar time step into the PETSc vec
+C                                 |
+C                                 |
+C                                \|/
+          CALL DINIT(NM1*NOFVAR,TSTEP,DUMMY,1)
+          CALL VecSetValuesBlocked(PetscVecDT,NM1,ICN,DUMMY,
+     +       ADD_VALUES, IFAIL)
+C
+ 100  CONTINUE ! end loop over the boundary faces
+C
+C     release work arrays
+C
+      CALL ISTKRL(2)
+C
+      RETURN
+  105 FORMAT('CONS_TO_PARM failed when called from ',A10,' on PE # ',I4,
+     &1X,A3)
+      END
+C
+@
+
+
+1.37
+log
+@calls to MatSetValues and VecSetValues had to be modified
+following petsc release 3.8
+@
+text
+@d38 1
+a38 1
+C     $Id: weakbc.F,v 1.36 2020/03/28 09:42:56 abonfi Exp abonfi $
+d405 1
+a405 1
+          CALL DINIT(NM1*NOFVAR,NODRES,DUMMY,1)
+@
+
+
+1.36
+log
+@renamed a call
+@
+text
+@d1 25
+a33 3
+C
+      IMPLICIT NONE
+C
+d38 1
+a38 1
+C     $Id: weakbc.F,v 1.35 2016/11/10 11:25:13 abonfi Exp abonfi $
+a39 1
+#include "petsc/finclude/petscsys.h"
+d42 5
+a84 7
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+a98 4
+C     ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell
+C
+a99 2
+C     FACNOR(1:NDIM,1:NFACE)  cartesian components
+C                             of the NFACE faces/edges
+d260 2
+a261 2
+          IF(.NOT.TIMEIMPL)GOTO 50
+          IF(NEWTON)THEN!GOTO 1000
+d266 1
+a266 1
+              DO 15 IVAR = 1, NOFVAR
+d324 1
+a324 1
+                      STOP ' Unimplemented feature'
+d348 2
+a349 2
+                  DO 15 JVAR = 1, NOFVAR
+                      DO 15 JVERT = 1, NM1
+d352 2
+d355 1
+d357 1
+a357 1
+      ENDIF ! Newton
+d362 26
+a387 3
+          N=NM1
+          DO 37 K= 1,NM1
+              DO 39 L= 1,NM1
+d389 2
+a390 3
+                  CALL MatSetValuesBlockedLocal(PetscMatA,1,ICN(K),1,
+     +            ICN(L),STIFEL(1,1,K,L), ADD_VALUES,IFAIL)
+ 
+d392 2
+a393 3
+                  CALL MatSetValuesBlocked(PetscMatA,1,ICN(K),1,ICN(L),
+     +            STIFEL(1,1,K,L), ADD_VALUES,IFAIL)
+ 
+d395 1
+a395 8
+#if 0 
+                  write(6,*)k,l,icn(k),icn(k),icn(ivert)
+                  CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,STIFEL
+     +            (1,1,k,l),NOFVAR,'jacobian matrix for wall b.c. ',
+     +            IFAIL)
+#endif
+   39         CONTINUE
+   37     CONTINUE
+d401 6
+a406 1
+          CALL VecSetValuesBlocked(PetscVecRHS,NM1,ICN,NODRES,
+@
+
+
+1.35
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d16 1
+a16 1
+C     $Id: weakbc.F,v 1.34 2014/04/18 09:22:06 abonfi Exp abonfi $
+d124 1
+a124 1
+!      CALL X04CAF('General',' ',NOFVAR,NBFLX(2),DSTAK(LBNDFLX(2)),
+d179 1
+a179 1
+                  CALL X04EAF('General',' ',3,NBFAC,ISTAK(LBNDFAC),
+d235 1
+a235 1
+                  CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFEL
+d329 1
+a329 1
+                  CALL X04CAF('General',' ',NOFVAR,NOFVert,nodres,
+d331 1
+a331 1
+                  CALL X04CAF('General',' ',NOFVAR,NOFVert,newres,
+d360 1
+a360 1
+                  CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFEL
+@
+
+
+1.34
+log
+@uses included constants where needed
+@
+text
+@d16 1
+a16 1
+C     $Id: weakbc.F,v 1.33 2014/03/21 12:15:38 abonfi Exp abonfi $
+d18 3
+a20 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.33
+log
+@major bugfix occuring when doing ALE calculations
+@
+text
+@d16 1
+a16 1
+C     $Id: weakbc.F,v 1.32 2013/09/17 09:57:31 abonfi Exp abonfi $
+d268 2
+a269 2
+                  EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),1.d0)*
+     +            SIGN(1.d0,VCZ(IVAR,IVERT))
+d374 4
+a377 2
+C         insert time step into the PETSc vec
+C
+a378 2
+!         CALL X04CAF('General',' ',NOFVAR,NM1,DUMMY,
+!    +            NOFVAR,'timestep pointer ',IFAIL)
+@
+
+
+1.32
+log
+@VOLUME has become an array so that cell volumes at the previous
+time instants can be stored
+@
+text
+@d16 1
+a16 1
+C     $Id: weakbc.F,v 1.31 2013/06/07 15:30:07 abonfi Exp abonfi $
+d44 3
+d156 1
+@
+
+
+1.31
+log
+@the array ICOLOR included from bnd.com has changed
+@
+text
+@d16 1
+a16 1
+C     $Id: weakbc.F,v 1.30 2013/05/03 10:53:05 abonfi Exp abonfi $
+d101 1
+a101 1
+      DOUBLE PRECISION VOLUME,EPS
+d141 1
+a141 1
+     +    NOFVAR,VOLUME)
+@
+
+
+1.30
+log
+@changes needed to implement characteristic time stepping:
+a different time step is computed for each dof
+@
+text
+@d16 1
+a16 1
+C     $Id: weakbc.F,v 1.29 2013/02/06 07:57:38 tesistim Exp abonfi $
+d126 1
+a126 1
+          IBC = ICOLOR(ICLR)
+@
+
+
+1.29
+log
+@Insignificant changes
+@
+text
+@d12 3
+d16 1
+a16 1
+C     $Id: weakbc.F,v 1.28 2013/01/29 08:47:05 abonfi Exp tesistim $
+d33 1
+d53 1
+a53 1
+      INTEGER I,J,IELEM,LOC,IFAIL,IPOS,LAST,IADDR,
+d113 1
+d163 1
+a163 1
+          LOC = (NOFVERT-1)*NDIM+1
+d232 1
+a232 1
+     +            (1,1,k,l),NOFVAR,'picard matrix for wall b.c. ',IFAIL)
+d238 1
+a238 1
+              TSTEP = ABAR * DNRM2(NDIM,VCN(LOC),1)
+d248 1
+a248 1
+          DO 15 IVERT = 1, NOFVERT-1
+d254 1
+a254 1
+     &                 .FALSE.,IFAIL)
+d256 1
+a256 1
+     &                 .FALSE.,IFAIL)
+d259 1
+a259 1
+     &                 .FALSE.,IFAIL)
+d261 1
+a261 1
+     &                 .FALSE.,IFAIL)                    
+d270 1
+a270 1
+     &                  .FALSE.,IFAIL)
+d277 1
+a277 1
+     &                  .FALSE.,IFAIL)
+d285 1
+a285 1
+     &                  .FALSE.,IFAIL)
+d292 1
+a292 1
+     &                  .FALSE.,IFAIL)
+d309 1
+a309 1
+                  ELSE
+d332 1
+a332 1
+                      DO 15 JVERT = 1, NOFVERT-1
+d340 1
+a340 1
+     &    CALL ROTATECIJ(STIFEL,NOFVAR,NOFVERT,NOFVERT-1,NOFVERT-1)
+d342 3
+a344 3
+          N=NOFVERT-1
+          DO 37 K= 1,NOFVERT-1
+              DO 39 L= 1,NOFVERT-1
+d367 1
+a367 1
+          CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT-1,ICN,NODRES,
+d370 1
+a370 1
+C         put time step in the first entry
+d372 5
+a376 4
+          DO 30 K= 1,NOFVERT-1
+              CALL VecSetValue(PetscVecDT,ICN(K)*NOFVAR,TSTEP,
+     +        ADD_VALUES,IFAIL)
+   30     CONTINUE
+@
+
+
+1.28
+log
+@useless write statements have been removed
+@
+text
+@d13 1
+a13 2
+C     $Id: weakbc.F,v 1.27 2013/01/26 11:48:03 abonfi Exp abonfi $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/weakbc.F,v 1.9 1999/12/09 10:
+a104 2
+!     EXTERNAL INVWLL,INVWLLI,DNRM2,PRESSI,PRESSC
+!     EXTERNAL INVWLL4Ar
+a111 2
+!     write(6,*)'Compressible = ',LFLAG(1)
+!     write(6,*)'Plasma = ',LFLAG(2)
+d188 2
+a189 1
+                  STOP 'Unimplemented feature in subr. weakbc'
+d267 1
+a267 1
+                         WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',
+d274 1
+a274 1
+                         WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',
+d282 1
+a282 1
+                         WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',
+d289 1
+a289 1
+                         WRITE(ERRMSG(1:64),FMT=105)'GHOST_____',
+@
+
+
+1.27
+log
+@added support for an Argon plasma
+@
+text
+@d13 1
+a13 1
+C     $Id: weakbc.F,v 1.26 2012/06/14 14:07:03 tesistim Exp tesistim $
+d115 2
+a116 2
+      write(6,*)'Compressible = ',LFLAG(1)
+      write(6,*)'Plasma = ',LFLAG(2)
+@
+
+
+1.26
+log
+@added support for ALE calculations
+@
+text
+@d4 1
+a4 1
+     4                  PetscVecDT,PetscVecRHS,PetscMatA,COMPRESSIBLE)
+d13 1
+a13 1
+C     $Id: weakbc.F,v 1.25 2012/04/11 10:42:23 abonfi Exp abonfi $
+d27 1
+a27 1
+      INCLUDE 'constants'
+d61 2
+a62 1
+      LOGICAL COMPRESSIBLE
+a73 1
+C
+d90 2
+a91 1
+      DOUBLE PRECISION VCN(3*VMAX),TSTEP,DUMMY((NMAX*VMAX)**2)
+d105 3
+a107 1
+      EXTERNAL INVWLL,INVWLLI,DNRM2,PRESSI,PRESSC
+d113 5
+d121 2
+a122 2
+!     CALL X04CAF('General',' ',NOFVAR,NBFLX(2),DSTAK(LBNDFLX(2)),
+!    +            NOFVAR,'bndry pointer ',IFAIL)
+d144 1
+a166 2
+C         Prescribed flux (not really used, might be removed perhaps.......)
+C
+d179 1
+a179 1
+                  CALL EXIT(3)
+a182 1
+                      CALL EXIT(IPOS)
+a194 3
+C
+C         Inviscid wall boundary condition
+C
+d207 12
+a218 1
+              ELSE
+d236 1
+a236 1
+          IF(COMPRESSIBLE)THEN
+d256 5
+d282 16
+d313 5
+a317 1
+                      ELSE
+d353 1
+a353 1
+#if 0
+@
+
+
+1.25
+log
+@removed an argument in the call to LINEARIZE
+@
+text
+@d13 1
+a13 1
+C     $Id: weakbc.F,v 1.24 2012/04/03 12:10:15 abonfi Exp abonfi $
+d158 2
+d176 1
+d184 2
+a185 1
+     +                       DSTAK(LWORK2),VCZ,VCN(LOC),NODRES,PICARD)
+d189 3
+d195 2
+a196 1
+     +                       DSTAK(LWORK2),VCZ,VCN(LOC),NODRES,PICARD)
+d206 2
+a207 1
+     +                       DSTAK(LWORK2),VCZ,VCN(LOC),NODRES,PICARD)
+d277 1
+a277 1
+     3                               VCN(LOC),NEWRES,.FALSE.)
+d281 1
+a281 1
+     3                               VCN(LOC),NEWRES,.FALSE.)
+@
+
+
+1.24
+log
+@*** empty log message ***
+@
+text
+@d13 1
+a13 1
+C     $Id: weakbc.F,v 1.23 2011/09/16 07:13:37 abonfi Exp abonfi $
+d132 1
+a132 1
+          CALL LINEARIZE(-IELEM,.TRUE.,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,
+@
+
+
+1.23
+log
+@uses exact integration of the forces in compressible flows
+@
+text
+@d1 4
+a4 3
+      SUBROUTINE WEAKBC(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,STIFEL,NODRES,
+     +NEWRES,VCZ,VCDZ,NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     +IBNDFAC,NBFAC,PetscVecDT,PetscVecRHS,PetscMatA,COMPRESSIBLE)
+d13 1
+a13 1
+C     $Id: weakbc.F,v 1.22 2011/04/14 10:16:16 abonfi Exp abonfi $
+d33 2
+d36 1
+a37 2
+      INCLUDE 'nloc.com'
+      INCLUDE 'newtoneps.com'
+d64 8
+a71 7
+      INTEGER ICELNOD(NOFVERT,NELEM),ICELFAC(NOFVERT,NELEM)
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM), ZROE(NOFVAR,*),
+     +STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT), NODRES(NOFVAR,NOFVERT),
+     +NEWRES(NOFVAR,NOFVERT), VCZ(NOFVAR,NOFVERT),VCDZ(NOFVAR,NOFVERT)
+ 
+ 
+      INTEGER IBNDFAC(3,NBFAC)
+d125 4
+a128 2
+          CALL CELPTR(IELEM, NELEM,ICELNOD, ICELFAC, VOL, ZROE,
+     +    VFACNOR, NDIM, NOFVERT, NOFVAR, NP, ICN, VCZ, VCN, VOLUME)
+d132 2
+a133 2
+          CALL LINEARIZE(-IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +    VOLUME)
+@
+
+
+1.22
+log
+@implemented prescribed boundary fluxes bounadry condition
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.21 2009/06/11 08:23:22 abonfi Exp abonfi $
+d184 7
+a190 2
+                  CALL PFORCE(ICLR,NOFVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,
+     +                        PRESSC)
+@
+
+
+1.21
+log
+@now passing NPNOD among the arguments
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.20 2008/02/22 11:04:15 abonfi Exp abonfi $
+d15 1
+a15 1
+#include "finclude/petsc.h"
+d28 2
+a30 1
+C
+d33 2
+a34 2
+      INCLUDE 'three'
+      INCLUDE 'nloc'
+d48 1
+a48 1
+      INTEGER I,J,IELEM,LOC,IFAIL,
+d110 3
+d116 2
+a117 1
+          IF( IBC .NE.  4)GOTO 100
+d121 1
+d153 40
+a192 11
+          IF(COMPRESSIBLE)THEN
+              CALL FLXW4(NDIM,NOFVAR,NOFVERT,STIFEL,DSTAK(LWORK1), DSTAK
+     +        (LWORK2),VCZ,VCN(LOC),NODRES,PICARD)
+              CALL PFORCE(ICLR,NOFVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,
+     +                    PRESSC)
+          ELSE
+              CALL FLXW2(NDIM,NOFVAR,NOFVERT,STIFEL,DSTAK(LWORK1), DSTAK
+     +        (LWORK2),VCZ,VCN(LOC),NODRES,PICARD)
+              CALL PFORCE(ICLR,NOFVERT,VCN,NDIM,VCZ,NOFVAR,NOFVERT,
+     +                    PRESSI)
+          ENDIF
+d246 8
+a253 4
+                  IF(COMPRESSIBLE)THEN
+                      CALL FLXW4(NDIM,NOFVAR,NOFVERT,DUMMY,DSTAK
+     +                (LWORK1), DSTAK(LWORK2),VCDZ,VCN(LOC),NEWRES,
+     +                .FALSE.)
+d255 9
+a263 3
+                      CALL FLXW2(NDIM,NOFVAR,NOFVERT,DUMMY,DSTAK
+     +                (LWORK1), DSTAK(LWORK2),VCDZ,VCN(LOC),NEWRES,
+     +                .FALSE.)
+@
+
+
+1.20
+log
+@improved error checking when calling CONS_TO_PARM
+@
+text
+@d2 2
+a3 2
+     +NEWRES,VCZ,VCDZ,NELEM,NPOIN,NGHOST,NDIM,NOFVERT,NOFVAR,IBNDFAC,
+     +NBFAC,PetscVecDT,PetscVecRHS,PetscMatA,COMPRESSIBLE)
+d12 1
+a12 1
+C     $Id: weakbc.F,v 1.19 2007/11/14 10:14:35 abonfi Exp abonfi $
+d46 1
+a46 1
+      INTEGER NELEM,NPOIN,NGHOST,NBFAC,NDIM,NOFVERT,NOFVAR
+d96 1
+a96 1
+      INTEGER  IVAR,JVAR,IVERT,JVERT,IV,JV
+d104 1
+d117 1
+a117 1
+     +    VFACNOR, NDIM, NOFVERT, NOFVAR, ICN, VCZ, VCN, VOLUME)
+@
+
+
+1.19
+log
+@ROOT_MACHINE_EPS is now computed only once in the main
+and stored in common STCOM
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.18 2007/11/14 09:39:34 abonfi Exp abonfi $
+d36 3
+d89 4
+d183 4
+a186 4
+                      CALL
+     1                PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+                      CALL
+     1                PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+d194 14
+a207 4
+                      CALL
+     1                CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+                      CALL
+     1                CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1,.FALSE.)
+d279 2
+@
+
+
+1.18
+log
+@rotations for periodic bcs
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.16 2005/09/09 08:47:41 abonfi Exp aldo $
+d18 2
+a25 1
+      INCLUDE 'paramt.h'
+d34 1
+a34 1
+      INCLUDE 'implicit.h'
+d86 1
+a86 1
+      DOUBLE PRECISION VOLUME,ROOT_MACHINE_EPS,EPS
+a96 2
+      ROOT_MACHINE_EPS=1.d-07
+C
+@
+
+
+1.17
+log
+@an included common has been renamed
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.16 2005/09/09 08:47:41 abonfi Exp abonfi $
+a137 1
+C
+a139 2
+C
+C
+a160 1
+C
+d167 2
+a168 14
+      INCLUDE 'rotaterhs2.f'
+C
+          CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT-1,ICN,NODRES,
+     +    ADD_VALUES, IFAIL)
+C
+C         put time step in the first entry
+C
+          DO 30 K= 1,NOFVERT-1
+              CALL VecSetValue(PetscVecDT,ICN(K)*NOFVAR,TSTEP,
+     +        ADD_VALUES,IFAIL)
+   30     CONTINUE
+C
+          IF(.NOT.TIMEIMPL)GOTO 100
+          IF(PICARD)GOTO 1000
+d216 1
+a216 3
+ 
+C
+ 1000     CONTINUE
+a217 1
+C     INCLUDE 'rotatecij2.f' 
+a220 1
+C
+d242 13
+d256 1
+a256 1
+ 100  CONTINUE ! loop over the boundary faces
+@
+
+
+1.16
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.15 2004/08/23 20:04:17 aldo Exp $
+d27 1
+a27 1
+      INCLUDE 'bnd'
+@
+
+
+1.15
+log
+@renamed a couple of variables
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE WEAKBC(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE, STIFEL,NODRES,
+     +NEWRES,VCZ,VCDZ, NELEM,NDIM,NOFVERT,NOFVAR, IBNDFAC,NBFAC,
+     +PetscVecDT,PetscVecRHS,PetscMatA,COMPRESSIBLE)
+d12 1
+a12 1
+C     $Id: weakbc.F,v 1.14 2002/10/25 06:03:39 abonfi Exp $
+d30 1
+d42 3
+a44 2
+      INTEGER I,J,IELEM,NBFAC,NDIM,NOFVERT,NOFVAR,LOC,IFAIL,
+     +IBC,IBFAC,LOCA,LOCB,K,L,N,LWORK1,LWORK2,NELEM,ICLR
+d86 1
+d88 1
+a88 1
+      INTEGER  IVAR,JVAR,IVERT,JVERT
+d109 4
+a112 3
+          CALL CELPTR(IELEM, ICELNOD, ICELFAC, VOL, ZROE, VFACNOR, NDIM,
+     +    NOFVERT, NOFVAR, ICN, VCZ, VCN, VOLUME)
+ 
+d129 3
+d171 2
+d235 6
+d263 1
+a263 1
+ 100  CONTINUE
+@
+
+
+1.14
+log
+@add a flag when calling PARM_TO_CONS() and CONS_TO_PARM()
+@
+text
+@d2 2
+a3 2
+     +NEWRES,VCZ,VCDZ, NELEM,NDIM,NOFVERT,NOFVAR, IBNDFAC,NBFAC,DT,RHS,
+     +A,COMPRESSIBLE)
+d12 1
+a12 1
+C     $Id: weakbc.F,v 1.13 2002/09/14 09:04:14 abonfi Exp abonfi $
+d21 2
+a22 2
+      Vec RHS,dt
+      Mat A
+d73 1
+a73 1
+C         it to the RHS PETSc vector
+d77 1
+a77 1
+C         and then scatter it to the PETSc vector DT
+d164 2
+a165 2
+          CALL VecSetValuesBlocked(RHS,NOFVERT-1,ICN,NODRES, ADD_VALUES,
+     +    IFAIL)
+d170 2
+a171 1
+              CALL VecSetValue(DT,ICN(K)*NOFVAR,TSTEP,ADD_VALUES,IFAIL)
+d230 2
+a231 2
+                  CALL MatSetValuesBlockedLocal(A,1,ICN(K),1,ICN(L),
+     +            STIFEL(1,1,K,L), ADD_VALUES,IFAIL)
+d234 2
+a235 2
+                  CALL MatSetValuesBlocked(A,1,ICN(K),1,ICN(L), STIFEL
+     +            (1,1,K,L), ADD_VALUES,IFAIL)
+@
+
+
+1.13
+log
+@the timestep vector is now dimensioned NOFVAR x NPOIN
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.12 2000/10/19 16:10:34 aldo Exp abonfi $
+d183 4
+a186 2
+                      CALL PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                      CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+d194 4
+a197 2
+                      CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                      CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+@
+
+
+1.12
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.11 2000/03/24 15:14:05 aldo Exp aldo $
+d80 1
+a80 1
+      DOUBLE PRECISION VCN(12),TSTEP,DUMMY(400)
+d166 3
+d170 1
+a170 1
+              CALL VecSetValue(DT,ICN(K),TSTEP,ADD_VALUES,IFAIL)
+@
+
+
+1.11
+log
+@now computing pressure forces on inviscid walls
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.10 1999/12/27 09:21:45 aldo Exp aldo $
+d16 2
+a17 2
+#include "finclude/vec.h"
+#include "finclude/mat.h"
+@
+
+
+1.10
+log
+@FD computation of the jacobian
+@
+text
+@d12 1
+a12 1
+C     $Id: weakbc.F,v 1.9 1999/12/09 10:14:00 aldo Exp aldo $
+d42 1
+a42 1
+     +IBC,IBFAC,LOCA,LOCB,K,L,N,LWORK1,LWORK2,NELEM
+d89 1
+a89 1
+      EXTERNAL INVWLL,INVWLLI,DNRM2
+d100 2
+a101 1
+          IBC = ICOLOR(IBNDFAC(3,IBFAC))
+d134 2
+d139 2
+d144 2
+@
+
+
+1.9
+log
+@now handles consistently the perturbation for
+compressible conservation variables
+@
+text
+@d1 4
+a4 4
+      SUBROUTINE WEAKBC(ICELNOD,ICELFAC,VFACNOR,VOL,ZROE,
+     +                 STIFEL,NODRES,NEWRES,VCZ,VCDZ,
+     +                 NELEM,NDIM,NOFVERT,NOFVAR,
+     +                 IBNDFAC,NBFAC,DT,RHS,A,COMPRESSIBLE)
+d12 2
+a13 2
+C     $Id: weakbc.F,v 1.8 1999/12/06 12:12:34 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/weakbc.F,v 1.8 1999/12/06 12:12:34 aldo Exp aldo $
+a27 2
+      INTEGER LNV
+      PARAMETER(LNV=NMAX*NMAX*VMAX*VMAX)
+d41 11
+a51 2
+      INTEGER I,J,IELEM,INODE,NBFAC,NDIM,NOFVERT,NOFVAR,LOC,IFAIL,
+     +IBC,IBFAC,LOCA,LOCB,IADD,K,L,N,LWORK1,LWORK2,NELEM
+d56 5
+a60 5
+      DOUBLE PRECISION VFACNOR(NDIM,*),VOL(NELEM),
+     +                 ZROE(NOFVAR,*),
+     +                 STIFEL(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 NODRES(NOFVAR,NOFVERT),NEWRES(NOFVAR,NOFVERT),
+     +                 VCZ(NOFVAR,NOFVERT),VCDZ(NOFVAR,NOFVERT)
+d63 17
+d83 1
+a83 1
+      DOUBLE PRECISION FLUXN(NMAX),S,ADIM,VOLUME,ROOT_MACHINE_EPS,EPS
+d86 4
+a89 4
+      INTEGER  ICYCL,istkgt
+      EXTERNAL ICYCL,istkgt
+      double precision dnrm2
+      EXTERNAL INVWLL,INVWLLI,dnrm2
+a94 1
+caldo picard=.true. 
+d96 2
+a97 2
+      lwork1 = istkgt((nofvert*nofvar)**2,4)
+      lwork2 = istkgt((nofvert*nofvar)**2,4)
+d100 8
+a107 8
+         IBC   = ICOLOR(IBNDFAC(3,IBFAC))
+         IF( IBC .NE. 4 )GOTO 100
+         IVERT = IBNDFAC(2,IBFAC)
+         IELEM = IBNDFAC(1,IBFAC)
+C
+      CALL CELPTR(IELEM, ICELNOD, ICELFAC, VOL,
+     +   ZROE, VFACNOR, NDIM, NOFVERT, NOFVAR, ICN,
+     +   VCZ, VCN, VOLUME)
+d109 2
+a110 1
+      CALL LINEARIZE(-IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+d112 1
+a112 1
+      IF(COMPRESSIBLE)CALL PARM2PRIM(NDIM,IELEM)
+d116 9
+a124 9
+      IF(IVERT.NE.NOFVERT)THEN
+         CALL DSWAP(NOFVAR,VCZ(1,IVERT),1,VCZ(1,NOFVERT),1)
+         LOCA = IDX(IVERT,1,NDIM)
+         LOCB = IDX(NOFVERT,1,NDIM)
+         CALL DSWAP(NDIM,VCN(LOCA),1,VCN(LOCB),1)
+         LOCA = ICN(NOFVERT)
+         ICN(NOFVERT) = ICN(IVERT)
+         ICN(IVERT) = LOCA
+      ENDIF
+a129 1
+C     compute F(1)-F(boundary)
+d133 3
+a135 3
+          IF(COMPRESSIBLE)THEN 
+              CALL FLXW4(NDIM,NOFVAR,NOFVERT,STIFEL,dstak(lwork1),
+     +    dstak(lwork2),VCZ,VCN(LOC),NODRES,PICARD)
+d137 2
+a138 2
+              CALL FLXW2(NDIM,NOFVAR,NOFVERT,STIFEL,dstak(lwork1),
+     +    dstak(lwork2),VCZ,VCN(LOC),NODRES,PICARD)
+d142 6
+a147 6
+      do k=1,nofvert-1
+      do l=1,nofvert-1
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFEL(1,1,k,l),
+     +NOFVAR,'picard matrix for wall b.c. ',IFAIL)
+      enddo
+      enddo
+d151 5
+a155 11
+      IF(COMPRESSIBLE)THEN 
+          tstep = abar * dnrm2(ndim,VCN(LOC),1)
+      ELSE
+          tstep = beta * dnrm2(ndim,VCN(LOC),1)
+      ENDIF
+C
+      CALL VecSetValuesBlocked(RHS,NOFVERT-1,ICN,NODRES,
+     +                         ADD_VALUES,IFAIL)
+      DO 30 K= 1,NOFVERT-1
+         CALL VecSetValue(dt,ICN(K),tstep,ADD_VALUES,IFAIL)
+   30 CONTINUE
+d157 9
+a165 2
+      IF(PICARD)GOTO 1000
+
+d168 27
+a194 32
+      DO 15 IVERT = 1, NOFVERT-1
+          DO 15 IVAR = 1, NOFVAR
+             CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+#if 1
+             IF(COMPRESSIBLE)THEN
+                CALL PARM_TO_CONS(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                CALL PARM_TO_CONS(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+             ENDIF
+#endif
+             EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,IVERT)),1.d0)*
+     +             SIGN(1.d0,VCZ(IVAR,IVERT))
+             VCDZ(IVAR,IVERT) = VCZ(IVAR,IVERT) + EPS
+#if 1
+             IF(COMPRESSIBLE)THEN
+                CALL CONS_TO_PARM(VCZ(1,IVERT),NDIM,NOFVAR,1)
+                CALL CONS_TO_PARM(VCDZ(1,IVERT),NDIM,NOFVAR,1)
+             ENDIF
+#endif
+C
+#if 0
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,vcz,
+     +NOFVAR,'Z for wall b.c. ',IFAIL)
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,vcdz,
+     +NOFVAR,'DZ for wall b.c. ',IFAIL)
+#endif
+          IF(COMPRESSIBLE)THEN 
+              CALL FLXW4(NDIM,NOFVAR,NOFVERT,DUMMY,dstak(lwork1),
+     +    dstak(lwork2),VCDZ,VCN(LOC),NEWRES,.FALSE.)
+          ELSE
+              CALL FLXW2(NDIM,NOFVAR,NOFVERT,DUMMY,dstak(lwork1),
+     +    dstak(lwork2),VCDZ,VCN(LOC),NEWRES,.FALSE.)
+          ENDIF
+d196 17
+a212 17
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,nodres,
+     +NOFVAR,'nodres for wall b.c. ',IFAIL)
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,newres,
+     +NOFVAR,'newres for wall b.c. ',IFAIL)
+#endif
+C
+             DO 15 JVAR = 1, NOFVAR
+                 DO 15 JVERT = 1, NOFVERT-1
+                 STIFEL(JVAR,IVAR,JVERT,IVERT) =
+     +           -(NEWRES(JVAR,JVERT)-NODRES(JVAR,JVERT))/EPS
+C
+   15 CONTINUE
+
+C
+ 1000 CONTINUE
+      N=NOFVERT-1
+      DO 37 K= 1,NOFVERT-1
+d216 2
+a217 2
+     +                                     STIFEL(1,1,K,L),
+     +                                     ADD_VALUES,IFAIL)
+d219 3
+a221 3
+                  CALL MatSetValuesBlocked(A,1,ICN(K),1,ICN(L),
+     +                                     STIFEL(1,1,K,L),
+     +                                     ADD_VALUES,IFAIL)
+d224 4
+a227 3
+      write(6,*)k,l,icn(k),icn(k),icn(ivert)
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFEL(1,1,k,l),
+     +NOFVAR,'jacobian matrix for wall b.c. ',IFAIL)
+d230 1
+a230 1
+   37 CONTINUE
+d233 1
+a233 1
+caldo picard=.false. 
+d235 1
+a235 1
+ 100  CONTINUE
+d237 1
+a237 1
+      call istkrl(2)
+a239 1
+  564 FORMAT((E12.6,1X))
+@
+
+
+1.8
+log
+@working version using FD jacobian
+@
+text
+@d12 2
+a13 2
+C     $Id: weakbc.F,v 1.7 1999/12/05 18:53:53 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/weakbc.F,v 1.7 1999/12/05 18:53:53 aldo Exp aldo $
+d115 1
+a115 2
+     +    dstak(lwork2),VCZ,VCN(LOC),NODRES,.true.)
+caldo+    dstak(lwork2),VCZ,VCN(LOC),NODRES,PICARD)
+d147 6
+d156 6
+@
+
+
+1.7
+log
+@experimental version
+@
+text
+@d12 2
+a13 2
+C     $Id: weakbc.F,v 1.6.1.1 1999/12/05 18:52:19 aldo Exp $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/weakbc.F,v 1.6.1.1 1999/12/05 18:52:19 aldo Exp $
+d56 1
+a56 1
+      DOUBLE PRECISION VCN(12),TSTEP
+d71 2
+d90 2
+a110 5
+              CALL trapezium(VCN(LOC),VCZ,INVWLL,FLUXN,NDIM,NOFVAR)
+#ifdef PRINT
+          write(6,*)'flux integral on element ',ielem
+          write(6,*)(fluxn(j),j=1,nofvar)
+#endif
+a113 5
+              CALL trapezium(VCN(LOC),VCZ,INVWLLI,FLUXN,NDIM,NOFVAR)
+#ifdef PRINT
+          write(6,*)'flux integral on element ',ielem
+          write(6,*)(fluxn(j),j=1,nofvar)
+#endif
+d115 2
+a116 1
+     +                   dstak(lwork2),VCZ,VCN(LOC),NODRES,PICARD)
+d119 8
+a126 2
+C     GOTO 999
+C999  CONTINUE
+a127 3
+C    The flux integral over the element ( = dF/dZ grad(Z) )
+C    is modified by substracting the computed and adding
+C    the imposed flux through the boundary face ..
+d152 6
+d159 1
+a159 1
+              CALL FLXW4(NDIM,NOFVAR,NOFVERT,STIFEL,dstak(lwork1),
+d162 1
+a162 1
+              CALL FLXW2(NDIM,NOFVAR,NOFVERT,STIFEL,dstak(lwork1),
+d165 6
+d193 5
+d201 2
+a202 4
+C     pause
+C     write(6,*)k,l,icn(i),icn(j),icn(ivert)
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFEL(IADD),
+C    +NOFVAR,'Stiffness matrix ',IFAIL)
+@
+
+
+1.6
+log
+@major rewriting, still an intermediate version
+@
+text
+@d12 2
+a13 2
+C     $Id: weakbc.F,v 1.5 1999/09/03 11:12:10 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/weakbc.F,v 1.5 1999/09/03 11:12:10 aldo Exp aldo $
+d19 2
+d44 1
+a44 1
+     +IBC,IVERT,IBFAC,LOCA,LOCB,IADD,K,L,N,LWORK1,LWORK2,NELEM
+d46 1
+d56 1
+a56 2
+      DOUBLE PRECISION VCN(12),
+     +VNOD(NMAX*VMAX),tstep
+d59 1
+a59 1
+      DOUBLE PRECISION FLUXN(NMAX),S,ADIM,VOLUME
+d61 1
+d67 6
+a72 2
+      lwork1 = istkgt(ndim*nofvar*nofvar,4)
+      lwork2 = istkgt(ndim*ndim*nofvar*nofvar,4)
+d84 1
+a84 1
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+d86 1
+a86 1
+      if(compressible)CALL PARM2PRIM(NDIM,IELEM)
+d88 9
+a96 5
+         DO 3 J = 1 , NDIM
+            I = ICYCL( IVERT + J , NOFVERT )
+            LOCB = (J-1)*NOFVAR+1
+            CALL DCOPY(NOFVAR,VCZ(1,I),1,VNOD(LOCB),1)
+   3     CONTINUE
+d100 1
+a100 1
+          LOC = (IVERT-1)*NDIM+1
+d104 2
+a105 1
+          CALL DINIT(NOFVAR*NOFVAR*ndim*ndim,0.d0,STIFEL,1)
+d107 1
+a107 1
+              CALL trapezium(VCN(LOC),VNOD,INVWLL,FLUXN,NDIM,NOFVAR)
+d112 2
+a113 2
+              CALL FLXW4(NDIM,NOFVAR,STIFEL,dstak(lwork1),dstak(lwork2),
+     +    VNOD,VCN(LOC),NODRES)
+d115 1
+a115 1
+              CALL trapezium(VCN(LOC),VNOD,INVWLLI,FLUXN,NDIM,NOFVAR)
+d120 2
+a121 2
+              CALL FLXW2(NDIM,NOFVAR,STIFEL,dstak(lwork1),dstak(lwork2),
+     +                   VNOD,VCN(LOC),NODRES)
+d137 34
+d172 2
+a173 14
+      DO 37 K= 1,N
+         I = ICYCL(IVERT+K,NOFVERT)
+         LOC = (I-1)*NOFVAR+1
+         LOCB= (K-1)*NOFVAR+1
+caldo    CALL VecSetValues(RHS,NOFVAR,IDX_V(LOC),NODRES(LOCB),
+caldo+                     ADD_VALUES,IFAIL)
+         CALL VecSetValuesBlocked(RHS,1,ICN(I),NODRES(1,K),
+     +                     ADD_VALUES,IFAIL)
+         CALL VecSetValue(dt,ICN(I),tstep,
+     +                     ADD_VALUES,IFAIL)
+         IF( TIMEIMPL )THEN
+              DO 39 L= 1,N
+                  J = ICYCL(IVERT+L,NOFVERT)
+                  IADD = (((L-1)*N+K-1)*NOFVAR*NOFVAR) + 1
+d175 1
+a175 1
+                  CALL MatSetValuesBlockedLocal(A,1,ICN(I),1,ICN(J),
+d179 1
+a179 1
+                  CALL MatSetValuesBlocked(A,1,ICN(I),1,ICN(J),
+a183 1
+         ENDIF
+a198 168
+
+      SUBROUTINE FLXW4(NDIM,NOFVAR,STIFC,WORK,work2,VCZ,VCN,NODRES)
+c
+c     correction flux for inviscid wall boundary conditions
+c
+c
+      IMPLICIT NONE 
+
+      INTEGER NDIM,NOFVAR
+      INTEGER i,j,k,l,IVERT,ifail,IADD
+
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NDIM+1,NDIM+1),
+     +                 VCZ(NOFVAR,NDIM),
+     +                 VCN(NDIM),NODRES(NOFVAR,NDIM)
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NDIM),dZdU(75)
+      DOUBLE PRECISION WORK2(NOFVAR,NOFVAR,NDIM,NDIM)
+      double precision wksp(5),temp(15),alpha,beta,tmp
+      parameter(alpha=0.75d0)
+
+      DATA dZdU/75*0.d0/
+
+      call dinit(nofvar,0.d0,wksp,1)
+      call dinit(ndim*nofvar,0.d0,temp,1)
+
+C
+C     Compute matrices dFcorr/dZ for all NOFVERT-1 vertices
+C     of the boundary face
+C
+      DO 1 IVERT = 1,NDIM
+          call GetdF4corrdU(vcz(1,IVERT),vcn,ndim,nofvar,
+     +                      work(1,1,IVERT))
+    1 CONTINUE 
+
+      beta = ( 1.d0 - alpha ) / real( ndim -1 )
+      DO 8 I = 1,NDIM
+         DO 8 j = 1,NDIM
+            if( j.eq.i )then
+                tmp = alpha / real(ndim)
+            else
+                tmp = beta / real(ndim)
+            endif
+            DO 8 l = 1,NOFVAR
+               DO 8 k = 1,NOFVAR
+                  work2(k,l,i,j) = tmp*work(k,l,j)
+    8 CONTINUE
+C
+      CALL DINIT(NOFVAR*NDIM,0.d0,NODRES,1)
+C
+C     compute nodal residuals as - \sum C_{i,j=1}^{d} Z_j
+C     the - sign is due to the fact that what we want to
+C     split is F(boundary) - F(1)
+C
+      do 29 i = 1,ndim
+         do 31 j = 1,ndim
+            call dgemv('N',nofvar,nofvar,-.5d0,work2(1,1,i,j),nofvar,
+     >                 vcz(1,j),1,1.d0,nodres(1,i),1)
+   31 CONTINUE
+      call daxpy(nofvar,1.d0,nodres(1,i),1,wksp,1)
+   29 CONTINUE
+#ifdef PRINT
+      write(6,*)'nodres '
+      write(6,*)(wksp(j),j=1,nofvar)
+#endif
+C
+C     transform the convection stiffness matrix into 
+C     conserved variables as C_{ij} := 2 C_{ij} dZdU(j)
+C
+      DO 9 IVERT = 1,NDIM
+	   IADD = (IVERT-1)*NOFVAR*NOFVAR+1
+           CALL MatdZdU(VCZ(1,IVERT),dZdU(IADD),NDIM,NOFVAR)
+           DO 9 I = 1,NDIM
+               CALL DGEMM('No transpose','No transpose',NOFVAR,
+     >           NOFVAR,NOFVAR,+1.d0,WORK2(1,1,I,IVERT),NOFVAR,
+     >           dZdU(IADD),NOFVAR,0.d0,
+     >           STIFC(1,1,I,IVERT),NOFVAR)
+C     write(6,*)i,ivert
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFC(1,1,I,IVERT),
+C    +NOFVAR,'Stiffness matrix ',IFAIL)
+    9 CONTINUE
+C
+#ifdef DEBUG
+C
+C     test the stiffness matrix in conserved variables 
+C
+      call dinit(nofvar,0.d0,wksp,1)
+      call dcopy(nofvar*ndim,vcz,1,temp,1)
+      call parm_to_cons(temp,ndim,nofvar,ndim) 
+      do 19 i = 1,ndim
+         do 19 j = 1,ndim
+            call dgemv('N',nofvar,nofvar,1.d0,stifc(1,1,i,j),nofvar,
+     >                 temp((j-1)*nofvar+1),1,1.d0,wksp,1)
+   19 CONTINUE
+#ifdef PRINT
+      write(6,*)' nodres from conserved',(wksp(j),j=1,nofvar)
+      write(6,*)'node #1',(nodres(j,1),j=1,nofvar)
+      write(6,*)'node #2',(nodres(j,2),j=1,nofvar)
+      if(ndim.eq.3)write(6,*)'node #3',(nodres(j,3),j=1,nofvar)
+      pause
+#endif
+#endif
+
+      RETURN
+  564 FORMAT((E12.6,1X))
+      END
+C
+C
+      SUBROUTINE FLXW2(NDIM,NOFVAR,STIFC,WORK,WORK2,
+     +                 VCZ,VCN,NODRES)
+
+      IMPLICIT NONE 
+
+      INTEGER NDIM,NOFVAR
+      INTEGER i,j,IVERT,ifail,IADD
+
+      DOUBLE PRECISION tstep
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NDIM+1,NDIM+1),
+     +VCZ(NOFVAR,NDIM),
+     +                 VCN(NDIM),NODRES(NOFVAR,NDIM)
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NDIM)
+      DOUBLE PRECISION WORK2(NOFVAR,NOFVAR,NDIM,NDIM)
+      double precision wksp(4),temp(4,2)
+      double precision alpha
+      parameter(alpha=0.75d0)
+
+
+      call dinit(4,0.d0,wksp,1)
+      call dinit(8,0.d0,temp,1)
+
+      call GetdF2corrdU(vcz(2,1),vcn,ndim,nofvar,work(1,1,1))
+      call GetdF2corrdU(vcz(2,2),vcn,ndim,nofvar,work(1,1,2))
+
+c     tstep = sqrt(vdotn(1)**2+vdotn(2)**2)*sqrt(vcn(1)**2+vcn(2)**2)
+
+      DO 8 j = 1,NOFVAR
+      DO 8 I = 1,NOFVAR
+         STIFC(I,j,1,1) = 0.25d0*alpha*work(i,j,1)
+         STIFC(I,j,1,2) = 0.25d0*(1.d0-alpha)*work(i,j,2)
+         STIFC(I,j,2,2) = 0.25d0*alpha*work(i,j,2)
+         STIFC(I,j,2,1) = 0.25d0*(1.d0-alpha)* work(i,j,1)
+    8 CONTINUE
+ 
+      CALL DINIT(NOFVAR*NDIM,0.d0,NODRES,1)
+C
+C     compute nodal residuals as - \sum C_{i,j=1}^{d} Z_j
+C     the - sign is due to the fact that what we want to
+C     split is F(boundary) - F(1)
+C
+      do 29 i = 1,ndim
+      do 31 j = 1,ndim
+            call dgemv('N',nofvar,nofvar,-1.d0,stifc(1,1,i,j),nofvar,
+     >                 vcz(1,j),1,1.d0,nodres(1,i),1)
+   31 CONTINUE
+      call daxpy(nofvar,1.d0,nodres(1,i),1,wksp,1)
+c
+      nodres(1,i)= 2.d0 * nodres(1,i)
+c
+   29 CONTINUE
+#ifdef PRINT
+      write(6,*)(wksp(j),j=1,nofvar)
+C
+      write(6,*)'INCO node #1',(nodres(j,1),j=1,nofvar)
+      write(6,*)'INCO node #2',(nodres(j,2),j=1,nofvar)
+      pause
+#endif
+
+      RETURN
+  564 FORMAT((E12.6,1X))
+      END
+@
+
+
+1.5
+log
+@changed call to CELPTR
+@
+text
+@d1 4
+a4 2
+      SUBROUTINE WEAKBC(A,RHS,dt,IBNDFAC,NBFAC,NDIM,NOFVERT,NOFVAR,
+     +                  COMPRESSIBLE)
+d12 2
+a13 2
+C     $Id: weakbc.F,v 1.4 1999/08/19 16:01:56 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/weakbc.F,v 1.4 1999/08/19 16:01:56 aldo Exp aldo $
+d34 7
+d42 9
+a50 2
+     +IBC,IVERT,IBFAC,LOCA,LOCB,IADD,K,L,N,LWORK1,LWORK2
+      LOGICAL COMPRESSIBLE     
+d53 3
+a55 10
+      DOUBLE PRECISION VCN(3*VMAX),VCP(3*VMAX),VCZ(NMAX*VMAX),
+     +VNOD(NMAX*VMAX),STIFC((VMAX-1)*(VMAX-1)*NMAX*NMAX),
+     +NODRES(NMAX*VMAX),tstep
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_I(4),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX)
+C
+      DOUBLE PRECISION DSTAK
+      COMMON /CSTAK/DSTAK(1)
+      INTEGER ISTAK(1)
+      EQUIVALENCE(ISTAK(1),DSTAK(1))
+d72 3
+a74 2
+         CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   DSTAK(LZROE), DSTAK(LFACNOR), NDIM, NOFVERT, NOFVAR, ICN,
+a82 1
+            LOCA = (I-1)*NOFVAR+1
+d84 1
+a84 1
+            CALL DCOPY(NOFVAR,VCZ(LOCA),1,VNOD(LOCB),1)
+d93 1
+a93 1
+          CALL DINIT(NOFVAR*NOFVAR*ndim*ndim,0.d0,STIFC,1)
+d100 1
+a100 1
+              CALL FLXW4(NDIM,NOFVAR,STIFC,dstak(lwork1),dstak(lwork2),
+d108 1
+a108 1
+              CALL FLXW2(NDIM,NOFVAR,STIFC,dstak(lwork1),dstak(lwork2),
+d132 1
+a132 1
+         CALL VecSetValuesBlocked(RHS,1,ICN(I),NODRES(LOCB),
+d142 2
+a143 1
+     +                                     STIFC(IADD),ADD_VALUES,IFAIL)
+d146 2
+a147 1
+     +                                     STIFC(IADD),ADD_VALUES,IFAIL)
+d155 1
+a155 1
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFC(IADD),
+d177 2
+a178 1
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NDIM,NDIM),VCZ(NOFVAR,NDIM),
+a270 100
+      SUBROUTINE GETDF2CORRDU(UVW,VN,NDIM,NOFVAR,DFCORRDU)
+
+
+C     .. Parameters ..
+      DOUBLE PRECISION TWO
+      PARAMETER (TWO=2.d0)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DFCORRDU(NOFVAR,NOFVAR),UVW(NDIM),VN(NDIM)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION UDOTN
+C     ..
+      UDOTN = UVW(1)*VN(1) + UVW(2)*VN(2)
+      IF (NDIM.EQ.3) UDOTN = UDOTN + UVW(3)*VN(3)
+
+      DFCORRDU(1,1) = 0.d0
+      DFCORRDU(1,2) = VN(1)                *1.d0
+      DFCORRDU(1,3) = VN(2)                *1.d0
+
+      DFCORRDU(2,1) = 0.d0
+      DFCORRDU(2,2) = UDOTN + UVW(1)*VN(1)
+      DFCORRDU(2,3) = UVW(1)*VN(2)
+
+      DFCORRDU(3,1) = 0.d0
+      DFCORRDU(3,2) = UVW(2)*VN(1)
+      DFCORRDU(3,3) = UDOTN + UVW(2)*VN(2)
+
+      IF (NDIM.EQ.3) THEN
+          DFCORRDU(1,4) = VN(3)            *1.d0
+          DFCORRDU(2,4) = UVW(1)*VN(3)
+          DFCORRDU(3,4) = UVW(2)*VN(3)
+          DFCORRDU(4,1) = 0.d0
+          DFCORRDU(4,2) = UVW(3)*VN(1)
+          DFCORRDU(4,3) = UVW(3)*VN(2)
+          DFCORRDU(4,4) = UDOTN + UVW(3)*VN(3)
+      ENDIF
+
+      RETURN
+
+      END
+
+      SUBROUTINE GETDF4CORRDU(ZROE,VN,NDIM,NOFVAR,DFCORRDU)
+
+
+
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DFCORRDU(NOFVAR,NOFVAR),VN(NDIM),ZROE(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION UDOTN
+C     ..
+      UDOTN = ZROE(3)*VN(1) + ZROE(4)*VN(2)
+      IF (NDIM.EQ.3) UDOTN = UDOTN + ZROE(5)*VN(3)
+
+      DFCORRDU(1,1) = UDOTN
+      DFCORRDU(1,2) = 0.d0
+      DFCORRDU(1,3) = VN(1)*ZROE(1)
+      DFCORRDU(1,4) = VN(2)*ZROE(1)
+
+      DFCORRDU(2,1) = 0.d0
+      DFCORRDU(2,2) = UDOTN
+      DFCORRDU(2,3) = ZROE(2)*VN(1)
+      DFCORRDU(2,4) = ZROE(2)*VN(2)
+
+      DFCORRDU(3,1) = 0.d0
+      DFCORRDU(3,2) = 0.d0
+      DFCORRDU(3,3) = UDOTN + ZROE(3)*VN(1)
+      DFCORRDU(3,4) = ZROE(3)*VN(2)
+
+      DFCORRDU(4,1) = 0.d0
+      DFCORRDU(4,2) = 0.d0
+      DFCORRDU(4,3) = ZROE(4)*VN(1)
+      DFCORRDU(4,4) = UDOTN + ZROE(4)*VN(2)
+
+      IF (NDIM.EQ.3) THEN
+
+          DFCORRDU(1,5) = VN(3)*ZROE(1)
+          DFCORRDU(2,5) = ZROE(2)*VN(3)
+          DFCORRDU(3,5) = ZROE(3)*VN(3)
+          DFCORRDU(4,5) = ZROE(4)*VN(3)
+
+          DFCORRDU(5,1) = 0.d0
+          DFCORRDU(5,2) = 0.d0
+          DFCORRDU(5,3) = ZROE(5)*VN(1)
+          DFCORRDU(5,4) = ZROE(5)*VN(2)
+          DFCORRDU(5,5) = UDOTN + ZROE(5)*VN(3)
+
+
+      ENDIF
+
+      RETURN
+
+      END
+d281 2
+a282 1
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NDIM,NDIM),VCZ(NOFVAR,NDIM),
+a333 51
+C
+      SUBROUTINE INVWLLI( DIM , VNOR , Z , F )
+C
+C    .. INVISCID WALL boundary condition ..
+C
+      IMPLICIT NONE
+C
+      INTEGER DIM
+      DOUBLE PRECISION VNOR(*),Z(*),F(*)
+      DOUBLE PRECISION VDOTN
+C
+C    | U_n         |    | 0   |
+C    | U_n U + p n |    | p n |
+C
+      VDOTN      = VNOR(1)*Z(2) + VNOR(2)*Z(3)
+      IF(DIM.EQ.3)VDOTN = VDOTN + VNOR(3)*Z(4)
+C
+      F(1) = VDOTN
+      F(2) = VDOTN * Z(2)
+      F(3) = VDOTN * Z(3)
+      IF(DIM.EQ.3) F(4) = VDOTN * Z(4)
+C
+      RETURN
+      END
+C
+      SUBROUTINE INVWLL( DIM , VNOR , Z , F )
+C
+C    .. INVISCID WALL boundary condition ..
+C
+      IMPLICIT NONE
+C
+      INTEGER DIM
+      DOUBLE PRECISION VNOR(*),Z(*),F(*)
+      DOUBLE PRECISION VDOTN
+C
+C    | rho U_n         |    | 0   |
+C    | rho U_n H       |  - | 0   |
+C    | rho U_n U + p n |    | p n |
+C
+      VDOTN      = VNOR(1)*Z(3) + VNOR(2)*Z(4)
+      IF(DIM.EQ.3)VDOTN = VDOTN + VNOR(3)*Z(5)
+C
+      F(1) = VDOTN * Z(1)
+      F(2) = VDOTN * Z(2)
+      F(3) = VDOTN * Z(3)
+      F(4) = VDOTN * Z(4)
+      IF(DIM.EQ.3)F(5) = VDOTN * Z(5)
+C
+      RETURN
+      END
+C
+@
+
+
+1.4
+log
+@changed VecSetValues into VecSetValuesBlocked
+@
+text
+@d10 2
+a11 2
+C     $Id: weakbc.F,v 1.3 1999/02/17 17:06:28 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/weakbc.F,v 1.3 1999/02/17 17:06:28 aldo Exp aldo $
+d63 3
+a65 4
+         CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,1,1,ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+
+d361 1
+a361 1
+     +                 VCZ,VCN,NODRES,tstep)
+@
+
+
+1.3
+log
+@fixed a bug with dimension of dZdU
+@
+text
+@d10 2
+a11 2
+C     $Id: weakbc.F,v 1.1 1998/12/23 11:53:44 aldo Exp aldo $
+C     $Header$
+d122 3
+a124 1
+         CALL VecSetValues(RHS,NOFVAR,IDX_V(LOC),NODRES(LOCB),
+@
+
+
+1.2
+log
+@fixed a bug with the first component of the corrective flux
+for incompressible flows
+@
+text
+@d11 1
+d27 1
+d101 1
+a101 5
+     +    VNOD,VCN(LOC),NODRES)
+c
+c     corrects
+c
+              nodres(1)=two*nodres(1)
+d111 5
+a115 2
+      tstep = abar * dnrm2(ndim,VCN(LOC),1)
+
+d167 1
+a167 1
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NDIM),dZdU(25)
+d172 1
+a172 1
+      DATA dZdU/25*0.d0/
+d278 2
+a279 2
+      DFCORRDU(1,2) = VN(1)
+      DFCORRDU(1,3) = VN(2)
+d290 1
+a290 1
+          DFCORRDU(1,4) = VN(3)
+d405 3
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 1
+a10 1
+C     $Id$
+d86 4
+a93 3
+              CALL FLXW2(NDIM,NOFVAR,STIFC,dstak(lwork1),dstak(lwork2),
+     +    VNOD,VCN(LOC),NODRES)
+          ENDIF
+d98 7
+d256 95
+d352 3
+a354 1
+      subroutine GetdF2corrdU(uvw,vn,ndim,nofvar,dFcorrdU)
+d356 1
+a356 83
+      implicit none
+      integer ndim,nofvar
+      double precision uvw(ndim),vn(ndim),dFcorrdU(nofvar,nofvar)
+      double precision udotn
+      double precision two
+      parameter(two=2.d0)
+
+      udotn = uvw(1)*vn(1)+uvw(2)*vn(2)
+      if(ndim.eq.3)udotn = udotn + uvw(3)*vn(3)
+
+      dFcorrdU(1,1) = 0.d0
+      dFcorrdU(1,2) = vn(1) * two
+      dFcorrdU(1,3) = vn(2) * two
+
+      dFcorrdU(2,1) = 0.d0
+      dFcorrdU(2,2) = udotn + uvw(1)*vn(1)
+      dFcorrdU(2,3) = uvw(1)*vn(2)
+
+      dFcorrdU(3,1) = 0.d0
+      dFcorrdU(3,2) = uvw(2)*vn(1)
+      dFcorrdU(3,3) = udotn + uvw(2)*vn(2)
+
+      if(ndim.eq.3)then
+          dFcorrdU(1,4) = vn(3) * two
+          dFcorrdU(2,4) = uvw(1)*vn(3)
+          dFcorrdU(3,4) = uvw(2)*vn(3)
+          dFcorrdU(4,1) = 0.d0
+          dFcorrdU(4,2) = uvw(3)*vn(1)
+          dFcorrdU(4,3) = uvw(3)*vn(2)
+          dFcorrdU(4,4) = udotn + uvw(3)*vn(3)
+      endif
+      return
+      end
+
+      SUBRoutine GetdF4corrdU(zroe,vn,ndim,nofvar,dFcorrdU)
+
+
+      implicit none
+      integer ndim,nofvar
+      double precision zroe(nofvar),vn(ndim),dFcorrdU(nofvar,nofvar)
+      double precision udotn
+
+      udotn = zroe(3)*vn(1)+zroe(4)*vn(2)
+      if(ndim.eq.3)udotn = udotn + zroe(5)*vn(3)
+
+      dFcorrdU(1,1) = udotn
+      dFcorrdU(1,2) = 0.d0
+      dFcorrdU(1,3) = vn(1)*zroe(1)
+      dFcorrdU(1,4) = vn(2)*zroe(1)
+
+      dFcorrdU(2,1) = 0.d0
+      dFcorrdU(2,2) = udotn
+      dFcorrdU(2,3) = zroe(2)*vn(1)
+      dFcorrdU(2,4) = zroe(2)*vn(2)
+
+      dFcorrdU(3,1) = 0.d0
+      dFcorrdU(3,2) = 0.d0
+      dFcorrdU(3,3) = udotn + zroe(3)*vn(1)
+      dFcorrdU(3,4) = zroe(3)*vn(2)
+
+      dFcorrdU(4,1) = 0.d0
+      dFcorrdU(4,2) = 0.d0
+      dFcorrdU(4,3) = zroe(4)*vn(1)
+      dFcorrdU(4,4) = udotn + zroe(4)*vn(2)
+
+      if(ndim.eq.3)then
+
+      dFcorrdU(1,5) = vn(3)*zroe(1)
+      dFcorrdU(2,5) = zroe(2)*vn(3)
+      dFcorrdU(3,5) = zroe(3)*vn(3)
+      dFcorrdU(4,5) = zroe(4)*vn(3)
+
+      dFcorrdU(5,1) = 0.d0
+      dFcorrdU(5,2) = 0.d0
+      dFcorrdU(5,3) = zroe(5)*vn(1)
+      dFcorrdU(5,4) = zroe(5)*vn(2)
+      dFcorrdU(5,5) = udotn + zroe(5)*vn(3)
+
+
+      endif
+      return
+      end
+C
+d408 2
+a409 2
+      write(6,*)'node #1',(nodres(j,1),j=1,nofvar)
+      write(6,*)'node #2',(nodres(j,2),j=1,nofvar)
+@

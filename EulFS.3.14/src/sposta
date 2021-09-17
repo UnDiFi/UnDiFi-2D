@@ -1,0 +1,1 @@
+mv *.dat convhst.* fort.4? ftn4? out $1; cp ~/.petscrc $1

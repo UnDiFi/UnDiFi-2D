@@ -1,0 +1,58 @@
+\hypertarget{seq_2setup_r_h_s__t_8_f}{\section{src/seq/setup\-R\-H\-S\-\_\-t.F File Reference}
+\label{seq_2setup_r_h_s__t_8_f}\index{src/seq/setup\-R\-H\-S\-\_\-t.\-F@{src/seq/setup\-R\-H\-S\-\_\-t.\-F}}
+}
+{\ttfamily \#include \char`\"{}finclude/petscsys.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscvec.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscmat.\-h\char`\"{}}\\*
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{seq_2setup_r_h_s__t_8_f_a5ff19471b1236283e869ad2595608445}{setuprhs\-\_\-t} (I\-C\-E\-L\-N\-O\-D, I\-C\-E\-L\-F\-A\-C, V\-F\-A\-C\-N\-O\-R, X\-Y\-Z\-D\-O\-T, V\-O\-L, \hyperlink{myts_8com_a0c4fbcdb78e6b50c8919d714e4b5a694}{Z\-R\-O\-E}, Z\-T\-U\-R\-B, S\-T\-I\-F\-E\-L, N\-O\-D\-R\-E\-S, N\-E\-W\-R\-E\-S, V\-C\-Z, V\-C\-D\-Z, V\-C\-B, \hyperlink{mesh_8com_aee5e75b79d0e815c0603cfbccc618957}{N\-E\-L\-E\-M}, \hyperlink{mesh_8com_ae28c1572321efcd8715b974d87d20c58}{N\-P\-O\-I\-N}, N\-G\-H\-O\-S\-T, N\-P\-N\-O\-D, N\-D\-I\-M, N\-O\-F\-V\-E\-R\-T, N\-O\-F\-V\-A\-R, N\-T\-U\-R\-B, \hyperlink{myts_8com_a41549d5ede5e2b840495daf35608da41}{D\-T}, R\-H\-S, \hyperlink{ibc2_8com_ad2108d58343608772fff791c23da58f5}{A}, Scalar\-Scheme, Matrix\-Scheme, Model)
+\item 
+subroutine \hyperlink{seq_2setup_r_h_s__t_8_f_ae9aba4ae2061b9d88fba7e0ceee69dd7}{scala} (\hyperlink{mesh_8com_ae28c1572321efcd8715b974d87d20c58}{N\-P\-O\-I\-N}, V, \hyperlink{myts_8com_a41549d5ede5e2b840495daf35608da41}{D\-T})
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{seq_2setup_r_h_s__t_8_f_ae9aba4ae2061b9d88fba7e0ceee69dd7}{\index{seq/setup\-R\-H\-S\-\_\-t.\-F@{seq/setup\-R\-H\-S\-\_\-t.\-F}!scala@{scala}}
+\index{scala@{scala}!seq/setupRHS_t.F@{seq/setup\-R\-H\-S\-\_\-t.\-F}}
+\subsubsection[{scala}]{\setlength{\rightskip}{0pt plus 5cm}subroutine scala (
+\begin{DoxyParamCaption}
+\item[{integer}]{N\-P\-O\-I\-N, }
+\item[{double precision, dimension($\ast$)}]{V, }
+\item[{double precision, dimension($\ast$)}]{D\-T}
+\end{DoxyParamCaption}
+)}}\label{seq_2setup_r_h_s__t_8_f_ae9aba4ae2061b9d88fba7e0ceee69dd7}
+\hypertarget{seq_2setup_r_h_s__t_8_f_a5ff19471b1236283e869ad2595608445}{\index{seq/setup\-R\-H\-S\-\_\-t.\-F@{seq/setup\-R\-H\-S\-\_\-t.\-F}!setuprhs\-\_\-t@{setuprhs\-\_\-t}}
+\index{setuprhs\-\_\-t@{setuprhs\-\_\-t}!seq/setupRHS_t.F@{seq/setup\-R\-H\-S\-\_\-t.\-F}}
+\subsubsection[{setuprhs\-\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}subroutine setuprhs\-\_\-t (
+\begin{DoxyParamCaption}
+\item[{integer, dimension(nofvert,nelem)}]{I\-C\-E\-L\-N\-O\-D, }
+\item[{integer, dimension(nofvert,nelem)}]{I\-C\-E\-L\-F\-A\-C, }
+\item[{double precision, dimension(ndim,$\ast$)}]{V\-F\-A\-C\-N\-O\-R, }
+\item[{double precision, dimension(ndim,$\ast$)}]{X\-Y\-Z\-D\-O\-T, }
+\item[{double precision, dimension(nelem)}]{V\-O\-L, }
+\item[{double precision, dimension(nofvar,$\ast$)}]{Z\-R\-O\-E, }
+\item[{double precision, dimension(nturb,$\ast$)}]{Z\-T\-U\-R\-B, }
+\item[{double precision, dimension(nturb,nturb,nofvert,nofvert)}]{S\-T\-I\-F\-E\-L, }
+\item[{double precision, dimension(nturb,nofvert)}]{N\-O\-D\-R\-E\-S, }
+\item[{double precision, dimension(nturb,nofvert)}]{N\-E\-W\-R\-E\-S, }
+\item[{double precision, dimension(nturb,nofvert)}]{V\-C\-Z, }
+\item[{double precision, dimension(nturb,nofvert)}]{V\-C\-D\-Z, }
+\item[{double precision, dimension(ndim,nofvert)}]{V\-C\-B, }
+\item[{integer}]{N\-E\-L\-E\-M, }
+\item[{integer}]{N\-P\-O\-I\-N, }
+\item[{integer}]{N\-G\-H\-O\-S\-T, }
+\item[{integer}]{N\-P\-N\-O\-D, }
+\item[{integer}]{N\-D\-I\-M, }
+\item[{integer}]{N\-O\-F\-V\-E\-R\-T, }
+\item[{integer}]{N\-O\-F\-V\-A\-R, }
+\item[{integer}]{N\-T\-U\-R\-B, }
+\item[{}]{D\-T, }
+\item[{}]{R\-H\-S, }
+\item[{}]{A, }
+\item[{external}]{Scalar\-Scheme, }
+\item[{external}]{Matrix\-Scheme, }
+\item[{external}]{Model}
+\end{DoxyParamCaption}
+)}}\label{seq_2setup_r_h_s__t_8_f_a5ff19471b1236283e869ad2595608445}

@@ -1,0 +1,72 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.02.09.17.34.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Get the list of elements surrounding no-slip wall nodes
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      subroutine zz003(nodcode,npoin,ibgn,iadj,
+     +                 jbgn,lena,jadj,lenb,iperm,lenc)
+
+      implicit none
+
+      integer nofvert,nelem,npoin
+      integer lena,lenb,lenc
+      integer nodcode(npoin),ibgn(npoin+1),
+     +        iadj(*),iperm(*),jbgn(*),jadj(*)
+      integer i,ipoin,job
+      parameter(job=0) 
+
+      double precision a,ao
+
+c
+c     iperm keeps the list of wall nodes
+c
+
+      i = 0
+      DO 1 ipoin = 1, npoin
+         if( nodcode(ipoin) .ne. 1000 )goto 1
+         i = i+1
+         iperm(i) = ipoin
+    1 continue 
+
+      if( lenc .lt. i )then
+         write(6,100)'IPERM',i,lenc
+         STOP
+      endif 
+
+      if( lena .lt. (i+1) )then
+         write(6,100)'JBGN',i+1,lena
+         STOP
+      endif 
+
+
+      call xtrows(1,i,a,iadj,ibgn,ao,jadj,jbgn,iperm,job)
+
+      if( lenb .lt. (jbgn(i+1)-1) )then
+         write(6,100)'JADJ',(jbgn(i+1)-1),lenb
+         STOP
+      endif 
+
+
+      return
+  100 format('Not enough space allocated for array ',A5,/,
+     +'in subroutine ZZ003; required: ',I6,' allocated: ',I6)
+      end
+@

@@ -1,0 +1,81 @@
+\hypertarget{matspl_i_i_8_f}{}\doxysection{src/euler/matspl\+II.F File Reference}
+\label{matspl_i_i_8_f}\index{src/euler/matsplII.F@{src/euler/matsplII.F}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{matspl_i_i_8_f_ace5374b34d793898b222cab70ee7ba33}{Mat\+Split\+II}} (I\+E\+L\+EM, N\+D\+IM, N\+O\+R\+D\+ER, V\+E\+CN, Jacobian\+Matrix, L\+DJ, K\+M\+AT, K\+P\+OS, K\+N\+EG, V\+L\+E\+FT, V\+R\+I\+G\+HT, L\+DA, WR, L\+P\+OS, L\+N\+EG, E\+I\+G\+E\+N\+D\+E\+CO)
+\begin{DoxyCompactList}\small\item\em {\bfseries{Mat\+Split\+IX}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{matspl_i_i_8_f_ace5374b34d793898b222cab70ee7ba33}\label{matspl_i_i_8_f_ace5374b34d793898b222cab70ee7ba33}} 
+\index{matsplII.F@{matsplII.F}!MatSplitII@{MatSplitII}}
+\index{MatSplitII@{MatSplitII}!matsplII.F@{matsplII.F}}
+\doxysubsubsection{\texorpdfstring{MatSplitII()}{MatSplitII()}}
+{\footnotesize\ttfamily subroutine Mat\+Split\+II (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+R\+D\+ER,  }\item[{double precision, dimension(ndim)}]{V\+E\+CN,  }\item[{double precision, dimension(ldj,$\ast$)}]{Jacobian\+Matrix,  }\item[{integer}]{L\+DJ,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+M\+AT,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+P\+OS,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+N\+EG,  }\item[{double precision, dimension(lda,$\ast$)}]{V\+L\+E\+FT,  }\item[{double precision, dimension(lda,$\ast$)}]{V\+R\+I\+G\+HT,  }\item[{integer}]{L\+DA,  }\item[{double precision, dimension($\ast$)}]{WR,  }\item[{double precision, dimension($\ast$)}]{L\+P\+OS,  }\item[{double precision, dimension($\ast$)}]{L\+N\+EG,  }\item[{logical}]{E\+I\+G\+E\+N\+D\+E\+CO }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{Mat\+Split\+IX}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the split matrices for the I\+Ncompressible preconditioned equations
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+R\+D\+ER} & the order of the system to be solved \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+E\+CN} & the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em Jacobian\+Matrix} & is the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DJ} & leading dimension of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+M\+AT} & the jacobian matrix times the face normal \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+P\+OS} & is the \char`\"{}positive\char`\"{} part of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+N\+EG} & is the \char`\"{}negative\char`\"{} part of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+L\+E\+FT} & is the left eigenvector matrix of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+R\+I\+G\+HT} & is the right eigenvector matrix of the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DA} & is the leading dimension of the matrices K\+M\+AT, K\+P\+OS, K\+N\+EG, V\+L\+E\+FT, V\+R\+I\+G\+HT \\
+\hline
+\mbox{\texttt{ out}}  & {\em WR} & are the eigenvalues of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em L\+P\+OS} & are the positive eigenvalues of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em L\+N\+EG} & are the negative eigenvalues of the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em E\+I\+G\+E\+N\+D\+E\+CO} & .T\+R\+UE. if the eigenvector decomposition of the matrix is needed, if .F\+A\+L\+SE. only the K\+M\+AT matrix is computed \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+5 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+Define the preprocessor macro D\+E\+B\+UG when modifying this piece of code 
+\end{DoxyWarning}

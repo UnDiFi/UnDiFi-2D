@@ -1,0 +1,14 @@
+6c6,8
+< C     $Id: turbsch.F,v 1.2 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: turbsch.F,v 1.2 2016/11/10 11:25:13 abonfi Exp $
+16a19
+> #include "petsc/finclude/petscsys.h"
+19,23d21
+<       use petscvec
+<       use petscmat
+< C
+<       IMPLICIT NONE
+< C

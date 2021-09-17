@@ -1,0 +1,6 @@
+F77CMD = cf77 -Dcray
+64_BIT_REALS =
+CCCMD  = c89 -DIFSTYLE=1 -Dcray
+RANLIB = echo
+AR = bld
+CPP = /usr/lib/gpp

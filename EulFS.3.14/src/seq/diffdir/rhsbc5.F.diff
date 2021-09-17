@@ -1,0 +1,45 @@
+2c2
+<       SUBROUTINE RHSBC5( RHS, NodalBcs )
+---
+>       SUBROUTINE RHSBC5( RHS )
+7c7
+< C     $Id: rhsbc5.F,v 1.18 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: rhsbc5.F,v 1.18 2016/11/10 11:25:13 abonfi Exp $
+9a10,12
+>       IMPLICIT NONE
+> C
+> #include "petsc/finclude/petscsys.h"
+12,15d14
+<       use petscvec
+<       use petscis
+< C
+<       IMPLICIT NONE
+20d18
+<       INCLUDE 'iset.h'
+21a20
+> #include "iset.com"
+26d24
+<       IS, dimension(0:*) :: NodalBcs
+42,43c40,41
+<       CALL ISGetIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+<       CALL ISGetSize(NodalBcs(NoSlipNodes),NI,IFAIL)
+---
+>       CALL ISGetIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+>       CALL ISGetSize(NoSlipNodes,NI,IFAIL)
+52c50
+<       CALL ISRestoreIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+---
+>       CALL ISRestoreIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+56,58c54,55
+<       CALL ISGetIndices(NodalBcs(FreestreamTurbulence),IDX_V,IDX_I,
+<      &                  IFAIL)
+<       CALL ISGetSize(NodalBcs(FreestreamTurbulence),NI,IFAIL)
+---
+>       CALL ISGetIndices(FreestreamTurbulence,IDX_V,IDX_I,IFAIL)
+>       CALL ISGetSize(FreestreamTurbulence,NI,IFAIL)
+67,68c64
+<       CALL ISRestoreIndices(NodalBcs(FreestreamTurbulence),IDX_V,IDX_I,
+<      &                      IFAIL)
+---
+>       CALL ISRestoreIndices(FreestreamTurbulence,IDX_V,IDX_I,IFAIL)

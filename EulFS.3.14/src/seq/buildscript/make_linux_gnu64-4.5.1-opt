@@ -1,0 +1,13 @@
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.2-p5
+export FSPL_DIR=$HOME/CFD_codes/EulFS.3.2.2
+export PETSC_ARCH=linux_gnu64-4.5.1-opt
+
+`which gcc` --version
+`which gfortran` --version
+
+echo $PETSC_DIR
+echo $PETSC_ARCH
+
+sleep 2
+
+make install

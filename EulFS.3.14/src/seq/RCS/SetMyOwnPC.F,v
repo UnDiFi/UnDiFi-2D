@@ -1,0 +1,154 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2001.11.09.14.23.04;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.11.09.08.09.24;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@A subroutine needed to choose user defined PCs
+@
+
+
+1.2
+log
+@add shell bjacobi two steps
+@
+text
+@      SUBROUTINE SetMyOwnPC(sles,A,B,X,NPOIN,NOFVAR,IFAIL)
+C
+C     $Id: SetMyOwnPC.F,v 1.1 2001/11/09 08:09:24 abonfi Exp abonfi $
+C
+C     Choose My own PC routine
+C
+      IMPLICIT NONE
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscsles.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscpc.h"
+C
+C
+      INTEGER NPOIN,NOFVAR
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'io.com'
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+C     ..
+C     .. Petsc Vectors ..
+      Vec X
+C     ..
+C     .. Petsc Matrices ..
+      Mat A,B
+C     ..
+C     .. Petsc Sles ..
+      SLES sles
+!     MatStructure str
+      PC pc
+      PetscTruth flg
+      CHARACTER string*255
+      INTEGER IFAIL,ICASE
+C
+      EXTERNAL PierluigiSetup,SSSORPCSetup,AldoSetup,
+     +PierluigiPCApply,SSSORPCApply,AldoPCApply
+C
+      CALL SLESGetPC(sles,pc,IFAIL)
+C
+C  Set a user-defined shell preconditioner
+C
+C  (Required) Indicate to PETSc that we are using a shell preconditioner
+C
+      call PCSetType(pc,PCSHELL,IFAIL)
+C
+      call PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +  '-user_defined_pc',string,flg,IFAIL)
+C
+      IF( flg .EQ. PETSC_FALSE )STOP 'strange error within SetMyOwnPC'
+C
+      IF( string(1:5) .EQ. "sssor" ) THEN
+           ICASE = 1 
+      ELSEIF( string(1:9) .EQ. "pierluigi" ) THEN 
+           ICASE = 2
+      ELSEIF( string(1:4) .EQ. "aldo" ) THEN 
+           ICASE = 3
+      ELSE
+         WRITE(6,*) "unknown user-defined PC ",string(1:50)
+         STOP
+      ENDIF
+C
+C (Required) Set the user-defined routine for applying the preconditioner:
+C
+      IF( ICASE .EQ. 1)CALL PCShellSetSetup(pc,SSSORPCSetup,IFAIL)
+      IF( ICASE .EQ. 2)CALL PCShellSetSetUp(pc,PierluigiSetup,IFAIL)
+      IF( ICASE .EQ. 3)CALL PCShellSetSetUp(pc,AldoSetup,IFAIL)
+C
+C
+C  (Optional) Set the user-defined routine for doing
+C  any setup required for the preconditioner
+C  whenever the matrix operator is changed; i.e. at each
+C  non-linear iteration 
+C
+C
+      IF( ICASE .EQ. 1)CALL PCShellSetApply(pc,SSSORPCApply,
+     +        PETSC_NULL_OBJECT,IFAIL)
+      IF( ICASE .EQ. 2)CALL PCShellSetApply(pc,PierluigiPCApply,
+     +        PETSC_NULL_OBJECT,IFAIL)
+      IF( ICASE .EQ. 3)CALL PCShellSetApply(pc,AldoPCApply,
+     +        PETSC_NULL_OBJECT,IFAIL)
+c
+c importante
+!     nblks = npoin
+!     nb= nofvar
+C
+C
+caldo call PCShellSetName(pc,"pierluigi",IFAIL)
+C
+C  Do any "una tantum" setup required for the preconditioner
+C
+      IF( ICASE .EQ. 1)THEN
+          call SSSORBasicSetup(NPOIN,NOFVAR,IFAIL)
+          B = A
+      ELSEIF( ICASE .EQ. 2)THEN
+          call PierluigiPCSetup(A,B,X,IFAIL)
+      ELSEIF( ICASE .EQ. 3)THEN
+          call AldoPCSetup(A,B,X,IFAIL)
+      ENDIF
+C
+      RETURN
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+C     $Id: myTS.F,v 1.11 2001/10/17 15:33:22 abonfi Exp abonfi $
+d40 2
+a41 2
+      EXTERNAL PierluigiSetup,SSSORPCSetup,
+     +PierluigiPCApply,SSSORPCApply
+d60 2
+d71 1
+d84 2
+d101 2
+@

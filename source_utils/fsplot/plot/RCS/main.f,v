@@ -1,0 +1,1158 @@
+head	1.9;
+access
+	abonfi;
+symbols;
+locks
+	abonfi:1.9; strict;
+comment	@c @;
+
+
+1.9
+date	2020.02.05.10.46.08;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2018.02.27.14.07.04;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2016.06.24.10.34.32;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2016.06.24.09.51.32;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.09.14.06.22.42;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2003.11.26.18.10.34;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.12.10.16.28.05;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.11.02.12.13.55;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.15.37.28;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@main program
+@
+
+
+1.9
+log
+@dumps the triangle areas, if really needed
+@
+text
+@      PROGRAM PLOT
+C
+C     $Id: main.f,v 1.8 2018/02/27 14:07:04 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants'
+C
+C
+      INCLUDE 'IO'
+      INCLUDE 'es.h'
+      INCLUDE 'mesh_i4'
+      INCLUDE 'int_flags'
+      INCLUDE 'dim_flags'
+C
+      INTEGER MAX_NUM_RAKES
+      PARAMETER(MAX_NUM_RAKES=15)
+      INTEGER NVA
+      PARAMETER (NVA=267000000)
+!     PARAMETER (NVA=9900000)
+C
+      DOUBLE PRECISION DSTAK(NVA)
+      INTEGER ISTAK(1)
+      REAL RSTAK(1)
+      EQUIVALENCE (DSTAK(1),ISTAK(1),RSTAK(1))
+      COMMON /CSTAK/DSTAK
+C
+      INTEGER      LCORG,LZROE,LCELNOD,LBNDFAC,LCELCEL,LHEAT,LQ2,
+     &          LNODPTR,LBNDPTR,LNODCOD
+      COMMON /NLOC/LCORG,LZROE,LCELNOD,LBNDFAC,LCELCEL,LHEAT,LQ2,
+     &          LNODPTR,LBNDPTR,LNODCOD
+C
+      common /freestream/ fren
+C
+      INTEGER NBFAC,ifail,ICLR,LRANK,LENW,LSKIN,LWORK(10),LTINDX,
+     >I,iunit,IRAKE,NRAKES,it,nlen,LENW2,IDUMMY,LWKSP(3),
+     +NELEMTYPES,NNODESFR,NDOF,NITEMS,IWRK
+      EQUIVALENCE(nBoundaryFaces,NBFAC)
+      INTEGER IV(3,5) 
+      DOUBLE PRECISION LINEBGN(3,MAX_NUM_RAKES),LINEEND(3,MAX_NUM_RAKES)
+      DOUBLE PRECISION AA,BB,CC,REYNO,M_INFTY,fren,S,T
+      DOUBLE PRECISION angle_min, angle_max, retval
+      DOUBLE PRECISION alpha_min, alpha_ave, alpha_area, 
+     &triangulation_area
+      INTEGER angle_max_triangle , angle_min_triangle
+      LOGICAL DPLOT_,TECPLOT_,NORMAL_TO_THE_WALL,LFLAG,KAN(3)
+C
+C     KAN Kind of ANalysis
+C
+C     KAN(1) = .TRUE. KAN(2:3) = .FALSE. -----> compressible
+C     KAN(2) = .TRUE. KAN(1,3) = .FALSE. -----> Incompressible
+C     KAN(3) = .TRUE. KAN(1:2) = .FALSE. -----> scalar
+C
+      CHARACTER*1 answ
+      CHARACTER*10 fname
+      CHARACTER*80 title,probefname
+      CHARACTER*255 datadir
+      LOGICAL lprobe
+C
+      INTEGER  ISTKGT,ISTKST,ISTKQU,INITXDR,IXDRCLOSE
+      EXTERNAL ISTKGT,ISTKST,ISTKQU,INITXDR,IXDRCLOSE
+C     ..
+C     .. External Subroutines ..
+      INTEGER  IXDRIMAT,IXDRINT
+      EXTERNAL IXDRIMAT,IXDRINT
+      DOUBLE PRECISION DNRM2,DASUM
+      EXTERNAL DNRM2,DASUM
+C
+      INTEGER kspace,lenstr
+C
+C     .. Executable Statements ..
+C
+      KAN(1) = .FALSE.
+      KAN(2) = .FALSE.
+      KAN(3) = .FALSE.
+C
+      OPEN (1,file='inp',STATUS='OLD')
+      READ (1,'(12X,A)') DATADIR
+      kspace = lenstr(datadir)
+      READ (1,'(12X,A)') filename(2)
+      READ (1,'(12X,A1)')answ
+      IF    (answ.EQ."C".OR.answ.EQ."c")THEN
+           KAN(1) = .TRUE.
+      ELSEIF(answ.EQ."I".OR.answ.EQ."i")THEN
+           KAN(2) = .TRUE.
+      ELSEIF(answ.EQ."S".OR.answ.EQ."s")THEN
+           KAN(3) = .TRUE.
+      ELSE
+           WRITE(6,*)'Need to specify whether I/C/S !'
+           CALL EXIT(1)
+      ENDIF
+      READ (1,*)
+      READ (1,*)
+      DPLOT_ = .TRUE.
+      TECPLOT_ = .TRUE.
+      READ (1,'(12X,F12.8)') REYNO
+      READ (1,'(12X,F12.8)') M_INFTY
+      READ (1,'(12X,I3)') ICLR
+      READ (1,'(12X,F12.8)') AA
+      READ (1,'(12X,F12.8)') BB
+      READ (1,'(12X,F12.8)') CC
+      READ (1,'(12X,I3)') I
+      NORMAL_TO_THE_WALL = (I .NE. 0)
+c
+c     read 3D rakes
+c
+      READ (1,'(12X,I3)') nrakes
+      IF(nrakes.GT.MAX_NUM_RAKES)THEN
+         stop 'far too many rakes! increase MAX_NUM_RAKES'
+      ENDIF
+      DO 178 irake = 1,  nrakes
+         READ (1,'(11X,6(1X,F7.3))') 
+     +   (linebgn(i,irake),i=1,3),(lineend(i,irake),i=1,3)
+!        write (6,'(11X,6(1X,F7.3))') 
+!    +   (linebgn(i,irake),i=1,3),(lineend(i,irake),i=1,3)
+  178 CONTINUE
+      READ (1,'(12X,L)') lprobe
+      IF(LPROBE)THEN
+         READ (1,'(12X,A)') probefname
+      ENDIF
+      CLOSE (1)
+C
+      filename(1) = datadir(1:KSPACE) // 'file001.dat'
+      filename(3) = datadir(1:KSPACE) // 'file002.dat'
+      filename(4) = datadir(1:KSPACE) // 'file004.dat'
+C
+      fren = (2.d0 + 0.4d0*M_INFTY*M_INFTY*1.4d0)/
+     +       (1.4d0*0.8d0*M_INFTY*M_INFTY)
+C
+C
+      CALL ISTKIN(NVA,4)
+C
+C
+      CALL WKSPCE
+C
+C ---------- ALLOCATE SPACE
+C
+      WRITE (NOUT,4000)
+
+ 4000 FORMAT (//' MEMORY ALLOCATION   '/' ',19 ('=')/)
+C
+C     .. Nodal coordinates ..
+C
+      LCORG = ISTKGT((NPOIN+NPNOD)*DIM,4)
+      CALL DINIT((NPOIN+NPNOD)*DIM,ZERO,DSTAK(LCORG),1)
+C
+C     .. Nodal values ..
+C
+      LZROE = ISTKGT((NPOIN+NPNOD)*NOFVAR,4)
+      CALL DINIT((NPOIN+NPNOD)*NOFVAR,ZERO,DSTAK(LZROE),1)
+C
+C     .. Cell to node pointer ..
+C
+      LCELNOD = ISTKGT(NELEM*NOFVERT,2)
+      CALL IINIT(NELEM*NOFVERT,0,ISTAK(LCELNOD),1)
+C
+C     .. Boundary structure ..
+C
+      LBNDFAC = ISTKGT(3*NBFAC,2)
+      CALL IINIT(3*NBFAC,0,ISTAK(LBNDFAC),1)
+C
+C     ... Reading data ...
+C
+      CALL READAT(DSTAK(LCORG),ISTAK(LCELNOD),ISTAK(LBNDFAC),
+     +            DSTAK(LZROE))
+C
+      WRITE(6,*)' Computing L2 norm with stride '
+      DO I = 0,NOFVAR-1
+         IDUMMY = LZROE + I
+         S=DNRM2((NPOIN+NPNOD),DSTAK(IDUMMY),NOFVAR)
+         T=DASUM((NPOIN+NPNOD),DSTAK(IDUMMY),NOFVAR)/(NPOIN+NPNOD)
+         WRITE(6,*)' L2 norm of dof ',I,' is = ',S,' <Q> = ',T
+      ENDDO
+C
+C rotate the mesh about a pole
+C
+!     CALL rotate2d("file110.dat",DSTAK(LCORG),dim,ISTAK(LCELNOD),
+!    +nofvert,nelem,nhole,DSTAK(LZROE),nofvar,npoin,npnod,
+!    +ISTAK(LBNDFAC),nbfac)
+C
+C     ... Dplot ...
+C
+      IF (DIM.EQ.3) GOTO 100
+      IF (.FALSE.) THEN
+
+          IF (NOFVAR.EQ.4) CALL PARM_TO_CONS(DSTAK(LZROE))
+
+          IF (NOFVAR.EQ.3) then
+           nofvar = 1
+           Lwksp = ISTKGT((NPOIN+NPNOD),4)
+           CALL Dcopy((NPOIN+NPNOD),DSTAK(LZROE),3,dstak(lwksp),1)
+          CALL DPLOT('p.dpl',DSTAK(LCORG),ISTAK(LCELNOD),
+     +               DSTAK(lwksp),ISTAK(LBNDFAC))
+           CALL Dcopy((NPOIN+NPNOD),DSTAK(LZROE+1),3,dstak(lwksp),1)
+          CALL DPLOT('u.dpl',DSTAK(LCORG),ISTAK(LCELNOD),
+     +               DSTAK(lwksp),ISTAK(LBNDFAC))
+           CALL Dcopy((NPOIN+NPNOD),DSTAK(LZROE+2),3,dstak(lwksp),1)
+          CALL DPLOT('v.dpl',DSTAK(LCORG),ISTAK(LCELNOD),
+     +               DSTAK(Lwksp),ISTAK(LBNDFAC))
+           nofvar = 3
+          else
+          CALL DPLOT('file012.dpl',DSTAK(LCORG),ISTAK(LCELNOD),
+     +               DSTAK(LZROE),ISTAK(LBNDFAC))
+          endif
+          IF (NOFVAR.EQ.4) CALL CONS_TO_PARM(DSTAK(LZROE))
+      ENDIF
+C
+  100 CONTINUE
+C     ... Tecplot ...
+C
+caldo     CALL GMV('file012.inp',DSTAK(LCORG),DIM,NPOIN,
+caldo+             ISTAK(LCELNOD),NOFVERT,NELEM,DSTAK(LZROE),NOFVAR)
+C     ... Tecplot ...
+C
+      IF (TECPLOT_) THEN
+          fname = "tecXXX.dat"
+          write(fname(4:6),FMT="(I3.3)")it
+          IF(NPOIN.GE.1000000)THEN
+             WRITE(6,*)'This is a large dataset with ',NPOIN,
+     &       ' gridpoints; do u want to produce a volume file?'
+             READ(5,*)answ
+          ELSE
+             answ = 'Y'
+          ENDIF
+             IF(answ.EQ.'y'.OR.answ.EQ.'Y')tHEN
+             IWRK=(MAX(DIM,NOFVAR)+NPOIN+NPNOD)/2
+caldo        LWKSP(1) = ISTKGT(IWRK,2)
+caldo     CALL BTEC('file012.plt',DSTAK(LCORG),DIM,NPOIN,
+caldo&                 ISTAK(LCELNOD),NOFVERT,NELEM,
+caldo+                 DSTAK(LZROE),NOFVAR,ISTAK(LWKSP(1)),IWRK)
+caldo        CALL ISTKRL(1)
+          CALL TECPLOT('file012.dat',DSTAK(LCORG),DIM,NPOIN,
+     &                 ISTAK(LCELNOD),NOFVERT,NELEM,
+     +                 DSTAK(LZROE),NOFVAR)
+             ENDIF
+          NLEN = ISTKQU(2)
+          nlen = 0.45*nlen
+          LWKSP(1) = ISTKGT(Nlen,2)
+          LRANK = ISTKGT(Nlen,2)
+          CALL BNDPLOT('file020.dat',DSTAK(LCORG),DSTAK(LZROE),
+     +                 ISTAK(LCELNOD),ISTAK(LBNDFAC),ISTAK(LWKSP(1)),
+     +                 ISTAK(LRANK),Nlen)
+          CALL ISTKRL(2)
+      ENDIF
+C
+      INQUIRE(FILE="file016.dat",EXIST=LFLAG)
+      IF(.NOT.LFLAG)GOTO 77
+      IF(DIM.EQ.2 .AND. NOFVAR .GT. 1)THEN
+C
+C     .. Cell to node pointer ..
+C
+!         LNODCOD = ISTKGT(NPOIN+NPNOD,2)
+!         CALL IINIT(NPOIN+NPNOD,0,ISTAK(LNODCOD),1)
+!         CALL NODCOD(ISTAK(LNODCOD),NPOIN+NPNOD,NBPOIN,
+!    &                ISTAK(LCELNOD),NOFVERT,NELEM,ISTAK(LBNDFAC),NBFAC)
+!         CALL SetBndryNodePtr(LBNDFAC,LNODCOD,LNODPTR,LCELNOD,NBFAC,
+!    &                         NPOIN+NPNOD,NBPOIN)
+!         LBNDPTR = ISTKGT(6*NBFAC,2)
+!         CALL IINIT(6*NBFAC,0,ISTAK(LBNDPTR),1)
+!         CALL SetBndryPntr(ISTAK(LCELNOD),ISTAK(LCELCEL),NOFVERT,NELEM,
+!    &    ISTAK(LBNDFAC),NBFAC,ISTAK(LBNDPTR),ISTAK(LNODPTR),NBPOIN)
+C
+          LENW = NBFAC
+          LSKIN = ISTKGT(LENW,4)
+          LHEAT = ISTKGT(LENW,4)
+          LWORK(1) = ISTKGT(2*LENW,2)
+          LTINDX = ISTKGT(LENW,4)
+          LWKSP(1) = ISTKGT(2*LENW,2)
+          LRANK = ISTKGT(LENW,2)
+          CALL CF(DSTAK(LSKIN),DSTAK(LHEAT),DSTAK(LTINDX),
+     +            ISTAK(LWKSP(1)),ISTAK(LWORK(1)),ISTAK(LRANK),LENW,
+     +            ISTAK(LCELNOD),DSTAK(LCORG),DSTAK(LZROE),DIM,NOFVERT,
+     +            NOFVAR,REYNO,M_INFTY,'file016.dat')
+          CALL ISTKRL(3)
+      ELSEIF(DIM.EQ.3 .AND. NOFVAR .GT. 1)THEN
+          LENW = NBFAC
+          LSKIN = ISTKGT(LENW,4)
+          LHEAT = ISTKGT(LENW,4)
+          LWORK(1) = ISTKGT(2*LENW,2)
+          LTINDX = ISTKGT(LENW,4)
+          LWKSP(1) = ISTKGT((NOFVERT-1)*LENW,2)
+          LWORK(5) = ISTKGT((NOFVERT-1)*LENW,2)
+          NDOF = 5
+          LWORK(2) = ISTKGT(NDOF*LENW,4)
+          LWORK(3) = ISTKGT(LENW,4)
+          LWORK(4) = ISTKGT(LENW,4)
+          LWORK(6) = ISTKGT(LENW,4)
+          LWORK(7) = ISTKGT(LENW,4)
+          CALL CH3D(DSTAK(LSKIN),DSTAK(LHEAT),DSTAK(LTINDX),
+     &         ISTAK(LWKSP(1)),ISTAK(LWORK(1)),ISTAK(LWORK(5)),
+     &         DSTAK(LWORK(2)),NDOF,DSTAK(LWORK(3)),DSTAK(LWORK(4)),
+     &         DSTAK(LWORK(6)),DSTAK(LWORK(7)),LENW,ISTAK(LCELNOD),
+     +         DSTAK(LCORG),DIM,NOFVERT,NOFVAR,
+     &    REYNO,M_INFTY,'file016.dat')
+          CALL ISTKRL(11)
+      ENDIF
+   77 CONTINUE 
+C
+C     Make room for the cell 2 cell pointer 
+C
+      IF (ICLR.GE.0.OR.LPROBE) THEN
+C
+         LCELCEL = ISTKGT(NELEM*NOFVERT,2)
+         CALL IINIT(NELEM*NOFVERT,0,ISTAK(LCELCEL),1)
+C
+         IXDRS(3) = INITXDR(FILENAME(3),'r',.FALSE.)
+         IFAIL = IXDRINT(IXDRS(3),IDUMMY)
+         IFAIL = IXDRINT(IXDRS(3),IDUMMY)
+         IFAIL = IXDRIMAT(IXDRS(3),NOFVERT*NELEM,ISTAK(LCELCEL))
+         IFAIL = IXDRCLOSE(IXDRS(3))
+C
+      ENDIF
+C
+      IF (ICLR.GE.0) THEN
+C
+C     .. Cell to cell pointer ..
+C
+ 
+          IF(DIM.EQ.2)THEN
+          CALL CUT(ICLR,AA,BB,CC,DSTAK(LZROE),NOFVAR,DSTAK(LCORG),DIM,
+     +             NPOIN+NPNOD,ISTAK(LCELNOD),ISTAK(LCELCEL),NOFVERT,
+     +             NELEM,ISTAK(LBNDFAC),NBFAC,ISTAK(LWORK(1)),
+     +             DSTAK(LSKIN),LENW,REYNO,M_INFTY,NORMAL_TO_THE_WALL,
+     +             FILENAME(3),KAN)
+!         CALL BL(ICLR,AA,BB,CC,DSTAK(LZROE),NOFVAR,DSTAK(LCORG),DIM,
+!    +             NPOIN+NPNOD,ISTAK(LCELNOD),ISTAK(LCELCEL),NOFVERT,
+!    +             NELEM,ISTAK(LBNDFAC),NBFAC,ISTAK(LWORK),DSTAK(LSKIN),
+!    +             LENW,REYNO,M_INFTY,NORMAL_TO_THE_WALL,FILENAME(3))
+          ELSEIF(DIM.EQ.3)THEN
+             IUNIT = 20
+             OPEN(UNIT=IUNIT,FILE='rake3d.dat',FORM="FORMATTED")
+             title = "this is a test"
+             CALL WTecplotHeader(IUNIT,title,NOFVAR)
+caldo
+caldo
+caldo
+             DO 145 IRAKE = 1,NRAKES
+c
+c LWKSP(1) will keep the rake(s)
+c leave room for the distance (hence NOFVAR+1)
+c
+!            LENW2 = 0.9*ISTKQU(2)/(NOFVAR+1)
+             LENW2 = 1000
+             LWKSP(1) = ISTKGT(LENW2*(NOFVAR+1),4)
+             LWKSP(2)= ISTKGT(LENW2*DIM,4)
+             CALL DINIT(LENW2*(NOFVAR+1),ZERO,DSTAK(LWKSP(1)),1)
+             CALL DINIT(LENW2*DIM,ZERO,DSTAK(LWKSP(2)),1)
+c
+             CALL CUT3D(ICLR,IRAKE,LINEBGN(1,IRAKE),LINEEND(1,IRAKE),
+     +       DSTAK(LZROE),DSTAK(LWKSP(1)),DSTAK(LWKSP(2)),LENW2,NOFVAR,
+     +       DSTAK(LCORG),DIM,NPOIN+NPNOD,ISTAK(LCELNOD),ISTAK(LCELCEL),
+     +       NOFVERT,NELEM,ISTAK(LBNDFAC),NBFAC,ISTAK(LWORK(1)),
+     +       DSTAK(LSKIN),LENW,REYNO,NORMAL_TO_THE_WALL)
+             CALL ISTKRL(1) ! can we free both?
+  145        CONTINUE
+             CLOSE(IUNIT)
+c
+          ENDIF ! ndim
+ 
+      ENDIF
+C
+      IF (LPROBE) THEN
+         IUNIT = 12
+         OPEN(IUNIT,FILE=probefname,FORM="FORMATTED")
+         READ(IUNIT,*)NITEMS
+         WRITE(6,*)'Reading ',NITEMS,' probes from file ',probefname
+         LWKSP(1) = ISTKGT(NITEMS*DIM,4) 
+         LWKSP(2) = ISTKGT(NITEMS*NOFVAR,4) 
+         LWKSP(3) = ISTKGT((NPOIN+NPNOD),2) 
+         CALL RPROBE(IUNIT,DSTAK(LWKSP(1)),DIM,NITEMS)
+         CLOSE(IUNIT)
+         IV(2,1) = NPOIN
+         IV(3,1) = NITEMS
+         IV(2,2) = NPNOD
+         IV(3,2) = 0
+         IV(2,3) = NELEM
+         IV(3,3) = 0
+         CALL BURKARDT(NOFVAR,DIM,IV(1,1),IV(1,2),NOFVAR,
+     &                 NOFVERT,IV(1,3),ISTAK(LCELNOD),ISTAK(LCELCEL),
+     &                 DSTAK(LCORG),DSTAK(LWKSP(1)),DSTAK(LZROE),
+     &                 DSTAK(LWKSP(2)),ISTAK(LWKSP(3)))
+         CALL r8mat_print(NOFVAR,NITEMS,DSTAK(LWKSP(2)),'values')
+         IUNIT = 12
+         WRITE(6,*)'Writing probe data in probeout.dat'
+         OPEN(IUNIT,FILE="probeout.dat",FORM="FORMATTED")
+         CALL WPROBE(IUNIT,DSTAK(LWKSP(1)),DIM,NITEMS,DSTAK(LWKSP(2)),
+     &               NOFVAR)
+         CLOSE(IUNIT)
+         CALL ISTKRL(3)
+      ENDIF
+caldo
+      IF(DIM.EQ.2)THEN
+         LWKSP(3) = ISTKGT(NELEM,4)
+         call triangulation_areas ( NPOIN+NPNOD, DSTAK(LCORG), NOFVERT,
+     &       NELEM, ISTAK(LCELNOD), DSTAK(LWKSP(3)), 
+     &       triangulation_area )
+         WRITE(6,*)'Triangulation area is ',triangulation_area
+!        OPEN(77,FILE='vol.log',FORM="FORMATTED")
+         IT = 0
+         DO I = LWKSP(3),LWKSP(3)+NELEM-1
+            IT = IT+1
+            IF( DSTAK(I). LE. ZERO )THEN
+                WRITE(6,*)'Triangle ',IT,' HAS NEGATIVE OR ZERO AREA = '
+     &          ,DSTAK(I)
+            ELSE
+!               WRITE(77,*)'Triangle ',IT,' HAS AREA = ',DSTAK(I)
+            ENDIF
+         ENDDO
+         CALL ISTKRL(1) ! release LWKSP(3)
+!        CLOSE(77)
+         CALL triangulation_order3_check ( NPOIN+NPNOD, NELEM,
+     &         ISTAK(LCELNOD), IFAIL )
+         IF( (IFAIL .EQ. 0) .OR. (IFAIL.EQ.8.AND.NHOLE.NE.0) )THEN
+         WRITE(6,*)'triangulation_order3_check has returned ',IFAIL
+         ELSE
+             CALL EXIT(IFAIL)
+         ENDIF
+         CALL triangulation_order3_edge_check ( NELEM, ISTAK(LCELNOD),
+     &        NNODESFR, IFAIL )
+         WRITE(6,*)'triangulation_order3_edge_check has returned ',IFAIL
+         IF( IFAIL .NE. 0 )CALL EXIT(IFAIL)
+         call alpha_measure ( NPOIN+NPNOD, DSTAK(LCORG), NOFVERT, 
+     &        NELEM, ISTAK(LCELNOD), alpha_min, alpha_ave, alpha_area )
+         WRITE(6,*)'Alpha criterion: min, avg, weighted = ',alpha_min, 
+     &             alpha_ave, alpha_area
+         LQ2 = ISTKGT(NOFVERT*NELEM,2)
+         call triangulation_neighbor_elements ( NOFVERT, NELEM,
+     &        ISTAK(LCELNOD), ISTAK(LQ2) )
+         CALL triangulation_delaunay_discrepancy_compute ( NPOIN+NPNOD,
+     &        DSTAK(LCORG), NOFVERT, NELEM, ISTAK(LCELNOD), ISTAK(LQ2),
+     &        angle_min, angle_min_triangle, angle_max,
+     &        angle_max_triangle, retval )
+        CALL ISTKRL(1) ! release LQ2
+!
+      write(6,*)
+      write(6,*)'The Delaunay check has returned ',retval
+      write(6,*)'The Delaunay check has returned min angle ',angle_min
+      write(6,*)'in triangle ',angle_min_triangle
+      write(6,*)'The Delaunay check has returned max angle ',angle_max
+      write(6,*)'in triangle ',angle_max_triangle
+      write(6,*)
+      ENDIF ! on NDIM
+C
+      call mshsiz ( ISTAK(LCELNOD), NOFVERT, NELEM, DSTAK(LCORG),
+     &       DIM)
+C
+      CALL ISTKRL(ISTKST(1))
+C
+      CALL EXIT(0)
+C
+
+      END
+@
+
+
+1.8
+log
+@mshsiz is now called with an extra array in the argument's list
+@
+text
+@d3 1
+a3 1
+C     $Id: main.f,v 1.7 2016/06/24 10:34:32 abonfi Exp abonfi $
+d398 1
+d405 2
+d409 2
+a443 1
+      LWKSP(3) = ISTKGT(2*NELEM,4)
+d445 1
+a445 1
+     &       DIM, DSTAK(LWKSP(3)))
+@
+
+
+1.7
+log
+@added further checks
+@
+text
+@d3 1
+a3 1
+C     $Id: main.f,v 1.6 2016/06/24 09:51:32 abonfi Exp abonfi $
+d423 1
+a423 1
+     &  ISTAK(LCELNOD), ISTAK(LQ2) )
+d425 4
+a428 4
+     &  DSTAK(LCORG), NOFVERT, NELEM, ISTAK(LCELNOD), ISTAK(LQ2),
+     & angle_min, angle_min_triangle, angle_max, angle_max_triangle,
+     & retval )
+        CALL ISTKRL(1) ! release LWKSP(3)
+d436 1
+d439 4
+a443 4
+      CALL EXIT(0)
+C
+      GOTO 130
+      GOTO 120
+a444 26
+C     NOT IEEE ?!?!?!
+C
+      nelemtypes = 1
+      LQ2 = ISTKGT(NOFVAR*NPOIN,4)
+      CALL DCOPY(NOFVAR*NPOIN,DSTAK(LZROE),1,DSTAK(LQ2),1)
+C
+      CALL whdb(DSTAK(LCORG),dim,DSTAK(LQ2),NOFVAR,NPOIN,
+     +NOFVAR,NPOIN,ISTAK(LCELNOD),nelem,nelemtypes,
+     +ISTAK(LBNDFAC),NBFAC)
+  120 CONTINUE
+C
+C  WRITING OF YOUR MESH IN ASCII2D FORMAT
+C
+      lq2 = istkgt(NOFVAR*(NOFVERT-1)*NBFAC,3)
+caldo call q2fr(dstak(lzroe),rstak(lq2),istak(lbndptr),nbfac,
+caldo+          nofvert)
+C
+C     CALL PARM_TO_CONS(DSTAK(LZROE))
+      NELEMTYPES = 1
+      NNODESFR = 0
+      CALL ascii2d(DSTAK(LCORG),DIM,DSTAK(LZROE),NOFVAR,NPOIN,
+     +          RSTAK(LQ2),NOFVAR,NNODESFR,
+     +          ISTAK(LCELNOD),NELEM,NELEMTYPES,ISTAK(LBNDFAC),
+     +          ISTAK(LBNDFAC),0)
+C
+  130 CONTINUE
+a445 29
+C
+C
+C write mesh in a simple ascii  fmt
+C
+C     call WASCII(DSTAK(LCORG),DIM,NPOIN,
+C    +ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),ISTAK(LCELCEL),NOFVERT,NELEM)
+C 777 CONTINUE
+C
+C
+C
+C     write for hydra
+C
+C     LWORK = ISTKGT(2*NBFAC,2)
+C     CALL IINIT(2*NBFAC,0,ISTAK(LWORK),1)
+C     LWKSP(1) = ISTKGT(6*NPOIN,4)
+C     CALL DINIT(6*NPOIN,0.d0,DSTAK(LWKSP(1)),1)
+C
+caldo call hydra2(DSTAK(LCORG),DIM,DSTAK(LZROE),NOFVAR,NPOIN,
+caldo+ISTAK(LBNDFAC),ISTAK(LWORK),NBFAC,ISTAK(LCELNOD),NOFVERT,NELEM)
+C
+C     call hydra(DSTAK(LCORG),DIM,DSTAK(LZROE),DSTAK(LWKSP(1)),NOFVAR,
+C    +NPOIN,ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),NOFVERT,NELEM)
+C
+!     LWKSP(1) = ISTKGT(6*NPOIN,4)
+!     CALL DINIT(6*NPOIN,0.d0,DSTAK(LWKSP(1)),1)
+!     LWORK = ISTKGT(NOFVAR*NPOIN,4)
+!     CALL DINIT(6*NPOIN,0.d0,DSTAK(LWORK),1)
+!     CALL RSUB(6,NPOIN,DSTAK(LWKSP(1)))
+!     CALL SOLZNE('hydra010.dat',DSTAK(LWKSP(1))
+@
+
+
+1.6
+log
+@added triangulation checks
+@
+text
+@d3 1
+a3 1
+C     $Id: main.f,v 1.5 2011/09/14 06:22:42 abonfi Exp abonfi $
+d406 11
+d418 3
+a420 3
+     & NELEM, ISTAK(LCELNOD), alpha_min, alpha_ave, alpha_area )
+         write(6,*)'Alpha criterion: min, avg, weighted = ',alpha_min, 
+     &alpha_ave, alpha_area
+d428 1
+a428 1
+         CALL ISTKRL(1)
+d430 1
+d433 1
+d435 2
+a436 4
+!     CALL triangulation_delaunay_discrepancy_compute ( node_num, node_xy, &
+!      element_order, element_num, element_node, element_neighbor, &
+!      angle_min, angle_min_triangle, angle_max, angle_max_triangle, value )
+      ENDIF
+@
+
+
+1.5
+log
+@before adding the probes
+@
+text
+@d3 1
+a3 1
+C     $Id: main.f,v 1.4 2003/11/26 18:10:34 aldo Exp aldo $
+d19 2
+a20 2
+!     PARAMETER (NVA=267000000)
+      PARAMETER (NVA=9900000)
+d35 3
+a37 3
+      INTEGER NBFAC,ifail,ICLR,LWKSP,LRANK,LENW,LSKIN,LWORK(10),LTINDX,
+     >I,iunit,IRAKE,NRAKES,it,nlen,LENW2,IDUMMY,LWKSP2,
+     +NELEMTYPES,NNODESFR,NDOF
+d39 1
+d42 4
+d56 1
+a56 1
+      CHARACTER*80 title
+d58 1
+a80 1
+!     READ (1,'(12X,A)') filename(3)
+d117 4
+a217 2
+c         CALL TECPLOT(fname,DSTAK(LCORG),ISTAK(LCELNOD),
+c    +                 DSTAK(LZROE))
+d226 9
+a234 2
+          CALL TECPLOT('file012.dat',DSTAK(LCORG),ISTAK(LCELNOD),
+     +                 DSTAK(LZROE))
+d238 1
+a238 1
+          LWKSP = ISTKGT(Nlen,2)
+d241 1
+a241 1
+     +                 ISTAK(LCELNOD),ISTAK(LBNDFAC),ISTAK(LWKSP),
+d268 1
+a268 1
+          LWKSP = ISTKGT(2*LENW,2)
+d270 4
+a273 4
+          CALL CF(DSTAK(LSKIN),DSTAK(LHEAT),DSTAK(LTINDX),ISTAK(LWKSP),
+     +            ISTAK(LWORK(1)),ISTAK(LRANK),LENW,ISTAK(LCELNOD),
+     +            DSTAK(LCORG),DSTAK(LZROE),DIM,NOFVERT,NOFVAR,REYNO,
+     +            M_INFTY,'file016.dat')
+d281 1
+a281 1
+          LWKSP = ISTKGT((NOFVERT-1)*LENW,2)
+d290 1
+a290 1
+     &         ISTAK(LWKSP),ISTAK(LWORK(1)),ISTAK(LWORK(5)),
+d298 16
+a317 2
+          LCELCEL = ISTKGT(NELEM*NOFVERT,2)
+          CALL IINIT(NELEM*NOFVERT,0,ISTAK(LCELCEL),1)
+a335 6
+C
+             IXDRS(3) = INITXDR(FILENAME(3),'r',.FALSE.)
+             IFAIL = IXDRINT(IXDRS(3),IDUMMY)
+             IFAIL = IXDRINT(IXDRS(3),IDUMMY)
+             IFAIL = IXDRIMAT(IXDRS(3),NOFVERT*NELEM,ISTAK(LCELCEL))
+             IFAIL = IXDRCLOSE(IXDRS(3))
+d339 1
+a339 1
+c LWKSP will keep the rake(s)
+d344 4
+a347 4
+             LWKSP = ISTKGT(LENW2*(NOFVAR+1),4)
+             LWKSP2= ISTKGT(LENW2*DIM,4)
+             CALL DINIT(LENW2*(NOFVAR+1),ZERO,DSTAK(LWKSP),1)
+             CALL DINIT(LENW2*DIM,ZERO,DSTAK(LWKSP2),1)
+d350 1
+a350 1
+     +       DSTAK(LZROE),DSTAK(LWKSP),DSTAK(LWKSP2),LENW2,NOFVAR,
+d354 1
+a354 1
+             CALL ISTKRL(1)
+d358 1
+a358 1
+          ENDIF
+d362 65
+d474 2
+a475 2
+C     LWKSP = ISTKGT(6*NPOIN,4)
+C     CALL DINIT(6*NPOIN,0.d0,DSTAK(LWKSP),1)
+d480 1
+a480 1
+C     call hydra(DSTAK(LCORG),DIM,DSTAK(LZROE),DSTAK(LWKSP),NOFVAR,
+d483 2
+a484 2
+!     LWKSP = ISTKGT(6*NPOIN,4)
+!     CALL DINIT(6*NPOIN,0.d0,DSTAK(LWKSP),1)
+d487 2
+a488 2
+!     CALL RSUB(6,NPOIN,DSTAK(LWKSP))
+!     CALL SOLZNE('hydra010.dat',DSTAK(LWKSP)
+@
+
+
+1.4
+log
+@Add 3D rakes
+@
+text
+@d3 1
+a3 1
+C     $Id:$
+d19 2
+a20 1
+      PARAMETER (NVA=14900000)
+d28 4
+a31 2
+      INTEGER LCORG,LZROE,LCELNOD,LBNDPTR,LCELCEL,LHEAT
+      COMMON /NLOC/LCORG,LZROE,LCELNOD,LBNDPTR,LCELCEL,LHEAT
+d35 3
+a37 2
+      INTEGER NBFAC,ifail,ICLR,LWKSP,LRANK,LENW,LSKIN,LWORK,LTINDX,I,
+     >iunit,NPTS,IRAKE,NRAKES,it,nlen,LENW2,IDUMMY,LWKSP2
+d40 2
+a41 2
+      DOUBLE PRECISION AA,BB,CC,REYNO,M_INFTY,fren,X1,Y1,Z1,X2,Y2,Z2
+      LOGICAL DPLOT_,TECPLOT_,NORMAL_TO_THE_WALL
+d43 7
+d60 2
+d67 5
+a71 1
+      OPEN (1,file='inp',STATUS='UNKNOWN')
+d75 12
+a86 1
+      READ (1,'(12X,A)') filename(3)
+a132 1
+C
+d142 1
+a142 1
+
+d150 2
+a151 2
+      LBNDPTR = ISTKGT(3*NBFAC,2)
+      CALL IINIT(3*NBFAC,0,ISTAK(LBNDPTR),1)
+d155 1
+a155 1
+      CALL READAT(DSTAK(LCORG),ISTAK(LCELNOD),ISTAK(LBNDPTR),
+d158 7
+d170 1
+a170 1
+!    +ISTAK(LBNDPTR),nbfac)
+a173 1
+c     GOTO 130
+d184 1
+a184 1
+     +               DSTAK(lwksp),ISTAK(LBNDPTR))
+d187 1
+a187 1
+     +               DSTAK(lwksp),ISTAK(LBNDPTR))
+d190 1
+a190 1
+     +               DSTAK(Lwksp),ISTAK(LBNDPTR))
+d194 1
+a194 1
+     +               DSTAK(LZROE),ISTAK(LBNDPTR))
+d202 4
+d211 8
+d221 1
+d227 1
+a227 1
+     +                 ISTAK(LCELNOD),ISTAK(LBNDPTR),ISTAK(LWKSP),
+d232 2
+d235 14
+d252 1
+a252 1
+          LWORK = ISTKGT(2*LENW,2)
+d257 3
+a259 2
+     +ISTAK(LWORK),ISTAK(LRANK),LENW,ISTAK(LCELNOD),DSTAK(LCORG),
+     +DSTAK(LZROE),DIM,NOFVERT,NOFVAR,REYNO,M_INFTY,'file016.dat')
+d261 21
+d283 1
+a283 1
+ 
+d294 7
+a300 2
+     +             NELEM,ISTAK(LBNDPTR),NBFAC,ISTAK(LWORK),DSTAK(LSKIN),
+     +             LENW,REYNO,M_INFTY,NORMAL_TO_THE_WALL,FILENAME(3))
+d330 1
+a330 1
+     +       NOFVERT,NELEM,ISTAK(LBNDPTR),NBFAC,ISTAK(LWORK),
+d340 31
+d372 2
+d378 1
+a378 1
+C    +ISTAK(LBNDPTR),NBFAC,ISTAK(LCELNOD),ISTAK(LCELCEL),NOFVERT,NELEM)
+d391 1
+a391 1
+caldo+ISTAK(LBNDPTR),ISTAK(LWORK),NBFAC,ISTAK(LCELNOD),NOFVERT,NELEM)
+d394 1
+a394 1
+C    +NPOIN,ISTAK(LBNDPTR),NBFAC,ISTAK(LCELNOD),NOFVERT,NELEM)
+a402 9
+      CALL ISTKRL(ISTKST(1))
+      STOP
+C
+  111 FORMAT ('.',$)
+  112 FORMAT (/,5X,A11,1X,'BACKUP FILE WRITTEN .......',/)
+  113 FORMAT (/,5X,A11,1X,'BACKUP FILE OPEN ..........',/)
+  114 FORMAT (/,5X,A11,1X,'BACKUP FILE READ ..........',/)
+  115 FORMAT (' done')
+  300 FORMAT (/,10X,'IFORM = ',I2,' while it should be 1 or 2')
+@
+
+
+1.3
+log
+@version for AVS and Vigie
+@
+text
+@d3 2
+d16 2
+d19 1
+a19 1
+      PARAMETER (NVA=2900000)
+d32 5
+a36 4
+      INTEGER NBFAC,ifail,ICLR,LWKSP,LRANK,LEN,LSKIN,LWORK,LTINDX,I,
+     >iunit,ivar,ibgn,lq2fr,nelemtypes,nnodesfr
+      DOUBLE PRECISION AA,BB,CC,REYNO,M_INFTY,fren
+      EQUIVALENCE (nBoundaryFaces,NBFAC)
+d39 10
+a48 19
+C     CHARACTER*7 TBL
+C     DIMENSION TBL(5)
+      CHARACTER*11 fname
+C
+      INTEGER ISTKGT
+      EXTERNAL ISTKGT
+C
+      INTEGER idimax,jdimax,kdimax,nfacmax,npatchmax,iunit,
+     &        ndim,nblock,idim,jdim,kdim,istruc,npatchi,npatchf,
+     &        ihmgel,ihmgfac,itypel,itypfac,lcoor2,
+     &        nnperel(7),nuvoltyp,nuvol,logvol,
+     &        nuvolp,nufacp,nufactyp,nufac,logfac,
+     &        ibegi,iendi,jbegi,jendi,kbegi,kendi,
+     &        ibegf,iendf,jbegf,jendf,kbegf,kendf
+c
+C
+      DATA ibegi,iendi,jbegi,jendi,kbegi,kendi,
+     &    ibegf,iendf,jbegf,jendf,kbegf,kendf/12*0/
+C
+d50 1
+a50 2
+C     DATA TBL/7HVCORG  ,7HVZROE  ,7HICELNOD,7HIBNDFAC,7HICELCEL/
+      DATA fname/'file0.vigie'/
+d55 2
+a56 1
+      READ (1,'(12X,A)') filename(1)
+a58 2
+C     READ(1,'(12X,L)')DPLOT_
+C     READ(1,'(12X,L)')TECPLOT_
+d71 13
+d86 4
+a92 1
+      CALL WKSPCE
+d96 3
+d108 2
+a109 2
+      LCORG = ISTKGT(NPOIN*DIM,4)
+      CALL DINIT(NPOIN*DIM,ZERO,DSTAK(LCORG),1)
+d113 2
+a114 2
+      LZROE = ISTKGT(NPOIN*NOFVAR,4)
+      CALL DINIT(NPOIN*NOFVAR,ZERO,DSTAK(LZROE),1)
+a130 1
+C     ... Writing the plot files ...
+d132 5
+d140 1
+a140 1
+c     GOTO 100
+d148 2
+a149 2
+           Lwksp = ISTKGT(NPOIN,4)
+           CALL Dcopy(NPOIN,DSTAK(LZROE),3,dstak(lwksp),1)
+d152 1
+a152 1
+           CALL Dcopy(NPOIN,DSTAK(LZROE+1),3,dstak(lwksp),1)
+d155 1
+a155 1
+           CALL Dcopy(NPOIN,DSTAK(LZROE+2),3,dstak(lwksp),1)
+d170 4
+d176 4
+a179 2
+          LWKSP = ISTKGT(NBFAC,2)
+          LRANK = ISTKGT(NBFAC,2)
+d182 2
+a183 1
+     +                 ISTAK(LRANK),NBFAC)
+a184 5
+c
+c     CALL PARM_TO_CONS(DSTAK(LZROE))
+c     CALL AVS('file012.avs',DSTAK(LCORG),ISTAK(LCELNOD),DSTAK(LZROE))
+C
+c     goto 22
+d187 7
+a193 7
+          LEN = NBFAC
+          LSKIN = ISTKGT(LEN,4)
+          LHEAT = ISTKGT(LEN,4)
+          LWORK = ISTKGT(2*LEN,2)
+          LTINDX = ISTKGT(LEN,4)
+          LWKSP = ISTKGT(2*LEN,2)
+          LRANK = ISTKGT(LEN,2)
+d195 1
+a195 1
+     +ISTAK(LWORK),ISTAK(LRANK),LEN,ISTAK(LCELNOD),DSTAK(LCORG),
+d207 1
+d209 39
+a247 3
+     +             NPOIN,ISTAK(LCELNOD),ISTAK(LCELCEL),NOFVERT,NELEM,
+     +             ISTAK(LBNDPTR),NBFAC,ISTAK(LWORK),DSTAK(LSKIN),LEN,
+     +             REYNO,NORMAL_TO_THE_WALL,FILENAME(3))
+d251 3
+a253 1
+      STOP
+d255 3
+a257 1
+C     write for hydra
+a258 2
+      call hydra(DSTAK(LCORG),DIM,DSTAK(LZROE),NOFVAR,NPOIN,
+     +ISTAK(LBNDPTR),NBFAC,ISTAK(LCELNOD),NOFVERT,NELEM)
+a259 1
+      STOP
+d261 1
+a261 1
+C  WRITING OF YOUR MESH IN EEDB FORMAT
+d263 17
+a279 77
+      idimax=1
+      jdimax=1
+      kdimax=1
+      idim=1
+      jdim=1
+      kdim=1
+      npatchmax = 1
+      npatchi = 1
+      npatchf = 1
+c
+      lcoor2 = istkgt(dim*npoin,3)
+      do 10 i = 0,dim*npoin-1 
+         rstak(lcoor2+i)=sngl(dstak(lcorg+i) )
+   10 continue
+c
+      logvol = istkgt(nelem,2)
+      call iinit(nelem,1,istak(logvol),1)
+c
+      logfac = istkgt(nbfac,2)
+      nufac = istkgt((nofvert-1)*nbfac,2)
+      call xnufac(nbfac,istak(lcelnod),nofvert,istak(lbndptr),
+     +            istak(nufac),istak(logfac))
+c
+      iunit = 33
+      open(iunit,file='file.mesh',form='unformatted')
+c
+      nblock = 1
+      istruc = 0
+      ihmgel = 1
+      ihmgfac = 1
+      IF(DIM.EQ.2)THEN
+         itypel = 6
+         itypfac = 7
+      ELSE 
+         itypel = 4
+         itypfac = 6
+      ENDIF 
+      write(iunit)dim,nblock
+      write(6,*)dim,nblock
+      call wmesh(DIM,idimax,jdimax,kdimax,NPOIN,NELEM,
+     &           NBFAC,npatchmax,iunit,
+     &           DIM,nblock,idim,jdim,kdim,istruc,npatchi,npatchf,
+     &           NPOIN,NBFAC,NELEM,ihmgel,ihmgfac,itypel,itypfac,
+     &           rstak(lcoor2),rstak(lcoor2),nnperel,nuvoltyp,
+     &           istak(lcelnod),istak(logvol),nuvolp,nufacp,nufactyp,
+     &           istak(nufac),istak(logfac),
+     &           ibegi,iendi,jbegi,jendi,kbegi,kendi,
+     &           ibegf,iendf,jbegf,jendf,kbegf,kendf)
+C
+      close(iunit)
+C
+      CALL PARM_TO_CONS(DSTAK(LZROE))
+C
+      do 12 ivar = 1, nofvar
+         iunit = 30
+         write(fname(5:5),"(I1.1)")ivar
+         open(iunit,file=fname,form='unformatted')
+         ibgn = LZROE + ivar-1
+         write(iunit)NPOIN
+         write(iunit)(sngl(dstak(ibgn+i-1)),i=1,NOFVAR*NPOIN,NOFVAR)
+         close(iunit)
+   12 continue
+   22 continue
+C
+C  WRITING OF YOUR MESH IN HDB FORMAT
+C
+      lq2fr = istkgt(NOFVAR*(NOFVERT-1)*NBFAC,3)
+caldo call q2fr(dstak(lzroe),rstak(lq2fr),istak(lbndptr),nbfac,
+caldo+          nofvert)
+C
+      CALL PARM_TO_CONS(DSTAK(LZROE))
+      NELEMTYPES = 1
+      NNODESFR = 0
+      CALL ascii2d(DSTAK(LCORG),DIM,DSTAK(LZROE),NOFVAR,NPOIN,
+     +          RSTAK(LQ2FR),NOFVAR,NNODESFR,
+     +          ISTAK(LCELNOD),NELEM,NELEMTYPES,ISTAK(LBNDPTR),
+     +          ISTAK(LBNDPTR),0)
+d281 1
+@
+
+
+1.2
+log
+@heat flux
+@
+text
+@d15 1
+a15 1
+      PARAMETER (NVA=900000)
+d19 2
+a20 1
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+d28 2
+a29 1
+      INTEGER NBFAC,ifail,ICLR,LWKSP,LRANK,LEN,LSKIN,LWORK,LTINDX,I
+d34 3
+a36 2
+      CHARACTER*7 TBL
+      DIMENSION TBL(5)
+d41 8
+d50 2
+a52 1
+      DATA TBL/7HVCORG  ,7HVZROE  ,7HICELNOD,7HIBNDFAC,7HICELCEL/
+d54 3
+d123 1
+d125 1
+a125 1
+      IF (DPLOT_) THEN
+d129 14
+d145 1
+d161 5
+d180 1
+a180 1
+C
+d187 1
+a187 1
+C
+d192 2
+d195 8
+a202 1
+      ENDIF
+d204 79
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d15 1
+a15 1
+      PARAMETER (NVA=400000)
+d22 2
+a23 2
+      INTEGER LCORG,LZROE,LCELNOD,LBNDPTR,LCELCEL
+      COMMON /NLOC/LCORG,LZROE,LCELNOD,LBNDPTR,LCELCEL
+d25 1
+d27 2
+a28 2
+      INTEGER NBFAC,ifail,ICLR,LWKSP,LRANK,LEN,LSKIN,LWORK,LTINDX
+      DOUBLE PRECISION AA,BB,CC,REYNO,M_INFTY
+d30 1
+a30 3
+      LOGICAL DPLOT_,TECPLOT_
+C
+C     DATA REYNO/1.E+7/
+d60 2
+d64 2
+a104 11
+C     ... Tecplot ...
+C
+      IF (TECPLOT_) THEN
+          CALL TECPLOT('file012.dat',DSTAK(LCORG),ISTAK(LCELNOD),
+     +                 DSTAK(LZROE))
+          LWKSP = ISTKGT(NBFAC,2)
+          LRANK = ISTKGT(NBFAC,2)
+          CALL BNDPLOT('file020.dat',DSTAK(LCORG),DSTAK(LZROE),
+     +                 ISTAK(LCELNOD),ISTAK(LBNDPTR),ISTAK(LWKSP),
+     +                 ISTAK(LRANK),NBFAC)
+      ENDIF
+d119 11
+d134 1
+d139 1
+a139 1
+          CALL CF(DSTAK(LSKIN),DSTAK(LTINDX),ISTAK(LWKSP),
+d155 1
+a155 1
+     +             REYNO,FILENAME(3))
+@

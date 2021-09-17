@@ -1,0 +1,66 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.11.19;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@cross product of two 3D vectors
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@c
+      SUBROUTINE cross_prod(a,b,c)
+C
+      IMPLICIT NONE
+C
+C     .. Array Arguments ..
+C
+      REAL*8 a(*) , b(*) , c(*)
+C
+C     .. Executable Statements ..
+C
+      c(1) = a(2) * b(3) - a(3) * b(2)
+      c(2) = a(3) * b(1) - a(1) * b(3)
+      c(3) = a(1) * b(2) - a(2) * b(1)
+c     do m = 1 , 3
+c     c(m) = a( JCYCL(m+1) ) * b( JCYCL(m+2) ) -
+c    .       a( JCYCL(m+2) ) * b( JCYCL(m+1) )
+c     enddo
+c
+      return
+      end
+C
+@

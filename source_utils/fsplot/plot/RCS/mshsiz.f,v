@@ -1,0 +1,151 @@
+head	1.3;
+access;
+symbols;
+locks
+	abonfi:1.3; strict;
+comment	@c @;
+
+
+1.3
+date	2018.02.27.14.00.26;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2018.02.27.13.39.47;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2018.02.26.08.45.58;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute representative mesh sizes
+@
+
+
+1.3
+log
+@aggiunta la deviazione standard
+@
+text
+@      subroutine mshsiz(icelnod,nofvert,nelem,coor,ndim,r)
+      implicit none
+      integer nofvert,nelem,ndim
+      integer icelnod(nofvert,nelem)
+      real*8 coor(ndim,*),r(2,nelem)
+      real*8 t(12),pc(3)
+      real*8 r1min,r1max,r2min,r2max,r1avg,r2avg,wg
+      real*8 std1,std2
+      integer i,ipoin,ielem,ivert,j
+      r1min = 1.d+38
+      r2min = 1.d+38
+      r1max = 0.d+00
+      r2max = 0.d+00
+      r1avg = 0.d0
+      r2avg = 0.d0
+      wg = 1.d0/real(nelem)
+      do ielem = 1, nelem
+         do ivert = 1,nofvert
+            j = (ivert-1)*ndim
+            ipoin = icelnod(ivert,ielem)
+            do i= 1,ndim
+               t(j+i) = coor(i,ipoin)
+            enddo 
+         enddo
+         if(ndim.EQ.2)then
+            call triangle_inradius_2d(t,r(1,ielem))
+            call triangle_diameter_2d(t,r(2,ielem))
+            r(2,ielem) = r(2,ielem)*0.5d0
+         elseif(ndim.EQ.3)then
+            call tetrahedron_insphere_3d(t,r(1,ielem),pc)
+            call tetrahedron_circumsphere_3d(t,r(2,ielem),pc)
+         else
+            write(6,*)'Smthg. wrong with ndim = ',ndim
+            call exit(ndim)
+         endif
+         r1avg = r1avg + wg * r(1,ielem)
+         r2avg = r2avg + wg * r(2,ielem)
+         r1min = min(r(1,ielem),r1min)
+         r1max = max(r(1,ielem),r1max)
+         r2min = min(r(2,ielem),r2min)
+         r2max = max(r(2,ielem),r2max)
+      enddo ! ielem
+      std1 = 0.d0
+      std2 = 0.d0
+      do ielem = 1, nelem
+         std1 = std1 + (r(1,ielem)-r1avg)**2
+         std2 = std2 + (r(2,ielem)-r2avg)**2
+      enddo ! ielem
+      std1 = sqrt(std1 * wg)/r1avg
+      std2 = sqrt(std2 * wg)/r2avg
+      write(6,100)'Inradius     (min/avg/rel.std./max) : ',r1min,r1avg,
+     &std1,r1max
+      write(6,100)'Circumradius (min/avg/rel.std./max) : ',r2min,r2avg,
+     &std2,r2max
+  100 FORMAT(A,4(1X,E12.6))
+      end
+@
+
+
+1.2
+log
+@3d version
+@
+text
+@d1 1
+a1 1
+      subroutine mshsiz(icelnod,nofvert,nelem,coor,ndim)
+d5 1
+a5 1
+      real*8 coor(ndim,*)
+d7 2
+a8 1
+      real*8 r1,r2,r1min,r1max,r2min,r2max,r1avg,r2avg,wg
+d26 3
+a28 3
+            call triangle_inradius_2d(t,r1)
+            call triangle_diameter_2d(t,r2)
+            r2 = r2*0.5d0
+d30 2
+a31 2
+            call tetrahedron_insphere_3d(t,r1,pc)
+            call tetrahedron_circumsphere_3d(t,r2,pc)
+d36 6
+a41 6
+         r1avg = r1avg + wg * r1
+         r2avg = r2avg + wg * r2
+         r1min = min(r1,r1min)
+         r1max = max(r1,r1max)
+         r2min = min(r2,r2min)
+         r2max = max(r2,r2max)
+d43 13
+a55 3
+      write(6,100)'Inradius     (min/avg/max) : ',r1min,r1avg,r1max
+      write(6,100)'Circumradius (min/avg/max) : ',r2min,r2avg,r2max
+  100 FORMAT(A,3(1X,E12.6))
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 1
+a6 1
+      real*8 t(15)
+d23 12
+a34 4
+         enddo 
+         call triangle_inradius_2d(t,r1)
+         call triangle_diameter_2d(t,r2)
+         r2 = r2*0.5d0
+d42 2
+a43 2
+      write(6,100)'Inradius : ',r1min,r1avg,r1max
+      write(6,100)'Circumradius : ',r2min,r2avg,r2max
+@

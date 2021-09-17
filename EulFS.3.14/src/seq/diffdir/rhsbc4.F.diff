@@ -1,0 +1,98 @@
+1c1
+<       SUBROUTINE RHSBC4(X,RHS,NodalBcs,ibgn,NDIM,PRATIO,COMPRESSIBLE)
+---
+>       SUBROUTINE RHSBC4(X,RHS,ibgn,NDIM,PRATIO,COMPRESSIBLE)
+6c6
+< C     $Id: rhsbc4.F,v 1.32 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: rhsbc4.F,v 1.32 2016/11/10 11:25:13 abonfi Exp $
+9,11d8
+< #include "petsc/finclude/petscvec.h"
+<       use petscvec
+< C
+13a11,14
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscis.h"
+> C
+18d18
+<       INCLUDE 'iset.h'
+28a29
+> #include "iset.com"
+34d34
+<       IS, dimension(0:*) :: NodalBcs
+37,38c37,38
+<       DOUBLE PRECISION ALPHA,DUM,U1,U2
+< !     DOUBLE PRECISION KINETIC,ASQR,MACHSQR,P0,TEMP,DENS
+---
+>       DOUBLE PRECISION ALPHA,SUM,U1,U2,KINETIC,ASQR,MACHSQR,
+>      +P0,TEMP,DENS
+56c56
+<       CALL ISGetSize(NodalBcs(SupersonicVariables),NI,IFAIL)
+---
+>       CALL ISGetSize(SupersonicVariables,NI,IFAIL)
+58,59c58
+<          CALL ISGetIndices(NodalBcs(SupersonicVariables),IDX_V,IDX_I,
+<      &                     IFAIL)
+---
+>          CALL ISGetIndices(SupersonicVariables,IDX_V,IDX_I,IFAIL)
+64,65c63
+<          CALL ISRestoreIndices(NodalBcs(SupersonicVariables),IDX_V,
+<      &                         IDX_I,IFAIL)
+---
+>          CALL ISRestoreIndices(SupersonicVariables,IDX_V,IDX_I,IFAIL)
+73c71
+<       CALL ISGetSize(NodalBcs(NoSlipVelocities),NI,IFAIL)
+---
+>       CALL ISGetSize(NoSlipVelocities,NI,IFAIL)
+75c73
+<          CALL ISGetIndices(NodalBcs(NoSlipVelocities),IDX_V,IDX_I,IFAIL)
+---
+>          CALL ISGetIndices(NoSlipVelocities,IDX_V,IDX_I,IFAIL)
+80,81c78
+<          CALL ISRestoreIndices(NodalBcs(NoSlipVelocities),IDX_V,IDX_I,
+<      &                         IFAIL)
+---
+>          CALL ISRestoreIndices(NoSlipVelocities,IDX_V,IDX_I,IFAIL)
+97c94
+<       CALL ISGetSize(NodalBcs(Isothermal),NI,IFAIL)
+---
+>       CALL ISGetSize(Isothermal,NI,IFAIL)
+99c96
+<          CALL ISGetIndices(NodalBcs(Isothermal),IDX_V,IDX_I,IFAIL)
+---
+>          CALL ISGetIndices(Isothermal,IDX_V,IDX_I,IFAIL)
+117,119c114,116
+<              DUM = X(I3)*X(I3)+X(I4)*X(I4)
+<              IF(NDIM.EQ.3)DUM = DUM + X(I5)*X(I5)
+<              U2 = GINV * X(I1)*X(I2)+HALF*GM1OG*DUM
+---
+>              SUM = X(I3)*X(I3)+X(I4)*X(I4)
+>              IF(NDIM.EQ.3)SUM = SUM + X(I5)*X(I5)
+>              U2 = GINV * X(I1)*X(I2)+HALF*GM1OG*SUM
+122c119
+< !            write(6,*)i2,DUM,alpha*U1,U2
+---
+> !            write(6,*)i2,SUM,alpha*U1,U2
+124c121
+<          CALL ISRestoreIndices(NodalBcs(Isothermal),IDX_V,IDX_I,IFAIL)
+---
+>          CALL ISRestoreIndices(Isothermal,IDX_V,IDX_I,IFAIL)
+133c130
+<          CALL ISGetSize(NodalBcs(Dirichlet4Poisson),NI,IFAIL)
+---
+>          CALL ISGetSize(Dirichlet4Poisson,NI,IFAIL)
+135,136c132
+<             CALL ISGetIndices(NodalBcs(Dirichlet4Poisson),IDX_V,IDX_I,
+<      &                        IFAIL)
+---
+>             CALL ISGetIndices(Dirichlet4Poisson,IDX_V,IDX_I,IFAIL)
+141,142c137
+<             CALL ISRestoreIndices(NodalBcs(Dirichlet4Poisson),IDX_V,
+<      &                            IDX_I,IFAIL)
+---
+>             CALL ISRestoreIndices(Dirichlet4Poisson,IDX_V,IDX_I,IFAIL)
+144c139
+<       ENDIF ! test on Poisson
+---
+>       ENDIF ! test on poisson

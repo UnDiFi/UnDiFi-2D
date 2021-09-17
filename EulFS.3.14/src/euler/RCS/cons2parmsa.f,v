@@ -1,0 +1,79 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.07.58.32;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Transformation from conservative to parameter vector;
+the turbulent variable of the SA model is stored as
+sqrt{\rho}\nu
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE CONS2PARMsa(ZROE,dZdU,NDIM,NOFVAR)
+C
+C     $Id:$
+C
+C     transformation matrix from conserved variables
+C     to parameter vector: Spalart-Allmaras model
+C
+C     CAVEAT: we assume that null entries have been
+C     set to 0.d0 in the calling routine once and for all
+C     turbulent variable \sqrt{\rho} \nu_t is stored in 
+C     the NOFVAR-th location
+C
+      IMPLICIT NONE
+      INCLUDE 'constants' 
+C
+      INTEGER NDIM,NOFVAR
+      DOUBLE PRECISION ZROE(NOFVAR),dZdU(NOFVAR,*)
+      DOUBLE PRECISION Z1INV,Z1SQRINV,KINETIC
+C
+C     Assembles the dZdU matrix ...
+C
+      Z1INV = ONE/ZROE(1)
+      Z1SQRINV = Z1INV*Z1INV
+C
+      KINETIC = ZROE(3)*ZROE(3) + ZROE(4)*ZROE(4)
+      IF (NDIM.EQ.3) KINETIC = KINETIC + ZROE(5)*ZROE(5)
+      KINETIC = HALF*KINETIC*Z1SQRINV
+C
+      dZdU(1,1) = HALF*Z1INV
+C
+      dZdU(2,1) = (GM1*KINETIC-HALF*Z1INV*ZROE(2))*Z1INV
+      dZdU(2,2) = GAM*Z1INV
+      dZdU(2,3) = -GM1*ZROE(3)*Z1SQRINV
+      dZdU(2,4) = -GM1*ZROE(4)*Z1SQRINV
+C
+      dZdU(3,1) = -HALF*ZROE(3)*Z1SQRINV
+      dZdU(3,3) = Z1INV
+C
+      dZdU(4,1) = -HALF*ZROE(4)*Z1SQRINV
+      dZdU(4,4) = Z1INV
+C
+      dZdU(NOFVAR,1) = -HALF*ZROE(NOFVAR)*Z1SQRINV
+      dZdU(NOFVAR,NOFVAR) = Z1INV
+C
+      IF (NDIM.EQ.2) RETURN
+C
+      dZdU(2,5) = -GM1*ZROE(5)*Z1SQRINV
+      dZdU(5,1) = -HALF*ZROE(5)*Z1SQRINV
+      dZdU(5,5) = Z1INV
+C
+      RETURN
+
+      END
+@

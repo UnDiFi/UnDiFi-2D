@@ -1,0 +1,271 @@
+*=*=*=*= UPDATE3.html =*=*=*=*
+<HEADER>
+<TITLE>SUBROUTINE UPDATE3</TITLE>
+</HEADER>
+<BODY>
+<H1>SUBROUTINE UPDATE3</H1>
+
+<PRE>
+
+      SUBROUTINE <A NAME=UPDATE3>UPDATE3</A>(<A HREF=#NDIM>NDIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#A>A</A>,<A HREF=#RHS>RHS</A>,<A HREF=#DT>DT</A>,<A HREF=#ZROE>ZROE</A>)
+C
+      IMPLICIT NONE
+C
+C
+C     This routine updates the nodal solution by implicit
+C     time integration when KAN = 2,4
+C
+C     $Id: update3.F,v 1.19 1999/11/05 20:52:48 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/update3.F,v 1.19 1999/11/05 20
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+C#include "include/finclude/pc.h"
+#include "include/finclude/sles.h"
+#include "include/finclude/ksp.h"
+#include "include/finclude/is.h"
+C
+      Mat A
+      Vec RHS,DT,ZROE,X
+      SLES FlowSolver
+      Vec Y,V
+      Scalar RHS_V(1)
+      KSP ksp
+C
+      SAVE <A NAME=X>X</A>
+C
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/<A NAME=COMISET>COMISET</A>/<A NAME=SupersonicNodes>SupersonicNodes</A>,<A NAME=SupersonicVariables>SupersonicVariables</A>,
+     +<A NAME=NoSlipNodes>NoSlipNodes</A>,<A NAME=NoSlipVelocities>NoSlipVelocities</A>
+C
+C
+      INCLUDE 'constants'
+      INCLUDE 'paramt.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'conv.com'
+      INCLUDE 'nloc'
+      INCLUDE 'verbose.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'IO'
+C
+C     .. Parameters ..
+      INTEGER <A NAME=NDNM>NDNM</A>
+      PARAMETER (<A NAME=NDNM>NDNM</A>=3*<A NAME=NMAX>NMAX</A>)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER <A NAME=NDIM>NDIM</A>,<A NAME=NOFVAR>NOFVAR</A>,<A NAME=NPOIN>NPOIN</A>
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION <A NAME=DSTAK>DSTAK</A>(1)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION <A NAME=CNST>CNST</A>,<A NAME=s>s</A>
+      INTEGER <A NAME=I>I</A>,<A NAME=IVAR>IVAR</A>,<A NAME=N>N</A>,<A NAME=ITS>ITS</A>,<A NAME=IFAIL>IFAIL</A>,<A NAME=locv>locv</A>,<A NAME=locy>locy</A>,<A NAME=LIWORK>LIWORK</A>,
+     +<A NAME=MY_PE>MY_PE</A>
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION <A NAME=WKSP1>WKSP1</A>(3,<A NAME=NMAX>NMAX</A>),<A NAME=WKSP2>WKSP2</A>(3,<A NAME=NMAX>NMAX</A>)
+      INTEGER <A NAME=ISTAK>ISTAK</A>(1)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION <A NAME=DNRM2>DNRM2</A>
+      INTEGER <A NAME=ISTKGT>ISTKGT</A>,<A NAME=ISTKST>ISTKST</A>
+      EXTERNAL <A NAME=DNRM2>DNRM2</A>,<A NAME=ISTKGT>ISTKGT</A>,<A NAME=ISTKST>ISTKST</A>
+C     ..
+C     .. External Subroutines ..
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC <A HREF=#DLOG10>DLOG10</A>,<A HREF=#MIN>MIN</A>
+C     ..
+C     .. Common blocks ..
+      COMMON /<A NAME=CSTAK>CSTAK</A>/<A NAME=DSTAK>DSTAK</A>
+      COMMON /<A NAME=MPICOM>MPICOM</A>/<A NAME=MY_PE>MY_PE</A>
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (<A NAME=DSTAK>DSTAK</A>(1),<A NAME=ISTAK>ISTAK</A>(1))
+C     ..
+C     .. Data statements ..
+      DATA <A HREF=#WKSP1>WKSP1</A>,<A HREF=#WKSP2>WKSP2</A>,<A HREF=#ITS>ITS</A>/<A HREF=#NDNM>NDNM</A>*<A HREF=#ZERO>ZERO</A>,<A HREF=#NDNM>NDNM</A>*<A HREF=#ZERO>ZERO</A>,0/
+C     ..
+      DO 24 <A HREF=#IVAR>IVAR</A> = 1,<A HREF=#NOFVAR>NOFVAR</A>
+          CALL <A NAME=UPDATE3_VECSTRIDENORM_1  >VecStrideNorm</A>(<A HREF=#RHS>RHS</A>,<A HREF=#IVAR>IVAR</A>-1,<A HREF=#NORM_2>NORM_2</A>,<A NAME=UPDATE3_RESL2_1  >RESL2</A>(<A HREF=#IVAR>IVAR</A>),<A HREF=#IFAIL>IFAIL</A>)
+          CALL <A NAME=UPDATE3_VECSTRIDENORM_2  >VecStrideNorm</A>(<A HREF=#RHS>RHS</A>,<A HREF=#IVAR>IVAR</A>-1,<A HREF=#NORM_INFINITY>NORM_INFINITY</A>,<A NAME=UPDATE3_RESMAX_1  >RESMAX</A>(<A HREF=#IVAR>IVAR</A>),
+     &                       <A HREF=#IFAIL>IFAIL</A>)
+   24 CONTINUE
+C
+C
+      IF (<A HREF=#ITER>ITER</A>.EQ.1) THEN
+          <A HREF=#RESMAX0>RESMAX0</A> = <A NAME=UPDATE3_RESMAX_2  >RESMAX</A>(<A HREF=#IVCNVG>IVCNVG</A>)
+          <A HREF=#RESL20>RESL20</A> = <A NAME=UPDATE3_RESL2_2  >RESL2</A>(<A HREF=#IVCNVG>IVCNVG</A>)
+      ENDIF
+C
+      IF( <A HREF=#TIMEIMPL>TIMEIMPL</A> )THEN
+         <A HREF=#CNST>CNST</A> = <A HREF=#RESL20>RESL20</A>/<A NAME=UPDATE3_RESL2_3  >RESL2</A>(<A HREF=#IVCNVG>IVCNVG</A>)
+         <A HREF=#CNST>CNST</A> = <A HREF=#MIN>MIN</A>(<A HREF=#CFLMAX>CFLMAX</A>,<A HREF=#CFL>CFL</A>*<A HREF=#CNST>CNST</A>)
+      ELSE
+         <A HREF=#CNST>CNST</A>=<A HREF=#ONE>ONE</A>/<A HREF=#CFL>CFL</A>
+      ENDIF
+C
+C
+C     global time stepping
+C
+C     call VecMax(DT,here,temp,ifail)
+C     call VecSet(temp,DT,ifail)
+C
+C     divide V_i/Dt by the CFL number ...
+C
+      CALL <A NAME=UPDATE3_VECSCALE_1  >VecScale</A>(<A HREF=#ONE>ONE</A>/<A HREF=#CNST>CNST</A>,<A HREF=#DT>DT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     add V/Dt to the diagonal block of the stiffness matrix
+C
+CCCC      call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCCC      write(6,*)'Norma matrice prima di addtstep  A ',S
+      CALL <A NAME=UPDATE3_ADDTSTEP_1  >ADDTSTEP</A>(<A HREF=#A>A</A>,<A HREF=#DT>DT</A>,<A HREF=#RHS>RHS</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#TIMEIMPL>TIMEIMPL</A>)
+CCCC      call matnorm(A,NORM_FROBENIUS,S,IFAIL)
+CCCC      write(6,*)'Norma matrice dopo addtstep  A ',S
+C
+C     We do not need DT any more
+C
+      CALL <A NAME=UPDATE3_VECDESTROY_1  >VecDestroy</A>(<A HREF=#DT>DT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+      IF( <A HREF=#TIMEIMPL>TIMEIMPL</A> )THEN
+C
+C     If Navier-Stokes, the stiffness matrix has to be modified
+C        to account for boundary conditions ..
+C
+C     Note that the Index Sets address rows by GLOBAL number
+C
+          CALL <A NAME=UPDATE3_MATZEROROWS_1  >MatZeroRows</A>(<A HREF=#A>A</A>,<A HREF=#SupersonicVariables>SupersonicVariables</A>,<A HREF=#ONE>ONE</A>,<A HREF=#IFAIL>IFAIL</A>)
+          CALL <A NAME=UPDATE3_MATZEROROWS_2  >MatZeroRows</A>(<A HREF=#A>A</A>,<A HREF=#NoSlipVelocities>NoSlipVelocities</A>,<A HREF=#ONE>ONE</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Is it really necessary to MatAssembly now?
+C     Is that required by MatSetOption()?
+C
+caldo     CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+caldo     CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+          CALL <A NAME=UPDATE3_MATSETOPTION_1  >MatSetOption</A>(<A HREF=#A>A</A>,<A HREF=#MAT_NO_NEW_NONZERO_LOCATIONS>MAT_NO_NEW_NONZERO_LOCATIONS</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C
+      ENDIF
+C
+      IF( <A HREF=#TIMEIMPL>TIMEIMPL</A> )THEN
+          if( <A HREF=#iter>iter</A> .eq. 1 )then
+C
+C     create a vector X to store the solution
+C
+          <A HREF=#N>N</A> = <A HREF=#NPOIN>NPOIN</A>*<A HREF=#NOFVAR>NOFVAR</A>
+#ifdef MPI
+          CALL <A NAME=UPDATE3_VECCREATEMPI_1  >VecCreateMPI</A>(<A HREF=#PETSC_COMM_WORLD>PETSC_COMM_WORLD</A>,<A HREF=#N>N</A>,<A HREF=#PETSC_DECIDE>PETSC_DECIDE</A>,<A HREF=#X>X</A>,<A HREF=#IFAIL>IFAIL</A>)
+#else
+          CALL <A NAME=UPDATE3_VECCREATESEQ_1  >VecCreateSeq</A>(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#N>N</A>,<A HREF=#X>X</A>,<A HREF=#IFAIL>IFAIL</A>)
+#endif
+          CALL <A NAME=UPDATE3_VECSETBLOCKSIZE_1  >VecSetBlockSize</A>(<A HREF=#X>X</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#IFAIL>IFAIL</A>)
+          endif
+C
+C     Sets the matrix associated with the linear system
+C
+          CALL <A NAME=UPDATE3_SLESSETOPERATORS_1  >SLESSetOperators</A>(<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#A>A</A>,<A HREF=#A>A</A>,<A HREF=#SAME_NONZERO_PATTERN>SAME_NONZERO_PATTERN</A>,
+     +                          <A HREF=#IFAIL>IFAIL</A>)
+          call <A NAME=UPDATE3_SLESGETKSP_1  >SLESGetKSP</A>(<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#ksp>ksp</A>,<A HREF=#IFAIL>IFAIL</A>)
+          call <A NAME=UPDATE3_KSPSETINITIALGUESSNONZER  1  >KSPSetInitialGuessNonzero</A>(<A HREF=#ksp>ksp</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Solve THE linear system
+C
+          CALL <A NAME=UPDATE3_SLESSOLVE_1  >SLESSolve</A>(<A HREF=#FlowSolver>FlowSolver</A>,<A HREF=#RHS>RHS</A>,<A HREF=#X>X</A>,<A HREF=#ITS>ITS</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+      ELSE
+C
+C     explicit time stepping
+C
+          <A HREF=#X>X</A> = <A HREF=#RHS>RHS</A>
+C
+      ENDIF
+C
+C     Update the nodal unknown vector by forming Z := Z + X
+C
+      CALL <A NAME=UPDATE3_VECAXPY_1  >VecAXPY</A>(<A HREF=#ONE>ONE</A>,<A HREF=#X>X</A>,<A HREF=#ZROE>ZROE</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Monitor the L2 and L infinity norms of the update ..
+C
+      DO 22 <A HREF=#IVAR>IVAR</A> = 1,<A HREF=#NOFVAR>NOFVAR</A>
+          CALL <A NAME=UPDATE3_VECSTRIDENORM_3  >VecStrideNorm</A>(<A HREF=#X>X</A>,<A HREF=#IVAR>IVAR</A>-1,<A HREF=#NORM_2>NORM_2</A>,<A NAME=UPDATE3_DELL2_1  >DELL2</A>(<A HREF=#IVAR>IVAR</A>),<A HREF=#IFAIL>IFAIL</A>)
+          CALL <A NAME=UPDATE3_VECSTRIDENORM_4  >VecStrideNorm</A>(<A HREF=#X>X</A>,<A HREF=#IVAR>IVAR</A>-1,<A HREF=#NORM_INFINITY>NORM_INFINITY</A>,<A NAME=UPDATE3_DELMAX_1  >DELMAX</A>(<A HREF=#IVAR>IVAR</A>),
+     &                      <A HREF=#IFAIL>IFAIL</A>)
+   22 CONTINUE
+C
+C     update the ghost regions
+C            for the Vector of the unknowns (ZROE)
+C            with correct values from the owning process
+C
+#ifdef MPI
+      CALL <A NAME=UPDATE3_VECGHOSTUPDATEBEGIN_1  >VecGhostUpdateBegin</A>(<A HREF=#ZROE>ZROE</A>,<A HREF=#INSERT_VALUES>INSERT_VALUES</A>,<A HREF=#SCATTER_FORWARD>SCATTER_FORWARD</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=UPDATE3_VECGHOSTUPDATEEND_1  >VecGhostUpdateEnd</A>(<A HREF=#ZROE>ZROE</A>,<A HREF=#INSERT_VALUES>INSERT_VALUES</A>,<A HREF=#SCATTER_FORWARD>SCATTER_FORWARD</A>,<A HREF=#IFAIL>IFAIL</A>)
+#endif
+C
+C     Print out the convergence history ..
+C
+      IF(<A HREF=#MY_PE>MY_PE</A>.EQ.0)THEN
+      IF ((<A HREF=#ITER>ITER</A>/<A HREF=#ISTMP>ISTMP</A>)*<A HREF=#ISTMP>ISTMP</A>.EQ.<A HREF=#ITER>ITER</A>) THEN
+  299 WRITE (<A HREF=#IWUNIT>IWUNIT</A>,FMT=200) <A HREF=#ITER>ITER</A>,<A HREF=#ITS>ITS</A>,<A HREF=#CNST>CNST</A>
+      WRITE (<A HREF=#IWUNIT>IWUNIT</A>,FMT=215)
+      DO 20 <A HREF=#IVAR>IVAR</A> = 1,<A HREF=#NOFVAR>NOFVAR</A>
+          WRITE (<A HREF=#IWUNIT>IWUNIT</A>,FMT=210) <A HREF=#IVAR>IVAR</A>,<A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE3_RESL2_4  >RESL2</A>(<A HREF=#IVAR>IVAR</A>)),
+     +      <A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE3_RESMAX_3  >RESMAX</A>(<A HREF=#IVAR>IVAR</A>)),<A NAME=UPDATE3_INMAX_1  >INMAX</A>(<A HREF=#IVAR>IVAR</A>), (<A HREF=#WKSP1>WKSP1</A>(<A HREF=#I>I</A>,<A HREF=#IVAR>IVAR</A>),<A HREF=#I>I</A>=1,3)
+   20 CONTINUE
+      WRITE (<A HREF=#IWUNIT>IWUNIT</A>,FMT=225)
+      DO 32 <A HREF=#IVAR>IVAR</A> = 1,<A HREF=#NOFVAR>NOFVAR</A>
+          WRITE (<A HREF=#IWUNIT>IWUNIT</A>,FMT=210) <A HREF=#IVAR>IVAR</A>,<A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE3_DELL2_2  >DELL2</A>(<A HREF=#IVAR>IVAR</A>)),
+     +      <A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE3_DELMAX_2  >DELMAX</A>(<A HREF=#IVAR>IVAR</A>)),<A NAME=UPDATE3_INDEL_1  >INDEL</A>(<A HREF=#IVAR>IVAR</A>), (<A HREF=#WKSP2>WKSP2</A>(<A HREF=#I>I</A>,<A HREF=#IVAR>IVAR</A>),<A HREF=#I>I</A>=1,3)
+   32 CONTINUE
+      ENDIF
+      ENDIF
+C
+C     clear memory allocated for the solution vector
+C
+caldo IF(TIMEIMPL)CALL VecDestroy(X,IFAIL)
+C
+C     Write convergence history to file ...
+C
+      IF(<A HREF=#MY_PE>MY_PE</A>.EQ.0)THEN
+      WRITE (7,FMT=235) <A HREF=#NITER>NITER</A>,<A HREF=#ITS>ITS</A>,(<A NAME=UPDATE3_RESL2_5  >RESL2</A>(<A HREF=#IVAR>IVAR</A>),<A HREF=#IVAR>IVAR</A>=1,<A HREF=#NOFVAR>NOFVAR</A>),<A HREF=#CNST>CNST</A>
+      WRITE (8,FMT=235) <A HREF=#NITER>NITER</A>,<A HREF=#ITS>ITS</A>,(<A NAME=UPDATE3_RESMAX_4  >RESMAX</A>(<A HREF=#IVAR>IVAR</A>),<A HREF=#IVAR>IVAR</A>=1,<A HREF=#NOFVAR>NOFVAR</A>),<A HREF=#CNST>CNST</A>
+      ENDIF
+C
+      RETURN
+
+  200 FORMAT (5X,70 ('-'),/,25X,'ITERATION # ',I4,' (',I4,') CFL = '
+     +,E10.4,/,5X,70 ('-'),/,5X,70 ('-'),/,5X,'Var.',4X,'L2-norm',3X,
+     +       'L_infty',3X,'node #',3X,'(',4X,'x',7X,'y',7X,'z',4X,')',/,
+     +       5X,70 ('-'))
+  210 FORMAT (5X,I1,5X,F10.5,1X,F10.5,2X,I5,3X,'(',2 (F8.5,','),F8.5,
+     +       ')')
+  215 FORMAT (5X,'Nodal Residual',/)
+  225 FORMAT (5X,'Nodal Update',/)
+  235 FORMAT (I5,1X,I4,7 (1X,E10.4))
+
+C     LOCV = ISTKGT(NOFVAR*NPOIN,4)
+C     CALL VecCreateSeq(PETSC_COMM_SELF,NOFVAR*NPOIN,Y,IFAIL)
+C     CALL VecCreateSeqWithArray(PETSC_COMM_SELF,NOFVAR*NPOIN,
+C    +DSTAK(LOCV),V,IFAIL)
+C     CALL DCOPY(NOFVAR*NPOIN,DSTAK(LZROE),1,DSTAK(LOCV),1)
+C     write(6,*)'Norma z ',dnrm2(NOFVAR*NPOIN,DSTAK(LZROE),1)
+C     CALL VecNorm(V,NORM_2,S,IFAIL)
+C     write(6,*)'Norma v ',S
+C     CALL MatMult(A,V,Y,IFAIL)
+C     CALL VecNorm(Y,NORM_2,S,IFAIL)
+C     write(6,*)'Norma A*z ',S
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL)
+C     write(6,*)'Norma RHS ',S
+C     CALL VecDestroy(Y,IFAIL)
+C     CALL VecDestroy(V,IFAIL)
+C     CALL ISTKRL(1)
+C         CALL VecNorm(X,NORM_2,S,IFAIL)
+C         write(6,*)'Norma X dopo SLESolve' ,s
+C
+      END
+</PRE>
+</BODY>

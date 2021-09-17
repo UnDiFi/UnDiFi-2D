@@ -1,0 +1,38 @@
+1,2c1,2
+<       SUBROUTINE INIT( NodalBcs, IBNDFAC, NBFAC, ICELNOD, NOFVERT, X,
+<      &                 VCORG, ROWBGN, NDIM, NOFVAR, NPOIN, COMPRESSIBLE,
+---
+>       SUBROUTINE INIT( IBNDFAC, NBFAC, ICELNOD, NOFVERT, X, VCORG,
+>      &                 ROWBGN, NDIM, NOFVAR, NPOIN, COMPRESSIBLE,
+5c5
+< C     $Id: init.F,v 1.20 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: init.F,v 1.20 2016/11/10 11:25:13 abonfi Exp $
+7a8
+>       IMPLICIT NONE
+8a10
+> #include "petsc/finclude/petscsys.h"
+11,14d12
+<       use petscvec
+<       use petscis
+< 
+<       IMPLICIT NONE
+35d32
+<       INCLUDE 'iset.h'
+44a42
+> #include "iset.com"
+71,72d68
+<       IS, dimension(0:*) :: NodalBcs 
+< C
+144c140
+<       CALL ISGetSize(NodalBcs(Isothermal),NI,IFAIL)
+---
+>       CALL ISGetSize(Isothermal,NI,IFAIL)
+146c142
+<          CALL ISGetIndices(NodalBcs(Isothermal),IDX_V,IDX_I,IFAIL)
+---
+>          CALL ISGetIndices(Isothermal,IDX_V,IDX_I,IFAIL)
+167c163
+<          CALL ISRestoreIndices(NodalBcs(Isothermal),IDX_V,IDX_I,IFAIL)
+---
+>          CALL ISRestoreIndices(Isothermal,IDX_V,IDX_I,IFAIL)

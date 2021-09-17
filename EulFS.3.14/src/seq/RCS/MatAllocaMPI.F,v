@@ -1,0 +1,1389 @@
+head	1.35;
+access
+	aldo
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.35
+	release3_13_0:1.33
+	release3_12_0:1.33
+	release3_11_0:1.33
+	release3_10_0:1.33
+	release3_8_0:1.33
+	release3_7_1:1.32
+	release3_7_0:1.32
+	release3_4_5:1.30
+	release3_4_4:1.30
+	release3_4_3:1.30
+	release3_4_2:1.30
+	release3_4_1:1.30
+	release3_4_0:1.29
+	release3_3_5:1.29
+	release3_3_4:1.29
+	release3_3_3:1.29
+	release3_3_2:1.29
+	release3_3_1:1.29
+	release3_3_0:1.28;
+locks; strict;
+
+
+1.35
+date	2021.01.29.09.01.29;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2021.01.29.08.54.56;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2016.11.11.08.56.11;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2013.06.06.10.46.33;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2013.01.26.11.30.51;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2013.01.04.10.54.36;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2012.03.21.10.39.22;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2011.12.14.09.53.31;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2011.03.30.09.06.26;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2009.06.11.13.10.01;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2008.02.25.09.42.57;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2005.12.23.10.04.19;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2005.09.07.09.06.18;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2001.11.09.14.18.25;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2001.10.17.13.39.07;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2000.11.22.14.36.39;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2000.11.10.17.10.18;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.10.26.15.12.19;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.09.29.09.23.11;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.09.22.11.55.05;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.08.17.10.15.15;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.03.31.09.00.50;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.12.27.09.15.26;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.11.05.20.49.30;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.10.12.16.42.01;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	99.09.29.09.49.18;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.09.03.11.04.00;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.09.02.08.28.09;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.12.10.18.01.12;	author simula;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.12.02.09.17.58;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Memory allocation for the PETSc matrices, parallel version
+@
+
+
+1.35
+log
+@unused variables have been removed
+@
+text
+@      SUBROUTINE MatAllocaMPI(A,NDIM,NOFVERT,NBLK,NELEM,NR,NGHOST,
+     +                        OPT,NOPT,MAPPING,TITLE)
+C
+C Purpose:
+C          the driver for allocating memory and building the
+C          stiffness matrix in parallel
+C
+C
+C     $Id: MatAllocaMPI.F,v 1.34 2021/01/29 08:54:56 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscis.h"
+      use petscvec 
+      use petscmat 
+      use petscis 
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'nloc.com'
+      INCLUDE 'verbose.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'io.com'
+C
+C
+C     .. Scalar Arguments ..
+      INTEGER NBLK,NDIM,NELEM,NOFVERT,NR,NGHOST,NOPT
+      CHARACTER*(*) TITLE
+C
+C     .. Petsc Stuff ..
+C     ..
+      Mat A
+      MatOption OPT(NOPT)
+      ISLocalToGlobalMapping MAPPING
+      PetscBool IFLAG
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+      INTEGER MY_PE
+C     ..
+C     .. Local Scalars ..
+      INTEGER IFAIL,N,kspace,NERR,IOPT
+      INTEGER ROWBGN,ROWEND,I,J,LINDX,IXDRS,LD_NNZ,LO_NNZ
+      LOGICAL VERBOSE,FNAME
+      CHARACTER MATRFILE*256,DATADIR*256,EXT*3,ERRMSG*72
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+      DOUBLE PRECISION INFO(MAT_INFO_SIZE)
+C     ..
+C     .. External Functions ..
+      INTEGER ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,IXDRCLOSE
+      EXTERNAL ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,IXDRCLOSE
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DINIT,IINIT,ISTKRL
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+      COMMON/MPICOM/MY_PE
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+C     ..
+C
+C
+C
+C     ------ Allocate space for the stiffness matrix -------
+C
+      VERBOSE = (IVERBOSE.GT.0)
+      VERBOSE = .TRUE.
+C
+C     the sparsity pattern of the parallel matrix is read from
+C     files matr$num_proc$.dat
+C     If these are not found; program terminates
+C
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     &     PETSC_NULL_CHARACTER,'-data_dir',DATADIR,IFLAG,IFAIL)
+      DO 70 I=1,80
+          MATRFILE(I:I) = CHAR(0)
+   70 CONTINUE
+      WRITE(EXT,FMT='(I3.3)')MY_PE+1
+      KSPACE = INDEX(DATADIR," ")
+      MATRFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'matr'//ext//'.dat'
+      KSPACE = KSPACE+10
+C
+      INQUIRE(FILE=MATRFILE(1:KSPACE),EXIST=FNAME)
+      IF(FNAME)THEN
+         IXDRS = INITXDR(MATRFILE(1:KSPACE),'r',.FALSE.) 
+         LD_NNZ = ISTKGT(NR,2)
+         LO_NNZ = ISTKGT(NR,2)
+         IFAIL = IXDRINT(IXDRS,N)
+         IF(N.NE.NR)THEN
+            WRITE(ERRMSG(1:72),500)
+  500 FORMAT('MatAllocaMPI Number of rows in matr$$$ file does NOT match
+     >',2(1X,I6))
+            NERR = 3
+            IOPT = 1
+            CALL SETERR(ERRMSG,NERR,IOPT)
+         ENDIF
+C
+C     read diagonal and off-diagonal CSR structure
+C
+         IFAIL = IXDRIMAT(IXDRS,NR,ISTAK(LD_NNZ))
+         IFAIL = IXDRIMAT(IXDRS,NR,ISTAK(LO_NNZ))
+C     close file
+         IFAIL = IXDRCLOSE(IXDRS)
+      ELSE
+         WRITE(6,520)MY_PE,MATRFILE(1:KSPACE)
+         WRITE(ERRMSG(1:37),510)MY_PE
+         WRITE(6,*)ERRMSG(1:37)
+         WRITE(6,*)'Exist / PE ',FNAME,MY_PE
+  520 FORMAT('PE # ',I4,' File : ',A120)
+  510 FORMAT('MatAllocaMPI PE# ',I4,'CANNOT OPEN FILE')
+            NERR = 9
+            IOPT = 1
+            CALL SETERR(ERRMSG,NERR,IOPT)
+      ENDIF
+C
+C
+      N=NR*NBLK
+C
+      IF( NBLK .EQ. 1 )THEN
+         CALL MatCreateAIJ(PETSC_COMM_WORLD,NR,NR,PETSC_DETERMINE,
+     +         PETSC_DETERMINE,PETSC_DEFAULT_INTEGER,ISTAK(LD_NNZ),
+     +         PETSC_DEFAULT_INTEGER,ISTAK(LO_NNZ),A,IFAIL)
+      ELSE
+         CALL MatCreateBAIJ(PETSC_COMM_WORLD,NBLK,N,N,
+     +                PETSC_DETERMINE,PETSC_DETERMINE,
+     +                PETSC_NULL_INTEGER,ISTAK(LD_NNZ),
+     +                PETSC_NULL_INTEGER,ISTAK(LO_NNZ),A,IFAIL)
+      ENDIF
+C
+C     create Local to Global mapping
+C     for the parallel matrix
+C
+      CALL MatGetOwnershipRange(A,ROWBGN,ROWEND,IFAIL)
+C
+C     note that N = ROWEND-ROWBGN
+C
+C     the indexing is blocked of block size NBLK
+C
+      LINDX = ISTKGT((NR+NGHOST),2)
+C
+C     mapping for the processor owned (or local)  rows
+C
+      J = 0
+      DO 55 I = ROWBGN,ROWEND-1,NBLK
+         ISTAK(LINDX+J) = I/NBLK
+         J = J + 1
+   55 CONTINUE
+C
+C     mapping for ghost rows: GetIdx copies the ghost locations 
+C                             into the array INDX and sets the
+C                             0-based indexing 
+C
+      CALL GETIDX(NGHOST,1,ISTAK(LTZX),ISTAK(LINDX+NR))
+C
+      CALL ISLocalToGlobalMappingCreate(PETSC_COMM_WORLD,NBLK,NR+NGHOST,
+     &                                  ISTAK(LINDX),PETSC_COPY_VALUES,
+     3                                  mapping,IFAIL)
+C
+C     free LINDX
+C
+      CALL ISTKRL(1)
+C
+C     Sets local to global mapping:
+C
+          CALL MatSetLocalToGlobalMapping(A,mapping,mapping,IFAIL) 
+C
+C
+C     Set options (if any)
+C
+      DO 12 IOPT = 1, NOPT
+          CALL MatSetOption(A,OPT(IOPT),PETSC_TRUE,IFAIL) 
+   12 CONTINUE
+C
+C     Blocks to be inserted in A will be COLUMN ORIENTED
+C
+      CALL MatSetOption(A,MAT_ROW_ORIENTED,PETSC_FALSE,IFAIL) 
+      CALL MatZeroEntries(A,IFAIL)
+C
+C     ***************  Local Matrix  ***************
+C
+      CALL MatGetInfo(A,MAT_LOCAL,INFO,IFAIL)
+      WRITE(NOUT,346)TITLE
+C
+      WRITE(NOUT,347)N,N,
+     +               INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +               INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +               INFO(MAT_INFO_MEMORY)
+C
+C     ***************  Global Matrix  ***************
+C
+      CALL MatGetInfo(A,MAT_GLOBAL_SUM,INFO,IFAIL)
+      IF(MY_PE.EQ.0)THEN
+          WRITE(IWUNIT,346)TITLE
+C
+          WRITE(IWUNIT,347)N,N,
+     +                     INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +                     INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +                     INFO(MAT_INFO_MEMORY)
+      ENDIF
+C
+      RETURN
+C
+  346 FORMAT(10X,5("*"),A)
+  347 FORMAT(10X,'Number of (block) rows and columns ',2(I6,1X),/,
+     +       10X,'Block size                    ',I2,/,
+     +       10X,'Number of allocated  nonzeros ',I12,/,
+     +       10X,'Memory allocated              ',F16.0)
+C
+      END  
+@
+
+
+1.34
+log
+@call to PetscOptionsGetString has been updated to petsc-3.14
+@
+text
+@d9 1
+a9 1
+C     $Id: MatAllocaMPI.F,v 1.33 2020/04/23 09:37:34 abonfi Exp abonfi $
+a28 1
+CCCCC#include "iset.com"
+d46 1
+a46 1
+      INTEGER IFAIL,NNZR,N,kspace,NERR,IOPT,LIS,LENIS
+@
+
+
+1.33
+log
+@changes required by petsc release 3.8
+@
+text
+@d9 1
+a9 1
+C     $Id: MatAllocaMPI.F,v 1.32 2016/11/11 08:56:11 abonfi Exp abonfi $
+d40 1
+d48 1
+a48 1
+      INTEGER ROWBGN,ROWEND,I,J,LINDX,IXDRS,IFLAG,LD_NNZ,LO_NNZ
+d57 2
+a58 2
+      INTEGER ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,i1mach,IXDRCLOSE
+      EXTERNAL ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,i1mach,IXDRCLOSE
+d83 2
+a84 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     &     '-data_dir',DATADIR,IFLAG,IFAIL)
+a115 1
+!        WRITE(I1MACH(3),520)MY_PE,MATRFILE
+@
+
+
+1.32
+log
+@In Petsc 3.7 the Options take an optional PetscOptions object as the first argument
+@
+text
+@a7 2
+      IMPLICIT NONE
+C
+d9 1
+a9 1
+C     $Id: MatAllocaMPI.F,v 1.31 2016/11/10 11:25:13 abonfi Exp abonfi $
+a11 1
+#include "petsc/finclude/petscsys.h"
+d15 5
+d29 1
+a29 1
+#include "iset.com"
+d165 1
+a165 1
+      CALL ISLocalToGlobalMappingCreate(PETSC_COMM_WORLD,NR+NGHOST,
+d173 1
+a173 2
+C     Sets local to global mapping: this is required
+C          by the MatSetValues[Blocked]() routine 
+a174 1
+      IF(NBLK.EQ.1)THEN
+a175 3
+      ELSE
+          CALL MatSetLocalToGlobalMappingBlock(A,mapping,mapping,IFAIL) 
+      ENDIF
+@
+
+
+1.31
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.30 2013/06/06 10:46:33 abonfi Exp abonfi $
+d80 2
+a81 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-data_dir',
+     >                      DATADIR,IFLAG,IFAIL)
+a222 16
+
+
+
+      integer function isum(x,n)
+
+      integer n 
+      integer i
+      integer x(n)
+
+      isum = 0 
+      do 1 i = 1,n
+           isum = isum + x(i)
+    1 continue
+
+      return
+      end
+@
+
+
+1.30
+log
+@now includes bnd.h
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.29 2013/01/26 11:30:51 abonfi Exp abonfi $
+d14 4
+a17 4
+#include "finclude/petscsys.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.29
+log
+@changed the name of included header/common files
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.28 2013/01/04 10:54:36 abonfi Exp abonfi $
+d21 1
+@
+
+
+1.28
+log
+@upgrade to petsc-3.3
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.27 2012/03/21 10:39:22 abonfi Exp abonfi $
+d19 3
+a21 2
+      INCLUDE 'nloc'
+      INCLUDE 'constants'
+a24 1
+      INCLUDE 'implicit.h'
+@
+
+
+1.27
+log
+@changed a call to MatSetLocalToGlobalMapping to upgrade to petsc-3.2
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.26 2011/12/14 09:53:31 abonfi Exp abonfi $
+d46 1
+a46 1
+      CHARACTER MATRFILE*256,OLAPFILE*256,DATADIR*256,EXT*3,ERRMSG*72
+d127 1
+a127 1
+         CALL MatCreateMPIAIJ(PETSC_COMM_WORLD,NR,NR,PETSC_DETERMINE,
+d131 1
+a131 1
+         CALL MatCreateMPIBAIJ(PETSC_COMM_WORLD,NBLK,N,N,
+@
+
+
+1.26
+log
+@changes required due to the upgrade to petsc-3.2
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.25 2011/09/16 07:19:48 abonfi Exp abonfi $
+d174 1
+a174 1
+          CALL MatSetLocalToGlobalMapping(A,mapping,IFAIL) 
+d176 1
+a176 1
+          CALL MatSetLocalToGlobalMappingBlock(A,mapping,IFAIL) 
+@
+
+
+1.25
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.24 2011/03/30 09:06:26 abonfi Exp abonfi $
+a122 19
+C     check if files with overlapping are there
+C
+      OLAPFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'olap'//ext//'.dat'
+C
+      INQUIRE(FILE=OLAPFILE,EXIST=FNAME)
+      IF(FNAME)THEN
+         IXDRS = INITXDR(OLAPFILE,'r',.FALSE.) 
+         IFAIL = IXDRINT(IXDRS,LENIS)
+         LIS = ISTKGT(LENIS,2) 
+         IFAIL = IXDRIMAT(IXDRS,LENIS,ISTAK(LIS))
+caldo    write(12+my_pe,*)(ISTAK(LIS+J),J=0,LENIS-1)
+         CALL ISCreateGeneral(PETSC_COMM_SELF,LENIS,ISTAK(LIS),ISolap,
+     + IFAIL)
+         CALL ISTKRL(1)
+         IFAIL = IXDRCLOSE(IXDRS)
+      ELSE
+         ISolap = -1
+      ENDIF
+C
+d163 2
+a164 1
+     &                                  ISTAK(LINDX),mapping,IFAIL)
+@
+
+
+1.24
+log
+@change required by new PETSC release
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.23 2009/06/11 13:10:01 abonfi Exp abonfi $
+d14 1
+a14 1
+#include "finclude/petsc.h"
+@
+
+
+1.23
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.22 2008/02/25 09:42:57 abonfi Exp abonfi $
+d206 1
+a206 1
+      CALL MatSetOption(A,MAT_COLUMN_ORIENTED,PETSC_TRUE,IFAIL) 
+@
+
+
+1.22
+log
+@changed PETSC_DECIDE in PETSC_DETERMINE
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.21 2005/12/23 10:04:19 abonfi Exp abonfi $
+d14 4
+a17 4
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscis.h"
+d201 1
+a201 1
+          CALL MatSetOption(A,OPT(IOPT),IFAIL) 
+d206 1
+a206 1
+      CALL MatSetOption(A,MAT_COLUMN_ORIENTED,IFAIL) 
+d214 1
+a214 2
+      WRITE(NOUT,347)INT(INFO(MAT_INFO_ROWS_LOCAL)),
+     +               INT(INFO(MAT_INFO_COLUMNS_LOCAL)),
+d225 1
+a225 2
+          WRITE(IWUNIT,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+     +                     INT(INFO(MAT_INFO_COLUMNS_GLOBAL)),
+@
+
+
+1.21
+log
+@fixed a problem when reading datafiles
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.20 2005/09/07 09:06:18 abonfi Exp aldo $
+d146 2
+a147 2
+      CALL MatCreateMPIAIJ(PETSC_COMM_WORLD,NR,NR,PETSC_DECIDE,
+     +         PETSC_DECIDE,PETSC_DEFAULT_INTEGER,ISTAK(LD_NNZ),
+d150 3
+a152 2
+          CALL MatCreateMPIBAIJ(PETSC_COMM_WORLD,NBLK,N,N,PETSC_DECIDE,
+     +                PETSC_DECIDE,PETSC_NULL_INTEGER,ISTAK(LD_NNZ),
+d236 1
+a236 1
+  347 FORMAT(10X,'Number of rows and columns    ',2(I6,1X),/,
+@
+
+
+1.20
+log
+@change required since PETSc added the FIXRETURNCHAR so that
+PETSc functions that fillup Fortran character
+arguments put in ' ' instead of the null character
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.19 2001/11/09 14:18:25 abonfi Exp abonfi $
+d46 1
+a46 1
+      CHARACTER MATRFILE*256,OLAPFILE*256,DATADIR*80,EXT*3,ERRMSG*72
+d87 1
+d89 1
+a89 1
+      INQUIRE(FILE=MATRFILE,EXIST=FNAME)
+d91 1
+a91 1
+         IXDRS = INITXDR(MATRFILE,'r',.FALSE.) 
+d111 2
+a112 1
+         WRITE(I1MACH(3),520)MY_PE,MATRFILE
+d114 2
+@
+
+
+1.19
+log
+@reads in the list of overlapping rows
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.18 2001/10/17 13:39:07 abonfi Exp abonfi $
+d85 1
+a85 1
+      KSPACE = INDEX(DATADIR,CHAR(0))
+d103 1
+a103 1
+C     read diagonale and off-diagonal CSR structure
+@
+
+
+1.18
+log
+@changes required with PETSc 2.1.0
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.17 2000/11/22 14:36:39 aldo Exp abonfi $
+d26 1
+d43 1
+a43 1
+      INTEGER IFAIL,NNZR,N,kspace,NERR,IOPT
+d46 1
+a46 1
+      CHARACTER MATRFILE*120,DATADIR*80,EXT*3,ERRMSG*72
+d53 2
+a54 2
+      INTEGER ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,i1mach
+      EXTERNAL ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,i1mach
+d107 2
+d119 20
+@
+
+
+1.17
+log
+@removed a de-bugging write stmt.
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.16 2000/11/15 09:15:09 aldo Exp aldo $
+d78 1
+a78 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-data_dir',
+@
+
+
+1.16
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.15 2000/11/10 17:10:18 aldo Exp aldo $
+a71 4
+C
+      IF(MY_PE.EQ.0)THEN
+          WRITE(IWUNIT,FMT=*)'Canu read this ?!?'
+      ENDIF
+@
+
+
+1.15
+log
+@MATRFILE now keeps up to 120 characters
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.14 2000/10/26 15:12:19 aldo Exp aldo $
+d23 1
+a23 1
+      INCLUDE 'IO'
+d39 1
+a39 1
+      integer my_pe
+d60 1
+a60 1
+      common/mpicom/my_pe
+d72 4
+@
+
+
+1.14
+log
+@some restructuring; now called twice to create the flow eqns.
+and turbulence eqn. matrices
+@
+text
+@d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.13 2000/10/19 16:10:34 aldo Exp aldo $
+d45 1
+a45 1
+      CHARACTER MATRFILE*80,DATADIR*80,EXT*3,ERRMSG*72
+d107 4
+a110 2
+         WRITE(ERRMSG(1:72),510)MY_PE,MATRFILE(1:39)
+  510 FORMAT('MatAllocaMPI PE# ',I4,'CANNOT OPEN ',A39)
+@
+
+
+1.13
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE MatAllocaMPI(A,B,NDIM,NOFVERT,NBLK,NELEM,NR,NGHOST)
+d6 1
+a6 1
+C          stiffness matrix
+d11 1
+a11 1
+C     $Id: MatAllocaMPI.F,v 1.12 2000/09/29 09:23:11 aldo Exp aldo $
+a24 1
+      INCLUDE 'mapping.com'
+d27 5
+a31 1
+C     .. Petsc Arrays ..
+d33 3
+a35 3
+      Mat A,B
+C     .. Scalar Arguments ..
+      INTEGER NBLK,NDIM,NELEM,NOFVERT,NR,NGHOST
+d167 7
+a178 10
+C     Create matrix for turbulence equation
+C
+      IF( TURBULENT )THEN 
+      stop 'Not implemented yet' 
+caldo CALL MatCreateSeqAIJ(MPI_COMM_SELF,NR,NR,NNZR/NR,
+caldo+                     ISTAK(LDEGREE),B,IFAIL)
+      CALL MatSetOption(B,MAT_COLUMN_ORIENTED,IFAIL) 
+      CALL MatZeroEntries(B,IFAIL)
+      ENDIF
+C
+d182 1
+a182 9
+      WRITE(NOUT,346)' Flow equation matrix'
+C
+      WRITE(NOUT,347)INT(INFO(MAT_INFO_ROWS_LOCAL)),
+     +               INT(INFO(MAT_INFO_COLUMNS_LOCAL)),
+     +               INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +               INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +               INFO(MAT_INFO_MEMORY)
+C
+      IF( TURBULENT )THEN
+a183 2
+      CALL MatGetInfo(B,MAT_LOCAL,INFO,IFAIL)
+      WRITE(NOUT,346)' Turbulence equation matrix'
+a188 1
+      ENDIF
+d194 1
+a194 8
+          WRITE(IWUNIT,346)' Flow equation matrix'
+C
+          WRITE(IWUNIT,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+     +                     INT(INFO(MAT_INFO_COLUMNS_GLOBAL)),
+     +                     INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +                     INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +                     INFO(MAT_INFO_MEMORY)
+      ENDIF
+a195 5
+      IF( .NOT. TURBULENT )RETURN
+C
+      CALL MatGetInfo(B,MAT_GLOBAL_SUM,INFO,IFAIL)
+      IF(MY_PE.EQ.0)THEN
+          WRITE(IWUNIT,346)' Turbulence equation matrix'
+@
+
+
+1.12
+log
+@restored 0-based indexing
+@
+text
+@d10 1
+a10 1
+C     $Id: MatAllocaMPI.F,v 1.11 2000/09/22 11:55:05 aldo Exp aldo $
+d14 3
+a16 4
+#include "include/finclude/mat.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/viewer.h"
+#include "include/finclude/is.h"
+@
+
+
+1.11
+log
+@reverting to 1-based indexing for ghost nodes
+@
+text
+@d10 1
+a10 2
+C     $Id: MatAllocaMPI.F,v 1.9 2000/03/31 09:00:50 aldo Exp $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.9/src/seq/RCS/MatAllocaMPI.F,v 1.9 2000/03/31 09:00:50 aldo Exp $
+d39 1
+a39 1
+      INTEGER IFAIL,NNZR,N,kspace
+a40 1
+      double precision degmin,degmax
+d42 1
+a62 2
+      character*3 ext
+      character matrfile*80,datadir*80
+d70 5
+a79 1
+C
+d83 1
+a84 1
+C
+d91 6
+a96 2
+            WRITE(6,*)'N does not match NR in MatAllocaMPI ',N,NR
+            STOP
+d98 3
+d104 5
+a108 2
+         WRITE(I1MACH(3),*)'CANNOT OPEN ',MATRFILE,' ON PE # ',MY_PE
+         STOP
+a110 3
+C     WRITE(6,*)'PROC # ',my_pe,' d_nnz elmts. ',isum(ISTAK(LD_NNZ),nr)
+C     WRITE(6,*)'PROC # ',my_pe,' o_nnz elmts. ',isum(ISTAK(LO_NNZ),nr)
+C
+a117 6
+          IF(.NOT.FNAME)THEN
+          CALL MatCreateMPIBAIJ(PETSC_COMM_WORLD,NBLK,N,N,PETSC_DECIDE,
+     +           PETSC_DECIDE,PETSC_DEFAULT_INTEGER,PETSC_NULL_INTEGER,
+     +           PETSC_DEFAULT_INTEGER,PETSC_NULL_INTEGER,A,IFAIL)
+          ELSE
+          write(6,*)'PE # ',my_pe,' exist =',fname
+a120 1
+          ENDIF 
+d124 1
+d146 1
+a146 1
+      CALL GetIdx(NGHOST,1,ISTAK(LTZX),ISTAK(LINDX+NR))
+d150 1
+d152 1
+@
+
+
+1.10
+log
+@indroduced 0-based indexing for the ghost nodes
+@
+text
+@d10 2
+a11 2
+C     $Id: MatAllocaMPI.F,v 1.9 2000/03/31 09:00:50 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.9/src/seq/RCS/MatAllocaMPI.F,v 1.9 2000/03/31 09:00:50 aldo Exp aldo $
+d140 3
+a142 2
+C     mapping for ghost rows: 
+C                            
+d144 1
+a144 4
+      DO 56 I = 1,NGHOST
+         ISTAK(LINDX+J) = ISTAK(LTZX+I-1)
+         J = J + 1
+   56 CONTINUE
+@
+
+
+1.9
+log
+@changed subroutine name MatSetLocalToGlobalMAppingBlock
+PETSc 2.0.28
+@
+text
+@d10 2
+a11 2
+C     $Id: MatAllocaMPI.F,v 1.8 1999/12/27 09:15:26 aldo Exp $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/MatAllocaMPI.F,v 1.8 1999/12/27 09:15:26 aldo Exp $
+d140 2
+a141 3
+C     mapping for ghost rows: GetIdx copies the ghost locations 
+C                             into the array INDX and sets the
+C                             0-based indexing 
+d143 4
+a146 1
+      CALL GetIdx(NGHOST,1,ISTAK(LTZX),ISTAK(LINDX+NR))
+@
+
+
+1.8
+log
+@minor cleaning
+@
+text
+@d10 2
+a11 2
+C     $Id: MatAllocaMPI.F,v 1.7 1999/11/05 20:49:30 aldo Exp $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/MatAllocaMPI.F,v 1.7 1999/11/05 20:49:30 aldo Exp $
+d157 1
+a157 1
+          CALL MatSetLocalToGlobalMapBlocked(A,mapping,IFAIL) 
+@
+
+
+1.7
+log
+@reading sparsity pattern from files
+@
+text
+@d1 1
+d3 3
+a5 7
+C
+C
+C STIFMAT  : is the driver for allocating memory and building the
+C            stiffness matrix
+C
+C
+      SUBROUTINE MatAllocaMPI(A,B,NDIM,NOFVERT,NBLK,NELEM,NR,NGHOST)
+a8 3
+C     This routine creates the Compressed Sparse Row structure
+C        of the stiffness matrix, i.e. the arrays:
+C        ia(1:NR+1) and ja(1:NNZ)
+d10 2
+a11 2
+C     $Id: MatAllocaMPI.F,v 1.5 1999/09/29 09:49:18 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/MatAllocaMPI.F,v 1.5 1999/09/29 09:49:18 aldo Exp aldo $
+a31 1
+      Vec degree,local1,local2,local3,d_nnz,o_nnz
+d50 2
+a51 2
+      INTEGER ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,isum
+      EXTERNAL ISTKGT,ISTKST,initxdr,ixdrint,ixdrimat,isum
+d95 3
+d100 2
+a101 2
+      WRITE(6,*)'PROC # ',my_pe,' d_nnz elmts. ',isum(ISTAK(LD_NNZ),nr)
+      WRITE(6,*)'PROC # ',my_pe,' o_nnz elmts. ',isum(ISTAK(LO_NNZ),nr)
+a119 11
+cccc      if(my_pe.eq.0)write(6,*)PETSC_DECIDE,PETSC_DETERMINE
+cccc      write(ext,"(I3.3)")my_pe+1
+cccc      fname = 'diag.'//ext
+cccc      open(unit=34,file=fname,form='formatted')
+cccc      write(34,*)(istak(ld_nnz+i),i=0,nr-1)
+cccc      close(34)
+cccc      fname = 'offd.'//ext
+cccc      open(unit=34,file=fname,form='formatted')
+cccc      write(34,*)(istak(lo_nnz+i),i=0,nr-1)
+cccc      close(34)
+cccc      stop
+@
+
+
+1.6
+log
+@various attempts to change things with MatCreateMPI
+@
+text
+@d17 1
+a17 1
+C     $Header: /ehome10/tracs/aldo/EulFS.0.9.7/src/seq/RCS/MatAllocaMPI.F,v 1.5 1999/09/29 09:49:18 aldo Exp aldo $
+d47 4
+a50 4
+      INTEGER IFAIL,LDEGREE,NNZR,N,isum2,isum3
+      INTEGER ROWBGN,ROWEND,I,J,LINDX,D_NZ,O_NZ,lghost,LD_NNZ,LO_NNZ
+      double precision degmin,degmax,dnnzr,sum1,sum2,sum3
+      LOGICAL VERBOSE
+d57 2
+a58 2
+      INTEGER ISTKGT,ISTKST
+      EXTERNAL ISTKGT,ISTKST
+d72 1
+a72 1
+      character*8 fname
+d80 23
+a102 51
+#if 0
+C
+      LGHOST = ISTKGT(NGHOST,2)
+      CALL GetIdx(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+      CALL VecCreateGhost(PETSC_COMM_WORLD,NR,PETSC_DECIDE,
+     +                    NGHOST,ISTAK(lghost),degree,IFAIL)
+      CALL VecCreateGhost(PETSC_COMM_WORLD,NR,PETSC_DECIDE,
+     +                    NGHOST,ISTAK(lghost),d_nnz,IFAIL)
+      CALL VecCreateGhost(PETSC_COMM_WORLD,NR,PETSC_DECIDE,
+     +                    NGHOST,ISTAK(lghost),o_nnz,IFAIL)
+      CALL ISTKRL(1)
+C
+      CALL VecGhostGetLocalForm(degree,local1,ifail)
+      CALL VecGhostGetLocalForm(d_nnz,local2,ifail)
+      CALL VecGhostGetLocalForm(o_nnz,local3,ifail)
+      CALL MatGetSizeMPI(ISTAK(LCELNOD),ISTAK(LCELCEL),
+     +              ISTAK(LNODCOD),local1,local2,local3,
+     +NDIM,NOFVERT,NELEM,NR,NNZR,NOUT,VERBOSE)
+      CALL VecAssemblyBegin(degree,ifail) 
+      CALL VecAssemblyEnd(degree,ifail) 
+      CALL VecAssemblyBegin(d_nnz,ifail) 
+      CALL VecAssemblyEnd(d_nnz,ifail) 
+      CALL VecAssemblyBegin(o_nnz,ifail) 
+      CALL VecAssemblyEnd(o_nnz,ifail) 
+      CALL VecGhostUpdateBegin(degree,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateEnd(degree,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateBegin(d_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateEnd(d_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateBegin(o_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecGhostUpdateEnd(o_nnz,ADD_VALUES,SCATTER_REVERSE,IFAIL)
+      CALL VecSum(degree,dnnzr,ifail)
+      CALL VecSum(d_nnz,sum2,ifail)
+      CALL VecSum(o_nnz,sum3,ifail)
+c     if(my_pe.eq.0)write(6,*)'nnzr= ',int(dnnzr),nnzr
+c     if(my_pe.eq.0)write(6,*)'nnzr= ',int(dnnzr),sum2,sum3,sum2+sum3
+      LD_NNZ = ISTKGT(NR,2)
+      LO_NNZ = ISTKGT(NR,2)
+      CALL CopyPETScVecToInteger(local2,ISTAK(LD_NNZ))
+      CALL CopyPETScVecToInteger(local3,ISTAK(LO_NNZ))
+      isum2 = 0
+      isum3 = 0
+      do i = 0,NR-1
+         isum2 = isum2 + istak(ld_nnz+i)
+         isum3 = isum3 + istak(lo_nnz+i)
+      enddo
+      CALL VecGhostRestoreLocalForm(degree,local1,ifail)
+      CALL VecGhostRestoreLocalForm(d_nnz,local2,ifail)
+      CALL VecGhostRestoreLocalForm(o_nnz,local3,ifail)
+      CALL VecDestroy(degree,ifail)
+      CALL VecDestroy(d_nnz,ifail)
+      CALL VecDestroy(o_nnz,ifail)
+d104 2
+a105 1
+#endif
+d111 2
+a112 2
+     +  PETSC_DECIDE,PETSC_DEFAULT_INTEGER,ISTAK(LD_NNZ),
+     +  PETSC_DEFAULT_INTEGER,ISTAK(LO_NNZ),A,IFAIL)
+d114 1
+a114 1
+#if 1
+d116 4
+a119 9
+     +    PETSC_DECIDE,PETSC_DEFAULT_INTEGER,PETSC_NULL_INTEGER,
+     +    PETSC_DEFAULT_INTEGER,PETSC_NULL_INTEGER,A,IFAIL)
+#else
+          WRITE(6,*)' PROC. NO. ',MY_PE,PETSC_DECIDE,PETSC_DETERMINE
+          CALL MatCreateMPIBAIJ(PETSC_COMM_WORLD,NBLK,N,N,
+     +         PETSC_DETERMINE,PETSC_DETERMINE,10,PETSC_NULL_INTEGER,
+     +         10,PETSC_NULL_INTEGER,A,IFAIL)
+#endif
+#if 0
+d121 14
+a134 13
+     +                PETSC_DECIDE,PETSC_DEFAULT_INTEGER,ISTAK(LD_NNZ),
+     +                PETSC_DEFAULT_INTEGER,ISTAK(LO_NNZ),A,IFAIL)
+          write(ext,"(I3.3)")my_pe+1
+          fname = 'diag.'//ext
+          open(unit=34,file=fname,form='formatted')
+          write(34,*)(istak(ld_nnz+i),i=0,nr-1)
+          close(34)
+          fname = 'offd.'//ext
+          open(unit=34,file=fname,form='formatted')
+          write(34,*)(istak(lo_nnz+i),i=0,nr-1)
+          close(34)
+          stop
+#endif
+d246 16
+@
+
+
+1.5
+log
+@make PETSc decide about memory allocation;
+there is a bug in the subroutine MatGetSizeMPI
+@
+text
+@d16 2
+a17 2
+C     $Id: MatAllocaMPI.F,v 1.4 1999/09/03 11:04:00 aldo Exp aldo $
+C     $Header: /c9/tracs/aldo/EulFS.0.9.7/src/seq/RCS/MatAllocaMPI.F,v 1.4 1999/09/03 11:04:00 aldo Exp aldo $
+d80 1
+a80 1
+      goto 687
+d132 1
+a132 1
+  687 continue
+d141 1
+d145 21
+a165 14
+cccc      CALL MatCreateMPIBAIJ(PETSC_COMM_WORLD,NBLK,N,N,PETSC_DECIDE,
+cccc +                PETSC_DECIDE,PETSC_DEFAULT_INTEGER,ISTAK(LD_NNZ),
+cccc +                PETSC_DEFAULT_INTEGER,ISTAK(LO_NNZ),A,IFAIL)
+cccc      if(my_pe.eq.0)write(6,*)PETSC_DECIDE,PETSC_DETERMINE
+cccc      write(ext,"(I3.3)")my_pe+1
+cccc      fname = 'diag.'//ext
+cccc      open(unit=34,file=fname,form='formatted')
+cccc      write(34,*)(istak(ld_nnz+i),i=0,nr-1)
+cccc      close(34)
+cccc      fname = 'offd.'//ext
+cccc      open(unit=34,file=fname,form='formatted')
+cccc      write(34,*)(istak(lo_nnz+i),i=0,nr-1)
+cccc      close(34)
+cccc      stop
+@
+
+
+1.4
+log
+@MatSetLocalToGlobalMappingBlocked has been changed into
+MatSetLocalToGlobalMapBlocked so that it will compile
+on CRAY t3e as well
+@
+text
+@d16 2
+a17 2
+C     $Id: MatAllocaMPI.F,v 1.3 1999/09/02 08:28:09 aldo Exp aldo $
+C     $Header: /c9/tracs/aldo/EulFS.0.9.7/src/seq/RCS/MatAllocaMPI.F,v 1.3 1999/09/02 08:28:09 aldo Exp aldo $
+d71 4
+d80 2
+d132 1
+d142 16
+a157 2
+     +    PETSC_DECIDE,PETSC_DEFAULT_INTEGER,ISTAK(LD_NNZ),
+     +    PETSC_DEFAULT_INTEGER,ISTAK(LO_NNZ),A,IFAIL)
+@
+
+
+1.3
+log
+@VecGhostRestoreLocalRepresentation changed to
+VecGhostRestoreLocalForm (for PETSc.2.0.24)
+@
+text
+@d16 2
+a17 2
+C     $Id: MatAllocaMPI.F,v 1.2 1998/12/10 18:01:12 simula Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/MatAllocaMPI.F,v 1.2 1998/12/10 18:01:12 simula Exp aldo $
+d174 1
+a174 1
+          CALL MatSetLocalToGlobalMappingBlocked(A,mapping,IFAIL) 
+@
+
+
+1.2
+log
+@new output
+@
+text
+@d16 2
+a17 2
+C     $Id: MatAllocaMPI.F,v 1.1 1998/12/02 09:17:58 aldo Exp simula $
+C     $Header: /home/simula/aldo/EulFS.0.9.5/src/seq/RCS/MatAllocaMPI.F,v 1.1 1998/12/02 09:17:58 aldo Exp simula $
+d86 3
+a88 3
+      CALL VecGhostGetLocalRepresentation(degree,local1,ifail)
+      CALL VecGhostGetLocalRepresentation(d_nnz,local2,ifail)
+      CALL VecGhostGetLocalRepresentation(o_nnz,local3,ifail)
+d119 3
+a121 3
+      CALL VecGhostRestoreLocalRepresentation(degree,local1,ifail)
+      CALL VecGhostRestoreLocalRepresentation(d_nnz,local2,ifail)
+      CALL VecGhostRestoreLocalRepresentation(o_nnz,local3,ifail)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d16 2
+a17 2
+C     $Id$
+C     $Header: stiffmat.F,v 1.10 98/11/25 17:01:42 aldo Exp $
+d47 1
+a47 1
+      INTEGER IFAIL,LDEGREE,NNZR,N
+d107 2
+a108 2
+      if(my_pe.eq.0)write(6,*)'nnzr= ',int(dnnzr),nnzr
+      if(my_pe.eq.0)write(6,*)'nnzr= ',int(dnnzr),sum2,sum3,sum2+sum3
+d113 6
+d122 1
+d192 2
+d198 4
+a201 4
+     +            INT(INFO(MAT_INFO_COLUMNS_LOCAL)),
+     +            INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +            INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +            INFO(MAT_INFO_MEMORY)
+d208 4
+a211 4
+     +            INT(INFO(MAT_INFO_COLUMNS_LOCAL)),
+     +            INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +            INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +            INFO(MAT_INFO_MEMORY)
+d214 2
+d218 1
+a218 1
+      WRITE(IWUNIT,346)' Flow equation matrix'
+d220 5
+a224 5
+      WRITE(IWUNIT,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_COLUMNS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +            INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +            INFO(MAT_INFO_MEMORY)
+d231 6
+a236 6
+      WRITE(IWUNIT,346)' Turbulence equation matrix'
+      WRITE(IWUNIT,347)INT(INFO(MAT_INFO_ROWS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_COLUMNS_GLOBAL)),
+     +            INT(INFO(MAT_INFO_BLOCK_SIZE)),
+     +            INT(INFO(MAT_INFO_NZ_ALLOCATED)),
+     +            INFO(MAT_INFO_MEMORY)
+@

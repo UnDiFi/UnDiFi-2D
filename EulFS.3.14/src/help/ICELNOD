@@ -1,0 +1,4 @@
+C
+C ICELNOD -- IN Integer ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell

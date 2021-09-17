@@ -1,0 +1,138 @@
+0a1,25
+> !> @param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+> !> @param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+> !> @param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+> !> @param[in] XYZDOT the cartesian components of the grid velocity
+> !> @param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+> !> @param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+> !> @param[in,out] STIFEL elemental stiffness matrix
+> !> @param[in,out] NODRES 
+> !> @param[in,out] NEWRES 
+> !> @param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCDZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+> !> @param[in] NELEM is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+> !> @param[in] NPOIN nof interior nodes in the mesh
+> !> @param[in] NGHOST nof ghost nodes in the mesh
+> !> @param[in] NPNOD nof periodic nodes in the mesh
+> !> @param[in] NDIM dimension of the space
+> !> @param[in] NOFVERT number of vertices per element (=NDIM+1, since only triangles or tetrahedra are allowed)
+> !> @param[in] NOFVAR number of variables (degrees of freedom) in each meshpoint
+> !> @param[in] IBNDFAC
+> !> @param[in] NBFAC number of bndry faces
+> !> @param[in,out] PetscVecDT Petsc Vec where time-step is stored
+> !> @param[in,out] PetscVecRHS Petsc Vec where the nodal residual is stored
+> !> @param[in,out] PetscMatA Petsc Mat where the implicit matrix is stored
+> !> @param[in] LFLAG
+9a35,36
+>       IMPLICIT NONE
+> C
+15a43
+> #include "petsc/finclude/petscsys.h"
+18,22d45
+<       use petscvec
+<       use petscmat
+< C
+<       IMPLICIT NONE
+< C
+61,67d83
+< C     NDIM    dimension of the space (2 or 3)
+< C     NOFVERT number of vertices per element (=NDIM+1, since
+< C             only triangles or tetrahedra are allowed)
+< C     NOFVAR  number of variables (degrees of freedom)
+< C             in each meshpoint
+< C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+< C             global number of elements in the uni-processor case
+82,85d97
+< C     ICELNOD(1:NOFVERT,1:NELEM)
+< C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+< C            global node number of the i-th vertex of the ielem-th cell
+< C
+87,88d98
+< C     FACNOR(1:NDIM,1:NFACE)  cartesian components
+< C                             of the NFACE faces/edges
+249,250c259,260
+<           IF(.NOT.TIMEIMPL)GOTO 50
+<           IF(NEWTON)THEN!GOTO 1000
+---
+>           IF(.NOT.TIMEIMPL)GOTO 50 ! Explicit timestepping
+>           IF(NEWTON)THEN
+255c265
+<               DO 15 IVAR = 1, NOFVAR
+---
+>               DO 25 IVAR = 1, NOFVAR
+313c323
+<                       STOP ' Unimplemented feature'
+---
+>                          STOP ' Unimplemented feature'
+337,338c347,348
+<                   DO 15 JVAR = 1, NOFVAR
+<                       DO 15 JVERT = 1, NM1
+---
+>                   DO JVAR = 1, NOFVAR
+>                       DO JVERT = 1, NM1
+340a351,352
+>                       ENDDO
+>                   ENDDO
+341a354
+>    25        CONTINUE
+343c356
+<       ENDIF ! Newton
+---
+>          ENDIF ! Newton
+348,350c361,386
+<           N=NM1
+<           DO 37 K= 1,NM1
+<               DO 39 L= 1,NM1
+---
+> C
+>          N = NM1*NOFVAR
+>          DO IV = 1, NM1
+>             DO JV = 1, NM1
+>                DO JVAR = 1, NOFVAR
+>                   DO IVAR = 1, NOFVAR
+>                      K = (IV-1)*NOFVAR+IVAR
+>                      L = (JV-1)*NOFVAR+JVAR
+>                      IADDR = (L-1)*N+K
+>                      DUMMY(IADDR) = STIFEL(IVAR,JVAR,IV,JV)
+>                   ENDDO ! IVAR
+>                ENDDO ! JVAR
+> #if 0
+>                IF(IBC.EQ.IBC)THEN
+>                   WRITE(6,*)IV,JV
+>                   CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,
+>      +            STIFEL(1,1,IV,JV),NOFVAR,'STIFEL ',ifail)
+>                ENDIF
+> #endif
+>             ENDDO ! JV
+>          ENDDO ! I
+> C
+> C     Add the element diffusion stiffness matrix to the global one
+> C
+> C     call MatSetValuesBlocked only once per boundary face
+> C
+352,354c388,389
+<                   CALL MatSetValuesBlockedLocal(PetscMatA,1,ICN(K),1,
+<      +            ICN(L),STIFEL(1,1,K,L), ADD_VALUES,IFAIL)
+<  
+---
+>          CALL MatSetValuesBlockedLocal(PetscMatA,NM1,ICN,NM1,
+>      +                     ICN,DUMMY,ADD_VALUES,IFAIL)
+356,364c391,392
+<                   CALL MatSetValuesBlocked(PetscMatA,1,ICN(K),1,ICN(L),
+<      +            STIFEL(1,1,K,L), ADD_VALUES,IFAIL)
+<  
+< #endif
+< #if 0 
+<                   write(6,*)k,l,icn(k),icn(k),icn(ivert)
+<                   CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,STIFEL
+<      +            (1,1,k,l),NOFVAR,'jacobian matrix for wall b.c. ',
+<      +            IFAIL)
+---
+>          CALL MatSetValuesBlocked(PetscMatA,NM1,ICN,NM1,ICN,
+>      +                     DUMMY,ADD_VALUES,IFAIL)
+366,367c394
+<    39         CONTINUE
+<    37     CONTINUE
+---
+> 

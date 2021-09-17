@@ -1,0 +1,865 @@
+head	1.11;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.11
+	release3_13_0:1.11
+	release3_12_0:1.11
+	release3_11_0:1.11
+	release3_10_0:1.11
+	release3_8_0:1.11
+	release3_7_1:1.11
+	release3_7_0:1.10
+	release3_4_5:1.10
+	release3_4_4:1.10
+	release3_4_3:1.10
+	release3_4_2:1.10
+	release3_4_1:1.10
+	release3_4_0:1.10
+	release3_3_5:1.10
+	release3_3_4:1.10
+	release3_3_3:1.10
+	release3_3_2:1.10
+	release3_3_1:1.10
+	release3_3_0:1.9;
+locks; strict;
+comment	@c @;
+
+
+1.11
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2013.01.24.17.58.20;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2012.12.20.10.33.01;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.08.08.11.21.12;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2002.08.24.10.10.20;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2000.10.13.13.18.33;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.03.25.15.33.32;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.03.10.15.13.52;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.01.18.18.55.15;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.01.15.09.45.42;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.24.06.22.51;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@eigenvector decomposition for the HE splitting
+@
+
+
+1.11
+log
+@renamed subroutine call
+@
+text
+@!> \copydoc MatSplitIX()
+      SUBROUTINE MatSplitII(IELEM,NDIM,NORDER,VECN,JacobianMatrix,LDJ,
+     +KMAT,KPOS,KNEG,VLEFT,VRIGHT,LDA,WR,LPOS,LNEG,EIGENDECO)
+C
+C     $Id: matsplII.F,v 1.10 2013/01/24 17:58:20 abonfi Exp abonfi $
+C
+C#define FSPL_USE_DEBUG
+C
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+      INCLUDE 'blkEulerII.com'
+      INCLUDE 'frame.com'
+C
+C
+      INTEGER   IELEM,NDIM,NORDER,LDA,LDJ
+      LOGICAL   EIGENDECO
+C
+      DOUBLE PRECISION  VECN(NDIM),JacobianMatrix(LDJ,*)
+      DOUBLE PRECISION  KMAT(LDA,*),  KPOS(LDA,*),KNEG(LDA,*),
+     1                  VLEFT(LDA,*),VRIGHT(LDA,*),
+     2                  WR(*),LPOS(*),LNEG(*)
+C
+      INTEGER I,J,K,IFBRANCH
+      DOUBLE PRECISION N,S,T,NSIGN,SUM1,SUM2
+      DOUBLE PRECISION TEMP1,TEMP2,TEMP3,TEMP4,TEMP5
+C
+#ifdef FSPL_USE_DEBUG
+      INTEGER IFAIL
+      DOUBLE PRECISION WORK1(3,3),WORK2(3,3)
+      DOUBLE PRECISION WKSPA(3,3),WKSPB(3,3)
+      DOUBLE PRECISION WKSPC(3,3),WKSPD(3,3)
+      LOGICAL LFLAG
+      LOGICAL NULLMAT
+#endif
+C
+C
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+C
+      INTRINSIC DSQRT
+C
+C
+C       N,S and T are the dot products of the face normal
+C       with the streamline and two crossflow directions
+C       divided by the space dimension  ..
+C
+      N = RotationMatrix(1,1)*VECN(1) +
+     >    RotationMatrix(2,1)*VECN(2)
+      S = RotationMatrix(1,2)*VECN(1) +
+     >    RotationMatrix(2,2)*VECN(2)
+      T = ZERO
+      IF(NDIM.EQ.3)THEN 
+          N = N + RotationMatrix(3,1)*VECN(3)
+          S = S + RotationMatrix(3,2)*VECN(3)
+          T = RotationMatrix(1,3)*VECN(1) +
+     >        RotationMatrix(2,3)*VECN(2) +
+     >        RotationMatrix(3,3)*VECN(3)
+      ENDIF 
+      N = N/NDIM
+      S = S/NDIM
+      T = T/NDIM
+C
+C     Jacobian Matrix ..
+C
+      TEMP1 = X*nu_p*N
+      TEMP2 = X*nu_m*N
+      TEMP3 = X*S/BETA
+      TEMP4 = X*T/BETA
+      KMAT(1,1) = TEMP1+TEMP3
+      KMAT(1,2) = TEMP2
+      KMAT(2,1) = TEMP2
+      KMAT(2,2) = TEMP1-TEMP3
+      IF(NDIM.EQ.3)THEN
+         KMAT(1,3) = TEMP4
+         KMAT(2,3) = TEMP4
+         KMAT(3,1) = HALF*TEMP4
+         KMAT(3,2) = HALF*TEMP4
+         KMAT(3,3) = X*N
+      ENDIF
+C
+      IF( EIGENDECO .EQV. .FALSE. )RETURN
+C
+C     Eigenvalues ..
+C
+      TEMP5 = T*T+S*S
+      TEMP3 = DSQRT( (nu_m*nu_m*BETASQR*N*N+TEMP5 ) )
+      TEMP2 = TEMP3 / BETA
+C
+C
+      WR(1) = X*(nu_p*N - TEMP2)
+      WR(2) = X*(nu_p*N + TEMP2)
+      WR(3) = X*N
+C
+      IF( TEMP5 .GT. 1.D-15 )THEN
+         IFBRANCH = 1
+         TEMP1 = BETA*nu_m*N
+         TEMP2 = HALF * TEMP3 / BETA
+         VLEFT(1,1) = - S - TEMP1 + TEMP3
+         VLEFT(1,2) =   S - TEMP1 + TEMP3
+         VLEFT(2,1) = - S - TEMP1 - TEMP3
+         VLEFT(2,2) =   S - TEMP1 - TEMP3
+         IF(NDIM.EQ.3)THEN
+            VLEFT(1,3) = - TWO * T
+            VLEFT(2,3) = - TWO * T
+            VLEFT(3,1) = - T
+            VLEFT(3,2) =   T
+            VLEFT(3,3) = TWO * S
+         ENDIF
+*
+         TEMP2 = ONE / (4.D0 * TEMP3 * TEMP5)
+         TEMP4 = T*T
+         VRIGHT(1,1) = TEMP2 * ( S * VLEFT(2,2) + TEMP4 )
+         VRIGHT(1,2) = TEMP2 * (-S * VLEFT(1,2) - TEMP4 )
+         VRIGHT(2,1) = TEMP2 * (-S * VLEFT(2,1) + TEMP4 )
+         VRIGHT(2,2) = TEMP2 * ( S * VLEFT(1,1) - TEMP4 )
+         IF(NDIM.EQ.3)THEN
+            VRIGHT(1,3) = TEMP2 * (-TWO * T * TEMP3 )
+            VRIGHT(2,3) = TEMP2 * ( TWO * T * TEMP3 )
+            VRIGHT(3,1) = TEMP2 * ( T * (VLEFT(2,2)-S) )
+            VRIGHT(3,2) = TEMP2 * (-T * (VLEFT(1,1)+S) )
+            VRIGHT(3,3) = TEMP2 * ( TWO * S * TEMP3 )
+         ENDIF
+      ELSE
+         IFBRANCH = 2
+         NSIGN = SIGN( ONE , N )
+         VLEFT(1,1) = ONE
+         VLEFT(1,2) = NSIGN
+         VLEFT(2,1) = ONE
+         VLEFT(2,2) =-NSIGN
+         IF(NDIM.EQ.3)THEN
+            VLEFT(1,3) = ZERO
+            VLEFT(2,3) = ZERO
+            VLEFT(3,1) = ZERO
+            VLEFT(3,2) = ZERO
+            VLEFT(3,3) = ONE
+         ENDIF
+*
+         VRIGHT(1,1) = HALF
+         VRIGHT(1,2) = HALF
+         VRIGHT(2,1) = HALF*NSIGN
+         VRIGHT(2,2) =-HALF*NSIGN
+         IF(NDIM.EQ.3)THEN
+            VRIGHT(1,3) = ZERO
+            VRIGHT(2,3) = ZERO
+            VRIGHT(3,1) = ZERO
+            VRIGHT(3,2) = ZERO
+            VRIGHT(3,3) = ONE
+         ENDIF
+      ENDIF
+C
+C     Positive and negative eigenvalues ..
+C
+      LPOS(1) = HALF * (WR(1) + DABS(WR(1)) )
+      LNEG(1) = HALF * (WR(1) - DABS(WR(1)) )
+      LPOS(2) = HALF * (WR(2) + DABS(WR(2)) )
+      LNEG(2) = HALF * (WR(2) - DABS(WR(2)) )
+      IF(NDIM.EQ.3)THEN
+         LPOS(3) = HALF * (WR(3) + DABS(WR(3)) )
+         LNEG(3) = HALF * (WR(3) - DABS(WR(3)) )
+      ENDIF
+C
+C     compute VRIGHT * LAMBDA(+/-) * VLEFT
+C
+      DO 15 J = 1 , NORDER
+         DO 15 I = 1 , NORDER
+         SUM1 = ZERO
+         SUM2 = ZERO
+            DO 13 K = 1 , NORDER
+               TEMP1= VRIGHT(I,K) * VLEFT(K,J)
+               SUM1 = SUM1 + TEMP1* LPOS(K)
+               SUM2 = SUM2 + TEMP1* LNEG(K)
+   13       CONTINUE
+         KPOS(I,J) = SUM1
+         KNEG(I,J) = SUM2
+   15 CONTINUE
+C
+#ifdef FSPL_USE_DEBUG
+         SUM1 = ZERO
+         DO 30 I =  1, NORDER
+            DO 30 J =  1, NORDER
+               WORK1(I,J) = (KPOS(I,J)+KNEG(I,J))
+               WORK2(I,J) = WORK1(I,J)
+               SUM1 = MAX(ABS(WORK1(I,J)),SUM1)
+   30    CONTINUE
+C
+C        normalize by the maximum value
+C
+         CALL MATSUB(WORK2,3,KMAT,3,NORDER,NORDER)
+         LFLAG = NULLMAT(WORK2,NORDER,NORDER,3,1.D-14*SUM1)
+         LFLAG = .FALSE.
+C
+         IF( LFLAG .EQV. .FALSE. )THEN
+ 
+            WRITE(6,*)'If branch, (N,S,T), TEMP5 '
+            WRITE(6,*)IFBRANCH,N,S,T,TEMP5
+            WRITE(6,*)'nu+ ',nu_p,' nu- ',nu_m,' ',nu_p+nu_m
+C
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,KMAT,LDA,
+     +                  'Jacobian matrix',IFAIL)
+            WRITE(6,*)(WR(I),I=1,NORDER)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VLEFT,LDA, 
+     +                  'LEFT eigenvectors',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VRIGHT,LDA, 
+     +                  'RIGHT eigenvectors',IFAIL)
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,VLEFT,LDA,
+     +                 KMAT,LDA,ZERO,WKSPA,3)
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0, KMAT,LDA,
+     +                 VRIGHT,LDA,ZERO,WKSPB,3)
+            DO 6 I =  1, NORDER
+               DO 6 J =  1, NORDER
+                  WKSPC(I,J) = WR(I)*VLEFT(I,J)
+                  WKSPD(I,J) = WR(J)*VRIGHT(I,J)
+    6       CONTINUE
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPA,3, 
+     >                  'LEFT*A ',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPC,3, 
+     >                  'lambda*LEFT',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPB,3, 
+     >                  'A*RIGHT',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPD,3, 
+     >                  'RIGHT*lambda',IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,KMAT,LDA,
+     +                 'Original matrix',IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,WORK1,3,
+     +                 'Reassembled matrix',IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,WORK2,3,
+     +                 'Error matrix',IFAIL)
+C
+C      Test if VRIGHT*VLEFT = Identity ..
+C
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,VRIGHT,LDA,
+     >                 VLEFT,LDA,0.D0,WORK1,3)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WORK1,3,
+     >                  'Identity matrix ????',IFAIL)
+C           PAUSE
+         ENDIF
+#endif
+C
+      RETURN
+      END
+@
+
+
+1.10
+log
+@names of included common/parameters have been changed
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplII.F,v 1.9 2012/12/20 10:33:01 abonfi Exp abonfi $
+d202 1
+a202 1
+            CALL X04CAF('G',' ',NORDER,NORDER,KMAT,LDA,
+d205 1
+a205 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VLEFT,LDA, 
+d207 1
+a207 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VRIGHT,LDA, 
+d218 1
+a218 1
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPA,3, 
+d220 1
+a220 1
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPC,3, 
+d222 1
+a222 1
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPB,3, 
+d224 1
+a224 1
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPD,3, 
+d226 1
+a226 1
+            CALL X04CAF('General',' ',NORDER,NORDER,KMAT,LDA,
+d228 1
+a228 1
+            CALL X04CAF('General',' ',NORDER,NORDER,WORK1,3,
+d230 1
+a230 1
+            CALL X04CAF('General',' ',NORDER,NORDER,WORK2,3,
+d237 1
+a237 1
+            CALL X04CAF('G',' ',NORDER,NORDER,WORK1,3,
+@
+
+
+1.9
+log
+@first Doxygen support
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplII.F,v 1.8 2005/08/08 11:21:12 abonfi Exp abonfi $
+d13 1
+d15 1
+a15 1
+      INCLUDE 'blkEulerII'
+a17 1
+      INCLUDE 'constants'
+@
+
+
+1.8
+log
+@minor changes (EQ into EQV) and reformatting
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE MatSplitII(IELEM,NDIM,NORDER,VNOR,JACMAT,LDJ,
+d5 1
+a5 1
+C     $Id: matsplII.F,v 1.7 2002/08/24 10:10:20 abonfi Exp aldo $
+a8 18
+C************************************************************
+C
+C     NORDER:   is the order of the system to be solved (INPUT)
+C     VNOR:     is the face normal (INPUT)
+C     KMAT:  is the jacobian matrix times the face normal (OUTPUT)
+C     KPOS:     is the "positive" part of the jacobian matrix (OUTPUT)
+C     KNEG:     is the "negative" part of the jacobian matrix (OUTPUT)
+C     VLEFT:    is left eigenvector matrix of the jacobian matrix (OUTPUT)
+C     VRIGHT:   is right eigenvector matrix of the jacobian matrix (OUTPUT)
+C     LDA:      is the leading dimension of the previous matrices
+C     WR:       eigenvalues of the jacobian matrix (OUTPUT)
+C     LPOS:     positive eigenvalues of the jacobian matrix (OUTPUT)
+C     LNEG:     negative eigenvalues of the jacobian matrix (OUTPUT)
+C
+C     EIGENDECO .TRUE. if the eigenvector decomposition of the matrix
+C               is needed, if .FALSE. only the K matrix is computed (INPUT)
+C
+C************************************************************
+d22 1
+a22 1
+      DOUBLE PRECISION  VNOR(NDIM),JACMAT(LDJ,*)
+d51 4
+a54 4
+      N = RotationMatrix(1,1)*VNOR(1) +
+     >    RotationMatrix(2,1)*VNOR(2)
+      S = RotationMatrix(1,2)*VNOR(1) +
+     >    RotationMatrix(2,2)*VNOR(2)
+d57 5
+a61 5
+          N = N + RotationMatrix(3,1)*VNOR(3)
+          S = S + RotationMatrix(3,2)*VNOR(3)
+          T = RotationMatrix(1,3)*VNOR(1) +
+     >        RotationMatrix(2,3)*VNOR(2) +
+     >        RotationMatrix(3,3)*VNOR(3)
+@
+
+
+1.7
+log
+@very minor changes
+@
+text
+@d4 3
+a6 1
+C     $Id:$
+d36 1
+a36 1
+      INTEGER	IELEM,NDIM,NORDER,LDA,LDJ
+d39 1
+a39 1
+      DOUBLE PRECISION	VNOR(NDIM),JACMAT(LDJ,*)
+d50 3
+a52 3
+      DOUBLE PRECISION	WORK1(3,3),WORK2(3,3)
+      DOUBLE PRECISION	WKSPA(3,3),WKSPB(3,3)
+      DOUBLE PRECISION	WKSPC(3,3),WKSPD(3,3)
+d61 1
+a61 1
+      INTRINSIC	DSQRT
+d84 1
+a84 1
+C	Jacobian Matrix ..
+d104 1
+a104 1
+C	Eigenvalues ..
+d172 1
+a172 1
+C	Positive and negative eigenvalues ..
+d211 1
+d213 1
+a213 1
+         IF( LFLAG .EQ. .FALSE. )THEN
+d217 1
+d250 1
+a250 1
+C	Test if VRIGHT*VLEFT = Identity ..
+d256 1
+a256 1
+            PAUSE
+@
+
+
+1.6
+log
+@removed variable STAGFIX
+@
+text
+@d4 1
+a4 1
+CCCC#define DEBUG
+d42 1
+a42 2
+      INTEGER I,J,K,IFAIL,IFBRANCH
+      LOGICAL LFLAG
+d46 2
+a47 1
+#ifdef DEBUG
+d51 2
+a60 1
+      DATA LFLAG / .FALSE. /
+d196 2
+a197 1
+#ifdef DEBUG
+d201 2
+a202 2
+               WORK2(I,J) = WORK1(I,J)-KMAT(I,J)
+               IF( DABS(WORK2(I,J)) .GT. 1.D- 14)LFLAG = .TRUE.
+d205 6
+a210 1
+         IF( LFLAG .EQ. .TRUE. )THEN
+a214 2
+            LFLAG = .FALSE.
+C
+@
+
+
+1.5
+log
+@undefined the DEBUG preprocessor flag
+@
+text
+@d4 1
+a4 1
+C#define DEBUG
+a30 1
+      INCLUDE 'fix'
+d83 4
+a86 4
+      TEMP1 = X*nu_p*N / STAGFIX
+      TEMP2 = X*nu_m*N / STAGFIX
+      TEMP3 = X*S/BETA / STAGFIX
+      TEMP4 = X*T/BETA / STAGFIX
+d96 1
+a96 1
+         KMAT(3,3) = X*N / STAGFIX
+d107 4
+a110 8
+C     This goes together with the fix suggested
+C     by J.C. : i.e. the RIGHT eigenvectors (char. to conserved) are
+C     multiplyed with STAGFIX but then the "wave speeds" (eigenvectors)
+C     are divided by STAGFIX ..
+C
+      WR(1) = X*(nu_p*N - TEMP2) / STAGFIX
+      WR(2) = X*(nu_p*N + TEMP2) / STAGFIX
+      WR(3) = X*N                / STAGFIX
+@
+
+
+1.4
+log
+@bug fixed: out of range index
+now checks the space dimension
+@
+text
+@d4 1
+a4 1
+#define DEBUG
+@
+
+
+1.3
+log
+@The stream-aligned frame is now kept in a separate common
+block, included with frame.com
+@
+text
+@d4 2
+d48 1
+d52 1
+d66 4
+a69 6
+cblas N = DDOT(DIM,RotationMatrix(1,1),1,VNOR,1)/ADIM
+cblas S = DDOT(DIM,RotationMatrix(1,2),1,VNOR,1)/ADIM
+cblas T = DDOT(DIM,RotationMatrix(1,3),1,VNOR,1)/ADIM
+C
+      N = ZERO
+      S = ZERO
+d71 7
+a77 5
+      DO 11 I = 1 , NDIM
+         N = N + RotationMatrix(I,1)*VNOR(I)
+         S = S + RotationMatrix(I,2)*VNOR(I)
+         T = T + RotationMatrix(I,3)*VNOR(I)
+   11 CONTINUE
+a89 1
+      KMAT(1,3) = TEMP4
+d92 7
+a98 4
+      KMAT(2,3) = TEMP4
+      KMAT(3,1) = HALF*TEMP4
+      KMAT(3,2) = HALF*TEMP4
+      KMAT(3,3) = X*N / STAGFIX
+a122 1
+         VLEFT(1,3) = - TWO * T
+d125 7
+a131 4
+         VLEFT(2,3) = - TWO * T
+         VLEFT(3,1) = - T
+         VLEFT(3,2) =   T
+         VLEFT(3,3) = TWO * S
+a136 1
+         VRIGHT(1,3) = TEMP2 * (-TWO * T * TEMP3 )
+d139 7
+a145 4
+         VRIGHT(2,3) = TEMP2 * ( TWO * T * TEMP3 )
+         VRIGHT(3,1) = TEMP2 * ( T * (VLEFT(2,2)-S) )
+         VRIGHT(3,2) = TEMP2 * (-T * (VLEFT(1,1)+S) )
+         VRIGHT(3,3) = TEMP2 * ( TWO * S * TEMP3 )
+a150 1
+         VLEFT(1,3) = ZERO
+d153 7
+a159 4
+         VLEFT(2,3) = ZERO
+         VLEFT(3,1) = ZERO
+         VLEFT(3,2) = ZERO
+         VLEFT(3,3) = ONE
+a162 1
+         VRIGHT(1,3) = ZERO
+d165 7
+a171 4
+         VRIGHT(2,3) = ZERO
+         VRIGHT(3,1) = ZERO
+         VRIGHT(3,2) = ZERO
+         VRIGHT(3,3) = ONE
+d180 4
+a183 29
+      LPOS(3) = HALF * (WR(3) + DABS(WR(3)) )
+      LNEG(3) = HALF * (WR(3) - DABS(WR(3)) )
+C
+C	Compute Lambda(+/-) * VLEFT
+C
+ccc   WORK1(1,1) = LPOS(1) * VLEFT(1,1)
+ccc   WORK1(1,2) = LPOS(1) * VLEFT(1,2)
+ccc   WORK1(1,3) = LPOS(1) * VLEFT(1,3)
+ccc   WORK2(1,1) = LNEG(1) * VLEFT(1,1)
+ccc   WORK2(1,2) = LNEG(1) * VLEFT(1,2)
+ccc   WORK2(1,3) = LNEG(1) * VLEFT(1,3)
+*
+ccc   WORK1(2,1) = LPOS(2) * VLEFT(2,1)
+ccc   WORK1(2,2) = LPOS(2) * VLEFT(2,2)
+ccc   WORK1(2,3) = LPOS(2) * VLEFT(2,3)
+ccc   WORK2(2,1) = LNEG(2) * VLEFT(2,1)
+ccc   WORK2(2,2) = LNEG(2) * VLEFT(2,2)
+ccc   WORK2(2,3) = LNEG(2) * VLEFT(2,3)
+*
+ccc   WORK1(3,1) = LPOS(3) * VLEFT(3,1)
+ccc   WORK1(3,2) = LPOS(3) * VLEFT(3,2)
+ccc   WORK1(3,3) = LPOS(3) * VLEFT(3,3)
+ccc   WORK2(3,1) = LNEG(3) * VLEFT(3,1)
+ccc   WORK2(3,2) = LNEG(3) * VLEFT(3,2)
+ccc   WORK2(3,3) = LNEG(3) * VLEFT(3,3)
+*
+cblas CALL DGEMM('N','N',3,3,3,1.D0,VRIGHT,LDA,WORK1,3,ZERO,KPOS,LDA)
+cblas CALL DGEMM('N','N',3,3,3,1.D0,VRIGHT,LDA,WORK2,3,ZERO,KNEG,LDA)
+*
+d201 2
+a202 2
+         DO 30 I =  1, 3
+            DO 30 J =  1, 3
+d210 2
+a211 1
+            WRITE(6,*)'If branch ',IFBRANCH,N,S,T,TEMP5
+d215 13
+a227 13
+            CALL X04CAF('G',' ',3,3,KMAT,LDA, 'Jacobian matrix',
+     +      IFAIL)
+            WRITE(6,*)(WR(I),I=1,3)
+            CALL X04CAF('G',' ',3,3,VLEFT,LDA, 'LEFT eigenvectors',
+     +      IFAIL)
+            CALL X04CAF('G',' ',3,3,VRIGHT,LDA, 'RIGHT eigenvectors',
+     +      IFAIL)
+            CALL DGEMM('N','N',3,3,3,1.D0,VLEFT,LDA, KMAT,LDA,ZERO,
+     +      WKSPA,3)
+            CALL DGEMM('N','N',3,3,3,1.D0, KMAT,LDA,VRIGHT,LDA,ZERO,
+     +      WKSPB,3)
+            DO 6 I =  1, 3
+               DO 6 J =  1, 3
+d231 8
+a238 4
+            CALL X04CAF('G',' ',3,3,WKSPA,3, 'LEFT*A ',IFAIL)
+            CALL X04CAF('G',' ',3,3,WKSPC,3, 'lambda*LEFT',IFAIL)
+            CALL X04CAF('G',' ',3,3,WKSPB,3, 'A*RIGHT',IFAIL)
+            CALL X04CAF('G',' ',3,3,WKSPD,3, 'RIGHT*lambda',IFAIL)
+d240 1
+a240 1
+     +      'Original matrix',IFAIL)
+d242 1
+a242 1
+     +      'Reassembled matrix',IFAIL)
+d244 1
+a244 1
+     +      'Error matrix',IFAIL)
+d248 4
+a251 4
+            CALL DGEMM('N','N',3,3,3,1.D0,VRIGHT,LDA, VLEFT,LDA,0.D0,
+     +      WORK1,3)
+            CALL X04CAF('G',' ',3,3,WORK1,3, 'Identity matrix ????',
+     +      IFAIL)
+@
+
+
+1.2
+log
+@Linux version
+@
+text
+@d28 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE MatSplitII(IELEM,NORDER,VNOR,JacobianMatrix,LDJ,
+     +J_dot_N,Cpos,Cneg,VLEFT,VRIGHT,LDA,WR,LPOS,LNEG,EIGENDECO)
+d8 3
+a10 3
+C     J_dot_N:  is the jacobian matrix times the face normal (OUTPUT)
+C     Cpos:     is the "positive" part of the jacobian matrix (OUTPUT)
+C     Cneg:     is the "negative" part of the jacobian matrix (OUTPUT)
+a24 2
+C     .. Parameters ..
+C
+a26 3
+C     .. Commons ..
+C
+      INCLUDE 'int_flags'
+a28 3
+      INCLUDE 'dim_flags'
+C
+C     .. Parameters ..
+d32 1
+a32 3
+C     .. Scalar Arguments ..
+C
+      INTEGER	IELEM,NORDER,LDA,LDJ
+d35 4
+a38 8
+C     .. Array Arguments ..
+C
+      DOUBLE PRECISION	VNOR(1),JacobianMatrix(LDJ,1)
+      DOUBLE PRECISION  J_dot_N(LDA,1),  Cpos(LDA,1),Cneg(LDA,1),
+     &                    VLEFT(LDA,1),VRIGHT(LDA,1),
+     2                  WR(1),LPOS(1),LNEG(1)
+C
+C     .. Local Scalars ..
+a44 2
+C     .. Local Arrays ..
+C
+a48 4
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+a52 2
+C     .. Intrinsic Functions ..
+C
+d57 3
+a59 5
+C     .. Executable Statements ..
+C
+C	.. N,S and T are the dot products of the face normal
+C		with the streamline and two crossflow directions
+C               divided by the space dimension  ..
+d68 1
+a68 1
+      DO 11 I = 1 , DIM
+d73 3
+a75 3
+      N = N/ADIM
+      S = S/ADIM
+      T = T/ADIM
+d77 1
+a77 1
+C	.. Jacobian Matrix ..
+d83 9
+a91 9
+      J_dot_N(1,1) = TEMP1+TEMP3
+      J_dot_N(1,2) = TEMP2
+      J_dot_N(1,3) = TEMP4
+      J_dot_N(2,1) = TEMP2
+      J_dot_N(2,2) = TEMP1-TEMP3
+      J_dot_N(2,3) = TEMP4
+      J_dot_N(3,1) = HALF*TEMP4
+      J_dot_N(3,2) = HALF*TEMP4
+      J_dot_N(3,3) = X*N / STAGFIX
+d93 1
+a93 1
+      IF( EIGENDECO .EQ. .FALSE. )RETURN
+d95 1
+a95 1
+C	.. Eigenvalues ..
+d101 1
+a101 1
+C     .. This goes together with the fix suggested
+d159 1
+a159 1
+C	.. Positive and negative eigenvalues ..
+d168 1
+a168 1
+C	.. Compute Lambda(+/-) * VLEFT
+d191 2
+a192 2
+cblas CALL DGEMM('N','N',3,3,3,1.D0,VRIGHT,LDA,WORK1,3,ZERO,Cpos,LDA)
+cblas CALL DGEMM('N','N',3,3,3,1.D0,VRIGHT,LDA,WORK2,3,ZERO,Cneg,LDA)
+d195 1
+a195 1
+C     .. compute VRIGHT * LAMBDA(+/-) * VLEFT
+d206 2
+a207 2
+         Cpos(I,J) = SUM1
+         Cneg(I,J) = SUM2
+d210 1
+a210 1
+      IF(ICHECK.EQ.2)THEN
+d213 2
+a214 2
+               WORK1(I,J) = (Cpos(I,J)+Cneg(I,J))
+               WORK2(I,J) = WORK1(I,J)-J_dot_N(I,J)
+d224 1
+a224 1
+            CALL X04CAF('G',' ',3,3,J_dot_N,LDA, 'Jacobian matrix',
+d231 1
+a231 1
+            CALL DGEMM('N','N',3,3,3,1.D0,VLEFT,LDA, J_dot_N,LDA,ZERO,
+d233 1
+a233 1
+            CALL DGEMM('N','N',3,3,3,1.D0, J_dot_N,LDA,VRIGHT,LDA,ZERO,
+d235 2
+a236 2
+            DO I =  1, 3
+               DO J =  1, 3
+d239 1
+a239 2
+               ENDDO
+            ENDDO
+d244 1
+a244 1
+            CALL X04CAF('General',' ',NORDER,NORDER,J_dot_N,LDA,
+d251 1
+a251 1
+C	.. Test if VRIGHT*VLEFT = Identity ..
+d259 1
+a259 1
+      ENDIF
+@

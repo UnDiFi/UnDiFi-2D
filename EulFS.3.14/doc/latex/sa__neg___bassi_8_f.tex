@@ -1,0 +1,101 @@
+\hypertarget{sa__neg___bassi_8_f}{}\doxysection{src/turbo/sa\+\_\+neg\+\_\+\+Bassi.F File Reference}
+\label{sa__neg___bassi_8_f}\index{src/turbo/sa\_neg\_Bassi.F@{src/turbo/sa\_neg\_Bassi.F}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{sa__neg___bassi_8_f_a27306133e34c5fabcf1db7cf2ee56d24}{S\+A\+\_\+\+N\+E\+G\+\_\+\+B\+A\+S\+SI}} (I\+E\+L\+EM, V\+CN, V\+CZ, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+O\+F\+V\+AR, N\+T\+U\+RB, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, T\+S\+T\+EP, S\+T\+I\+F\+EL, V\+O\+L\+U\+ME, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY, S\+C\+A\+L\+A\+R\+S\+C\+H\+E\+ME, M\+A\+T\+R\+I\+X\+S\+C\+H\+E\+ME, R\+W\+O\+RK, C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE, V\+I\+S\+CL, V\+I\+S\+CT)
+\begin{DoxyCompactList}\small\item\em {\bfseries{S\+A\+\_\+\+N\+A\+G\+\_\+\+B\+A\+S\+SI}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{sa__neg___bassi_8_f_a27306133e34c5fabcf1db7cf2ee56d24}\label{sa__neg___bassi_8_f_a27306133e34c5fabcf1db7cf2ee56d24}} 
+\index{sa\_neg\_Bassi.F@{sa\_neg\_Bassi.F}!SA\_NEG\_BASSI@{SA\_NEG\_BASSI}}
+\index{SA\_NEG\_BASSI@{SA\_NEG\_BASSI}!sa\_neg\_Bassi.F@{sa\_neg\_Bassi.F}}
+\doxysubsubsection{\texorpdfstring{SA\_NEG\_BASSI()}{SA\_NEG\_BASSI()}}
+{\footnotesize\ttfamily subroutine S\+A\+\_\+\+N\+E\+G\+\_\+\+B\+A\+S\+SI (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{double precision, dimension(nofvar,nofvert,$\ast$)}]{V\+CZ,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+T\+U\+RB,  }\item[{double precision, dimension(nofvar,nofvert)}]{N\+O\+D\+R\+ES,  }\item[{double precision, dimension(nofvar,$\ast$)}]{T\+S\+T\+EP,  }\item[{double precision, dimension(nofvar,nofvar,nofvert,nofvert)}]{S\+T\+I\+F\+EL,  }\item[{double precision, dimension($\ast$)}]{V\+O\+L\+U\+ME,  }\item[{logical}]{M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY,  }\item[{external}]{S\+C\+A\+L\+A\+R\+S\+C\+H\+E\+ME,  }\item[{external}]{M\+A\+T\+R\+I\+X\+S\+C\+H\+E\+ME,  }\item[{double precision, dimension($\ast$)}]{R\+W\+O\+RK,  }\item[{logical}]{C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE,  }\item[{double precision}]{V\+I\+S\+CL,  }\item[{double precision}]{V\+I\+S\+CT }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{S\+A\+\_\+\+N\+A\+G\+\_\+\+B\+A\+S\+SI}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+This routine discretizes the SA (standard) version of the Spalart-\/\+Allmaras turbulence model transport equation for the K\+I\+N\+E\+M\+A\+T\+IC viscosity to be used in the coupled solution approach for compressible flows
+
+\[ \frac{D\tilde{\nu}}{Dt} = c_{b_1} \left[ 1 - f_{t_2} \right] \tilde{S} \tilde{\nu} - \frac{1}{Re} \left[ c_{w_1} f_{w} - \frac{c_{b_1}}{\kappa^2} f_{t_2} \right] \left[ \frac{\tilde{\nu}}{d} \right]^2 + \frac{1}{\sigma Re} \left[ \nabla \cdot \left( \left( \nu + \tilde{\nu} \right) \nabla \tilde{\nu} \right) + c_{b_2} \left( \nabla \tilde{\nu} \right)^2 \right] \]
+
+Nondimensionalization also leads to the redefinition of the $ \tilde{S} $ and $r$ variables\+: \[ \tilde{S} \equiv \frac{U_{0}}{L_{0}} \left( \Omega + \frac{1}{Re_{0}} \frac{\tilde{\nu} f_{v2}} {\kappa^2 d^2 } \right) \] \[ r \equiv \frac{1}{Re_{0}} \, \frac{\tilde{\nu}}{\tilde{S} \kappa^2 d^2 } \]
+
+As far as the limiting of $ \tilde{S} $ is concerned, we use\+: \[ \tilde{S} = \max \left( \tilde{S}, 0.3\,\Omega \right) \]
+
+which is referred to as \char`\"{}limiting (b)\char`\"{} in \href{http://turbmodels.larc.nasa.gov/spalart.html}{\texttt{ http\+://turbmodels.\+larc.\+nasa.\+gov/spalart.\+html}}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & is the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & the N\+D\+IM cartesian component of the inward face normal to all N\+O\+F\+V\+E\+RT vertices, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & is the set of N\+O\+F\+V\+AR dependent variables in the N\+O\+F\+V\+E\+RT vertices of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & is the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & is number of vertices of the simplicial elements (= N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & is the number of dofs in the gridpoints, also the leading dimension of V\+CZ, S\+T\+I\+F\+EL, N\+O\+D\+R\+ES, T\+S\+T\+EP \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+T\+U\+RB} & is the number of turbulent transport equations being solved \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+D\+R\+ES} & are the signals sent to each of the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em T\+S\+T\+EP} & is the elemental contribution to the (inverse of the) time step \\
+\hline
+\mbox{\texttt{ out}}  & {\em S\+T\+I\+F\+EL} & the elemental contribution to the implicit matrix (computed only if M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY is true) \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+O\+L\+U\+ME} & is the area/volume of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} & when set == .T\+R\+UE. the S\+T\+I\+F\+EL matrix will be assembled \\
+\hline
+\mbox{\texttt{ in}}  & {\em S\+C\+A\+L\+A\+R\+S\+C\+H\+E\+ME} & is the subroutine used to discretize the turbulent transport equation \\
+\hline
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+S\+C\+H\+E\+ME} & is the subroutine used to discretize the turbulent transport coupled equations \\
+\hline
+\mbox{\texttt{ in}}  & {\em R\+W\+O\+RK} & is a work array \\
+\hline
+\mbox{\texttt{ in}}  & {\em C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE} & is logical flag, currently unused \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+I\+S\+CL} & is the elemental (cell averaged) molecular laminar viscosity \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+I\+S\+CT} & is the elemental (cell averaged) molecular turbulent viscosity \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+1 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2015/05/11 07\+:18\+:36 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+M\+A\+T\+R\+I\+X\+S\+C\+H\+E\+ME is currently unused 
+
+M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY == .T\+R\+UE. is N\+OT supported; it is among the arguments for compatibility with similar calls 
+
+S\+T\+I\+F\+EL is currently unused; it is among the arguments for compatibility with similar calls 
+
+C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE is currently unused; it is among the arguments for compatibility with similar calls 
+
+R\+W\+O\+RK is currently unused; it is among the arguments for compatibility with similar calls 
+\end{DoxyWarning}

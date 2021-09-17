@@ -1,0 +1,372 @@
+head	1.4;
+access;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.04.30.07.42.54;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.02.06.07.48.01;	author tesistim;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.26.11.23.09;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Argon Plasma
+@
+
+
+1.4
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE Eigen_XII(Matrix,LDA,DVDZ,DUDV,NDIM,LDB)
+C
+C     $Id: eigen_XII.F,v 1.3 2013/04/30 07:42:54 abonfi Exp abonfi $
+C
+C     Conserved variables 
+C
+C     define FSPL_USE_DEBUG for debugging purposes, i.e. when using
+C     -check
+C
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'plasma.h'
+C
+      INCLUDE 'dofs.com'
+      INCLUDE 'three.com'
+      INCLUDE 'four.com'
+      INCLUDE 'flags.com'
+C
+C
+      INTEGER LDA,NDIM,LDB
+C
+      DOUBLE PRECISION Matrix(LDA,LDA,*),DVDZ(LDB,LDB),
+     +DUDV(LDB,LDB)
+#ifdef FSPL_USE_DEBUG
+      DOUBLE PRECISION WORK(NMAX*NMAX)
+      LOGICAL NULLMAT
+#endif
+C
+      DOUBLE PRECISION DENSABARINV,DENSINVABARINV
+      INTEGER IDIM,ifail,I,J
+      DOUBLE PRECISION TMPA(NSP)
+C
+      DOUBLE PRECISION DDOT 
+crpepe      ,PIR,PIE,PIM
+      EXTERNAL         DDOT 
+crpepe      ,PIR,PIE,PIM 
+C
+C
+C     Conserved variables for a plasma ..
+C
+      IF(ICHECK.NE.0)THEN 
+C
+C     N.B. GRAD_CHAR  non serve, tranne quando ICHECK <> 0
+C          cosi` la matrice, tranne che si utilizzi la
+C          decomposizione numerica. 
+C
+C     here GRAD_CHAR are the conserved variables
+C
+      CALL PARM2CONS4Ar(ZAVG,DVDZ,LDB,NDIM)
+      CALL DGEMM('NoTranspose','NoTranspose',LDB,NDIM,LDB,
+     +           ONE,DVDZ,LDB,GRAD_PARM,NMAX,ZERO,GRAD_CHAR,LDW)
+CREM  CALL R8Mat_Print('G',' ',LDB,NDIM,GRAD_CHAR,LDW,
+CREM +      'CONSV variables within eigenXI ',IFAIL)
+CREM  pause
+C
+C
+C     Jacobian matrix in conserved variables
+C  
+      DO 15 I = 1 , NSP
+        TMPA(I) = DR(I) - UAVG(IE)    
+   15 CONTINUE
+C
+      IDIM = 1
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            Matrix(I,J,IDIM) = - ALPHA(I) * UAVG(IE+IDIM) 
+            IF (I.EQ.J)THEN
+                Matrix(I,J,IDIM) = Matrix(I,J,IDIM) + UAVG(IE+IDIM)
+            ENDIF
+        ENDDO
+      ENDDO
+C
+      DO I = 1 , NSP
+        Matrix(I,IE,IDIM) = ZERO
+        Matrix(I,IX,IDIM) = ALPHA(I)
+        Matrix(I,IY,IDIM) = ZERO
+        Matrix(I,IZ,IDIM) = ZERO
+      ENDDO
+C
+      DO I = 1 , NSP
+        Matrix(IE,I,IDIM) = UAVG(IE+IDIM) * TMPA(I)
+      ENDDO
+      Matrix(IE,IE,IDIM) = UAVG(IX) * (ONE + DE)
+      Matrix(IE,IX,IDIM) = UAVG(IE) + DM(1)*UAVG(IX)
+      Matrix(IE,IY,IDIM) = DM(2) * UAVG(IX)
+      Matrix(IE,IZ,IDIM) = DM(3) * UAVG(IX)
+C
+      DO I = 1 , NSP
+        Matrix(IX,I,IDIM) = -UAVG(IX)*UAVG(IX) + DR(I)
+      ENDDO
+      Matrix(IX,IE,IDIM) = DE
+      Matrix(IX,IX,IDIM) = DM(1) + TWO*UAVG(IX)
+      Matrix(IX,IY,IDIM) = DM(2)
+      Matrix(IX,IZ,IDIM) = DM(3)
+C
+      DO I = 1 , NSP
+        Matrix(IY,I,IDIM) = -UAVG(IX)*UAVG(IY)
+      ENDDO
+      Matrix(IY,IE,IDIM) = ZERO
+      Matrix(IY,IX,IDIM) = UAVG(IY)
+      Matrix(IY,IY,IDIM) = UAVG(IX)
+      Matrix(IY,IZ,IDIM) = ZERO
+C
+      DO I = 1 , NSP
+        Matrix(IZ,I,IDIM) = -UAVG(IX)*UAVG(IZ)
+      ENDDO
+      Matrix(IZ,IE,IDIM) = ZERO
+      Matrix(IZ,IX,IDIM) = UAVG(IZ)
+      Matrix(IZ,IY,IDIM) = ZERO
+      Matrix(IZ,IZ,IDIM) = UAVG(IX)
+C
+      IDIM = 2
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            Matrix(I,J,IDIM) = - ALPHA(I) * UAVG(IE+IDIM)
+            IF (I.EQ.J)THEN
+                Matrix(I,J,IDIM) = Matrix(I,J,IDIM) + UAVG(IE+IDIM)
+            ENDIF
+        ENDDO
+      ENDDO
+C
+      DO I = 1 , NSP
+        Matrix(I,IE,IDIM) = ZERO
+        Matrix(I,IX,IDIM) = ZERO
+        Matrix(I,IY,IDIM) = ALPHA(I)
+        Matrix(I,IZ,IDIM) = ZERO
+      ENDDO
+C
+      DO I = 1 , NSP
+        Matrix(IE,I,IDIM) = UAVG(IE+IDIM) * TMPA(I)
+      enddo
+      Matrix(IE,IE,IDIM) = UAVG(IY) * (ONE + DE)
+      Matrix(IE,IX,IDIM) = UAVG(IY) * DM(1)
+      Matrix(IE,IY,IDIM) = UAVG(IE) + UAVG(IY) * DM(2)
+      Matrix(IE,IZ,IDIM) = UAVG(IY) * DM(3)
+C
+      DO I = 1 , NSP
+        Matrix(IX,I,IDIM) = -UAVG(IX)*UAVG(IY)
+      ENDDO
+      Matrix(IX,IE,IDIM) = ZERO
+      Matrix(IX,IX,IDIM) = UAVG(IY)
+      Matrix(IX,IY,IDIM) = UAVG(IX)
+      Matrix(IX,IZ,IDIM) = ZERO
+C
+      DO I = 1 , NSP
+        Matrix(IY,I,IDIM) = -UAVG(IY)*UAVG(IY) + DR(I)
+      ENDDO
+      Matrix(IY,IE,IDIM) = DE
+      Matrix(IY,IX,IDIM) = DM(1)
+      Matrix(IY,IY,IDIM) = DM(2) + TWO*UAVG(IY)
+      Matrix(IY,IZ,IDIM) = DM(3)
+C
+      DO I = 1 , NSP
+        Matrix(IZ,I,IDIM) = -UAVG(IY)*UAVG(IZ)
+      ENDDO
+      Matrix(IZ,IE,IDIM) = ZERO
+      Matrix(IZ,IX,IDIM) = ZERO
+      Matrix(IZ,IY,IDIM) = UAVG(IZ)
+      Matrix(IZ,IZ,IDIM) = UAVG(IY)
+C
+C
+      IDIM = 3
+C
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            Matrix(I,J,IDIM) = - ALPHA(I) * UAVG(IE+IDIM)
+            IF (I.EQ.J)THEN
+                Matrix(I,J,IDIM) = Matrix(I,J,IDIM) + UAVG(IE+IDIM)
+            ENDIF
+        ENDDO
+      ENDDO
+C      
+      DO I = 1 , NSP
+        Matrix(I,IE,IDIM) = ZERO
+        Matrix(I,IX,IDIM) = ZERO
+        Matrix(I,IY,IDIM) = ZERO
+        Matrix(I,IZ,IDIM) = ALPHA(I)
+      ENDDO
+C
+      DO I = 1 , NSP
+        Matrix(IE,I,IDIM) = UAVG(IZ) * TMPA(I) 
+      ENDDO
+      Matrix(IE,IE,IDIM) = UAVG(IZ) * (ONE+DE)
+      Matrix(IE,IX,IDIM) = DM(1) * UAVG(IZ)
+      Matrix(IE,IY,IDIM) = DM(2) * UAVG(IZ)
+      Matrix(IE,IZ,IDIM) = UAVG(IE) + DM(3) * UAVG(IZ)
+C
+      DO I = 1 , NSP
+        Matrix(IX,I,IDIM) = -UAVG(IX)*UAVG(IZ)
+      ENDDO
+      Matrix(IX,IE,IDIM) = ZERO
+      Matrix(IX,IX,IDIM) = UAVG(IZ)
+      Matrix(IX,IY,IDIM) = ZERO
+      Matrix(IX,IZ,IDIM) = UAVG(IX)
+C
+      DO I = 1 , NSP
+        Matrix(IY,I,IDIM) = -UAVG(IY)*UAVG(IZ)
+      ENDDO
+      Matrix(IY,IE,IDIM) = ZERO
+      Matrix(IY,IX,IDIM) = ZERO
+      Matrix(IY,IY,IDIM) = UAVG(IZ)
+      Matrix(IY,IZ,IDIM) = UAVG(IY)
+C
+      DO I = 1 , NSP
+        Matrix(IZ,I,IDIM) = -UAVG(IZ)*UAVG(IZ)+DR(I)
+      ENDDO
+      Matrix(IZ,IE,IDIM) = DE
+      Matrix(IZ,IX,IDIM) = DM(1)
+      Matrix(IZ,IY,IDIM) = DM(2)
+      Matrix(IZ,IZ,IDIM) = DM(3) + TWO*UAVG(IZ)
+C
+C
+C
+      ENDIF
+C
+C
+      RETURN
+      END
+@
+
+
+1.3
+log
+@the integer addresses of the energy and momentum dofs
+are now in a common
+@
+text
+@d3 1
+a3 1
+C     $Id: eigen_XII.F,v 1.2 2013/02/06 07:48:01 tesistim Exp abonfi $
+d55 1
+a55 1
+CREM  CALL X04CAF('G',' ',LDB,NDIM,GRAD_CHAR,LDW,
+@
+
+
+1.2
+log
+@bug fixed
+@
+text
+@d3 1
+a3 1
+C     $Id: eigen_XII.F,v 1.2 2013/02/04 16:50:39 tesistim Exp $
+d17 1
+a58 19
+C      Pressure derivatives      
+C
+crpepe      KAPPA = GM1
+crpepe      DO 11 I = 1 , NSP
+crpepe          DR(I) = PIR(UU,NDIM,CHI(I),KAPPA)
+crpepe   11 CONTINUE
+C
+crpepe      DE = PIE(KAPPA)
+C
+crpepe      DO 14 I = 1 , NDIM
+crpepe            DM(I) = PIM(UU(I),KAPPA)
+crpepe   14 CONTINUE
+C
+C     DENSITY
+C      
+crpepe      DENS = ZERO
+crpepe      DO I = 1 , NSP
+crpepe      DENS = DENS + UAVG(I)
+crpepe      ENDDO
+d87 1
+a87 1
+      Matrix(IE,IE,IDIM) = UAVG(IX) * (ONE + DE) ! rpepe usa ONE anzichè 1
+d96 1
+a96 1
+      Matrix(IX,IX,IDIM) = DM(1) + TWO*UAVG(IX) ! rpepe usa TWO anzichè 2
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+C     $Id: eigen_XI.F,v 1.1 2003/07/17 13:59:00 abonfi Exp $
+a22 1
+!rpepe      INTEGER IE,IX,IY,IZ
+a33 6
+
+C     PRESSURE DERIVATIVE (Thermodynamic Variables (dp/drho)eps & (dp/deps)rho)
+crpepe      DOUBLE PRECISION CHI(NSP),KAPPA,UU(NSP) ! rpepe controlla UU
+C     PRESSURE DERIVATIVE (Conservative Variables)          
+crpepe       DOUBLE PRECISION DR(NSP),DE,DM(NDIM),SUM_DR
+C
+d41 1
+a41 1
+C     Conserved variables ..
+a77 7
+C     Index
+C      
+!      IE = NSP + 1
+!      IX = NSP + 2       
+!      IY = NSP + 3
+!      IZ = NSP + 4
+C
+d79 1
+a79 1
+C
+d81 1
+a81 1
+        TMPA(I) = DR(I) - UAVG(2)
+@

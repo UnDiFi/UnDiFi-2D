@@ -1,0 +1,100 @@
+head	1.1;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Trip term for the Spalart-Allmaras model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)tbtrip.f      1.0.0.1   95/08/22        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tbtrip.f
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+      DOUBLE PRECISION FUNCTION TBTRIP(TD,TTD,UX,UY,UZ)
+*  ==============================================================
+*
+*
+*      FILENAME: tbtrip.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      Trip term term computation
+*      (Spalart & Allmort?? model: easy version)
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : August 95
+*
+*  ==============================================================
+
+c2345678
+c termine di trip
+      IMPLICIT NONE
+      INCLUDE 'visco.com'
+
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION TD,TTD,UX,UY,UZ
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DU
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TDU,TFT1
+      EXTERNAL TDU,TFT1
+C     ..
+      DU = TDU(UX,UY,UZ)
+      TBTRIP = TFT1(TD,TTD,DU)*DU*DU*RE
+      RETURN
+
+      END
+@

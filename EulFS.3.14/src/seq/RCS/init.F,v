@@ -1,0 +1,768 @@
+head	1.21;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.21
+	release3_13_0:1.21
+	release3_12_0:1.21
+	release3_11_0:1.21
+	release3_10_0:1.21
+	release3_8_0:1.21
+	release3_7_1:1.20
+	release3_7_0:1.20
+	release3_4_5:1.19
+	release3_4_4:1.19
+	release3_4_3:1.19
+	release3_4_2:1.19
+	release3_4_1:1.19
+	release3_4_0:1.18
+	release3_3_5:1.18
+	release3_3_4:1.18
+	release3_3_3:1.18
+	release3_3_2:1.18
+	release3_3_1:1.17
+	release3_3_0:1.17;
+locks; strict;
+comment	@c @;
+
+
+1.21
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2013.06.07.15.30.07;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2013.01.29.14.40.49;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2012.08.09.07.23.59;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2011.03.30.09.05.55;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2010.10.04.12.16.16;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2008.02.22.11.04.15;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2005.09.09.08.49.02;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2004.12.20.14.31.26;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2002.10.25.06.03.39;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2002.03.02.01.40.42;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2001.01.20.13.49.24;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.11.14.16.47.34;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.10.30.16.25.04;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.08.15.07.57.19;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.06.23.16.51.18;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@new initialisation routine
+@
+
+
+1.21
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE INIT( NodalBcs, IBNDFAC, NBFAC, ICELNOD, NOFVERT, X,
+     &                 VCORG, ROWBGN, NDIM, NOFVAR, NPOIN, COMPRESSIBLE,
+     &                 RESTART )
+C
+C     $Id: init.F,v 1.20 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+CCCCC#define COUETTE
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscis.h"
+      use petscvec
+      use petscis
+
+      IMPLICIT NONE
+C
+C    the BIG warning is: GHOST nodes will NOT be
+C    initialised, Index Sets ONLY address interior nodes
+C
+C    NOTE that this routine must be called AFTER
+C    the flow variables have been initialized,
+C    so that the velocity components can be set to 0.0 
+C    on viscous walls
+C
+C    Some of the Index sets use global numbering to address
+C    specific rows of Vecs and Mats. This is because
+C    use of local numbering would require a NON-blocked
+C    mapping for the matrices.
+C    
+C
+C     Parameters ..
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+C
+C     Commons ..
+C
+      INCLUDE 'bnd.com'
+      INCLUDE 'io.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'pfcgas.com'
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+      PetscOffset IDX_I
+      INTEGER IDX_V(1)
+C
+C     Scalar Arguments ..
+C
+      INTEGER NDIM,NOFVAR,NPOIN,ROWBGN,NOFVERT,NBFAC
+      LOGICAL COMPRESSIBLE,RESTART
+C
+C     Array Arguments ..
+C
+      DOUBLE PRECISION X(*)
+      DOUBLE PRECISION VCORG(NDIM,NPOIN)
+      INTEGER IBNDFAC(3,NBFAC),ICELNOD(NOFVERT,*)
+C
+C     Local Scalars ..
+C
+      INTEGER IPOIN,NI,IFAIL,IOFF,IFACE,IRE,IBC,IELEM,I,J,K,IVERT,IADD
+      DOUBLE PRECISION ALPHA
+      INTEGER NERR,IOPT
+      CHARACTER*72 ERRMSG
+      PARAMETER(NERR = 5, IOPT = 1)
+C
+      IS, dimension(0:*) :: NodalBcs 
+C
+C     External Functions ..
+C
+      INTEGER  ICYCL
+      EXTERNAL ICYCL
+C
+C     Intrinsic Functions ..
+C
+C
+C     Executable Statements ..
+C
+C     no-slip nodes are identyfied by looping over the faces
+C     -NOT- as nodes with a prescribed velocity profile
+C     as these also includes nodes where a velocity profile
+C     is specified
+C
+      IF(COMPRESSIBLE)THEN
+          IOFF =  2
+      ELSE
+          IOFF =  1
+      ENDIF
+C
+C     IOFF is the offset between the location where 
+C     the first variable is stored for a given node and the one where
+C     the first velocity component is
+C
+      DO 3 IFACE = 1, NBFAC
+         IBC=IBNDFAC(3,IFACE)
+         IF(ICOLOR(IBC,1).NE.BC_TYPE_NO_SLIP)GOTO 3 ! colours for the mean flow equations
+         IELEM=IBNDFAC(1,IFACE)
+         IVERT=IBNDFAC(2,IFACE)
+         DO 4 J = 1,NOFVERT-1
+            IPOIN = ICELNOD(ICYCL(IVERT+J,NOFVERT),IELEM)
+            IADD = (IPOIN-1)*NOFVAR + IOFF
+C
+C         set u=v=w=0. ...
+C
+            DO 4 K = 1, NDIM
+                X(IADD+K) = ZERO
+    4    CONTINUE
+    3 CONTINUE
+C
+#ifdef COUETTE
+      write(6,*)'Ad hoc for Couette!!!'
+C
+      DO 13 IFACE = 1, NBFAC
+         IBC=IBNDFAC(3,IFACE)
+         IF(IBC.NE.3)GOTO 13
+         IELEM=IBNDFAC(1,IFACE)
+         IVERT=IBNDFAC(2,IFACE)
+         DO 14 J = 1,NOFVERT-1
+            IPOIN = ICELNOD(ICYCL(IVERT+J,NOFVERT),IELEM)
+            IADD = (IPOIN-1)*NOFVAR + IOFF
+C
+C         set u=v=w=0. ...
+C
+                X(IADD+1) = ONE
+   14 CONTINUE
+   13 CONTINUE
+#endif
+C
+      IF(IADIA.EQ.0)RETURN
+C
+C     Isothermal bcs on all solid surfaces
+C
+      IF(RESTART)THEN
+         IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=*)'Isothermal walls are not any 
+     &longer initialized to wall temperature'
+         RETURN
+      ENDIF
+      
+C
+      CALL ISGetSize(NodalBcs(Isothermal),NI,IFAIL)
+      IF(NI.NE.0)THEN
+         CALL ISGetIndices(NodalBcs(Isothermal),IDX_V,IDX_I,IFAIL)
+         ALPHA = RSTAR * TWALL /GM1
+         DO 120 I = 1,NI
+C
+C        set 1-based indexing
+C
+             IRE = IDX_V(IDX_I+I)+1-ROWBGN
+C
+C where total enthalpy is stored
+C
+C
+C     .. Isothermal wall .. 
+C
+            CALL PARM_TO_CONS(X(IRE-1),NDIM,NOFVAR,1,.FALSE.,IFAIL)
+            X(IRE) = ALPHA*X(IRE-1)
+            CALL CONS_TO_PARM(X(IRE-1),NDIM,NOFVAR,1,.FALSE.,IFAIL)
+            IF(IFAIL.NE.0)THEN
+               WRITE(ERRMSG(1:64),FMT=105)'INIT______',MY_PE,"(0)"
+               CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+            ENDIF   ! ifail
+  120    CONTINUE
+         CALL ISRestoreIndices(NodalBcs(Isothermal),IDX_V,IDX_I,IFAIL)
+      ENDIF
+C
+      RETURN
+  105 FORMAT('CONS_TO_PARM failed when called from ',A10,' on PE # ',I4,
+     &1X,A3)
+      END
+@
+
+
+1.20
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE INIT( IBNDFAC, NBFAC, ICELNOD, NOFVERT, X, VCORG,
+     &                 ROWBGN, NDIM, NOFVAR, NPOIN, COMPRESSIBLE,
+d5 1
+a5 1
+C     $Id: init.F,v 1.19 2013/06/07 15:30:07 abonfi Exp abonfi $
+a7 1
+      IMPLICIT NONE
+a8 1
+#include "petsc/finclude/petscsys.h"
+d11 4
+d35 1
+a44 1
+#include "iset.com"
+d71 2
+d144 1
+a144 1
+      CALL ISGetSize(Isothermal,NI,IFAIL)
+d146 1
+a146 1
+         CALL ISGetIndices(Isothermal,IDX_V,IDX_I,IFAIL)
+d167 1
+a167 1
+         CALL ISRestoreIndices(Isothermal,IDX_V,IDX_I,IFAIL)
+@
+
+
+1.19
+log
+@the array ICOLOR included from bnd.com has changed
+@
+text
+@d5 1
+a5 1
+C     $Id: init.F,v 1.18 2013/01/29 14:40:49 abonfi Exp abonfi $
+d10 3
+a12 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.18
+log
+@The adiabatic index is now a variable, not any longer a parameter
+@
+text
+@d5 1
+a5 1
+C     $Id: init.F,v 1.17 2012/08/09 07:23:59 abonfi Exp abonfi $
+d96 1
+a96 1
+         IF(ICOLOR(IBC).NE.BC_TYPE_NO_SLIP)GOTO 3
+@
+
+
+1.17
+log
+@temperature is NOT any longer set on isothermal walls when
+restarting from a previous calculation
+@
+text
+@d5 1
+a5 1
+C     $Id: init.F,v 1.16 2011/09/16 07:19:48 abonfi Exp abonfi $
+d41 1
+@
+
+
+1.16
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d2 2
+a3 1
+     +                 ROWBGN, NDIM, NOFVAR, NPOIN, COMPRESSIBLE )
+d5 1
+a5 1
+C     $Id: init.F,v 1.15 2011/03/30 09:05:55 abonfi Exp abonfi $
+d37 1
+d52 1
+a52 1
+      LOGICAL COMPRESSIBLE
+d129 10
+a141 1
+!        ALPHA = TWALL /(GAM*GM1*M_INFTY*M_INFTY)
+@
+
+
+1.15
+log
+@now referencing the non-dimensional gas constant RSTAR
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.14 2010/10/04 12:16:16 abonfi Exp abonfi $
+d9 1
+a9 1
+#include "finclude/petsc.h"
+@
+
+
+1.14
+log
+@ad hoc fix for Couette flow using a preprocessor flag
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.13 2009/06/11 13:10:58 abonfi Exp abonfi $
+d6 1
+d29 1
+a29 1
+      INCLUDE 'constants'
+d130 2
+a131 1
+         ALPHA = TWALL /(GAM*GM1*M_INFTY*M_INFTY)
+@
+
+
+1.13
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.12 2008/02/22 11:04:15 abonfi Exp abonfi $
+d106 18
+@
+
+
+1.12
+log
+@improved error checking when calling CONS_TO_PARM
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.11 2005/12/27 11:49:19 abonfi Exp abonfi $
+d8 3
+a10 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscis.h"
+@
+
+
+1.11
+log
+@an included common has been renamed
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.10 2005/09/09 08:49:02 abonfi Exp abonfi $
+d40 3
+d61 3
+d123 1
+a123 1
+            CALL PARM_TO_CONS(X(IRE-1),NDIM,NOFVAR,1,.FALSE.)
+d125 5
+a129 1
+            CALL CONS_TO_PARM(X(IRE-1),NDIM,NOFVAR,1,.FALSE.)
+d135 2
+@
+
+
+1.10
+log
+@minor cosmetic changes
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.9 2004/12/20 14:31:26 aldo Exp abonfi $
+d34 1
+a34 1
+      INCLUDE 'bnd'
+@
+
+
+1.9
+log
+@minor cosmetic change
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.8 2002/10/25 06:03:39 abonfi Exp abonfi $
+a36 1
+caldo INCLUDE 'nboun.com'
+d56 1
+a56 2
+      INTEGER IPOIN,NI,IFAIL,IOFF,IFACE,IVAR,IRE,IBC,IELEM,I,J,K,IVERT,
+     +IADD
+a57 1
+      DOUBLE PRECISION module,ennex,enney,ennez,erre,xzero,yzero
+d61 1
+a61 1
+      INTEGER ICYCL
+@
+
+
+1.8
+log
+@add a flag when calling PARM_TO_CONS() and CONS_TO_PARM()
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.7 2002/03/02 01:40:42 abonfi Exp abonfi $
+d89 1
+a89 1
+         IF(ICOLOR(IBC).NE.BC_NO_SLIP)GOTO 3
+@
+
+
+1.7
+log
+@removed ad hoc initialisation
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.6 2001/01/20 13:49:24 aldo Exp abonfi $
+d120 1
+a120 1
+            CALL PARM_TO_CONS(X(IRE-1),NDIM,NOFVAR,1)
+d122 1
+a122 1
+            CALL CONS_TO_PARM(X(IRE-1),NDIM,NOFVAR,1)
+@
+
+
+1.6
+log
+@ad hoc initialisation (Pietro & Pino)
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.5 2000/11/14 16:47:34 aldo Exp $
+a81 67
+#if 0
+      write(6,*)'Ad hoc initialisation'
+C
+C Rotate the initial velocity
+C
+      DO I=1,NPOIN
+
+c       IF (I.EQ.35904) THEN
+c       write(6,*) 'CHECK',I, VCORG(1,I),VCORG(2,I),VCORG(3,I)
+c       CALL EXIT
+c       END IF
+
+        IADD = (I-1)*NOFVAR + IOFF
+        module=ZERO
+        DO K = 1, NDIM
+        module=module+X(IADD+K)**2
+        END DO
+        module=dsqrt(module)
+c
+C Istruzioni per Stanitz
+        IF(VCORG(1,I).GT.-10.d0) then
+         ennex=-1.d0
+         enney= 0.d0
+         ennez= 0.d0
+        X(IADD+1)=module*ennex
+        X(IADD+2)=module*enney
+        if(NDIM.EQ.3) X(IADD+3)=module*ennez
+        ELSE IF(VCORG(2,I).GT.15.d0) then
+         ennex= 0.d0
+         enney= 1.d0
+         ennez= 0.d0
+        X(IADD+1)=module*ennex
+        X(IADD+2)=module*enney
+        if(NDIM.EQ.3) X(IADD+3)=module*ennez
+        ELSE
+         xzero=-10.d0
+         yzero= 15.d0
+         erre=dsqrt((VCORG(1,I)-xzero)**2+(VCORG(2,I)-yzero)**2)
+         ennex=-(yzero-VCORG(2,I))/erre
+         enney= (xzero-VCORG(1,I))/erre
+         ennez= 0.d0
+        X(IADD+1)=module*ennex
+        X(IADD+2)=module*enney
+        if(NDIM.EQ.3) X(IADD+3)=module*ennez
+        END IF
+C Istruzioni per T106
+c       IF(VCORG(1,I).GT.0.d0.AND.VCORG(1,I).LT.0.65d0) then
+c        xzero=0.325d0
+c        yzero=-0.2d0
+c        erre=dsqrt((VCORG(1,I)-xzero)**2+(VCORG(2,I)-yzero)**2)
+c        ennex=-(yzero-VCORG(2,I))/erre
+c        enney= (xzero-VCORG(1,I))/erre
+c        ennez= 0.d0
+c       X(IADD+1)=module*ennex
+c       X(IADD+2)=module*enney
+c       if(NDIM.EQ.3) X(IADD+3)=module*ennez
+c       ELSE IF(VCORG(1,I).GE.0.65d0) then
+c        ennex=0.39073d0
+c        enney=-0.92050d0
+c        ennez= 0.d0
+c       X(IADD+1)=module*ennex
+c       X(IADD+2)=module*enney
+c       if(NDIM.EQ.3) X(IADD+3)=module*ennez
+c       END IF
+      END DO
+C Stop rotation
+#endif
+@
+
+
+1.5
+log
+@removed un-used include
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE INIT( IBNDFAC, NBFAC, ICELNOD, NOFVERT, X, ROWBGN,
+     +                 NDIM, NOFVAR, NPOIN, COMPRESSIBLE )
+d4 1
+a4 1
+C     $Id: init.F,v 1.4 2000/10/30 16:25:04 aldo Exp aldo $
+d52 1
+d60 1
+d82 67
+@
+
+
+1.4
+log
+@change required to address wall nodes only
+@
+text
+@d4 1
+a4 1
+C     $Id: init.F,v 1.3 2000/10/19 16:10:34 aldo Exp aldo $
+d37 1
+a37 1
+      INCLUDE 'nboun.com'
+a38 1
+      INCLUDE 'IO'
+@
+
+
+1.3
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE INIT( X, ROWBGN, NDIM, NOFVAR, NPOIN )
+d4 1
+a4 1
+C     $Id: init.F,v 1.2 2000/08/15 07:57:19 aldo Exp aldo $
+d47 2
+a48 1
+      INTEGER NDIM,NOFVAR,NPOIN,ROWBGN
+d53 1
+d57 2
+a58 1
+      INTEGER IPOIN,NI,IFAIL,I,J,IVAR,IRE
+d63 2
+d71 10
+d82 12
+a93 3
+C     whenever you wish to keep a nonzero velocity
+C     on a solid wall (e.g. lid driven cavity flow) 
+C     you should skip the following
+d95 1
+a95 4
+C
+      CALL ISGetSize(NoSlipVelocities,NI,IFAIL)
+      IF(NI.NE.0)THEN
+         CALL ISGetIndices(NoSlipVelocities,IDX_V,IDX_I,IFAIL)
+d97 4
+a100 1
+C         set u=v=w=0. ...
+a101 6
+         DO 110 I = 1,NI
+             IPOIN = IDX_V(IDX_I+I)+1-ROWBGN
+             X(IPOIN) = ZERO
+  110    CONTINUE
+         CALL ISRestoreIndices(NoSlipVelocities,IDX_V,IDX_I,IFAIL)
+      ENDIF
+@
+
+
+1.2
+log
+@add offset for row number
+@
+text
+@d3 1
+a3 1
+C     $Id$
+d8 2
+a9 2
+#include "include/finclude/vec.h"
+#include "include/finclude/is.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE INIT( X, NDIM, NOFVAR, NPOIN )
+d3 2
+d6 1
+d14 10
+a23 4
+C        NOTE that this routine must be called AFTER
+C        the flow variables have been initialized,
+C        so that the velocity components can be set to 0.0 
+C        on viscous walls
+d46 1
+a46 1
+      INTEGER NDIM,NOFVAR,NPOIN
+a61 1
+      INTRINSIC IABS
+d78 1
+a78 1
+             IPOIN = IDX_V(IDX_I+I)+1
+d93 1
+a93 1
+             IRE = IDX_V(IDX_I+I)+1
+@

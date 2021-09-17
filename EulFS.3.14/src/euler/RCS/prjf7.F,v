@@ -1,0 +1,216 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.08.25.15.41.38;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute projectors for far field boundary conditions
+using the eigenvector decomposition
+compressible Euler eqns.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE PROJF7(ZROE,VECN,PPOSZ,PNEGZ,PPOSU,PNEGU,NDIM,NOFVAR)
+C
+C     $Id$
+C     $Header$
+C
+      IMPLICIT NONE
+C
+C     Compute projectors for farfield boundary conditions
+C     UNpreconditioned compressible Euler (VII)
+C
+C
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ONE,ZERO
+      PARAMETER (ONE=1.D0,ZERO=0.D0)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION PNEGU(NOFVAR,NOFVAR),PNEGZ(NOFVAR,NOFVAR),
+     +                 PPOSU(NOFVAR,NOFVAR),PPOSZ(NOFVAR,NOFVAR),
+     +                 VECN(NDIM),ZROE(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DOT
+      INTEGER I,IA,IELEM,INFO,J,NORDER
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DUDV(25),DUMMY(25),DVDU(25),DVDZ(25),DZDV(25),
+     +                 KMAT(25),PNEGV(25),PPOSV(25),TEMPA(25),TEMPB(25),
+     +                 VLEFT(5,5),VRIGHT(5,5),WNEG(5),WPOS(5),WR(5)
+      INTEGER IPIV(5)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DNRM2
+      EXTERNAL DNRM2
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL CONS2SYMM,DGEMM,DGETRF,DGETRS,MATSPLITVII,PARM2SYMM,
+     +         SIGN7,SYMM2CONS,SYMM2PARM
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SIGN
+C     ..
+C     .. Data statements ..
+      DATA DVDZ,DZDV,PPOSV,PNEGV/100*ZERO/
+C     ..
+C
+C
+C     Split the matrix into its positive and negative parts
+C
+      IELEM = -1
+      NORDER = NDIM + 1
+      CALL MATSPLITVII(IELEM,NDIM,NORDER,VECN,DUMMY,NORDER,KMAT,PPOSV,
+     +                 PNEGV,VLEFT,VRIGHT,NORDER,WR,WPOS,WNEG,.TRUE.)
+C
+      CALL DGETRF(NORDER,NORDER,KMAT,NORDER,IPIV,INFO)
+C
+      IF (INFO.GT.0) THEN
+          WRITE (6,FMT=200) 'DGETRF',INFO
+          GOTO 100
+CCCC     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KMAT,
+CCCC +               nofvar,'KMAT returned by DGETRF ',Info)
+      ELSEIF (INFO.LT.0) THEN
+          WRITE (6,FMT=200) 'DGETRF',INFO
+          STOP
+
+      ENDIF
+
+      CALL DGETRS('No',NORDER,NOFVAR,KMAT,NORDER,IPIV,PPOSV,NORDER,INFO)
+      GOTO 150
+C
+caldo CALL DGETRS( 'No',  NORDER,  NORDER, KMAT, NORDER, IPIV,
+caldo+             PNEGZ, NORDER, INFO )
+C
+C          CALL X04CAF('General',' ',NORDER,NORDER,PPOSV,
+C    +                 norder,'Positive projector in V var. ',IFAIL)
+C
+C
+C     Whenever KMAT is singular, compute the SIGN matrix
+C
+  100 CALL SIGN7(IELEM,NDIM,NORDER,VECN,DUMMY,NORDER,KMAT,PPOSV,PNEGV,
+     +           VLEFT,VRIGHT,NORDER,WR,WPOS,WNEG,.TRUE.)
+  150 CONTINUE
+C
+C     sign of the characteristic corresponing to ENTROPY
+C
+      DOT = ZROE(3)*VECN(1) + ZROE(4)*VECN(2)
+      IF (NDIM.EQ.3) DOT = DOT + ZROE(4)*VECN(3)
+C
+      PPOSZ(1,1) = 0.5d0* (ONE+SIGN(ONE,DOT))
+C
+      PPOSZ(1,2) = ZERO
+      PPOSZ(1,3) = ZERO
+      PPOSZ(1,4) = ZERO
+C
+      PPOSZ(2,1) = ZERO
+      PPOSZ(3,1) = ZERO
+      PPOSZ(4,1) = ZERO
+C
+      IF (NDIM.EQ.3) THEN
+          PPOSZ(1,5) = ZERO
+          PPOSZ(5,1) = ZERO
+      ENDIF
+C
+C     copy the block corresponding to the NORDER X NORDER block
+C     into the matrix
+C
+      IA = 0
+      DO 5 J = 2,NOFVAR
+          DO 5 I = 2,NOFVAR
+              IA = IA + 1
+              PPOSZ(I,J) = PPOSV(IA)
+    5 CONTINUE
+C
+C     Now PPOSZ stores the matrix
+C
+C
+C          CALL X04CAF('General',' ',norder,norder,pposv,
+C    +                 norder,'pposV matrix ',IFAIL)
+C          CALL X04CAF('General',' ',nofvar,nofvar,pposz,
+C    +                 nofvar,'pposz matrix ',IFAIL)
+C
+      CALL SYMM2PARM(ZROE,DZDV,NOFVAR,NDIM)
+      CALL PARM2SYMM(ZROE,DVDZ,NOFVAR,NDIM)
+      CALL SYMM2CONS(ZROE,DUDV,NOFVAR,NDIM)
+      CALL CONS2SYMM(ZROE,DVDU,NOFVAR,NDIM)
+C
+C     call dgemm('No','No',nofvar,nofvar,nofvar,ONE,dzdv,nofvar,
+C    +           dvdz,nofvar,ZERO,tempA,nofvar)
+C     warna = unitmat(tempA,nofvar,nofvar,nofvar,1.d-13)
+C     if(.not.warna)then
+C
+C          CALL X04CAF('General',' ',nofvar,nofvar,tempA,
+C    +                 nofvar,'Unit matrix ',IFAIL)
+C
+C     endif
+C
+C     transform PPOS from symmetrizing into parameter vector
+C
+      CALL DGEMM('No','No',NOFVAR,NOFVAR,NOFVAR,ONE,DZDV,NOFVAR,PPOSZ,
+     +           NOFVAR,ZERO,TEMPA,NOFVAR)
+      CALL DGEMM('No','No',NOFVAR,NOFVAR,NOFVAR,ONE,DUDV,NOFVAR,PPOSZ,
+     +           NOFVAR,ZERO,TEMPB,NOFVAR)
+C
+      CALL DGEMM('No','No',NOFVAR,NOFVAR,NOFVAR,ONE,TEMPA,NOFVAR,DVDZ,
+     +           NOFVAR,ZERO,PPOSZ,NOFVAR)
+      CALL DGEMM('No','No',NOFVAR,NOFVAR,NOFVAR,ONE,TEMPB,NOFVAR,DVDU,
+     +           NOFVAR,ZERO,PPOSU,NOFVAR)
+C
+C          CALL X04CAF('General',' ',nofvar,nofvar,dvdz,
+C    +                 nofvar,'analytical matrix dVdZ ',IFAIL)
+C          CALL X04CAF('General',' ',nofvar,nofvar,dzdv,
+C    +                 nofvar,'analytical matrix dZdV ',IFAIL)
+C
+C     transform into conserved variables vector
+C
+C
+C     compute P(-) = I - P(+)
+C
+C     all entries
+C
+      DO 8 J = 1,NOFVAR
+          DO 8 I = 1,NOFVAR
+              PNEGZ(I,J) = -PPOSZ(I,J)
+              PNEGU(I,J) = -PPOSU(I,J)
+    8 CONTINUE
+C
+C     only diagonal entries
+C
+      DO 9 I = 1,NOFVAR
+          PNEGZ(I,I) = ONE + PNEGZ(I,I)
+          PNEGU(I,I) = ONE + PNEGU(I,I)
+    9 CONTINUE
+C
+C
+      RETURN
+
+  200 FORMAT (5X,'SUBROUTINE ',A6,' HAS RETURNED IFAIL = ',I4,/,5X,
+     +       'IN SUBROUTINE PRJF7')
+
+      END
+@

@@ -1,0 +1,855 @@
+head	1.15;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.15
+	release3_13_0:1.15
+	release3_12_0:1.15
+	release3_11_0:1.15
+	release3_10_0:1.15
+	release3_8_0:1.15
+	release3_7_1:1.15
+	release3_7_0:1.14
+	release3_4_5:1.14
+	release3_4_4:1.14
+	release3_4_3:1.14
+	release3_4_2:1.14
+	release3_4_1:1.14
+	release3_4_0:1.14
+	release3_3_5:1.14
+	release3_3_4:1.12
+	release3_3_3:1.12
+	release3_3_2:1.12
+	release3_3_1:1.12
+	release3_3_0:1.11;
+locks; strict;
+comment	@c @;
+
+
+1.15
+date	2020.03.28.09.52.52;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2013.05.03.08.46.39;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.05.02.15.51.36;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.01.26.11.56.44;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2007.12.17.15.17.35;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2005.12.27.11.16.21;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2002.09.14.09.12.49;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2002.09.10.12.51.18;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2000.10.12.10.56.34;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.12.18.13.13.04;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.02.09.17.32.38;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.02.06.18.23.40;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.04.23.15.57;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.12.01.15.45.09;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.22.49;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@routine for computing boundary viscous fluxes in INCOMPRESSIBLE flows
+@
+
+
+1.15
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE BVSFLX2(ICLR,IELEM,KVERT,ZROE,NodRes,TSTEP,NOFVAR,
+     +                   NOFVERT,VCN,NDIM,VOLUME,STIFC,VISCL,VISCT,
+     +                   TAUW,QFLUX,WALL,MATRIX_ASSEMBLY)
+C
+C     $Id: bvsflx2.f,v 1.14 2013/05/03 08:46:39 abonfi Exp abonfi $
+C
+      IMPLICIT NONE 
+C
+C     This routine computes the viscous fluxes which appear
+C     in the INCOMPRESSIBLE Navier Stokes eqns. on boundary cells
+C
+C
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'constants.h'
+C
+C
+      INCLUDE 'dofs.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'bnd.com'
+      INCLUDE 'three.com'
+C
+C
+C
+C     output:
+C     ------
+C     NodRes(1:NOFVAR,1:NOFVERT) is the nodal residual
+C                             updated with the addition of the viscous
+C                             fluxes
+C     TSTEP(1:NPOIN) is the nodal timestep divided by the median
+C                 dual cell updated with the addition of the viscous
+C                 contribution
+C
+C     STIFC(1:NOFVAR,1:NOFVAR,1:NOFVERT,1:NOFVERT) is the approximate
+C            jacobian updated with the addition of the viscous terms
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      INTEGER NMAX2
+      PARAMETER (NMAX2=NMAX*NMAX)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION QFLUX,TAUW,VISCL,VISCT,VOLUME
+      INTEGER ICLR,IELEM,KVERT,NDIM,NOFVAR,NOFVERT
+      LOGICAL MATRIX_ASSEMBLY,WALL
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION TSTEP(NOFVAR,NOFVERT),NodRes(NOFVAR,NOFVERT),
+     +                 STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),ZROE(NOFVAR,NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION CNST,LI,LJ,MI,MJ,MU,NI,NI_DOT_NJ,NJ,SURFSQR,DTV
+      INTEGER I,IFAIL,IV,IVAR,IVERT,JV,K,NONAME
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION GFLUX(NMAX,VMAX),SIGMA(3),TAU(3,3),
+     +                 VSFLX(NMAX,VMAX)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,DNRM2
+      INTEGER ICYCL
+      EXTERNAL DDOT,DNRM2
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DGEMV,DINIT
+C     ..
+C     .. Data statements ..
+C
+C
+      DATA TAU,NI,NJ/9*ZERO,2*ZERO/
+C     ..
+C
+      NONAME = NDIM + 1
+C
+C     Compute viscosity (VISCL must be 1)
+C
+      MU = (VISCL+VISCT)*REINV
+C
+C     ... Compute the stress tensor ...
+C     \mu ( grad u + grad^T u )
+C
+      TAU(1,1) = MU*TWO* (GRAD_PARM(2,1))
+      TAU(1,2) = MU* (GRAD_PARM(2,2)+GRAD_PARM(3,1))
+      TAU(1,3) = MU* (GRAD_PARM(2,3)+GRAD_PARM(4,1))
+      TAU(2,1) = TAU(1,2)
+      TAU(2,2) = MU*TWO* (GRAD_PARM(3,2))
+      TAU(2,3) = MU* (GRAD_PARM(3,3)+GRAD_PARM(4,2))
+      TAU(3,1) = TAU(1,3)
+      TAU(3,2) = TAU(2,3)
+      TAU(3,3) = MU*TWO* (GRAD_PARM(4,3))
+C
+C     Compute viscous stress only if on a solid surface
+C
+      IF (WALL) THEN
+C
+C     Compute the stress vector
+C
+          SIGMA(1) = DDOT(NDIM,TAU(1,1),1,VCN(1,KVERT),1)
+          SIGMA(2) = DDOT(NDIM,TAU(1,2),1,VCN(1,KVERT),1)
+          IF (NDIM.EQ.3) SIGMA(3) = DDOT(NDIM,TAU(1,3),1,VCN(1,KVERT),1)
+C
+          SURFSQR = ONE/DDOT(NDIM,VCN(1,KVERT),1,VCN(1,KVERT),1)
+C
+          IF (NDIM.EQ.2) THEN
+              TAUW = - (-VCN(2,KVERT)*SIGMA(1)+VCN(1,KVERT)*SIGMA(2))*
+     +               SURFSQR
+
+          ELSE
+              CNST = DDOT(NDIM,SIGMA(1),1,VCN(1,KVERT),1)*SURFSQR
+              LI = SIGMA(1) - CNST*VCN(1,KVERT)
+              MI = SIGMA(2) - CNST*VCN(2,KVERT)
+              NI = SIGMA(3) - CNST*VCN(3,KVERT)
+              TAUW = SQRT(LI*LI+MI*MI+NI*NI)
+          ENDIF
+C
+          VISCF(1,ICLR) = VISCF(1,ICLR) + SIGMA(1)
+          VISCF(2,ICLR) = VISCF(2,ICLR) + SIGMA(2)
+          IF (NDIM.EQ.3) VISCF(3,ICLR) = VISCF(3,ICLR) + SIGMA(3)
+C
+          QFLUX = 0.d0
+C
+      ENDIF
+C
+C     CNST = 1.d0/(d * Re)
+C
+      CNST = -REINV/NDIM
+C
+C     Compute the viscous fluxes for each of the (NOFVERT-1) vertices
+C     on the boundary
+C
+C     the viscous term looks like:
+C     -\frac{1}{d} \n_{boundary} \cdot [ 0, \tau ]
+C
+      DO 17 I = 1, (NOFVERT-1)
+C
+          IVERT = ICYCL(KVERT+I,NOFVERT)
+          DTV = -CNST*DDOT(NDIM,VCN(1,IVERT),1,VCN(1,IVERT),1)/
+     &(NDIM*VOLUME)
+C
+          TSTEP(1,IVERT) = TSTEP(1,IVERT) + DTV
+          TSTEP(IX,IVERT) = TSTEP(IX,IVERT) + DTV
+          TSTEP(IY,IVERT) = TSTEP(IY,IVERT) + DTV
+          IF(NDIM.EQ.3)TSTEP(IZ,IVERT) = TSTEP(IZ,IVERT) + DTV
+C
+          GFLUX(1,IVERT) = ZERO
+          GFLUX(2,IVERT) = -DDOT(NDIM,VCN(1,KVERT),1,TAU(1,1),1)/NDIM
+          GFLUX(3,IVERT) = -DDOT(NDIM,VCN(1,KVERT),1,TAU(1,2),1)/NDIM
+          IF (NDIM.EQ.3) GFLUX(4,IVERT) = -DDOT(NDIM,VCN(1,KVERT),1,
+     +        TAU(1,3),1)/NDIM
+C
+          NodRes(2,IVERT) = NodRes(2,IVERT) + GFLUX(2,IVERT)
+          NodRes(3,IVERT) = NodRes(3,IVERT) + GFLUX(3,IVERT)
+          IF (NDIM.EQ.3) NodRes(4,IVERT) = NodRes(4,IVERT) +
+     & GFLUX(4,IVERT)
+C
+   17 CONTINUE
+C
+      IF (.NOT.MATRIX_ASSEMBLY) RETURN
+C
+C     contruct a matrix D_{i,j} such that the viscous terms
+C     can be written as \sum_j D_{i,j} U_j
+C
+      MU = MU/ (NDIM*NDIM*VOLUME)
+C
+C     ... Loop over vertices ...
+C
+      DO 10 I = 1, (NOFVERT-1)
+C
+          IV = ICYCL(KVERT+I,NOFVERT)
+C
+          LI = VCN(1,KVERT)
+          MI = VCN(2,KVERT)
+          IF (NDIM.EQ.3) NI = VCN(3,KVERT)
+C
+          DO 10 JV = 1,NOFVERT
+C
+              LJ = VCN(1,JV)
+              MJ = VCN(2,JV)
+              IF (NDIM.EQ.3) NJ = VCN(3,JV)
+C
+              NI_DOT_NJ = LI*LJ + MI*MJ + NI*NJ
+C
+C     ... Momentum flux
+C
+        STIFC(2,2,IV,JV) = MU* (LI*LJ+NI_DOT_NJ)
+        STIFC(2,3,IV,JV) = MU*MI*LJ
+        STIFC(3,2,IV,JV) = MU*LI*MJ
+        STIFC(3,3,IV,JV) = MU* (MI*MJ+NI_DOT_NJ)
+C
+              IF (NDIM.EQ.3) THEN
+C
+           STIFC(2,4,IV,JV) = MU*NI*LJ
+           STIFC(3,4,IV,JV) = MU*NI*MJ
+C
+           STIFC(4,2,IV,JV) = MU*LI*NJ
+           STIFC(4,3,IV,JV) = MU*MI*NJ
+           STIFC(4,4,IV,JV) = MU* (NI*NJ+NI_DOT_NJ)
+              ENDIF
+C
+   10 CONTINUE
+C
+C comment out the following RETURN if you wish to debug the
+C viscous flux calculation
+C
+      RETURN
+C
+C     Debugging stuff ...
+C
+      CALL DINIT(NMAX*VMAX,ZERO,VSFLX,1)
+C
+C     The "explicitely" calculated viscous flux is compared
+C        with the "implicit" one ...
+C
+      DO 12 K = 1, (NOFVERT-1)
+          IV = ICYCL(KVERT+K,NOFVERT)
+          DO 14 JV = 1,NOFVERT
+C
+              CALL DGEMV('N',NONAME,NONAME,ONE,STIFC(1,1,IV,JV),NOFVAR,
+     +                   ZROE(1,JV),1,ONE,VSFLX(1,IV),1)
+
+C        CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,STIFC(1,1,IV,JV),
+C    +   NOFVAR,'Diffusion element matrix',IFAIL)
+C
+   14     CONTINUE
+
+          WRITE (6,FMT=*) 'Element # ',IELEM,
+     +      ' (on the boundary) vertex # ',IV
+C
+          DO 15 IVAR = 2,NONAME
+              WRITE (6,FMT=100) IVAR,GFLUX(IVAR,IV),VSFLX(IVAR,IV),
+     +          VSFLX(IVAR,IV)/GFLUX(IVAR,IV)
+   15     CONTINUE
+C
+   12 CONTINUE
+C
+C     PAUSE
+C
+      RETURN
+
+  100 FORMAT (I1,3 (5X,E18.8))
+
+      END
+@
+
+
+1.14
+log
+@bug fixed with un-initialized IVERT
+@
+text
+@d5 1
+a5 1
+C     $Id: bvsflx2.f,v 1.13 2013/05/02 15:51:36 abonfi Exp abonfi $
+d226 1
+a226 1
+C        CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFC(1,1,IV,JV),
+@
+
+
+1.13
+log
+@characteristic time stepping: allowable dt/V
+is kept separately for each dof
+@
+text
+@d5 1
+a5 1
+C     $Id: bvsflx2.f,v 1.12 2013/01/26 11:56:44 abonfi Exp abonfi $
+a131 2
+      DTV = -CNST*DDOT(NDIM,VCN(1,IVERT),1,VCN(1,IVERT),1)/
+     &(NDIM*VOLUME)
+d142 2
+@
+
+
+1.12
+log
+@changed the name of included header/common files
+@
+text
+@d5 1
+a5 1
+C     $Id: bvsflx2.f,v 1.11 2007/12/17 15:17:35 abonfi Exp abonfi $
+d19 1
+d57 1
+a57 1
+      DOUBLE PRECISION CNST,LI,LJ,MI,MJ,MU,NI,NI_DOT_NJ,NJ,SURFSQR
+d132 2
+d145 4
+a148 2
+          TSTEP(1,IVERT) = TSTEP(1,IVERT) - CNST/ (NDIM*VOLUME)*
+     +                DDOT(NDIM,VCN(1,IVERT),1,VCN(1,IVERT),1)
+@
+
+
+1.11
+log
+@somehow compute tauw in 3D
+@
+text
+@d5 1
+a5 1
+C     $Id: bvsflx2.f,v 1.10 2005/12/27 11:16:21 abonfi Exp abonfi $
+d16 1
+a16 1
+      INCLUDE 'constants'
+d21 1
+a21 1
+      INCLUDE 'three'
+@
+
+
+1.10
+log
+@an included common has been renamed
+@
+text
+@d5 1
+a5 1
+C     $Id: bvsflx2.f,v 1.9 2002/09/14 09:12:49 abonfi Exp $
+d113 5
+a117 1
+              TAUW = 0.d0
+@
+
+
+1.9
+log
+@the timestep vector is now dimensioned NOFVAR x NPOIN
+@
+text
+@d5 1
+a5 1
+C     $Id: bvsflx2.f,v 1.8 2002/09/10 12:51:18 abonfi Exp abonfi $
+d20 1
+a20 2
+      INCLUDE 'stream.com'
+C
+@
+
+
+1.8
+log
+@changes made necessary to implement the coupled approach for RANS
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE BVSFLX2(ICLR,IELEM,KVERT,ZROE,NodRes,DT,NOFVAR,NOFVERT,
+     +                   VCN,NDIM,VOLUME,STIFC,VISCL,VISCT,TAUW,
+     +                   QFLUX,WALL,MATRIX_ASSEMBLY)
+d5 1
+a5 1
+C     $Id: bvsflx2.f,v 1.7 2000/10/12 10:56:34 aldo Exp abonfi $
+d31 1
+a31 1
+C     DT(1:NPOIN) is the nodal timestep divided by the median
+d52 1
+a52 1
+      DOUBLE PRECISION DT(NOFVERT),NodRes(NOFVAR,NOFVERT),
+d139 1
+a139 1
+          DT(IVERT) = DT(IVERT) - CNST/ (NDIM*VOLUME)*
+@
+
+
+1.7
+log
+@VISCT and VISCL are now imput values for the subroutine;
+removed calls to the linearization routines.
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE BVSFLX2(ICLR,IELEM,KVERT,ZROE,RHS,DT,NOFVAR,NOFVERT,
+     +                   VCN,NDIM,VOLUME,ELTMAT,VISCL,VISCT,TAUW,
+d5 1
+a5 1
+C     $Id$
+d28 1
+a28 1
+C     RHS(1:NOFVAR,1:NOFVERT) is the nodal residual
+d35 1
+a35 1
+C     ELTMAT(1:NOFVAR,1:NOFVAR,1:NOFVERT,1:NOFVERT) is the approximate
+d52 2
+a53 2
+      DOUBLE PRECISION DT(NOFVERT),RHS(NOFVAR,NOFVERT),
+     +                 ELTMAT(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+d58 1
+a58 1
+      INTEGER I,IFAIL,IV,IVAR,IVERT,JV,K
+d78 2
+d148 4
+a151 3
+          RHS(2,IVERT) = RHS(2,IVERT) + GFLUX(2,IVERT)
+          RHS(3,IVERT) = RHS(3,IVERT) + GFLUX(3,IVERT)
+          IF (NDIM.EQ.3) RHS(4,IVERT) = RHS(4,IVERT) + GFLUX(4,IVERT)
+d182 4
+a185 4
+        ELTMAT(2,2,IV,JV) = MU* (LI*LJ+NI_DOT_NJ)
+        ELTMAT(2,3,IV,JV) = MU*MI*LJ
+        ELTMAT(3,2,IV,JV) = MU*LI*MJ
+        ELTMAT(3,3,IV,JV) = MU* (MI*MJ+NI_DOT_NJ)
+d189 2
+a190 2
+           ELTMAT(2,4,IV,JV) = MU*NI*LJ
+           ELTMAT(3,4,IV,JV) = MU*NI*MJ
+d192 3
+a194 3
+           ELTMAT(4,2,IV,JV) = MU*LI*NJ
+           ELTMAT(4,3,IV,JV) = MU*MI*NJ
+           ELTMAT(4,4,IV,JV) = MU* (NI*NJ+NI_DOT_NJ)
+d215 1
+a215 1
+              CALL DGEMV('N',NOFVAR,NOFVAR,ONE,ELTMAT(1,1,IV,JV),NOFVAR,
+d218 1
+a218 1
+C        CALL X04CAF('General',' ',NOFVAR,NOFVAR,ELTMAT(1,1,IV,JV),
+d226 1
+a226 1
+          DO 15 IVAR = 2,NOFVAR
+@
+
+
+1.6
+log
+@add a call to LINEARIZE
+@
+text
+@d2 2
+a3 2
+     +                   VCN,DUMMY,NDIM,VOLUME,STIFD,VISCL,VISCT,TAUW,
+     +                   QFLUX,WALL,TIMEIMPL)
+d5 2
+d26 8
+a33 1
+C
+d35 2
+d47 1
+a47 1
+      DOUBLE PRECISION DUMMY,QFLUX,TAUW,VISCL,VISCT,VOLUME
+d49 1
+a49 1
+      LOGICAL TIMEIMPL,WALL
+d53 1
+a53 1
+     +                 STIFD(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+a77 5
+
+      CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,
+     +               ZROE,NOFVAR,VOLUME)
+
+C
+d152 1
+a152 1
+      IF (.NOT.TIMEIMPL) RETURN
+d179 4
+a182 4
+              STIFD(2,2,IV,JV) = MU* (LI*LJ+NI_DOT_NJ)
+              STIFD(2,3,IV,JV) = MU*MI*LJ
+              STIFD(3,2,IV,JV) = MU*LI*MJ
+              STIFD(3,3,IV,JV) = MU* (MI*MJ+NI_DOT_NJ)
+d186 2
+a187 2
+                  STIFD(2,4,IV,JV) = MU*NI*LJ
+                  STIFD(3,4,IV,JV) = MU*NI*MJ
+d189 3
+a191 3
+                  STIFD(4,2,IV,JV) = MU*LI*NJ
+                  STIFD(4,3,IV,JV) = MU*MI*NJ
+                  STIFD(4,4,IV,JV) = MU* (NI*NJ+NI_DOT_NJ)
+d212 1
+a212 1
+              CALL DGEMV('N',NOFVAR,NOFVAR,ONE,STIFD(1,1,IV,JV),NOFVAR,
+d215 1
+a215 1
+C        CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFD(1,1,IV,JV),
+@
+
+
+1.5
+log
+@Laminar viscosity is now passed as an argument
+Reformatted using toolpack
+@
+text
+@d67 5
+@
+
+
+1.4
+log
+@Add a dummy argument to the arguments list
+to make it compatible with the call to bvsflx4
+where there is now the wall heat flux in the argument's list
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE BVSFLX2(ICLR,IELEM,KVERT,ZROE,DU,DT,NOFVAR,NOFVERT,
+     +           VCN,DUMMY,NDIM,VOLUME,STIFD,VISCT,TAUW,QFLUX,
+     +           WALL,TIMEIMPL)
+d5 4
+a8 2
+C     .. This routine computes the viscous fluxes which appear
+C        in the INCOMPRESSIBLE Navier Stokes eqns. on boundary cells ..
+a9 1
+      IMPLICIT NONE
+a14 2
+      INTEGER NMAX2
+      PARAMETER(NMAX2=NMAX*NMAX)
+d19 1
+a20 1
+      INCLUDE 'IO'
+a22 4
+      INTEGER ICLR,IELEM,KVERT,NOFVAR,NDIM,NOFVERT
+      DOUBLE PRECISION TAUW,QFLUX
+      DOUBLE PRECISION VISCT,VOLUME
+      LOGICAL WALL,TIMEIMPL
+a24 2
+      DOUBLE PRECISION DU(NOFVAR,NOFVERT),DT(NOFVERT),DUMMY,
+     +ZROE(NOFVAR,NOFVERT),STIFD(NOFVAR,NOFVAR,NOFVERT,NOFVERT)
+a26 3
+      INTEGER I,K,IV,JV,IVERT,IVAR,ifail
+      DOUBLE PRECISION CNST,LI,LJ,MI,MJ,NI,NJ,MU,Ni_DOT_Nj,
+     +                 SURFSQR
+a28 2
+      DOUBLE PRECISION TAU(3,3),GFLUX(NMAX,VMAX),VSFLX(NMAX,VMAX),
+     +SIGMA(3),VCN(NDIM,NOFVERT)
+d31 23
+d56 6
+a61 1
+      EXTERNAL         DDOT,ICYCL,DNRM2
+d64 2
+a65 1
+      DATA TAU,NI,NJ/9*0.D0,2*ZERO/
+d67 1
+a67 1
+C     Compute laminar viscosity
+d69 1
+a69 1
+      MU = (ONE+VISCT)*REINV
+d74 3
+a76 3
+      TAU(1,1) = MU*TWO*(GRAD_PARM(2,1))
+      TAU(1,2) = MU*(GRAD_PARM(2,2)+GRAD_PARM(3,1))
+      TAU(1,3) = MU*(GRAD_PARM(2,3)+GRAD_PARM(4,1))
+d78 2
+a79 2
+      TAU(2,2) = MU*TWO*(GRAD_PARM(3,2))
+      TAU(2,3) = MU*(GRAD_PARM(3,3)+GRAD_PARM(4,2))
+d82 1
+a82 1
+      TAU(3,3) = MU*TWO*(GRAD_PARM(4,3))
+d84 1
+a84 1
+C     .. Compute viscous stress only if on a solid surface
+d86 1
+a86 1
+      IF( WALL )THEN
+d90 17
+a106 16
+         SIGMA(1) = DDOT(NDIM,TAU(1,1),1,VCN(1,KVERT),1)
+         SIGMA(2) = DDOT(NDIM,TAU(1,2),1,VCN(1,KVERT),1)
+         IF(NDIM.EQ.3)SIGMA(3) = DDOT(NDIM,TAU(1,3),1,VCN(1,KVERT),1)
+C
+         SURFSQR = ONE/DDOT(NDIM,VCN(1,KVERT),1,VCN(1,KVERT),1)
+C
+         IF( NDIM.EQ.2 )THEN
+             TAUW =-(-VCN(2,KVERT)*SIGMA(1)+ 
+     +                VCN(1,KVERT)*SIGMA(2))*SURFSQR
+         ELSE
+             TAUW = 0.d0
+         ENDIF
+C
+         VISCF(1,ICLR) = VISCF(1,ICLR) + SIGMA(1)
+         VISCF(2,ICLR) = VISCF(2,ICLR) + SIGMA(2)
+         IF(NDIM.EQ.3)VISCF(3,ICLR) = VISCF(3,ICLR) + SIGMA(3)
+d108 1
+a108 1
+         QFLUX = 0.d0
+d114 1
+a114 1
+      CNST = -REINV / NDIM
+d124 1
+a124 1
+         IVERT = ICYCL( KVERT+I , NOFVERT )
+d126 2
+a127 2
+         DT(IVERT) = DT(IVERT) - CNST / (NDIM*VOLUME) *
+     +   DDOT(NDIM,VCN(1,IVERT),1,VCN(1,IVERT),1)
+d129 9
+a137 10
+         GFLUX(1,IVERT) = ZERO
+         GFLUX(2,IVERT) =-DDOT(NDIM,VCN(1,KVERT),1,TAU(1,1),1)/NDIM
+         GFLUX(3,IVERT) =-DDOT(NDIM,VCN(1,KVERT),1,TAU(1,2),1)/NDIM
+         IF( NDIM .EQ. 3 )
+     +   GFLUX(4,IVERT) =-DDOT(NDIM,VCN(1,KVERT),1,TAU(1,3),1)/NDIM
+C
+         DU(2,IVERT) = DU(2,IVERT) + GFLUX(2,IVERT)
+         DU(3,IVERT) = DU(3,IVERT) + GFLUX(3,IVERT)
+         IF( NDIM .EQ. 3 )
+     +   DU(4,IVERT) = DU(4,IVERT) + GFLUX(4,IVERT)
+d141 1
+a141 1
+      IF( .NOT. TIMEIMPL )RETURN
+d146 1
+a146 1
+      MU =MU/(NDIM*NDIM*VOLUME) 
+d152 1
+a152 1
+         IV = ICYCL( KVERT+I, NOFVERT )
+d154 3
+a156 3
+         LI = VCN(1,KVERT)
+         MI = VCN(2,KVERT)
+         IF(NDIM.EQ.3)NI = VCN(3,KVERT)
+d158 1
+a158 1
+      DO 10 JV = 1, NOFVERT
+d160 3
+a162 3
+         LJ = VCN(1,JV)
+         MJ = VCN(2,JV)
+         IF(NDIM.EQ.3)NJ = VCN(3,JV)
+d164 1
+a164 1
+         Ni_DOT_Nj = LI*LJ + MI*MJ + NI*NJ
+d168 4
+a171 4
+            STIFD(2,2,IV,JV) = MU * ( LI*LJ + Ni_DOT_Nj )
+            STIFD(2,3,IV,JV) = MU * MI * LJ
+            STIFD(3,2,IV,JV) = MU * LI * MJ
+            STIFD(3,3,IV,JV) = MU * ( MI*MJ + Ni_DOT_Nj )
+d173 1
+a173 1
+            IF( NDIM.EQ.3 )THEN
+d175 2
+a176 2
+            STIFD(2,4,IV,JV) = MU * NI * LJ
+            STIFD(3,4,IV,JV) = MU * NI * MJ
+d178 4
+a181 4
+            STIFD(4,2,IV,JV) = MU * LI * NJ
+            STIFD(4,3,IV,JV) = MU * MI * NJ
+            STIFD(4,4,IV,JV) = MU * ( NI*NJ + Ni_DOT_Nj )
+            ENDIF
+d183 1
+a183 1
+   10 CONTINUE ! End loop over vertices
+d185 1
+a185 1
+C comment out the following RETURN if you wish to debug the 
+d190 1
+a190 1
+C     ... Debugging stuff ...
+d194 1
+a194 1
+C     .. The "explicitely" calculated viscous flux is compared
+d198 2
+a199 2
+         IV = ICYCL( KVERT + K , NOFVERT )
+         DO 14 JV = 1, NOFVERT
+d201 2
+a202 2
+            CALL DGEMV('N',NOFVAR,NOFVAR,ONE,STIFD(1,1,IV,JV),NOFVAR,
+     +      ZROE(1,JV),1,ONE,VSFLX(1,IV),1)
+d207 1
+a207 1
+   14    CONTINUE
+d209 2
+a210 1
+      WRITE(NOUT,*)'Element # ',IELEM,' (on the boundary) vertex # ',IV
+d212 4
+a215 4
+      DO 15 IVAR = 2, NOFVAR
+      WRITE(NOUT,"(I1,3(5X,E18.8))")IVAR,GFLUX(IVAR,IV),VSFLX(IVAR,IV),
+     +VSFLX(IVAR,IV)/GFLUX(IVAR,IV)
+   15 CONTINUE
+d217 1
+a217 1
+   12 CONTINUE ! End loop on IV
+d222 3
+@
+
+
+1.3
+log
+@sign changed to the element diffusion matrix
+@
+text
+@d2 2
+a3 1
+     +           VCN,NDIM,VOLUME,STIFD,VISCT,TAUW,WALL,TIMEIMPL)
+d25 1
+a25 1
+      DOUBLE PRECISION TAUW
+d30 1
+a30 1
+      DOUBLE PRECISION DU(NOFVAR,NOFVERT),DT(NOFVERT),
+d89 2
+@
+
+
+1.2
+log
+@Now handles the computation of aerodynamic forces for
+multiple bodies: ICLR in the arguments list
+@
+text
+@d126 1
+a126 1
+      MU =-MU/(NDIM*NDIM*VOLUME) 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE BVSFLX2(IELEM,KVERT,ZROE,DU,DT,NOFVAR,NOFVERT,
+d11 1
+d23 1
+a23 1
+      INTEGER IELEM,KVERT,NOFVAR,NDIM,NOFVERT
+d85 3
+a87 3
+         VISCF(1) = VISCF(1) + SIGMA(1)
+         VISCF(2) = VISCF(2) + SIGMA(2)
+         IF(NDIM.EQ.3)VISCF(3) = VISCF(3) + SIGMA(3)
+@

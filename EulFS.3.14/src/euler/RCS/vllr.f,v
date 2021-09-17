@@ -1,0 +1,256 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.08.25.15.16.07;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@This routines computes the nodal preconditioner for
+the Hyperbolic-Elliptic splitting using the vLLR matrix
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+      SUBROUTINE VLLR(UCONS,PCONS,NDIM,NOFVAR)
+C
+C     $Id$
+C     $Header$
+C
+      IMPLICIT NONE
+C
+C       .. This routines computes the nodal preconditioner for
+C       the decomposition model EulerII ..
+C
+C       At the time the routine is called, UCONS() MUST contain
+C       the conserved variables
+C
+C
+
+C
+C
+C       NIN     is the OUTPUT device number
+C       NOUT    is the INPUT device number
+C
+C
+C
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION DUDS(5,5),DSDU(5,5),PSYMM(5,5),
+     +                 P_MAT(5,5),WKSP(5),WKSP1(5,5),WORK(25)
+C     ..
+C     .. Parameters ..
+      REAL*8 ZERO,HALF,ONE,TWO,GAM,GM1,GOGM1,GINV,GM1OG,GP1OG,PI
+      PARAMETER (ZERO=0.00d0,HALF=0.5d0,ONE=1.00d0,TWO=2.00d0,
+     +          GAM=1.40d0,GM1=GAM-ONE,GOGM1=GAM/GM1,GINV=ONE/GAM,
+     +          GM1OG=GM1*GINV,GP1OG= (GAM+ONE)*GINV,
+     +          PI=3.14159265358979323846d0)
+      INTEGER*4 NIN,NOUT
+      PARAMETER (NIN=5,NOUT=6)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION PCONS(NOFVAR,NOFVAR),UCONS(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION ABAR,ASQR,BETA,BETASQR,DENS,DENSINV,ETA,MACH,
+     +                 MACHSQR,MSQRM1,QINV,QSQR,TEMP,U,V,W,X
+      INTEGER IFAIL,IR,JC
+      LOGICAL LFLAG
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,FUN_BETA_ALDO
+      EXTERNAL DDOT,FUN_BETA_ALDO
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DCOPY,DGEMM,X04CAF
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DABS,DMAX1,DSQRT,SQRT
+C     ..
+      DENS = UCONS(1)
+      DENSINV = ONE/DENS
+C
+C       Note that QSQR is twice the kinetic energy
+C
+      QSQR = DDOT(NDIM,UCONS(3),1,UCONS(3),1)*DENSINV*DENSINV
+      ASQR = GAM*GM1* (UCONS(2)*DENSINV-HALF*QSQR)
+      MACHSQR = QSQR/ASQR
+      IF (MACHSQR.LT.0) THEN
+          WRITE (NOUT,FMT=*) 'Invalid Mach number in preconditioner'
+          STOP
+
+      ENDIF
+
+      MACH = SQRT(MACHSQR)
+      MSQRM1 = MACHSQR - ONE
+      BETA = FUN_BETA_ALDO(MSQRM1)
+      BETASQR = BETA*BETA
+      X = BETA/DMAX1(ONE,MACH)
+C
+      U = UCONS(3)*DENSINV
+      V = UCONS(4)*DENSINV
+      IF (NDIM.EQ.3) THEN
+          W = UCONS(5)*DENSINV
+
+      ELSE
+          W = ZERO
+      ENDIF
+C
+      TEMP = GM1/ASQR
+      DSDU(1,1) = ONE - HALF*GM1*MACHSQR
+      DSDU(1,2) = -TEMP
+      DSDU(1,3) = TEMP*U
+      DSDU(1,4) = TEMP*V
+      DSDU(1,5) = TEMP*W
+C
+      ABAR = DSQRT(ASQR)
+      TEMP = GM1*DENSINV/ABAR
+      DSDU(2,1) = HALF*QSQR*TEMP
+      DSDU(2,2) = TEMP
+      DSDU(2,3) = -TEMP*U
+      DSDU(2,4) = -TEMP*V
+      DSDU(2,5) = -TEMP*W
+C
+      DSDU(3,1) = -U*DENSINV
+      DSDU(3,2) = ZERO
+      DSDU(3,3) = DENSINV
+      DSDU(3,4) = ZERO
+      DSDU(3,5) = ZERO
+C
+      DSDU(4,1) = -V*DENSINV
+      DSDU(4,2) = ZERO
+      DSDU(4,3) = ZERO
+      DSDU(4,4) = DENSINV
+      DSDU(4,5) = ZERO
+C
+      DSDU(5,1) = -W*DENSINV
+      DSDU(5,2) = ZERO
+      DSDU(5,3) = ZERO
+      DSDU(5,4) = ZERO
+      DSDU(5,5) = DENSINV
+C
+      DUDS(1,1) = ONE
+      DUDS(1,2) = DENS/ABAR
+      DUDS(1,3) = ZERO
+      DUDS(1,4) = ZERO
+      DUDS(1,5) = ZERO
+C
+      DUDS(2,1) = HALF*QSQR
+      DUDS(2,2) = DENS*ABAR* (HALF*MACHSQR+ONE/GM1)
+      DUDS(2,3) = DENS*U
+      DUDS(2,4) = DENS*V
+      DUDS(2,5) = DENS*W
+C
+      DUDS(3,1) = U
+      DUDS(3,2) = DENS*U/ABAR
+      DUDS(3,3) = DENS
+      DUDS(3,4) = ZERO
+      DUDS(3,5) = ZERO
+C
+      DUDS(4,1) = V
+      DUDS(4,2) = DENS*V/ABAR
+      DUDS(4,3) = ZERO
+      DUDS(4,4) = DENS
+      DUDS(4,5) = ZERO
+C
+      DUDS(5,1) = W
+      DUDS(5,2) = DENS*W/ABAR
+      DUDS(5,3) = ZERO
+      DUDS(5,4) = ZERO
+      DUDS(5,5) = DENS
+C
+*     CALL DGEMM('N','N',5,5,5,ONE,DConsvDSymm,5,DSymmDConsv,5,
+*    &ZERO,wksp1,5)
+*     LFLAG=.FALSE.
+*     do ir = 1 , 5
+*       do jc = 1 , 5
+*       if(ir.eq.jc)then
+*         TEMP=ONE
+*       else
+*         TEMP=ZERO
+*       endif
+*       if(dabs(wksp1(ir,jc)-TEMP).gt.1.D-15)LFLAG=.TRUE.
+*       enddo
+*     enddo
+*     if(LFLAG.EQ..TRUE.)THEN
+*     LFLAG=.FALSE.
+*     CALL X04CAF('G',' ',5,5,wksp1,5,'Identity matrix ????',IFAIL)
+*     pause
+*     ENDIF
+c
+      TEMP = X/BETASQR*MACH
+      ETA = X/BETASQR + ONE - X
+      QINV = ONE/DSQRT(QSQR)
+      U = U*QINV
+      V = V*QINV
+      W = W*QINV
+c
+      PSYMM(1,1) = ONE
+      PSYMM(1,2) = ZERO
+      PSYMM(1,3) = ZERO
+      PSYMM(1,4) = ZERO
+      PSYMM(1,5) = ZERO
+c
+      PSYMM(2,1) = ZERO
+      PSYMM(2,2) = TEMP*MACH
+      PSYMM(2,3) = -TEMP*U
+      PSYMM(2,4) = -TEMP*V
+      PSYMM(2,5) = -TEMP*W
+c
+      PSYMM(3,1) = ZERO
+      PSYMM(3,2) = PSYMM(2,3)
+      PSYMM(3,3) = ETA*U*U + X
+      PSYMM(3,4) = ETA*U*V
+      PSYMM(3,5) = ETA*U*W
+c
+      PSYMM(4,1) = ZERO
+      PSYMM(4,2) = PSYMM(2,4)
+      PSYMM(4,3) = PSYMM(3,4)
+      PSYMM(4,4) = ETA*V*V + X
+      PSYMM(4,5) = ETA*V*W
+c
+      PSYMM(5,1) = ZERO
+      PSYMM(5,2) = PSYMM(2,5)
+      PSYMM(5,3) = PSYMM(3,5)
+      PSYMM(5,4) = PSYMM(4,5)
+      PSYMM(5,5) = ETA*W*W + X
+C
+      CALL DGEMM('N','N',NOFVAR,NOFVAR,NOFVAR,ONE,PSYMM,5,DSDU,5,
+     +           ZERO,WORK,NOFVAR)
+      CALL DGEMM('N','N',NOFVAR,NOFVAR,NOFVAR,ONE,DUDS,5,WORK,NOFVAR,
+     +           ZERO,PCONS,NOFVAR)
+C
+      RETURN
+
+      LFLAG = .FALSE.
+      DO 16 IR = 1,5
+          DO 16 JC = 1,5
+              TEMP = P_MAT(IR,JC) - PSYMM(IR,JC)
+              IF (DABS(TEMP).GT.1.D-15) LFLAG = .TRUE.
+   16 CONTINUE
+      IF (LFLAG .EQV. .TRUE.) THEN
+          LFLAG = .FALSE.
+          CALL X04CAF('G',' ',5,5,P_MAT,5,'Analitical expression',IFAIL)
+          CALL X04CAF('G',' ',5,5,PSYMM,5,'Through multiplications ',
+     +                IFAIL)
+          PAUSE
+
+      ENDIF
+C
+      END
+@

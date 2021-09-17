@@ -1,0 +1,554 @@
+head	1.12;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.12
+	release3_13_0:1.12
+	release3_12_0:1.12
+	release3_11_0:1.12
+	release3_10_0:1.12
+	release3_8_0:1.12
+	release3_7_1:1.12
+	release3_7_0:1.11
+	release3_4_5:1.11
+	release3_4_4:1.11
+	release3_4_3:1.11
+	release3_4_2:1.11
+	release3_4_1:1.11
+	release3_4_0:1.11
+	release3_3_5:1.11
+	release3_3_4:1.11
+	release3_3_3:1.11
+	release3_3_2:1.11
+	release3_3_1:1.11
+	release3_3_0:1.10;
+locks
+	abonfi:1.12; strict;
+comment	@c @;
+
+
+1.12
+date	2020.03.25.15.19.11;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2013.01.26.12.07.26;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.09.16.07.29.13;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2005.12.27.10.17.03;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.08.09.20.49.50;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.08.08.11.10.41;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.08.08.11.08.24;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2003.08.08.03.42.00;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2001.07.19.09.37.13;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.07.05.10.22.42;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.05.05.08.10.07;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.01.20.13.48.18;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@read total pressure and temperature profiles to be used as (subsonic)
+inflow boundary conditions (ibc=8)
+@
+
+
+1.12
+log
+@replaced calls to NAG routines
+@
+text
+@      SUBROUTINE SETPTO( FNAME, KLIST, VLIST, DWKSP, IRANK, 
+     &                   NDIM, NOFVAR )
+C
+C     $Id: setpto.f,v 1.11 2013/01/26 12:07:26 abonfi Exp abonfi $
+C
+C     This routine reads the total pressure profile
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'bnd.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.com'
+      INCLUDE 'io.com'
+      INCLUDE 'ibc8.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'stream.com'
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE 
+C
+C     Scalar arguments:
+C
+      INTEGER NDIM,NOFVAR,K
+      CHARACTER*(*) FNAME
+      CHARACTER*72 ERRMSG
+C
+C     Array arguments:
+C
+      INTEGER KLIST(NLIST),IRANK(NLIST)
+      DOUBLE PRECISION VLIST(nVarsInlet,NLIST),DWKSP(NLIST)
+C
+C     Local scalars:
+C
+      INTEGER NN,IFAIL,IOPT,NERR,IUNIT,I
+      INTEGER I1MACH
+C
+C     If there is no file (file005.dat/pbcs???.dat) with a
+C     inflow profile, we total pressure and temperature
+C     at the inflow bndry as set to 1.d0
+C     (because of the non-dimensionalisation) and the
+C     flow direction is taken equal to the one specified
+C     with -flow_angles
+C     filling VLIST is not actually needed, since
+C     it is never used when LREAD(1) = .FALSE.
+C     (see subr ghost2.F) 
+C
+      INQUIRE(FILE=FNAME,EXIST=LREAD(1))
+      IF( .NOT. LREAD(1) )THEN
+          IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=400)
+  400 FORMAT(/,5X,'SETTING UNIFORM TOTAL PRESSURE ON THE INLET FACE',/,
+     +       5X,48("="))
+C
+C         set total pressure to one (because of the non-dimensionalisation)
+C
+          DO 3 I = 1,NLIST
+               VLIST(1,I) = ONE ! total pressure/ref pressure
+               VLIST(2,I) = ONE ! total temperature/ref temperature
+               VLIST(3,I) = 1.d38 ! unused (backward compatibility)
+               VLIST(4,I) = FLOWDIR(1)
+               VLIST(5,I) = FLOWDIR(2)
+               VLIST(6,I) = FLOWDIR(3)
+    3     CONTINUE
+          RETURN
+C
+      ELSE
+          IF(MY_PE.EQ.0)WRITE(NOUT,1000)MY_PE,FNAME
+      ENDIF
+C
+      CALL IINIT(NLIST,0,IRANK,1) 
+C
+      IUNIT=77
+      OPEN(IUNIT,FILE=FNAME)
+      READ(IUNIT,*)NN
+      IF(NN.NE.NLIST)THEN
+          WRITE(I1MACH(4),FMT=500)NN,FNAME,NLIST
+          ERRMSG(1:15) = 'SETPTO, PROC # '
+          WRITE(ERRMSG(16:19),FMT="(I4.4)")MY_PE
+          NERR = 12
+          IOPT = 1
+          CALL SETERR(ERRMSG,19,NERR,IOPT)
+      ENDIF 
+C
+C     +-----------------------------------------------------+
+C     read the global mesh number and corresponding value
+C     of total pressure (relative)
+C     +-----------------------------------------------------+
+C
+      DO 1 I = 1 , NLIST
+         READ(IUNIT,*)KLIST(I),(VLIST(K,I),K=1,nVarsInlet)
+    1 CONTINUE
+      CLOSE(IUNIT) 
+C
+C     +-----------------------------------------------------+
+C     sort the array for increasing nodenumber
+C     +-----------------------------------------------------+
+!     CALL M01DBF(KLIST,1,NLIST,'Ascending',IRANK,IFAIL)
+      CALL QSORTI(IRANK,NLIST,KLIST)
+      CALL RNKIDX(IRANK,1,NLIST,IFAIL) ! converti in ranking
+      CALL I4RANK(KLIST,1,NLIST,IRANK,IFAIL)
+      DO 12 K = 1,nVarsInlet
+         CALL DCOPY(NLIST,VLIST(K,1),nVarsInlet,DWKSP,1)
+         CALL R8RANK(DWKSP,1,NLIST,IRANK,IFAIL)
+         CALL DCOPY(NLIST,DWKSP,1,VLIST(K,1),nVarsInlet)
+   12 CONTINUE
+C
+C
+      RETURN
+  500 FORMAT(5X,'THE NUMBER OF MESHPOINTS ',I7,' DECLARED IN FILE ',/,
+     +A,/,' DOES NOT MATCH THE NO. OF ENTRIES ',I7,
+     +' IN THE Index Set')
+  550 FORMAT(5X,'MESHPOINT ',I7,' IN THE Index Set',/, 
+     +' IS NOT AMONG THOSE DECLARED IN FILE ',/,
+     +A)
+ 1000 FORMAT(/,5X,'READING INFLOW BOUNDARY CONDITIONS ON PE # ',I4,/,
+     &       5X,48("=")/,5X,'FROM FILE: ',A,/)
+      END
+@
+
+
+1.11
+log
+@changed the name of an included file
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.10 2011/09/16 07:29:13 abonfi Exp abonfi $
+d97 4
+a100 2
+      CALL M01DBF(KLIST,1,NLIST,'Ascending',IRANK,IFAIL)
+      CALL M01EBF(KLIST,1,NLIST,IRANK,IFAIL)
+d103 1
+a103 1
+         CALL M01EAF(DWKSP,1,NLIST,IRANK,IFAIL)
+@
+
+
+1.10
+log
+@now LFLAG is an array of LOGICAL
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.9 2005/12/27 10:17:03 abonfi Exp abonfi $
+d12 1
+a12 1
+      INCLUDE 'constants'
+@
+
+
+1.9
+log
+@an included common has been renamed
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.8 2005/08/09 20:49:50 aldo Exp abonfi $
+d16 1
+d45 1
+a45 1
+C     it is never used when LREAD = .FALSE.
+d48 2
+a49 2
+      INQUIRE(FILE=FNAME,EXIST=LREAD)
+      IF( .NOT. LREAD )THEN
+@
+
+
+1.8
+log
+@VLIST is now filled with correct values;
+this change was required with version 0.11.9
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.7 2005/08/08 11:10:41 abonfi Exp aldo $
+d13 1
+a13 1
+      INCLUDE 'bnd'
+@
+
+
+1.7
+log
+@removed unused variables
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.6 2005/08/08 11:08:24 abonfi Exp abonfi $
+a7 8
+C     Warnings:
+C     --------
+C     In the parallel case it is important that
+C          the routine is called with NPOIN=# of processor
+C          owned nodes, since the index sets are local
+C          and shoud not address ghost nodes 
+C
+C
+a9 1
+C
+d11 2
+d16 1
+d37 10
+d49 1
+a49 1
+          WRITE(IWUNIT,FMT=400)
+d55 8
+a62 1
+          CALL DINIT(nVarsInlet*NLIST,1.d0,VLIST,1)
+d66 1
+a66 1
+          WRITE(NOUT,1000)MY_PE,FNAME
+@
+
+
+1.6
+log
+@the number of entries defining inflow bcs has
+changed with code version 0.11.9
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.5 2003/08/08 03:42:00 abonfi Exp $
+d29 1
+a29 1
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NBFAC,ROWBGN,K
+d40 1
+a40 1
+      INTEGER IPOIN,NN,IFAIL,IOPT,NERR,IUNIT,I,IPOS,LAST
+@
+
+
+1.5
+log
+@changed format statement
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.4 2001/07/19 09:37:13 abonfi Exp abonfi $
+d36 1
+a36 1
+      DOUBLE PRECISION VLIST(3,NLIST),DWKSP(NLIST)
+d51 1
+a51 1
+          CALL DINIT(3*NLIST,1.d0,VLIST,1)
+d78 1
+a78 1
+         READ(IUNIT,*)KLIST(I),(VLIST(K,I),K=1,3)
+d87 2
+a88 2
+      DO 12 K = 1,3
+         CALL DCOPY(NLIST,VLIST(K,1),3,DWKSP,1)
+d90 1
+a90 1
+         CALL DCOPY(NLIST,DWKSP,1,VLIST(K,1),3)
+@
+
+
+1.4
+log
+@heavily modified following version 0.10.13 of the code
+@
+text
+@d4 1
+a4 1
+C     $Id: setpto.f,v 1.3 2001/07/05 10:22:42 abonfi Exp abonfi $
+a29 1
+      LOGICAL LREAD
+d101 2
+a102 2
+ 1000 FORMAT(/,5X,'READING INFLOW BOUNDARY CONDITIONS ON PE # ',I4,/
+     &       5X,48("=")/,5X,'FROM FILE: ",A,/)
+@
+
+
+1.3
+log
+@now reading velocity and temperature profiles as well
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE SETPTO( FNAME, IARRAY, VARRAY, DWKSP, IRANK, IDX, 
+     &                   NI, NDIM, NOFVAR )
+d4 1
+a4 1
+C     $Id: setpto.f,v 1.2 2001/05/05 08:10:07 abonfi Exp abonfi $
+a6 4
+C     then matches meshpoint numbers in the IndexSet
+C     with those read from the file
+C     this is necessary because the two sets will not be (in general)
+C     in the same order
+a17 3
+caldo#include "include/finclude/petsc.h"
+caldo#include "include/finclude/petscvec.h"
+caldo#include "include/finclude/petscis.h"
+d22 1
+d29 2
+a30 2
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NBFAC,ROWBGN,NI,K
+      LOGICAL LFLAG
+d36 2
+a37 2
+      INTEGER IDX(NI),IARRAY(NI),IRANK(NI)
+      DOUBLE PRECISION VARRAY(3,NI),DWKSP(NI)
+d44 2
+a45 3
+          WRITE(IWUNIT,FMT=*)fname
+      INQUIRE(FILE=FNAME,EXIST=LFLAG)
+      IF( .NOT. LFLAG )THEN
+d52 1
+a52 1
+          CALL DINIT(3*NI,1.d0,VARRAY,1)
+d56 1
+a56 1
+          WRITE(NOUT,1000)MY_PE
+d59 1
+a59 1
+      CALL IINIT(NI,0,IRANK,1) 
+d64 2
+a65 2
+      IF(NN.NE.NI)THEN
+          WRITE(I1MACH(4),FMT=500)NN,FNAME,NI
+d78 2
+a79 3
+      DO 1 I = 1 , NI
+         READ(IUNIT,*)IARRAY(I),(VARRAY(K,I),K=1,3)
+caldo write(6,*)IARRAY(I),VARRAY(I)
+d86 2
+a87 2
+      CALL M01DBF(IARRAY,1,NI,'Ascending',IRANK,IFAIL)
+      CALL M01EBF(IARRAY,1,NI,IRANK,IFAIL)
+d89 3
+a91 3
+         CALL DCOPY(NI,VARRAY(K,1),3,DWKSP,1)
+         CALL M01EAF(DWKSP,1,NI,IRANK,IFAIL)
+         CALL DCOPY(NI,DWKSP,1,VARRAY(K,1),3)
+a93 47
+C     +-----------------------------------------------------+
+C     Nodes in file FNAME (ptot$nnn$.dat) might not be in the
+C     same order as in the IndexSet Internal_inflow, so we need
+C     to search for them and later re-arrange the corresponding
+C     pressure profile
+C     +-----------------------------------------------------+
+C
+      DO 7 I = 1 , NI
+C
+C     +-----------------------------------------------------+
+C     loop over the entries in the IndexSet Internal_inflow
+C     N.B. these are global rownumbers AND 0-based indexed
+C          need to be transformed in meshpoint numbers
+C          and restore 1-based indexing
+C     +-----------------------------------------------------+
+C
+         IPOIN = (IDX(I)/NOFVAR)+1
+C
+C        look for ipoin in IARRAY (binary search)
+C
+         CALL BINSRC(IPOIN,IARRAY,NI,IPOS,LAST)
+C
+         IF(IPOS.EQ.0)THEN
+             WRITE(I1MACH(4),FMT=550)IPOIN,FNAME
+             ERRMSG(1:15) = 'SETPTO, PROC # '
+             WRITE(ERRMSG(16:19),FMT="(I4.4)")MY_PE
+             NERR = 13
+             IOPT = 1
+             CALL SETERR(ERRMSG,19,NERR,IOPT)
+         ENDIF
+C
+         IRANK(I) = IPOS
+    7 CONTINUE
+C
+C     rank the array that stores the total pressure profile
+C
+      CALL M01EBF(IARRAY,1,NI,IRANK,IFAIL)
+caldo CALL M01EAF(VARRAY,1,NI,IRANK,IFAIL)
+      DO 14 K = 1,3
+         CALL DCOPY(NI,VARRAY(K,1),3,DWKSP,1)
+         CALL M01EAF(DWKSP,1,NI,IRANK,IFAIL)
+         CALL DCOPY(NI,DWKSP,1,VARRAY(K,1),3)
+   14 CONTINUE
+C
+c     do i = 1,ni
+c        write(6,*)iarray(i),varray(k,i)
+c     enddo
+d103 1
+a103 1
+     &       5X,48("="))
+@
+
+
+1.2
+log
+@removed duplicated variable
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE SETPTO( FNAME, IARRAY, VARRAY, IRANK, IDX, 
+d4 1
+a4 1
+C     $Id: setpto.f,v 1.1 2001/01/20 13:48:18 aldo Exp abonfi $
+d35 1
+a35 1
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NBFAC,ROWBGN,NI
+d43 1
+a43 1
+      DOUBLE PRECISION VARRAY(NI)
+d50 1
+d59 1
+a59 1
+          CALL DINIT(NI,1.d0,VARRAY,1)
+d86 1
+a86 1
+         READ(IUNIT,*)IARRAY(I),VARRAY(I)
+d96 5
+a100 1
+      CALL M01EAF(VARRAY,1,NI,IRANK,IFAIL)
+a101 1
+C
+d139 10
+a148 5
+      CALL M01EAF(VARRAY,1,NI,IRANK,IFAIL)
+C
+caldo do i = 1,ni
+caldo    write(6,*)iarray(i),varray(i)
+caldo enddo
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+C     $Id$
+d35 1
+a35 1
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NBFAC,ROWBGN
+d47 1
+a47 1
+      INTEGER IPOIN,NI,NN,IFAIL,IOPT,NERR,IUNIT,I,IPOS,LAST
+@

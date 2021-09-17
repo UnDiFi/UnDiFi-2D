@@ -1,0 +1,57 @@
+2c2
+<      +                    NIT, IFLAG, NodalBcs )
+---
+>      +                    NIT, IFLAG )
+4c4
+< C     $Id: update4.F,v 1.38 2016/11/10 12:06:40 abonfi Exp abonfi $
+---
+> C     $Id: update4.F,v 1.38 2016/11/10 12:06:40 abonfi Exp $
+5a6
+>       IMPLICIT NONE
+10,11c11,13
+< CCC#include "petsc/finclude/petscvec.h"
+< CCC#include "petsc/finclude/petscmat.h"
+---
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+13,17c15
+< CCC#include "petsc/finclude/petscis.h"
+< !     use petscvec
+< !     use petscmat
+< !     use petscis
+<       use petscksp
+---
+> #include "petsc/finclude/petscis.h"
+19c17,20
+<       IMPLICIT NONE
+---
+>       Mat B
+>       Vec RHS,DT,ViscT
+>       Vec X
+>       KSP solver
+25d25
+<       INCLUDE 'iset.h'
+32a33,34
+> #include "iset.com"
+> C
+36,43d37
+< C
+< C
+<       Mat B
+<       Vec RHS,DT,ViscT
+<       Vec X
+<       KSP solver
+<       IS, dimension(0:*) :: NodalBcs
+< C
+54,56c48,49
+<      &                 WKSP3(3,MAXNOFVAR),WKSP4(3,MAXNOFVAR),
+<      &                 WKSP5(3,MAXNOFVAR), 
+<      &                 AL2(MAXNOFVAR,5),AMAX(MAXNOFVAR,5)
+---
+>      &  WKSP3(3,MAXNOFVAR),WKSP4(3,MAXNOFVAR),
+>      &  WKSP5(3,MAXNOFVAR), AL2(MAXNOFVAR,5),AMAX(MAXNOFVAR,5)
+117c110
+<           CALL LHSBC5( B, NodalBcs )
+---
+>           CALL LHSBC5( B )

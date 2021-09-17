@@ -1,0 +1,70 @@
+head	1.1;
+access
+	abonfi;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks
+	abonfi:1.1; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.25.09.48.16;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Implementation of Saha equation to compute the degree of ionization
+Mixture of Ar,Ar+ and e- at equilibrium
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@       subroutine iondegree4Ar(P,T,chi)
+! 
+!      Implementation of Saha equation to compute the degree of ionization 
+!      Mixture of Ar,Ar+ and e- at equilibrium  
+!
+!      $Id$
+!
+       implicit none
+       
+       include 'plasma.h'
+       include 'paramchem.h'
+       
+       double precision P,T,chi
+       double precision ntot,nion,beta,const
+       parameter (const=2.4d15)
+C
+       ntot = P/(kBolSI*T)
+       ntot = ntot/1.0d6
+C
+       beta = const * T**(3/2) * exp(-hArI/(kBol*T))/ntot
+       chi = (-beta + sqrt(beta**2 + 4*beta))/2
+C 
+       return
+       end    
+@

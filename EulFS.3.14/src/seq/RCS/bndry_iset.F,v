@@ -1,0 +1,255 @@
+head	1.4;
+access;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.06.25.14.29.45;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.06.06.10.49.20;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@creates PETSc Index Sets for all nodes on the boundary,
+grouped by colour (or patch)
+@
+
+
+1.4
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE BNDRY_ISET(NodalBcs, IDX, IBNDFAC, NBFAC, ICELNOD,
+     &NOFVERT, NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, NPNOD, NELEM )
+C
+C     $Id: bndry_iset.F,v 1.3 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C     This routine creates PETSc Index Sets addressing
+C          boundary meshpoints with different colours
+C
+C     Warnings:
+C     --------
+C     Nodes are adressed by local numbering 1-based indexing
+C
+C     NODCODE will address interior nodes as well ghost ones
+C     so it must be allocated for NPOIN+NGHOST+NPNOD in the calling routine
+C
+C     Note that Index sets are NOT created, if empty
+C
+C     It might be BUGGY in the parallel, periodic case
+C
+C
+C
+#include "petsc/finclude/petscis.h"
+      use petscis
+      IMPLICIT NONE
+      INCLUDE 'bnd.h'
+      INCLUDE 'bctype.h'
+C
+C
+C
+      INCLUDE 'bnd.com'
+      INCLUDE 'io.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'ibc8.com'
+C
+      IS, dimension(0:*) :: NodalBcs
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+C     Scalar arguments:
+C
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NPNOD,NBFAC,NELEM
+C
+C     Array arguments:
+C
+      INTEGER NODCODE(NPOIN+NGHOST),IDX(NPOIN),IBNDFAC(3,NBFAC)
+      INTEGER ICELNOD(NOFVERT,*)
+C
+C     Local scalars:
+C
+      INTEGER IPOIN,NI,IFAIL,IBC,IVERT,I,ICLR,IFACE,IELEM
+      INTEGER ICYCL
+C
+C
+      WRITE(NOUT,1000)MY_PE
+C
+      DO 50 IBC = 0, NCOLOR ! loop over all colours
+C
+         IF( MCOLOR(IBC) .EQ. 0 )GOTO 50 ! if empty, skip
+C
+C     +-----------------------------------------------------+
+C     Test for 
+C     +-----------------------------------------------------+
+C
+C
+         CALL IINIT(NPOIN+NGHOST+NPNOD,0,NODCODE,1)
+C
+         NI = 0
+         DO 1 IFACE = 1 , NBFAC ! loop over all boundary faces
+C
+            ICLR = (IBNDFAC(3,IFACE))
+C
+C        faces with no-slip b.c. or prescribed velocity profile
+C
+            IF( .NOT.(ICLR .EQ. IBC) )GOTO 1 ! skip current face
+C
+               NI = NI + 1
+               IELEM = IBNDFAC(1,IFACE)
+               IVERT = IBNDFAC(2,IFACE)
+C
+               DO 2 I =  1, NOFVERT - 1
+C
+                   IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+                   NODCODE(IPOIN) = IBC
+C
+    2         CONTINUE ! end loop over the vertices of the bndry face
+    1    CONTINUE
+C
+         IF( NI .NE. MCOLOR(IBC) )THEN
+             WRITE(NOUT,*)'Smthg. went wrong in bndry_iset ',NI,
+     &MCOLOR(IBC)
+             CALL EXIT(1)
+         ENDIF 
+C
+         NI=0
+         DO 230 IPOIN = 1, NPOIN+NGHOST+NPNOD ! this should be checked in the parallel and/or periodic case
+            IF(NODCODE(IPOIN).EQ.IBC)THEN
+                NI=NI+1
+                IDX(NI) = IPOIN
+            ENDIF
+  230 CONTINUE
+         CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,PETSC_COPY_VALUES,
+     &                        NodalBcs(IBC),IFAIL)
+         WRITE(NOUT,2100)IBC,NI
+   50 CONTINUE ! loop over colours (i.e. patches)
+C
+C
+C
+      RETURN
+ 1000 FORMAT(/,5X,'NODAL BOUNDARY COLOURS ON PE # ',I4,/ 5X,38("="))
+ 
+ 2100 FORMAT(5X,' BOUNDARY PATCH COLOURED ',I2,' HAS ',I6,' NODES ')
+      END
+C
+@
+
+
+1.3
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE BNDRY_ISET(IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+     &NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, NPNOD, NELEM )
+d4 1
+a4 1
+C     $Id: bndry_iset.F,v 1.2 2013/06/25 14:29:45 abonfi Exp abonfi $
+a20 1
+      IMPLICIT NONE
+a21 2
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+d23 2
+a24 1
+C
+d27 3
+d36 1
+a36 1
+#include "iset.com"
+d52 1
+a52 1
+      INTEGER IPOIN,NI,IFAIL,IBC,J,IVERT,I,ICLR,IFACE,IELEM
+d55 1
+d105 1
+a105 1
+     &                        bndrynodes(IBC),IFAIL)
+@
+
+
+1.2
+log
+@useless comments have been removed;
+may NOT work with periodic grids and/or in parallel
+@
+text
+@d4 1
+a4 1
+C     $Id: bndry_iset.F,v 1.1 2013/06/06 10:49:20 abonfi Exp abonfi $
+d23 3
+a25 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+C     $Id: iset.F,v 1.31 2013/06/04 15:25:17 abonfi Exp $
+d11 1
+a11 4
+C     In the parallel case it is important that
+C          the routine is called with NPOIN=# of processor
+C          owned nodes, since the index sets are local
+C          and shoud not address ghost nodes
+d18 2
+a19 13
+C     One of the limitations in the current implementation is that
+C     if a boundary vertex belongs to two (or more) boundary faces
+C     where different types of b.c. are specified the routine won't
+C     detect it (though it shouldn't be too difficult to modify it
+C     so that it will) but, more importantly, conflicts may arise
+C     (or may not) depending on whether the two b.c. affect different
+C     variables or not.
+C     For instance: take the trailing edge of a flat plate
+C     and suppose the t.e. is also located on the outflow boundary
+C     where a cnst. pressure boundary condition is specified.
+C     This won't conflict with the no-slip boundary
+C     condition but WILL conflict if you specify an iso-thermal b.c.
+C     on the whole plate (you can give it a try).
+@

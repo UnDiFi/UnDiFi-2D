@@ -1,0 +1,45 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2013.06.04.09.37.15;	author tesistim;	state Exp;
+branches;
+next	;
+
+
+desc
+@tempi caratteristici per la chimica
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@!
+!     This common block contains chemical characteristic times
+!
+      DOUBLE PRECISION tau(NSP)
+      COMMON/TAUCHEM/   tau
+!
+!
+@

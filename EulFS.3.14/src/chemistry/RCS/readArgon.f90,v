@@ -1,0 +1,175 @@
+head	1.3;
+access
+	abonfi;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_3:1.2
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2013.06.05.11.41.03;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.02.05.08.00.13;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.15.10.17.36;	author tesistim;	state Exp;
+branches;
+next	;
+
+
+desc
+@Reading stochiometric coefficients and other data
+@
+
+
+1.3
+log
+@reads data from hardwired directory inside $FSPL_DIR
+@
+text
+@      SUBROUTINE readArgon()
+
+      IMPLICIT NONE
+      INCLUDE 'plasma.h'
+      INCLUDE 'chem.h'
+      INCLUDE 'paramchem.h'
+      INCLUDE 'commonv.inc'
+
+      INTEGER ISP,IR,IFIT 
+      DOUBLE PRECISION eV2KJoMOL  
+      PARAMETER (eV2KJoMOL=96.485d0)
+      CHARACTER(len=255) :: homedir,fname 
+
+      CALL get_environment_variable("FSPL_DIR", homedir)
+
+!     Stoichiometric coefficients (reagents)
+      fname = TRIM(homedir)//'/src/chemistry/data/Ar/creagent.dat'
+!     OPEN(10,FILE='creagent.dat')
+      OPEN(10,FILE=fname)
+        DO ISP = 1,NSP
+            READ(10,*)(scr(ISP,IR),IR=1,NRMAX)
+        ENDDO
+      CLOSE(10)
+
+!     Stoichiometric coefficients (products)
+      fname = TRIM(homedir)//'/src/chemistry/data/Ar/cproduct.dat'
+!     OPEN(10,FILE='cproduct.dat')
+      OPEN(10,FILE=fname)
+        DO ISP = 1,NSP
+            READ(10,*)(scp(ISP,IR),IR=1,NRMAX)
+        ENDDO
+      CLOSE(10)
+
+!     Rate fit coefficients (atom-electron collisions - Colonna) 
+      fname = TRIM(homedir)//'/src/chemistry/data/Ar/fitdata.dat'
+!     OPEN(10,FILE='fitdata.dat')
+      OPEN(10,FILE=fname)
+        DO IFIT = 1,NFIT
+             READ(10,*)(mc(IFIT,IR),IR=1,2*Ncol+1)
+        ENDDO
+      CLOSE(10)
+
+!      Rate fit coefficients (atom-atom collisions - Bacri & Vlcek) 
+      fname = TRIM(homedir)//'/src/chemistry/data/Ar/fitdatabacri.dat'
+!     OPEN(10,FILE='fitdatabacri.dat')
+      OPEN(10,FILE=fname)
+         DO IFIT = 1,2
+              READ(10,*)(mbv(IFIT,IR),IR=1,Nbac)
+         ENDDO
+      CLOSE(10)
+
+!     Molar masses (g/mol)
+      Ms(1) = MAr              !Ar
+      Ms(2) = MAr              !Ar*
+      Ms(3) = MAr - Me         !Ar+
+      Ms(4) = Me               !e-
+
+!     Heat of formation (eV)
+      HF0(1) = 0.d0            !Ar
+      HF0(2) = hArm            !Ar*
+      HF0(3) = hArI            !Ar+            
+      HF0(4) = 0.d0            !e-
+
+!     eV/part -> J/kg
+      DO ISP = 1,NSP
+          HF0(ISP) = HF0(ISP) * eV2KJoMOL / Ms(ISP) * 1.0d6
+      ENDDO     
+
+!     Rgas (J * K^-1 * kg^-1)
+      DO ISP = 1,NSP
+          RGASS(ISP) = Rgp / Ms(ISP) * 1.0d3
+      ENDDO           
+
+!      write(6,*)'HF0=',HF0
+!      write(6,*)'RGASS=',RGASS
+!      pause
+      RETURN
+      END
+@
+
+
+1.2
+log
+@Fixed a missing 1.0d6
+@
+text
+@d12 3
+d17 3
+a19 1
+      OPEN(10,FILE='creagent.dat')
+d26 3
+a28 1
+      OPEN(10,FILE='cproduct.dat')
+d35 3
+a37 1
+      OPEN(10,FILE='fitdata.dat')
+d44 3
+a46 2
+!      IF(NR.GT.3)THEN
+       OPEN(10,FILE='fitdatabacri.dat')
+d50 1
+a50 2
+       CLOSE(10)
+!      ENDIF
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a16 1
+!            READ(10,*)(scr(ISP,IR),IR=1,NR)
+a23 1
+!            READ(10,*)(scp(ISP,IR),IR=1,NR)
+d57 1
+a57 1
+          HF0(ISP) = HF0(ISP) * eV2KJoMOL / Ms(ISP)
+d62 1
+a62 1
+          RGASS(ISP) = Rgp / Ms(ISP) * 1e3
+d65 3
+@

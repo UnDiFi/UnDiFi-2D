@@ -1,0 +1,797 @@
+head	1.9;
+access
+	tesistim;
+symbols
+	release3_14_0:1.9
+	release3_13_0:1.9
+	release3_12_0:1.9
+	release3_11_0:1.9
+	release3_10_0:1.9
+	release3_8_0:1.9
+	release3_7_1:1.8
+	release3_7_0:1.8
+	release3_4_5:1.7
+	release3_4_4:1.7
+	release3_4_3:1.7
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.6;
+locks; strict;
+comment	@c @;
+
+
+1.9
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.10.23.10.49.57;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.09.16.07.24.58;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2008.02.25.09.40.48;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2006.11.10.08.31.31;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.08.19.06.46.43;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2005.08.08.11.05.32;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@a tool for printing ksp matrices and rhs
+utilizzato per fornire a Bruno Carpentieri
+matrici in formato Matlab
+@
+
+
+1.9
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE PrintMat(A,RHS,X,cols,values,maxcols,ITER,JOB)
+C
+CC#define HYPER_PARCSR 5555
+C
+CCCC#define VIEWER_ASCII
+CC#define HAVE_HYPRE
+#define VIEWER_BINARY
+C
+C
+C
+C     $Id: printmat.F,v 1.8 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+CCCC#include "petsc/finclude/petscvec.h"
+CCCC#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscksp.h"
+#include "petsc/finclude/petscpc.h"
+CCCC#include "petsc/finclude/petscis.h"
+#include "petsc/finclude/petscviewer.h"
+              use petscksp
+              use petscpc
+C
+      IMPLICIT NONE
+C
+#ifdef HAVE_HYPRE
+CCC#include "HYPRE.h"
+CCC#include "IJ_mv.h"
+#endif
+
+C
+      Mat A
+      Vec RHS,X
+      INTEGER ITER,JOB
+      INTEGER rstart,rend,ncols,i,k
+      INTEGER HYPRE_PARCSR
+      parameter(HYPRE_PARCSR=5555)
+      INTEGER maxcols
+      integer cols(maxcols)
+      double precision values(maxcols)
+      double  precision info(MAT_INFO_SIZE)
+      INTEGER nz_a
+C
+C
+C
+C
+C     .. Parameters ..
+C     ..
+C     .. Scalar Arguments ..
+C     ..
+C     .. Arrays in Common ..
+C     ..
+C     .. Local Scalars ..
+      INTEGER IFAIL,MY_PE
+C     ..
+C     .. Local Arrays ..
+      PetscViewer MyOpenMindedViewer
+      INTEGER*8 ij
+      CHARACTER* 6 matfile,rhsfile,solfile
+      PetscScalar x_array(1)
+      PetscOffset i_x
+      PetscInt n
+!     PetscErrorCode IFAIL
+
+C     ..
+C     .. External Functions ..
+C     ..
+C     .. External Subroutines ..
+C     ..
+C
+C     .. Intrinsic Functions ..
+C     ..
+C     .. Common blocks ..
+      COMMON /MPICOM/MY_PE
+C     ..
+C     .. Equivalences ..
+C     ..
+C     .. Data statements ..
+      DATA matfile,rhsfile,solfile/"matXXX","rhsXXX","solXXX"/
+C     ..
+C     Executable statements 
+C
+      IF(JOB.EQ.0)THEN
+         call MatGetInfo(A,MAT_LOCAL,info,IFAIL)
+         nz_a = info(MAT_INFO_NZ_ALLOCATED)
+!        maxcols = info(MAT_INFO_COLUMNS_LOCAL)
+         maxcols = 0
+         CALL VecGetLocalSize(rhs,n,IFAIL)
+         maxcols = max(maxcols,n)
+         write(6,*)'PE # ',MY_PE,nz_a,maxcols,n
+         RETURN
+      ENDIF
+C
+      IF( ITER. NE. 11 )RETURN
+C
+      WRITE(matfile(4:6),FMT="(I3.3)")0
+      WRITE(rhsfile(4:6),FMT="(I3.3)")0
+      WRITE(solfile(4:6),FMT="(I3.3)")0
+!
+!    #     #  #     #  ######   ######   #######  
+!    #     #   #   #   #     #  #     #  #        
+!    #     #    # #    #     #  #     #  #        
+!    #######     #     ######   ######   #####    
+!    #     #     #     #        #   #    #        
+!    #     #     #     #        #    #   #        
+!    #     #     #     #        #     #  #######  
+!    
+#ifdef HAVE_HYPRE
+      CALL MatGetOwnershipRange(A,rstart,rend,IFAIL)
+      CALL HYPRE_IJMatrixCreate(PETSC_COMM_WORLD,rstart,rend-1,rstart,
+     &rend-1,ij,IFAIL)
+      write(6,*)'HYPRE_IJMatrixCreate has returned ifail = ',ifail
+      CALL HYPRE_IJMatrixSetObjectType(ij,HYPRE_PARCSR,IFAIL) 
+      write(6,*)'HYPRE_IJMatrixSetObjectType has returned ifail = ',
+     &ifail
+      CALL  HYPRE_IJMatrixInitialize(ij,IFAIL)
+      write(6,*)'HYPRE_IJMatrixInitialize has returned ifail = ',
+     &ifail
+      do i= rstart, rend-1
+        CALL MatGetRow(A,i,ncols,cols,values,IFAIL)
+        if(ncols.GT.maxcols)STOP 'Must increase maxcols'
+        CALL HYPRE_IJMatrixSetValues(ij,1,ncols,i,cols,values,IFAIL)
+        CALL MatRestoreRow(A,i,ncols,cols,values,IFAIL)
+      enddo
+      CALL HYPRE_IJMatrixAssemble(ij,IFAIL)
+      CALL HYPRE_IJMatrixPrint(ij,matfile,IFAIL)
+      write(6,*)'HYPRE_IJMatrixPrint has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJMatrixDestroy(ij,IFAIL)
+      write(6,*)'HYPRE_IJMatrixDestroy has returned ifail = ',
+     &ifail
+C
+C     now dump rhs
+C
+      CALL VecGetOwnerShipRange(rhs,rstart,rend,IFAIL)
+      CALL HYPRE_IJVectorCreate(PETSC_COMM_WORLD,rstart,rend-1,
+     &ij,IFAIL)
+      write(6,*)'HYPRE_IJVectorCreate has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJVectorSetObjectType(ij,HYPRE_PARCSR,IFAIL)
+      write(6,*)'HYPRE_IJSetObjectType has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJVectorInitialize(ij,IFAIL)
+      write(6,*)'HYPRE_IJVectorInitialize has returned ifail = ',
+     &ifail
+      CALL VecGetLocalSize(rhs,n,IFAIL)
+      if(n.GT.maxcols)STOP 'Must increase maxcols'
+      CALL VecGetArray(rhs,x_array,i_x,IFAIL)
+      k = 0 
+      do i = rstart,rend-1
+         k = k + 1
+         cols(k) = i
+      enddo
+!     write(6,*)rend-rstart,n
+      CALL HYPRE_IJVectorSetValues(ij,n,cols,x_array(i_x + 1),IFAIL)
+      write(6,*)'HYPRE_IJVectorSetValues has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJVectorAssemble(ij,IFAIL)
+      CALL VecRestoreArray(rhs,x_array,i_x,IFAIL)
+      CALL HYPRE_IJVectorPrint(ij,rhsfile,IFAIL)
+      write(6,*)'HYPRE_IJVectorPrint has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJVectorDestroy(ij,IFAIL)
+c
+c     dump solution
+c
+      CALL VecGetOwnerShipRange(x,rstart,rend,IFAIL)
+      CALL HYPRE_IJVectorCreate(PETSC_COMM_WORLD,rstart,rend-1,
+     &ij,IFAIL)
+      write(6,*)'HYPRE_IJVectorCreate has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJVectorSetObjectType(ij,HYPRE_PARCSR,IFAIL)
+      write(6,*)'HYPRE_IJSetObjectType has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJVectorInitialize(ij,IFAIL)
+      write(6,*)'HYPRE_IJVectorInitialize has returned ifail = ',
+     &ifail
+      CALL VecGetLocalSize(x,n,IFAIL)
+      if(n.GT.maxcols)STOP 'Must increase maxcols'
+      CALL VecGetArray(x,x_array,i_x,IFAIL)
+      k = 0 
+      do i = rstart,rend-1
+         k = k + 1
+         cols(k) = i
+      enddo
+      CALL HYPRE_IJVectorSetValues(ij,n,cols,x_array(i_x + 1),IFAIL)
+      write(6,*)'HYPRE_IJVectorSetValues has returned ifail = ',
+     &ifail
+      CALL VecRestoreArray(x,x_array,i_x,IFAIL)
+      CALL HYPRE_IJVectorAssemble(ij,IFAIL)
+      CALL HYPRE_IJVectorPrint(ij,solfile,IFAIL)
+      write(6,*)'HYPRE_IJVectorPrint has returned ifail = ',
+     &ifail
+      CALL HYPRE_IJVectorDestroy(ij,IFAIL)
+
+      RETURN
+#endif
+C
+C     This is the non-HYPRE portion
+C
+#ifdef VIEWER_ASCII
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,matfile,
+     &                          MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                  PETSC_VIEWER_ASCII_DEFAULT,IFAIL)
+#endif
+#ifdef VIEWER_MATLAB
+C
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,matfile,
+     &                          MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+C
+#endif
+#ifdef VIEWER_BINARY
+C
+      CALL PetscViewerBinaryOpen(PETSC_COMM_WORLD,matfile//'.bin',
+     &                          FILE_MODE_WRITE,MyOpenMindedViewer,
+     &                          IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_DEFAULT,IFAIL)
+C
+#endif
+!
+C
+      write(6,*)"Dumping matrix at iteration on proc. no. ",my_pe
+      CALL MatView(A,MyOpenMindedViewer,IFAIL)
+      write(6,*)"I just finished Dumping matrix on proc. no. ",
+     &my_pe,' IFAIL = ',IFAIL
+C
+      CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+C
+C     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C
+#ifdef VIEWER_ASCII
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,rhsfile,
+     &                          MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_ASCII_DEFAULT,IFAIL)
+#endif
+#ifdef VIEWER_MATLAB
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,rhsfile,
+     &                          MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+#endif
+#ifdef VIEWER_BINARY
+C
+      CALL PetscViewerBinaryOpen(PETSC_COMM_WORLD,rhsfile//'.bin',
+     &                          FILE_MODE_WRITE,MyOpenMindedViewer,
+     &                          IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_DEFAULT,IFAIL)
+C
+#endif
+C
+      write(6,*)"Dumping rhs on proc. no. ",my_pe
+      CALL VecView(RHS,MyOpenMindedViewer,IFAIL)
+      write(6,*)"I just finished Dumping the rhs on proc. no. ",
+     &my_pe,' IFAIL = ',IFAIL
+C
+      CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+C
+C     dump solution
+C
+#ifdef VIEWER_BINARY
+C
+      CALL PetscViewerBinaryOpen(PETSC_COMM_WORLD,solfile//'.bin',
+     &                          FILE_MODE_WRITE,MyOpenMindedViewer,
+     &                          IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_DEFAULT,IFAIL)
+C
+#endif
+#ifdef VIEWER_ASCII
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,solfile,
+     &                          MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_ASCII_DEFAULT,IFAIL)
+#endif
+#ifdef VIEWER_MATLAB
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,solfile,
+     &                          MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &                          PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+#endif
+C
+      write(6,*)"Dumping solution on proc. no. ",my_pe
+      CALL VecView(X,MyOpenMindedViewer,IFAIL)
+      write(6,*)"I just finished with the solution vector on proc. no. "
+     &,my_pe
+C
+      CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+C
+      RETURN
+      END
+@
+
+
+1.8
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@a2 2
+      IMPLICIT NONE
+C
+d11 1
+a11 1
+C     $Id: printmat.F,v 1.7 2013/10/23 10:49:57 abonfi Exp abonfi $
+d13 2
+a14 3
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+d17 1
+a17 1
+#include "petsc/finclude/petscis.h"
+d19 5
+@
+
+
+1.7
+log
+@Now uses the PETSc binary format to dump matrices and vecs
+@
+text
+@d13 1
+a13 1
+C     $Id: printmat.F,v 1.6 2011/09/16 07:24:58 abonfi Exp abonfi $
+d15 7
+a21 7
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscksp.h"
+#include "finclude/petscpc.h"
+#include "finclude/petscis.h"
+#include "finclude/petscviewer.h"
+@
+
+
+1.6
+log
+@minor changes
+@
+text
+@d9 1
+d13 1
+a13 1
+C     $Id: printmat.F,v 1.5 2009/06/11 13:10:58 abonfi Exp abonfi $
+d95 9
+d197 1
+a199 1
+#ifdef VIEWER_ASCII
+d202 2
+a203 1
+#else
+d205 2
+a206 2
+!     CALL PetscViewerBinaryOpen(PETSC_COMM_SELF,matfile,  !"mat.bin",
+!    &FILE_MODE_WRITE,MyOpenMindedViewer,IFAIL)
+d211 9
+a223 1
+!     CALL MatView(A,PETSC_VIEWER_STDOUT_SELF,IFAIL)
+d231 7
+d239 1
+a239 2
+     &MyOpenMindedViewer,IFAIL)
+#ifdef VIEWER_ASCII
+d241 7
+a247 2
+     &PETSC_VIEWER_ASCII_DEFAULT,IFAIL)
+#else
+d249 2
+a250 1
+     &PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+a254 1
+!     CALL VecView(RHS,PETSC_VIEWER_STDOUT_SELF,IFAIL)
+d262 10
+a273 2
+C
+#ifdef VIEWER_ASCII
+d276 4
+a279 1
+#else
+@
+
+
+1.5
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d7 2
+d12 1
+a12 1
+C     $Id: printmat.F,v 1.4 2008/02/25 09:40:48 abonfi Exp abonfi $
+d14 1
+a14 1
+#include "finclude/petsc.h"
+d21 4
+a24 2
+C#include "HYPRE.h"
+C#include "IJ_mv.h"
+d81 2
+a82 1
+         maxcols = info(MAT_INFO_COLUMNS_LOCAL)
+d89 1
+a89 1
+      IF( ITER. NE. 3 )RETURN
+d94 1
+d98 1
+a98 1
+!     write(6,*)'HYPRE_IJMatrixCreate has returned ifail = ',ifail
+d100 2
+a101 2
+!     write(6,*)'HYPRE_IJMatrixSetObjectType has returned ifail = ',
+!    &ifail
+d103 2
+a104 2
+!     write(6,*)'HYPRE_IJMatrixInitialize has returned ifail = ',
+!    &ifail
+d113 2
+a114 2
+!     write(6,*)'HYPRE_IJMatrixPrint has returned ifail = ',
+!    &ifail
+d116 2
+a117 2
+!     write(6,*)'HYPRE_IJMatrixDestroy has returned ifail = ',
+!    &ifail
+d124 2
+a125 2
+!     write(6,*)'HYPRE_IJVectorCreate has returned ifail = ',
+!    &ifail
+d127 2
+a128 2
+!     write(6,*)'HYPRE_IJSetObjectType has returned ifail = ',
+!    &ifail
+d130 2
+a131 2
+!     write(6,*)'HYPRE_IJVectorInitialize has returned ifail = ',
+!    &ifail
+d142 2
+a143 2
+!     write(6,*)'HYPRE_IJVectorSetValues has returned ifail = ',
+!    &ifail
+d147 2
+a148 2
+!     write(6,*)'HYPRE_IJVectorPrint has returned ifail = ',
+!    &ifail
+d156 2
+a157 2
+!     write(6,*)'HYPRE_IJVectorCreate has returned ifail = ',
+!    &ifail
+d159 2
+a160 2
+!     write(6,*)'HYPRE_IJSetObjectType has returned ifail = ',
+!    &ifail
+d162 2
+a163 2
+!     write(6,*)'HYPRE_IJVectorInitialize has returned ifail = ',
+!    &ifail
+d173 2
+a174 2
+!     write(6,*)'HYPRE_IJVectorSetValues has returned ifail = ',
+!    &ifail
+d178 2
+a179 2
+!     write(6,*)'HYPRE_IJVectorPrint has returned ifail = ',
+!    &ifail
+d181 14
+a194 5
+!     CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,matfile,
+!    &MyOpenMindedViewer,IFAIL)
+!     CALL PetscViewerSetFormat(MyOpenMindedViewer,
+!    &PETSC_VIEWER_ASCII_DEFAULT,IFAIL)
+!     CALL PetscViewerBinaryOpen(PETSC_COMM_SELF,"mat.bin",
+d196 2
+a197 2
+!     CALL PetscViewerSetFormat(MyOpenMindedViewer,
+!    &PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+d199 2
+d202 2
+a203 2
+!     write(6,*)"Dumping matrix at iteration on proc. no. ",my_pe
+!     CALL MatView(A,MyOpenMindedViewer,IFAIL)
+d205 4
+a208 2
+!     write(6,*)"I just Finished Dumping matrix on proc. no. ",
+!    &my_pe,' IFAIL = ',IFAIL
+d210 1
+a210 2
+!     CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+!     stop
+d212 12
+a223 10
+!     CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,rhsfile,
+!    &MyOpenMindedViewer,IFAIL)
+!     CALL PetscViewerSetFormat(MyOpenMindedViewer,
+!    &PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+!     CALL PetscViewerSetFormat(MyOpenMindedViewer,
+!    &PETSC_VIEWER_ASCII_DEFAULT,IFAIL)
+C
+!     write(6,*)"Dumping rhs on proc. no. ",
+!    &my_pe
+!     CALL VecView(RHS,MyOpenMindedViewer,IFAIL)
+d225 22
+a246 2
+!     write(6,*)"I just Finished Dumping the rhs on proc. no. ",
+!    &my_pe,' IFAIL = ',IFAIL
+d248 1
+a248 14
+!     CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+!     stop
+!     CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,solfile,
+!    &MyOpenMindedViewer,IFAIL)
+!     CALL PetscViewerSetFormat(MyOpenMindedViewer,
+!    &PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+!     CALL PetscViewerSetFormat(MyOpenMindedViewer,
+!    &PETSC_VIEWER_ASCII_DEFAULT,IFAIL)
+C
+!     write(6,*)"Dumping solution on proc. no. ",
+!    &my_pe
+!     CALL VecView(X,MyOpenMindedViewer,IFAIL)
+!     write(6,*)"I just Finished with the solution vector on proc. no. "
+!    &,my_pe
+a249 1
+!     CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+@
+
+
+1.4
+log
+@changed nof arguments
+@
+text
+@d10 1
+a10 1
+C     $Id: printmat.F,v 1.3 2006/11/10 08:31:31 abonfi Exp abonfi $
+d12 7
+a18 7
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscksp.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscviewer.h"
+@
+
+
+1.3
+log
+@tried opening a different file for each processor
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE PrintMat(A,RHS,X,ITER)
+d5 1
+d10 1
+a10 1
+C     $Id: printmat.F,v 1.2 2005/08/19 06:46:43 aldo Exp abonfi $
+d19 3
+d25 9
+a33 1
+      INTEGER ITER
+d49 7
+a55 1
+      CHARACTER* 8 matfile,rhsfile,solfile
+d61 1
+d70 1
+a70 1
+      DATA matfile,rhsfile,solfile/"matXXX.m","rhsXXX.m","solXXX.m"/
+d74 148
+a221 33
+      IF( ITER. NE. 5 )RETURN
+      WRITE(matfile(4:6),FMT="(I3.3)")MY_PE
+      WRITE(rhsfile(4:6),FMT="(I3.3)")MY_PE
+      WRITE(solfile(4:6),FMT="(I3.3)")MY_PE
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,matfile,
+     &MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+C
+      write(6,*)"Dumping matrix at iteration ",iter
+      CALL MatView(A,MyOpenMindedViewer,IFAIL)
+      write(6,*)"I just Finished Dumping matrix"
+C
+      CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+C
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,rhsfile,
+     &MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+C
+      write(6,*)"Dumping rhs"
+      CALL VecView(RHS,MyOpenMindedViewer,IFAIL)
+      write(6,*)"I just Finished Dumping the rhs"
+C
+      CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerASCIIOpen(PETSC_COMM_SELF,solfile,
+     &MyOpenMindedViewer,IFAIL)
+      CALL PetscViewerSetFormat(MyOpenMindedViewer,
+     &PETSC_VIEWER_ASCII_MATLAB,IFAIL)
+C
+      write(6,*)"Dumping solution"
+      CALL VecView(X,MyOpenMindedViewer,IFAIL)
+      write(6,*)"I just Finished with the solution vector"
+d223 1
+a223 1
+      CALL PetscViewerDestroy(MyOpenMindedViewer,IFAIL)
+@
+
+
+1.2
+log
+@removed unused variables
+@
+text
+@d9 1
+a9 1
+C     $Id: printmat.F,v 1.1 2005/08/08 11:05:32 abonfi Exp aldo $
+d37 1
+d51 1
+d55 5
+a59 2
+      IF( ITER. NE. 12 )RETURN
+      CALL PetscViewerASCIIOpen(PETSC_COMM_WORLD,"mat.m",
+d70 1
+a70 1
+      CALL PetscViewerASCIIOpen(PETSC_COMM_WORLD,"rhs.m",
+d80 1
+a80 1
+      CALL PetscViewerASCIIOpen(PETSC_COMM_WORLD,"sol.m",
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d9 1
+a9 1
+C     $Id: update3.F,v 1.46 2004/12/20 16:30:43 aldo Exp abonfi $
+a20 1
+      PetscLogDouble TBEGALL,telapsed,tbeg,tend
+a21 1
+      character*12 fname(2)
+a22 1
+!#include "iset.com"
+a23 2
+      PetscTruth flg
+      logical valid 
+a24 11
+      COMMON /TIMING/TBEGALL
+C
+!     INCLUDE 'constants'
+!     INCLUDE 'paramt.h'
+!     INCLUDE 'implicit.h'
+!     INCLUDE 'conv.com'
+!     INCLUDE 'visco.com'
+!     INCLUDE 'nloc'
+!     INCLUDE 'verbose.com'
+!     INCLUDE 'flags.com'
+!     INCLUDE 'io.com'
+a28 1
+      INTEGER NDIM,NOFVAR,NPOIN
+a30 1
+      DOUBLE PRECISION DSTAK(1)
+d33 1
+a33 3
+      DOUBLE PRECISION eps
+      parameter(eps=1.d-20) 
+      INTEGER I,IFAIL,MY_PE,ROWBGN,ROWEND,IPOIN
+a35 6
+      INTEGER ISTAK(1)
+caldo
+      PetscScalar      x_array(1)
+      PetscScalar      b_array(1),dt_v(1)
+      PetscOffset i_x,dt_i,idx_i
+      PetscOffset i_b
+a36 5
+!     PetscViewerFormat format
+      integer j,k,idx_v(1)
+caldo
+      integer          ierr,nrows,ncols
+ 
+a38 3
+      DOUBLE PRECISION DNRM2
+      INTEGER ISTKGT,ISTKST
+      EXTERNAL DNRM2,ISTKGT,ISTKST
+a42 1
+      INTRINSIC DLOG10,MIN
+a44 1
+      COMMON /CSTAK/DSTAK
+a47 1
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+a85 10
+ 
+  200 FORMAT (5X, 70('-'),/,25X,'ITERATION # ',I4,' (',I4,') CFL = ',E10
+     +.4,/,5X, 70('-'),/,5X, 70('-'),/,5X,'Var.',4X,'L2-norm',3X,
+     +'L_infty',3X,'node #',3X,'(',4X,'x',7X,'y',7X,'z',4X,')',/, 5X, 70
+     +('-'))
+  210 FORMAT (5X,I1,5X,F10.5,1X,F10.5,2X,I5,3X,'(', 2(F8.5,','),F8.5,
+     +')')
+  215 FORMAT (5X,'Nodal Residual',/)
+  225 FORMAT (5X,'Nodal Update',/)
+  235 FORMAT (I5,1X,I4,8 (1X,E10.4))
+@

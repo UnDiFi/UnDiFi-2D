@@ -1,0 +1,84 @@
+\hypertarget{scalar_8f}{}\doxysection{src/scalar/scalar.f File Reference}
+\label{scalar_8f}\index{src/scalar/scalar.f@{src/scalar/scalar.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{scalar_8f_a9d3076015c0f80a57b914176be02846d}{S\+C\+A\+L\+AR}} (I\+E\+L\+EM, V\+CN, V\+CB, V\+CZ, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+O\+F\+V\+AR, N\+D\+U\+M\+MY, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, T\+S\+T\+EP, S\+T\+I\+F\+EL, V\+O\+L\+U\+ME, P\+I\+C\+A\+RD, S\+C\+A\+L\+A\+R\+S\+C\+H\+E\+ME, M\+A\+T\+R\+I\+X\+S\+C\+H\+E\+ME)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{scalar_8f_a9d3076015c0f80a57b914176be02846d}\label{scalar_8f_a9d3076015c0f80a57b914176be02846d}} 
+\index{scalar.f@{scalar.f}!SCALAR@{SCALAR}}
+\index{SCALAR@{SCALAR}!scalar.f@{scalar.f}}
+\doxysubsubsection{\texorpdfstring{SCALAR()}{SCALAR()}}
+{\footnotesize\ttfamily subroutine S\+C\+A\+L\+AR (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{double precision, dimension($\ast$)}]{V\+CN,  }\item[{double precision, dimension($\ast$)}]{V\+CB,  }\item[{double precision, dimension($\ast$)}]{V\+CZ,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+D\+U\+M\+MY,  }\item[{double precision, dimension($\ast$)}]{N\+O\+D\+R\+ES,  }\item[{double precision, dimension($\ast$)}]{T\+S\+T\+EP,  }\item[{double precision, dimension(nofvert,nofvert)}]{S\+T\+I\+F\+EL,  }\item[{double precision, dimension($\ast$)}]{V\+O\+L\+U\+ME,  }\item[{logical}]{P\+I\+C\+A\+RD,  }\item[{external}]{S\+C\+A\+L\+A\+R\+S\+C\+H\+E\+ME,  }\item[{external}]{M\+A\+T\+R\+I\+X\+S\+C\+H\+E\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Here we compute the signals {\ttfamily N\+O\+D\+R\+ES} sent to the vertices of cell {\ttfamily I\+E\+L\+EM} when dealing with scalar convection equations\+:
+
+\[ \frac{\partial u}{\partial t} + \mathbf{\lambda} \cdot \nabla u = f \]
+
+We compute the cell averaged velocity $\hat{\lambda}-\hat{\mathbf{b}}$ relative to the grid, where\+:
+
+\[ \hat{\lambda} = \frac{1}{d+1} \sum_{j=1}^{d+1} u_j \quad\quad \hat{\mathbf{b}} = \frac{1}{d+1} \sum_{j=1}^{d+1} \mathbf{b}_j \] and $(\mathbf{b} = 0)$ on a fixed grid
+
+We compute the source term ${\tt SOURCE} = -\int_{T_e} f \mathrm{d}V$
+
+We compute the signals due to the inviscid contribution $\int_{T_e}\left(\hat{\lambda}-\hat{\mathbf{b}}\right)\cdot\nabla u\,\mathrm{d}V$
+
+We compute the signals due to the temporal contribution
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & current element \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & {\ttfamily N\+D\+IM} Cartesian components of the {\ttfamily N\+O\+F\+V\+E\+RT} inward normals for the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CB} & {\ttfamily N\+D\+IM} Cartesian components of the {\ttfamily N\+O\+F\+V\+E\+RT} grid velocity vectors \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & {\ttfamily dependent} variable in the {\ttfamily N\+O\+F\+V\+E\+RT} vertices of the current cell \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimensionality of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices of the current cell {\ttfamily }(=N\+D\+I\+M+1) dimensionality of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs within each vertex {\ttfamily }(N\+O\+F\+V\+AR=1) for a scalar problem \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+U\+M\+MY} & dummy integer used for compatibility with similar subroutines sharing the same calling sequence \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em N\+O\+D\+R\+ES} & the nodal residual is updated with the signals scattered to the vertices of the current cell \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em T\+S\+T\+EP} & the nodal timestep (actually $V_i/\Delta t_i$) is updated with contributions from the current cell \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em S\+T\+I\+F\+EL} & the elemental Jacobian matrix ( $ C_{ij} = \frac{\partial R_i}{\partial u_j}$ is updated with contributions from the current cell, only if {\ttfamily P\+I\+C\+A\+RD} is set to {\ttfamily }.T\+R\+UE. \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+O\+L\+U\+ME} & is the array with cell volumes at times\+: current, {\ttfamily n+1}, {\ttfamily n}, {\ttfamily n-\/1} \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+I\+C\+A\+RD} & should be set to {\ttfamily T\+R\+UE} when the Jacobian matrix has to be computed analytically \\
+\hline
+\mbox{\texttt{ in}}  & {\em S\+C\+A\+L\+A\+R\+S\+C\+H\+E\+ME} & is the Fluctuation Splitting scheme to be used to discretize the convective term of the governing P\+D\+Es \\
+\hline
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+S\+C\+H\+E\+ME} & is unused and left for compatibility with similar subroutines sharing the same calling sequence \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+26 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/09/18 10\+:39\+:31 
+\end{DoxyParagraph}

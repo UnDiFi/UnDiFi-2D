@@ -1,0 +1,14 @@
+6c6,8
+< C     $Id: setupLHS_b.F,v 1.5 2020/03/28 09:42:46 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: setupLHS_b.F,v 1.5 2020/03/28 09:42:46 abonfi Exp $
+8a11
+> #include "petsc/finclude/petscsys.h"
+11,15d13
+<       use petscvec
+<       use petscmat
+< C
+<       IMPLICIT NONE
+< C

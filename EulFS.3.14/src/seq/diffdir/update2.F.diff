@@ -1,0 +1,95 @@
+2c2
+<      & VMDCO, VMDCN, NodalBcs )
+---
+>      & VMDCO, VMDCN )
+4c4,6
+< C     $Id: update2.F,v 1.47 2016/11/10 12:06:40 abonfi Exp abonfi $
+---
+> C     $Id: update2.F,v 1.47 2016/11/10 12:06:40 abonfi Exp $
+> C
+>       IMPLICIT NONE
+11,13c13,15
+< CCCC#include "petsc/finclude/petscvec.h"
+< CCCC#include "petsc/finclude/petscmat.h"
+< CCCC#include "petsc/finclude/petscis.h"
+---
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+15,18c17
+<       use petscksp
+< C
+<       IMPLICIT NONE
+< C
+---
+> #include "petsc/finclude/petscis.h"
+19a19,23
+>       Mat A,B
+>       Vec RHS,DT,Z,X
+>       KSP solver
+>       PetscLogDouble TBEGALL,telapsed,tbeg,tend
+>       COMMON /TIMING/TBEGALL
+25d28
+<       INCLUDE 'iset.h'
+28a32,33
+> #include "iset.com"
+> C
+35d39
+<       COMMON /TIMING/TBEGALL
+49,60d52
+< C
+<       DOUBLE PRECISION dnrm2
+<       EXTERNAL DNRM2
+< C
+<       DATA WKSP1,WKSP2,ITS/NDNM*ZERO,NDNM*ZERO,0/
+< C
+< C     Petsc stuff
+< C
+<       Mat A,B
+<       Vec RHS,DT,Z,X
+<       KSP solver
+<       PetscLogDouble TBEGALL,telapsed,tbeg,tend
+67c59,61
+<       IS, dimension(0:*) :: NodalBcs
+---
+> C
+>       DOUBLE PRECISION dnrm2
+>       EXTERNAL DNRM2
+69a64,65
+>       DATA WKSP1,WKSP2,ITS/NDNM*ZERO,NDNM*ZERO,0/
+> C
+100,102c96,97
+<           CALL ISGetIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,IFAIL)
+<           CALL ISGetSize(NodalBcs(SupersonicNodes),
+<      &                   Number_of_DirichletNodes,IFAIL)
+---
+>           CALL ISGetIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+>           CALL ISGetSize(SupersonicNodes,Number_of_DirichletNodes,IFAIL)
+116,117c111
+<           CALL ISRestoreIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,
+<      &                          IFAIL)
+---
+>           CALL ISRestoreIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+126c120
+<       CALL ISGetSize(NodalBcs(HangingNodes),NI,IFAIL)
+---
+>       CALL ISGetSize(HangingNodes,NI,IFAIL)
+131c125
+<           CALL ISGetIndices(NodalBcs(HangingNodes),IDX_V,IDX_I,IFAIL)
+---
+>           CALL ISGetIndices(HangingNodes,IDX_V,IDX_I,IFAIL)
+145,146c139
+<           CALL ISRestoreIndices(NodalBcs(HangingNodes),IDX_V,IDX_I,
+<      &                          IFAIL)
+---
+>           CALL ISRestoreIndices(HangingNodes,IDX_V,IDX_I,IFAIL)
+257,258c250,251
+<           CALL MatZeroRowsIS(A,NodalBcs(SupersonicNodes),ONE,
+<      &                       PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+---
+>           CALL MatZeroRowsIS(A,SupersonicNodes,ONE,PETSC_NULL_OBJECT,
+>      &                       PETSC_NULL_OBJECT,IFAIL)
+323c316
+<             CALL RHSBC1( rhs, NodalBcs )
+---
+>             CALL RHSBC1( rhs )

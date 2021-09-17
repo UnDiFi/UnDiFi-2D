@@ -1,0 +1,86 @@
+head	1.1;
+access;
+symbols;
+locks
+	aldo:1.1; strict;
+comment	@c @;
+
+
+1.1
+date	99.08.14.09.56.40;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute projectors in a more clever way
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE PROJECTOR(VECN,MATSPLIT,PPOS,PNEG,NDIM,NOFVAR)
+C
+C     Compute projectors for farfield boundary conditions
+C
+      IMPLICIT NONE
+C
+C     INCLUDE 'three'
+C     INCLUDE 'projct.com'
+C
+      INTEGER NDIM,NOFVAR
+C
+C     VNOR stores by columns an orthonormal base (n,s,t) where n
+C          is multiplied by the surface of the face
+C     ZROE stores the parameter vector of the face vertices
+C
+      DOUBLE PRECISION VECN(*),PPOS(*),PNEG(*)
+C
+      INTEGER IDIM,i,j,k
+C#ifdef DEBUG
+C     INTEGER ifail
+C     LOGICAL WARNA,WARNB,WARNC,WARND,WARNE
+C#endif
+C
+      INTEGER NMAX
+      PARAMETER (NMAX=5)
+C
+      DOUBLE PRECISION DUMMY(NMAX,NMAX),KMAT(NMAX*NMAX)
+      DOUBLE PRECISION WR(NMAX),wPOS(NMAX),wNEG(NMAX)
+      DOUBLE PRECISION VRIGHT(NMAX,NMAX),VLEFT(NMAX,NMAX)
+      INTEGER IPIV(NMAX)
+      INTEGER INFO
+      INTEGER IELEM
+#ifdef DEBUG
+      DOUBLE PRECISION WKSP(5,5),WKSP1(5,5),
+     +WKSP2(5,5),WKSP3(5,5),WKSP4(5,5)
+#endif
+C
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+#ifdef DEBUG
+      LOGICAL  UNITMAT
+      EXTERNAL UNITMAT
+#endif
+C
+      EXTERNAL MATSPLIT
+C
+C     Split the matrix into its positive and negative parts
+C
+      IELEM = -1
+      CALL MATSPLIT(IELEM,NDIM,NOFVAR,VECN(1),DUMMY,NMAX,
+     +              KMAT(1),PPOS(1),PNEG(1),VLEFT,VRIGHT,NOFVAR,
+     +              WR,WPOS,WNEG,.TRUE.)
+C
+      CALL DGETRF( NOFVAR, NOFVAR, KMAT, NOFVAR, IPIV, INFO ) 
+      CALL DGETRS( 'No',  NOFVAR,  NOFVAR, KMAT, NOFVAR, IPIV,
+     +             PPOS, NOFVAR, INFO )
+      CALL DGETRS( 'No',  NOFVAR,  NOFVAR, KMAT, NOFVAR, IPIV,
+     +             PNEG, NOFVAR, INFO )
+C
+      RETURN
+      END
+@

@@ -1,0 +1,36 @@
+
+\begin{DoxyRefList}
+\item[Subprogram \mbox{\hyperlink{flxale_8f_af7d9e25db2af30fe0d70b6b9e34d4ce5}{aleflux}} (ndim, nofvert, ndof, vcn, vcb, vcz, fluxale, test)]\label{bug__bug000001}%
+\Hypertarget{bug__bug000001}%
+This routine does N\+OT work yet in 3D  
+\item[Subprogram \mbox{\hyperlink{bvsflx4_8f_a9b99a57e67b47e2327f3dc581c48cc2a}{B\+V\+S\+F\+L\+X4}} (I\+C\+LR, I\+E\+L\+EM, K\+V\+E\+RT, Z\+R\+OE, Nod\+Res, T\+S\+T\+EP, N\+O\+F\+V\+AR, N\+O\+F\+V\+E\+RT, V\+CN, N\+D\+IM, V\+O\+L\+U\+ME, E\+L\+T\+M\+AT, V\+I\+S\+CL, V\+I\+S\+CT, T\+A\+UW, H\+F\+L\+UX, W\+A\+LL, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)]\label{bug__bug000004}%
+\Hypertarget{bug__bug000004}%
+3D wall shear stress is neither computed nor stored  
+\item[Subprogram \mbox{\hyperlink{chkint_8f_a68dd5db5850b7a11e9af7ff06f0f9cf8}{C\+H\+K\+I\+NT}} (I\+C\+E\+L\+N\+OD, I\+C\+E\+L\+F\+AC, V\+F\+A\+C\+N\+OR, X\+Y\+Z\+D\+OT, V\+OL, Z\+R\+OE, N\+E\+L\+EM, N\+P\+O\+IN, N\+G\+H\+O\+ST, N\+P\+N\+OD, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+O\+F\+V\+AR, N\+T\+U\+RB, T\+I\+ME)]\label{bug__bug000003}%
+\Hypertarget{bug__bug000003}%
+Only works for compressible (perfect gas) flows  
+\item[Subprogram \mbox{\hyperlink{_motion_solver_8_f_a39d11c44bc6f5ff0b4da1e9fbe9b3917}{Grid\+Deformation}} (Motion\+Solver, Petsc\+MatC, Nodal\+B\+CS, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+P\+O\+IN, N\+G\+H\+O\+ST, N\+P\+N\+OD, N\+E\+L\+EM, N\+B\+F\+AC, N\+F\+A\+CE)]\label{bug__bug000009}%
+\Hypertarget{bug__bug000009}%
+This subroutine is N\+OT yet working in parallel  
+\item[Subprogram \mbox{\hyperlink{_l_d_a2_sys__scheme_8_f_ac66e66fdb4f2dac368e95666db2abdae}{L\+D\+A2\+S\+Y\+S\+\_\+\+S\+C\+H\+E\+ME}} (M\+A\+T\+R\+I\+X\+S\+P\+L\+I\+T\+T\+ER, W, N\+O\+D\+R\+ES, T\+S\+T\+EP, B\+E\+TA, S\+T\+I\+FC, N\+O\+R\+D\+ER, N\+D\+OF, N\+O\+F\+V\+E\+RT, V\+CN, N\+D\+IM, D\+F\+G\+H\+DU, L\+DJ, C\+E\+L\+R\+ES, S\+O\+U\+R\+CE, I\+E\+L\+EM, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)]\label{bug__bug000006}%
+\Hypertarget{bug__bug000006}%
+The source term is N\+OT distributed in the current release  
+\item[Subprogram \mbox{\hyperlink{_l_wa_sys__scheme_8_f_aa772e815e8202c72e502820785c468f7}{L\+W\+T\+S\+Y\+S\+\_\+\+S\+C\+H\+E\+ME}} (M\+A\+T\+R\+I\+X\+S\+P\+L\+I\+T\+T\+ER, W, N\+O\+D\+R\+ES, T\+S\+T\+EP, B\+E\+TA, S\+T\+I\+FC, N\+O\+R\+D\+ER, N\+D\+OF, N\+O\+F\+V\+E\+RT, V\+CN, N\+D\+IM, D\+F\+G\+H\+DU, L\+DJ, C\+E\+L\+R\+ES, S\+O\+U\+R\+CE, I\+E\+L\+EM, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)]\label{bug__bug000007}%
+\Hypertarget{bug__bug000007}%
+Not sure this is ok for 3D  
+\item[Subprogram \mbox{\hyperlink{matspl_v_i_i_8_f_ac2728f9a64e014026c02a5826fef01ca}{Mat\+Split\+V\+II}} (I\+E\+L\+EM, N\+D\+IM, N\+O\+R\+D\+ER, V\+E\+CN, Jacobian\+Matrix, L\+DJ, K\+M\+AT, K\+P\+OS, K\+N\+EG, V\+L\+E\+FT, V\+R\+I\+G\+HT, L\+DA, WR, L\+P\+OS, L\+N\+EG, E\+I\+G\+E\+N\+D\+E\+CO)]\label{bug__bug000002}%
+\Hypertarget{bug__bug000002}%
+Does N\+OT support moving grids  
+\item[Subprogram \mbox{\hyperlink{quadrature_8f_ad014778b03d6b519d64b7a38214cba6d}{Q\+U\+A\+D\+R\+A\+T\+U\+RE}} (N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+D\+OF, Z\+R\+OE, X\+Y\+Z\+D\+OT, F\+A\+CN, F\+L\+XN, F\+L\+U\+XF)]\label{bug__bug000010}%
+\Hypertarget{bug__bug000010}%
+Not sure the grid velociy is accounted for correctly  
+\item[Subprogram \mbox{\hyperlink{simpson_8f_ab020f1e204629b20d9eb01726d1f3190}{S\+I\+M\+P\+S\+ON}} (N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+D\+OF, Z\+R\+OE, X\+Y\+Z\+D\+OT, F\+A\+CN, F\+L\+XN, F\+L\+U\+XF)]\label{bug__bug000011}%
+\Hypertarget{bug__bug000011}%
+In 3D it uses the midpoint rule, N\+OT Simpson\textquotesingle{}s  
+\item[Subprogram \mbox{\hyperlink{_u_c_v_sys__scheme_8_f_ac1d816a6f16d611ef0e874b790903fe2}{U\+C\+V\+S\+Y\+S\+\_\+\+S\+C\+H\+E\+ME}} (M\+A\+T\+R\+I\+X\+S\+P\+L\+I\+T\+T\+ER, W, N\+O\+D\+R\+ES, T\+S\+T\+EP, B\+E\+TA, S\+T\+I\+FC, N\+O\+R\+D\+ER, N\+D\+OF, N\+O\+F\+V\+E\+RT, V\+CN, N\+D\+IM, D\+F\+G\+H\+DU, L\+DJ, C\+E\+L\+R\+ES, S\+O\+U\+R\+CE, I\+E\+L\+EM, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)]\label{bug__bug000008}%
+\Hypertarget{bug__bug000008}%
+The source term is N\+OT distributed in the current release  
+\item[Subprogram \mbox{\hyperlink{vsflx4_8f_a10011952338ce2e78a6acded71132121}{V\+S\+F\+L\+X4}} (I\+E\+L\+EM, Z\+R\+OE, Nod\+Res, T\+S\+T\+EP, N\+O\+F\+V\+AR, V\+CN, N\+D\+IM, N\+O\+F\+V\+E\+RT, V\+O\+L\+U\+ME, S\+T\+I\+FD, V\+I\+S\+CL, V\+I\+S\+CT, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)]\label{bug__bug000005}%
+\Hypertarget{bug__bug000005}%
+The calculation of the time-\/step restriction assumes that the dimensionless kinematic viscosity equals 1 
+\end{DoxyRefList}

@@ -1,0 +1,130 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    ; strict;
+comment  @c @;
+
+
+1.2
+date     98.03.04.18.00.43;  author aldo;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     98.03.02.17.33.30;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Compute vorticity at trip points
+@
+
+
+1.2
+log
+@bug fixed with averaged vorticity
+@
+text
+@      SUBROUTINE TTST(JA,IA,IDXLST,TST,NTRIP,ICELNOD,ICELCEL,ICELFAC,
+     +                FACNOR,VOL,NDIM,
+     +                NOFVERT,NOFVAR,NELEM,NPOIN,
+     +                COMPRESSIBLE)
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'three'
+C
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVERT,NELEM,NPOIN,NOFVAR,NTRIP
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION FACNOR(NDIM,*),TST(NTRIP),VOL(NELEM)
+      INTEGER IA(NTRIP+1),ICELCEL(NOFVERT,NELEM),ICELNOD(NOFVERT,NELEM),
+     +        ICELFAC(NOFVERT,NELEM),IDXLST(NTRIP),JA(*)
+      DOUBLE PRECISION VCN(3*VMAX),
+     +                VCP(3*VMAX),VCZ(NMAX*VMAX)
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX)
+      LOGICAL COMPRESSIBLE
+C     ..
+C     .. Local Scalars ..
+      INTEGER I,IELEM,IFACE,IPOIN,IVERT,J,JBGN,JEND,NELT
+      DOUBLE PRECISION OMEGAX,OMEGAY,OMEGAZ,TEMP,VOLUME
+C     ..
+C     .. External Functions ..
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+C     loop over trip points
+      DO 1 I = 1,NTRIP
+          IPOIN = IDXLST(I)
+          JBGN = IA(I)
+          JEND = IA(I+1) - 1
+C
+C     loop over the elements surrounding trip point IPOIN
+C
+          NELT = JEND-JBGN+1
+C
+          TEMP = 0.d0
+C
+          DO 3 J = JBGN,JEND
+              IELEM = JA(J)
+C
+C     loop over the vertices of the element to find boundary faces
+C
+          CALL CELPTR(IELEM,ICELNOD,ICELFAC,VOL,
+     +                NDIM,NOFVERT,NOFVAR,NELEM,NPOIN,
+     +                ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+C
+C
+C     COMPUTES THE GRADIENT OF THE flow VARIABLES
+C
+          CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,
+     +                   NOFVAR,VOLUME)
+C
+      IF (COMPRESSIBLE) THEN
+C
+          OMEGAX = GRAD_PRIM(5,2) - GRAD_PRIM(4,3)
+          OMEGAY = GRAD_PRIM(3,3) - GRAD_PRIM(5,1)
+          OMEGAZ = GRAD_PRIM(4,1) - GRAD_PRIM(3,2)
+C
+      ELSE
+C
+          OMEGAX = GRAD_PRIM(4,2) - GRAD_PRIM(3,3)
+          OMEGAY = GRAD_PRIM(2,3) - GRAD_PRIM(4,1)
+          OMEGAZ = GRAD_PRIM(3,1) - GRAD_PRIM(2,2)
+      ENDIF
+C
+      TEMP = TEMP +  SQRT(OMEGAX*OMEGAX+OMEGAY*OMEGAY+OMEGAZ*OMEGAZ)
+C
+    3     CONTINUE
+C    compute an average vorticity at trip point
+          TEMP = TEMP / NELT
+      WRITE(6,FMT=1000) IPOIN,TEMP
+          TST(I) = TEMP
+    1 CONTINUE
+      RETURN
+
+ 1000 FORMAT (5X,'Vorticity at trip point ',I6,' is ',D12.6)
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d43 2
+a60 2
+C         IF (COMPRESSIBLE) CALL PARM2PRIM(NDIM,IELEM)
+C
+d74 1
+a74 1
+      TEMP = SQRT(OMEGAX*OMEGAX+OMEGAY*OMEGAY+OMEGAZ*OMEGAZ)
+@

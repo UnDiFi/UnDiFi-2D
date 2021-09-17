@@ -1,0 +1,94 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.02.09.17.34.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Modified version of the routine that computes the modified
+vorticity
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)tsc.f      1.0.0.1 4/1/95  95/08/21        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tsc.f
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+      DOUBLE PRECISION FUNCTION newTSC(OMEGA,TD,TVI,VI)
+*  ==============================================================
+*
+*
+*      FILENAME: tsc.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      vorticity module computation
+*      (Spalart & Allmaras model: version)
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : October 97
+*
+*
+*      Note the nondimensionalization of \tilde{S}
+*
+*  ==============================================================
+
+c2345678
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'turb.com'
+      INCLUDE 'visco.com'
+C
+
+C
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION OMEGA,TD,TVI,VI
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TCHI
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TFV2
+      EXTERNAL TFV2
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+C
+      TCHI = TVI/VI
+      newTSC = OMEGA + TVI/ (TK*TD)**2.*TFV2(TCHI)*REINV
+
+
+      RETURN
+
+      END
+@

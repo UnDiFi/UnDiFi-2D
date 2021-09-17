@@ -1,0 +1,390 @@
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/seq
+
+Now processing  ApplicationFunction.F
+Now processing  ApplicationFunction_t.F
+Now processing  blockdata.f
+Now processing  bndry_iset.F
+Now processing  bndvflx.F
+Now processing  clearmem.F
+Now processing  exgeo.F
+Now processing  getidx.f
+Now processing  getnrm.f
+Now processing  ghost2.F
+Now processing  ghost.F
+Now processing  init.F
+Now processing  iset.F
+Now processing  iset_t.F
+Now processing  JacobianBoundaryConditions.F
+Now processing  lhsbc5.F
+Now processing  lhsbc6.F
+Now processing  main.F
+Now processing  MatAllocaMPI.F
+Uh! Oh! the current head 1.35 is NOT in the release  MatAllocaMPI.F 1.33
+check MatAllocaMPI.F in /home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/seq
+Now processing  MatAllocaSeq.F
+Now processing  matsch.F
+Now processing  MotionSolver.F
+Now processing  myTS.F
+Now processing  newgeo.F
+Now processing  nodres.F
+Now processing  nodres_t.F
+Now processing  noname.f
+Now processing  printmat2.F
+Now processing  printmat.F
+Now processing  printmatmm.F
+Now processing  ptest.f
+Now processing  qb.F
+Now processing  rdat.F
+Uh! Oh! the current head 1.89 is NOT in the release  rdat.F 1.88
+check rdat.F in /home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/seq
+Now processing  readat.F
+Now processing  rgrdpts.F
+Now processing  rhsbc1.F
+Now processing  rhsbc4.F
+Now processing  rhsbc5c.F
+Now processing  rhsbc5.F
+Now processing  rhsbc6.F
+Now processing  RHSFunction.F
+Now processing  RHSFunction_t.F
+Now processing  RHSJacobian.F
+Now processing  RHSJacobian_t.F
+Now processing  rotaterhs2.f
+Now processing  rotaterhs.f
+Now processing  sclsch.F
+Now processing  setbc4laplace.F
+Now processing  seterr.F
+Now processing  setibc.F
+Now processing  setupLHS_b.F
+Now processing  setupRHS.F
+Uh! Oh! the current head 1.35 is NOT in the release  setupRHS.F 1.32
+check setupRHS.F in /home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/seq
+Now processing  setupRHS_t.F
+Uh! Oh! the current head 1.22 is NOT in the release  setupRHS_t.F 1.21
+check setupRHS_t.F in /home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/seq
+Now processing  solzne.F
+Now processing  test.F
+Now processing  tmodel.F
+Now processing  turbini.F
+Now processing  turbsch.F
+Now processing  update2.F
+Now processing  update3.F
+Now processing  update4.F
+Now processing  weakbc.F
+Now processing  makefile
+Uh! Oh! the current head 1.33 is NOT in the release  makefile 1.32
+check makefile in /home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/seq
+Now processing  make_linux_gnu
+Now processing  make_linux_gnu-opt
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/euler
+
+Now processing  bc28vii4Ar.F
+Now processing  bc28vii.F
+Now processing  bc28viii.F
+Now processing  bc4vii.F
+Now processing  bc5vii4Ar.F
+Now processing  bc5vii.F
+Now processing  bc5viii.f
+Now processing  beta.f
+Now processing  check.f
+Now processing  cons2parm4Ar.f
+Now processing  cons2parm.f
+Now processing  cons2symm.f
+Now processing  eigen_IIbis.F
+Now processing  eigen_II.F
+Now processing  eigen_IX.F
+Now processing  eigen_VII.F
+Now processing  eigen_VIII.f
+Now processing  eigen_X.F
+Now processing  eigen_XI.F
+Now processing  eigen_XII.F
+Now processing  EulerIIbis.f
+Now processing  EulerII.F
+Now processing  EulerIX.f
+Now processing  EulerVII.f
+Now processing  EulerVIII.f
+Now processing  EulerX.f
+Now processing  EulerXI.f
+Now processing  EulerXII.f
+Now processing  flxale.f
+Now processing  flxb4.f
+Now processing  flxw2.f
+Now processing  flxw4.f
+Now processing  frame.f
+Now processing  gradprim.f
+Now processing  lagmin.f
+Now processing  linavg.f
+Now processing  linearize.f
+Now processing  MatrixSplitting.f
+Now processing  matsplII.F
+Now processing  matsplIX.F
+Now processing  matsplVII.F
+Now processing  matsplVIII.F
+Now processing  matsplX.F
+Now processing  matsplXI.F
+Now processing  matsplXII.F
+Now processing  parm2charHE.f
+Now processing  parm2cons4Ar.f
+Now processing  parm2cons.f
+Now processing  parm2consSA.f
+Now processing  parm2prim.f
+Now processing  parm2symm.f
+Now processing  pforce.f
+Now processing  pressc.f
+Now processing  pressderiv.f
+Now processing  pressi.f
+Now processing  symm2cons.f
+Now processing  symm2parm.f
+Now processing  transf.f
+Now processing  vstate.f
+Now processing  wall.f
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/navier-stokes
+
+Now processing  bvsflx2.f
+Now processing  bvsflx4.f
+Now processing  laminar.f
+Now processing  sutherlaw.f
+Now processing  vsflx2.f
+Now processing  vsflx4.f
+Now processing  wskin.F
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/util
+
+Now processing  binsrc.f
+Now processing  cross_prod.f
+Now processing  csrfmt.f
+Now processing  dinit.f
+Now processing  div.f
+Now processing  dump.f
+Now processing  factorial.f
+Now processing  gauss.f
+Now processing  getunit.f
+Now processing  i4rank.f
+Now processing  icopy.f
+Now processing  icycl.f
+Now processing  igthr.f
+Now processing  iinit.f
+Now processing  isctr.f
+Now processing  isdmin.f
+Now processing  isortrx.f
+Now processing  jcycl.f
+Now processing  lenstr.f
+Now processing  ludeco.f
+Now processing  lusolv.f
+Now processing  matins.f
+Now processing  matsub.f
+Now processing  matsum.f
+Now processing  matvec.f
+Now processing  mlusol.f
+Now processing  mlusolx.f
+Now processing  mmio.f
+Now processing  nullmat.f
+Now processing  print.f
+Now processing  qsort2.f
+Now processing  qsorti.f
+Now processing  quadrature.f
+Now processing  r8rank.f
+Now processing  reordr.f
+Now processing  rg.f
+Now processing  rnkidx.f
+Now processing  simpson.f
+Now processing  store.f
+Now processing  tecplot.f
+Uh! Oh! the current head 1.2 is NOT in the release  tecplot.f 1.1
+check tecplot.f in /home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/util
+Now processing  test.f
+Now processing  toms380.f
+Now processing  trapezium.f
+Now processing  triangulation_order3_adj_count.f
+Now processing  unitmat.f
+Now processing  xgemv.f
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/geometry
+
+Now processing  aratio.f
+Now processing  avgflx.f
+Now processing  backup.f
+Now processing  bndchk.f
+Now processing  cdist.f
+Now processing  celnhb.f
+Now processing  celptr.f
+Now processing  chkflx2.f
+Now processing  chkflx.f
+Now processing  chkgcl.f
+Now processing  chkint.f
+Now processing  ff.f
+Now processing  getvol.f
+Now processing  MatGetSizeSeq.f
+Now processing  median.f
+Now processing  motion_type.f
+Now processing  mshcnt.F
+Now processing  nodcod.f
+Now processing  periodic.F
+Now processing  probe.f
+Now processing  rankcl.f
+Now processing  rotate.f
+Now processing  seg3d.f
+Now processing  setbndflxptr.f
+Now processing  setpto.f
+Now processing  subyy.f
+Now processing  subyz.f
+Now processing  updtp.f
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/schemes
+
+Now processing  CDS.f
+Now processing  FCT_scheme.F
+Now processing  FV_scheme.f
+Now processing  FVSys_scheme.f
+Now processing  LDA2_scheme.f
+Now processing  LDA2Sys_scheme.F
+Now processing  LDA_scheme.f
+Now processing  LDAS_fast.F
+Now processing  LDASqr_scheme.f
+Now processing  LDASys_scheme.F
+Now processing  limiters.f
+Now processing  LSSys_scheme.F
+Now processing  LW2_scheme.f
+Now processing  LWaSys_scheme.F
+Now processing  LWbSys_scheme.F
+Now processing  LW_scheme.f
+Now processing  LWSys_scheme.F
+Now processing  NL2_scheme.f
+Now processing  NL_scheme.f
+Now processing  N_scheme.f
+Now processing  NS_scheme.f
+Now processing  NSys_scheme.f
+Now processing  petsc_kernel.c
+Now processing  PSI_scheme.f
+Now processing  SDK_scheme.f
+Now processing  SUPG_scheme.f
+Now processing  UCVSys_scheme.F
+Now processing  unsteady1.f
+Now processing  unsteady2.F
+Now processing  unsteady4.F
+Now processing  VKIB_scheme.F
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/scalar
+
+Now processing  advect.f
+Now processing  laplace4motion.f
+Now processing  laplace.f
+Now processing  scalar.f
+Now processing  source.f
+Now processing  tdummy.f
+Now processing  visco.f
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/turbo
+
+Now processing  limitvisct.f
+Now processing  sa7.F
+Now processing  sa8.F
+Now processing  sa.F
+Now processing  sa_neg_Bassi.F
+Now processing  tbdest.f
+Now processing  tbdiff.f
+Now processing  tbprod.f
+Now processing  tbtrip.f
+Now processing  tdiff.f
+Now processing  tdu.f
+Now processing  tft1.f
+Now processing  tft2.f
+Now processing  tfv1.f
+Now processing  tfv2.f
+Now processing  tfv3.f
+Now processing  tfw.f
+Now processing  tgt.f
+Now processing  tindx.F
+Now processing  tsa1.f
+Now processing  tsa.f
+Now processing  tsc.f
+Now processing  tsetup.f
+Now processing  turbcomp.F
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/chemistry
+
+Now processing  boltzeq4Ar.f
+Now processing  currentflux.F
+Now processing  iondegree4Ar.f
+Now processing  plasflow_inf.f
+Now processing  chemsource.f90
+Now processing  electcond.f90
+Now processing  getsigma.f90
+Now processing  massaction.f90
+Now processing  massactionSU2.f90
+Now processing  ohmsource.f90
+Now processing  rate.f90
+Now processing  readArgon.f90
+Now processing  Makefile
+
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/mpi
+
+Now processing  makefile
+Uh! Oh! the current head 1.29 is NOT in the release  makefile 1.27
+check makefile in /home/abonfi/CFD_codes/eulfs/EulFS.3.14/src/mpi
+/home/abonfi/CFD_codes/eulfs/EulFS.3.14/include
+Now processing  backup.com
+Now processing  blkEulerII.com
+Now processing  bnd.com
+Now processing  bodyf.com
+Now processing  chorin.com
+Now processing  conv.com
+Now processing  dofs.com
+Now processing  electric.com
+Now processing  flags.com
+Now processing  four.com
+Now processing  frame.com
+Now processing  ibc2.com
+Now processing  ibc8.com
+Now processing  io.com
+Now processing  ioplasma.com
+Now processing  iset.com
+Now processing  mapping.com
+Now processing  merkle.com
+Now processing  myts.com
+Now processing  nboun.com
+Now processing  newtoneps.com
+Now processing  nloc.com
+Now processing  periodic.com
+Now processing  pfcgas.com
+Now processing  sa.com
+Now processing  scalar.com
+Now processing  solver.com
+Now processing  stack.com
+Now processing  stream.com
+Now processing  streamplasma.com
+Now processing  suther.com
+Now processing  tauchem.com
+Now processing  tdebug.com
+Now processing  three.com
+Now processing  time.com
+Now processing  transf.com
+Now processing  trip.com
+Now processing  turb.com
+Now processing  verbose.com
+Now processing  visco.com
+Now processing  bctype.h
+Now processing  bnd.h
+Now processing  chem.h
+Now processing  constants.h
+Now processing  datatype.h
+Now processing  es.h
+Now processing  implicit.h
+Now processing  iset.h
+Now processing  paramchem.h
+Now processing  paramt.h
+Now processing  plasma.h
+Now processing  strlen.h
+Now processing  time.h
+Now processing  visco.h
+Now processing  commonchem.inc
+Now processing  commonv.inc

@@ -1,0 +1,368 @@
+\hypertarget{poisson_8f90}{}\doxysection{src/util/poisson.f90 File Reference}
+\label{poisson_8f90}\index{src/util/poisson.f90@{src/util/poisson.f90}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ae097c00290b9206a99425e5229fe9848}{assemble\+\_\+poisson\+\_\+dsp}} (node\+\_\+num, node\+\_\+xy, element\+\_\+num, element\+\_\+node, quad\+\_\+num, nz\+\_\+num, ia, ja, a, f)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a08bd44aff36e6bb296782a1c161be846}{ax}} (a, ia, ja, x, w, n, nz\+\_\+num)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_aa522617a5e01c5c6a138192ee4464e34}{basis\+\_\+one\+\_\+t3}} (t, i, p, qi, dqidx, dqidy)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a66d0117e856a9033dbc7ca0e0e14b108}{ch\+\_\+cap}} (c)
+\item 
+logical function \mbox{\hyperlink{poisson_8f90_a53ad290015d4cc09c50131bfa098fb75}{ch\+\_\+eqi}} (c1, c2)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a0ca60e4f88245bd5e6917429b6701a51}{ch\+\_\+to\+\_\+digit}} (c, digit)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a83c6db59216b57125d5d2db4c6e3e96e}{dirichlet\+\_\+apply\+\_\+dsp}} (node\+\_\+num, node\+\_\+xy, node\+\_\+condition, nz\+\_\+num, ia, ja, a, f)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a44fc15677959adfe66c28251a54386f4}{dsp\+\_\+ij\+\_\+to\+\_\+k}} (nz\+\_\+num, row, col, i, j, k)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a2c15c43705feb834222ac92636008ce3}{dsp\+\_\+print\+\_\+some}} (m, n, nz\+\_\+num, row, col, a, ilo, jlo, ihi, jhi, title)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_aba01cfaaefb164fb0f90dd5893963977}{file\+\_\+column\+\_\+count}} (input\+\_\+file\+\_\+name, column\+\_\+num)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ab2c344d67824b309576cf3ed7c395b15}{file\+\_\+name\+\_\+specification}} (node\+\_\+file\+\_\+name, element\+\_\+file\+\_\+name)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a82f40e8222943a3ff3d18e751d549496}{file\+\_\+row\+\_\+count}} (input\+\_\+file\+\_\+name, row\+\_\+num)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ab3d74dfd668c8e03f54fe0e48b09bb6f}{get\+\_\+unit}} (iunit)
+\item 
+integer(kind=4) function \mbox{\hyperlink{poisson_8f90_ac40458fc12d558d069cc441ada098509}{i4\+\_\+huge}} ()
+\item 
+integer(kind=4) function \mbox{\hyperlink{poisson_8f90_a0131d5af857c2fb71b3caef5b4d9ceeb}{i4\+\_\+modp}} (i, j)
+\item 
+integer(kind=4) function \mbox{\hyperlink{poisson_8f90_ac61a0f65095703972a5a5455756d297b}{i4\+\_\+wrap}} (ival, ilo, ihi)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_af0365ef94f6fae936eaed5c241a82f7d}{i4mat\+\_\+transpose\+\_\+print\+\_\+some}} (m, n, a, ilo, jlo, ihi, jhi, title)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a9c91ee219d86ec6737494f15f971638a}{i4vec2\+\_\+compare}} (n, a1, a2, i, j, isgn)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a641a5566bde121ff8c434c58d138232f}{i4vec2\+\_\+sort\+\_\+a}} (n, a1, a2)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a2e38fbc4657b2d5042030f2ae14ee80a}{i4mat\+\_\+data\+\_\+read}} (input\+\_\+filename, m, n, table)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ac0ae8c7c6caca9b0c495c0e7542b9a7b}{i4mat\+\_\+header\+\_\+read}} (input\+\_\+filename, m, n)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_abb23829ee7d1fa4b6c03522771aa4557}{mgmres}} (a, ia, ja, x, rhs, n, nz\+\_\+num, itr\+\_\+max, mr, tol\+\_\+abs, tol\+\_\+rel)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ae76858d1e9e690d3169133879584c42a}{mult\+\_\+givens}} (c, s, k, g)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_adaa917742348d19997acd43cfa176cbe}{points\+\_\+plot}} (file\+\_\+name, node\+\_\+num, node\+\_\+xy, node\+\_\+label)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ac43f956658bbd42e6aaca35cccd7e280}{quad\+\_\+rule}} (quad\+\_\+num, quad\+\_\+w, quad\+\_\+xy)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a93d9e2421331553bb98e4188e5636d21}{r8mat\+\_\+data\+\_\+read}} (input\+\_\+filename, m, n, table)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a4022c9afc1952e8b428d33ca81082f78}{r8mat\+\_\+header\+\_\+read}} (input\+\_\+filename, m, n)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a5c1f708a0ab66b53b50da10a229fd53c}{r8mat\+\_\+transpose\+\_\+print\+\_\+some}} (m, n, a, ilo, jlo, ihi, jhi, title)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ae9356dc5631a66268b5d8216389a57a0}{r8mat\+\_\+write}} (output\+\_\+filename, m, n, table)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ae3f9535154856f9144f113d8abf55de6}{r8vec\+\_\+print\+\_\+some}} (n, a, i\+\_\+lo, i\+\_\+hi, title)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a5e64b19c036489d0c15f5a2c7ba0e216}{r8vec\+\_\+uniform\+\_\+01}} (n, seed, r)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a236c0fa4f764327123209712fae6fab6}{reference\+\_\+to\+\_\+physical\+\_\+t3}} (t, n, ref, phy)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_afeeae57d6c8b5f27d7d5c9762454d18f}{s\+\_\+to\+\_\+i4}} (s, ival, ierror, length)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a978b74ca205924c5a305fc69a9a5dc52}{s\+\_\+to\+\_\+i4vec}} (s, n, ivec, ierror)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a84f9c4767fccd2bf9acdd90495dc5f82}{s\+\_\+to\+\_\+r8}} (s, dval, ierror, length)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a2443e166eb25f2dae58619e79b1cc28c}{s\+\_\+to\+\_\+r8vec}} (s, n, rvec, ierror)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a4911d8c2b552675e87b4aaf51e6fd394}{s\+\_\+word\+\_\+count}} (s, nword)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a5398f40fc4a62bb5995fde00c48520e5}{solution\+\_\+evaluate}} (xy, t, node\+\_\+u, u, dudx, dudy)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a44fdaa08281ed3009542bc9257fa965d}{timestamp}} ()
+\item 
+real(kind=8) function \mbox{\hyperlink{poisson_8f90_af922111da7d410875c13a186bdc4220d}{triangle\+\_\+area\+\_\+2d}} (t)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a763aa20723e3c0538a74122bdc32030a}{triangulation\+\_\+order3\+\_\+adj\+\_\+countf90}} (node\+\_\+num, triangle\+\_\+num, triangle\+\_\+node, triangle\+\_\+neighbor, adj\+\_\+num, adj\+\_\+col)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_aac69632f37084097cf57a6063b8976b9}{triangulation\+\_\+order3\+\_\+adj\+\_\+set2}} (node\+\_\+num, triangle\+\_\+num, triangle\+\_\+node, triangle\+\_\+neighbor, adj\+\_\+num, adj\+\_\+col, ia, ja)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a99ff27d74f66de1e97e4ead5556143eb}{triangulation\+\_\+order3\+\_\+boundary\+\_\+node}} (node\+\_\+num, element\+\_\+num, element\+\_\+node, node\+\_\+boundary)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_ae554b2ef422433f3f67cf381e301eb12}{triangulation\+\_\+order3\+\_\+neighbor\+\_\+triangles}} (triangle\+\_\+num, triangle\+\_\+node, triangle\+\_\+neighbor)
+\item 
+subroutine \mbox{\hyperlink{poisson_8f90_a7b63ca6d359e36637b6946a7361826da}{triangulation\+\_\+order3\+\_\+plot}} (file\+\_\+name, node\+\_\+num, node\+\_\+xy, element\+\_\+num, element\+\_\+node, node\+\_\+show, element\+\_\+show)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{poisson_8f90_ae097c00290b9206a99425e5229fe9848}\label{poisson_8f90_ae097c00290b9206a99425e5229fe9848}} 
+\index{poisson.f90@{poisson.f90}!assemble\_poisson\_dsp@{assemble\_poisson\_dsp}}
+\index{assemble\_poisson\_dsp@{assemble\_poisson\_dsp}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{assemble\_poisson\_dsp()}{assemble\_poisson\_dsp()}}
+{\footnotesize\ttfamily subroutine assemble\+\_\+poisson\+\_\+dsp (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{real ( kind = 8 ), dimension(2,node\+\_\+num)}]{node\+\_\+xy,  }\item[{integer ( kind = 4 )}]{element\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(3,element\+\_\+num)}]{element\+\_\+node,  }\item[{integer ( kind = 4 )}]{quad\+\_\+num,  }\item[{integer ( kind = 4 )}]{nz\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ia,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ja,  }\item[{real ( kind = 8 ), dimension(nz\+\_\+num)}]{a,  }\item[{real ( kind = 8 ), dimension(node\+\_\+num)}]{f }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a08bd44aff36e6bb296782a1c161be846}\label{poisson_8f90_a08bd44aff36e6bb296782a1c161be846}} 
+\index{poisson.f90@{poisson.f90}!ax@{ax}}
+\index{ax@{ax}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{ax()}{ax()}}
+{\footnotesize\ttfamily subroutine ax (\begin{DoxyParamCaption}\item[{real ( kind = 8 ), dimension(nz\+\_\+num)}]{a,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ia,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ja,  }\item[{real ( kind = 8 ), dimension(n)}]{x,  }\item[{real ( kind = 8 ), dimension(n)}]{w,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 )}]{nz\+\_\+num }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_aa522617a5e01c5c6a138192ee4464e34}\label{poisson_8f90_aa522617a5e01c5c6a138192ee4464e34}} 
+\index{poisson.f90@{poisson.f90}!basis\_one\_t3@{basis\_one\_t3}}
+\index{basis\_one\_t3@{basis\_one\_t3}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{basis\_one\_t3()}{basis\_one\_t3()}}
+{\footnotesize\ttfamily subroutine basis\+\_\+one\+\_\+t3 (\begin{DoxyParamCaption}\item[{real ( kind = 8 ), dimension(2,3)}]{t,  }\item[{integer ( kind = 4 )}]{i,  }\item[{real ( kind = 8 ), dimension(2)}]{p,  }\item[{real ( kind = 8 )}]{qi,  }\item[{real ( kind = 8 )}]{dqidx,  }\item[{real ( kind = 8 )}]{dqidy }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a66d0117e856a9033dbc7ca0e0e14b108}\label{poisson_8f90_a66d0117e856a9033dbc7ca0e0e14b108}} 
+\index{poisson.f90@{poisson.f90}!ch\_cap@{ch\_cap}}
+\index{ch\_cap@{ch\_cap}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{ch\_cap()}{ch\_cap()}}
+{\footnotesize\ttfamily subroutine ch\+\_\+cap (\begin{DoxyParamCaption}\item[{character}]{c }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a53ad290015d4cc09c50131bfa098fb75}\label{poisson_8f90_a53ad290015d4cc09c50131bfa098fb75}} 
+\index{poisson.f90@{poisson.f90}!ch\_eqi@{ch\_eqi}}
+\index{ch\_eqi@{ch\_eqi}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{ch\_eqi()}{ch\_eqi()}}
+{\footnotesize\ttfamily logical function ch\+\_\+eqi (\begin{DoxyParamCaption}\item[{character}]{c1,  }\item[{character}]{c2 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a0ca60e4f88245bd5e6917429b6701a51}\label{poisson_8f90_a0ca60e4f88245bd5e6917429b6701a51}} 
+\index{poisson.f90@{poisson.f90}!ch\_to\_digit@{ch\_to\_digit}}
+\index{ch\_to\_digit@{ch\_to\_digit}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{ch\_to\_digit()}{ch\_to\_digit()}}
+{\footnotesize\ttfamily subroutine ch\+\_\+to\+\_\+digit (\begin{DoxyParamCaption}\item[{character}]{c,  }\item[{integer ( kind = 4 )}]{digit }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a83c6db59216b57125d5d2db4c6e3e96e}\label{poisson_8f90_a83c6db59216b57125d5d2db4c6e3e96e}} 
+\index{poisson.f90@{poisson.f90}!dirichlet\_apply\_dsp@{dirichlet\_apply\_dsp}}
+\index{dirichlet\_apply\_dsp@{dirichlet\_apply\_dsp}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{dirichlet\_apply\_dsp()}{dirichlet\_apply\_dsp()}}
+{\footnotesize\ttfamily subroutine dirichlet\+\_\+apply\+\_\+dsp (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{real ( kind = 8 ), dimension(2,node\+\_\+num)}]{node\+\_\+xy,  }\item[{integer ( kind = 4 ), dimension(node\+\_\+num)}]{node\+\_\+condition,  }\item[{integer ( kind = 4 )}]{nz\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ia,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ja,  }\item[{real ( kind = 8 ), dimension(nz\+\_\+num)}]{a,  }\item[{real ( kind = 8 ), dimension(node\+\_\+num)}]{f }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a44fc15677959adfe66c28251a54386f4}\label{poisson_8f90_a44fc15677959adfe66c28251a54386f4}} 
+\index{poisson.f90@{poisson.f90}!dsp\_ij\_to\_k@{dsp\_ij\_to\_k}}
+\index{dsp\_ij\_to\_k@{dsp\_ij\_to\_k}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{dsp\_ij\_to\_k()}{dsp\_ij\_to\_k()}}
+{\footnotesize\ttfamily subroutine dsp\+\_\+ij\+\_\+to\+\_\+k (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{nz\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{row,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{col,  }\item[{integer ( kind = 4 )}]{i,  }\item[{integer ( kind = 4 )}]{j,  }\item[{integer ( kind = 4 )}]{k }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a2c15c43705feb834222ac92636008ce3}\label{poisson_8f90_a2c15c43705feb834222ac92636008ce3}} 
+\index{poisson.f90@{poisson.f90}!dsp\_print\_some@{dsp\_print\_some}}
+\index{dsp\_print\_some@{dsp\_print\_some}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{dsp\_print\_some()}{dsp\_print\_some()}}
+{\footnotesize\ttfamily subroutine dsp\+\_\+print\+\_\+some (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 )}]{nz\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{row,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{col,  }\item[{real ( kind = 8 ), dimension(nz\+\_\+num)}]{a,  }\item[{integer ( kind = 4 )}]{ilo,  }\item[{integer ( kind = 4 )}]{jlo,  }\item[{integer ( kind = 4 )}]{ihi,  }\item[{integer ( kind = 4 )}]{jhi,  }\item[{character ( len = $\ast$ )}]{title }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_aba01cfaaefb164fb0f90dd5893963977}\label{poisson_8f90_aba01cfaaefb164fb0f90dd5893963977}} 
+\index{poisson.f90@{poisson.f90}!file\_column\_count@{file\_column\_count}}
+\index{file\_column\_count@{file\_column\_count}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{file\_column\_count()}{file\_column\_count()}}
+{\footnotesize\ttfamily subroutine file\+\_\+column\+\_\+count (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{input\+\_\+file\+\_\+name,  }\item[{integer ( kind = 4 )}]{column\+\_\+num }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ab2c344d67824b309576cf3ed7c395b15}\label{poisson_8f90_ab2c344d67824b309576cf3ed7c395b15}} 
+\index{poisson.f90@{poisson.f90}!file\_name\_specification@{file\_name\_specification}}
+\index{file\_name\_specification@{file\_name\_specification}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{file\_name\_specification()}{file\_name\_specification()}}
+{\footnotesize\ttfamily subroutine file\+\_\+name\+\_\+specification (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{node\+\_\+file\+\_\+name,  }\item[{character ( len = $\ast$ )}]{element\+\_\+file\+\_\+name }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a82f40e8222943a3ff3d18e751d549496}\label{poisson_8f90_a82f40e8222943a3ff3d18e751d549496}} 
+\index{poisson.f90@{poisson.f90}!file\_row\_count@{file\_row\_count}}
+\index{file\_row\_count@{file\_row\_count}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{file\_row\_count()}{file\_row\_count()}}
+{\footnotesize\ttfamily subroutine file\+\_\+row\+\_\+count (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{input\+\_\+file\+\_\+name,  }\item[{integer ( kind = 4 )}]{row\+\_\+num }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ab3d74dfd668c8e03f54fe0e48b09bb6f}\label{poisson_8f90_ab3d74dfd668c8e03f54fe0e48b09bb6f}} 
+\index{poisson.f90@{poisson.f90}!get\_unit@{get\_unit}}
+\index{get\_unit@{get\_unit}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{get\_unit()}{get\_unit()}}
+{\footnotesize\ttfamily subroutine get\+\_\+unit (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{iunit }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ac40458fc12d558d069cc441ada098509}\label{poisson_8f90_ac40458fc12d558d069cc441ada098509}} 
+\index{poisson.f90@{poisson.f90}!i4\_huge@{i4\_huge}}
+\index{i4\_huge@{i4\_huge}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4\_huge()}{i4\_huge()}}
+{\footnotesize\ttfamily integer ( kind = 4 ) function i4\+\_\+huge (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a0131d5af857c2fb71b3caef5b4d9ceeb}\label{poisson_8f90_a0131d5af857c2fb71b3caef5b4d9ceeb}} 
+\index{poisson.f90@{poisson.f90}!i4\_modp@{i4\_modp}}
+\index{i4\_modp@{i4\_modp}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4\_modp()}{i4\_modp()}}
+{\footnotesize\ttfamily integer ( kind = 4 ) function i4\+\_\+modp (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{i,  }\item[{integer ( kind = 4 )}]{j }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ac61a0f65095703972a5a5455756d297b}\label{poisson_8f90_ac61a0f65095703972a5a5455756d297b}} 
+\index{poisson.f90@{poisson.f90}!i4\_wrap@{i4\_wrap}}
+\index{i4\_wrap@{i4\_wrap}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4\_wrap()}{i4\_wrap()}}
+{\footnotesize\ttfamily integer ( kind = 4 ) function i4\+\_\+wrap (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{ival,  }\item[{integer ( kind = 4 )}]{ilo,  }\item[{integer ( kind = 4 )}]{ihi }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a2e38fbc4657b2d5042030f2ae14ee80a}\label{poisson_8f90_a2e38fbc4657b2d5042030f2ae14ee80a}} 
+\index{poisson.f90@{poisson.f90}!i4mat\_data\_read@{i4mat\_data\_read}}
+\index{i4mat\_data\_read@{i4mat\_data\_read}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4mat\_data\_read()}{i4mat\_data\_read()}}
+{\footnotesize\ttfamily subroutine i4mat\+\_\+data\+\_\+read (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{input\+\_\+filename,  }\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(m,n)}]{table }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ac0ae8c7c6caca9b0c495c0e7542b9a7b}\label{poisson_8f90_ac0ae8c7c6caca9b0c495c0e7542b9a7b}} 
+\index{poisson.f90@{poisson.f90}!i4mat\_header\_read@{i4mat\_header\_read}}
+\index{i4mat\_header\_read@{i4mat\_header\_read}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4mat\_header\_read()}{i4mat\_header\_read()}}
+{\footnotesize\ttfamily subroutine i4mat\+\_\+header\+\_\+read (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{input\+\_\+filename,  }\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_af0365ef94f6fae936eaed5c241a82f7d}\label{poisson_8f90_af0365ef94f6fae936eaed5c241a82f7d}} 
+\index{poisson.f90@{poisson.f90}!i4mat\_transpose\_print\_some@{i4mat\_transpose\_print\_some}}
+\index{i4mat\_transpose\_print\_some@{i4mat\_transpose\_print\_some}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4mat\_transpose\_print\_some()}{i4mat\_transpose\_print\_some()}}
+{\footnotesize\ttfamily subroutine i4mat\+\_\+transpose\+\_\+print\+\_\+some (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(m,n)}]{a,  }\item[{integer ( kind = 4 )}]{ilo,  }\item[{integer ( kind = 4 )}]{jlo,  }\item[{integer ( kind = 4 )}]{ihi,  }\item[{integer ( kind = 4 )}]{jhi,  }\item[{character ( len = $\ast$ )}]{title }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a9c91ee219d86ec6737494f15f971638a}\label{poisson_8f90_a9c91ee219d86ec6737494f15f971638a}} 
+\index{poisson.f90@{poisson.f90}!i4vec2\_compare@{i4vec2\_compare}}
+\index{i4vec2\_compare@{i4vec2\_compare}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4vec2\_compare()}{i4vec2\_compare()}}
+{\footnotesize\ttfamily subroutine i4vec2\+\_\+compare (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(n)}]{a1,  }\item[{integer ( kind = 4 ), dimension(n)}]{a2,  }\item[{integer ( kind = 4 )}]{i,  }\item[{integer ( kind = 4 )}]{j,  }\item[{integer ( kind = 4 )}]{isgn }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a641a5566bde121ff8c434c58d138232f}\label{poisson_8f90_a641a5566bde121ff8c434c58d138232f}} 
+\index{poisson.f90@{poisson.f90}!i4vec2\_sort\_a@{i4vec2\_sort\_a}}
+\index{i4vec2\_sort\_a@{i4vec2\_sort\_a}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{i4vec2\_sort\_a()}{i4vec2\_sort\_a()}}
+{\footnotesize\ttfamily subroutine i4vec2\+\_\+sort\+\_\+a (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(n)}]{a1,  }\item[{integer ( kind = 4 ), dimension(n)}]{a2 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_abb23829ee7d1fa4b6c03522771aa4557}\label{poisson_8f90_abb23829ee7d1fa4b6c03522771aa4557}} 
+\index{poisson.f90@{poisson.f90}!mgmres@{mgmres}}
+\index{mgmres@{mgmres}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{mgmres()}{mgmres()}}
+{\footnotesize\ttfamily subroutine mgmres (\begin{DoxyParamCaption}\item[{real ( kind = 8 ), dimension(nz\+\_\+num)}]{a,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ia,  }\item[{integer ( kind = 4 ), dimension(nz\+\_\+num)}]{ja,  }\item[{real ( kind = 8 ), dimension(1\+:n)}]{x,  }\item[{real ( kind = 8 ), dimension(1\+:n)}]{rhs,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 )}]{nz\+\_\+num,  }\item[{integer ( kind = 4 )}]{itr\+\_\+max,  }\item[{integer ( kind = 4 )}]{mr,  }\item[{real ( kind = 8 )}]{tol\+\_\+abs,  }\item[{real ( kind = 8 )}]{tol\+\_\+rel }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ae76858d1e9e690d3169133879584c42a}\label{poisson_8f90_ae76858d1e9e690d3169133879584c42a}} 
+\index{poisson.f90@{poisson.f90}!mult\_givens@{mult\_givens}}
+\index{mult\_givens@{mult\_givens}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{mult\_givens()}{mult\_givens()}}
+{\footnotesize\ttfamily subroutine mult\+\_\+givens (\begin{DoxyParamCaption}\item[{real ( kind = 8 )}]{c,  }\item[{real ( kind = 8 )}]{s,  }\item[{integer ( kind = 4 )}]{k,  }\item[{real ( kind = 8 ), dimension(1\+:k+1)}]{g }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_adaa917742348d19997acd43cfa176cbe}\label{poisson_8f90_adaa917742348d19997acd43cfa176cbe}} 
+\index{poisson.f90@{poisson.f90}!points\_plot@{points\_plot}}
+\index{points\_plot@{points\_plot}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{points\_plot()}{points\_plot()}}
+{\footnotesize\ttfamily subroutine points\+\_\+plot (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{file\+\_\+name,  }\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{real ( kind = 8 ), dimension(2,node\+\_\+num)}]{node\+\_\+xy,  }\item[{logical}]{node\+\_\+label }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ac43f956658bbd42e6aaca35cccd7e280}\label{poisson_8f90_ac43f956658bbd42e6aaca35cccd7e280}} 
+\index{poisson.f90@{poisson.f90}!quad\_rule@{quad\_rule}}
+\index{quad\_rule@{quad\_rule}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{quad\_rule()}{quad\_rule()}}
+{\footnotesize\ttfamily subroutine quad\+\_\+rule (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{quad\+\_\+num,  }\item[{real ( kind = 8 ), dimension(quad\+\_\+num)}]{quad\+\_\+w,  }\item[{real ( kind = 8 ), dimension(dim\+\_\+num,quad\+\_\+num)}]{quad\+\_\+xy }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a93d9e2421331553bb98e4188e5636d21}\label{poisson_8f90_a93d9e2421331553bb98e4188e5636d21}} 
+\index{poisson.f90@{poisson.f90}!r8mat\_data\_read@{r8mat\_data\_read}}
+\index{r8mat\_data\_read@{r8mat\_data\_read}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{r8mat\_data\_read()}{r8mat\_data\_read()}}
+{\footnotesize\ttfamily subroutine r8mat\+\_\+data\+\_\+read (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{input\+\_\+filename,  }\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{real ( kind = 8 ), dimension(m,n)}]{table }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a4022c9afc1952e8b428d33ca81082f78}\label{poisson_8f90_a4022c9afc1952e8b428d33ca81082f78}} 
+\index{poisson.f90@{poisson.f90}!r8mat\_header\_read@{r8mat\_header\_read}}
+\index{r8mat\_header\_read@{r8mat\_header\_read}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{r8mat\_header\_read()}{r8mat\_header\_read()}}
+{\footnotesize\ttfamily subroutine r8mat\+\_\+header\+\_\+read (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{input\+\_\+filename,  }\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a5c1f708a0ab66b53b50da10a229fd53c}\label{poisson_8f90_a5c1f708a0ab66b53b50da10a229fd53c}} 
+\index{poisson.f90@{poisson.f90}!r8mat\_transpose\_print\_some@{r8mat\_transpose\_print\_some}}
+\index{r8mat\_transpose\_print\_some@{r8mat\_transpose\_print\_some}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{r8mat\_transpose\_print\_some()}{r8mat\_transpose\_print\_some()}}
+{\footnotesize\ttfamily subroutine r8mat\+\_\+transpose\+\_\+print\+\_\+some (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{real ( kind = 8 ), dimension(m,n)}]{a,  }\item[{integer ( kind = 4 )}]{ilo,  }\item[{integer ( kind = 4 )}]{jlo,  }\item[{integer ( kind = 4 )}]{ihi,  }\item[{integer ( kind = 4 )}]{jhi,  }\item[{character ( len = $\ast$ )}]{title }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ae9356dc5631a66268b5d8216389a57a0}\label{poisson_8f90_ae9356dc5631a66268b5d8216389a57a0}} 
+\index{poisson.f90@{poisson.f90}!r8mat\_write@{r8mat\_write}}
+\index{r8mat\_write@{r8mat\_write}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{r8mat\_write()}{r8mat\_write()}}
+{\footnotesize\ttfamily subroutine r8mat\+\_\+write (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{output\+\_\+filename,  }\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{real ( kind = 8 ), dimension(m,n)}]{table }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ae3f9535154856f9144f113d8abf55de6}\label{poisson_8f90_ae3f9535154856f9144f113d8abf55de6}} 
+\index{poisson.f90@{poisson.f90}!r8vec\_print\_some@{r8vec\_print\_some}}
+\index{r8vec\_print\_some@{r8vec\_print\_some}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{r8vec\_print\_some()}{r8vec\_print\_some()}}
+{\footnotesize\ttfamily subroutine r8vec\+\_\+print\+\_\+some (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{n,  }\item[{real ( kind = 8 ), dimension(n)}]{a,  }\item[{integer ( kind = 4 )}]{i\+\_\+lo,  }\item[{integer ( kind = 4 )}]{i\+\_\+hi,  }\item[{character ( len = $\ast$ )}]{title }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a5e64b19c036489d0c15f5a2c7ba0e216}\label{poisson_8f90_a5e64b19c036489d0c15f5a2c7ba0e216}} 
+\index{poisson.f90@{poisson.f90}!r8vec\_uniform\_01@{r8vec\_uniform\_01}}
+\index{r8vec\_uniform\_01@{r8vec\_uniform\_01}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{r8vec\_uniform\_01()}{r8vec\_uniform\_01()}}
+{\footnotesize\ttfamily subroutine r8vec\+\_\+uniform\+\_\+01 (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 )}]{seed,  }\item[{real ( kind = 8 ), dimension(n)}]{r }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a236c0fa4f764327123209712fae6fab6}\label{poisson_8f90_a236c0fa4f764327123209712fae6fab6}} 
+\index{poisson.f90@{poisson.f90}!reference\_to\_physical\_t3@{reference\_to\_physical\_t3}}
+\index{reference\_to\_physical\_t3@{reference\_to\_physical\_t3}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{reference\_to\_physical\_t3()}{reference\_to\_physical\_t3()}}
+{\footnotesize\ttfamily subroutine reference\+\_\+to\+\_\+physical\+\_\+t3 (\begin{DoxyParamCaption}\item[{real ( kind = 8 ), dimension(2,3)}]{t,  }\item[{integer ( kind = 4 )}]{n,  }\item[{real ( kind = 8 ), dimension(2,n)}]{ref,  }\item[{real ( kind = 8 ), dimension(2,n)}]{phy }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_afeeae57d6c8b5f27d7d5c9762454d18f}\label{poisson_8f90_afeeae57d6c8b5f27d7d5c9762454d18f}} 
+\index{poisson.f90@{poisson.f90}!s\_to\_i4@{s\_to\_i4}}
+\index{s\_to\_i4@{s\_to\_i4}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{s\_to\_i4()}{s\_to\_i4()}}
+{\footnotesize\ttfamily subroutine s\+\_\+to\+\_\+i4 (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{s,  }\item[{integer ( kind = 4 )}]{ival,  }\item[{integer ( kind = 4 )}]{ierror,  }\item[{integer ( kind = 4 )}]{length }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a978b74ca205924c5a305fc69a9a5dc52}\label{poisson_8f90_a978b74ca205924c5a305fc69a9a5dc52}} 
+\index{poisson.f90@{poisson.f90}!s\_to\_i4vec@{s\_to\_i4vec}}
+\index{s\_to\_i4vec@{s\_to\_i4vec}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{s\_to\_i4vec()}{s\_to\_i4vec()}}
+{\footnotesize\ttfamily subroutine s\+\_\+to\+\_\+i4vec (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{s,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(n)}]{ivec,  }\item[{integer ( kind = 4 )}]{ierror }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a84f9c4767fccd2bf9acdd90495dc5f82}\label{poisson_8f90_a84f9c4767fccd2bf9acdd90495dc5f82}} 
+\index{poisson.f90@{poisson.f90}!s\_to\_r8@{s\_to\_r8}}
+\index{s\_to\_r8@{s\_to\_r8}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{s\_to\_r8()}{s\_to\_r8()}}
+{\footnotesize\ttfamily subroutine s\+\_\+to\+\_\+r8 (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{s,  }\item[{real ( kind = 8 )}]{dval,  }\item[{integer ( kind = 4 )}]{ierror,  }\item[{integer ( kind = 4 )}]{length }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a2443e166eb25f2dae58619e79b1cc28c}\label{poisson_8f90_a2443e166eb25f2dae58619e79b1cc28c}} 
+\index{poisson.f90@{poisson.f90}!s\_to\_r8vec@{s\_to\_r8vec}}
+\index{s\_to\_r8vec@{s\_to\_r8vec}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{s\_to\_r8vec()}{s\_to\_r8vec()}}
+{\footnotesize\ttfamily subroutine s\+\_\+to\+\_\+r8vec (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{s,  }\item[{integer ( kind = 4 )}]{n,  }\item[{real ( kind = 8 ), dimension(n)}]{rvec,  }\item[{integer ( kind = 4 )}]{ierror }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a4911d8c2b552675e87b4aaf51e6fd394}\label{poisson_8f90_a4911d8c2b552675e87b4aaf51e6fd394}} 
+\index{poisson.f90@{poisson.f90}!s\_word\_count@{s\_word\_count}}
+\index{s\_word\_count@{s\_word\_count}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{s\_word\_count()}{s\_word\_count()}}
+{\footnotesize\ttfamily subroutine s\+\_\+word\+\_\+count (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{s,  }\item[{integer ( kind = 4 )}]{nword }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a5398f40fc4a62bb5995fde00c48520e5}\label{poisson_8f90_a5398f40fc4a62bb5995fde00c48520e5}} 
+\index{poisson.f90@{poisson.f90}!solution\_evaluate@{solution\_evaluate}}
+\index{solution\_evaluate@{solution\_evaluate}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{solution\_evaluate()}{solution\_evaluate()}}
+{\footnotesize\ttfamily subroutine solution\+\_\+evaluate (\begin{DoxyParamCaption}\item[{real ( kind = 8 ), dimension(2)}]{xy,  }\item[{real ( kind = 8 ), dimension(2,3)}]{t,  }\item[{real ( kind = 8 ), dimension(3)}]{node\+\_\+u,  }\item[{real ( kind = 8 )}]{u,  }\item[{real ( kind = 8 )}]{dudx,  }\item[{real ( kind = 8 )}]{dudy }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a44fdaa08281ed3009542bc9257fa965d}\label{poisson_8f90_a44fdaa08281ed3009542bc9257fa965d}} 
+\index{poisson.f90@{poisson.f90}!timestamp@{timestamp}}
+\index{timestamp@{timestamp}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{timestamp()}{timestamp()}}
+{\footnotesize\ttfamily subroutine timestamp (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_af922111da7d410875c13a186bdc4220d}\label{poisson_8f90_af922111da7d410875c13a186bdc4220d}} 
+\index{poisson.f90@{poisson.f90}!triangle\_area\_2d@{triangle\_area\_2d}}
+\index{triangle\_area\_2d@{triangle\_area\_2d}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{triangle\_area\_2d()}{triangle\_area\_2d()}}
+{\footnotesize\ttfamily real ( kind = 8 ) function triangle\+\_\+area\+\_\+2d (\begin{DoxyParamCaption}\item[{real ( kind = 8 ), dimension(dim\+\_\+num,3)}]{t }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a763aa20723e3c0538a74122bdc32030a}\label{poisson_8f90_a763aa20723e3c0538a74122bdc32030a}} 
+\index{poisson.f90@{poisson.f90}!triangulation\_order3\_adj\_countf90@{triangulation\_order3\_adj\_countf90}}
+\index{triangulation\_order3\_adj\_countf90@{triangulation\_order3\_adj\_countf90}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{triangulation\_order3\_adj\_countf90()}{triangulation\_order3\_adj\_countf90()}}
+{\footnotesize\ttfamily subroutine triangulation\+\_\+order3\+\_\+adj\+\_\+countf90 (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{integer ( kind = 4 )}]{triangle\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(triangle\+\_\+order,triangle\+\_\+num)}]{triangle\+\_\+node,  }\item[{integer ( kind = 4 ), dimension(3,triangle\+\_\+num)}]{triangle\+\_\+neighbor,  }\item[{integer ( kind = 4 )}]{adj\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(node\+\_\+num+1)}]{adj\+\_\+col }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_aac69632f37084097cf57a6063b8976b9}\label{poisson_8f90_aac69632f37084097cf57a6063b8976b9}} 
+\index{poisson.f90@{poisson.f90}!triangulation\_order3\_adj\_set2@{triangulation\_order3\_adj\_set2}}
+\index{triangulation\_order3\_adj\_set2@{triangulation\_order3\_adj\_set2}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{triangulation\_order3\_adj\_set2()}{triangulation\_order3\_adj\_set2()}}
+{\footnotesize\ttfamily subroutine triangulation\+\_\+order3\+\_\+adj\+\_\+set2 (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{integer ( kind = 4 )}]{triangle\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(triangle\+\_\+order,triangle\+\_\+num)}]{triangle\+\_\+node,  }\item[{integer ( kind = 4 ), dimension(3,triangle\+\_\+num)}]{triangle\+\_\+neighbor,  }\item[{integer ( kind = 4 )}]{adj\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(node\+\_\+num+1)}]{adj\+\_\+col,  }\item[{integer ( kind = 4 ), dimension(adj\+\_\+num)}]{ia,  }\item[{integer ( kind = 4 ), dimension(adj\+\_\+num)}]{ja }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a99ff27d74f66de1e97e4ead5556143eb}\label{poisson_8f90_a99ff27d74f66de1e97e4ead5556143eb}} 
+\index{poisson.f90@{poisson.f90}!triangulation\_order3\_boundary\_node@{triangulation\_order3\_boundary\_node}}
+\index{triangulation\_order3\_boundary\_node@{triangulation\_order3\_boundary\_node}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{triangulation\_order3\_boundary\_node()}{triangulation\_order3\_boundary\_node()}}
+{\footnotesize\ttfamily subroutine triangulation\+\_\+order3\+\_\+boundary\+\_\+node (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{integer ( kind = 4 )}]{element\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(3,element\+\_\+num)}]{element\+\_\+node,  }\item[{logical, dimension(node\+\_\+num)}]{node\+\_\+boundary }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_ae554b2ef422433f3f67cf381e301eb12}\label{poisson_8f90_ae554b2ef422433f3f67cf381e301eb12}} 
+\index{poisson.f90@{poisson.f90}!triangulation\_order3\_neighbor\_triangles@{triangulation\_order3\_neighbor\_triangles}}
+\index{triangulation\_order3\_neighbor\_triangles@{triangulation\_order3\_neighbor\_triangles}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{triangulation\_order3\_neighbor\_triangles()}{triangulation\_order3\_neighbor\_triangles()}}
+{\footnotesize\ttfamily subroutine triangulation\+\_\+order3\+\_\+neighbor\+\_\+triangles (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{triangle\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(triangle\+\_\+order,triangle\+\_\+num)}]{triangle\+\_\+node,  }\item[{integer ( kind = 4 ), dimension(3,triangle\+\_\+num)}]{triangle\+\_\+neighbor }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{poisson_8f90_a7b63ca6d359e36637b6946a7361826da}\label{poisson_8f90_a7b63ca6d359e36637b6946a7361826da}} 
+\index{poisson.f90@{poisson.f90}!triangulation\_order3\_plot@{triangulation\_order3\_plot}}
+\index{triangulation\_order3\_plot@{triangulation\_order3\_plot}!poisson.f90@{poisson.f90}}
+\doxysubsubsection{\texorpdfstring{triangulation\_order3\_plot()}{triangulation\_order3\_plot()}}
+{\footnotesize\ttfamily subroutine triangulation\+\_\+order3\+\_\+plot (\begin{DoxyParamCaption}\item[{character ( len = $\ast$ )}]{file\+\_\+name,  }\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{real ( kind = 8 ), dimension(2,node\+\_\+num)}]{node\+\_\+xy,  }\item[{integer ( kind = 4 )}]{element\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(3,element\+\_\+num)}]{element\+\_\+node,  }\item[{integer ( kind = 4 )}]{node\+\_\+show,  }\item[{integer ( kind = 4 )}]{element\+\_\+show }\end{DoxyParamCaption})}
+

@@ -1,0 +1,57 @@
+\hypertarget{clearmem_8_f}{}\doxysection{src/seq/clearmem.F File Reference}
+\label{clearmem_8_f}\index{src/seq/clearmem.F@{src/seq/clearmem.F}}
+{\ttfamily \#include \char`\"{}petsc/finclude/petscpc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}mapping.\+com\char`\"{}}\newline
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{clearmem_8_f_aedc968fb9216ca13672c2b68ab1bcd17}{C\+L\+E\+A\+R\+M\+EM}} (Z\+R\+OE, V\+I\+S\+CT, Petsc\+Matrix, Nodal\+Bcs, N\+O\+F\+V\+AR)
+\begin{DoxyCompactList}\small\item\em This routine destroys P\+E\+T\+Sc Objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{clearmem_8_f_aedc968fb9216ca13672c2b68ab1bcd17}\label{clearmem_8_f_aedc968fb9216ca13672c2b68ab1bcd17}} 
+\index{clearmem.F@{clearmem.F}!CLEARMEM@{CLEARMEM}}
+\index{CLEARMEM@{CLEARMEM}!clearmem.F@{clearmem.F}}
+\doxysubsubsection{\texorpdfstring{CLEARMEM()}{CLEARMEM()}}
+{\footnotesize\ttfamily subroutine C\+L\+E\+A\+R\+M\+EM (\begin{DoxyParamCaption}\item[{}]{Z\+R\+OE,  }\item[{}]{V\+I\+S\+CT,  }\item[{dimension($\ast$)}]{Petsc\+Matrix,  }\item[{dimension(0\+:$\ast$)}]{Nodal\+Bcs,  }\item[{integer}]{N\+O\+F\+V\+AR }\end{DoxyParamCaption})}
+
+
+
+This routine destroys P\+E\+T\+Sc Objects. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & P\+E\+T\+Sc Vec where Roe\textquotesingle{}s parameter vector is stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+I\+S\+CT} & P\+E\+T\+Sc Vec where turbulent viscosity is stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em A} & P\+E\+T\+Sc Mat where the Jacobian matrix for the mean flow equations is stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em B} & P\+E\+T\+Sc Mat where the Jacobian matrix for the turbulent transport equations is stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em C} & P\+E\+T\+Sc Mat where the implicit matrix for Laplace\textquotesingle{}s equations is stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em Nodal\+Bcs} & P\+E\+T\+Sc Index Sets where the nodal boundary conditions are stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & number of dofs and leading dimension of Z\+R\+OE \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+14 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/04/24 06\+:04\+:16 
+\end{DoxyParagraph}

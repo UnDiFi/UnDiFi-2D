@@ -1,0 +1,1 @@
+for i in `ls *.com *.h`; do echo $i; echo $i >> log; cat $i >> log;done

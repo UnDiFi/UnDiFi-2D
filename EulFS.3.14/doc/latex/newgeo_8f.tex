@@ -1,0 +1,118 @@
+\hypertarget{newgeo_8f}{}\doxysection{src/geometry/newgeo.f File Reference}
+\label{newgeo_8f}\index{src/geometry/newgeo.f@{src/geometry/newgeo.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{newgeo_8f_a322eed919ef15b616d1b42ae64638b5a}{N\+E\+W\+G\+EO}} (I\+C\+E\+L\+N\+OD, I\+C\+E\+L\+C\+EL, P\+M\+AP, I\+C\+E\+L\+F\+AC, F\+A\+C\+N\+OR, V\+OL, V\+M\+E\+D\+I\+AN, C\+O\+RG, X\+Y\+Z\+D\+OT, I\+B\+N\+D\+P\+TR, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+E\+L\+EM, N\+P\+O\+IN, N\+G\+H\+O\+ST, N\+P\+N\+OD, N\+F\+A\+CE, N\+B\+F\+AC, N\+B\+I\+NT, N\+H\+O\+LE, T\+I\+ME)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{newgeo_8f_a322eed919ef15b616d1b42ae64638b5a}\label{newgeo_8f_a322eed919ef15b616d1b42ae64638b5a}} 
+\index{newgeo.f@{newgeo.f}!NEWGEO@{NEWGEO}}
+\index{NEWGEO@{NEWGEO}!newgeo.f@{newgeo.f}}
+\doxysubsubsection{\texorpdfstring{NEWGEO()}{NEWGEO()}}
+{\footnotesize\ttfamily subroutine N\+E\+W\+G\+EO (\begin{DoxyParamCaption}\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+N\+OD,  }\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+C\+EL,  }\item[{integer, dimension($\ast$)}]{P\+M\+AP,  }\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+F\+AC,  }\item[{double precision, dimension(ndim,nface)}]{F\+A\+C\+N\+OR,  }\item[{double precision, dimension(nelem)}]{V\+OL,  }\item[{double precision, dimension($\ast$)}]{V\+M\+E\+D\+I\+AN,  }\item[{double precision, dimension(ndim,$\ast$)}]{C\+O\+RG,  }\item[{double precision, dimension($\ast$)}]{X\+Y\+Z\+D\+OT,  }\item[{integer, dimension(3,nbfac)}]{I\+B\+N\+D\+P\+TR,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{integer}]{N\+G\+H\+O\+ST,  }\item[{integer}]{N\+P\+N\+OD,  }\item[{integer}]{N\+F\+A\+CE,  }\item[{integer}]{N\+B\+F\+AC,  }\item[{integer}]{N\+B\+I\+NT,  }\item[{integer}]{N\+H\+O\+LE,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+here in \mbox{\hyperlink{newgeo_8f_a322eed919ef15b616d1b42ae64638b5a}{N\+E\+W\+G\+E\+O()}} we re-\/compute some grid metrics, more precisely\+:
+
+a) measures of the triangle/tetrahedra (L\+V\+OL) are stored in V\+OL(N\+E\+L\+E\+M+1\+:2$\ast$\+N\+E\+L\+EM)
+
+b) measures of the median dual control volumes (L\+M\+E\+D\+I\+AN) are stored in M\+E\+D\+I\+AN(N\+P+1\+:2$\ast$\+NP)
+
+c) face normals (L\+F\+A\+C\+N\+OR) are overwritten on the current ones
+
+d) cell to face pointers (L\+C\+E\+L\+F\+AC) are overwritten on the current ones, but should not change anyway, since it is assumed that the connectivity is un-\/changed
+
+e) grid velocities L\+X\+Y\+Z\+D\+OT
+
+this has to be done B\+E\+F\+O\+RE calculating the residual i.\+e. before calling R\+H\+S\+Function
+
+in N\+E\+W\+G\+EO all metrics are updated at some time which is intermediate btw n and n+1 the areas/volumes of the median dual C\+Vs are however those at n+1 since these are only needed to update the solution, not to compute the residual
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+N\+OD} & Cell to node pointer\+: {\ttfamily I\+C\+E\+L\+N\+O\+D(i,j)} gives the global node number of the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+C\+EL} & Cell to cell pointer\+: {\ttfamily I\+C\+E\+L\+C\+E\+L(i,j)} gives the element number that shares the face opposite the i-\/th vertex of the j-\/th element if 0 or $>$ {\ttfamily N\+E\+L\+EM}, that face is a boundary face \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+M\+AP} & Map for periodic nodes \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+F\+AC} & Cell to face pointer\+: {\ttfamily I\+C\+E\+L\+F\+AC}(i,j\} gives the global face number of the face opposite the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em F\+A\+C\+N\+OR} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em V\+OL} & area/volume of the simplicial elements (triangles,tetrahedra) \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em V\+M\+E\+D\+I\+AN} & area/volume of the median dual cells \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em C\+O\+RG} & Cartesian coordinates of the meshpoints; C\+O\+RG(1,2$\ast$\+N\+P+1) stores the grid at time level 0, i.\+e. the fixed grid; new grid coordinates are put into C\+O\+RG(1,N\+P+1) and the grid velocity is computed accordingly \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+D\+OT} & Cartesian components of the nodal grid velocities \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+B\+N\+D\+P\+TR} & Boundary informations\+: {\ttfamily I\+B\+N\+D\+F\+A\+C(1,j)} gives the element the j-\/th face belongs to; {\ttfamily I\+B\+N\+D\+F\+A\+C(2,j)} gives the local vertex number of element {\ttfamily I\+B\+N\+D\+F\+A\+C(1,j)} opposite the boundary face; {\ttfamily I\+B\+N\+D\+F\+A\+C(3,j)} gives the color of the boundary face \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & nof interior nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+G\+H\+O\+ST} & nof ghost nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+N\+OD} & nof periodic nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+F\+A\+CE} & nof faces in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+B\+F\+AC} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+B\+I\+NT} & nof inter-\/processor faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+H\+O\+LE} & nof holes in the mesh (should be 0 in 3D) \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & physical time to be reached, i.\+e. time $(n+1)\Delta t$.\\
+\hline
+\end{DoxyParams}
+Upon entry\+:
+
+\begin{DoxyVerb}    LCORG       |---- n   ----| |---- XXX ----| |---- 0 ----|
+    LMEDIAN     |---- n   ----| |---- XXX ----| |---- n ----|
+    LVOL        |---- n   ----| |---- XXX ----| |----n-1----|
+    LFACNOR     |---- n   ----|
+
+    XXX means that the entry is irrelevant\end{DoxyVerb}
+
+
+Upon return\+:
+
+\begin{DoxyVerb}    LCORG       |---- n+a ----| |---- n+1 ----| |---- 0 ----|
+    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+    LVOL        |---- n+a ----| |---- n+1 ----| |----n-1----|
+    LFACNOR     |---- n+a ----|\end{DoxyVerb}
+
+
+where {\ttfamily n} stands for the time level and {\ttfamily a} is the {\ttfamily A\+L\+F\+A\+LE} parameter which is set through {\ttfamily -\/ale\+\_\+grid\+\_\+weight} 
+
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+15 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2016/01/29 10\+:30\+:27 
+\end{DoxyParagraph}

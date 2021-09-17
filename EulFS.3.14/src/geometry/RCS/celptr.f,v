@@ -1,0 +1,513 @@
+head	1.10;
+access
+	caspur
+	aldo
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.10
+	release3_13_0:1.10
+	release3_12_0:1.10
+	release3_11_0:1.10
+	release3_10_0:1.10
+	release3_8_0:1.10
+	release3_7_1:1.10
+	release3_7_0:1.9
+	release3_4_5:1.9
+	release3_4_4:1.9
+	release3_4_3:1.9
+	release3_4_2:1.7
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.7
+	release3_3_3:1.7
+	release3_3_2:1.7
+	release3_3_1:1.7
+	release3_3_0:1.7;
+locks; strict;
+comment	@c @;
+
+
+1.10
+date	2020.03.28.09.45.57;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.09.23.11.21.16;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.09.17.10.01.18;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2012.12.20.10.58.43;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2009.06.11.09.54.30;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.09.09.08.42.52;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.09.09.08.35.21;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.09.01.11.04.19;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.01.22.10.22;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.00.52.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine fothat build local pointers
+@
+
+
+1.10
+log
+@renamed a call
+@
+text
+@!> \par Purpose
+!>
+!> retrieve data for cell \c IELEM from global arrays
+!>
+!> @@param[in] IELEM is the current cell in local (per processor) numbering
+!> @@param[in] NELEM nof cells on the current PE
+!> @@param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+!> @@param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+!> @@param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+!> @@param[in] ZROE stores the dependent \c NOFVAR variables within all meshpoints; ZROE(1:NOFVAR,1,*) stores the values at time level \c n+1,k ; \c ZROE(1:NOFVAR,1,*) those at tme level n and \c ZROE(1:NOFVAR,3,*) those at time level \c n-1; could actually feed any other vector using the same layout, such as, e.g. the nodal coordinates; however, there must be room enough in the unsteady case
+!> @@param[in] FACNOR Cartesian components of the normals to a face, multiplied by the face area
+!> @@param[in] XYZDOT Cartesian components of the nodal grid velocities
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NOFVERT nof boundary faces
+!> @@param[in] NOFVAR nof dofs within each meshpoint
+!> @@param[in] LDA second leading dimension of \c ZROE, should equal NPOIN+NGHOST+NPNOD
+!> @@param[out] ICN returns the vertices of the current simplex in 0-based indexing; to be used to insert values into PETSc vecs and/or mats 
+!> @@param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+!> @@param[out] VCN returns the \c NDIM Cartesian components of the NOFVERT faces of cell \c IELEM
+!> @@param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+!> @@param[out] VOLUME returns the volume of simplex \c IELEM 
+!> \author $Author: abonfi $
+!> \version $Revision: 1.9 $
+!> \date $Date: 2013/09/23 11:21:16 $
+!> \warning on periodic meshes we access the 2nd copy of the cell to node pointer, i.e. the original addressing
+      SUBROUTINE CELPTR(IELEM,NELEM,ICELNOD,ICELFAC,VOL,ZROE,FACNOR,
+     2                  XYZDOT,NDIM,NOFVERT,NOFVAR,LDA,ICN,VCZ,VCN,VCB,
+     3                  VOLUME)
+C
+C     $Id: celptr.f,v 1.9 2013/09/23 11:21:16 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C
+C     .. Parameters ..
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'time.h'
+      INCLUDE 'time.com'
+C     ..
+C     .. Scalar Arguments ..
+C     Input:
+      INTEGER IELEM,NELEM,NDIM,NOFVAR,NOFVERT,LDA
+C     Output:
+      DOUBLE PRECISION VOLUME(*)
+C     ..
+C     .. Array Arguments ..
+C     Input:
+      DOUBLE PRECISION FACNOR(NDIM,*),ZROE(NOFVAR,LDA,*),XYZDOT(NDIM,*)
+      INTEGER ICELFAC(NOFVERT,*),ICELNOD(NOFVERT,*)
+C     Output:
+      DOUBLE PRECISION VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT,*),
+     2                 VCB(NDIM,NOFVERT),VOL(*)
+      INTEGER ICN(NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IDIM,IFACE,IPOIN,IVAR,IVERT,ILEV
+C     ..
+C     .. Intrinsic Functions ..
+C
+      INTRINSIC ABS,SIGN
+C     ..
+      DO 10 IVERT = 1,NOFVERT
+C
+C     in periodic grids, IPOIN is
+C     the original addressing
+C     (note that we access the 2nd copy of the
+C     cell to node pointer)
+C
+          IPOIN = ICELNOD(IVERT,IELEM+NELEM)
+C
+C     zero indexing for PETSc
+C     in periodic grids, ICN will keep 
+C     the re-mapped addressing
+C
+          ICN(IVERT) = ICELNOD(IVERT,IELEM) - 1
+C
+          IFACE = ICELFAC(IVERT,IELEM)
+C
+          DO 8 ILEV = 1, NTIMLEVS
+             DO 8 IVAR = 1,NOFVAR
+                 VCZ(IVAR,IVERT,ILEV) = ZROE(IVAR,IPOIN,ILEV)
+    8     CONTINUE
+C
+          IF(LALE)THEN
+              DO 9 IDIM = 1,NDIM
+                  VCB(IDIM,IVERT) = XYZDOT(IDIM,IPOIN)
+    9         CONTINUE
+          ENDIF
+C
+          IF (IFACE.GT.0) THEN
+              DO 6 IDIM = 1,NDIM
+                  VCN(IDIM,IVERT) = FACNOR(IDIM,IFACE)
+    6         CONTINUE
+
+          ELSE
+              IFACE = -IFACE
+              DO 7 IDIM = 1,NDIM
+                  VCN(IDIM,IVERT) = -FACNOR(IDIM,IFACE)
+    7         CONTINUE
+          ENDIF
+C
+   10 CONTINUE
+C
+      VOLUME(1) = VOL(IELEM)
+      IF(LTIME.AND.LALE.AND.(NTIMLEVS.EQ.3))THEN
+         VOLUME(2) = VOL(IELEM+NELEM) ! time level n+1
+         VOLUME(3) = VOL(IELEM+2*NELEM) ! time level n
+         VOLUME(4) = VOL(IELEM+3*NELEM) ! time level n-1
+      ENDIF
+C
+C     CALL R8Mat_Print('General',' ',NDIM,NOFVERT,VCN(1,1),NDIM,
+C    +            'VCN',IFAce)
+!     CALL R8Mat_Print('General',' ',NDIM,NOFVERT,VCB(1,1),NDIM,
+!    +            'VCB',IFAce)
+C     CALL R8Mat_Print('General',' ',NDIM,NOFVERT,VCP(1,1),NDIM,
+C    +            'VCP',IFAce)
+!     do idim = 1,ntimlevs
+!      write(6,*)'Time lev within celptr is = ',idim
+!     CALL R8Mat_Print('General',' ',NOFVAR,NOFVERT,VCZ(1,1,idim),
+!    +            NOFVAR,'VCZ',IFAce)
+!     enddo
+C     PAUSE
+C
+      RETURN
+
+      END
+@
+
+
+1.9
+log
+@fixed an error in the Doxygen documentation
+@
+text
+@d23 2
+a24 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/09/17 10:01:18 $
+d30 1
+a30 1
+C     $Id: celptr.f,v 1.8 2013/09/17 10:01:18 abonfi Exp abonfi $
+d112 1
+a112 1
+C     CALL X04CAF('General',' ',NDIM,NOFVERT,VCN(1,1),NDIM,
+d114 1
+a114 1
+!     CALL X04CAF('General',' ',NDIM,NOFVERT,VCB(1,1),NDIM,
+d116 1
+a116 1
+C     CALL X04CAF('General',' ',NDIM,NOFVERT,VCP(1,1),NDIM,
+d120 1
+a120 1
+!     CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ(1,1,idim),
+@
+
+
+1.8
+log
+@VOLUME is now an array so that cell volumes at the previous
+time levels can be stored
+@
+text
+@d19 1
+d24 1
+a24 1
+!> \date $Date: 2013/08/20 14:48:46 $
+d30 1
+a30 1
+C     $Id: celptr.f,v 1.7 2012/12/20 10:58:43 abonfi Exp abonfi $
+@
+
+
+1.7
+log
+@added support for moving grids
+@
+text
+@d1 24
+d29 1
+a29 1
+C     $Id: celptr.f,v 1.6 2009/06/11 09:54:30 abonfi Exp abonfi $
+d44 1
+a44 1
+      DOUBLE PRECISION VOLUME
+d104 6
+a109 1
+      VOLUME = VOL(IELEM)
+@
+
+
+1.6
+log
+@now retrieves values of the dependent variable from previous time levels
+@
+text
+@d2 2
+a3 1
+     +                  NDIM,NOFVERT,NOFVAR,LDA,ICN,VCZ,VCN,VOLUME)
+d5 1
+a5 1
+C     $Id: celptr.f,v 1.5 2005/09/09 08:42:52 abonfi Exp abonfi $
+d17 3
+a20 1
+      INTEGER IELEM,NELEM,NDIM,NOFVAR,NOFVERT,LDA
+d23 7
+a29 3
+      DOUBLE PRECISION FACNOR(NDIM,*),VCN(NDIM,NOFVERT),
+     +                 VCZ(NOFVAR,NOFVERT,*),VOL(*),ZROE(NOFVAR,LDA,*)
+      INTEGER ICELFAC(NOFVERT,*),ICELNOD(NOFVERT,*),ICN(NOFVERT)
+d60 6
+d84 2
+@
+
+
+1.5
+log
+@mispelled INCLUDE
+@
+text
+@d2 1
+a2 1
+     +                  NDIM,NOFVERT,NOFVAR,ICN,VCZ,VCN,VOLUME)
+d4 1
+a4 1
+C     $Id: celptr.f,v 1.4 2005/09/09 08:35:21 abonfi Exp abonfi $
+d10 4
+a13 1
+      INCLUDE 'constants'
+d17 1
+a17 1
+      INTEGER IELEM,NELEM,NDIM,NOFVAR,NOFVERT
+d21 1
+a21 1
+     +                 VCZ(NOFVAR,NOFVERT),VOL(*),ZROE(NOFVAR,*)
+d25 1
+a25 1
+      INTEGER IDIM,IFACE,IPOIN,IVAR,IVERT
+d48 3
+a50 2
+          DO 8 IVAR = 1,NOFVAR
+              VCZ(IVAR,IVERT) = ZROE(IVAR,IPOIN)
+d73 5
+a77 2
+C     CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ(1,1),NOFVAR,'VCZ',
+C    +            IFAce)
+@
+
+
+1.4
+log
+@changes required for handling
+ANNULAR cascades
+@
+text
+@d4 1
+a4 1
+C     $Id:$
+d10 1
+a10 1
+      INCLUDE 'constans'
+@
+
+
+1.3
+log
+@simplified version
+@
+text
+@d1 2
+d4 1
+a4 2
+      SUBROUTINE CELPTR(IELEM,ICELNOD,ICELFAC,VOL,ZROE,FACNOR,NDIM,
+     +                  NOFVERT,NOFVAR,ICN,VCZ,VCN,VOLUME)
+d10 1
+a10 2
+      DOUBLE PRECISION ONE
+      PARAMETER (ONE=1.D0)
+d14 1
+a14 1
+      INTEGER IELEM,NDIM,NOFVAR,NOFVERT
+d30 6
+a35 1
+          IPOIN = ICELNOD(IVERT,IELEM)
+d38 2
+d41 1
+a41 1
+          ICN(IVERT) = IPOIN - 1
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@a0 5
+
+C
+      SUBROUTINE CELPTR(IELEM,ICELNOD,ICELFAC,VOL,NDIM,NOFVERT,NOFVAR,
+     +                  NELEM,NPOIN,ICN,ICF,VCP,VCZ,VCN,VOLUME,IDX_P,
+     +                  IDX_V,IDX_F)
+d2 2
+a7 3
+      INCLUDE 'nloc'
+C
+C
+d14 1
+a14 1
+      INTEGER IELEM,NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+d17 3
+a19 8
+      DOUBLE PRECISION VCN(NDIM,NOFVERT),VCP(NDIM,NOFVERT),
+     +                 VCZ(NOFVAR,NOFVERT),VOL(NELEM)
+      INTEGER ICELFAC(NOFVERT,NELEM+1),ICELNOD(NOFVERT,NELEM+1),
+     +        ICF(NOFVERT),ICN(NOFVERT),IDX_F(NDIM*NOFVERT),
+     +        IDX_P(NDIM*NOFVERT),IDX_V(NOFVAR*NOFVERT)
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+d22 1
+a22 9
+      DOUBLE PRECISION ALPHA
+      INTEGER I,IDIM,IFACE,IFAIL,IPOIN,IVAR,IVERT,J,
+     +        N,NZD,NZV
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DGTHR,DSCAL,X04CAF
+d25 1
+a27 17
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     ..
+C     .. Statement Functions ..
+      INTEGER IDX
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+C     ..
+C     .. Statement Function definitions ..
+C
+      IDX(I,J,N) = (I-1)*N + J
+C     ..
+C
+C
+      NZD = 0
+      NZV = 0
+a29 1
+C
+d34 2
+a35 1
+          ICN(IVERT) = IPOIN-1
+a36 2
+          ICF(IVERT) = IFACE
+          IFACE = ABS(IFACE)
+d38 2
+a39 4
+          DO 8 IDIM = 1,NDIM
+              NZD = NZD + 1
+              IDX_P(NZD) = IDX(IPOIN,IDIM,NDIM)
+              IDX_F(NZD) = IDX(IFACE,IDIM,NDIM)
+d41 5
+d47 6
+a52 5
+          DO 9 IVAR = 1,NOFVAR
+              NZV = NZV + 1
+              IDX_V(NZV) = IDX(IPOIN,IVAR,NOFVAR)
+    9     CONTINUE
+C
+a55 16
+C     retrieve
+C     1) nodal values
+C     2) nodal coordinates
+C     3) normal components
+C     from global arrays
+C
+      CALL DGTHR(NZV,DSTAK(LZROE),VCZ,IDX_V)
+      CALL DGTHR(NZD,DSTAK(LCORG),VCP,IDX_P)
+      CALL DGTHR(NZD,DSTAK(LFACNOR),VCN,IDX_F)
+C
+C     Reset for later use in zero indexed rhs Vec
+C
+      DO 11 I = 1,NZV      
+         IDX_V(I) = IDX_V(I)-1
+   11 CONTINUE
+C
+a57 9
+      DO 12 IVERT = 1,NOFVERT
+          ALPHA = SIGN(1,ICF(IVERT))
+          CALL DSCAL(NDIM,ALPHA,VCN(1,IVERT),1)
+   12 CONTINUE
+C
+C
+C     WRITE (6,FMT=*) IELEM
+C     WRITE (6,FMT=*) (NZD.EQ.NDIM*NOFVERT)
+C     WRITE (6,FMT=*) (NZV.EQ.NOFVAR*NOFVERT)
+d59 1
+a59 1
+C    +            'VCN',IFAIL)
+d61 1
+a61 1
+C    +            'VCP',IFAIL)
+d63 1
+a63 1
+C    +            IFAIL)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d67 4
+a70 1
+          ICN(IVERT) = IPOIN
+d98 6
+@

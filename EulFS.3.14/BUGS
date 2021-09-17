@@ -1,0 +1,9 @@
+21.10.2009 when running ~/testcases/3D/compressible.euler/sinus/6/A
+in unsteady mode different results are obtained if using symm. vars or conserved ones
+the bug occurs in the former case (see EulerVII.f)
+
+problema con TEMPA(125) in bc5vii.F
+dovrebbe essere dimensionata 25, ma in questo caso
+da i numeri
+
+update3.F INITIAL_GUESS_NONZERO perde X (SAVE)

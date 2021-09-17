@@ -1,0 +1,2 @@
+C   DTLIN(1:NPOIN) is the nodal timestep divided by the median
+C                  dual cell

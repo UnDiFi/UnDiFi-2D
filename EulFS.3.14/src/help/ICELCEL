@@ -1,0 +1,8 @@
+C ICELCEL -- IN Integer ICELCEL(1:NOFVERT,1:NELEM)
+C            Cell to Cell pointer : ICELCEL(i,ielem) gives the
+C            global number of the element sharing with ielem
+C            the face opposite the i-th vertex of the ielem-th cell
+C            If ICELCEL(i,ielem) = 0 or ICELCEL(i,ielem) > NELEM
+C            the element ielem is a boundary element and the face
+C            opposite its i-th vertex is a boundary face
+C

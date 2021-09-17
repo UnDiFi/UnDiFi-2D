@@ -1,0 +1,57 @@
+\hypertarget{fun2_8f}{\section{src/scalar/\-T\-R\-A\-S\-H/fun2.f File Reference}
+\label{fun2_8f}\index{src/scalar/\-T\-R\-A\-S\-H/fun2.\-f@{src/scalar/\-T\-R\-A\-S\-H/fun2.\-f}}
+}
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+D\-O\-U\-B\-L\-E P\-R\-E\-C\-I\-S\-I\-O\-N function \hyperlink{fun2_8f_a83d3d377b3800d6a3676e673bb7d1db4}{funsou2} (X, Y, D\-E\-L\-T\-A)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{fun2_8f_a83d3d377b3800d6a3676e673bb7d1db4}{\index{fun2.\-f@{fun2.\-f}!funsou2@{funsou2}}
+\index{funsou2@{funsou2}!fun2.f@{fun2.\-f}}
+\subsubsection[{funsou2}]{\setlength{\rightskip}{0pt plus 5cm}D\-O\-U\-B\-L\-E P\-R\-E\-C\-I\-S\-I\-O\-N function funsou2 (
+\begin{DoxyParamCaption}
+\item[{double precision}]{X, }
+\item[{double precision}]{Y, }
+\item[{double precision}]{D\-E\-L\-T\-A}
+\end{DoxyParamCaption}
+)}}\label{fun2_8f_a83d3d377b3800d6a3676e673bb7d1db4}
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Source term for the convection equation \[ u_t + \lambda_x u_x+\lambda_y u_y = f \]
+
+the source term is\-: \[ f = -\left(x\cos\delta+x\sin\delta\right) \] and the exact steady solution is\-: \[ u = \sin\left(2\pi\left(y\cos\delta-x\sin\delta\right)\right)+ x'y' -xy \] where \begin{eqnarray*} x' &=& x - \cos(\delta) (x\cos(\delta)+y\sin(\delta)) \\ y' &=& y - \sin(\delta) (x\cos(\delta)+y\sin(\delta)) \end{eqnarray*}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Cartesian x coordinate \\
+\hline
+\mbox{\tt in}  & {\em Y} & Cartesian y coordinate \\
+\hline
+\mbox{\tt in}  & {\em D\-E\-L\-T\-A} & is the angle $\delta$ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The pointwise value of the source term {\ttfamily f}. 
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author\-:}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision\-:}
+1.\-8 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date\-:}
+2013/08/20 14\-:48\-:46 
+\end{DoxyParagraph}

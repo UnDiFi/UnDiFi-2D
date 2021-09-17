@@ -1,0 +1,166 @@
+head	1.8;
+access;
+symbols
+	release3_7_0:1.8
+	release3_4_5:1.8
+	release3_4_4:1.8
+	release3_4_3:1.7
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.4
+	release3_3_5:1.3
+	release3_3_2:1.2
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.8
+date	2014.04.08.10.36.31;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.10.30.11.10.26;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.07.18.14.58.58;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.06.25.07.14.49;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.05.15.10.41.04;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.05.15.09.52.46;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.01.29.14.53.07;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.29.12.33.59;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Makes the code with Intel compilers (unoptimized)
+@
+
+
+1.8
+log
+@now supports petsc version 3.4.4
+@
+text
+@#export FSPL_DIR=$HOME/CFD_codes/EulFS.3.3
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.4.4
+export PETSC_ARCH=linux_intel
+
+#source /opt/intel/composer_xe_2011_sp1.9.293/bin/compilervars.sh intel64
+#source /opt/intel/composer_xe_2011_sp1.10.319/bin/compilervars.sh intel64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+echo `which gcc`
+echo `which gfortran`
+echo $LD_LIBRARY_PATH
+
+echo $PETSC_DIR
+echo $PETSC_ARCH
+
+sleep 2
+
+make install
+@
+
+
+1.7
+log
+@Updated to petsc 3.4.3
+@
+text
+@d2 1
+a2 1
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.4.3
+@
+
+
+1.6
+log
+@updated petsc version to 3.4.2
+@
+text
+@d2 1
+a2 1
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.4.2
+@
+
+
+1.5
+log
+@PETSC version has been upgraded to 3.4.1
+@
+text
+@d2 1
+a2 1
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.4.1
+@
+
+
+1.4
+log
+@upgraded to petsc-3.4.0
+@
+text
+@d2 1
+a2 1
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.4.0
+@
+
+
+1.3
+log
+@update PETSC's patch level to 6
+@
+text
+@d2 1
+a2 1
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.3-p6
+@
+
+
+1.2
+log
+@Changed working directory
+@
+text
+@d1 2
+a2 2
+export FSPL_DIR=$HOME/CFD_codes/EulFS.3.3
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.3-p5
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+export FSPL_DIR=$HOME/CFD_codes/EulFS.3.3.1
+@

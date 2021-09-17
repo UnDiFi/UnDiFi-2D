@@ -1,0 +1,65 @@
+head	1.1;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2005.12.23.09.45.40;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@A subroutine that re-orders the data structure
+of the c-lines
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE RANKCL(INDX,A,JA,IA,LDA,NCL)
+C
+C     $Id:$
+C
+C     A subroutine that re-orders the data structure
+C     of the c-lines
+C
+      IMPLICIT NONE
+      INTEGER LDA ,NCL
+      DOUBLE PRECISION A(LDA,*)
+      INTEGER INDX(*),JA(LDA,*),IA(NCL+1)
+      INTEGER NNZR ,I
+      NNZR = IA(NCL+1) -IA(1)
+      DO I = 1,NNZR
+           JA(4,I) = INDX(JA(4,I))
+      ENDDO
+      RETURN
+      END
+@

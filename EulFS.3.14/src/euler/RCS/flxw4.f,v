@@ -1,0 +1,921 @@
+head	1.10;
+access
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.10
+	release3_13_0:1.10
+	release3_12_0:1.10
+	release3_11_0:1.10
+	release3_10_0:1.10
+	release3_8_0:1.10
+	release3_7_1:1.10
+	release3_7_0:1.9
+	release3_4_5:1.9
+	release3_4_4:1.9
+	release3_4_3:1.7
+	release3_4_2:1.7
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.10
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.04.14.15.19.54;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.03.21.13.23.44;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.08.22.11.55.13;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.01.26.12.21.35;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2012.12.20.10.42.16;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.04.14.10.19.22;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2002.08.24.10.07.52;	author abonfi;	state Exp;
+branches
+	1.3.1.1;
+next	1.2;
+
+1.2
+date	99.12.27.09.30.15;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.12.05.18.43.00;	author aldo;	state Exp;
+branches;
+next	;
+
+1.3.1.1
+date	2011.09.16.07.43.27;	author abonfi;	state Exp;
+branches;
+next	1.3.1.2;
+
+1.3.1.2
+date	2012.12.20.10.38.55;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@weak inviscid wall bc for  compressible flows
+@
+
+
+1.10
+log
+@renamed subroutine call
+@
+text
+@!> \brief \b FLXW4
+!
+!> \par Purpose
+!>
+!> compute inviscid wall b.c.'s for compressible flows: weak approach
+!>
+!> @@param[in] NDIM the dimension of the space
+!> @@param[in] NOFVAR nof dofs
+!> @@param[in] NOFVERT nof vertices of a cell (=NDIM+1)
+!> @@param[in] STIFC the jacobian matrix
+!> @@param[in] WORK work array
+!> @@param[in] WORK2 work array
+!> @@param[in] VCZ nodal values in the NOFVERT vertices
+!> @@param[in] VCB grid velocity at all NOFVERT vertices
+!> @@param[in] VCN NDIM components of the normal to the boundary
+!> @@param[out] NODRES nodal residual
+!> @@param[in] PICARD .TRUE. if the jacobian matrix has to be assembled
+!     
+!>
+!> In two-dimensional flows we use:
+!>
+!> \f{eqnarray*}{
+!> R_1 &:=& R_1 + \frac{\alpha}{2} F_1 + \frac{1-\alpha}{2} F_2 \\
+!> R_2 &:=& R_2 + \frac{\alpha}{2} F_2 + \frac{1-\alpha}{2} F_1
+!>   \f} 
+!     
+!>
+!> In three-dimensional flows we use:
+!>
+!> \f{eqnarray*}{
+!> R_1 &:=& R_1 + \frac{\alpha}{3} F_1 + \frac{1-\alpha}{6} F_2 + \frac{1-\alpha}{6} F_3 \\
+!> R_2 &:=& R_2 + \frac{\alpha}{3} F_2 + \frac{1-\alpha}{6} F_3 + \frac{1-\alpha}{6} F_1 \\
+!> R_3 &:=& R_3 + \frac{\alpha}{3} F_3 + \frac{1-\alpha}{6} F_1 + \frac{1-\alpha}{6} F_2
+!>   \f} 
+!>
+!> \f$\alpha\f$ is hardwired to 3/4
+!     
+!> \author $Author: abonfi $
+!> \version $Revision: 1.9 $
+!> \date $Date: 2014/04/14 15:19:54 $
+!
+      SUBROUTINE FLXW4(NDIM,NOFVAR,NOFVERT,STIFC,WORK,WORK2,VCZ,VCB,VCN,
+     +                 NODRES,PICARD)
+C
+C     $Id: flxw4.f,v 1.9 2014/04/14 15:19:54 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C
+C
+      include 'paramt.h'
+      include 'constants.h'
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ALPHA
+      PARAMETER (ALPHA=0.75d0)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR,NOFVERT
+      LOGICAL PICARD
+C     NDIM   dimension of the space (2 or 3)
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     PICARD .TRUE. for Picard linearisation
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION NODRES(NOFVAR,NOFVERT),
+     +                 STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),VCN(NDIM),
+     +                 VCZ(NOFVAR,NOFVERT),WORK(NDIM+2,NDIM+2,NDIM),
+     +                 WORK2(NDIM+2,NDIM+2,NDIM,NDIM),VCB(NDIM,NOFVERT)
+C
+C     On entry:
+C     --------
+C     VCN(1:NDIM) cartesian components of the normal
+C                 to the boundary face
+C     VCZ(1:NOFVAR,1:NOFVERT) dependent variables in the vertices
+C                           of the current (IELEM) element
+C                           the freestream values need
+C                           to be stored in VCZ(1:NOFVAR,NOFVERT)
+C     Upon return:
+C     -----------
+C     STIFC(1:NOFVAR,1:NOFVAR,1:NOFVERT,1:NOFVERT) 
+C                   convection matrix
+C                   in the NOFVERT-1 vertices of the boundary face
+C     NODRES(1:NOFVAR,1:NOFVERT-1) nodal residual due to the incoming
+C                   characteristics in the NOFVERT-1 vertices 
+C                   of the boundary face
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION BETA,CNST,TMP
+      INTEGER I,IADD,IFAIL,IVERT,J,JVERT,K,L,NOFEQN
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DZDU(75),FLUX(MAXNOFVAR*MAXNOFVERT)
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DGEMM,DINIT,GETDF4CORRDU,INVWLL,MATDZDU
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC REAL
+C     ..
+C     .. Data statements ..
+
+      DATA DZDU/75*0.d0/
+      INTEGER IPATCH
+      COMMON/MYBUG/IPATCH
+C     ..
+C
+C     Compute correction flux
+C
+      NOFEQN = NDIM+2
+C
+      DO 3 IVERT = 1,NOFVERT
+          IADD = (IVERT-1)*NOFVAR + 1
+          CALL INVWLL(NDIM,VCN,VCB(1,IVERT),VCZ(1,IVERT),FLUX(IADD))
+    3 CONTINUE
+      IF(IPATCH.EQ.-2)THEN
+      WRITE(6,*)'Current patch is ',IPATCH
+      CALL R8Mat_Print('G',' ',Nofvar,Nofvert,VCZ(1,1),Nofvar,
+     +      'Nodal values of Z ',IFAIL)
+      CALL R8Mat_Print('G',' ',NDIM,NDIM,VCB(1,1),NDIM,
+     +      'Nodal values of B ',IFAIL)
+      CALL R8Mat_Print('G',' ',NOFVAR,Nofvert,FLUX,NOFVAR,
+     +      'Nodal values of the flux ',IFAIL)
+      WRITE(6,*)
+      ENDIF
+C
+      CALL DINIT(NOFVAR* (NOFVERT-1),ZERO,NODRES,1)
+      BETA = (ONE-ALPHA)/REAL(NDIM-1)/REAL(NDIM)
+      DO 5 IVERT = 1,NOFVERT - 1
+          DO 7 JVERT = 1,NOFVERT - 1
+              IADD = (JVERT-1)*NOFVAR + 1
+              IF (JVERT.EQ.IVERT) THEN
+                  CNST = ALPHA/NDIM
+
+              ELSE
+                  CNST = BETA
+              ENDIF
+
+              CALL DAXPY(NOFEQN,CNST,FLUX(IADD),1,NODRES(1,IVERT),1)
+    7     CONTINUE
+    5 CONTINUE
+C
+      IF (.NOT.PICARD) RETURN
+C
+C     Compute matrices dFcorr/dZ for all NOFVERT-1 vertices
+C     of the boundary face
+C
+      DO 1 IVERT = 1,NDIM
+          CALL GETDF4CORRDU(VCZ(1,IVERT),VCB(1,IVERT),VCN,NDIM,NOFEQN,
+     +                      WORK(1,1,IVERT))
+    1 CONTINUE
+
+      BETA = (ONE-ALPHA)/REAL(NDIM-1)
+      DO 8 I = 1,NDIM
+          DO 8 J = 1,NDIM
+              IF (J.EQ.I) THEN
+                  TMP = ALPHA/REAL(NDIM)
+
+              ELSE
+                  TMP = BETA/REAL(NDIM)
+              ENDIF
+
+              DO 8 L = 1,NOFEQN
+                  DO 8 K = 1,NOFEQN
+                      WORK2(K,L,I,J) = TMP*WORK(K,L,J)
+    8 CONTINUE
+C
+C
+C     transform the convection stiffness matrix into
+C     conserved variables as C_{ij} := 2 C_{ij} dZdU(j)
+C
+      DO 9 IVERT = 1,NDIM
+          IADD = (IVERT-1)*NOFEQN*NOFEQN + 1
+          CALL MATDZDU(VCZ(1,IVERT),DZDU(IADD),NDIM,NOFEQN)
+          DO 9 I = 1,NDIM
+              CALL DGEMM('No transpose','No transpose',NOFEQN,NOFEQN,
+     +                   NOFEQN,ONE,WORK2(1,1,I,IVERT),NOFEQN,
+     +                   DZDU(IADD),NOFEQN,ZERO,STIFC(1,1,I,IVERT),
+     +                   NOFVAR)
+C
+!     write(6,*)ivert,i
+!     CALL R8Mat_Print('G',' ',Nofvar,Nofvar,STIFC(1,1,I,IVERT),Nofvar,
+!    +      'C(i,j) ',IFAIL)
+!     pause
+C
+    9 CONTINUE
+C
+      RETURN
+
+  564 FORMAT ((E12.6,1X))
+
+      END
+!> \brief \b FLXW44Ar
+!
+!> \par Purpose
+!>
+!> compute inviscid wall b.c.'s for an Argon plasma: weak approach
+!>
+!> @@param[in] NDIM the dimension of the space
+!> @@param[in] NOFVAR nof dofs
+!> @@param[in] NOFVERT nof vertices of a cell (=NDIM+1)
+!> @@param[in] STIFC the jacobian matrix
+!> @@param[in] WORK work array
+!> @@param[in] WORK2 work array
+!> @@param[in] VCZ nodal values in the NOFVERT vertices
+!> @@param[in] VCN NDIM components of the normal to the boundary
+!> @@param[out] NODRES nodal residual
+!> @@param[in] PICARD .TRUE. if the jacobian matrix has to be assembled
+!     
+!> \author $Author: abonfi $
+!> \version $Revision: 1.9 $
+!> \date $Date: 2014/04/14 15:19:54 $
+!
+      SUBROUTINE FLXW44Ar(NDIM,NOFVAR,NOFVERT,STIFC,WORK,WORK2,VCZ,VCN,
+     +                 NODRES,PICARD)
+C
+      IMPLICIT NONE
+C
+C
+C     Purpose: 
+C     ------
+C     compute inviscid wall b.c.'s for plasma flows
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'plasma.h'
+C
+C     .. Parameters ..
+      INTEGER LENB
+      DOUBLE PRECISION ALPHA
+      PARAMETER (LENB=MAXNOFVERT*MAX_NOFVAR_SQR,ALPHA=0.75d0)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR,NOFVERT
+      LOGICAL PICARD
+C     NDIM   dimension of the space (2 or 3)
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     PICARD .TRUE. for Picard linearisation
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION NODRES(NOFVAR,NOFVERT),
+     +                 STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),VCN(NDIM),
+     +                 VCZ(NOFVAR,NOFVERT),WORK(NOFVAR,NOFVAR,NDIM),
+     +                 WORK2(NOFVAR,NOFVAR,NDIM,NDIM)
+C
+C     On entry:
+C     --------
+C     VCN(1:NDIM) cartesian components of the normal
+C                 to the boundary face
+C     VCZ(1:NOFVAR,1:NOFVERT) dependent variables in the vertices
+C                           of the current (IELEM) element
+C                           the freestream values need
+C                           to be stored in VCZ(1:NOFVAR,NOFVERT)
+C     Upon return:
+C     -----------
+C     STIFC(1:NOFVAR,1:NOFVAR,1:NOFVERT,1:NOFVERT) 
+C                   convection matrix
+C                   in the NOFVERT-1 vertices of the boundary face
+C     NODRES(1:NOFVAR,1:NOFVERT-1) nodal residual due to the incoming
+C                   characteristics in the NOFVERT-1 vertices 
+C                   of the boundary face
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION BETA,CNST,TMP
+      INTEGER I,IADD,IFAIL,IVERT,J,JVERT,K,L,NOFEQN
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DZDU(LENB),FLUX(NMAX*VMAX)
+      DOUBLE PRECISION WKSP(MAXNOFVAR) 
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DGEMM,DINIT,GETDF4CORRDU,INVWLL,MATDZDU
+      EXTERNAL GETDF4CORRDU4Ar,INVWLL4Ar,MATDZDU4Ar 
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC REAL
+C     ..
+C     .. Data statements ..
+
+      DATA DZDU/LENB*ZERO/
+C
+C     ..
+C     Compute correction flux
+C
+      NOFEQN = NDIM+NSP+1
+C
+      DO 3 IVERT = 1,NOFVERT
+          IADD = (IVERT-1)*NOFVAR + 1
+          CALL INVWLL4Ar(NDIM,VCN,VCZ(1,IVERT),FLUX(IADD))
+    3 CONTINUE
+!     CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,VCN,FLUX,INVWLL4Ar) !< da cambiare INVWLL
+C
+      CALL DINIT(NOFVAR* (NOFVERT-1),ZERO,NODRES,1)
+      BETA = (1.-ALPHA)/REAL(NDIM-1)/REAL(NDIM)
+      DO 5 IVERT = 1,NOFVERT - 1
+          DO 7 JVERT = 1,NOFVERT - 1
+              IADD = (JVERT-1)*NOFVAR + 1
+              IF (JVERT.EQ.IVERT) THEN
+                  CNST = ALPHA/NDIM
+
+              ELSE
+                  CNST = BETA
+              ENDIF
+!             IADD = (NOFVERT-1)*NOFVAR + 1
+!             CNST = ONE/REAL(NOFVERT-1)
+
+              CALL DAXPY(NOFEQN,CNST,FLUX(IADD),1,NODRES(1,IVERT),1)
+    7     CONTINUE
+    5 CONTINUE
+C
+      IF (.NOT.PICARD) RETURN
+C
+C     Compute matrices dFcorr/dZ for all NOFVERT-1 vertices
+C     of the boundary face
+C
+      DO 1 IVERT = 1,NDIM
+          CALL GETDF4CORRDU4Ar(VCZ(1,IVERT),VCN,NDIM,NOFEQN, !< da cambiare INVWLL
+     +                      WORK(1,1,IVERT))
+    1 CONTINUE      
+      
+      BETA = (1.d0-ALPHA)/REAL(NDIM-1)
+      DO 8 I = 1,NDIM
+          DO 8 J = 1,NDIM
+              IF (J.EQ.I) THEN
+                  TMP = ALPHA/REAL(NDIM)
+
+              ELSE
+                  TMP = BETA/REAL(NDIM)
+              ENDIF
+
+              DO 8 L = 1,NOFEQN
+                  DO 8 K = 1,NOFEQN
+                     WORK2(K,L,I,J) = TMP*WORK(K,L,J)
+    8 CONTINUE
+!     do j = 1,ndim 
+!     write(6,*)'vertice ',J
+!      CALL R8Mat_Print('G',' ',Nofvar,Nofvar,WORK(1,1,J),Nofvar,
+!    +      'WORK ',IFAIL)
+!     enddo
+!     pause
+C
+C
+C     transform the convection stiffness matrix into
+C     conserved variables as C_{ij} := 2 C_{ij} dZdU(j)
+C
+      DO 9 IVERT = 1,NDIM
+          IADD = (IVERT-1)*NOFEQN*NOFEQN + 1
+          CALL MATDZDU4Ar(VCZ(1,IVERT),DZDU(IADD),NDIM,NOFEQN) ! <-- da cambiare
+!      CALL R8Mat_Print('G',' ',Nofvar,Nofvar,DZDU(IADD),Nofvar,
+!    +      'dZdU ',IFAIL)
+          DO 9 I = 1,NDIM
+              CALL DGEMM('No transpose','No transpose',NOFEQN,NOFEQN,
+     +                   NOFEQN,ONE,WORK2(1,1,I,IVERT),NOFEQN,
+     +                   DZDU(IADD),NOFEQN,ZERO,STIFC(1,1,I,IVERT),
+     +                   NOFVAR)
+C
+!      write(6,*)ivert,i
+!      CALL R8Mat_Print('G',' ',Nofvar,Nofvar,STIFC(1,1,I,IVERT),Nofvar,
+!    +      'C(i,j) ',IFAIL)
+!      pause
+C
+    9 CONTINUE
+C
+!      write(6,*) DZDU
+!      pause
+C
+      RETURN
+
+  564 FORMAT ((E12.6,1X))
+
+      END
+@
+
+
+1.9
+log
+@uses constants included from an header file
+@
+text
+@d39 2
+a40 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2014/03/21 13:23:44 $
+d45 1
+a45 1
+C     $Id: flxw4.f,v 1.8 2014/03/21 13:23:44 abonfi Exp abonfi $
+d122 1
+a122 1
+      CALL X04CAF('G',' ',Nofvar,Nofvert,VCZ(1,1),Nofvar,
+d124 1
+a124 1
+      CALL X04CAF('G',' ',NDIM,NDIM,VCB(1,1),NDIM,
+d126 1
+a126 1
+      CALL X04CAF('G',' ',NOFVAR,Nofvert,FLUX,NOFVAR,
+d186 1
+a186 1
+!     CALL X04CAF('G',' ',Nofvar,Nofvar,STIFC(1,1,I,IVERT),Nofvar,
+d215 2
+a216 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2014/03/21 13:23:44 $
+d345 1
+a345 1
+!      CALL X04CAF('G',' ',Nofvar,Nofvar,WORK(1,1,J),Nofvar,
+d357 1
+a357 1
+!      CALL X04CAF('G',' ',Nofvar,Nofvar,DZDU(IADD),Nofvar,
+d366 1
+a366 1
+!      CALL X04CAF('G',' ',Nofvar,Nofvar,STIFC(1,1,I,IVERT),Nofvar,
+@
+
+
+1.8
+log
+@improved doxygen documentation
+@
+text
+@d39 2
+a40 2
+!> \version $Revision: 1.7 $
+!> \date $Date: 2013/08/22 11:55:13 $
+d45 1
+a45 1
+C     $Id: flxw4.f,v 1.7 2013/08/22 11:55:13 abonfi Exp abonfi $
+d97 1
+a97 1
+      DOUBLE PRECISION DZDU(75),FLUX(NMAX*VMAX),WKSP(5)
+d132 1
+a132 1
+      BETA = (1.-ALPHA)/REAL(NDIM-1)/REAL(NDIM)
+d157 1
+a157 1
+      BETA = (1.d0-ALPHA)/REAL(NDIM-1)
+d215 2
+a216 2
+!> \version $Revision: 1.7 $
+!> \date $Date: 2013/08/22 11:55:13 $
+@
+
+
+1.7
+log
+@Improved Doxygen documentation
+@
+text
+@d19 19
+d39 2
+a40 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d45 1
+a45 1
+C     $Id: flxw4.f,v 1.6 2013/01/26 12:21:35 abonfi Exp abonfi $
+d108 2
+d120 10
+d215 2
+a216 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d289 1
+@
+
+
+1.6
+log
+@Added support for an Argon plasma
+@
+text
+@d1 6
+a6 1
+!> \details
+a9 1
+!> @@param[in] VECN the NDIM cartesian component of the inward face normal, scaled by its measure
+d14 1
+a15 1
+!> @@param[in] VCB grid velocity at all NOFVERT vertices
+d18 5
+a22 1
+C     
+d26 1
+a26 1
+C     $Id: flxw4.f,v 1.5 2012/12/20 10:42:16 abonfi Exp abonfi $
+a30 3
+C     Purpose: 
+C     ------
+C     compute inviscid wall b.c.'s for compressible flows
+d166 21
+@
+
+
+1.5
+log
+@same as revision 1.3.1.2
+@
+text
+@d18 1
+a18 1
+C     $Id: flxw4.f,v 1.3.1.2 2012/12/20 10:38:55 abonfi Exp $
+d155 161
+@
+
+
+1.4
+log
+@Uses Simpson's rule to compute the flux
+@
+text
+@d1 15
+a15 2
+
+      SUBROUTINE FLXW4(NDIM,NOFVAR,NOFVERT,STIFC,WORK,WORK2,VCZ,VCN,
+d18 2
+d48 1
+a48 1
+     +                 WORK2(NDIM+2,NDIM+2,NDIM,NDIM)
+d90 4
+a93 5
+!     DO 3 IVERT = 1,NOFVERT
+!         IADD = (IVERT-1)*NOFVAR + 1
+!         CALL INVWLL(NDIM,VCN,VCZ(1,IVERT),FLUX(IADD))
+!   3 CONTINUE
+      CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,VCN,FLUX,INVWLL)
+d98 8
+a105 10
+!         DO 7 JVERT = 1,NOFVERT - 1
+!             IADD = (JVERT-1)*NOFVAR + 1
+!             IF (JVERT.EQ.IVERT) THEN
+!                 CNST = ALPHA/NDIM
+
+!             ELSE
+!                 CNST = BETA
+!             ENDIF
+              IADD = (NOFVERT-1)*NOFVAR + 1
+              CNST = ONE/REAL(NOFVERT-1)
+d117 1
+a117 1
+          CALL GETDF4CORRDU(VCZ(1,IVERT),VCN,NDIM,NOFEQN,
+d145 2
+a146 2
+     +                   NOFEQN,+1.d0,WORK2(1,1,I,IVERT),NOFEQN,
+     +                   DZDU(IADD),NOFEQN,0.d0,STIFC(1,1,I,IVERT),
+@
+
+
+1.3
+log
+@towards the implementation of a coupled approach
+for RANS: the number of variables NOFVAR can now
+be different from the number of mean flow equations
+(hereafter called NOFEQN)
+@
+text
+@d13 1
+a13 1
+      include 'constants'
+d75 5
+a79 4
+      DO 3 IVERT = 1,NOFVERT
+          IADD = (IVERT-1)*NOFVAR + 1
+          CALL INVWLL(NDIM,VCN,VCZ(1,IVERT),FLUX(IADD))
+    3 CONTINUE
+d84 4
+a87 4
+          DO 7 JVERT = 1,NOFVERT - 1
+              IADD = (JVERT-1)*NOFVAR + 1
+              IF (JVERT.EQ.IVERT) THEN
+                  CNST = ALPHA/NDIM
+d89 5
+a93 3
+              ELSE
+                  CNST = BETA
+              ENDIF
+@
+
+
+1.3.1.1
+log
+@Changed header file name
+@
+text
+@a4 2
+C     $Id:$
+C
+d13 1
+a13 1
+      include 'constants.h'
+@
+
+
+1.3.1.2
+log
+@now supports ALE calculations
+@
+text
+@d1 2
+a2 15
+!> \details
+!> @@param[in] NDIM the dimension of the space
+!> @@param[in] NOFVAR nof dofs
+!> @@param[in] NOFVERT nof vertices of a cell (=NDIM+1)
+!> @@param[in] VECN the NDIM cartesian component of the inward face normal, scaled by its measure
+!> @@param[in] STIFC the jacobian matrix
+!> @@param[in] WORK work array
+!> @@param[in] WORK2 work array
+!> @@param[in] VCZ nodal values in the NOFVERT vertices
+!> @@param[in] VCN NDIM components of the normal to the boundary
+!> @@param[in] VCB grid velocity at all NOFVERT vertices
+!> @@param[out] NODRES nodal residual
+!> @@param[in] PICARD .TRUE. if the jacobian matrix has to be assembled
+C     
+      SUBROUTINE FLXW4(NDIM,NOFVAR,NOFVERT,STIFC,WORK,WORK2,VCZ,VCB,VCN,
+d5 1
+a5 1
+C     $Id: flxw4.f,v 1.3.1.1 2011/09/16 07:43:27 abonfi Exp abonfi $
+d35 1
+a35 1
+     +                 WORK2(NDIM+2,NDIM+2,NDIM,NDIM),VCB(NDIM,NOFVERT)
+d79 1
+a79 1
+          CALL INVWLL(NDIM,VCN,VCB(1,IVERT),VCZ(1,IVERT),FLUX(IADD))
+d104 1
+a104 1
+          CALL GETDF4CORRDU(VCZ(1,IVERT),VCB(1,IVERT),VCN,NDIM,NOFEQN,
+d132 2
+a133 2
+     +                   NOFEQN,ONE,WORK2(1,1,I,IVERT),NOFEQN,
+     +                   DZDU(IADD),NOFEQN,ZERO,STIFC(1,1,I,IVERT),
+@
+
+
+1.2
+log
+@some cleanup
+@
+text
+@d12 2
+a15 2
+      REAL*8 ZERO,HALF,ONE,TWO
+      PARAMETER (ZERO=0.00d0,HALF=0.5d0,ONE=1.00d0,TWO=2.00d0)
+d32 2
+a33 2
+     +                 VCZ(NOFVAR,NOFVERT),WORK(NOFVAR,NOFVAR,NDIM),
+     +                 WORK2(NOFVAR,NOFVAR,NDIM,NDIM)
+d55 1
+a55 1
+      INTEGER I,IADD,IFAIL,IVERT,J,JVERT,K,L
+d58 1
+a58 1
+      DOUBLE PRECISION DZDU(75),FLUX(20),TEMP(15),WKSP(5)
+d73 2
+d92 1
+a92 1
+              CALL DAXPY(NOFVAR,CNST,FLUX(IADD),1,NODRES(1,IVERT),1)
+d102 1
+a102 1
+          CALL GETDF4CORRDU(VCZ(1,IVERT),VCN,NDIM,NOFVAR,
+d116 2
+a117 2
+              DO 8 L = 1,NOFVAR
+                  DO 8 K = 1,NOFVAR
+d126 2
+a127 2
+          IADD = (IVERT-1)*NOFVAR*NOFVAR + 1
+          CALL MATDZDU(VCZ(1,IVERT),DZDU(IADD),NDIM,NOFVAR)
+d129 3
+a131 3
+              CALL DGEMM('No transpose','No transpose',NOFVAR,NOFVAR,
+     +                   NOFVAR,+1.d0,WORK2(1,1,I,IVERT),NOFVAR,
+     +                   DZDU(IADD),NOFVAR,0.d0,STIFC(1,1,I,IVERT),
+d133 6
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 12
+a13 6
+      SUBROUTINE FLXW4(NDIM,NOFVAR,NOFVERT,
+     +STIFC,WORK,work2,VCZ,VCN,NODRES,PICARD)
+c
+c     correction flux for inviscid wall boundary conditions
+c
+      IMPLICIT NONE 
+d15 5
+a19 4
+C
+      PARAMETER (ZERO = 0.00d0 , HALF = 0.5d0 , ONE = 1.00d0 , 
+     . TWO = 2.00d0 )
+
+d21 46
+a66 1
+      INTEGER i,j,k,l,IVERT,JVERT,ifail,IADD
+d68 2
+a69 11
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 VCZ(NOFVAR,NOFVERT),
+     +                 VCN(NDIM),NODRES(NOFVAR,NOFVERT)
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NDIM),dZdU(75)
+      DOUBLE PRECISION WORK2(NOFVAR,NOFVAR,NDIM,NDIM)
+      DOUBLE PRECISION FLUX(20),CNST
+      double precision wksp(5),temp(15),alpha,beta,tmp
+      parameter(alpha=0.75d0)
+      LOGICAL PICARD 
+
+      DATA dZdU/75*0.d0/
+d74 2
+a75 2
+         IADD = (IVERT-1)*NOFVAR+1
+         CALL INVWLL(NDIM,VCN,VCZ(1,IVERT),FLUX(IADD))
+d78 1
+a78 1
+      CALL DINIT(NOFVAR*(NOFVERT-1),ZERO,NODRES,1)
+d80 12
+a91 10
+      DO 5 IVERT = 1,NOFVERT-1
+         DO 7 JVERT = 1,NOFVERT-1
+            IADD = (JVERT-1)*NOFVAR+1
+            IF(JVERT.EQ.IVERT)THEN
+               CNST = ALPHA/NDIM
+            ELSE
+               CNST = BETA
+            ENDIF
+            CALL DAXPY(NOFVAR,CNST,FLUX(IADD),1,NODRES(1,IVERT),1)
+    7    CONTINUE
+d94 1
+a94 1
+      IF(.NOT.PICARD)RETURN
+d100 3
+a102 3
+          call GetdF4corrdU(vcz(1,IVERT),vcn,ndim,nofvar,
+     +                      work(1,1,IVERT))
+    1 CONTINUE 
+d104 1
+a104 1
+      beta = ( 1.d0 - alpha ) / real( ndim -1 )
+d106 11
+a116 9
+         DO 8 j = 1,NDIM
+            if( j.eq.i )then
+                tmp = alpha / real(ndim)
+            else
+                tmp = beta / real(ndim)
+            endif
+            DO 8 l = 1,NOFVAR
+               DO 8 k = 1,NOFVAR
+                  work2(k,l,i,j) = tmp*work(k,l,j)
+a118 1
+C     CALL DINIT(NOFVAR*NDIM,0.d0,NODRES,1)
+d120 1
+a120 17
+C     compute nodal residuals as - \sum C_{i,j=1}^{d} Z_j
+C     the - sign is due to the fact that what we want to
+C     split is F(boundary) - F(1)
+C
+C     do 29 i = 1,ndim
+C        do 31 j = 1,ndim
+C           call dgemv('N',nofvar,nofvar,-.5d0,work2(1,1,i,j),nofvar,
+C    >                 vcz(1,j),1,1.d0,nodres(1,i),1)
+C  31 CONTINUE
+C     call daxpy(nofvar,1.d0,nodres(1,i),1,wksp,1)
+C  29 CONTINUE
+C#ifdef PRINT
+Cwrite(6,*)'nodres '
+Cwrite(6,*)(wksp(j),j=1,nofvar)
+C#endif
+C
+C     transform the convection stiffness matrix into 
+d124 7
+a130 10
+	   IADD = (IVERT-1)*NOFVAR*NOFVAR+1
+           CALL MatdZdU(VCZ(1,IVERT),dZdU(IADD),NDIM,NOFVAR)
+           DO 9 I = 1,NDIM
+               CALL DGEMM('No transpose','No transpose',NOFVAR,
+     >           NOFVAR,NOFVAR,+1.d0,WORK2(1,1,I,IVERT),NOFVAR,
+     >           dZdU(IADD),NOFVAR,0.d0,
+     >           STIFC(1,1,I,IVERT),NOFVAR)
+C     write(6,*)i,ivert
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFC(1,1,I,IVERT),
+C    +NOFVAR,'Stiffness matrix ',IFAIL)
+a132 20
+C#ifdef DEBUG
+C
+C     test the stiffness matrix in conserved variables 
+C
+C     call dinit(nofvar,0.d0,wksp,1)
+C     call dcopy(nofvar*ndim,vcz,1,temp,1)
+C     call parm_to_cons(temp,ndim,nofvar,ndim) 
+C     do 19 i = 1,ndim
+C        do 19 j = 1,ndim
+C           call dgemv('N',nofvar,nofvar,1.d0,stifc(1,1,i,j),nofvar,
+C    >                 temp((j-1)*nofvar+1),1,1.d0,wksp,1)
+C  19 CONTINUE
+Cifdef PRINT
+C     write(6,*)' nodres from conserved',(wksp(j),j=1,nofvar)
+C     write(6,*)'node #1',(nodres(j,1),j=1,nofvar)
+C     write(6,*)'node #2',(nodres(j,2),j=1,nofvar)
+C     if(ndim.eq.3)write(6,*)'node #3',(nodres(j,3),j=1,nofvar)
+C     pause
+Cendif
+Cendif
+d134 3
+a136 1
+  564 FORMAT((E12.6,1X))
+a137 1
+C
+@

@@ -1,0 +1,24 @@
+3c3
+< C     $Id: RHSJacobian.F,v 1.6 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: RHSJacobian.F,v 1.6 2016/11/10 11:25:13 abonfi Exp $
+5c5,7
+< CCCCC#include "petsc/finclude/petscsys.h"
+---
+>       implicit none
+> C
+> #include "petsc/finclude/petscsys.h"
+8,10c10,12
+< CCCCC#include "petsc/finclude/petscksp.h"
+< CCCCC#include "petsc/finclude/petscpc.h"
+< CCCCC#include "petsc/finclude/petscis.h"
+---
+> #include "petsc/finclude/petscksp.h"
+> #include "petsc/finclude/petscpc.h"
+> #include "petsc/finclude/petscis.h"
+12,16d13
+<               use petscvec
+<               use petscmat
+<               use petscts
+< C
+<       implicit none

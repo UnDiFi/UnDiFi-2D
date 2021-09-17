@@ -1,0 +1,548 @@
+head	1.9;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.9
+	release3_13_0:1.9
+	release3_12_0:1.9
+	release3_11_0:1.9
+	release3_10_0:1.9
+	release3_8_0:1.9
+	release3_7_1:1.9
+	release3_7_0:1.8
+	release3_4_5:1.8
+	release3_4_4:1.8
+	release3_4_3:1.7
+	release3_4_2:1.7
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.6
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.9
+date	2020.03.28.09.49.28;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.04.18.09.26.37;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.05.18.09.18.33;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.04.27.09.33.46;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2012.10.25.11.24.29;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2012.10.11.08.52.08;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.06.11.09.07.25;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.01.02.09.10.34;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Time accurate version of the Lax-Wendroff scheme
+@
+
+
+1.9
+log
+@renamed subroutine call
+@
+text
+@!> \par Purpose
+!>
+!> This routine computes the time-accurate LW system scheme on one tetrahedron;
+!>
+!> it differs from the LDA version 1 system scheme since here the matrix \f$ K_i^+ \f$
+!> multiplies \f$ \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} \f$ from the left, i.e.
+!>
+!> the distribution matrix for the time-accurate LW scheme reads:
+!> \f[
+!> B_i = 
+!> \f]
+!>
+!>
+!> @@param[in] MATRIXSPLITTER is the subroutine use to split the Jacobian matrix
+!> @@param[in] W is the set of NORDER dependent variables in the NOFVERT vertices of the current cell
+!> @@param[out] NODRES are the signals sent to each of the NOFVERT vertices
+!> @@param[in,out] TSTEP is the elemental contribution to the (inverse of the) time step
+!> @@param[out] BETA the NOFVERT distribution matrices
+!> @@param[out] STIFC the elemental contribution to the implicit matrix (computed only if MATRIX_ASSEMBLY is true)
+!> @@param[in] NORDER is the order of the hyperbolic system being solved, it could be < than NDOF
+!> @@param[in] NDOF is the number of dofs in the gridpoints, also the leading dimension of W, STIFC, NODRES, TSTEP
+!> @@param[out] NOFVERT is number of vertices of the simplicial elements (= NDIM+1)
+!> @@param[in] VCN the NDIM cartesian component of the inward face normal to all NOFVERT vertices, scaled by its measure
+!> @@param[in] NDIM is the dimension of the space
+!> @@param[in] DFGHDU the NDIM cartesian components of the Jacobian matrix
+!> @@param[in] LDJ is the leading dimension of DFGHDU
+!> @@param[out] CELRES the elemental residual
+!> @@param[in] SOURCE the elemental source term
+!> @@param[in] IELEM is the current simplicial element
+!> @@param[in] MATRIX_ASSEMBLY when set == .TRUE. the STIFC matrix will be assembled
+!> \author $Author: abonfi $
+!> \version $Revision: 1.8 $
+!> \date $Date: 2014/04/18 09:26:37 $
+!> \bug Not sure this is ok for 3D
+      SUBROUTINE LWTSYS_SCHEME(MATRIXSPLITTER,W,NODRES,TSTEP,BETA,STIFC,
+     +                         NORDER,NDOF,NOFVERT,VCN,NDIM,DFGHDU,
+     +                         LDJ,CELRES,SOURCE,IELEM,
+     &                         MATRIX_ASSEMBLY)
+C
+C     $Id: LWaSys_scheme.F,v 1.8 2014/04/18 09:26:37 abonfi Exp abonfi $
+C
+C
+C
+C
+C
+      IMPLICIT NONE
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'time.h'
+      INCLUDE 'flags.com'
+      INCLUDE 'time.com'
+C
+C
+cnag  EXTERNAL F07ADF,F07AEF,DSCAL
+C
+C
+C
+C     .. Parameters ..
+C
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION VOLUME
+      INTEGER IELEM,LDJ,NDIM,NOFVERT,NDOF,NORDER
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DFGHDU(LDJ,*),NODRES(NDOF,NOFVERT),
+     +                 TSTEP(NDOF,NOFVERT),SOURCE(*),CELRES(*),
+     3                 BETA(*),
+     4                 STIFC(NDOF,NDOF,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NDOF,NOFVERT)
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL MATRIXSPLITTER
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION GALERKIN,TEMP,HELP
+      DOUBLE PRECISION CFLELEM
+      INTEGER I,INFO,IROW,IVAR,IVERT,JVERT,J,N,M,ORDSQR,IADD,JADD
+      LOGICAL LFLAG
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION 
+     + KNEG(MAX_NOFVAR_SQR*MAXNOFVERT),KPOS(MAX_NOFVAR_SQR*MAXNOFVERT),
+     +    K(MAX_NOFVAR_SQR*MAXNOFVERT),
+     + VRIGHT(MAX_NOFVAR_SQR),VLEFT(MAX_NOFVAR_SQR),
+     & WKSP2(MAXNOFVAR,MAXNOFVAR),
+     & WNEG(MAXNOFVAR),WPOS(MAXNOFVAR),WR(MAXNOFVAR)
+C     ..
+C     .. External Functions ..
+      LOGICAL NULLMAT,UNITMAT
+      EXTERNAL NULLMAT,UNITMAT
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DGEMM,DGEMV,DGETRF,DGETRS,DINIT,DSCAL,MATSUM,R8Mat_Print
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DABS
+C     ..
+C     .. Statement Functions ..
+      INTEGER IDX
+      IDX(I,J,N,M) = (((J-1)*M+I-1)*N*N)+1
+C     ..
+C
+      IF(.NOT.LTIME)THEN
+         WRITE(*,*) 'This version of the LW scheme should be used for ti
+     &me-accurate only'
+         CALL EXIT(1)
+      ELSE
+         IF(DUALTS)THEN
+            WRITE(*,*) 'The LW scheme should be used WITHOUT dual time-s
+     &tepping'
+            CALL EXIT(1)
+         ENDIF
+      ENDIF
+C
+      ORDSQR = NORDER*NORDER
+      DO 3 I = 1,2*NORDER
+          CELRES(I) = ZERO
+    3 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+          CALL DINIT(MAX_NOFVAR_SQR,ZERO,WKSP2,1)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+      GALERKIN = ONE / NOFVERT
+      CFLELEM = HALF*DTVOL ! not sure this is ok for 3D
+!     IF(NDIM.EQ.3)STOP 'LW scheme has not been checked in 3D'
+C
+C     Loop over the vertices of the element ..
+C
+      DO 10 IVERT = 1,NOFVERT
+C
+C     The matrix IS split into its positive and negative parts
+C     (this could be avoided)
+C
+C     probabilmente posso usare .FALSE. 
+C
+          IADD = ORDSQR*(IVERT-1)+1
+          CALL MATRIXSPLITTER(IELEM,NDIM,NORDER,VCN(1,IVERT),DFGHDU,LDJ,
+     +                        K(IADD),KPOS(IADD),KNEG(IADD),
+     &                        VLEFT,VRIGHT,NORDER,
+!    +                        WR,WPOS,WNEG,.TRUE.)
+     +                        WR,WPOS,WNEG,.FALSE.)
+C
+C       Timestep ..
+C
+          DO 32 IVAR = 1,NORDER
+              TSTEP(IVAR,IVERT) = TSTEP(IVAR,IVERT) + WPOS(IVAR)
+   32     CONTINUE
+C
+C       the residual is computed as Sum_j K(j) * U(j) ..
+C
+         CALL DGEMV('NoTranspose',NORDER,NORDER,ONE,K(IADD),NORDER,
+     +   W(1,IVERT),1,ONE,CELRES,1)
+C
+   10 CONTINUE ! end loop over vertices
+C
+C       .. Loop again over all vertices to compute the distribution
+C               matrices (overwritten on KPOS)  ..
+C
+      DO 30 IVERT = 1,NOFVERT
+C
+C     compute the distribution matrices
+C
+         IADD = ORDSQR*(IVERT-1)+1
+         CALL DCOPY(ORDSQR,K(IADD),1,BETA(IADD),1)
+C
+C        .. add the Galerkin term
+C
+         CALL DSCAL(ORDSQR,CFLELEM,BETA(IADD),1)
+         DO 33 IROW = 1, NORDER
+               JADD = IADD + (IROW-1)*NORDER + IROW -1
+               BETA(JADD) = GALERKIN + BETA(JADD)
+   33    CONTINUE
+!         CALL R8Mat_Print('General',' ',NORDER,NORDER,BETA(IADD),
+!    +                 NORDER,'  |B| matrix ',INFO)
+C
+C       NODRES(IVERT) = -BETA(IVERT)*CELRES
+C
+         CALL DGEMV('NoTranspose',NORDER,NORDER,MONE,BETA(IADD),NORDER,
+     +   CELRES,1,ZERO,NODRES(1,IVERT),1)
+C
+C
+C --------------- Debugging code starts here ---------------
+C
+          IF (ICHECK.NE.0) THEN
+C
+C       .. Sum up the distribution matrices ..
+C
+              CALL MATSUM(WKSP2,MAXNOFVAR,BETA(IADD),NORDER,
+     +        NORDER,NORDER)
+C
+          ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+   30 CONTINUE ! End loop over vertices
+C
+C       the source term is distributed using Galerkin
+C
+      DO IROW = 1,NORDER
+         HELP = SOURCE(IROW)/REAL(NOFVERT)
+         DO IVERT = 1, NOFVERT
+            NODRES(IROW,IVERT) = NODRES(IROW,IVERT) -HELP
+         ENDDO  
+      ENDDO
+C
+      DO IROW = 1, NORDER
+         CELRES(IROW) = CELRES(IROW) + SOURCE(IROW)
+      ENDDO 
+C
+C --------------- Debugging code starts here ---------------
+C
+      include 'test1.inc'
+C
+C --------------- Debugging code ends here ---------------
+C
+      IF (MATRIX_ASSEMBLY) THEN
+         STOP 'LW scheme should be used with explicit time-stepping'
+C
+C     .. Assembling the element stiffness matrix for the LW scheme ..
+C
+         DO 31 JVERT = 1,NOFVERT
+C
+             JADD = IDX(JVERT,1,NORDER,NOFVERT)
+             DO 31 IVERT = 1,NOFVERT
+C
+C     ... C_{ij}^{LW} = - Beta_i^{+} K_j
+C         Beta_i^{+} had been written in BETA
+C
+               IADD = IDX(IVERT,1,NORDER,NOFVERT)
+               CALL DGEMM('N','N',NORDER,NORDER,NORDER,MONE,BETA(IADD),
+     +         NORDER,K(JADD),NORDER,ZERO,STIFC(1,1,IVERT,JVERT),NDOF)
+C
+   31    CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      include 'test2.inc'
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+      RETURN
+      END
+@
+
+
+1.8
+log
+@now works for 3D as well, but I am not sure it is all right
+@
+text
+@d32 2
+a33 2
+!> \version $Revision: 1.13 $
+!> \date $Date: 2013/08/22 15:10:57 $
+d40 1
+a40 1
+C     $Id: LWaSys_scheme.F,v 1.7 2013/05/18 09:18:33 abonfi Exp abonfi $
+d95 1
+a95 1
+      EXTERNAL DGEMM,DGEMV,DGETRF,DGETRS,DINIT,DSCAL,MATSUM,X04CAF
+d180 1
+a180 1
+!         CALL X04CAF('General',' ',NORDER,NORDER,BETA(IADD),
+@
+
+
+1.7
+log
+@Issue a warning and stop when this explicit LW scheme is used
+with dual time stepping
+@
+text
+@d1 34
+a34 1
+!> \copydetails LDASYS_SCHEME()
+d40 1
+a40 1
+C     $Id: LWaSys_scheme.F,v 1.6 2013/04/27 09:33:46 abonfi Exp abonfi $
+a41 2
+C     This is the "true" time-accurate LW scheme
+C     not sure it is ok for 3D
+a45 3
+C This routine computes the LW system scheme on one tetrahedron
+C
+C
+d132 1
+a132 1
+      IF(NDIM.EQ.3)STOP 'LW scheme has not been checked in 3D'
+@
+
+
+1.6
+log
+@the contribution to the timestep is now added
+separately for each variable
+@
+text
+@d7 1
+a7 1
+C     $Id: LWaSys_scheme.F,v 1.5 2013/01/24 07:46:33 abonfi Exp abonfi $
+d78 9
+a86 2
+         STOP 'This version of the LW scheme should be used for time-acc
+     &urate only'
+@
+
+
+1.5
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@d7 1
+a7 1
+C     $Id: LWaSys_scheme.F,v 1.4 2012/10/25 11:24:29 abonfi Exp abonfi $
+d118 1
+a118 1
+              TSTEP(1,IVERT) = TSTEP(1,IVERT) + WPOS(IVAR)
+@
+
+
+1.4
+log
+@ALE version: the gradient correction is distributed using the LW weighting
+@
+text
+@d7 1
+a7 1
+C     $Id: LWaSys_scheme.F,v 1.2 2009/06/11 09:07:25 abonfi Exp abonfi $
+a127 4
+      DO IROW = 1, NORDER
+         CELRES(IROW) = CELRES(IROW) + SOURCE(IROW)
+      ENDDO 
+C
+d153 1
+d167 10
+d178 3
+a180 1
+   30 CONTINUE ! End loop over vertices
+@
+
+
+1.3
+log
+@the distribution of the source term has been de-activated
+@
+text
+@d9 2
+a10 2
+!>    This is the "true" time-accurate LW scheme
+!>    not sure it is ok for 3D
+d15 1
+a15 1
+!>    This routine computes the LW system scheme on one tetrahedron
+d57 1
+a57 1
+     + K(MAX_NOFVAR_SQR*MAXNOFVERT),
+d78 2
+a79 2
+         STOP 'LW scheme should be used for time-accurate calculations o
+     &nly'
+d112 2
+a113 1
+     +                        WR,WPOS,WNEG,.TRUE.)
+d128 4
+d137 1
+a137 1
+C     compute the distribution matrices as B_i =  K^+ (\sum K^+)^{-1}
+d155 1
+a155 1
+     +   CELRES,1,ZERO,NODRES(1,IVERT),1) ! should be + SOURCE
+a203 3
+C
+C
+C --------------- Time accurate stuff starts here ---------------
+@
+
+
+1.2
+log
+@added BETA among the arguments of the call
+@
+text
+@d1 1
+d7 1
+a7 1
+C     $Id: LWaSys_scheme.F,v 1.1 2009/01/02 09:10:34 abonfi Exp abonfi $
+d9 2
+a10 2
+C     This is the "true" time-accurate LW scheme
+C     not sure it is ok for 3D
+a12 20
+C NORDER                is the order of the system to solve for, i.e.
+C                       the order of the matrix dFGHdU.
+C FrstEq                is the first among the NDOF variable which
+C                       appears into the system of order NORDER.
+C IELEM                 is the current element.
+C dFGHdU(LDJ,*) is the Jacobian Matrix of the system.
+C LDJ                   is the leading dimension of dFGHdU.
+C W                     stores by columns the NORDER variables of the
+C                       NOFVERT vertices.
+C LNODRES               is the leading dimension of W.
+C CELRES[1:2*NORDER]    OUT Real
+C CELRES[1:NORDER]      stores the residual computed by the Matrix scheme
+C                       as \sum K_j U_j (explicit part of the scheme)
+C CELRES[NORDER+1:2*NORDER]
+C                       stores the residual computed by the Matrix scheme
+C                       as \sum C_{ij} U_j (implicit part of the scheme)
+C MatrixSplitter        is the procedure used to compute the eigenvector
+C                       decomposition of the matrix dFGHdU.
+C TSTEP(NDOF,*)         is the nodal timestep.
+C Nodres(NDOF,*)        is the nodal residual.
+d15 1
+a15 2
+C
+C This routine computes the LW system scheme on one tetrahedron
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE LWTSYS_SCHEME(MATRIXSPLITTER,W,NODRES,TSTEP,STIFC,
+d6 1
+a6 1
+C     $Id: LWbSys_scheme.F,v 1.8 2004/12/20 14:53:54 aldo Exp aldo $
+d9 1
+a9 1
+C
+d60 3
+a62 2
+     +                 TSTEP(NDOF,NOFVERT),SOURCE(*),
+     +                 CELRES(*),STIFC(NDOF,NDOF,NOFVERT,NOFVERT),
+d77 1
+a77 1
+     + BETA(MAX_NOFVAR_SQR*MAXNOFVERT),K(MAX_NOFVAR_SQR*MAXNOFVERT),
+d126 2
+a222 12
+      IF(LTIME.AND.DUALTS)THEN
+C
+C     here we add the time-derivative term to the spatial, time-accurate
+C     LW discretization; this is used, for instance, for incompressible
+C     flows which require dual time stepping anyway
+C     remark that the terms corresponding to the physical time derivative
+C     are set to zero within UNSTEADYS
+C
+         WRITE(6,*)'WARNING : expl LW computes the unsteady term'
+         CALL UNSTEADYS(BETA,W,NODRES,STIFC,NORDER,NDIM,NOFVERT,
+     &                  MATRIX_ASSEMBLY)
+      ENDIF
+@

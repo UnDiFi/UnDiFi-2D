@@ -1,0 +1,101 @@
+\hypertarget{matspl_x_i_8_f}{}\doxysection{src/euler/matspl\+XI.F File Reference}
+\label{matspl_x_i_8_f}\index{src/euler/matsplXI.F@{src/euler/matsplXI.F}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{matspl_x_i_8_f_a5e4efbabc99e6f8bba24f93258080776}{Mat\+Split\+XI}} (I\+E\+L\+EM, N\+D\+IM, N\+O\+R\+D\+ER, V\+E\+CN, Jacobian\+Matrix, L\+DJ, K\+M\+AT, K\+P\+OS, K\+N\+EG, V\+L\+E\+FT, V\+R\+I\+G\+HT, L\+DA, WR, L\+P\+OS, L\+N\+EG, E\+I\+G\+E\+N\+D\+E\+CO)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{matspl_x_i_8_f_a5e4efbabc99e6f8bba24f93258080776}\label{matspl_x_i_8_f_a5e4efbabc99e6f8bba24f93258080776}} 
+\index{matsplXI.F@{matsplXI.F}!MatSplitXI@{MatSplitXI}}
+\index{MatSplitXI@{MatSplitXI}!matsplXI.F@{matsplXI.F}}
+\doxysubsubsection{\texorpdfstring{MatSplitXI()}{MatSplitXI()}}
+{\footnotesize\ttfamily subroutine Mat\+Split\+XI (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+R\+D\+ER,  }\item[{double precision, dimension(ndim)}]{V\+E\+CN,  }\item[{double precision, dimension(ldj,$\ast$)}]{Jacobian\+Matrix,  }\item[{integer}]{L\+DJ,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+M\+AT,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+P\+OS,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+N\+EG,  }\item[{double precision, dimension(lda,$\ast$)}]{V\+L\+E\+FT,  }\item[{double precision, dimension(lda,$\ast$)}]{V\+R\+I\+G\+HT,  }\item[{integer}]{L\+DA,  }\item[{double precision, dimension($\ast$)}]{WR,  }\item[{double precision, dimension($\ast$)}]{L\+P\+OS,  }\item[{double precision, dimension($\ast$)}]{L\+N\+EG,  }\item[{logical}]{E\+I\+G\+E\+N\+D\+E\+CO }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the split matrices for the compressible (perfect gas) equations in conserved variables, i.\+e. we split matrix\+:
+
+\[ \mbox{{\tt KMAT}} = K_{\mathbf{n}} = \frac{1}{d} {\bf A}_{\mathbf{n}} = \frac{1}{d} {\bf R}_{\mathbf{n}} {\bf \Lambda}_{\mathbf{n}} {\bf L}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} -b_n & 0 & \mathbf{n}^t \\\ \left[-H + \left(\gamma-1\right)k\right] u_n & \gamma u_n - b_n & H\mathbf{n}^t -\left(\gamma -1\right) u_n \mathbf{u}^t \\\ -\mathbf{u} u_n + \left(\gamma -1\right) k\mathbf{n} & \left(\gamma-1\right) \mathbf{n} & \mathbf{u}\mathbf{n} -\left(\gamma-1\right)\mathbf{n}\mathbf{u} + \left(u_n-b_n\right) I_{d\times d} \end{array} \right) \]
+
+into its positive and negative parts {\ttfamily K\+P\+OS} and {\ttfamily K\+N\+EG} 
+
+\[ \mathbf{K}_{\mathbf{n}}^{\pm} = \frac{1}{d} \mathbf{A}_{\mathbf{n}}^{\pm} \quad\quad \mathbf{A}_{\mathbf{n}}^{\pm} = \frac{1}{d} {\bf R}_{\mathbf{n}} {\bf \Lambda}^{\pm}_{\mathbf{n}} {\bf L}_{\mathbf{n}} = \left( \begin{array}{ccc} a_{11}^{\pm} & a_{12}^{\pm} & a_{13}^{\pm} \\\ a_{21}^{\pm} & a_{22}^{\pm} & \mathbf{a}_{23}^{\pm} \\\ \mathbf{a}_{31}^{\pm} & \mathbf{a}_{32}^{\pm} & A_{33}^{\pm} \\\ \end{array} \right). \]
+
+The individual entries of $ {\bf A}_{\mathbf{n}}^{\pm} $ are\+:
+
+\begin{eqnarray*} a_{11}^{\pm} &=& \lambda_0^{\pm} + \delta M^2 \left[ \frac{\lambda_{+}^{\pm} + \lambda_{-}^{\pm} }{2} -\lambda_{0}^{\pm} \right] -M_{n} \frac{\lambda_{+}^{\pm} - \lambda_{-}^{\pm}}{2} \\\ a_{12}^{\pm} &=& \frac{\left(\gamma-1\right)}{a^2}\left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\\ a_{13}^{\pm}&=& \frac{1}{a} \left[ -\left(\gamma-1\right) \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\\ a_{21}^{\pm} &=& \lambda_0^{\pm} k \left(1-\delta M^2\right) - \lambda_0^{\pm} \left(S^2 + T^2\right) + \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} \left[ k \left(1+\delta M^2\right) - N^2 \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ &=& \left[ k \left(1+\delta M^2\right) - N^2 \right] \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ a_{22}^{\pm} &=& \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} + \delta M^2 \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\gamma-1\right) M_n \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \\\ \mathbf{a}_{23}^{\pm} &=& \left[ N \mathbf{n} - \left( 1 +\delta M^2 \right) \mathbf{u} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \left[ \frac{H}{a} \mathbf{n} - \left(\gamma-1\right) \mathbf{u} M_n \right] \\\ \mathbf{a}_{31}^{\pm} &=& \left( \delta M^2 \mathbf{u} - N \mathbf{n} \right) \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right) +\left( \delta M^2 a \mathbf{n} - M_n \mathbf{u} \right) \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm} }{2} \right) \\\ \mathbf{a}_{32}^{\pm}&=& \frac{\left(\gamma-1\right)}{a} \left[ \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right)+ \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\\ A_{33}^{\pm}&=& \left[ \mathbf{n}\mathbf{n} - \left(\gamma-1\right)\frac{\mathbf{u}\mathbf{u}}{a^2} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\mathbf{u} \mathbf{n} - \left(\gamma-1\right) \mathbf{n} \mathbf{u} \right) \frac{1}{a} \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right) + \lambda_0^{\pm} I_{d\times d} \end{eqnarray*}
+
+In deriving the expressions for the individual entries of the matrix above, the following identities proved useful\+:
+
+\begin{eqnarray*} N \mathbf{n} + S \mathbf{s} + T \mathbf{t} &=& \mathbf{u} \\\ N^2 + S^2 + T^2 &=& 2 k \\\ \mathbf{n}\mathbf{n} + \mathbf{s}\mathbf{s} + \mathbf{t}\mathbf{t} &=& I_{d\times d} \end{eqnarray*}
+
+and the following shorthand notation has been used\+:
+
+\[ u_n = \mathbf{u} \cdot \mathbf{n} = N \quad \mathbf{u} \cdot \mathbf{s} = S \quad \mathbf{u} \cdot \mathbf{t} = T \quad \delta = \frac{\gamma-1}{2} \quad b_n = \mathbf{b} \cdot \mathbf{n} \]
+
+Left {\ttfamily L\+E\+FT} and right {\ttfamily R\+I\+G\+HT} eigenvector matrices\+:
+
+\[ \mathbf{L}_{\mathbf{n}} = \left( \begin{array}{ccc} 1-\frac{(\gamma-1)}{2} M^2 & -\frac{(\gamma-1)}{a^2} & \frac{(\gamma-1)}{a^2} \mathbf{u}^t \\\ -\mathbf{u} \cdot \mathbf{s} / \rho & 0 & \mathbf{s}^t / \rho \\\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k - \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t + \mathbf{n}^t \right] \\\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k + \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t - \mathbf{n}^t \right] \\\ -\mathbf{u} \cdot \mathbf{t} / \rho & 0 & \mathbf{t}^t / \rho \end{array} \right) \quad\quad \mathbf{R}_{\mathbf{n}} = \left( \begin{array}{ccccc} 1 & 0 & \frac{\rho}{a} & \frac{\rho}{a} & 0 \\\ k & \rho \mathbf{u} \cdot \mathbf{s} & \rho \left[ \frac{H}{a} + \mathbf{u} \cdot \mathbf{ n} \right] & \rho \left[ \frac{H}{a} - \mathbf{u} \cdot \mathbf{ n} \right] & \rho \mathbf{ u} \cdot \mathbf{ t} \\\ \mathbf{ u} & \rho \mathbf{s} & \rho \left( \frac{\mathbf{ u}}{a} + \mathbf{ n} \right) & \rho \left( \frac{\mathbf{u}}{a} - \mathbf{ n} \right) & \rho \mathbf{t} \end{array} \right) \]
+
+are N\+OT computed unless the preprocessor flag {\ttfamily F\+S\+P\+L\+\_\+\+U\+S\+E\+\_\+\+D\+E\+B\+UG} is set
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+R\+D\+ER} & the order of the system to be solved \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+E\+CN} & the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em Jacobian\+Matrix} & is the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DJ} & leading dimension of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+M\+AT} & the jacobian matrix times the face normal \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+P\+OS} & is the \char`\"{}positive\char`\"{} part of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+N\+EG} & is the \char`\"{}negative\char`\"{} part of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+L\+E\+FT} & is the left eigenvector matrix of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+R\+I\+G\+HT} & is the right eigenvector matrix of the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DA} & is the leading dimension of the matrices K\+M\+AT, K\+P\+OS, K\+N\+EG, V\+L\+E\+FT, V\+R\+I\+G\+HT \\
+\hline
+\mbox{\texttt{ out}}  & {\em WR} & are the eigenvalues of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em L\+P\+OS} & are the positive eigenvalues of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em L\+N\+EG} & are the negative eigenvalues of the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em E\+I\+G\+E\+N\+D\+E\+CO} & .T\+R\+UE. if matrices K\+P\+OS and K\+N\+EG are needed, if .F\+A\+L\+SE. only the K\+M\+AT matrix is computed\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+Define the preprocessor macro F\+S\+P\+L\+\_\+\+U\+S\+E\+\_\+\+D\+E\+B\+UG when modifying this piece of code 
+\end{DoxyWarning}

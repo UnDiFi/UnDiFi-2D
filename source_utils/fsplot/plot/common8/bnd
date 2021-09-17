@@ -1,0 +1,13 @@
+      INTEGER ICOLOR(0:NCOLOR),MCOLOR(0:NCOLOR)
+      DOUBLE PRECISION SCOLOR(0:NCOLOR)
+      CHARACTER*20 CBTYPE(0:NBTYPE)
+C
+C     ICOLOR is the boundary type corresponding to a given color
+C     i.e.   0 <= ICOLOR(i) <= NBTYPE
+C     MCOLOR is the # of boundary faces for a given color
+C     SCOLOR is the total surface of the boundary of a given color
+C
+      COMMON /bnd_i4/ ICOLOR,MCOLOR
+      COMMON /bnd_r8/ SCOLOR
+      COMMON /bnd_ch/ CBTYPE
+C

@@ -1,0 +1,59 @@
+1c1
+<       SUBROUTINE TURBINI(NodalBcs,NOFVERT,NOFVAR,NDIM,NP,
+---
+>       SUBROUTINE TURBINI(NOFVERT,NOFVAR,NDIM,NP,
+8c8
+< C      $Id: turbini.F,v 1.26 2018/01/22 14:04:57 abonfi Exp abonfi $
+---
+> C      $Id: turbini.F,v 1.26 2018/01/22 14:04:57 abonfi Exp $
+21,26c21
+< C
+< C
+< #include "petsc/finclude/petscis.h"
+<       use petscis
+< C
+<       IMPLICIT NONE
+---
+> 
+28c23,24
+< C
+---
+>       IMPLICIT NONE
+> 
+31d26
+<       INCLUDE 'iset.h'
+37a33,36
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscis.h"
+> C
+> #include "iset.com"
+54,56d52
+< C     ..
+< C     .. Petsc stuff
+< C
+59,60d54
+<       IS, dimension(0:*) :: NodalBcs 
+< C
+77a72,73
+> C     ..
+> 
+101c97
+<       CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+---
+>       CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+116,118d111
+< C Retrieve from the Index Set the gridpoints where no-slip
+< C boundary conditions are applied so that turbulent viscosity
+< C can be set to 0. there
+120c113
+<       CALL ISGetSize(NodalBcs(NoSlipNodes),NI,IFAIL)
+---
+>       CALL ISGetSize(NoSlipNodes,NI,IFAIL)
+122c115
+<          CALL ISGetIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+---
+>          CALL ISGetIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)
+134c127
+<          CALL ISRestoreIndices(NodalBcs(NoSlipNodes),IDX_V,IDX_I,IFAIL)
+---
+>          CALL ISRestoreIndices(NoSlipNodes,IDX_V,IDX_I,IFAIL)

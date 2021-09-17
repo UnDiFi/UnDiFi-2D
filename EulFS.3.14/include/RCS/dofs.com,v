@@ -1,0 +1,51 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2013.04.30.07.02.02;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@integer adresses for the energy and momentum equations
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER IE,IX,IY,IZ
+      COMMON/DOFCOM/IE,IX,IY,IZ
+C
+C     $Id:$
+C
+C     degree of freedom where the x,y,z momentum is stored
+C
+C     IE = 2 for   compressible flow (IABS(KAN)=4)
+C     IE = -1 for incompressible flow (IABS(KAN)=4)
+C     IX = 2 for incompressible flow (IABS(KAN)=2)
+C     IX = NSP+2 for plasma     flow (IABS(KAN)=3)
+C     IX = 3 for   compressible flow (IABS(KAN)=4)
+@

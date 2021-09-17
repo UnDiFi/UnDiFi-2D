@@ -1,0 +1,23 @@
+      INTEGER ICHECK,IPAR(22),IFMT,NOFVAR
+C
+      COMMON/aflag_i4/ICHECK,IPAR,IFMT,NOFVAR
+C
+C	ICASE	is an integer the flags the scalar testcase (only with KAN=1)
+C	ISCHEME	scalar scheme
+C	JSCHEME	system scheme
+C	ICHECK  if <> 0 some tests are performed
+C	IPAR(1):
+C	IPAR(2):
+C	IPAR(3):
+C	IPAR(4):
+C	IPAR(5):
+C	IPAR(6):
+C	IPAR(7): Nodal Preconditioning ON (<>0) or OFF (=0)
+C	KAN:	Type of analysis
+C	DECOMP
+C	IVCNVG : variable upon which convergence test is based
+C	IFMT
+C	NOFVAR
+C	NOFWAVES
+C	NUM_ANGLES
+C

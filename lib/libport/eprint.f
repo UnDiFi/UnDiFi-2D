@@ -1,0 +1,10 @@
+      SUBROUTINE EPRINT                                                 ERRP0000
+C
+C  THIS SUBROUTINE PRINTS THE LAST ERROR MESSAGE, IF ANY.
+C
+      INTEGER MESSG(1)
+C
+      CALL E9RINT(MESSG,1,1,.FALSE.)
+      RETURN
+C
+      END

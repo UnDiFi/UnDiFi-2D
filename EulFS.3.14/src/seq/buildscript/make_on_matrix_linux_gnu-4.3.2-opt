@@ -1,0 +1,33 @@
+module purge
+module load caspur
+module show compilers/gcc-4.3.2
+module load compilers/gcc-4.3.2
+module show openmpi/1.2.5/64/gcc-4.3.2
+module load openmpi/1.2.5/64/gcc-4.3.2
+module show acml/4.2.0/64/gfortran
+module load acml/4.2.0/64/gfortran
+export PETSC_DIR=/work/ahn/abonfigl/petsc-3.1-p8
+export FSPL_DIR=/work/ahn/abonfigl/EulFS.0.15.0
+export PETSC_ARCH=linux_gnu-4.3.2-opt
+
+echo Using gcc: `which gcc`
+echo
+echo Using F95: `which gfortran`
+echo
+
+echo PETSC_DIR is: $PETSC_DIR
+echo
+echo PETSC_ARCH is: $PETSC_ARCH
+echo
+echo LD_LIBRARY_PATH is: $LD_LIBRARY_PATH
+echo
+
+sleep 2
+
+make install
+
+echo REM 
+echo REM 
+echo REM copy the executable under /work/ahn/$USER
+echo REM 
+echo REM 

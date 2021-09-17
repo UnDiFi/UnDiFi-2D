@@ -1,0 +1,1387 @@
+head	1.32;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.32
+	release3_13_0:1.32
+	release3_12_0:1.32
+	release3_11_0:1.32
+	release3_10_0:1.32
+	release3_8_0:1.32
+	release3_7_1:1.32
+	release3_7_0:1.32
+	release3_4_5:1.32
+	release3_4_4:1.32
+	release3_4_3:1.32
+	release3_4_2:1.32
+	release3_4_1:1.32
+	release3_4_0:1.31
+	release3_3_5:1.31
+	release3_3_4:1.30
+	release3_3_3:1.30
+	release3_3_2:1.30
+	release3_3_1:1.30
+	release3_3_0:1.28;
+locks; strict;
+comment	@c @;
+
+
+1.32
+date	2013.06.04.15.37.42;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2013.05.02.10.55.09;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2013.01.26.11.49.51;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2013.01.26.11.30.37;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2012.04.03.12.15.07;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2008.06.10.10.10.50;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2005.10.22.11.03.52;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2005.10.03.08.49.57;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2004.12.20.14.36.35;	author aldo;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2004.03.17.20.31.35;	author aldo;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2002.11.02.16.02.06;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2002.09.14.09.02.43;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2001.10.17.15.37.00;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2000.12.06.13.37.53;	author aldo;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2000.10.26.15.39.00;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2000.10.26.15.30.35;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2000.08.18.14.06.33;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.06.23.16.47.59;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	99.09.29.09.52.05;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	99.09.03.10.46.23;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	99.09.02.08.32.40;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	99.08.31.09.43.04;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.08.22.08.03.41;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.08.07.13.23.13;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.03.19.08.34.13;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.03.02.12.15.54;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.05.10.36.20;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.01.22.10.22;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.12.01.15.40.42;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@reads in mesh global parameters
+@
+
+
+1.32
+log
+@added support for solving Laplace's equation
+@
+text
+@      SUBROUTINE READAT(NELEM,NPOIN,NGHOST,NPNOD,
+     +                  NBPOIN,NFACE,NBFAC,NBINT,NHOLE,NOFVERT,
+     +                  NDIM,NOFVAR,NTURB,
+     &                  FNAME1,FNAME2,FNAME3,FNAME4)
+C
+C     This routine reads the mesh parameters from the meshfiles
+C     (FNAME1) and allocates the space required for reading
+C     the data structure
+C
+C     $Id: readat.F,v 1.31 2013/05/02 10:55:09 abonfi Exp abonfi $
+C
+C
+C     for the UNI-processor case
+C         NPOIN is the # of meshpoints 
+C         NGHOST is 0
+C
+C     for the parallel case
+C         NPOIN is the # of processor owned meshpoints 
+C         NGHOST is the number of off-processor nodes or
+C         inter-processor nodes
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'datatype.h'
+      INCLUDE 'plasma.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'time.h'
+      INCLUDE 'io.com'
+      INCLUDE 'dofs.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'ibc2.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'time.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER NBFAC,NBPOIN,NDIM,NELEM,NFACE,NHOLE,NOFVAR,NOFVERT,NPOIN,
+     +NTURB,NGHOST,NPNOD
+      CHARACTER FNAME1* (*),FNAME2* (*), FNAME3* (*),
+     &          FNAME4* (*)
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+      INTEGER MY_PE
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TEMP
+      INTEGER IFAIL,IXDRS(5),NBINT,NERR,IOPT,NITEMS,NZR
+      CHARACTER*72 ERRMSG
+      LOGICAL LFLAG
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DNRM2
+      INTEGER        INITXDR,ISTKGT,IXDRINT,I1MACH
+      EXTERNAL DNRM2,INITXDR,ISTKGT,IXDRINT,I1MACH
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DINIT,IINIT,MSHCNT,NODCOD
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+      COMMON/MPICOM/MY_PE
+C
+      DATA ERRMSG(1:14) /'IXDRS=00;FILE='/
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+      INTEGER LGHOST
+      EQUIVALENCE (LTZX,LGHOST)
+C     ..
+      WRITE (NOUT,FMT=4000)
+C
+C     .. Reading info from mesh file 001 ..
+C
+      IXDRS(1) = INITXDR(FNAME1,'r',.TRUE.)
+      IF( IXDRS(1).LT.0 )THEN
+          WRITE(ERRMSG(7:8),FMT="(I2.2)")IXDRS(1)
+          WRITE(ERRMSG(15:72),FMT="(A57)")FNAME1(1:57)
+          NERR = 3
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+      IFAIL = IXDRINT(IXDRS(1),NDIM)
+      IFAIL = IXDRINT(IXDRS(1),NPOIN)
+      IFAIL = IXDRINT(IXDRS(1),NELEM)
+      IFAIL = IXDRINT(IXDRS(1),NBFAC)
+#ifdef MPI
+      IFAIL = IXDRint(ixdrs(1),NBINT)
+#else
+      NBINT = 0
+#endif 
+      IFAIL = IXDRINT(IXDRS(1),NHOLE)
+#ifdef MPI
+      IFAIL = IXDRINT(IXDRS(1),NGHOST)
+#else
+      NGHOST = 0
+#endif 
+C
+C     .. Reading info from mesh file 002 ..
+C
+      IXDRS(2) = INITXDR( FNAME2 , 'r' , .FALSE. ) 
+C
+      IFAIL = IXDRINT( IXDRS(2) , NITEMS )
+      IF( NITEMS .NE. NDIM )THEN
+          WRITE(NOUT,*) 'Invalid no of vertices in file002',NITEMS 
+          STOP
+      ENDIF 
+      IFAIL = IXDRINT( IXDRS(2) , NITEMS )
+      IF( NITEMS .NE. NELEM )THEN
+          STOP 'Invalid no of cells in file002' 
+      ENDIF 
+C
+C     .. Reading info from mesh file 004 (periodic bcs) ...
+C
+      INQUIRE(FILE=FNAME3,EXIST=LFLAG)
+      IF(LFLAG)THEN
+          PERIODIC_MESH = .TRUE.
+          IXDRS(4) = INITXDR(FNAME3,'r',.TRUE.)
+          IF( IXDRS(4).LT.0 )THEN
+              WRITE(ERRMSG(7:8),FMT="(I2.2)")IXDRS(4)
+              WRITE(ERRMSG(15:72),FMT="(A57)")FNAME3(1:57)
+              NERR = 3
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+          IFAIL = IXDRINT(IXDRS(4),NPNOD)
+      ELSE
+          NPNOD=0
+          PERIODIC_MESH = .FALSE.
+      ENDIF
+C
+C     .. Reading info from mesh file 006 (c-lines) ...
+C
+      INQUIRE(FILE=FNAME4,EXIST=LCLTHERE)
+      IF(LCLTHERE)THEN
+          IXDRS(5) = INITXDR(FNAME4,'r',.TRUE.)
+          IF( IXDRS(5).LT.0 )THEN
+              WRITE(ERRMSG(7:8),FMT="(I2.2)")IXDRS(5)
+              WRITE(ERRMSG(15:72),FMT="(A57)")FNAME4(1:57)
+              NERR = 3
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+          IFAIL = IXDRINT(IXDRS(5),NCL) ! nof c-lines
+          IFAIL = IXDRINT(IXDRS(5),NZR) ! nof vertices on all c-lines
+      ELSE
+          NCL=0
+          NZR=0
+      ENDIF
+C
+C     Only triangles/tetrahedra are allowed ..
+C
+      NOFVERT = NDIM + 1
+C
+C     KAN stands for Kind of ANalysis
+C
+      IF (ABS(KAN).EQ.1 .OR. KAN.EQ.5) THEN ! scalar or potential (Laplace's eqn)
+          NTURB = 0
+          NOFVAR = 1
+      ENDIF
+      IF (ABS(KAN).EQ.2) THEN ! Incompressible
+          NOFVAR = NDIM + 1
+          IE = -23414
+          IX = 2
+          IY = 3
+          IZ = 4
+      ENDIF
+      IF (ABS(KAN).EQ.4) THEN ! Compressible
+          NOFVAR = NDIM + 2
+          IE = 2
+          IX = 3
+          IY = 4
+          IZ = 5
+      ENDIF
+      IF (ABS(KAN).EQ.3) THEN ! Argon
+          NOFVAR = NDIM + 5
+          IE = NSP+1
+          IX = NSP+2
+          IY = NSP+3
+          IZ = NSP+4
+          IF(LAPLACE)nofvar = nofvar + 1
+      ENDIF
+cxxxx
+      IF(TURBULENT .AND. COUPLED) then
+         NOFVAR = NOFVAR + 1
+C
+C     It is important to set NTURB=0 or subr. backup()
+C     will try to save the array DSTAK(LTURB)
+C
+         NTURB = 0
+      endif
+cxxxx
+cxxxx
+caldo        NOFVAR = NOFVAR + 1
+cxxxx
+cxxxx
+C
+C
+C ---------- ALLOCATE SPACE
+C
+C     Nodal coordinates ..
+C
+      NITEMS = (NPOIN+NGHOST+NPNOD)*NDIM 
+      write(6,*)nitems
+      IF(LALE) NITEMS = NITEMS*MAXTIMLEVS ! store the coordinates of all time levels
+      write(6,*)nitems,lale
+      LCORG = ISTKGT(NITEMS,KIND_REAL8)
+      CALL DINIT(NITEMS,ZERO,DSTAK(LCORG),1)
+C
+C     Nodal grid velocities ..
+C
+      IF(LALE)THEN
+         NITEMS = (NPOIN+NGHOST+NPNOD)*NDIM 
+         LXYZDOT = ISTKGT(NITEMS,KIND_REAL8)
+         CALL DINIT(NITEMS,ZERO,DSTAK(LXYZDOT),1)
+      ENDIF
+C
+C     Nodal values ..
+C
+      NITEMS = (NPOIN+NGHOST+NPNOD)*NOFVAR 
+      IF(LTIME) NITEMS = NITEMS*MAXTIMLEVS
+C
+      LZROE = ISTKGT(NITEMS,KIND_REAL8)
+      CALL DINIT(NITEMS,ZERO,DSTAK(LZROE),1)
+C
+C     Turbulent stuff ..
+C
+      IF( TURBULENT )THEN
+C     Turbulent variables ..
+          IF(SEGREGATED)THEN
+             NITEMS = (NPOIN+NGHOST+NPNOD)*NTURB 
+             IF(LTIME) NITEMS = NITEMS*MAXTIMLEVS
+             LTURB = ISTKGT(NITEMS,KIND_REAL8)
+             CALL DINIT(NITEMS,ZERO,DSTAK(LTURB),1)
+          ENDIF
+C     Nearest wall distance ..
+          LTD = ISTKGT(NPOIN+1+NGHOST+NPNOD,KIND_REAL8)
+          LTTD = ISTKGT(NPOIN+1+NGHOST+NPNOD,KIND_REAL8)
+          CALL DINIT((NPOIN+1+NGHOST),ZERO,DSTAK(LTD),1)
+          CALL DINIT((NPOIN+1+NGHOST),ZERO,DSTAK(LTTD),1)
+      ENDIF
+C
+C     Cell to node pointer ..
+C
+      NITEMS = 2*(NELEM*NOFVERT)
+      LCELNOD = ISTKGT(NITEMS,KIND_INTEGER)
+      CALL IINIT(NITEMS,0,ISTAK(LCELNOD),1)
+C
+C     Cell to cell pointer ..
+C
+      LCELCEL = ISTKGT(NELEM*NOFVERT,KIND_INTEGER)
+      CALL IINIT(NELEM*NOFVERT,0,ISTAK(LCELCEL),1)
+C
+C     Boundary structure ..
+C
+      LBNDFAC = ISTKGT(3*NBFAC,KIND_INTEGER)
+      CALL IINIT(3*NBFAC,0,ISTAK(LBNDFAC),1)
+C
+C     Nodal code ..
+C
+      LNODCOD = ISTKGT(NPOIN+NGHOST+NPNOD,KIND_INTEGER)
+      CALL IINIT(NPOIN+NGHOST+NPNOD,0,ISTAK(LNODCOD),1)
+C
+C     ghost code ..
+C
+#ifdef MPI
+      LGHOST = ISTKGT(NGHOST,KIND_INTEGER)
+      CALL IINIT(NGHOST,0,ISTAK(LGHOST),1)
+#endif
+C
+C     periodic mapping ..
+C
+      IF(NPNOD.GT.0)THEN
+          LPMAP = ISTKGT(NPNOD,KIND_INTEGER)
+          CALL IINIT(NPNOD,0,ISTAK(LPMAP),1)
+      ENDIF
+C
+C     c-lines linked list ..
+C
+      IF(NCL.NE.0)THEN
+          LCLRC = ISTKGT(    NCL,KIND_REAL8)
+          LCLDEG= ISTKGT(    NCL,KIND_INTEGER)
+          LCLA  = ISTKGT(LCLDA*NZR,KIND_REAL8)
+          LCLJA = ISTKGT(LCLDA*NZR,KIND_INTEGER)
+          LCLIA = ISTKGT(  NCL+1,KIND_INTEGER)
+          LCLZB = ISTKGT(NOFVAR*NCL,KIND_REAL8)
+          CALL DINIT(    NCL,ZERO,DSTAK(LCLRC),1) ! radial position
+          CALL DINIT(LCLDA*NZR,ZERO,DSTAK(LCLA ),1) ! a(LCLDA,*) area coords
+          CALL IINIT(LCLDA*NZR,0,ISTAK(LCLJA),1)    ! ja(LCLDA,*)
+          CALL IINIT(  NCL+1,0,ISTAK(LCLIA),1)    ! ia(1:NCL+1)
+          CALL IINIT(  NCL  ,0,ISTAK(LCLDEG),1)   ! degree(1:NCL)
+          CALL DINIT(NOFVAR*NCL,ZERO,DSTAK(LCLZB),1) ! zb(NOFVAR,*)
+      ENDIF
+C
+C     Reads mesh points, connectivity and boundary structure ..
+C     REM: routine MSHCNT() is called with the number of 
+C          meshpoints being equal to NPOIN+NGHOST+NPNOD
+C
+C
+      CALL MSHCNT(DSTAK(LCORG),NPOIN+NGHOST+NPNOD,NGHOST,ISTAK(LGHOST),
+     +            NDIM,ISTAK(LCELNOD),ISTAK(LCELCEL),NOFVERT,NELEM,
+     +            ISTAK(LBNDFAC),NBFAC,NBINT,NHOLE,NFACE,ISTAK(LPMAP),
+     +            NPNOD,DSTAK(LCLA),ISTAK(LCLJA),ISTAK(LCLIA),
+     &            ISTAK(LCLDEG),DSTAK(LCLRC),LCLDA,NCL,NZR,IXDRS)
+C
+C     store a copy of the cell to vertex pointer; this
+C     is used for periodic grids
+C
+      CALL ICOPY(NELEM*NOFVERT,ISTAK(LCELNOD),1,
+     &           ISTAK(LCELNOD+NELEM*NOFVERT),1)
+C
+C     Sets the node code: a flag for labeling boundary nodes ..
+C     Does it REALLY make sense to call NODCOD() here ?!?! 
+C
+      CALL NODCOD(ISTAK(LNODCOD),NPOIN+NGHOST+NPNOD,NBPOIN,
+     +            ISTAK(LCELNOD),NOFVERT,NELEM,ISTAK(LBNDFAC),NBFAC)
+C
+      RETURN
+C
+ 2020 FORMAT (15X,'FUNCTION ',A31,/,
+     +5X,'HAS RETURNED A NONZERO ERROR FLAG =',I6,/,
+     +5X,'IN SUBROUTINE ',A10,' ON PE =',I4)
+ 2030 FORMAT (5X,'WHILE TRYING TO OPEN FILE:',/,A75)
+ 4000 FORMAT (/,/,' MEMORY ALLOCATION   ',/,' ',19 ('='),/)
+      END
+@
+
+
+1.31
+log
+@the locations where the momentum components and energy
+are stored are now included from dofs.com
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.30 2013/01/26 11:49:51 abonfi Exp abonfi $
+d190 1
+@
+
+
+1.30
+log
+@changed the name of an included header file
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.29 2013/01/26 11:30:37 abonfi Exp abonfi $
+d24 1
+d26 2
+a28 2
+      INCLUDE 'paramt.h'
+      INCLUDE 'datatype.h'
+d31 1
+d172 4
+d179 4
+d186 4
+@
+
+
+1.29
+log
+@version for Argon
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.28 2012/04/03 12:15:07 abonfi Exp abonfi $
+d24 1
+a24 1
+      INCLUDE 'constants'
+@
+
+
+1.28
+log
+@changes needed for the ALE formulation
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.27 2008/06/10 10:10:50 abonfi Exp abonfi $
+d164 1
+a164 1
+      IF (ABS(KAN).EQ.1 .OR. KAN.EQ.5) THEN
+d168 1
+a168 1
+      IF (ABS(KAN).EQ.2) THEN
+d171 1
+a171 1
+      IF (ABS(KAN).EQ.4) THEN
+d173 3
+@
+
+
+1.27
+log
+@introduced a number of changes to allow
+time accurate calculations
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.26 2005/10/22 11:03:52 abonfi Exp abonfi $
+d194 14
+a207 2
+      LCORG = ISTKGT((NPOIN+1+NGHOST+NPNOD)*NDIM,KIND_REAL8)
+      CALL DINIT((NPOIN+NGHOST+1)*NDIM,ZERO,DSTAK(LCORG),1)
+@
+
+
+1.26
+log
+@implemented c-lines
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.25 2005/10/03 08:49:57 abonfi Exp abonfi $
+d28 1
+d32 1
+a32 1
+      INCLUDE 'nloc'
+d34 1
+d199 5
+a203 2
+      LZROE = ISTKGT((NPOIN+1+NGHOST+NPNOD)*NOFVAR,KIND_REAL8)
+      CALL DINIT((NPOIN+1+NGHOST)*NOFVAR,ZERO,DSTAK(LZROE),1)
+d210 4
+a213 2
+             LTURB = ISTKGT((NPOIN+1+NGHOST+NPNOD)*NTURB,KIND_REAL8)
+             CALL DINIT((NPOIN+1+NGHOST)*NTURB,ZERO,DSTAK(LTURB),1)
+@
+
+
+1.25
+log
+@allocating the cell to node pointer twice: this
+is useful for periodic grids
+@
+text
+@d3 2
+a4 1
+     +                  NDIM,NOFVAR,NTURB,FILENAME1,FILENAME2,FILENAME3)
+d6 2
+a7 2
+C     This routine reads the mesh parameters from the meshfile
+C     (FILENAME1) and allocates the space required for reading
+d10 1
+a10 1
+C     $Id: readat.F,v 1.24 2004/12/20 14:36:35 aldo Exp abonfi $
+d30 1
+d37 2
+a38 1
+      CHARACTER FILENAME1* (*),FILENAME2* (*), FILENAME3* (*)
+d46 1
+a46 1
+      INTEGER IFAIL,IXDRS(5),NBINT,NERR,IOPT,NITEMS
+d79 1
+a79 1
+      IXDRS(1) = INITXDR(FILENAME1,'r',.TRUE.)
+d82 1
+a82 1
+          WRITE(ERRMSG(15:72),FMT="(A57)")FILENAME1(1:57)
+d106 1
+a106 1
+      IXDRS(2) = INITXDR( filename2 , 'r' , .FALSE. ) 
+d120 1
+a120 1
+      INQUIRE(FILE=FILENAME3,EXIST=LFLAG)
+d123 1
+a123 1
+          IXDRS(4) = INITXDR(FILENAME3,'r',.TRUE.)
+d126 1
+a126 1
+              WRITE(ERRMSG(15:72),FMT="(A57)")FILENAME3(1:57)
+d137 19
+d217 1
+a217 6
+!     IF( PERIODIC_MESH )THEN
+      IF( .TRUE. )THEN
+          NITEMS = 2*(NELEM*NOFVERT)
+      ELSE
+          NITEMS = NELEM*NOFVERT
+      ENDIF
+d250 17
+d275 5
+a279 1
+     +            NPNOD,IXDRS)
+d281 2
+a282 3
+!     IF( PERIODIC_MESH )
+          CALL ICOPY(NELEM*NOFVERT,ISTAK(LCELNOD),1,
+     &               ISTAK(LCELNOD+NELEM*NOFVERT),1)
+@
+
+
+1.24
+log
+@cosmetic changes
+@
+text
+@d9 1
+a9 1
+C     $Id: readat.F,v 1.23 2004/03/17 20:31:35 aldo Exp aldo $
+d28 1
+d43 1
+a43 1
+      INTEGER IFAIL,IXDRS(5),NBINT,NERR,IOPT,IDUMMY
+d105 3
+a107 3
+      IFAIL = IXDRINT( IXDRS(2) , IDUMMY )
+      IF( IDUMMY .NE. NDIM )THEN
+          WRITE(NOUT,*) 'Invalid no of vertices in file002',IDUMMY 
+d110 2
+a111 2
+      IFAIL = IXDRINT( IXDRS(2) , IDUMMY )
+      IF( IDUMMY .NE. NELEM )THEN
+d195 8
+a202 2
+      LCELNOD = ISTKGT((NELEM+1)*NOFVERT,KIND_INTEGER)
+      CALL IINIT((NELEM+1)*NOFVERT,0,ISTAK(LCELNOD),1)
+d243 4
+@
+
+
+1.23
+log
+@mesh reading is now done within a single routine;
+a few calls have been removed
+@
+text
+@d9 1
+a9 1
+C     $Id: readat.F,v 1.22 2002/11/02 16:02:06 abonfi Exp $
+d26 1
+d105 1
+a105 1
+      IF( IDUMMY .NE. NOFVERT )THEN
+d107 1
+d169 1
+a169 1
+      LCORG = ISTKGT((NPOIN+1+NGHOST+NPNOD)*NDIM,4)
+d174 1
+a174 1
+      LZROE = ISTKGT((NPOIN+1+NGHOST+NPNOD)*NOFVAR,4)
+d182 1
+a182 1
+             LTURB = ISTKGT((NPOIN+1+NGHOST+NPNOD)*NTURB,4)
+d186 2
+a187 2
+          LTD = ISTKGT(NPOIN+1+NGHOST+NPNOD,4)
+          LTTD = ISTKGT(NPOIN+1+NGHOST+NPNOD,4)
+d194 1
+a194 1
+      LCELNOD = ISTKGT((NELEM+1)*NOFVERT,2)
+d199 1
+a199 1
+      LCELCEL = ISTKGT(NELEM*NOFVERT,2)
+d204 1
+a204 1
+      LBNDFAC = ISTKGT(3*NBFAC,2)
+d209 1
+a209 1
+      LNODCOD = ISTKGT(NPOIN+NGHOST+NPNOD,2)
+d215 1
+a215 1
+      LGHOST = ISTKGT(NGHOST,2)
+d222 1
+a222 1
+          LPMAP = ISTKGT(NPNOD,2)
+d237 1
+@
+
+
+1.22
+log
+@minor cosmeti changes
+@
+text
+@a0 1
+C
+d9 1
+a9 1
+C     $Id: readat.F,v 1.21 2002/09/14 09:02:43 abonfi Exp abonfi $
+d41 1
+a41 1
+      INTEGER IFAIL,IXDRS(5),NBINT,NERR,IOPT
+d50 1
+a50 1
+      INTEGER INITXDR,ISTKGT,IXDRINT,I1MACH
+d54 1
+a54 1
+      EXTERNAL CELNHB,DINIT,IINIT,MSHCNT,NODCOD
+d67 1
+a67 1
+      integer LGHOST
+a70 2
+
+ 4000 FORMAT (/,/,' MEMORY ALLOCATION   ',/,' ',19 ('='),/)
+d72 1
+a72 1
+C     .. Reading info from the mesh file ..
+d94 1
+a94 1
+      IFAIL = IXDRint(ixdrs(1),NGHOST)
+d99 14
+a112 1
+C     .. Reading info from the file with periodic bcs ..
+d117 3
+a119 4
+          IXDRS(2) = INITXDR(FILENAME3,'r',.TRUE.)
+      write(6,*)'Opening file ',FILENAME3
+          IF( IXDRS(2).LT.0 )THEN
+              WRITE(ERRMSG(7:8),FMT="(I2.2)")IXDRS(2)
+d125 1
+a125 1
+          IFAIL = IXDRINT(IXDRS(2),NPNOD)
+d135 2
+d217 7
+d230 3
+a232 11
+     +            NDIM,ISTAK(LCELNOD),NOFVERT,NELEM,ISTAK(LBNDFAC),
+     +            NBFAC,NBINT,NHOLE,NFACE,IXDRS(1),FILENAME1)
+C
+C     Reads neighbouring cells ...
+C
+      CALL CELNHB(ISTAK(LCELCEL),NOFVERT,NELEM,FILENAME2)
+C
+C     Reads periodic nodes and the related mapping
+C
+      IF(NPNOD.GT.0)LPMAP = ISTKGT(NPNOD,2)
+      IF(NPNOD.GT.0)CALL PERBCS(NPNOD,ISTAK(LPMAP),IXDRS(2))
+d245 1
+a245 1
+C
+@
+
+
+1.21
+log
+@supports coupled solution strategy for RANS
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.20 2001/10/17 15:37:00 abonfi Exp abonfi $
+d106 2
+a107 2
+      PERIODIC_MESH = .TRUE.
+      IXDRS(2) = INITXDR(FILENAME3,'r',.TRUE.)
+d109 8
+a116 8
+      IF( IXDRS(2).LT.0 )THEN
+          WRITE(ERRMSG(7:8),FMT="(I2.2)")IXDRS(2)
+          WRITE(ERRMSG(15:72),FMT="(A57)")FILENAME3(1:57)
+          NERR = 3
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+      IFAIL = IXDRINT(IXDRS(2),NPNOD)
+d139 4
+d207 3
+@
+
+
+1.20
+log
+@unuseful write stmt. removed
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.19 2000/12/06 13:37:53 aldo Exp $
+d136 10
+d162 1
+a162 1
+      IF( NTURB .GT. 0 )THEN
+d164 4
+a167 1
+          LTURB = ISTKGT((NPOIN+1+NGHOST+NPNOD)*NTURB,4)
+d171 2
+d198 2
+a199 2
+      Lghost = ISTKGT(NGHOST,2)
+      CALL IINIT(NGHOST,0,ISTAK(Lghost),1)
+@
+
+
+1.19
+log
+@changes to make periodic b.c. work in parallel
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.18 2000/11/15 09:15:09 aldo Exp aldo $
+a117 1
+      write(6,*)'could not find file ',FILENAME3
+@
+
+
+1.18
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d2 1
+a2 1
+      SUBROUTINE READAT(NELEM,NPOIN,NGHOST,
+d4 1
+a4 1
+     +                  NDIM,NOFVAR,NTURB,FILENAME1,FILENAME2)
+d10 1
+a10 1
+C     $Id: readat.F,v 1.17 2000/10/26 15:39:00 aldo Exp aldo $
+a29 1
+C     INCLUDE 'stream.com'
+d33 2
+a34 2
+     +NTURB,NGHOST
+      CHARACTER FILENAME1* (*),FILENAME2* (*)
+d42 1
+a42 1
+      INTEGER IFAIL,IXDRS,U,NBINT,NERR,IOPT
+d44 1
+d58 1
+a58 1
+      INTRINSIC ABS,SQRT
+d77 3
+a79 3
+      IXDRS = INITXDR(FILENAME1,'r',.TRUE.)
+      IF( IXDRS.LT.0 )THEN
+          WRITE(ERRMSG(7:8),FMT="(I2.2)")IXDRS
+d86 4
+a89 4
+      IFAIL = IXDRINT(IXDRS,NDIM)
+      IFAIL = IXDRINT(IXDRS,NPOIN)
+      IFAIL = IXDRINT(IXDRS,NELEM)
+      IFAIL = IXDRINT(IXDRS,NBFAC)
+d91 1
+a91 1
+      IFAIL = IXDRint(ixdrs,NBINT)
+d95 1
+a95 1
+      IFAIL = IXDRINT(IXDRS,NHOLE)
+d97 1
+a97 1
+      IFAIL = IXDRint(ixdrs,NGHOST)
+d102 21
+d143 1
+a143 1
+      LCORG = ISTKGT((NPOIN+1+NGHOST)*NDIM,4)
+d148 1
+a148 1
+      LZROE = ISTKGT((NPOIN+1+NGHOST)*NOFVAR,4)
+d155 1
+a155 1
+          LTURB = ISTKGT((NPOIN+1+NGHOST)*NTURB,4)
+d157 2
+a158 2
+          LTD = ISTKGT(NPOIN+1+NGHOST,4)
+          LTTD = ISTKGT(NPOIN+1+NGHOST,4)
+d178 2
+a179 2
+      LNODCOD = ISTKGT(NPOIN+NGHOST,2)
+      CALL IINIT(NPOIN+NGHOST,0,ISTAK(LNODCOD),1)
+d190 1
+a190 1
+      CALL MSHCNT(DSTAK(LCORG),NPOIN+NGHOST,NGHOST,ISTAK(LGHOST),
+d192 1
+a192 1
+     +            NBFAC,NBINT,NHOLE,NFACE,IXDRS,FILENAME1)
+d198 5
+d205 2
+a206 2
+      CALL NODCOD(ISTAK(LNODCOD),NPOIN+NGHOST,NBPOIN,ISTAK(LCELNOD),
+     +            NOFVERT,NELEM,ISTAK(LBNDFAC),NBFAC)
+@
+
+
+1.17
+log
+@a VERY minor change
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.16 2000/10/26 15:30:35 aldo Exp aldo $
+d27 1
+a27 1
+      INCLUDE 'IO'
+@
+
+
+1.16
+log
+@IREAL removed
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.15 2000/08/18 14:06:33 aldo Exp aldo $
+a132 1
+      write(6,*)'Yes I am creating LTD'
+@
+
+
+1.15
+log
+@removed operations related to the freestream variables
+now in subr. setibc
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.14 2000/06/23 16:47:59 aldo Exp aldo $
+d30 1
+a30 2
+      INCLUDE 'stream.com'
+      INCLUDE 'rsize.com'
+d122 1
+a122 1
+      LCORG = ISTKGT((NPOIN+1+NGHOST)*NDIM,IREAL)
+d127 1
+a127 1
+      LZROE = ISTKGT((NPOIN+1+NGHOST)*NOFVAR,IREAL)
+d133 1
+d135 1
+a135 1
+          LTURB = ISTKGT((NPOIN+1+NGHOST)*NTURB,IREAL)
+d137 2
+a138 2
+          LTD = ISTKGT(NPOIN+1+NGHOST,IREAL)
+          LTTD = ISTKGT(NPOIN+1+NGHOST,IREAL)
+@
+
+
+1.14
+log
+@create a pointer for trip-point distance
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.13 1999/09/29 09:52:05 aldo Exp aldo $
+d44 2
+a45 1
+      INTEGER IFAIL,IXDRS,U,NBINT
+d64 2
+d80 5
+a84 3
+          WRITE(I1MACH(4),2020)'INITXDR',IXDRS,'READAT',MY_PE
+          WRITE(I1MACH(4),2030)FILENAME1
+          STOP
+a116 18
+C
+C     Set freestream values
+C
+C     Q_INFTY is the freestream kinetic energy
+C     M_INFTY is the freestream Mach number
+C
+      IF(KAN .EQ. 4)THEN
+         U = 3
+      ELSE 
+         U = 2
+      ENDIF
+      Q_INFTY = DNRM2(NDIM,U_INFTY(U),1)
+      IF( ABS(KAN) .EQ. 4 )THEN
+          TEMP = U_INFTY(1)*U_INFTY(2)/Q_INFTY
+          Q_INFTY = Q_INFTY/U_INFTY(1)**2
+          M_INFTY = SQRT(ONE/GM1/ (TEMP-HALF))
+      ENDIF
+C
+@
+
+
+1.13
+log
+@error handling when opening an XDR file
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.12 1999/09/03 10:46:23 aldo Exp aldo $
+d151 1
+@
+
+
+1.12
+log
+@bug fixed when calling INITXDR
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.11 1999/09/02 08:32:40 aldo Exp aldo $
+d40 1
+d51 2
+a52 2
+      INTEGER INITXDR,ISTKGT,IXDRINT
+      EXTERNAL DNRM2,INITXDR,ISTKGT,IXDRINT
+d62 1
+d75 6
+a80 1
+      IXDRS = INITXDR(FILENAME1,'r',.true.)
+d197 4
+a200 1
+ 2010 FORMAT (15X,'TABLE ',A7,' STARTS AT DSTAK(',I7,')')
+@
+
+
+1.11
+log
+@last argument of ISTKGT has been changed
+so that it will work on t3e as well
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.10 1999/08/31 09:43:04 aldo Exp aldo $
+d73 1
+a73 1
+      IXDRS = INITXDR(FILENAME1,'r')
+@
+
+
+1.10
+log
+@changed call to XDR routines to comply to rev. 2.0
+of that library
+@
+text
+@d10 1
+a10 1
+C     $Id: readat.F,v 1.9 1998/11/07 09:01:00 aldo Exp aldo $
+d31 1
+d129 1
+a129 1
+      LCORG = ISTKGT((NPOIN+1+NGHOST)*NDIM,4)
+d134 1
+a134 1
+      LZROE = ISTKGT((NPOIN+1+NGHOST)*NOFVAR,4)
+d141 1
+a141 1
+          LTURB = ISTKGT((NPOIN+1+NGHOST)*NTURB,4)
+d143 1
+a143 1
+          LTD = ISTKGT(NPOIN+1+NGHOST,4)
+@
+
+
+1.9
+log
+@Add automatic identification flag
+@
+text
+@d10 1
+a10 1
+C     $Id$
+d49 2
+a50 2
+      INTEGER INITXDR,ISTKGT
+      EXTERNAL DNRM2,INITXDR,ISTKGT
+d53 1
+a53 1
+      EXTERNAL CELNHB,DINIT,IINIT,MSHCNT,NODCOD,XDRINT
+d74 4
+a77 4
+      CALL XDRINT(IXDRS,NDIM)
+      CALL XDRINT(IXDRS,NPOIN)
+      CALL XDRINT(IXDRS,NELEM)
+      CALL XDRINT(IXDRS,NBFAC)
+d79 1
+a79 1
+      call xdrint(ixdrs,NBINT)
+d83 1
+a83 1
+      CALL XDRINT(IXDRS,NHOLE)
+d85 1
+a85 1
+      call xdrint(ixdrs,NGHOST)
+@
+
+
+1.8
+log
+@add a variable NBINT equal to the number of inter-processor
+boundary edges/faces
+@
+text
+@d10 3
+@
+
+
+1.7
+log
+@parallel version using preprocessor directives
+@
+text
+@d3 1
+a3 1
+     +                  NBPOIN,NFACE,NBFAC,NHOLE,NOFVERT,
+d39 1
+a39 1
+      INTEGER IFAIL,IXDRS,U
+d75 5
+d87 1
+a87 1
+C     .. Only triangles/tetrahedra are allowed ..
+d172 2
+a173 2
+     +            NDIM,ISTAK(LCELNOD),NOFVERT,NELEM,
+     +            ISTAK(LBNDFAC),NBFAC,NHOLE,NFACE,IXDRS,FILENAME1)
+@
+
+
+1.6
+log
+@unused variables removed
+@
+text
+@d2 2
+a3 1
+      SUBROUTINE READAT(NELEM,NPOIN,NBPOIN,NFACE,NBFAC,NHOLE,NOFVERT,
+d10 9
+d31 1
+a31 1
+     +NTURB
+d60 2
+d76 5
+d97 1
+a97 1
+C     .. Set freestream values
+d120 2
+a121 2
+      LCORG = ISTKGT((NPOIN+1)*NDIM,4)
+      CALL DINIT((NPOIN+1)*NDIM,ZERO,DSTAK(LCORG),1)
+d125 2
+a126 2
+      LZROE = ISTKGT((NPOIN+1)*NOFVAR,4)
+      CALL DINIT((NPOIN+1)*NOFVAR,ZERO,DSTAK(LZROE),1)
+d132 1
+a132 1
+          LTURB = ISTKGT((NPOIN+1)*NTURB,4)
+d134 1
+a134 1
+          LTD = ISTKGT(NPOIN,4)
+d154 9
+a162 2
+      LNODCOD = ISTKGT(NPOIN,2)
+      CALL IINIT(NPOIN,0,ISTAK(LNODCOD),1)
+d166 2
+a167 1
+      CALL MSHCNT(DSTAK(LCORG),NPOIN,NDIM,ISTAK(LCELNOD),NOFVERT,NELEM,
+d176 2
+a177 2
+      CALL NODCOD(ISTAK(LNODCOD),NPOIN,NBPOIN,ISTAK(LCELNOD),NOFVERT,
+     +            NELEM,ISTAK(LBNDFAC),NBFAC)
+@
+
+
+1.5
+log
+@removed allocation for nearest trip point distance
+@
+text
+@a83 1
+C     ANFACT is the 1/2 * density * Q_Infty * Chord
+a90 1
+      ANFACT = ONE / (HALF * Q_INFTY)
+a96 11
+      IF    ( IABS(KAN) .EQ. 2 )THEN
+         TEMP = ONE/Q_INFTY
+         FLOWDIR(1) = U_INFTY(2)*TEMP
+         FLOWDIR(2) = U_INFTY(3)*TEMP
+         FLOWDIR(3) = U_INFTY(4)*TEMP
+      ELSEIF( IABS(KAN) .EQ. 4 )THEN
+         TEMP = ONE/Q_INFTY
+         FLOWDIR(1) = U_INFTY(3)*TEMP
+         FLOWDIR(2) = U_INFTY(4)*TEMP
+         FLOWDIR(3) = U_INFTY(5)*TEMP
+      ENDIF
+@
+
+
+1.4
+log
+@cleaned up
+@
+text
+@a130 2
+C     Trip point distance ..
+          LTTD = ISTKGT(NPOIN,4)
+@
+
+
+1.3
+log
+@PETSc version
+@
+text
+@d114 1
+a114 1
+C     .. Nodal coordinates ..
+d119 1
+a119 1
+C     .. Nodal values ..
+d124 1
+a124 11
+C     .. Nodal values (copy) ..
+C
+CXXX  LZROERK = ISTKGT((NPOIN+1)*NOFVAR,4)
+CXXX  CALL DINIT((NPOIN+1)*NOFVAR,ZERO,DSTAK(LZROERK),1)
+C
+C     .. Nodal residual ..
+C
+CXXX  LRESID = ISTKGT((NPOIN+1)*NOFVAR,4)
+CXXX  CALL DINIT((NPOIN+1)*NOFVAR,ZERO,DSTAK(LRESID),1)
+C
+C     .. Turbulent stuff ..
+d135 1
+a135 6
+C     .. Nodal timestep ..
+C
+CXXX  LDTLIN = ISTKGT(NPOIN+1,4)
+CXXX  CALL DINIT(NPOIN+1,ZERO,DSTAK(LDTLIN),1)
+C
+C     .. Cell to node pointer ..
+d140 1
+a140 1
+C     .. Cell to cell pointer ..
+d145 1
+a145 1
+C     .. Boundary structure ..
+d150 1
+a150 1
+C     .. Nodal code ..
+d155 1
+a155 1
+C     .. Reads mesh points, connectivity and boundary structure ..
+d160 1
+a160 1
+C     .. Reads neighbouring cells ...
+d164 1
+a164 1
+C     .. Sets the node code: a flag for labeling boundary nodes ..
+@
+
+
+1.2
+log
+@bnd.h is now included
+@
+text
+@d126 2
+a127 2
+      LZROERK = ISTKGT((NPOIN+1)*NOFVAR,4)
+      CALL DINIT((NPOIN+1)*NOFVAR,ZERO,DSTAK(LZROERK),1)
+d131 2
+a132 2
+      LRESID = ISTKGT((NPOIN+1)*NOFVAR,4)
+      CALL DINIT((NPOIN+1)*NOFVAR,ZERO,DSTAK(LRESID),1)
+d147 2
+a148 2
+      LDTLIN = ISTKGT(NPOIN+1,4)
+      CALL DINIT(NPOIN+1,ZERO,DSTAK(LDTLIN),1)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d12 1
+@

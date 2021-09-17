@@ -1,0 +1,102 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.38.19;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Checks whether a matrix is the identity matrix up to a given tolerance
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+C
+      LOGICAL FUNCTION UNITMAT(A,N,M,LDA,TOLER)
+C
+      IMPLICIT NONE 
+C
+C     This function tests a matrix A(N,M) to see
+C     whether it is the Identity matrix up to given
+C     tolerance TOLER
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ONE
+      PARAMETER (ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION TOLER
+      INTEGER LDA,M,N
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION A(LDA,*)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION S
+      INTEGER I,J
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS
+C     ..
+      DO 1 J = 1,M
+          DO 1 I = 1,N
+              IF (I.EQ.J) THEN
+                  S = A(I,J) - ONE
+
+              ELSE
+                  S = A(I,J)
+              ENDIF
+
+              IF (ABS(S).GT.TOLER) THEN
+                  UNITMAT = .FALSE.
+                  RETURN
+
+              ENDIF
+
+    1 CONTINUE
+      UNITMAT = .TRUE.
+      RETURN
+
+      END
+@

@@ -1,0 +1,116 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine for
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE SUBAAA(NDIM,NOFVERT,NOFVAR,NPOIN,NINT,NELEM,NBFAC)
+C
+      IMPLICIT NONE
+C
+C     ... When implicit time integration is used and potential (KAN=5)
+C         or advection-diffusion (KAN=+/-1) problems are solved,
+C         the meshpoint numbering is rearranged so that Dirichlet nodes
+C         appear last and the implicit solver only solves for the first
+C         NINT internal nodes ...
+C         Not only the meshpoints, but also the structure of the 
+C         stiffness matrix has to be permuted
+C
+C     .. Parameters ..
+C
+C
+C     .. Commons ..
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(ISTAK(1),DSTAK(1))
+      INCLUDE 'nloc'
+      INCLUDE 'implicit.h'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NINT,NELEM,NBFAC
+C
+C     .. Array Arguments ..
+C
+C
+C     .. Local Scalars ..
+C
+      INTEGER LRANK,LDWKSP
+C
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+      INTEGER  ISTKGT
+      EXTERNAL ISTKGT
+C
+C     .. Intrinsic Functions ..
+C
+C
+C     .. Executable Statements ..
+C
+C
+C     ... Neumann nodes ...
+C
+      WRITE(6,100) 
+C
+      CALL Neumann(ISTAK(LCELNOD),NOFVERT,ISTAK(LBNDFAC),NBFAC,
+     &ISTAK(LNODCOD))
+C
+C     ... Rank the nodes: dirichlet nodes are the last ones ...
+C
+      LPERM = ISTKGT(NPOIN+1,2)
+      LRANK = ISTKGT(NPOIN+1,2)
+C
+      CALL Dirichlet(NPOIN,NELEM,ISTAK(LNODCOD),NINT,ISTAK(LPERM),
+     &ISTAK(LRANK))
+      WRITE(6,105)NINT,NPOIN-NINT
+C
+      LDWKSP = ISTKGT(NPOIN,4)
+C
+C     ... Sort pointers according to the new ordering
+C         of the nodal coordinates ... 
+C
+      CALL SORTNOD(ISTAK(LCELNOD),NOFVERT,NELEM,.TRUE.,
+     &ISTAK(LNODCOD),NPOIN,.TRUE.,
+     &ISTAK(LRANK),DSTAK(LCORG),NDIM,.TRUE.,
+     &DSTAK(LZROE),NOFVAR,.TRUE.,DSTAK(LDWKSP))
+      REORDERING = .TRUE.
+C
+      CALL ISTKRL(2)
+C
+      RETURN
+  100 FORMAT(10X,'Renumbering nodes....Internal/Dirichlet ',$)
+  105 FORMAT(2(1X,I6))
+      END
+C
+C ------------------------------ + ------------------------------
+C
+@

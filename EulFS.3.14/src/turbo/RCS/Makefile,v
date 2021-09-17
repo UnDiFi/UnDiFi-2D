@@ -1,0 +1,331 @@
+head	1.7;
+access;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.7
+	release3_11_0:1.7
+	release3_10_0:1.7
+	release3_8_0:1.7
+	release3_7_1:1.7
+	release3_7_0:1.7
+	release3_4_5:1.6
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_3:1.3
+	release3_3_2:1.3
+	release3_3_1:1.3
+	release3_3_0:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.7
+date	2016.11.10.11.52.59;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2016.11.10.09.51.02;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2015.05.11.07.19.17;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.09.17.11.06.37;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.01.26.12.04.50;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.01.24.09.29.59;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.11.27.17.31.17;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@makefile in the turbo dir
+@
+
+
+1.7
+log
+@Changed the location of the petsc header files
+@
+text
+@FFLAGS	      = -I../../include
+
+include $(PETSC_DIR)/lib/petsc/conf/variables
+include $(PETSC_DIR)/lib/petsc/conf/rules
+
+DEST	      = $(FSPL_DIR)/lib/$(PETSC_ARCH)/.
+
+EXTHDRS	      = ../../include/bnd.com \
+		../../include/bnd.h \
+		../../include/constants.h \
+		../../include/flags.com \
+		../../include/nboun.com \
+		../../include/nloc.com \
+		../../include/paramt.h \
+		../../include/stream.com \
+		../../include/three.com \
+		../../include/turb.com \
+		../../include/visco.com
+
+HDRS	      =
+
+INSTALL	      = cp
+
+LIBRARY	      = libturbo.a
+
+MAKEFILE      = Makefile
+
+OBJS	      = limitvisct.o \
+		sa.o \
+		sa7.o \
+		sa8.o \
+		sa_neg_Bassi.o \
+		tbdest.o \
+		tbdiff.o \
+		tbprod.o \
+		tbtrip.o \
+		tdiff.o \
+		tdu.o \
+		tft1.o \
+		tft2.o \
+		tfv1.o \
+		tfv2.o \
+		tfv3.o \
+		tfw.o \
+		tgt.o \
+		tsa.o \
+		tsa1.o \
+		tsc.o \
+		tsetup.o \
+		turbcomp.o
+
+PRINT	      = pr
+
+SHELL	      = /bin/sh
+
+SRCS	      = limitvisct.f \
+		sa.F \
+		sa7.F \
+		sa8.F \
+		sa_neg_Bassi.F \
+		tbdest.f \
+		tbdiff.f \
+		tbprod.f \
+		tbtrip.f \
+		tdiff.f \
+		tdu.f \
+		tft1.f \
+		tft2.f \
+		tfv1.f \
+		tfv2.f \
+		tfv3.f \
+		tfw.f \
+		tgt.f \
+		tsa.f \
+		tsa1.f \
+		tsc.f \
+		tsetup.f \
+		turbcomp.F
+
+SYSHDRS	      =
+
+#
+# I had to explicitely define the rules for CRAY
+#
+#
+#.f.o:
+#		$(FC) $(FFLAGS) $<
+#.F.o:
+#		$(FC) $(FFLAGS) -DPARCH_$(PETSC_ARCH) $<
+
+all:		$(LIBRARY)
+
+$(LIBRARY):	$(OBJS)
+		@@echo "Loading $(LIBRARY) ..."
+		@@ar cru $(LIBRARY) $(OBJS)
+		@@echo "done"
+
+clobber:;	@@rm -f $(OBJS) $(LIBRARY) core tags log
+
+depend:;	@@mkmf -f $(MAKEFILE)
+
+echo:;		@@echo $(HDRS) $(SRCS)
+
+extract:;	@@ar x $(DEST)/$(LIBRARY)
+
+index:;		@@ctags -wx $(HDRS) $(SRCS)
+
+install:	$(LIBRARY)
+		@@echo Installing $(LIBRARY) in $(DEST)
+		@@if [ $(DEST) != . ]; then \
+		(rm -f $(DEST)/$(LIBRARY); $(INSTALL) $(LIBRARY) $(DEST)); fi
+
+print:;		@@$(PRINT) $(HDRS) $(SRCS)
+
+tags:           $(HDRS) $(SRCS); @@ctags $(HDRS) $(SRCS)
+###
+tbdest.o: ../../include/turb.com ../../include/visco.com
+tbdiff.o: ../../include/paramt.h ../../include/three.com ../../include/turb.com \
+	../../include/visco.com
+tbprod.o: ../../include/turb.com
+tbtrip.o: ../../include/visco.com
+tdiff.o: ../../include/paramt.h ../../include/three.com
+tft1.o: ../../include/turb.com
+tft2.o: ../../include/turb.com
+tfv1.o: ../../include/turb.com
+tfv2.o: ../../include/turb.com ../../include/constants.h
+tfw.o: ../../include/turb.com
+tgt.o: ../../include/turb.com
+tindx.o: ../../include/paramt.h ../../include/bnd.h ../../include/bnd.com \
+	../../include/nloc.com ../../include/three.com ../../include/stream.com \
+	../../include/turb.com ../../include/visco.com
+tsa1.o: ../../include/paramt.h ../../include/three.com
+tsc.o: ../../include/paramt.h ../../include/bnd.h ../../include/turb.com \
+	../../include/stream.com ../../include/visco.com
+tsetup.o: ../../include/paramt.h ../../include/bnd.h ../../include/three.com \
+	../../include/stream.com ../../include/turb.com ../../include/nloc.com
+turbcomp.o: ../../include/paramt.h ../../include/constants.h ../../include/nloc.com \
+	../../include/three.com ../../include/flags.com ../../include/turb.com \
+	../../include/visco.com ../../include/nboun.com
+@
+
+
+1.6
+log
+@fixed a typo
+@
+text
+@d3 2
+a4 2
+include $(PETSC_DIR)/conf/variables
+include $(PETSC_DIR)/conf/rules
+@
+
+
+1.5
+log
+@added sa.F
+@
+text
+@d32 1
+d60 1
+@
+
+
+1.4
+log
+@removed sa7b.F
+@
+text
+@d29 1
+d56 1
+@
+
+
+1.3
+log
+@changed the name of header or common files
+@
+text
+@a29 1
+		sa7b.o \
+a55 1
+		sa7b.F \
+@
+
+
+1.2
+log
+@removed CRAY support
+@
+text
+@d10 1
+a10 1
+		../../include/constants \
+d13 1
+a13 1
+		../../include/nloc \
+d16 1
+a16 1
+		../../include/three \
+d116 1
+a116 1
+tbdiff.o: ../../include/paramt.h ../../include/three ../../include/turb.com \
+d120 1
+a120 1
+tdiff.o: ../../include/paramt.h ../../include/three
+d124 1
+a124 1
+tfv2.o: ../../include/turb.com ../../include/constants
+d128 1
+a128 1
+	../../include/nloc ../../include/three ../../include/stream.com \
+d130 1
+a130 1
+tsa1.o: ../../include/paramt.h ../../include/three
+d133 4
+a136 4
+tsetup.o: ../../include/paramt.h ../../include/bnd.h ../../include/three \
+	../../include/stream.com ../../include/turb.com ../../include/nloc
+turbcomp.o: ../../include/paramt.h ../../include/constants ../../include/nloc \
+	../../include/three ../../include/flags.com ../../include/turb.com \
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 4
+a4 1
+FFLAGS	      = -I../../include -c
+d8 1
+a8 1
+EXTHDRS	      = ../../include/bnd \
+d28 5
+a32 1
+OBJS	      = tbdest.o \
+a44 1
+		tindx.o \
+d55 5
+a59 1
+SRCS	      = tbdest.f \
+a71 1
+		tindx.F \
+d84 4
+a87 4
+.f.o:
+		$(FC) $(FFLAGS) $<
+.F.o:
+		$(FC) $(FFLAGS) -DPARCH_$(PETSC_ARCH) $<
+a95 2
+clean:;		@@rm -f $(OBJS) core log
+
+d127 1
+a127 1
+tindx.o: ../../include/paramt.h ../../include/bnd.h ../../include/bnd \
+@

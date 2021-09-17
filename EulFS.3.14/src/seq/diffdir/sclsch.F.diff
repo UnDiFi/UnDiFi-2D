@@ -1,0 +1,13 @@
+4c4,6
+< C     $Id: sclsch.F,v 1.22 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: sclsch.F,v 1.22 2016/11/10 11:25:13 abonfi Exp $
+> C
+>       IMPLICIT NONE
+14a17
+> #include "petsc/finclude/petscsys.h"
+17,20d19
+<               use petscvec
+<               use petscmat
+< C
+<       IMPLICIT NONE

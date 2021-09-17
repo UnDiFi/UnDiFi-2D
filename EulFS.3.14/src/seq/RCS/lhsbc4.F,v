@@ -1,0 +1,293 @@
+head	1.6;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.6
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.08.13.13.14.16;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.08.07.13.21.27;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.07.29.12.59.10;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.01.02.15.33.14;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Set boundary conditions on the stiffness matrix for Euler/NS problems
+@
+
+
+1.6
+log
+@Add automatic identification flag
+@
+text
+@C
+      SUBROUTINE LHSBC4( A )
+C
+      IMPLICIT NONE
+C
+C     This routine applies the boundary conditions to the
+C     stiffness matrix.
+C
+C
+C     $Id$
+C
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/is.h"
+C
+      Mat A
+C
+      INCLUDE 'constants'
+      INCLUDE 'iset.com'
+C
+C     Local Scalars ..
+C
+      INTEGER IFAIL
+C
+C     Executable Statements ..
+C
+C     Note that the Index Sets address rows by GLOBAL number
+C
+      CALL MatZeroRows(A,SupersonicVariables,ONE,IFAIL)
+      CALL MatZeroRows(A,NoSlipVelocities,ONE,IFAIL)
+C
+C     Is it really necessary to MatAssembly now?
+C     Is that required by MatSetOption()?
+C
+      CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+      CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+      CALL MatSetOption(A,MAT_NO_NEW_NONZERO_LOCATIONS,IFAIL)
+C
+      RETURN
+      END
+C
+@
+
+
+1.5
+log
+@removed unused arguments in the calling sequence
+@
+text
+@d6 7
+a17 4
+C
+C     This routine applies the boundary conditions to the
+C     stiffness matrix.
+C
+@
+
+
+1.4
+log
+@boundary conditions are now set using IndexSets
+@
+text
+@d2 1
+a2 1
+      SUBROUTINE LHSBC4( NPOIN, NOFVAR, NDIM, NODCODE, IX, LENIX, A )
+a10 1
+      IS  ISet
+a14 3
+C     NOFVAR is the dimension of each block
+C
+C     Parameters ..
+a16 3
+C
+C     Commons ..
+C
+a17 8
+      INCLUDE 'mapping.com'
+      INCLUDE 'flags.com'
+C
+      INTEGER NPOIN,NOFVAR,NDIM,LENIX
+C
+C     Array Arguments ..
+C
+      INTEGER NODCODE(*),IX(*)
+d21 1
+a21 4
+      INTEGER I,IPOIN,ICODE,NI,IFAIL,IBGN,IROW
+#ifdef MPI
+      INTEGER ROWBGN,ROWEND
+#endif
+d25 1
+a26 1
+#ifdef MPI
+d29 4
+a32 4
+#else
+      CALL MatZeroRows(A,SupersonicVariables,ONE,IFAIL)
+      CALL MatZeroRows(A,NoSlipVelocities,ONE,IFAIL)
+#endif
+@
+
+
+1.3
+log
+@parallel version using pre-processor directives
+@
+text
+@d24 2
+a25 1
+      INCLUDE 'visco.com'
+a42 7
+      IF( KAN .EQ. 2 )THEN
+         IBGN = 0
+      ELSEIF( KAN .EQ. 4 )THEN
+         IBGN = 1
+      ELSE
+         STOP 'Invalid KAN in SETBC2'
+      ENDIF
+d45 2
+a46 81
+      CALL MatGetOwnerShipRange(A,ROWBGN,ROWEND,IFAIL)
+#endif
+C
+      NI=0
+C
+      DO 1 IPOIN = 1 , NPOIN
+         ICODE = NODCODE(IPOIN)
+         IF( ICODE .EQ. 1000 )THEN
+C
+C         Diagonal block (compressible)
+C
+C         +-----------+
+C         | + + * * * |  d(r)       <------ IROW
+C         | + + * * * |  d(rE)      <------ IROW+IBGN
+C         | 0 0 + 0 0 |  d(ru)
+C         | 0 0 0 + 0 |  d(rv)
+C         | 0 0 0 0 + |  d(rw)
+C         +-----------+
+C
+C         Diagonal block (incompressible)
+C
+C         +---------+
+C         | + * * * |  d(p)      <------ IROW+IBGN
+C         | 0 + 0 0 |  d(u)
+C         | 0 0 + 0 |  d(v)
+C         | 0 0 0 + |  d(w)
+C         +---------+
+C    IROW is the row corresponding to the 
+C         first variable of node IPOIN
+C
+#ifdef MPI
+C
+C    global rownumber in the parallel case
+C
+            IROW = ROWBGN + (IPOIN-1)*NOFVAR
+C
+#else
+C
+            IROW = (IPOIN-1)*NOFVAR
+C
+#endif
+C
+C    row just before the first velocity component of node IPOIN
+C
+            IROW = IROW + IBGN
+C
+C    build pointer to those rows corresponding 
+C    to the NDIM velocity components
+C
+            DO 6 I = 1,NDIM
+                IROW = IROW+1
+                NI=NI+1
+                IX(NI) = IROW
+    6       CONTINUE
+C
+C    Handles the adiabatic wall ..
+C
+C                   IF( KAN .EQ. 4 .AND. IADIA .NE. 0 )THEN
+C                   STOP 'Does NOT handle isotermal b.c.'
+C                       A(2,1,I) = -TWALL / GM1
+C                       A(2,2,I) = ONE
+C                       RHS(2,I) = ZERO
+C                   ENDIF
+C
+         ELSEIF( ICODE .LT. 0 )THEN
+         IROW = (IPOIN-1)*NOFVAR-1 
+            DO 7 I = 1,NOFVAR
+                IROW = IROW+1
+                NI=NI+1
+                IX(NI) = IROW
+    7       CONTINUE
+         ENDIF
+C
+    1 CONTINUE
+C
+      IF( LENIX .LT. NI )STOP 'LENIX too short'
+C
+#ifdef MPI
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IX,ISet,IFAIL)
+      CALL MatZeroRows(A,ISet,ONE,IFAIL)
+caldo CALL MatZeroRowsLocal(A,ISet,ONE,IFAIL)
+d48 2
+a49 3
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IX,ISet,IFAIL)
+caldo CALL ISCreateGeneral(MPI_COMM_WORLD,NI,IX,ISet,IFAIL)
+      CALL MatZeroRows(A,ISet,ONE,IFAIL)
+a51 1
+      CALL ISDestroy(ISet,IFAIL)
+@
+
+
+1.2
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d36 3
+d50 4
+d78 6
+d85 3
+a87 1
+C    row corresponding to the first variable of node IPOIN
+d91 2
+d128 7
+a134 1
+      CALL ISCreateGeneral(MPI_COMM_WORLD,NI,IX,ISet,IFAIL)
+d136 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 3
+a8 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/is.h"
+@

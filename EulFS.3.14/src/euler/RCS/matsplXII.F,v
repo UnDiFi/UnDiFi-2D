@@ -1,0 +1,2180 @@
+head	1.10;
+access;
+symbols
+	release3_14_0:1.10
+	release3_13_0:1.10
+	release3_12_0:1.10
+	release3_11_0:1.10
+	release3_10_0:1.10
+	release3_8_0:1.10
+	release3_7_1:1.10
+	release3_7_0:1.9
+	release3_4_5:1.9
+	release3_4_4:1.9
+	release3_4_3:1.9
+	release3_4_2:1.9
+	release3_4_1:1.9
+	release3_4_0:1.9
+	release3_3_5:1.9
+	release3_3_4:1.8
+	release3_3_3:1.8
+	release3_3_2:1.7
+	release3_3_1:1.6;
+locks; strict;
+comment	@c @;
+
+
+1.10
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.04.30.07.42.54;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.02.05.08.10.33;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.01.26.12.28.52;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2012.06.05.14.46.23;	author tesistim;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2012.06.05.11.27.12;	author tesistim;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2012.06.01.08.51.52;	author tesistim;	state Exp;
+branches
+	1.3.1.1;
+next	1.2;
+
+1.2
+date	2012.06.01.08.50.24;	author tesistim;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2012.05.21.10.05.38;	author abonfi;	state Exp;
+branches;
+next	;
+
+1.3.1.1
+date	2012.06.05.14.45.24;	author tesistim;	state Exp;
+branches;
+next	;
+
+
+desc
+@splitting for a non-equilibrium gas
+@
+
+
+1.10
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE MatSplitXII(IELEM,NDIM,NORDER,VECN,
+     +JacobianMatrix,LDJ,KMAT,KPOS,KNEG,VLEFT,VRIGHT,LDA,
+     +WR,LPOS,LNEG,EIGENDECO)
+C
+C     $Id: matsplXII.F,v 1.9 2013/04/30 07:42:54 abonfi Exp abonfi $
+C
+C     generalized inflow parameters in conserved variables 
+C
+C     when the pre-processor flag PETSC_USE_DEBUG is defined
+C     compare the analyical expresion for \K^{\pm} with
+C     the one obtained as R \Lambda^{\pm} L.
+C
+CC#define FSPL_USE_DEBUG
+C
+C************************************************************
+C
+C     NORDER: is the order of the system to be solved (INPUT)
+C     VECN:   is the face normal (INPUT)
+C     KMAT:   the jacobian matrix times the face normal (OUTPUT)                        
+C     KPOS:   is the "positive" part of the jacobian matrix (OUTPUT)            
+C     KNEG:   is the "negative" part of the jacobian matrix (OUTPUT)                  
+C     VLEFT:  is left eigenvector matrix of the jacobian matrix (OUTPUT)            
+C     VRIGHT: is right eigenvector matrix of the jacobian matrix (OUTPUT)            
+C     LD:     is the leading dimension of the previous matrices
+C     WR:     eigenvalues of the jacobian matrix (OUTPUT)                                    
+C     LPOS:   positive eigenvalues of the jacobian matrix (OUTPUT)                  
+C     LNEG:   negative eigenvalues of the jacobian matrix (OUTPUT)      
+C     NSP:    number of chemical species            
+C
+C************************************************************
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'plasma.h'
+      INCLUDE 'constants.h'
+C
+      INCLUDE 'three.com'
+      INCLUDE 'four.com'
+      INCLUDE 'dofs.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'pfcgas.com'
+C
+C
+      INTEGER IELEM,NDIM,NORDER,LDA,LDJ
+      LOGICAL EIGENDECO
+C
+      DOUBLE PRECISION VECN(NDIM)
+      DOUBLE PRECISION JacobianMatrix(LDJ,*)
+      DOUBLE PRECISION KMAT(LDA,*),KPOS(LDA,*),KNEG(LDA,*),
+     +VLEFT(LDA,*),VRIGHT(LDA,*),WR(*),LPOS(*),LNEG(*)
+C
+      INTEGER I,J,K,IDIM,JDIM,IFAIL
+      DOUBLE PRECISION l,m,n,U_dot_M,U_DOT_S,U_DOT_T,
+     &AREAINV,AREA,TRATIO,DELTA,ABARINV,CE,CD,CDQ
+      DOUBLE PRECISION UPLUS,UMINS,AMACHN,UPOS,APOS,UNEG,ANEG
+      DOUBLE PRECISION FSPSLP,FSPSLN,FSMSLP,FSMSLN,APLUS,AMINS,NX,NY,NZ
+C
+#ifdef FSPL_USE_DEBUG
+C
+      DOUBLE PRECISION VECM(3),VECS(3),VECT(3)
+      DOUBLE PRECISION WKSPA(MAXNOFVAR,MAXNOFVAR),
+     2WKSPB(MAXNOFVAR,MAXNOFVAR)
+      DOUBLE PRECISION WKSPC(MAXNOFVAR,MAXNOFVAR),
+     2WKSPD(MAXNOFVAR,MAXNOFVAR)
+      DOUBLE PRECISION WORK1(MAXNOFVAR,MAXNOFVAR),
+     2WORK2(MAXNOFVAR,MAXNOFVAR)
+      DOUBLE PRECISION WORKL(MAXNOFVAR,MAXNOFVAR),
+     2WORKR(MAXNOFVAR,MAXNOFVAR)
+      DOUBLE PRECISION KPLUS(MAXNOFVAR,MAXNOFVAR),
+     2KMINS(MAXNOFVAR,MAXNOFVAR)
+      INTEGER TABLE(3,3),INDX
+      DOUBLE PRECISION SURF,SUM1,SUM2,TEMP1,Nxyz,Sxyz,Txyz
+      LOGICAL LFLAG
+#endif
+C
+      DOUBLE PRECISION DDOT,DNRM2
+C
+C     PRESSURE DERIVATIVE (Conservative Variables)          
+      DOUBLE PRECISION UU(3) ! crpepe aggIXnto UU
+      DOUBLE PRECISION PIR,PIE,PIM
+C
+      INTEGER  ISDMIN
+      LOGICAL  NULLMAT,UNITMAT
+      EXTERNAL ISDMIN,DDOT,DNRM2,NULLMAT,UNITMAT
+C
+      INTRINSIC DSQRT
+C
+      DATA l,m,n / 3*ZERO /
+#ifdef FSPL_USE_DEBUG
+      DATA (table(1,j),j=1,3) / 1,0,0 /
+      DATA (table(2,j),j=1,3) / 0,1,0 /
+      DATA (table(3,j),j=1,3) / 0,0,1 /
+      DATA LFLAG / .FALSE. /
+#endif
+C
+C     Executable Statements ..
+C
+C
+C     U_dot_M is the dot product between the velocity vector
+C          and the face normal ..
+C
+      l = VECN(1)/NDIM
+      m = VECN(2)/NDIM
+C
+C     UAVG(RHO1,...,RHON,H,U,V,W)
+      U_dot_M = UAVG(IX) * l + UAVG(IY) * m ! rpepe 
+      IF( NDIM .EQ. 3 )THEN
+           n = VECN(3)/NDIM
+           U_dot_M = U_dot_M + UAVG(IZ) * n
+      ENDIF
+
+C
+C     Jacobian Matrix for conserved variables ..
+C
+C     (Matrix (1...Ns) x (1...Ns)) ..
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            KMAT(I,J) = - ALPHA(I) * U_dot_M
+            IF (I.EQ.J)THEN
+                KMAT(I,J) = KMAT(I,J) + U_dot_M
+            ENDIF
+        ENDDO
+      ENDDO
+
+C     (Matrix (1...Ns) x (Ns+1...Ns+3)) ..
+
+      DO I = 1 , NSP
+        KMAT(I,IE) = ZERO
+        KMAT(I,IX) = ALPHA(I) * l
+        KMAT(I,IY) = ALPHA(I) * m
+      ENDDO
+
+C     (Matrix (Ns+1...Ns+3) x (1...Ns)) ..
+
+      DO J = 1 , NSP
+        KMAT(IE,J) =  U_dot_M * (-UAVG(IE) + DR(J))
+        KMAT(IX,J) = -U_DOT_M * UAVG(IX) + DR(J) * l
+        KMAT(IY,J) = -U_DOT_M * UAVG(IY) + DR(J) * m
+      ENDDO
+
+C     (Matrix (Ns+1...Ns+3) x (Ns+1...Ns+3)) ..
+
+      KMAT(IE,IE) = (DE+1) * U_dot_M
+      KMAT(IE,IX) = UAVG(IE) * l + U_dot_M * DM(1)
+      KMAT(IE,IY) = UAVG(IE) * m + U_dot_M * DM(2)
+C
+      KMAT(IX,IE) = DE * l
+      KMAT(IX,IX) = (UAVG(IX) + DM(1)) * l + U_dot_M
+      KMAT(IX,IY) = UAVG(IX) * m + DM(2) * l
+C
+      KMAT(IY,IE) = DE * m
+      KMAT(IY,IX) = UAVG(IY) * l + DM(1) * m
+      KMAT(IY,IY) = (UAVG(IY) + DM(2)) * m + U_dot_M
+C
+      IF( NDIM .NE. 3 )GOTO 7
+C      
+      DO I = 1 , NSP
+        KMAT(I,IZ) = ALPHA(I) * n
+      ENDDO
+C
+      DO J = 1 , NSP
+        KMAT(IZ,J) = -U_DOT_M * UAVG(IZ) + DR(J) * n
+      ENDDO
+C
+      KMAT(IE,IZ) = UAVG(IE) * n + U_dot_M * DM(3)
+      KMAT(IX,IZ) = UAVG(IX) * n + DM(3) * l
+      KMAT(IY,IZ) = UAVG(IY) * n + DM(3) * m
+C
+      KMAT(IZ,IE) = DE * n
+      KMAT(IZ,IX) = UAVG(IZ) * l + DM(1) * n
+      KMAT(IZ,IY) = UAVG(IZ)*m + DM(2) * n
+      KMAT(IZ,IZ) = (UAVG(IZ) + DM(3)) * n + U_dot_M
+C
+    7 IF( EIGENDECO .EQV. .FALSE. )RETURN
+C
+C     Some useful constants ..
+C
+      AREA = VECN(1)*VECN(1)+VECN(2)*VECN(2)
+      IF( NDIM .EQ. 3 ) AREA=AREA + VECN(3)*VECN(3)
+      AREA = SQRT(AREA)
+      AREAINV = ONE/AREA
+      AREA = AREA/NDIM
+C
+C     Speed of Sound
+C
+C
+C     Eigenvalues are divided by d ..
+C
+      U_dot_M = U_dot_M / AREA
+C
+      DO I = 1 , NSP
+        WR(I) = AREA * U_dot_M
+      ENDDO
+
+      WR(IE) = AREA * U_dot_M
+      WR(IX) = AREA * ( U_dot_M + ABAR )
+      WR(IY) = AREA * ( U_dot_M - ABAR )
+      WR(IZ) = AREA * U_dot_M
+C
+C    PositIYe and negative eigenvalues ..
+C
+      DO 12 IDIM = 1 , NORDER
+         LPOS(IDIM) = HALF * (WR(IDIM) + ABS(WR(IDIM)) )
+         LNEG(IDIM) = HALF * (WR(IDIM) - ABS(WR(IDIM)) )
+   12 CONTINUE
+C
+#ifdef FSPL_USE_DEBUG
+C
+      IF( NDIM .EQ. 2 )THEN
+         VECM(1) = VECN(1)*AREAINV
+         VECM(2) = VECN(2)*AREAINV
+         VECM(3) = ZERO
+         VECS(1) = - VECM(2)
+         VECS(2) = VECM(1)
+         VECS(3) = ZERO
+         VECT(1) = ZERO
+         VECT(2) = ZERO
+         VECT(3) =  ONE
+      ELSE
+         VECM(1) = VECN(1)*AREAINV
+         VECM(2) = VECN(2)*AREAINV
+         VECM(3) = VECN(3)*AREAINV
+         INDX = ISDMIN(NDIM,VECM,1)
+         VECS(1) = table(2,INDX) * VECM(3) - table(3,INDX) * VECM(2)
+         VECS(2) = table(3,INDX) * VECM(1) - table(1,INDX) * VECM(3)
+         VECS(3) = table(1,INDX) * VECM(2) - table(2,INDX) * VECM(1)
+         SURF = ONE/DNRM2(NDIM,VECS,1)
+         VECS(1) = VECS(1)*SURF
+         VECS(2) = VECS(2)*SURF
+         VECS(3) = VECS(3)*SURF
+         CALL CROSS_PROD( VECM , VECS , VECT )
+      ENDIF
+C
+      U_DOT_S = DDOT(NDIM,UAVG(IX),1,VECS,1)
+      U_DOT_T = DDOT(NDIM,UAVG(IX),1,VECT,1)    
+
+      ABARINV = ONE/ABAR
+C
+C     Left Eigenvectors (Matrix (1...Ns) x (1...Ns)) ..
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            VLEFT(I,J) = - ALPHA(I) * DR(J) / ASQR
+            IF (I.EQ.J)THEN
+                VLEFT(I,J) = 1 + VLEFT(I,J)
+            ENDIF
+        ENDDO
+      ENDDO
+
+C     Left Eigenvectors (Matrix (1...Ns) x (Ns+1...Ns+4)) ..
+      
+      DO I = 1 , NSP
+        VLEFT(I,IE) = - ALPHA(I) * DE/ASQR
+        VLEFT(I,IX) = ALPHA(I) * DE/ASQR * UAVG(IX)
+        VLEFT(I,IY) = ALPHA(I) * DE/ASQR * UAVG(IY)
+        IF(NDIM.EQ.3) VLEFT(I,IZ) = ALPHA(I) * DE/ASQR * UAVG(IZ)
+      ENDDO
+
+C     Left Eigenvectors (Matrix (Ns+1...Ns+4) x (1...Ns)) ..
+
+      DO J = 1 , NSP
+        VLEFT(IE,J) = -U_DOT_S * DENSINV
+        VLEFT(IX,J) = HALF * DENSINV * (DR(J)*ABARINV - U_DOT_M)
+        VLEFT(IY,J) = HALF * DENSINV * (DR(J)*ABARINV + U_DOT_M)
+        IF(NDIM.EQ.3) VLEFT(IZ,J) = -U_DOT_T * DENSINV
+      ENDDO
+
+C     Left Eigenvectors (Matrix (Ns+1...Ns+4) x (Ns+1)) ..
+      
+      VLEFT(IE,IE) = ZERO
+      VLEFT(IX,IE) = HALF*DENSINV*DE*ABARINV
+      VLEFT(IY,IE) = HALF*DENSINV*DE*ABARINV
+      IF(NDIM.EQ.3) VLEFT(IZ,IE) = ZERO
+C
+C     Right Eigenvectors (Matrix (1...Ns) x (1...Ns)) ..
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            VRIGHT(I,J) = ZERO
+            IF (I.EQ.J)THEN
+                VRIGHT(I,J) = ONE
+            ENDIF
+        ENDDO
+      ENDDO
+
+C     Right Eigenvectors (Matrix (1...Ns) x (Ns+1 ... Ns+4)) ..
+      
+      DO I = 1 , NSP
+        VRIGHT(I,IE) = ZERO
+        VRIGHT(I,IX) = DENS * ALPHA(I) * ABARINV
+        VRIGHT(I,IY) = DENS * ALPHA(I) * ABARINV
+        IF(NDIM.EQ.3) VRIGHT(I,IZ) = ZERO
+      ENDDO
+
+C     Right Eigenvectors (Matrix (Ns+1...Ns+4) x (1...Ns)) ..
+
+      DO J = 1 , NSP
+        VRIGHT(IE,J) = 2 * KINETIC - DR(J) / DE
+        VRIGHT(IX,J) = UAVG(IX)
+        VRIGHT(IY,J) = UAVG(IY)
+        IF(NDIM.EQ.3) VLEFT(IZ,J) = UAVG(IZ)
+      ENDDO
+
+C     Right Eigenvectors (Matrix (Ns+1) x (Ns+1...Ns+4)) ..
+
+      VRIGHT(IE,IE) = DENS * U_DOT_S
+      VRIGHT(IE,IX) = DENS * (UAVG(IE)/ABAR + U_DOT_M )
+      VRIGHT(IE,IY) = DENS * (UAVG(IE)/ABAR - U_DOT_M )
+      IF(NDIM.EQ.3) VRIGHT(IE,IZ) = DENS * U_DOT_T
+C
+C
+      DO 10 JDIM = 1 , NDIM
+C
+         IDIM = JDIM + 2
+         Nxyz = VECM(JDIM)
+         Sxyz = VECS(JDIM)
+         Txyz = VECT(JDIM)
+C
+         IDIM = JDIM + NSP + 1
+C
+C     Left Eigenvectors (Matrix (Ns+1...Ns+4) x (Ns+2...Ns+4)) ..
+C
+         VLEFT(IE,IDIM) = DENSINV * Sxyz
+         VLEFT(IX,IDIM) = HALF*DENSINV*(-DE*ABARINV*UAVG(IDIM)+Nxyz)
+         VLEFT(IY,IDIM) = HALF*DENSINV*(-DE*ABARINV*UAVG(IDIM)-Nxyz)
+         IF(NDIM.EQ.3) VLEFT(IZ,IDIM) = DENSINV * Txyz
+C     Right Eigenvectors (Matrix (Ns+2...Ns+4) x (Ns+1...Ns+4)) ..
+             VRIGHT(IDIM,IE) = DENS * Sxyz
+             VRIGHT(IDIM,IX) = DENS * (UAVG(IDIM)/ABAR+Nxyz)
+             VRIGHT(IDIM,IY) = DENS * (UAVG(IDIM)/ABAR-Nxyz)
+         IF(NDIM.EQ.3) VRIGHT(IDIM,IZ) = DENS * Txyz
+C
+C
+   10 CONTINUE
+#if 0
+C
+C    Test if the product of the two eigenvectors equals the
+C    identity matrix: VRIGHT*VLEFT = Identity
+C
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VLEFT,LDA,
+     +                      'Left ',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VRIGHT,LDA,
+     +                      'Right ',IFAIL)
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,ONE,VRIGHT,LDA,
+     +                 VLEFT,LDA,ZERO,WORK1,MAXNOFVAR)
+            IF( UNITMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-15) .EQV. 
+     &          .FALSE. ) THEN
+                CALL R8Mat_Print('G',' ',NORDER,NORDER,WORK1,MAXNOFVAR,
+     +                      'L*R = Identity matrix ????',IFAIL)
+                PAUSE
+            ENDIF
+#endif
+C
+C     compute VRIGHT * LAMBDA(+/-) * VLEFT
+C
+      DO 15 J = 1 , NORDER
+         DO 15 I = 1 , NORDER
+            SUM1 = ZERO
+            SUM2 = ZERO
+            DO 13 K = 1 , NORDER
+               TEMP1= VRIGHT(I,K) * VLEFT(K,J)
+               SUM1 = SUM1 + TEMP1* LPOS(K)
+               SUM2 = SUM2 + TEMP1* LNEG(K)
+   13       CONTINUE
+            KPLUS(I,J) = SUM1
+            KMINS(I,J) = SUM2
+!           KPOS(I,J) = SUM1 ! comment out once the analytical ones will be all right
+!           KNEG(I,J) = SUM2 ! comment out once the analytical ones will be all right
+   15 CONTINUE
+C
+#endif
+C
+CREM  VECN is not dIYided by d ?!?! 
+C
+C
+      NX = VECN(1) * AREAINV
+      NY = VECN(2) * AREAINV
+      IF( NDIM .EQ. 3 )NZ = VECN(3) * AREAINV
+C
+      FSPSLP = LPOS(IX)+LPOS(IY)
+      FSMSLP = LPOS(IX)-LPOS(IY)
+      FSPSLN = LNEG(IX)+LNEG(IY)
+      FSMSLN = LNEG(IX)-LNEG(IY)
+      UPLUS = HALF*FSPSLP - LPOS(1)
+      UMINS = HALF*FSPSLN - LNEG(1)
+      APLUS = HALF*FSMSLP
+      AMINS = HALF*FSMSLN
+      AMACHN = U_DOT_M/ABAR
+      DELTA = GM1 * HALF
+      TRATIO = ONE+DELTA*MACHSQR
+      CE = DE*UAVG(IE)/ASQR
+!      CD = ZERO
+!      CDQ = ZERO
+!      DO I = 1 , NSP
+!        CD = ALPHA(I) * DR(I) + CD
+!        CDQ = ALPHA(I) * DR(I)**2 + CDQ
+!      ENDDO
+!      CD = KINETIC * TWO * CD / ASQR
+!      CDQ = CDQ / (DE * ASQR) 
+C
+C
+C     (Matrix (1...Ns) x (1...Ns)) ..
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            KPOS(I,J) = ALPHA(I)* (UPLUS*DR(J)/ASQR-AMACHN*APLUS)
+            IF (I.EQ.J) THEN
+                KPOS(I,J) = KPOS(I,J) + LPOS(1)
+            ENDIF
+        ENDDO
+      ENDDO
+C
+C     (Matrix (1...Ns) x (Ns+1...Ns+3)) ..
+      DO I = 1 , NSP
+       KPOS(I,IE) = ALPHA(I)*DE/ASQR*UPLUS
+       KPOS(I,IX) = ALPHA(I)*(-DE*UAVG(IX)/ASQR*UPLUS+NX/ABAR*APLUS)
+       KPOS(I,IY) = ALPHA(I)*(-DE*UAVG(IY)/ASQR*UPLUS+NY/ABAR*APLUS)
+      ENDDO
+C
+C     (Matrix (Ns+1...Ns+3) x (1...Ns)) .. 
+      DO J = 1 , NSP
+        KPOS(IE,J) = (DR(J)*UAVG(IE)/ASQR - U_DOT_M*U_DOT_M)*UPLUS 
+     &          + (DR(J) - UAVG(IE))*APLUS*AMACHN    
+!rpepe        KPOS(IE,J) = HALF * FSPSLP*(DR(J)*UAVG(IE)/ASQR-U_DOT_M*U_DOT_M)
+!rpepe     &          + APLUS * AMACHN * (DR(J) - UAVG(IE)) 
+!rpepe     &          + LPOS(1) * (U_DOT_M*U_DOT_M - CD + CDQ - DR(J)/DE)
+        KPOS(IX,J) = (DR(J)/ASQR*UAVG(IX)-U_DOT_M*NX)*UPLUS
+     &          + (DR(J)/ABAR*NX-AMACHN*UAVG(IX))*APLUS
+        KPOS(IY,J) = (DR(J)/ASQR*UAVG(IY)-U_DOT_M*NY)*UPLUS
+     &          + (DR(J)/ABAR*NY-AMACHN*UAVG(IY))*APLUS
+      ENDDO        
+C
+C     (Matrix (Ns+1...Ns+3) x (Ns+1...Ns+3)) ..     
+      KPOS(IE,IE) = LPOS(1)+CE*UPLUS+APLUS*DE*AMACHN
+C
+      KPOS(IE,IX) = (U_DOT_M * NX-CE * UAVG(IX)) * UPLUS
+     &          + APLUS * (UAVG(IE)/ABAR*NX-DE*AMACHN*UAVG(IX))
+      KPOS(IE,IY) = (U_DOT_M*NY-CE*UAVG(IY))*UPLUS
+     &          + APLUS * (UAVG(IE)/ABAR*NY-DE*AMACHN*UAVG(IY))
+C
+      KPOS(IX,IE) = DE/ABAR*(UAVG(IX)/ABAR*UPLUS+NX*APLUS)
+      KPOS(IY,IE) = DE/ABAR*(UAVG(IY)/ABAR*UPLUS+NY*APLUS)
+C
+      KPOS(IX,IX) = (NX*NX-DE*UAVG(IX)*UAVG(IX)/ASQR)*UPLUS
+     &          + (UAVG(IX)*NX-DE*NX*UAVG(IX))*APLUS/ABAR + LPOS(1)
+      KPOS(IX,IY) = (NX*NY-DE*UAVG(IX)*UAVG(IY)/ASQR)*UPLUS
+     &          + (UAVG(IX)*NY-DE*NX*UAVG(IY))*APLUS/ABAR
+C
+      KPOS(IY,IX) = (NY*NX-DE*UAVG(IY)*UAVG(IX)/ASQR)*UPLUS
+     &          + (UAVG(IY)*NX-DE*NY*UAVG(IX))*APLUS/ABAR
+      KPOS(IY,IY) = (NY*NY-DE*UAVG(IY)*UAVG(IY)/ASQR)*UPLUS
+     &          + (UAVG(IY)*NY-DE*NY*UAVG(IY))*APLUS/ABAR + LPOS(1)
+
+C     KNEG
+
+C     (Matrix (1...Ns) x (1...Ns)) ..
+      DO I = 1 , NSP
+        DO J = 1 , NSP
+            KNEG(I,J) = ALPHA(I)*(UMINS*DR(J)/ASQR-AMACHN*AMINS)
+            IF (I.EQ.J) THEN
+                KNEG(I,J) = KNEG(I,J) + LNEG(1)
+            ENDIF
+        ENDDO
+      ENDDO
+C
+C     (Matrix (1...Ns) x (Ns+1...Ns+3)) ..
+      DO I = 1 , NSP
+       KNEG(I,IE) = ALPHA(I)*DE/ASQR*UMINS
+       KNEG(I,IX) = ALPHA(I)*(-DE*UAVG(IX)/ASQR*UMINS+NX/ABAR*AMINS)
+       KNEG(I,IY) = ALPHA(I)*(-DE*UAVG(IY)/ASQR*UMINS+NY/ABAR*AMINS)
+      ENDDO
+C
+C     (Matrix (Ns+1...Ns+3) x (1...Ns)) .. 
+      DO J = 1 , NSP
+        KNEG(IE,J) = (DR(J)*UAVG(IE)/ASQR - U_DOT_M*U_DOT_M)*UMINS
+     &          + (DR(J) - UAVG(IE))*AMINS*AMACHN
+!rpepe        KNEG(IE,J) = HALF*FSPSLN*(DR(J)*UAVG(IE)/ASQR - U_DOT_M*U_DOT_M)
+!rpepe     &          + AMINS * AMACHN * (DR(J) - UAVG(IE)) 
+!rpepe     &          + LNEG(1) * (U_DOT_M * U_DOT_M - CD + CDQ - DR(J)/DE)
+        KNEG(IX,J) = (DR(J)/ASQR*UAVG(IX)-U_DOT_M*NX)*UMINS
+     &          + (DR(J)/ABAR*NX-AMACHN*UAVG(IX))*AMINS
+        KNEG(IY,J) = (DR(J)/ASQR*UAVG(IY)-U_DOT_M*NY)*UMINS
+     &          + (DR(J)/ABAR*NY-AMACHN*UAVG(IY))*AMINS
+      ENDDO
+C
+C     (Matrix (Ns+1...Ns+3) x (Ns+1...Ns+3)) ..
+      KNEG(IE,IE) = LNEG(1)+CE*UMINS+AMINS*DE*AMACHN
+      KNEG(IE,IX) = (U_DOT_M*NX-CE*UAVG(IX))*UMINS
+     &          + AMINS * (UAVG(IE)/ABAR*NX-DE*AMACHN*UAVG(IX))
+      KNEG(IE,IY) = (U_DOT_M*NY-CE*UAVG(IY))*UMINS
+     &          + AMINS * (UAVG(IE)/ABAR*NY-DE*AMACHN*UAVG(IY))
+C
+      KNEG(IX,IE) = DE/ABAR*(UAVG(IX)/ABAR*UMINS+NX*AMINS)
+      KNEG(IY,IE) = DE/ABAR*(UAVG(IY)/ABAR*UMINS+NY*AMINS)
+C
+      KNEG(IX,IX) = (NX*NX-DE*UAVG(IX)*UAVG(IX)/ASQR)*UMINS
+     &          + (UAVG(IX)*NX-DE*NX*UAVG(IX))*AMINS/ABAR + LNEG(1)
+      KNEG(IX,IY) = (NX*NY-DE*UAVG(IX)*UAVG(IY)/ASQR)*UMINS
+     &          + (UAVG(IX)*NY-DE*NX*UAVG(IY))*AMINS/ABAR
+C
+      KNEG(IY,IX) = (NY*NX-DE*UAVG(IY)*UAVG(IX)/ASQR)*UMINS
+     &          + (UAVG(IY)*NX-DE*NY*UAVG(IX))*AMINS/ABAR
+      KNEG(IY,IY) = (NY*NY-DE*UAVG(IY)*UAVG(IY)/ASQR)*UMINS
+     &          + (UAVG(IY)*NY-DE*NY*UAVG(IY))*AMINS/ABAR + LNEG(1)
+C
+      IF(NDIM.EQ.3)THEN
+C
+      DO I = 1 , NSP
+       KPOS(I,IZ) = ALPHA(I)*(-DE*UAVG(IZ)/ASQR*UPLUS+NZ/ABAR*APLUS)
+      ENDDO
+C
+      KPOS(IE,IZ) = (U_DOT_M*NZ-CE*UAVG(IZ))*UPLUS
+     &          + APLUS * (UAVG(IE)/ABAR*NZ-DE*AMACHN*UAVG(IZ))
+      KPOS(IX,IZ) = (NX*NZ-DE*UAVG(IX)*UAVG(IZ)/ASQR)*UPLUS
+     &          + (UAVG(IX)*NZ-DE*NX*UAVG(IZ))*APLUS/ABAR
+      KPOS(IY,IZ) = (NY*NZ-DE*UAVG(IY)*UAVG(IZ)/ASQR)*UPLUS
+     &          + (UAVG(IY)*NZ-DE*NY*UAVG(IZ))*APLUS/ABAR
+C
+      DO J = 1 , NSP
+        KPOS(IZ,J) = (DR(J)/ASQR*UAVG(IZ)-U_DOT_M*NZ)*UPLUS
+     &          + (DR(J)/ABAR*NZ-AMACHN*UAVG(IZ))*APLUS
+      ENDDO  
+C
+      KPOS(IZ,IE) = DE/ABAR*(UAVG(IZ)/ABAR*UPLUS+NZ*APLUS)
+C
+      KPOS(IZ,IX) = (NZ*NX-DE*UAVG(IZ)*UAVG(IX)/ASQR)*UPLUS
+     &          + (UAVG(IZ)*NX-DE*NZ*UAVG(IX))*APLUS/ABAR
+      KPOS(IZ,IY) = (NZ*NY-DE*UAVG(IZ)*UAVG(IY)/ASQR)*UPLUS
+     &          + (UAVG(IZ)*NY-DE*NZ*UAVG(IY))*APLUS/ABAR
+      KPOS(IZ,IZ) = (NZ*NZ-DE*UAVG(IZ)*UAVG(IZ)/ASQR)*UPLUS
+     &          + (UAVG(IZ)*NZ-DE*NZ*UAVG(IZ))*APLUS/ABAR + LPOS(1)
+C
+      DO I = 1 , NSP
+       KNEG(I,IZ) = ALPHA(I)*(-DE*UAVG(IZ)/ASQR*UMINS+NZ/ABAR*AMINS)
+      ENDDO
+C
+      KNEG(IE,IZ) = (U_DOT_M*NZ-CE*UAVG(IZ))*UMINS
+     &          + AMINS * (UAVG(IE)/ABAR*NZ-DE*AMACHN*UAVG(IZ))
+      KNEG(IX,IZ) = (NX*NZ-DE*UAVG(IX)*UAVG(IZ)/ASQR)*UMINS
+     &          + (UAVG(IX)*NZ-DE*NX*UAVG(IZ))*AMINS/ABAR
+      KNEG(IY,IZ) = (NY*NZ-DE*UAVG(IY)*UAVG(IZ)/ASQR)*UMINS
+     &          + (UAVG(IY)*NZ-DE*NY*UAVG(IZ))*AMINS/ABAR
+C
+      DO J = 1 , NSP
+        KNEG(IZ,J) = (DR(J)/ASQR*UAVG(IZ)-U_DOT_M*NZ)*UMINS
+     &          + (DR(J)/ABAR*NZ-AMACHN*UAVG(IZ))*AMINS
+      ENDDO
+C      
+      KNEG(IZ,IE) = DE/ABAR*(UAVG(IZ)/ABAR*UMINS+NZ*AMINS)
+C
+      KNEG(IZ,IX) = (NZ*NX-DE*UAVG(IZ)*UAVG(IX)/ASQR)*UMINS
+     &          + (UAVG(IZ)*NX-DE*NZ*UAVG(IX))*AMINS/ABAR
+      KNEG(IZ,IY) = (NZ*NY-DE*UAVG(IZ)*UAVG(IY)/ASQR)*UMINS
+     &          + (UAVG(IZ)*NY-DE*NZ*UAVG(IY))*AMINS/ABAR
+      KNEG(IZ,IZ) = (NZ*NZ-DE*UAVG(IZ)*UAVG(IZ)/ASQR)*UMINS
+     &          + (UAVG(IZ)*NZ-DE*NZ*UAVG(IZ))*AMINS/ABAR + LNEG(1)
+C
+C
+      ENDIF ! NDIM
+C
+#ifdef FSPL_USE_DEBUG
+C
+      DO 32 I =  1, NORDER
+         DO 32 J =  1, NORDER
+            WORK1(I,J) = KPOS(I,J)-KPLUS(I,J)
+            WORK2(I,J) = KNEG(I,J)-KMINS(I,J)
+   32 CONTINUE
+      IF( NULLMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-15) .EQV. .FALSE. 
+     2    .OR.
+     +    NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-15) .EQV. .FALSE. 
+     4   )THEN
+         WRITE(6,*)'Errors on Inflow parameters for IELEM =',ielem
+         WRITE(6,*)NULLMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-15)
+         WRITE(6,*)NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-15)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KPOS,LDA,
+     +               'A+ analytical positive matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KPLUS,MAXNOFVAR,
+     +               'R diag(+) L matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,WORK1,MAXNOFVAR,
+     +               'error positive matrix (A(+) - Rdiag(+)L)',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KNEG,LDA,
+     +               'R diag(-) L matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,KMINS,MAXNOFVAR,
+     +               'A(-) analytical negative matrix',IFAIL)
+         CALL R8Mat_Print('G',' ',NORDER,NORDER,WORK2,MAXNOFVAR,
+     +               'error negative matrix (A(-) - Rdiag(-)L)',IFAIL)
+         PAUSE
+      ENDIF
+C
+C     test if the positive and negative matrices
+C     sum up to the jacobian matrix 
+C
+      DO 30 I =  1, NORDER
+            DO 30 J =  1, NORDER
+               WORK1(I,J) = (KPOS(I,J)+KNEG(I,J))
+CREM           WORK1(I,J) = (KPLUS(I,J)+KMINS(I,J))
+               WORK2(I,J) = WORK1(I,J)-KMAT(I,J)
+   30 CONTINUE
+      LFLAG = ( .NOT. NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-15) )
+!     lflag = .true.
+C
+      IF( LFLAG .EQV. .TRUE. )THEN
+C
+            LFLAG = .FALSE.
+C
+            WRITE(6,*)'Element # ',IELEM
+            WRITE(6,*)'Eigenvalues ',(WR(I),I=1,NORDER)
+C
+C     skip the following ...
+C
+#if 1
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VLEFT,LDA,
+     +                  'LEFT eigenvectors',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,VRIGHT,LDA,
+     +                  'RIGHT eigenvectors',IFAIL)
+C
+C     compute L*K and K*R
+C
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,ONE,VLEFT,LDA,
+     +                 KMAT,LDA,ZERO,WKSPA,MAXNOFVAR)
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,ONE,KMAT,LDA,
+     +                 VRIGHT,LDA,ZERO,WKSPB,MAXNOFVAR)
+C
+C     compute R*\Lambda and L*\Lambda 
+C
+            DO 8 I =  1, NORDER
+               DO 8 J =  1, NORDER
+                  WKSPC(I,J) = WR(I)*VLEFT(I,J)
+                  WKSPD(I,J) = WR(J)*VRIGHT(I,J)
+                  WORKL(I,J) = WKSPA(I,J) - WKSPC(I,J)
+                  WORKR(I,J) = WKSPB(I,J) - WKSPD(I,J)  
+    8       CONTINUE
+C
+C     test if L*K = \Lambda*L and K*R = R*\Lambda 
+C
+!            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPA,MAXNOFVAR,'LEFT*A ',
+!     2                  IFAIL)
+!            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPC,MAXNOFVAR,
+!     +                  'lambda*LEFT',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WORKL,MAXNOFVAR,
+     +                  'error LEFT (LEFT*A - labda*LEFT)',IFAIL)
+           PAUSE
+!            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPB,MAXNOFVAR,'A*RIGHT',
+!     6                  IFAIL)
+!            CALL R8Mat_Print('G',' ',NORDER,NORDER,WKSPD,MAXNOFVAR,
+!     +                  'RIGHT*lambda',IFAIL)
+            CALL R8Mat_Print('G',' ',NORDER,NORDER,WORKR,MAXNOFVAR,
+     +                  'error RIGHT (A*RIGHT - RIGHT*labda)',IFAIL)
+           PAUSE
+#endif
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,KMAT,LDA,
+     +                  'Analytical Jacobian matrix (A)',IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,WORK1,MAXNOFVAR,
+     +                  'Reassembled Jacobian matrix (A(+)+A(-))',IFAIL)
+            CALL R8Mat_Print('General',' ',NORDER,NORDER,WORK2,MAXNOFVAR,
+     +                  'Error matrix ((A(+)+A(-))- A)',IFAIL)
+           PAUSE
+      ENDIF
+#endif
+C
+      RETURN
+      END
+
+
+C     PRESSURE DERIVATIVE (CHEMICAL SPECIES DENSITY)
+      DOUBLE PRECISION FUNCTION PIR(u,NDIM,chii,kappa)
+      IMPLICIT NONE
+      INCLUDE 'constants.h'
+      INTEGER NDIM
+      DOUBLE PRECISION u(NDIM),chii,kappa
+
+      PIR = chii + HALF * kappa * (u(1)*u(1) + u(2)*u(2))
+      
+      IF(NDIM.EQ.3)THEN
+         PIR = PIR + HALF * kappa * u(3)*u(3)
+      ENDIF
+      RETURN
+      END
+
+C     PRESSURE DERIVATIVE (TOTAL ENERGY)
+      DOUBLE PRECISION FUNCTION PIE(kappa)
+      IMPLICIT NONE
+      DOUBLE PRECISION kappa
+
+      PIE = kappa
+      RETURN
+      END
+
+C     PRESSURE DERIVATIVE (MOMENTUM)
+      DOUBLE PRECISION FUNCTION PIM(u,kappa)
+      IMPLICIT NONE
+      DOUBLE PRECISION u,kappa
+
+      PIM = - u * kappa
+            RETURN
+      END
+@
+
+
+1.9
+log
+@the integer addresses of the energy and momentum dofs
+are now in a common
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXII.F,v 1.8 2013/02/05 08:10:33 abonfi Exp abonfi $
+d342 1
+a342 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VLEFT,LDA,
+d344 1
+a344 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VRIGHT,LDA,
+d350 1
+a350 1
+                CALL X04CAF('G',' ',NORDER,NORDER,WORK1,MAXNOFVAR,
+d576 1
+a576 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KPOS,LDA,
+d578 1
+a578 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KPLUS,MAXNOFVAR,
+d580 1
+a580 1
+         CALL X04CAF('G',' ',NORDER,NORDER,WORK1,MAXNOFVAR,
+d582 1
+a582 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KNEG,LDA,
+d584 1
+a584 1
+         CALL X04CAF('G',' ',NORDER,NORDER,KMINS,MAXNOFVAR,
+d586 1
+a586 1
+         CALL X04CAF('G',' ',NORDER,NORDER,WORK2,MAXNOFVAR,
+d613 1
+a613 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VLEFT,LDA,
+d615 1
+a615 1
+            CALL X04CAF('G',' ',NORDER,NORDER,VRIGHT,LDA,
+d637 1
+a637 1
+!            CALL X04CAF('G',' ',NORDER,NORDER,WKSPA,MAXNOFVAR,'LEFT*A ',
+d639 1
+a639 1
+!            CALL X04CAF('G',' ',NORDER,NORDER,WKSPC,MAXNOFVAR,
+d641 1
+a641 1
+            CALL X04CAF('G',' ',NORDER,NORDER,WORKL,MAXNOFVAR,
+d644 1
+a644 1
+!            CALL X04CAF('G',' ',NORDER,NORDER,WKSPB,MAXNOFVAR,'A*RIGHT',
+d646 1
+a646 1
+!            CALL X04CAF('G',' ',NORDER,NORDER,WKSPD,MAXNOFVAR,
+d648 1
+a648 1
+            CALL X04CAF('G',' ',NORDER,NORDER,WORKR,MAXNOFVAR,
+d652 1
+a652 1
+            CALL X04CAF('General',' ',NORDER,NORDER,KMAT,LDA,
+d654 1
+a654 1
+            CALL X04CAF('General',' ',NORDER,NORDER,WORK1,MAXNOFVAR,
+d656 1
+a656 1
+            CALL X04CAF('General',' ',NORDER,NORDER,WORK2,MAXNOFVAR,
+@
+
+
+1.8
+log
+@changes made by Raffaele in January 2013:
+needed to upgrade to his 3.2.11 release of the code
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXII.F,v 1.6 2013/01/30 15:55:07 tesistim Exp $
+d36 1
+d40 1
+a43 1
+      INCLUDE 'constants.h'
+@
+
+
+1.7
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXII.F,v 1.6 2013/01/26 12:28:52 abonfi Exp abonfi $
+d13 2
+a14 2
+CCCC#define FSPL_USE_DEBUG
+CTSPLITXII
+a34 1
+      INCLUDE 'constants.h'
+d36 1
+d42 1
+d54 1
+a54 1
+     &AREAINV,AREA,TRATIO,DELTA,ABARINV,CE
+a64 2
+      DOUBLE PRECISION WKSPE(MAXNOFVAR,MAXNOFVAR),
+     2WKSPF(MAXNOFVAR,MAXNOFVAR)
+d67 2
+a68 2
+      DOUBLE PRECISION WORK3(MAXNOFVAR,MAXNOFVAR),
+     2WORK4(MAXNOFVAR,MAXNOFVAR)
+d77 1
+a77 1
+
+d79 1
+a79 1
+      DOUBLE PRECISION UU(3) 
+a97 7
+      DO I = 1,NSP      
+         ALPHA(I) = UAVG(I) * DENSINV
+!         write(6,*)'Chemical species',I
+!         write(6,*)'CHIi=', CHI(I)         
+!         DR(I)=DR(I)-CHI(I)
+!         write(6,*)'DRi=',DR(I)
+      ENDDO        
+d104 1
+a104 1
+
+d116 1
+d127 1
+d135 1
+d143 1
+d241 1
+d251 2
+a252 1
+C     Left Eigenvectors (Matrix (1...Ns) x (Ns+1...Ns+4)) ..     
+d261 1
+d269 2
+a270 1
+C     Left Eigenvectors (Matrix (Ns+1...Ns+4) x (Ns+1)) ..     
+d277 1
+d287 2
+a288 1
+C     Right Eigenvectors (Matrix (1...Ns) x (Ns+1 ... Ns+4)) ..      
+d297 1
+d306 1
+d308 2
+a309 2
+      VRIGHT(IE,IX) = DENS * (UAVG(IE) * ABARINV + U_DOT_M )
+      VRIGHT(IE,IY) = DENS * (UAVG(IE) * ABARINV - U_DOT_M )
+a312 1
+C
+d315 1
+a315 1
+!         IDIM = JDIM + 2
+d323 1
+d336 1
+a336 1
+#if 1
+d347 1
+a347 2
+!            IF( UNITMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-15) .EQV. 
+            IF( UNITMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-50) .EQV. 
+d368 2
+a369 2
+!            KPOS(I,J) = SUM1 ! comment out once the analytical ones will be all right
+!            KNEG(I,J) = SUM2 ! comment out once the analytical ones will be all right
+d391 10
+a400 2
+      TRATIO = ONE+DELTA*MACHSQR      
+      CE = DE * UAVG(IE)/ASQR
+d422 5
+a426 2
+        KPOS(IE,J) = (DR(J)*UAVG(IE)/ASQR - U_DOT_M*U_DOT_M)*UPLUS      
+     &          + APLUS * AMACHN * (DR(J) - UAVG(IE))
+d433 1
+a433 1
+C     (Matrix (Ns+1...Ns+3) x (Ns+1...Ns+3)) ..
+d435 1
+d476 4
+a479 1
+     &          + AMINS * AMACHN * (DR(J) - UAVG(IE))
+d490 1
+a490 1
+      KNEG(IE,IY) = (U_DOT_M*NY-TRATIO*UAVG(IY))*UMINS
+d559 1
+a559 1
+      ENDIF 
+d568 1
+a568 1
+      IF( NULLMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-65) .EQV. .FALSE. 
+d570 1
+a570 1
+     +    NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-65) .EQV. .FALSE. 
+d573 2
+a574 2
+         WRITE(6,*)NULLMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-65)
+         WRITE(6,*)NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-65)
+d576 1
+a576 1
+     +               'true positive matrix',IFAIL)
+d580 1
+a580 1
+     +               'error positive matrix',IFAIL)
+d584 1
+a584 1
+     +               'analytical negative matrix',IFAIL)
+d586 2
+a587 2
+     +               'error negative matrix',IFAIL)
+!         PAUSE
+d595 2
+a596 1
+               WORK1(I,J) = (KPOS(I,J)+KNEG(I,J))              
+a597 2
+               WORK3(I,J) = (KPLUS(I,J)+KMINS(I,J))
+               WORK4(I,J) = WORK3(I,J)-KMAT(I,J)
+d599 1
+a599 1
+      LFLAG = ( .NOT. NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-55))
+d611 1
+a611 2
+!#if 0
+#ifdef FSPL_USE_DEBUG
+d630 3
+a632 3
+                  WKSPE(I,J) = WKSPA(I,J) - WKSPC(I,J)
+                  WKSPF(I,J) = WKSPB(I,J) - WKSPD(I,J)
+   8       CONTINUE
+d636 14
+a649 12
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPA,MAXNOFVAR,'LEFT*A ',
+     2                  IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPC,MAXNOFVAR,
+     +                  'lambda*LEFT',IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPE,MAXNOFVAR,
+     +                  'Error L*A - lambda*L',IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPB,MAXNOFVAR,'A*RIGHT',
+     6                  IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPD,MAXNOFVAR,
+     +                  'RIGHT*lambda',IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,WKSPF,MAXNOFVAR,
+     +                  'Error A*R - R*lambda',IFAIL)
+d652 1
+a652 1
+     +                  'Original matrix (A analytical)',IFAIL)
+d654 1
+a654 1
+     +                  'Reassembled matrix (A = A+ + A-)',IFAIL)
+d656 1
+a656 5
+     +                  'Error matrix (A - (A+ + A-))',IFAIL)
+!            CALL X04CAF('General',' ',NORDER,NORDER,WORK3,MAXNOFVAR,
+!     +                  'Reassembled matrix (A = L*lamb*R)',IFAIL)
+!            CALL X04CAF('General',' ',NORDER,NORDER,WORK4,MAXNOFVAR,
+!     +                  'Error matrix (A - (R*Lp*L + R*Lm*L))',IFAIL)
+@
+
+
+1.6
+log
+@latest changes made by Raffaele
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXII.F,v 1.5 2012/06/05 14:46:23 tesistim Exp $
+d35 1
+d40 1
+a41 1
+      INCLUDE 'constants.h'
+@
+
+
+1.5
+log
+@same as 1.3.1.1
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXII.F,v 1.3.1.1 2012/06/05 14:45:24 tesistim Exp $
+d14 1
+a14 1
+C
+a35 1
+C
+d52 1
+a52 1
+     &AREAINV,AREA,TRATIO,DELTA,ABARINV,CE,CD,CDQ
+d63 2
+d67 2
+d77 1
+a77 3
+      INTEGER IE,IX,IY,IZ
+C
+C     PRESSURE DERIVATIVE (Thermodynamic Variables (dp/drho)eps & (dp/deps)rho)
+d79 1
+a79 1
+      DOUBLE PRECISION UU(3) ! crpepe aggIXnto UU
+a80 7
+caldo
+C     PARTIAL DENSITY       
+!     DOUBLE PRECISION CHI(NSP)
+!     DOUBLE PRECISION DR(NSP),DE,DM(3),SUM_DR ! crpepe aggIXnto UU
+!     DOUBLE PRECISION ALPHA(NSP)   
+!     DOUBLE PRECISION DENS,DENSINV,KAPPA
+caldo
+d98 1
+a98 6
+      KAPPA = GM1 
+C
+C
+      DO I = 1,NSP
+         CHI(I) = ZERO
+!        write(6,*)'alpha prima ',alpha(i)
+d100 5
+a104 7
+!        write(6,*)'alpha dopo ',alpha(i)
+      ENDDO
+
+      IE = NSP + 1
+      IX = NSP + 2
+      IY = NSP + 3
+      IZ = NSP + 4
+d111 1
+a122 1
+C
+a132 1
+
+a139 1
+
+a146 1
+
+a243 1
+C
+d253 1
+a253 2
+C     Left Eigenvectors (Matrix (1...Ns) x (Ns+1...Ns+4)) ..
+      
+a261 1
+
+d269 1
+a269 2
+C     Left Eigenvectors (Matrix (Ns+1...Ns+4) x (Ns+1)) ..
+      
+a275 1
+C
+d285 1
+a285 2
+C     Right Eigenvectors (Matrix (1...Ns) x (Ns+1 ... Ns+4)) ..
+      
+a293 1
+
+a301 1
+
+d303 2
+a304 2
+      VRIGHT(IE,IX) = DENS * (UAVG(IE)/ABAR + U_DOT_M )
+      VRIGHT(IE,IY) = DENS * (UAVG(IE)/ABAR - U_DOT_M )
+d307 1
+a307 3
+!     write(6,*)'inv(r) = ',densinv
+!     write(6,*)'inv(a) = ',abarinv
+!     write(6,*)'de = ',de
+d311 1
+a311 1
+         IDIM = JDIM + 2
+a318 1
+C
+d331 1
+a331 1
+#if 0
+d342 2
+a343 1
+            IF( UNITMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-15) .EQV. 
+d364 2
+a365 2
+!           KPOS(I,J) = SUM1 ! comment out once the analytical ones will be all right
+!           KNEG(I,J) = SUM2 ! comment out once the analytical ones will be all right
+d387 2
+a388 10
+      TRATIO = ONE+DELTA*MACHSQR
+      CE = DE*UAVG(IE)/ASQR
+      CD = ZERO
+      CDQ = ZERO
+      DO I = 1 , NSP
+        CD = ALPHA(I) * DR(I) + CD
+        CDQ = ALPHA(I) * DR(I)**2 + CDQ
+      ENDDO
+      CD = KINETIC * TWO * CD / ASQR
+      CDQ = CDQ / (DE * ASQR) 
+d410 2
+a411 3
+        KPOS(IE,J) = HALF * FSPSLP*(DR(J)*UAVG(IE)/ASQR-U_DOT_M*U_DOT_M)
+     &          + APLUS * AMACHN * (DR(J) - UAVG(IE)) 
+     &          + LPOS(1) * (U_DOT_M*U_DOT_M - CD + CDQ - DR(J)/DE)
+a418 2
+      
+cpepe KPOS(IE,IE) = LPOS(1)+CC*UPLUS+APLUS*DE*AMACHN
+a419 2
+
+cpepe KPOS(IE,IX) = (U_DOT_M*NX-CC*UAVG(IX))*UPLUS
+d459 2
+a460 4
+        KNEG(IE,J) = HALF*FSPSLN*(DR(J)*UAVG(IE)/ASQR - U_DOT_M*U_DOT_M)
+     &          + AMINS * AMACHN * (DR(J) - UAVG(IE)) 
+     &          + LNEG(1) * (U_DOT_M * U_DOT_M - CD + CDQ - DR(J)/DE)
+
+d540 1
+a540 1
+      ENDIF ! NDIM
+d549 1
+a549 1
+      IF( NULLMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-15) .EQV. .FALSE. 
+d551 1
+a551 1
+     +    NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-15) .EQV. .FALSE. 
+d554 2
+a555 2
+         WRITE(6,*)NULLMAT(WORK1,NORDER,NORDER,MAXNOFVAR,1.D-15)
+         WRITE(6,*)NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-15)
+d568 1
+a568 1
+         PAUSE
+d576 1
+a576 2
+               WORK1(I,J) = (KPOS(I,J)+KNEG(I,J))
+CREM           WORK1(I,J) = (KPLUS(I,J)+KMINS(I,J))
+d578 2
+d581 1
+a581 1
+      LFLAG = ( .NOT. NULLMAT(WORK2,NORDER,NORDER,MAXNOFVAR,1.D-15) )
+d593 2
+a594 1
+#if 1
+d613 3
+a615 1
+    8       CONTINUE
+d623 2
+d629 2
+d633 1
+a633 1
+     +                  'Original matrix',IFAIL)
+d635 1
+a635 1
+     +                  'Reassembled matrix',IFAIL)
+d637 6
+a642 2
+     +                  'Error matrix',IFAIL)
+C           PAUSE
+@
+
+
+1.4
+log
+@changed name of unit normals
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXII.F,v 1.3 2012/06/01 08:51:52 tesistim Exp tesistim $
+d13 1
+a13 1
+#define FSPL_USE_DEBUG
+a34 2
+C
+      INCLUDE 'constants.h'
+d41 2
+d52 1
+a52 1
+      DOUBLE PRECISION U_dot_M,U_DOT_S,U_DOT_T,
+d78 1
+a78 1
+      DOUBLE PRECISION SUM_DR ! crpepe aggIXnto UU
+d80 1
+d82 5
+d94 1
+a94 1
+      DATA nx,ny,nz / 3*ZERO /
+d104 9
+d122 2
+a123 2
+      nx = VECN(1)/NDIM
+      ny = VECN(2)/NDIM
+d125 1
+a125 1
+      U_dot_M = UAVG(IX) * nx + UAVG(IY) * ny ! rpepe 
+d127 2
+a128 2
+           nz = VECN(3)/NDIM
+           U_dot_M = U_dot_M + UAVG(IZ) * nz
+d149 2
+a150 2
+        KMAT(I,IX) = ALPHA(I) * nx
+        KMAT(I,IY) = ALPHA(I) * ny
+d157 2
+a158 2
+        KMAT(IX,J) = -U_DOT_M * UAVG(IX) + DR(J) * nx
+        KMAT(IY,J) = -U_DOT_M * UAVG(IY) + DR(J) * ny
+d163 11
+a173 11
+      KMAT(IE,IE) = (DE+ONE) * U_dot_M
+      KMAT(IE,IX) = UAVG(IE) * nx + U_dot_M * DM(1)
+      KMAT(IE,IY) = UAVG(IE) * ny + U_dot_M * DM(2)
+C
+      KMAT(IX,IE) = DE * nx
+      KMAT(IX,IX) = (UAVG(IX) + DM(1)) * nx + U_dot_M
+      KMAT(IX,IY) = UAVG(IX) * ny + DM(2) * nx
+C
+      KMAT(IY,IE) = DE * ny
+      KMAT(IY,IX) = UAVG(IY) * nx + DM(1) * ny
+      KMAT(IY,IY) = (UAVG(IY) + DM(2)) * ny + U_dot_M
+d178 1
+a178 1
+        KMAT(I,IZ) = ALPHA(I) * nz
+d182 1
+a182 1
+        KMAT(IZ,J) = -U_DOT_M * UAVG(IZ) + DR(J) * nz
+d185 3
+a187 3
+      KMAT(IE,IZ) = UAVG(IE) * nz + U_dot_M * DM(3)
+      KMAT(IX,IZ) = UAVG(IX) * nz + DM(3) * nx
+      KMAT(IY,IZ) = UAVG(IY) * nz + DM(3) * ny
+d189 4
+a192 4
+      KMAT(IZ,IE) = DE * nz
+      KMAT(IZ,IX) = UAVG(IZ) * nx + DM(1) * nz
+      KMAT(IZ,IY) = UAVG(IZ) * ny + DM(2) * nz
+      KMAT(IZ,IZ) = (UAVG(IZ) + DM(3)) * nz + U_dot_M
+a205 6
+!      SUM_DR = ZERO
+!      DO I = 1 , NSP ! da eliminare
+!        SUM_DR = SUM_DR + DR(I) * ALPHA(I) ! da eliminare
+!      ENDDO ! da eliminare
+!      ASQR = SUM_DR + (UAVG(IE)-2*KINETIC)*DE ! rpepe ! da eliminare
+!      ABAR = SQRT(ASQR) ! da eliminare
+d265 1
+a265 1
+                VLEFT(I,J) = ONE + VLEFT(I,J)
+d331 3
+a333 5
+      write(6,*)'elem = ',ielem,(vecn(i),i=1,ndim)
+      write(6,*)'inv(r) = ',densinv
+      write(6,*)'inv(a) = ',abarinv
+      write(6,*)'de = ',de
+      write(6,*)'dr = ',(dr(i),i=1,NSP)
+d358 1
+d363 4
+a366 4
+!           CALL X04CAF('G',' ',NORDER,NORDER,VLEFT,LDA,
+!    +                      'Left ',IFAIL)
+!           CALL X04CAF('G',' ',NORDER,NORDER,VRIGHT,LDA,
+!    +                      'Right ',IFAIL)
+a370 1
+!           IF( .TRUE. ) THEN
+d375 1
+a394 1
+caldo RETURN ! remove once the analytical ones will be all right
+d423 1
+a423 2
+c
+C     KPOS
+a581 1
+caldo#endif
+a584 3
+C     Here we check that K(+) K(-) computed by R \Lambda R
+C     equal the analytically calculated  
+C
+d617 2
+a618 2
+               WORK1(I,J) = (KPOS(I,J)+KNEG(I,J)) ! analiticamente
+CREM           WORK1(I,J) = (KPLUS(I,J)+KMINS(I,J)) ! mediante prodotto di matrici
+d622 1
+a622 1
+caldo lflag = .true.
+a633 1
+      write(6,*)'Sono qui!'
+d709 1
+a709 1
+      RETURN
+@
+
+
+1.3
+log
+@cambiato NSP in IX, etc
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXI.F,v 1.1 2003/07/17 13:58:36 abonfi Exp $
+d36 3
+d40 1
+a42 3
+      INCLUDE 'constants.h'
+      INCLUDE 'plasma.h'
+C
+d52 3
+a54 3
+      DOUBLE PRECISION l,m,n,U_dot_M,U_DOT_S,U_DOT_T,
+     &AREAINV,AREA,TRATIO,DELTA,DENSINV,ABARINV,DENS,CE,CD,CDQ
+      DOUBLE PRECISION UPLUS,UMINS,AMACHN,UPOS,APOS,UNEG,ANEG,KAPPA
+a76 1
+      DOUBLE PRECISION CHI(NSP)
+d78 1
+a78 1
+      DOUBLE PRECISION DR(NSP),DE,DM(NDIM),SUM_DR,UU(NSP) ! crpepe aggIXnto UU
+a80 1
+      DOUBLE PRECISION ALPHA(NSP)   
+d88 1
+a88 1
+      DATA l,m,n / 3*ZERO /
+a97 12
+      KAPPA = GM1 
+C
+      DENS = ZERO
+      DO I = 1 , NSP
+        DENS = DENS + UAVG(I)
+      ENDDO
+      DENSINV = ONE/DENS
+C
+      DO I = 1,NSP
+         CHI(I) = ZERO
+         ALPHA(I) = UAVG(I) * DENSINV
+      ENDDO
+d107 2
+a108 2
+      l = VECN(1)/NDIM
+      m = VECN(2)/NDIM
+d110 1
+a110 1
+      U_dot_M = UAVG(IX) * l + UAVG(IY) * m ! rpepe 
+d112 2
+a113 2
+           n = VECN(3)/NDIM
+           U_dot_M = U_dot_M + UAVG(IZ) * n
+a115 17
+      DO I = 1 , NDIM
+        UU(I) = UAVG(IE + I)
+      ENDDO
+    
+C      Pressure derivatives      
+C
+      DO 11 I = 1 , NSP
+          DR(I) = PIR(UU,NDIM,CHI(I),KAPPA)
+!         write(6,*)'dr ',i,dr(i)
+   11 CONTINUE
+C
+      DE = PIE(KAPPA)
+
+      DO 14 I = 1 , NDIM
+            DM(I) = PIM(UU(I),KAPPA)
+!         write(6,*)'dm ',i,dm(i)
+   14 CONTINUE
+d134 2
+a135 2
+        KMAT(I,IX) = ALPHA(I) * l
+        KMAT(I,IY) = ALPHA(I) * m
+d142 2
+a143 2
+        KMAT(IX,J) = -U_DOT_M * UAVG(IX) + DR(J) * l
+        KMAT(IY,J) = -U_DOT_M * UAVG(IY) + DR(J) * m
+d148 11
+a158 11
+      KMAT(IE,IE) = (DE+1) * U_dot_M
+      KMAT(IE,IX) = UAVG(IE) * l + U_dot_M * DM(1)
+      KMAT(IE,IY) = UAVG(IE) * m + U_dot_M * DM(2)
+C
+      KMAT(IX,IE) = DE * l
+      KMAT(IX,IX) = (UAVG(IX) + DM(1)) * l + U_dot_M
+      KMAT(IX,IY) = UAVG(IX) * m + DM(2) * l
+C
+      KMAT(IY,IE) = DE * m
+      KMAT(IY,IX) = UAVG(IY) * l + DM(1) * m
+      KMAT(IY,IY) = (UAVG(IY) + DM(2)) * m + U_dot_M
+d163 1
+a163 1
+        KMAT(I,IZ) = ALPHA(I) * n
+d167 1
+a167 1
+        KMAT(IZ,J) = -U_DOT_M * UAVG(IZ) + DR(J) * n
+d170 3
+a172 3
+      KMAT(IE,IZ) = UAVG(IE) * n + U_dot_M * DM(3)
+      KMAT(IX,IZ) = UAVG(IX) * n + DM(3) * l
+      KMAT(IY,IZ) = UAVG(IY) * n + DM(3) * m
+d174 4
+a177 4
+      KMAT(IZ,IE) = DE * n
+      KMAT(IZ,IX) = UAVG(IZ) * l + DM(1) * n
+      KMAT(IZ,IY) = UAVG(IZ)*m + DM(2) * n
+      KMAT(IZ,IZ) = (UAVG(IZ) + DM(3)) * n + U_dot_M
+d191 6
+a196 6
+      SUM_DR = 0.d0
+      DO I = 1 , NSP
+        SUM_DR = SUM_DR + DR(I) * ALPHA(I)
+      ENDDO
+      ASQR = SUM_DR + (UAVG(IE)-2*KINETIC)*DE ! rpepe
+      ABAR = SQRT(ASQR)
+d256 1
+a256 1
+                VLEFT(I,J) = 1 + VLEFT(I,J)
+d322 5
+a326 3
+!     write(6,*)'inv(r) = ',densinv
+!     write(6,*)'inv(a) = ',abarinv
+!     write(6,*)'de = ',de
+a358 1
+#if 0
+a367 1
+#endif
+d382 2
+a383 2
+            KPOS(I,J) = SUM1 ! comment out once the analytical ones will be all right
+            KNEG(I,J) = SUM2 ! comment out once the analytical ones will be all right
+d387 1
+a387 1
+      RETURN ! remove once the analytical ones will be all right
+d416 1
+a416 1
+#ifdef PIPPO
+d440 1
+a440 1
+     &          + LPOS(1) * (U_DOT_M*U_DOT_M + CD + CDQ - DR(J)/DE)
+d491 1
+a491 1
+      DO J = J , NSP
+d494 1
+a494 1
+     &          + LNEG(1) * (U_DOT_M * U_DOT_M + CD + CDQ - DR(J)/DE)
+d576 1
+a576 1
+#endif
+d580 3
+d615 2
+a616 2
+               WORK1(I,J) = (KPOS(I,J)+KNEG(I,J))
+CREM           WORK1(I,J) = (KPLUS(I,J)+KMINS(I,J))
+d620 1
+a620 1
+      lflag = .true.
+d632 1
+d708 1
+a708 1
+            RETURN
+@
+
+
+1.3.1.1
+log
+@il calcolo analitico di K(+) e K(-) funziona
+@
+text
+@d5 1
+a5 1
+C     $Id: matsplXII.F,v 1.3 2012/06/01 08:51:52 tesistim Exp tesistim $
+d13 1
+a13 1
+CCCC#define FSPL_USE_DEBUG
+a34 1
+      INCLUDE 'plasma.h'
+a36 1
+      INCLUDE 'four.com'
+d40 1
+d52 2
+a53 2
+     &AREAINV,AREA,TRATIO,DELTA,ABARINV,CE,CD,CDQ
+      DOUBLE PRECISION UPLUS,UMINS,AMACHN,UPOS,APOS,UNEG,ANEG
+d76 1
+d78 1
+a78 1
+      DOUBLE PRECISION UU(3) ! crpepe aggIXnto UU
+a79 1
+caldo
+d81 1
+a81 5
+!     DOUBLE PRECISION CHI(NSP)
+!     DOUBLE PRECISION DR(NSP),DE,DM(3),SUM_DR ! crpepe aggIXnto UU
+!     DOUBLE PRECISION ALPHA(NSP)   
+!     DOUBLE PRECISION DENS,DENSINV,KAPPA
+caldo
+d101 5
+a108 1
+!        write(6,*)'alpha prima ',alpha(i)
+a109 1
+!        write(6,*)'alpha dopo ',alpha(i)
+d129 17
+d221 6
+a378 1
+#if 0
+d383 5
+a387 4
+            CALL X04CAF('G',' ',NORDER,NORDER,VLEFT,LDA,
+     +                      'Left ',IFAIL)
+            CALL X04CAF('G',' ',NORDER,NORDER,VRIGHT,LDA,
+     +                      'Right ',IFAIL)
+d392 1
+d412 2
+a413 2
+!           KPOS(I,J) = SUM1 ! comment out once the analytical ones will be all right
+!           KNEG(I,J) = SUM2 ! comment out once the analytical ones will be all right
+d417 1
+d446 2
+a447 1
+C
+d470 1
+a470 1
+     &          + LPOS(1) * (U_DOT_M*U_DOT_M - CD + CDQ - DR(J)/DE)
+d521 1
+a521 1
+      DO J = 1 , NSP
+d524 1
+a524 1
+     &          + LNEG(1) * (U_DOT_M * U_DOT_M - CD + CDQ - DR(J)/DE)
+d606 1
+d647 1
+a647 1
+!     lflag = .true.
+@
+
+
+1.2
+log
+@work in progress
+@
+text
+@d73 1
+a73 1
+      INTEGER NSP1,NSP2,NSP3,NSP4
+d78 1
+a78 1
+      DOUBLE PRECISION DR(NSP),DE,DM(NDIM),SUM_DR,UU(NSP) ! crpepe aggiunto UU
+d109 1
+a109 1
+         ALPHA(I) = UAVG(I)*DENSINV
+d112 4
+a115 4
+      NSP1 = NSP + 1
+      NSP2 = NSP + 2
+      NSP3 = NSP + 3
+      NSP4 = NSP + 4
+d123 1
+a123 1
+      U_dot_M = UAVG(NSP2) * l + UAVG(NSP3) * m ! rpepe 
+d126 1
+a126 1
+           U_dot_M = U_dot_M + UAVG(NSP4) * n
+d130 1
+a130 1
+        UU(I) = UAVG(NSP1 + I)
+d163 3
+a165 3
+        KMAT(I,NSP1) = ZERO
+        KMAT(I,NSP+2) = ALPHA(I) * l
+        KMAT(I,NSP3) = ALPHA(I) * m
+d171 3
+a173 3
+        KMAT(NSP1,J) =  U_dot_M * (-UAVG(NSP1) + DR(J))
+        KMAT(NSP2,J) = -U_DOT_M * UAVG(NSP2) + DR(J) * l
+        KMAT(NSP3,J) = -U_DOT_M * UAVG(NSP3) + DR(J) * m
+d178 11
+a188 11
+      KMAT(NSP1,NSP1) = (DE+1) * U_dot_M
+      KMAT(NSP1,NSP2) = UAVG(NSP1) * l + U_dot_M * DM(1)
+      KMAT(NSP1,NSP3) = UAVG(NSP1) * m + U_dot_M * DM(2)
+C
+      KMAT(NSP2,NSP1) = DE * l
+      KMAT(NSP2,NSP2) = (UAVG(NSP2) + DM(1)) * l + U_dot_M
+      KMAT(NSP2,NSP3) = UAVG(NSP2) * m + DM(2) * l
+C
+      KMAT(NSP3,NSP1) = DE * m
+      KMAT(NSP3,NSP2) = UAVG(NSP3) * l + DM(1) * m
+      KMAT(NSP3,NSP3) = (UAVG(NSP3) + DM(2)) * m + U_dot_M
+d193 1
+a193 1
+        KMAT(I,NSP4) = ALPHA(I) * n
+d197 1
+a197 1
+        KMAT(NSP4,J) = -U_DOT_M * UAVG(NSP4) + DR(J) * n
+d200 3
+a202 3
+      KMAT(NSP1,NSP4) = UAVG(NSP1) * n + U_dot_M * DM(3)
+      KMAT(NSP2,NSP4) = UAVG(NSP2) * n + DM(3) * l
+      KMAT(NSP3,NSP4) = UAVG(NSP3) * n + DM(3) * m
+d204 4
+a207 4
+      KMAT(NSP4,NSP1) = DE * n
+      KMAT(NSP4,NSP2) = UAVG(NSP4) * l + DM(1) * n
+      KMAT(NSP4,NSP3) = UAVG(NSP4)*m + DM(2) * n
+      KMAT(NSP4,NSP4) = (UAVG(NSP4) + DM(3)) * n + U_dot_M
+d225 1
+a225 1
+      ASQR = SUM_DR + (UAVG(NSP1)-2*KINETIC)*DE ! rpepe
+d236 4
+a239 4
+      WR(NSP1) = AREA * U_dot_M
+      WR(NSP2) = AREA * ( U_dot_M + ABAR )
+      WR(NSP3) = AREA * ( U_dot_M - ABAR )
+      WR(NSP4) = AREA * U_dot_M
+d241 1
+a241 1
+C    Positive and negative eigenvalues ..
+d275 2
+a276 2
+      U_DOT_S = DDOT(NDIM,UAVG(NSP2),1,VECS,1)
+      U_DOT_T = DDOT(NDIM,UAVG(NSP2),1,VECT,1)    
+d294 4
+a297 4
+        VLEFT(I,NSP1) = - ALPHA(I) * DE/ASQR
+        VLEFT(I,NSP2) = ALPHA(I) * DE/ASQR * UAVG(NSP2)
+        VLEFT(I,NSP3) = ALPHA(I) * DE/ASQR * UAVG(NSP3)
+        IF(NDIM.EQ.3) VLEFT(I,NSP4) = ALPHA(I) * DE/ASQR * UAVG(NSP4)
+d303 4
+a306 4
+        VLEFT(NSP1,J) = -U_DOT_S * DENSINV
+        VLEFT(NSP2,J) = HALF * DENSINV * (DR(J)*ABARINV - U_DOT_M)
+        VLEFT(NSP3,J) = HALF * DENSINV * (DR(J)*ABARINV + U_DOT_M)
+        IF(NDIM.EQ.3) VLEFT(NSP4,J) = -U_DOT_T * DENSINV
+d311 4
+a314 4
+      VLEFT(NSP1,NSP1) = ZERO
+      VLEFT(NSP2,NSP1) = HALF*DENSINV*DE*ABARINV
+      VLEFT(NSP3,NSP1) = HALF*DENSINV*DE*ABARINV
+      IF(NDIM.EQ.3) VLEFT(NSP4,NSP1) = ZERO
+d330 4
+a333 4
+        VRIGHT(I,NSP1) = ZERO
+        VRIGHT(I,NSP2) = DENS * ALPHA(I) * ABARINV
+        VRIGHT(I,NSP3) = DENS * ALPHA(I) * ABARINV
+        IF(NDIM.EQ.3) VRIGHT(I,NSP4) = ZERO
+d339 4
+a342 4
+        VRIGHT(NSP1,J) = 2 * KINETIC - DR(J) / DE
+        VRIGHT(NSP2,J) = UAVG(NSP2)
+        VRIGHT(NSP3,J) = UAVG(NSP3)
+        IF(NDIM.EQ.3) VLEFT(NSP4,J) = UAVG(NSP4)
+d347 4
+a350 4
+      VRIGHT(NSP1,NSP1) = DENS * U_DOT_S
+      VRIGHT(NSP1,NSP2) = DENS * (UAVG(NSP1)/ABAR + U_DOT_M )
+      VRIGHT(NSP1,NSP3) = DENS * (UAVG(NSP1)/ABAR - U_DOT_M )
+      IF(NDIM.EQ.3) VRIGHT(NSP1,NSP4) = DENS * U_DOT_T
+d367 4
+a370 4
+         VLEFT(NSP1,IDIM) = DENSINV * Sxyz
+         VLEFT(NSP2,IDIM) = HALF*DENSINV*(-DE*ABARINV*UAVG(IDIM)+Nxyz)
+         VLEFT(NSP3,IDIM) = HALF*DENSINV*(-DE*ABARINV*UAVG(IDIM)-Nxyz)
+         IF(NDIM.EQ.3) VLEFT(NSP4,IDIM) = DENSINV * Txyz
+d372 4
+a375 4
+             VRIGHT(IDIM,NSP1) = DENS * Sxyz
+             VRIGHT(IDIM,NSP2) = DENS * (UAVG(IDIM)/ABAR+Nxyz)
+             VRIGHT(IDIM,NSP3) = DENS * (UAVG(IDIM)/ABAR-Nxyz)
+         IF(NDIM.EQ.3) VRIGHT(IDIM,NSP4) = DENS * Txyz
+d419 1
+a419 1
+CREM  VECN is not divided by d ?!?! 
+d426 4
+a429 4
+      FSPSLP = LPOS(NSP2)+LPOS(NSP3)
+      FSMSLP = LPOS(NSP2)-LPOS(NSP3)
+      FSPSLN = LNEG(NSP2)+LNEG(NSP3)
+      FSMSLN = LNEG(NSP2)-LNEG(NSP3)
+d437 1
+a437 1
+      CE = DE*UAVG(NSP1)/ASQR
+d442 1
+a442 1
+        CDQ = ALPHA(I) * DR(I) * DR(I) + CDQ
+d461 3
+a463 3
+       KPOS(I,NSP1) = ALPHA(I)*DE/ASQR*UPLUS
+       KPOS(I,NSP2) = ALPHA(I)*(-DE*UAVG(NSP2)/ASQR*UPLUS+NX/ABAR*APLUS)
+       KPOS(I,NSP3) = ALPHA(I)*(-DE*UAVG(NSP3)/ASQR*UPLUS+NY/ABAR*APLUS)
+d468 2
+a469 2
+        KPOS(NSP1,J) = HALF*FSPSLP*(DR(J)*UAVG(NSP1)/ASQR - U_DOT_M**2)
+     &           + APLUS*AMACHN*(DR(J) - UAVG(NSP1)) 
+d471 4
+a474 4
+        KPOS(NSP2,J) = (DR(J)/ASQR*UAVG(NSP2)-U_DOT_M*NX)*UPLUS
+     &          + (DR(J)/ABAR*NX-AMACHN*UAVG(NSP2))*APLUS
+        KPOS(NSP3,J) = (DR(J)/ASQR*UAVG(NSP3)-U_DOT_M*NY)*UPLUS
+     &          + (DR(J)/ABAR*NY-AMACHN*UAVG(NSP3))*APLUS
+d479 2
+a480 2
+cpepe KPOS(NSP1,NSP1) = LPOS(1)+CC*UPLUS+APLUS*DE*AMACHN
+      KPOS(NSP1,NSP1) = LPOS(1)+CE*UPLUS+APLUS*DE*AMACHN
+d482 18
+a499 18
+cpepe KPOS(NSP1,NSP2) = (U_DOT_M*NX-CC*UAVG(NSP2))*UPLUS
+      KPOS(NSP1,NSP2) = (U_DOT_M*NX-CE*UAVG(NSP2))*UPLUS
+     &          + APLUS * (UAVG(NSP1)/ABAR*NX-DE*AMACHN*UAVG(NSP2))
+      KPOS(NSP1,NSP3) = (U_DOT_M*NY-CE*UAVG(NSP3))*UPLUS
+     &          + APLUS * (UAVG(NSP1)/ABAR*NY-DE*AMACHN*UAVG(NSP3))
+C
+      KPOS(NSP2,NSP1) = DE/ABAR*(UAVG(NSP2)/ABAR*UPLUS+NX*APLUS)
+      KPOS(NSP3,NSP1) = DE/ABAR*(UAVG(NSP3)/ABAR*UPLUS+NY*APLUS)
+C
+      KPOS(NSP2,NSP2) = (NX*NX-DE*UAVG(NSP2)*UAVG(NSP2)/ASQR)*UPLUS
+     &          + (UAVG(NSP2)*NX-DE*NX*UAVG(NSP2))*APLUS/ABAR + LPOS(1)
+      KPOS(NSP2,NSP3) = (NX*NY-DE*UAVG(NSP2)*UAVG(NSP3)/ASQR)*UPLUS
+     &          + (UAVG(NSP2)*NY-DE*NX*UAVG(NSP3))*APLUS/ABAR
+C
+      KPOS(NSP3,NSP2) = (NY*NX-DE*UAVG(NSP3)*UAVG(NSP2)/ASQR)*UPLUS
+     &          + (UAVG(NSP3)*NX-DE*NY*UAVG(NSP2))*APLUS/ABAR
+      KPOS(NSP3,NSP3) = (NY*NY-DE*UAVG(NSP3)*UAVG(NSP3)/ASQR)*UPLUS
+     &          + (UAVG(NSP3)*NY-DE*NY*UAVG(NSP3))*APLUS/ABAR + LPOS(1)
+d506 1
+a506 1
+            KNEG(1,1) = ALPHA(I)*(UMINS*DR(J)/ASQR-AMACHN*AMINS)
+d515 3
+a517 3
+       KNEG(I,NSP1) = ALPHA(I)*DE/ASQR*UMINS
+       KNEG(I,NSP2) = ALPHA(I)*(-DE*UAVG(NSP2)/ASQR*UMINS+NX/ABAR*AMINS)
+       KNEG(I,NSP3) = ALPHA(I)*(-DE*UAVG(NSP3)/ASQR*UMINS+NY/ABAR*AMINS)
+d522 8
+a529 8
+        KNEG(NSP1,J) = HALF*FSPSLN*(DR(J)*UAVG(NSP1)/ASQR - U_DOT_M**2)
+     &          + AMINS*AMACHN*(DR(J) - UAVG(NSP1)) 
+     &          + LNEG(1)*(U_DOT_M * U_DOT_M + CD + CDQ - DR(J)/DE)
+
+        KNEG(NSP2,J) = (DR(J)/ASQR*UAVG(NSP2)-U_DOT_M*NX)*UMINS
+     &          + (DR(J)/ABAR*NX-AMACHN*UAVG(NSP2))*AMINS
+        KNEG(NSP3,J) = (DR(J)/ASQR*UAVG(NSP3)-U_DOT_M*NY)*UMINS
+     &          + (DR(J)/ABAR*NY-AMACHN*UAVG(NSP3))*AMINS
+d533 18
+a550 18
+      KNEG(NSP1,NSP1) = LNEG(1)+CE*UMINS+AMINS*DE*AMACHN
+      KNEG(NSP1,NSP2) = (U_DOT_M*NX-CE*UAVG(NSP2))*UMINS
+     &          + AMINS * (UAVG(NSP1)/ABAR*NX-DE*AMACHN*UAVG(NSP2))
+      KNEG(NSP1,NSP3) = (U_DOT_M*NY-TRATIO*UAVG(NSP3))*UMINS
+     &          + AMINS * (UAVG(NSP1)/ABAR*NY-DE*AMACHN*UAVG(NSP3))
+C
+      KNEG(NSP2,NSP1) = DE/ABAR*(UAVG(NSP2)/ABAR*UMINS+NX*AMINS)
+      KNEG(NSP3,NSP1) = DE/ABAR*(UAVG(NSP3)/ABAR*UMINS+NY*AMINS)
+C
+      KNEG(NSP2,NSP2) = (NX*NX-DE*UAVG(NSP2)*UAVG(NSP2)/ASQR)*UMINS
+     &          + (UAVG(NSP2)*NX-DE*NX*UAVG(NSP2))*AMINS/ABAR + LNEG(1)
+      KNEG(NSP2,NSP3) = (NX*NY-DE*UAVG(NSP2)*UAVG(NSP3)/ASQR)*UMINS
+     &          + (UAVG(NSP2)*NY-DE*NX*UAVG(NSP3))*AMINS/ABAR
+C
+      KNEG(NSP3,NSP2) = (NY*NX-DE*UAVG(NSP3)*UAVG(NSP2)/ASQR)*UMINS
+     &          + (UAVG(NSP3)*NX-DE*NY*UAVG(NSP2))*AMINS/ABAR
+      KNEG(NSP3,NSP3) = (NY*NY-DE*UAVG(NSP3)*UAVG(NSP3)/ASQR)*UMINS
+     &          + (UAVG(NSP3)*NY-DE*NY*UAVG(NSP3))*AMINS/ABAR + LNEG(1)
+d555 1
+a555 1
+       KPOS(I,NSP4) = ALPHA(I)*(-DE*UAVG(NSP4)/ASQR*UPLUS+NZ/ABAR*APLUS)
+d558 6
+a563 6
+      KPOS(NSP1,NSP4) = (U_DOT_M*NZ-CE*UAVG(NSP4))*UPLUS
+     &          + APLUS * (UAVG(NSP1)/ABAR*NZ-DE*AMACHN*UAVG(NSP4))
+      KPOS(NSP2,NSP4) = (NX*NZ-DE*UAVG(NSP2)*UAVG(NSP4)/ASQR)*UPLUS
+     &          + (UAVG(NSP2)*NZ-DE*NX*UAVG(NSP4))*APLUS/ABAR
+      KPOS(NSP3,NSP4) = (NY*NZ-DE*UAVG(NSP3)*UAVG(NSP4)/ASQR)*UPLUS
+     &          + (UAVG(NSP3)*NZ-DE*NY*UAVG(NSP4))*APLUS/ABAR
+d566 2
+a567 2
+        KPOS(NSP4,J) = (DR(J)/ASQR*UAVG(NSP4)-U_DOT_M*NZ)*UPLUS
+     &          + (DR(J)/ABAR*NZ-AMACHN*UAVG(NSP4))*APLUS
+d570 1
+a570 1
+      KPOS(NSP4,NSP1) = DE/ABAR*(UAVG(NSP4)/ABAR*UPLUS+NZ*APLUS)
+d572 6
+a577 6
+      KPOS(NSP4,NSP2) = (NZ*NX-DE*UAVG(NSP4)*UAVG(NSP2)/ASQR)*UPLUS
+     &          + (UAVG(NSP4)*NX-DE*NZ*UAVG(NSP2))*APLUS/ABAR
+      KPOS(NSP4,NSP3) = (NZ*NY-DE*UAVG(NSP4)*UAVG(NSP3)/ASQR)*UPLUS
+     &          + (UAVG(NSP4)*NY-DE*NZ*UAVG(NSP3))*APLUS/ABAR
+      KPOS(NSP4,NSP4) = (NZ*NZ-DE*UAVG(NSP4)*UAVG(NSP4)/ASQR)*UPLUS
+     &          + (UAVG(NSP4)*NZ-DE*NZ*UAVG(NSP4))*APLUS/ABAR + LPOS(1)
+d580 1
+a580 1
+       KNEG(I,NSP4) = ALPHA(I)*(-DE*UAVG(NSP4)/ASQR*UMINS+NZ/ABAR*AMINS)
+d583 6
+a588 6
+      KNEG(NSP1,NSP4) = (U_DOT_M*NZ-CE*UAVG(NSP4))*UMINS
+     &          + AMINS * (UAVG(NSP1)/ABAR*NZ-DE*AMACHN*UAVG(NSP4))
+      KNEG(NSP2,NSP4) = (NX*NZ-DE*UAVG(NSP2)*UAVG(NSP4)/ASQR)*UMINS
+     &          + (UAVG(NSP2)*NZ-DE*NX*UAVG(NSP4))*AMINS/ABAR
+      KNEG(NSP3,NSP4) = (NY*NZ-DE*UAVG(NSP3)*UAVG(NSP4)/ASQR)*UMINS
+     &          + (UAVG(NSP3)*NZ-DE*NY*UAVG(NSP4))*AMINS/ABAR
+d591 2
+a592 2
+        KNEG(5,J) = (DR(J)/ASQR*UAVG(NSP4)-U_DOT_M*NZ)*UMINS
+     &          + (DR(J)/ABAR*NZ-AMACHN*UAVG(NSP4))*AMINS
+d594 2
+a595 2
+      
+      KNEG(NSP4,NSP1) = DE/ABAR*(UAVG(NSP4)/ABAR*UMINS+NZ*AMINS)
+d597 6
+a602 6
+      KNEG(NSP4,NSP2) = (NZ*NX-DE*UAVG(NSP4)*UAVG(NSP2)/ASQR)*UMINS
+     &          + (UAVG(NSP4)*NX-DE*NZ*UAVG(NSP2))*AMINS/ABAR
+      KNEG(NSP4,NSP3) = (NZ*NY-DE*UAVG(NSP4)*UAVG(NSP3)/ASQR)*UMINS
+     &          + (UAVG(NSP4)*NY-DE*NZ*UAVG(NSP3))*AMINS/ABAR
+      KNEG(NSP4,NSP4) = (NZ*NZ-DE*UAVG(NSP4)*UAVG(NSP4)/ASQR)*UMINS
+     &          + (UAVG(NSP4)*NZ-DE*NZ*UAVG(NSP4))*AMINS/ABAR + LNEG(1)
+a735 1
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d52 1
+a52 1
+     &AREAINV,AREA,TRATIO,DELTA,DENSINV,ABARINV,DENS,CC
+d73 1
+d100 7
+d109 1
+a109 1
+         ALPHA(I) = ZERO
+d111 5
+a115 1
+      ALPHA(1)=ONE
+d123 1
+a123 1
+      U_dot_M = UAVG(NSP + 2) * l + UAVG(NSP + 3) * m ! rpepe 
+d126 1
+a126 1
+           U_dot_M = U_dot_M + UAVG(NSP + 4) * n
+d130 1
+a130 1
+        UU(I) = UAVG(NSP + 1 + I)
+d132 1
+a132 1
+
+d163 1
+a163 1
+        KMAT(I,NSP+1) = ZERO
+d165 1
+a165 1
+        KMAT(I,NSP+3) = ALPHA(I) * m
+d171 3
+a173 3
+        KMAT(NSP+1,J) =  U_dot_M * (-UAVG(NSP+1) + DR(J))
+        KMAT(NSP+2,J) = -U_DOT_M * UAVG(NSP+2) + DR(J) * l
+        KMAT(NSP+3,J) = -U_DOT_M * UAVG(NSP+3) + DR(J) * m
+d178 11
+a188 11
+      KMAT(NSP+1,NSP+1) = (DE+1) * U_dot_M
+      KMAT(NSP+1,NSP+2) = UAVG(NSP+1) * l + U_dot_M * DM(1)
+      KMAT(NSP+1,NSP+3) = UAVG(NSP+1) * m + U_dot_M * DM(2)
+C
+      KMAT(NSP+2,NSP+1) = DE * l
+      KMAT(NSP+2,NSP+2) = (UAVG(NSP+2) + DM(1)) * l + U_dot_M
+      KMAT(NSP+2,NSP+3) = UAVG(NSP+2) * m + DM(2) * l
+C
+      KMAT(NSP+3,NSP+1) = DE * m
+      KMAT(NSP+3,NSP+2) = UAVG(NSP+3) * l + DM(1) * m
+      KMAT(NSP+3,NSP+3) = (UAVG(NSP+3) + DM(2)) * m + U_dot_M
+d193 1
+a193 1
+        KMAT(I,NSP+4) = ALPHA(I) * n
+d197 1
+a197 1
+        KMAT(NSP+4,J) = -U_DOT_M * UAVG(NSP+4) + DR(J) * n
+d200 3
+a202 3
+      KMAT(NSP+1,NSP+4) = UAVG(NSP+1) * n + U_dot_M * DM(3)
+      KMAT(NSP+2,NSP+4) = UAVG(NSP+2) * n + DM(3) * l
+      KMAT(NSP+3,NSP+4) = UAVG(NSP+3) * n + DM(3) * m
+d204 4
+a207 4
+      KMAT(NSP+4,NSP+1) = DE * n
+      KMAT(NSP+4,NSP+2) = UAVG(NSP+4) * l + DM(1) * n
+      KMAT(NSP+4,NSP+3) = UAVG(NSP+4)*m + DM(2) * n
+      KMAT(NSP+4,NSP+4) = (UAVG(NSP+4) + DM(3)) * n + U_dot_M
+d225 1
+a225 1
+      ASQR = SUM_DR + (UAVG(NSP+1)-2*KINETIC)*DE ! rpepe
+d235 5
+a239 8
+!     NSP1 = NSP+1 
+!     NSP2 = NSP+2 
+!     NSP3 = NSP+3 
+!     NSP4 = NSP+4 
+      WR(NSP+1) = AREA * U_dot_M
+      WR(NSP+2) = AREA * ( U_dot_M + ABAR )
+      WR(NSP+3) = AREA * ( U_dot_M - ABAR )
+      WR(NSP+4) = AREA * U_dot_M
+d275 2
+a276 2
+      U_DOT_S = DDOT(NDIM,UAVG(NSP+2),1,VECS,1)
+      U_DOT_T = DDOT(NDIM,UAVG(NSP+2),1,VECT,1)    
+a277 6
+      DENS = UAVG(1)
+!     DO I = 1 , NSP
+!       DENS = DENS + UAVG(I)
+!     ENDDO
+
+      DENSINV = ONE/DENS
+d294 4
+a297 4
+        VLEFT(I,NSP+1) = - ALPHA(I) * DE/ASQR
+        VLEFT(I,NSP+2) = ALPHA(I) * DE/ASQR * UAVG(NSP+2)
+        VLEFT(I,NSP+3) = ALPHA(I) * DE/ASQR * UAVG(NSP+3)
+        IF(NDIM.EQ.3) VLEFT(I,NSP+4) = ALPHA(I) * DE/ASQR * UAVG(NSP+4)
+d303 4
+a306 4
+        VLEFT(NSP+1,J) = -U_DOT_S * DENSINV
+        VLEFT(NSP+2,J) = HALF * DENSINV * (DR(J)*ABARINV - U_DOT_M)
+        VLEFT(NSP+3,J) = HALF * DENSINV * (DR(J)*ABARINV + U_DOT_M)
+        IF(NDIM.EQ.3) VLEFT(NSP+4,J) = -U_DOT_T * DENSINV
+d311 4
+a314 4
+      VLEFT(NSP+1,NSP+1) = ZERO
+      VLEFT(NSP+2,NSP+1) = HALF*DENSINV*DE*ABARINV
+      VLEFT(NSP+3,NSP+1) = HALF*DENSINV*DE*ABARINV
+      IF(NDIM.EQ.3) VLEFT(NSP+4,NSP+1) = ZERO
+d330 4
+a333 4
+        VRIGHT(I,NSP+1) = ZERO
+        VRIGHT(I,NSP+2) = DENS * ALPHA(I) * ABARINV
+        VRIGHT(I,NSP+3) = DENS * ALPHA(I) * ABARINV
+        IF(NDIM.EQ.3) VRIGHT(I,NSP+4) = ZERO
+d339 4
+a342 4
+        VRIGHT(NSP+1,J) = 2 * KINETIC - DR(J) / DE
+        VRIGHT(NSP+2,J) = UAVG(NSP+2)
+        VRIGHT(NSP+3,J) = UAVG(NSP+3)
+        IF(NDIM.EQ.3) VLEFT(NSP+4,J) = UAVG(NSP+4)
+d347 4
+a350 4
+      VRIGHT(NSP+1,NSP+1) = DENS * U_DOT_S
+      VRIGHT(NSP+1,NSP+2) = DENS * (UAVG(NSP+1)/ABAR + U_DOT_M )
+      VRIGHT(NSP+1,NSP+3) = DENS * (UAVG(NSP+1)/ABAR - U_DOT_M )
+      IF(NDIM.EQ.3) VRIGHT(NSP+1,NSP+4) = DENS * U_DOT_T
+d367 4
+a370 6
+C         VLEFT(1,IDIM) = DE/ASQR*UAVG(IDIM)
+         VLEFT(NSP+1,IDIM) = DENSINV * Sxyz
+         VLEFT(NSP+2,IDIM) = HALF*DENSINV*(-DE*ABARINV*UAVG(IDIM)+Nxyz)
+         VLEFT(NSP+3,IDIM) = HALF*DENSINV*(-DE*ABARINV*UAVG(IDIM)-Nxyz)
+         IF(NDIM.EQ.3) VLEFT(NSP+4,IDIM) = DENSINV * Txyz
+C
+d372 4
+a375 6
+C
+C         VRIGHT(IDIM,1) = UAVG(IDIM)
+         VRIGHT(IDIM,NSP+1) = DENS * Sxyz
+         VRIGHT(IDIM,NSP+2) = DENS * (UAVG(IDIM)/ABAR+Nxyz)
+         VRIGHT(IDIM,NSP+3) = DENS * (UAVG(IDIM)/ABAR-Nxyz)
+         IF(NDIM.EQ.3) VRIGHT(IDIM,NSP+4) = DENS * Txyz
+d412 2
+a413 2
+            KPOS(I,J) = SUM1
+            KNEG(I,J) = SUM2
+d417 1
+d426 4
+a429 4
+      FSPSLP = LPOS(3)+LPOS(4)
+      FSMSLP = LPOS(3)-LPOS(4)
+      FSPSLN = LNEG(3)+LNEG(4)
+      FSMSLN = LNEG(3)-LNEG(4)
+d437 63
+a499 1
+      CC = DE*UAVG(2)/ASQR
+d501 18
+a518 1
+#if 0
+d520 11
+a530 62
+      KPOS(1,1) = LPOS(1) + UPLUS*Dr/ASQR-AMACHN*APLUS
+      KPOS(1,2) = DE/ASQR*UPLUS
+      KPOS(1,3) = -DE*UAVG(3)/ASQR*UPLUS+NX/ABAR*APLUS
+      KPOS(1,4) = -DE*UAVG(4)/ASQR*UPLUS+NY/ABAR*APLUS
+C
+      KPOS(2,1) = UPLUS*(CC*UAVG(2)-U_DOT_M*U_DOT_M)
+     &          + APLUS*AMACHN*(Dr-UAVG(2))
+      KPOS(2,2) = HALF*FSPSLP+(DE*UAVG(2)/ASQR-1)*UPLUS+DE*AMACHN*APLUS
+      KPOS(2,3) = (U_DOT_M*NX-CC*UAVG(3))*UPLUS
+     &          + APLUS * (UAVG(2)/ABAR*NX-DE*AMACHN*UAVG(3))
+      KPOS(2,4) = (U_DOT_M*NY-CC*UAVG(4))*UPLUS
+     &          + APLUS * (UAVG(2)/ABAR*NY-DE*AMACHN*UAVG(4))
+C
+      KPOS(3,1) = (Dr/ASQR*UAVG(3)-U_DOT_M*NX)*UPLUS
+     &          + (Dr/ABAR*NX-AMACHN*UAVG(3))*APLUS
+      KPOS(4,1) = (Dr/ASQR*UAVG(4)-U_DOT_M*NY)*UPLUS
+     &          + (Dr/ABAR*NY-AMACHN*UAVG(4))*APLUS
+C
+      KPOS(3,2) = DE/ABAR*(UAVG(3)/ABAR*UPLUS+NX*APLUS)
+      KPOS(4,2) = DE/ABAR*(UAVG(4)/ABAR*UPLUS+NY*APLUS)
+C
+      KPOS(3,3) = (NX*NX-DE*UAVG(3)*UAVG(3)/ASQR)*UPLUS
+     &          + (UAVG(3)*NX-DE*NX*UAVG(3))*APLUS/ABAR + LPOS(1)
+      KPOS(3,4) = (NX*NY-DE*UAVG(3)*UAVG(4)/ASQR)*UPLUS
+     &          + (UAVG(3)*NY-DE*NX*UAVG(4))*APLUS/ABAR
+C
+      KPOS(4,3) = (NY*NX-DE*UAVG(4)*UAVG(3)/ASQR)*UPLUS
+     &          + (UAVG(4)*NX-DE*NY*UAVG(3))*APLUS/ABAR
+      KPOS(4,4) = (NY*NY-DE*UAVG(4)*UAVG(4)/ASQR)*UPLUS
+     &          + (UAVG(4)*NY-DE*NY*UAVG(4))*APLUS/ABAR + LPOS(1)
+C
+C
+      KNEG(1,1) = LNEG(1) + UMINS*Dr/ASQR-AMACHN*AMINS
+      KNEG(1,2) = DE/ASQR*UMINS
+      KNEG(1,3) = -DE*UAVG(3)/ASQR*UMINS+NX/ABAR*AMINS
+      KNEG(1,4) = -DE*UAVG(4)/ASQR*UMINS+NY/ABAR*AMINS
+C
+      KNEG(2,1) = UMINS*(CC*UAVG(2)-U_DOT_M*U_DOT_M)
+     &          + AMINS*AMACHN*(Dr-UAVG(2))
+      KNEG(2,2) = HALF*FSPSLN+(DE*UAVG(2)/ASQR-1)*UMINS+DE*AMACHN*AMINS
+      KNEG(2,3) = (U_DOT_M*NX-CC*UAVG(3))*UMINS
+     &          + AMINS * (UAVG(2)/ABAR*NX-DE*AMACHN*UAVG(3))
+      KNEG(2,4) = (U_DOT_M*NY-TRATIO*UAVG(4))*UMINS
+     &          + AMINS * (UAVG(2)/ABAR*NY-DE*AMACHN*UAVG(4))
+C
+      KNEG(3,1) = (Dr/ASQR*UAVG(3)-U_DOT_M*NX)*UMINS
+     &          + (Dr/ABAR*NX-AMACHN*UAVG(3))*AMINS
+      KNEG(4,1) = (Dr/ASQR*UAVG(4)-U_DOT_M*NY)*UMINS
+     &          + (Dr/ABAR*NY-AMACHN*UAVG(4))*AMINS
+C
+      KNEG(3,2) = DE/ABAR*(UAVG(3)/ABAR*UMINS+NX*AMINS)
+      KNEG(4,2) = DE/ABAR*(UAVG(4)/ABAR*UMINS+NY*AMINS)
+C
+      KNEG(3,3) = (NX*NX-DE*UAVG(3)*UAVG(3)/ASQR)*UMINS
+     &          + (UAVG(3)*NX-DE*NX*UAVG(3))*AMINS/ABAR + LNEG(1)
+      KNEG(3,4) = (NX*NY-DE*UAVG(3)*UAVG(4)/ASQR)*UMINS
+     &          + (UAVG(3)*NY-DE*NX*UAVG(4))*AMINS/ABAR
+C
+      KNEG(4,3) = (NY*NX-DE*UAVG(4)*UAVG(3)/ASQR)*UMINS
+     &          + (UAVG(4)*NX-DE*NY*UAVG(3))*AMINS/ABAR
+      KNEG(4,4) = (NY*NY-DE*UAVG(4)*UAVG(4)/ASQR)*UMINS
+     &          + (UAVG(4)*NY-DE*NY*UAVG(4))*AMINS/ABAR + LNEG(1)
+d532 19
+d554 49
+a602 37
+      KPOS(1,5) = -DE*UAVG(5)/ASQR*UPLUS+NZ/ABAR*APLUS
+      KPOS(2,5) = (U_DOT_M*NZ-CC*UAVG(5))*UPLUS
+     &          + APLUS * (UAVG(2)/ABAR*NZ-DE*AMACHN*UAVG(5))
+      KPOS(3,5) = (NX*NZ-DE*UAVG(3)*UAVG(5)/ASQR)*UPLUS
+     &          + (UAVG(3)*NZ-DE*NX*UAVG(5))*APLUS/ABAR
+      KPOS(4,5) = (NY*NZ-DE*UAVG(4)*UAVG(5)/ASQR)*UPLUS
+     &          + (UAVG(4)*NZ-DE*NY*UAVG(5))*APLUS/ABAR
+C
+      KPOS(5,1) = (Dr/ASQR*UAVG(5)-U_DOT_M*NZ)*UPLUS
+     &          + (Dr/ABAR*NZ-AMACHN*UAVG(5))*APLUS
+      KPOS(5,2) = DE/ABAR*(UAVG(5)/ABAR*UPLUS+NZ*APLUS)
+C
+      KPOS(5,3) = (NZ*NX-DE*UAVG(5)*UAVG(3)/ASQR)*UPLUS
+     &          + (UAVG(5)*NX-DE*NZ*UAVG(3))*APLUS/ABAR
+      KPOS(5,4) = (NZ*NY-DE*UAVG(5)*UAVG(4)/ASQR)*UPLUS
+     &          + (UAVG(5)*NY-DE*NZ*UAVG(4))*APLUS/ABAR
+      KPOS(5,5) = (NZ*NZ-DE*UAVG(5)*UAVG(5)/ASQR)*UPLUS
+     &          + (UAVG(5)*NZ-DE*NZ*UAVG(5))*APLUS/ABAR + LPOS(1)
+C
+      KNEG(1,5) = -DE*UAVG(5)/ASQR*UMINS+NZ/ABAR*AMINS
+      KNEG(2,5) = (U_DOT_M*NZ-CC*UAVG(5))*UMINS
+     &          + AMINS * (UAVG(2)/ABAR*NZ-DE*AMACHN*UAVG(5))
+      KNEG(3,5) = (NX*NZ-DE*UAVG(3)*UAVG(5)/ASQR)*UMINS
+     &          + (UAVG(3)*NZ-DE*NX*UAVG(5))*AMINS/ABAR
+      KNEG(4,5) = (NY*NZ-DE*UAVG(4)*UAVG(5)/ASQR)*UMINS
+     &          + (UAVG(4)*NZ-DE*NY*UAVG(5))*AMINS/ABAR
+C
+      KNEG(5,1) = (Dr/ASQR*UAVG(5)-U_DOT_M*NZ)*UMINS
+     &          + (Dr/ABAR*NZ-AMACHN*UAVG(5))*AMINS
+      KNEG(5,2) = DE/ABAR*(UAVG(5)/ABAR*UMINS+NZ*AMINS)
+C
+      KNEG(5,3) = (NZ*NX-DE*UAVG(5)*UAVG(3)/ASQR)*UMINS
+     &          + (UAVG(5)*NX-DE*NZ*UAVG(3))*AMINS/ABAR
+      KNEG(5,4) = (NZ*NY-DE*UAVG(5)*UAVG(4)/ASQR)*UMINS
+     &          + (UAVG(5)*NY-DE*NZ*UAVG(4))*AMINS/ABAR
+      KNEG(5,5) = (NZ*NZ-DE*UAVG(5)*UAVG(5)/ASQR)*UMINS
+     &          + (UAVG(5)*NZ-DE*NZ*UAVG(5))*AMINS/ABAR + LNEG(1)
+a607 1
+#if 0
+d625 1
+a625 1
+     +               'analytical positive matrix',IFAIL)
+d629 1
+a629 1
+     +               'true negative matrix',IFAIL)
+a698 1
+#endif
+d736 1
+@

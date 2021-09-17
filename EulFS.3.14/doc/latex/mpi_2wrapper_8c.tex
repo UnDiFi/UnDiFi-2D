@@ -1,0 +1,102 @@
+\hypertarget{mpi_2wrapper_8c}{
+\section{src/mpi/wrapper.c File Reference}
+\label{mpi_2wrapper_8c}\index{src/mpi/wrapper.c@{src/mpi/wrapper.c}}
+}
+{\ttfamily \#include \char`\"{}petsc.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}petscfix.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}HYPRE.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}IJ\_\-mv.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}petscmat.h\char`\"{}}\par
+Include dependency graph for wrapper.c:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{mpi_2wrapper_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{mpi_2wrapper_8c_a9efcd29a5ceee94937d7bbf2572fbf4e}{PetscToPointer}(a)~($\ast$(long $\ast$)(a))
+\item 
+\#define \hyperlink{mpi_2wrapper_8c_a2b14aeb0a89eccc1b03cf2aae4341c96}{PetscFromPointer}(a)~(long)(a)
+\item 
+\#define \hyperlink{mpi_2wrapper_8c_aa5c498bcfe4bfc7433d8995374b8b30c}{PetscRmPointer}(a)
+\item 
+\#define \hyperlink{mpi_2wrapper_8c_a36224c428923ea34cadcaee87de536ba}{mathypre\_\-ijmatrixcreate\_\-}~mathypre\_\-ijmatrixcreate
+\item 
+\#define \hyperlink{mpi_2wrapper_8c_a08562bcef1b3170be3a8d65ea980d7b5}{mathypre\_\-ijmatrixcopy\_\-}~mathypre\_\-ijmatrixcopy
+\end{DoxyCompactItemize}
+\subsection*{Functions/Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+void PETSC\_\-STDCALL \hyperlink{mpi_2wrapper_8c_adbf20af2e9adf50012d3085c43252203}{mathypre\_\-ijmatrixcreate\_\-} (Mat \hyperlink{turb_8com_a8961853e9a171af64fe80e35da93a2e0}{v}, HYPRE\_\-IJMatrix $\ast$ij, int $\ast$\_\-\_\-ierr)
+\item 
+void PETSC\_\-STDCALL \hyperlink{mpi_2wrapper_8c_a5ec62fcddbb1ce5a051c7525e235fcaf}{mathypre\_\-ijmatrixcopy\_\-} (Mat \hyperlink{turb_8com_a8961853e9a171af64fe80e35da93a2e0}{v}, HYPRE\_\-IJMatrix ij, int $\ast$\_\-\_\-ierr)
+\end{DoxyCompactItemize}
+
+
+\subsection{Define Documentation}
+\hypertarget{mpi_2wrapper_8c_a08562bcef1b3170be3a8d65ea980d7b5}{
+\index{mpi/wrapper.c@{mpi/wrapper.c}!mathypre\_\-ijmatrixcopy\_\-@{mathypre\_\-ijmatrixcopy\_\-}}
+\index{mathypre\_\-ijmatrixcopy\_\-@{mathypre\_\-ijmatrixcopy\_\-}!mpi/wrapper.c@{mpi/wrapper.c}}
+\subsubsection[{mathypre\_\-ijmatrixcopy\_\-}]{\setlength{\rightskip}{0pt plus 5cm}\#define mathypre\_\-ijmatrixcopy\_\-~mathypre\_\-ijmatrixcopy}}
+\label{mpi_2wrapper_8c_a08562bcef1b3170be3a8d65ea980d7b5}
+\hypertarget{mpi_2wrapper_8c_a36224c428923ea34cadcaee87de536ba}{
+\index{mpi/wrapper.c@{mpi/wrapper.c}!mathypre\_\-ijmatrixcreate\_\-@{mathypre\_\-ijmatrixcreate\_\-}}
+\index{mathypre\_\-ijmatrixcreate\_\-@{mathypre\_\-ijmatrixcreate\_\-}!mpi/wrapper.c@{mpi/wrapper.c}}
+\subsubsection[{mathypre\_\-ijmatrixcreate\_\-}]{\setlength{\rightskip}{0pt plus 5cm}\#define mathypre\_\-ijmatrixcreate\_\-~mathypre\_\-ijmatrixcreate}}
+\label{mpi_2wrapper_8c_a36224c428923ea34cadcaee87de536ba}
+\hypertarget{mpi_2wrapper_8c_a2b14aeb0a89eccc1b03cf2aae4341c96}{
+\index{mpi/wrapper.c@{mpi/wrapper.c}!PetscFromPointer@{PetscFromPointer}}
+\index{PetscFromPointer@{PetscFromPointer}!mpi/wrapper.c@{mpi/wrapper.c}}
+\subsubsection[{PetscFromPointer}]{\setlength{\rightskip}{0pt plus 5cm}\#define PetscFromPointer(
+\begin{DoxyParamCaption}
+\item[{}]{a}
+\end{DoxyParamCaption}
+)~(long)(a)}}
+\label{mpi_2wrapper_8c_a2b14aeb0a89eccc1b03cf2aae4341c96}
+\hypertarget{mpi_2wrapper_8c_aa5c498bcfe4bfc7433d8995374b8b30c}{
+\index{mpi/wrapper.c@{mpi/wrapper.c}!PetscRmPointer@{PetscRmPointer}}
+\index{PetscRmPointer@{PetscRmPointer}!mpi/wrapper.c@{mpi/wrapper.c}}
+\subsubsection[{PetscRmPointer}]{\setlength{\rightskip}{0pt plus 5cm}\#define PetscRmPointer(
+\begin{DoxyParamCaption}
+\item[{}]{a}
+\end{DoxyParamCaption}
+)}}
+\label{mpi_2wrapper_8c_aa5c498bcfe4bfc7433d8995374b8b30c}
+\hypertarget{mpi_2wrapper_8c_a9efcd29a5ceee94937d7bbf2572fbf4e}{
+\index{mpi/wrapper.c@{mpi/wrapper.c}!PetscToPointer@{PetscToPointer}}
+\index{PetscToPointer@{PetscToPointer}!mpi/wrapper.c@{mpi/wrapper.c}}
+\subsubsection[{PetscToPointer}]{\setlength{\rightskip}{0pt plus 5cm}\#define PetscToPointer(
+\begin{DoxyParamCaption}
+\item[{}]{a}
+\end{DoxyParamCaption}
+)~($\ast$(long $\ast$)(a))}}
+\label{mpi_2wrapper_8c_a9efcd29a5ceee94937d7bbf2572fbf4e}
+
+
+\subsection{Function Documentation}
+\hypertarget{mpi_2wrapper_8c_a5ec62fcddbb1ce5a051c7525e235fcaf}{
+\index{mpi/wrapper.c@{mpi/wrapper.c}!mathypre\_\-ijmatrixcopy\_\-@{mathypre\_\-ijmatrixcopy\_\-}}
+\index{mathypre\_\-ijmatrixcopy\_\-@{mathypre\_\-ijmatrixcopy\_\-}!mpi/wrapper.c@{mpi/wrapper.c}}
+\subsubsection[{mathypre\_\-ijmatrixcopy\_\-}]{\setlength{\rightskip}{0pt plus 5cm}void PETSC\_\-STDCALL mathypre\_\-ijmatrixcopy\_\- (
+\begin{DoxyParamCaption}
+\item[{Mat}]{v, }
+\item[{HYPRE\_\-IJMatrix}]{ij, }
+\item[{int $\ast$}]{\_\-\_\-ierr}
+\end{DoxyParamCaption}
+)}}
+\label{mpi_2wrapper_8c_a5ec62fcddbb1ce5a051c7525e235fcaf}
+\hypertarget{mpi_2wrapper_8c_adbf20af2e9adf50012d3085c43252203}{
+\index{mpi/wrapper.c@{mpi/wrapper.c}!mathypre\_\-ijmatrixcreate\_\-@{mathypre\_\-ijmatrixcreate\_\-}}
+\index{mathypre\_\-ijmatrixcreate\_\-@{mathypre\_\-ijmatrixcreate\_\-}!mpi/wrapper.c@{mpi/wrapper.c}}
+\subsubsection[{mathypre\_\-ijmatrixcreate\_\-}]{\setlength{\rightskip}{0pt plus 5cm}void PETSC\_\-STDCALL mathypre\_\-ijmatrixcreate\_\- (
+\begin{DoxyParamCaption}
+\item[{Mat}]{v, }
+\item[{HYPRE\_\-IJMatrix $\ast$}]{ij, }
+\item[{int $\ast$}]{\_\-\_\-ierr}
+\end{DoxyParamCaption}
+)}}
+\label{mpi_2wrapper_8c_adbf20af2e9adf50012d3085c43252203}

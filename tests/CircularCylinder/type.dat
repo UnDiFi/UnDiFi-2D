@@ -1,0 +1,24 @@
+Face	type
+1	 1
+2	 2
+3	 3
+4	 2
+5	-1
+6	-1
+7	-1
+8	-1
+9	-1
+10	-1
+
+#
+# boundary #1 is the inflow
+# boundary #2 is the upper outlow
+# boundary #3 is the wall
+# boundary #4 is the upper outlow
+#
+#
+# THIS FILE IS read by Triangle2grd
+#
+# bndry code 1 is supersonic inlet
+# bndry code 2 is supersonic outflow
+# bndry code 3 is inviscid wall

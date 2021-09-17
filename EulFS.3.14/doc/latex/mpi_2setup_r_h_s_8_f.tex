@@ -1,0 +1,50 @@
+\hypertarget{mpi_2setup_r_h_s_8_f}{\section{src/mpi/setup\-R\-H\-S.F File Reference}
+\label{mpi_2setup_r_h_s_8_f}\index{src/mpi/setup\-R\-H\-S.\-F@{src/mpi/setup\-R\-H\-S.\-F}}
+}
+{\ttfamily \#include \char`\"{}finclude/petscsys.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscvec.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscmat.\-h\char`\"{}}\\*
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{mpi_2setup_r_h_s_8_f_a718e288d437007ef5bc48b3f57941f65}{setuprhs} (I\-C\-E\-L\-N\-O\-D, I\-C\-E\-L\-F\-A\-C, V\-F\-A\-C\-N\-O\-R, X\-Y\-Z\-D\-O\-T, V\-O\-L, \hyperlink{myts_8com_a0c4fbcdb78e6b50c8919d714e4b5a694}{Z\-R\-O\-E}, Z\-T\-U\-R\-B, S\-T\-I\-F\-E\-L, N\-O\-D\-R\-E\-S, N\-E\-W\-R\-E\-S, V\-C\-Z, V\-C\-D\-Z, V\-C\-B, \hyperlink{mesh_8com_aee5e75b79d0e815c0603cfbccc618957}{N\-E\-L\-E\-M}, \hyperlink{mesh_8com_ae28c1572321efcd8715b974d87d20c58}{N\-P\-O\-I\-N}, N\-G\-H\-O\-S\-T, N\-P\-N\-O\-D, N\-D\-I\-M, N\-O\-F\-V\-E\-R\-T, N\-O\-F\-V\-A\-R, N\-T\-U\-R\-B, Petsc\-Vec\-D\-T, Petsc\-Vec\-R\-H\-S, Petsc\-Mat\-A, Scalar\-Scheme, Matrix\-Scheme, T\-Model\-Scheme, Euler\-Model, N\-S\-Model, Turbulence\-Model)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{mpi_2setup_r_h_s_8_f_a718e288d437007ef5bc48b3f57941f65}{\index{mpi/setup\-R\-H\-S.\-F@{mpi/setup\-R\-H\-S.\-F}!setuprhs@{setuprhs}}
+\index{setuprhs@{setuprhs}!mpi/setupRHS.F@{mpi/setup\-R\-H\-S.\-F}}
+\subsubsection[{setuprhs}]{\setlength{\rightskip}{0pt plus 5cm}subroutine setuprhs (
+\begin{DoxyParamCaption}
+\item[{integer, dimension(nofvert,nelem)}]{I\-C\-E\-L\-N\-O\-D, }
+\item[{integer, dimension(nofvert,nelem)}]{I\-C\-E\-L\-F\-A\-C, }
+\item[{double precision, dimension(ndim,$\ast$)}]{V\-F\-A\-C\-N\-O\-R, }
+\item[{double precision, dimension(ndim,$\ast$)}]{X\-Y\-Z\-D\-O\-T, }
+\item[{double precision, dimension(nelem)}]{V\-O\-L, }
+\item[{double precision, dimension(nofvar,$\ast$)}]{Z\-R\-O\-E, }
+\item[{double precision, dimension($\ast$)}]{Z\-T\-U\-R\-B, }
+\item[{double precision, dimension(nofvar,nofvar,nofvert,nofvert)}]{S\-T\-I\-F\-E\-L, }
+\item[{double precision, dimension(nofvar,nofvert)}]{N\-O\-D\-R\-E\-S, }
+\item[{double precision, dimension(nofvar,nofvert)}]{N\-E\-W\-R\-E\-S, }
+\item[{double precision, dimension(nofvar,nofvert)}]{V\-C\-Z, }
+\item[{double precision, dimension(nofvar,nofvert)}]{V\-C\-D\-Z, }
+\item[{double precision, dimension(ndim,nofvert)}]{V\-C\-B, }
+\item[{integer}]{N\-E\-L\-E\-M, }
+\item[{integer}]{N\-P\-O\-I\-N, }
+\item[{integer}]{N\-G\-H\-O\-S\-T, }
+\item[{integer}]{N\-P\-N\-O\-D, }
+\item[{integer}]{N\-D\-I\-M, }
+\item[{integer}]{N\-O\-F\-V\-E\-R\-T, }
+\item[{integer}]{N\-O\-F\-V\-A\-R, }
+\item[{integer}]{N\-T\-U\-R\-B, }
+\item[{}]{Petsc\-Vec\-D\-T, }
+\item[{}]{Petsc\-Vec\-R\-H\-S, }
+\item[{}]{Petsc\-Mat\-A, }
+\item[{external}]{Scalar\-Scheme, }
+\item[{external}]{Matrix\-Scheme, }
+\item[{external}]{T\-Model\-Scheme, }
+\item[{external}]{Euler\-Model, }
+\item[{external}]{N\-S\-Model, }
+\item[{external}]{Turbulence\-Model}
+\end{DoxyParamCaption}
+)}}\label{mpi_2setup_r_h_s_8_f_a718e288d437007ef5bc48b3f57941f65}

@@ -1,0 +1,67 @@
+10c10
+< !> @param[in] NodalBcs is an un-used integer
+---
+> !> @param[in] IDUMMY is an un-used integer
+14,15c14,15
+< !> \version $Revision: 1.50 $
+< !> \date $Date: 2020/02/07 14:26:16 $
+---
+> !> \version $Revision: 1.51 $
+> !> \date $Date: 2020/04/15 16:08:10 $
+18c18
+<       SUBROUTINE myTS(ZROE,VISCT,A,B,C,NodalBcs,IWORK)
+---
+>       SUBROUTINE myTS(ZROE,VISCT,A,B,C,IDUMMY,IWORK)
+20c20
+< C     $Id: myTS.F,v 1.50 2020/02/07 14:26:16 abonfi Exp abonfi $
+---
+> C     $Id: myTS.F,v 1.51 2020/04/15 16:08:10 abonfi Exp $
+26,28c26,31
+< CCC#include "petsc/finclude/petscvec.h"
+< CCC#include "petsc/finclude/petscmat.h"
+< CCC#include "petsc/finclude/petscis.h"
+---
+>       IMPLICIT NONE
+> C
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+> #include "petsc/finclude/petscis.h"
+31,34d33
+<       use petscksp
+<       use petscts
+< C
+<       IMPLICIT NONE
+49a49
+> #include "iset.com"
+65,67d64
+< C     .. Petsc Vectors ..
+<       IS, dimension (0:*) :: NodalBcs
+< C     ..
+125c122
+<      +NOFVAR,NTURB,NOFVERT,NPOIN,NPNOD,ITIMS,ITIME,NITEMS,
+---
+>      +NOFVAR,NTURB,NOFVERT,NPOIN,NPNOD,IDUMMY,ITIMS,ITIME,NITEMS,
+148a146
+>       ts_dummy = -1
+477c475
+<           CALL RHSFunction(ts_dummy,tbeg,ZROE,RHS,IWORK,NodalBcs)
+---
+>           CALL RHSFunction(ts_dummy,tbeg,ZROE,RHS,IWORK)
+486c484
+<      &                     DSTAK(LMEDIAN),DSTAK(IADDR),NodalBcs) ! Median Dual Cells at n and n+1
+---
+>      &                     DSTAK(LMEDIAN),DSTAK(IADDR)) ! Median Dual Cells at n and n+1
+531c529
+<      &                     DSTAK(LMEDIAN),DSTAK(IADDR),NodalBcs) ! Median Dual Cells at n and n+1
+---
+>      &                     DSTAK(LMEDIAN),DSTAK(IADDR)) ! Median Dual Cells at n and n+1
+590,591c588
+<               CALL RHSFunction_t(ts_dummy,tbeg,VISCT,RHS_T,IWORK,
+<      &                           NodalBcs)
+---
+>               CALL RHSFunction_t(ts_dummy,tbeg,VISCT,RHS_T,IWORK)
+596c593
+<      +                     ViscT,DT,NIT,IFAIL,NodalBcs)
+---
+>      +                     ViscT,DT,NIT,IFAIL)

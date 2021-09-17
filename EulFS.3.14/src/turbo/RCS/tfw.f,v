@@ -1,0 +1,139 @@
+head	1.2;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2015.05.11.07.21.49;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Function for the Spalart-Allmaras model
+@
+
+
+1.2
+log
+@returns the fw function of the SA model;
+same calculations have been re-arranged
+@
+text
+@!> \brief \b TFW
+!> \par Purpose
+!>
+!> (Spalart & Allmaras model: version: all)
+!>
+!> Computes the function:
+!>
+!> \f[
+!> f_{w} = g \, \left(\frac{1+c_{w_3}^6}{g^6+c_{w_3}^6}\right)^{1/6}
+!> \f]
+!> where:
+!> \f[
+!> g = r + c_{w_2} \left(r^6-r\right)
+!> \f]
+!> and
+!> \f[
+!> r = \frac{\tilde{\nu}}{\tilde{S}\,\kappa^2\,d^2}
+!> \f]
+!>
+!>
+!> @@param[in] R is \f$ \frac{\tilde{\nu}}{\tilde{S}\,\kappa^2\,d^2} \f$
+!> \author $Author: abonfi $
+!> \version $Revision: 1.14 $
+!> \date $Date: 2013/08/22 15:10:57 $
+       DOUBLE PRECISION FUNCTION TFW(R)
+c2345678
+      INCLUDE 'constants.h'
+      INCLUDE 'turb.com'
+      DOUBLE PRECISION R
+      DOUBLE PRECISION GG,HELP
+!     GG=R+TCW2*(R**6.-R)
+      GG=R*(ONE+TCW2*(R*R*R*R*R-ONE))
+      HELP = TCW3*TCW3*TCW3*TCW3*TCW3*TCW3
+      TFW=GG*((ONE+HELP)/(GG**6+HELP))**(ONE/6.d0)
+      RETURN
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 24
+a24 13
+
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)td.f      1.0.0.1   95/08/22        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tsc.f
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+a25 21
+*  ==============================================================
+*
+*
+*      FILENAME: td.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      turbulence model function
+*      (Spalart & Allmaras model: 2D mgship version)
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : April 97
+*
+*  ==============================================================
+
+d27 1
+d30 5
+a34 3
+      DOUBLE PRECISION GG
+      GG=R+TCW2*(R**6.-R)
+      TFW=GG*((1.+TCW3**6.)/(GG**6.+TCW3**6.))**(1./6.)
+@

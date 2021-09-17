@@ -1,0 +1,493 @@
+head	1.8;
+access;
+symbols
+	release3_14_0:1.8
+	release3_13_0:1.8
+	release3_12_0:1.8
+	release3_11_0:1.8
+	release3_10_0:1.8
+	release3_8_0:1.7
+	release3_7_1:1.6
+	release3_7_0:1.5
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3;
+locks; strict;
+comment	@c @;
+
+
+1.8
+date	2020.04.24.06.04.41;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2020.03.28.09.42.28;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2016.11.10.12.06.40;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.09.02.15.10.10;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.07.17.10.00.17;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.06.28.09.14.46;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@This is the driver for solving the Motion problem
+@
+
+
+1.8
+log
+@the Petsc matrix is now among the arguments of the call
+@
+text
+@!>  \brief
+!>  the Motion solver: given the grid velocities at all boundaries,
+!>  solves Laplace's equation to get the grid velocites at all interior gridpoints
+!>
+!> @@param [in] MotionSolver
+!> @@param [in] PetscMatC
+!> @@param [in] NodalBcs
+!> @@param [in] NOFVERT number of vertices per element (=NDIM+1), since only triangles or tetrahedra are allowed)
+!> @@param [in] NPOIN   nof of interior (processor owned) meshpoints; global number of meshpoints in the uni-processor case
+!> @@param [in] NGHOST  nof of ghost meshpoints on the current processor; 0 the uni-processor case
+!> @@param [in] NPNOD  nof of periodic meshpoints on the current processor
+!> @@param [in] NELEM   nof of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+!> @@param [in] NBFAC   nof of processor owned boundary faces/edges; global number of boundary faces/edges in the uni-processor case.
+!> @@param [in] NFACE   number of edges/faces in the mesh for the current processor (multi-processor case) or global number of edges/faces in the mesh (uni-processor case).
+!> \author $Author: abonfi $
+!> \version $Revision: 1.7 $
+!> \date $Date: 2020/04/23 09:46:19 $
+!> \warning The subroutine C_DISTIJ is un-optimized and will be VERY slow on large meshes
+!> \warning This subroutine is un-tested in 3D
+!> \bug This subroutine is NOT yet working in parallel
+      SUBROUTINE GridDeformation(MotionSolver,PetscMatC,NodalBCS,
+     &                           NDIM,NOFVERT,NPOIN,NGHOST,NPNOD,NELEM,
+     3                           NBFAC,NFACE)
+!
+!  $Id: MotionSolver.F,v 1.7 2020/04/23 09:46:19 abonfi Exp abonfi $
+!
+C
+#include "petsc/finclude/petscksp.h"
+#include "petsc/finclude/petscviewer.h"
+#include "petsc/finclude/petscpc.h"
+      use petscpc
+      use petscksp
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'flags.com'
+      INCLUDE 'implicit.h'
+      INCLUDE 'datatype.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+      INCLUDE 'nloc.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'io.com'
+      integer my_pe 
+      common/MPICOM/my_pe
+C
+      Mat PetscMatC
+      Vec              X,RHS,dummy
+      IS, dimension(0:*) :: NodalBcs
+      KSP Motionsolver
+      PetscScalar x_array(1)
+      PetscOffset i_x
+
+cxxx  COMMON/MYTSCOM/A,B,PetscMatC,dummy
+C
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NPNOD,
+     &NELEM,NFACE,NBFAC
+      integer IFAIL,I,LIWORK(3),NR,NZR,BS
+      double precision s 
+C
+C
+C     Executable Statements ..
+C
+C
+C     PETSc stuff
+C
+      PetscLogDouble t1beg,t1elapsed,t2beg
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+C
+C     External Arguments ..
+C
+C
+C     External Subroutines ..
+C
+      INTEGER ISTKGT
+C
+C     Local Scalars ..
+C
+      INTEGER LWORKA
+C
+C
+C
+C     Set entries of the matrix to 0.d0
+C
+      CALL MatZeroEntries(PetscMatC,IFAIL)
+C     
+ctime CALL PetscTime(t1beg,IFAIL)
+C
+C
+C
+      LWORKA = ISTKGT(NELEM,KIND_REAL8) ! <--- distance from the nearest boundary
+C
+C     We compute the distance of the cell centres from the closest boundary
+C
+      CALL C_DISTIJ(DSTAK(LCORG),NDIM,ISTAK(LNODCOD),
+     &              NPOIN+NGHOST+NPNOD,DSTAK(LWORKA),
+     &              ISTAK(LCELNOD),NOFVERT,NELEM)
+C
+!     CALL DINIT(NELEM,ONE,DSTAK(LWORKA),1) ! put 1 into the diffusion coefficient: just 4 debugging
+C
+      CALL SetupLHS_b(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     +              DSTAK(LCORG),DSTAK(LXYZDOT),DSTAK(LVOL),
+C                   ^
+C                   |
+C                   |
+C          we pass the grid velocity because we have there 3 time levels in the un-steady case
+C          otherwise there will be an access out-of-bounds in celptr
+     +              DSTAK(LWORKA),
+     +              NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,
+     4              PetscMatC)
+C
+!     CALL R8Mat_Print('General',' ',NDIM,NPOIN,DSTAK(LXYZDOT),
+!    +            NDIM,'Grid velocity ',IFAIL)
+C
+      CALL ISTKRL(1)
+C
+C     The matrix has now been assembled
+C
+      CALL KSPSetOperators(MotionSolver,PetscMatC,PetscMatC,IFAIL)
+      CALL KSPSetFromOptions(MotionSolver,IFAIL) 
+C
+      CALL VecCreate(PETSC_COMM_WORLD,X,IFAIL)
+#ifdef MPI
+      CALL VecSetType(X,VECMPI,IFAIL)
+#else
+      CALL VecSetType(X,VECSEQ,IFAIL)
+#endif
+      CALL VecSetSizes(X,NPOIN,PETSC_DECIDE,IFAIL)
+      CALL VecDuplicate(X,RHS,IFAIL)
+C
+      DO I = 0,NDIM-1
+         CALL VecSet(RHS,ZERO,IFAIL)
+         call VecGetArray(X,x_array,i_x,ifail)
+         CALL DCOPY(NPOIN,DSTAK(LXYZDOT+I),NDIM,x_array(i_x+1),1)
+         call VecRestoreArray(X,x_array,i_x,ifail)
+!        CALL VecNorm(X,NORM_2,s,IFAIL)
+!        write(6,*)'X norm before solving ',s
+C
+         CALL MatZeroRowsIS(PetscMatC,NodalBcs(MotionSolverBCS),ONE,
+     &                   X,RHS,IFAIL)
+C
+      IF( .FALSE. )THEN
+!     IF( .TRUE. )THEN
+          LIWORK(1) = 1
+          LIWORK(2) = 1
+          LIWORK(3) = 1
+          NR = NPOIN
+          BS = 1
+          CALL PrintMatMM(PetscMatC,RHS,X,
+     3                    ISTAK(LIWORK(3)),NR,NZR,BS,ITER,0)
+          LIWORK(3) = ISTKGT(NZR,KIND_INTEGER)! storage for ir
+          CALL PrintMatMM(PetscMatC,RHS,X,
+     3                    ISTAK(LIWORK(3)),NR,NZR,BS,ITER,100)
+          write(6,*)'Beyond PrintMatMM'
+          CALL ISTKRL(1)
+          CALL EXIT(0)
+      ENDIF
+C
+         CALL KSPSolve(MotionSolver,RHS,X,IFAIL)
+!        CALL VecNorm(X,NORM_2,s,IFAIL)
+!        write(6,*)'X norm after solving ',s
+         call VecGetArray(X,x_array,i_x,ifail)
+         CALL DCOPY(NPOIN,x_array(i_x+1),1,DSTAK(LXYZDOT+I),NDIM)
+         call VecRestoreArray(X,x_array,i_x,ifail)
+      ENDDO
+C
+      CALL VecDestroy(X,IFAIL)
+      CALL VecDestroy(RHS,IFAIL)
+#ifdef MPI
+      STOP 'Motion solver has not been checked in parallel'
+#endif
+C
+      RETURN
+      END
+@
+
+
+1.7
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@d5 3
+a7 1
+!> @@param [in] NDIM    dimension of the space (2 or 3)
+d16 2
+a17 2
+!> \version $Revision: 1.6 $
+!> \date $Date: 2020/03/28 09:42:28 $
+d21 3
+a23 2
+      SUBROUTINE GridDeformation(MotionSolver,NodalBCS,NDIM,NOFVERT,
+     &                           NPOIN,NGHOST,NPNOD,NELEM,NBFAC,NFACE)
+d25 1
+a25 1
+!  $Id: MotionSolver.F,v 1.6 2020/03/28 09:42:28 abonfi Exp abonfi $
+a47 1
+CCCCCC#include "solver.com"
+d51 1
+a51 1
+      Mat              A,B,PetscMatC
+d58 1
+a58 1
+      COMMON/MYTSCOM/A,B,PetscMatC,dummy
+a63 1
+C
+@
+
+
+1.6
+log
+@renamed a call
+@
+text
+@d14 2
+a15 2
+!> \version $Revision: 1.5 $
+!> \date $Date: 2016/11/10 12:06:40 $
+d19 2
+a20 2
+      SUBROUTINE GridDeformation(NDIM,NOFVERT,NPOIN,NGHOST,NPNOD,NELEM,
+     &                        NBFAC,NFACE)
+d22 1
+a22 1
+!  $Id: MotionSolver.F,v 1.5 2016/11/10 12:06:40 abonfi Exp abonfi $
+a23 2
+      IMPLICIT NONE
+C
+a24 3
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+a25 1
+#include "petsc/finclude/petscis.h"
+d28 2
+d31 1
+d39 1
+d45 1
+a45 2
+#include "iset.com"
+#include "solver.com"
+d51 2
+d59 1
+a59 1
+     &NELEM,NFACE,NBFAC,IOPT
+d89 1
+a89 1
+      INTEGER LWORKA,NBPOIN
+d149 1
+a149 1
+         CALL MatZeroRowsIS(PetscMatC,MotionSolverBCS,ONE,
+@
+
+
+1.5
+log
+@KSPSetOperators() no longer has the MatStructure argument.
+@
+text
+@d14 2
+a15 2
+!> \version $Revision: 1.4 $
+!> \date $Date: 2016/11/10 11:25:13 $
+d22 1
+a22 1
+!  $Id: MotionSolver.F,v 1.4 2016/11/10 11:25:13 abonfi Exp abonfi $
+d123 1
+a123 1
+!     CALL X04CAF('General',' ',NDIM,NPOIN,DSTAK(LXYZDOT),
+@
+
+
+1.4
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d14 2
+a15 2
+!> \version $Revision: 1.3 $
+!> \date $Date: 2013/09/02 15:10:10 $
+d22 1
+a22 1
+!  $Id: MotionSolver.F,v 1.3 2013/09/02 15:10:10 abonfi Exp abonfi $
+d130 1
+a130 3
+      CALL KSPSetOperators(MotionSolver,PetscMatC,PetscMatC,
+     &SAME_PRECONDITIONER,IFAIL)
+!    &SAME_NONZERO_PATTERN,IFAIL)
+@
+
+
+1.3
+log
+@updated Doxygen documentation
+@
+text
+@d14 2
+a15 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d22 1
+a22 1
+!  $Id: MotionSolver.F,v 1.2 2013/07/17 10:00:17 abonfi Exp abonfi $
+d27 7
+a33 7
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscksp.h"
+#include "finclude/petscis.h"
+#include "finclude/petscviewer.h"
+#include "finclude/petscpc.h"
+@
+
+
+1.2
+log
+@first working version of the Motion Solver
+@
+text
+@d1 18
+d21 3
+a23 10
+C ---------------------------------------------------------------------
+C
+C  GridDeformation - the Motion solver
+C
+C  $Id: MotionSolver.F,v 1.1 2013/06/28 09:14:46 abonfi Exp abonfi $
+C
+C
+C
+C  Notes:
+C
+a79 24
+C
+C     Scalar Arguments ..
+C
+!     INTEGER NDIM,NOFVERT,NPOIN,NGHOST,NPNOD,NELEM,NFACE,
+!    2NBFAC
+C
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NPOIN   no. of interior (processor owned) meshpoints; 
+C             global number of meshpoints in the uni-processor case
+C     NGHOST  no. of ghost meshpoints on the current processor; 
+C             0 the uni-processor case
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+C     NFACE   number of edges/faces in the mesh for the current 
+C             processor (multi-processor case) or global number 
+C             of edges/faces in the mesh (uni-processor case).
+C     NBFAC   no. of processor owned boundary faces/edges;
+C             global number of boundary faces/edges
+C             in the uni-processor case.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE MotionSolver(NDIM,NOFVERT,NPOIN,NGHOST,NPNOD,NELEM,
+d5 5
+a9 14
+C  ApplicationFunction_b - Computes nonlinear function
+C  for the Motion solver
+C  This function is called by
+C  the higher level routines RHSFunction_b() and RHSJacobian_b()
+C
+C  $Id: ApplicationFunction_t.F,v 1.9 2011/09/16 07:19:48 abonfi Exp $
+C
+C  Input Parameter:
+C  x - local vector data as a FORTRAN array
+C  A - the jacobian matrix
+C
+C  Output Parameters:
+C  PetscVecRHS - local vector data, PetscVecRHS(x)
+C  PetscMatC - the jacobian matrix
+d15 1
+d19 5
+d36 2
+d42 4
+a45 1
+      Vec              X,Rhs,dummy
+a47 1
+      integer IFAIL
+d50 2
+d123 2
+d127 6
+a132 7
+!                   ^
+!                   |
+!                   |
+!          we pass the grid velocity because we have there 3 time levels in the un-steady case
+!          otherwise there will be an access out-of-bounds in celptr
+!
+     +              DSTAK(LWORKA), ! <---- distance from the nearest boundary
+d136 62
+a197 1
+      CALL ISTKRL(1) ! release LWORKA
+@

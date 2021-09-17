@@ -1,0 +1,129 @@
+
+      SUBROUTINE FLXW4(NDIM,NOFVAR,NOFVERT,
+     +STIFC,WORK,work2,VCZ,VCN,NODRES,PICARD)
+c
+c     correction flux for inviscid wall boundary conditions
+c
+      IMPLICIT NONE 
+      REAL*8 ZERO,HALF,ONE,TWO
+C
+      PARAMETER (ZERO = 0.00d0 , HALF = 0.5d0 , ONE = 1.00d0 , 
+     . TWO = 2.00d0 )
+
+      INTEGER NDIM,NOFVAR,NOFVERT
+      INTEGER i,j,k,l,IVERT,JVERT,ifail,IADD
+
+      DOUBLE PRECISION STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 VCZ(NOFVAR,NOFVERT),
+     +                 VCN(NDIM),NODRES(NOFVAR,NOFVERT)
+      DOUBLE PRECISION WORK(NOFVAR,NOFVAR,NDIM),dZdU(75)
+      DOUBLE PRECISION WORK2(NOFVAR,NOFVAR,NDIM,NDIM)
+      DOUBLE PRECISION FLUX(20),CNST
+      double precision wksp(5),temp(15),alpha,beta,tmp
+      parameter(alpha=0.75d0)
+      LOGICAL PICARD 
+
+      DATA dZdU/75*0.d0/
+C
+C     Compute correction flux
+C
+      DO 3 IVERT = 1,NOFVERT
+         IADD = (IVERT-1)*NOFVAR+1
+         CALL INVWLL(NDIM,VCN,VCZ(1,IVERT),FLUX(IADD))
+    3 CONTINUE
+C
+      CALL DINIT(NOFVAR*(NOFVERT-1),ZERO,NODRES,1)
+      BETA = (1.-ALPHA)/REAL(NDIM-1)/REAL(NDIM)
+      DO 5 IVERT = 1,NOFVERT-1
+         DO 7 JVERT = 1,NOFVERT-1
+            IADD = (JVERT-1)*NOFVAR+1
+            IF(JVERT.EQ.IVERT)THEN
+               CNST = ALPHA/NDIM
+            ELSE
+               CNST = BETA
+            ENDIF
+            CALL DAXPY(NOFVAR,CNST,FLUX(IADD),1,NODRES(1,IVERT),1)
+    7    CONTINUE
+    5 CONTINUE
+C
+      IF(.NOT.PICARD)RETURN
+C
+C     Compute matrices dFcorr/dZ for all NOFVERT-1 vertices
+C     of the boundary face
+C
+      DO 1 IVERT = 1,NDIM
+          call GetdF4corrdU(vcz(1,IVERT),vcn,ndim,nofvar,
+     +                      work(1,1,IVERT))
+    1 CONTINUE 
+
+      beta = ( 1.d0 - alpha ) / real( ndim -1 )
+      DO 8 I = 1,NDIM
+         DO 8 j = 1,NDIM
+            if( j.eq.i )then
+                tmp = alpha / real(ndim)
+            else
+                tmp = beta / real(ndim)
+            endif
+            DO 8 l = 1,NOFVAR
+               DO 8 k = 1,NOFVAR
+                  work2(k,l,i,j) = tmp*work(k,l,j)
+    8 CONTINUE
+C
+C     CALL DINIT(NOFVAR*NDIM,0.d0,NODRES,1)
+C
+C     compute nodal residuals as - \sum C_{i,j=1}^{d} Z_j
+C     the - sign is due to the fact that what we want to
+C     split is F(boundary) - F(1)
+C
+C     do 29 i = 1,ndim
+C        do 31 j = 1,ndim
+C           call dgemv('N',nofvar,nofvar,-.5d0,work2(1,1,i,j),nofvar,
+C    >                 vcz(1,j),1,1.d0,nodres(1,i),1)
+C  31 CONTINUE
+C     call daxpy(nofvar,1.d0,nodres(1,i),1,wksp,1)
+C  29 CONTINUE
+C#ifdef PRINT
+Cwrite(6,*)'nodres '
+Cwrite(6,*)(wksp(j),j=1,nofvar)
+C#endif
+C
+C     transform the convection stiffness matrix into 
+C     conserved variables as C_{ij} := 2 C_{ij} dZdU(j)
+C
+      DO 9 IVERT = 1,NDIM
+	   IADD = (IVERT-1)*NOFVAR*NOFVAR+1
+           CALL MatdZdU(VCZ(1,IVERT),dZdU(IADD),NDIM,NOFVAR)
+           DO 9 I = 1,NDIM
+               CALL DGEMM('No transpose','No transpose',NOFVAR,
+     >           NOFVAR,NOFVAR,+1.d0,WORK2(1,1,I,IVERT),NOFVAR,
+     >           dZdU(IADD),NOFVAR,0.d0,
+     >           STIFC(1,1,I,IVERT),NOFVAR)
+C     write(6,*)i,ivert
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,STIFC(1,1,I,IVERT),
+C    +NOFVAR,'Stiffness matrix ',IFAIL)
+    9 CONTINUE
+C
+C#ifdef DEBUG
+C
+C     test the stiffness matrix in conserved variables 
+C
+C     call dinit(nofvar,0.d0,wksp,1)
+C     call dcopy(nofvar*ndim,vcz,1,temp,1)
+C     call parm_to_cons(temp,ndim,nofvar,ndim) 
+C     do 19 i = 1,ndim
+C        do 19 j = 1,ndim
+C           call dgemv('N',nofvar,nofvar,1.d0,stifc(1,1,i,j),nofvar,
+C    >                 temp((j-1)*nofvar+1),1,1.d0,wksp,1)
+C  19 CONTINUE
+Cifdef PRINT
+C     write(6,*)' nodres from conserved',(wksp(j),j=1,nofvar)
+C     write(6,*)'node #1',(nodres(j,1),j=1,nofvar)
+C     write(6,*)'node #2',(nodres(j,2),j=1,nofvar)
+C     if(ndim.eq.3)write(6,*)'node #3',(nodres(j,3),j=1,nofvar)
+C     pause
+Cendif
+Cendif
+      RETURN
+  564 FORMAT((E12.6,1X))
+      END
+C

@@ -1,0 +1,70 @@
+\hypertarget{fun1_8f}{\section{src/scalar/\-T\-R\-A\-S\-H/fun1.f File Reference}
+\label{fun1_8f}\index{src/scalar/\-T\-R\-A\-S\-H/fun1.\-f@{src/scalar/\-T\-R\-A\-S\-H/fun1.\-f}}
+}
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+D\-O\-U\-B\-L\-E P\-R\-E\-C\-I\-S\-I\-O\-N function \hyperlink{fun1_8f_aa35c21a3877d927257603a7d4adb333d}{funsou1} (X, Y, \hyperlink{ibc2_8com_ad2108d58343608772fff791c23da58f5}{A}, B, E\-P\-S)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{fun1_8f_aa35c21a3877d927257603a7d4adb333d}{\index{fun1.\-f@{fun1.\-f}!funsou1@{funsou1}}
+\index{funsou1@{funsou1}!fun1.f@{fun1.\-f}}
+\subsubsection[{funsou1}]{\setlength{\rightskip}{0pt plus 5cm}D\-O\-U\-B\-L\-E P\-R\-E\-C\-I\-S\-I\-O\-N function funsou1 (
+\begin{DoxyParamCaption}
+\item[{double precision}]{X, }
+\item[{double precision}]{Y, }
+\item[{double precision}]{A, }
+\item[{double precision}]{B, }
+\item[{double precision}]{E\-P\-S}
+\end{DoxyParamCaption}
+)}}\label{fun1_8f_aa35c21a3877d927257603a7d4adb333d}
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Source term for the convection-\/diffusion equation \[ u_t + \lambda_xu_x+\lambda_yu_y - \varepsilon(u_{xx}+u_{yy}) = f \]
+
+The convection speed is {\ttfamily }(A,B) = $\lambda_x\mathbf{e}_x+\lambda_y\mathbf{e}_y$
+
+{\ttfamily E\-P\-S} is the diffusion coefficient $\varepsilon$ which is set using the runtime option\-: \begin{DoxyVerb}  -Reynolds [value]\end{DoxyVerb}
+
+
+where {\ttfamily value} = $1/\varepsilon$.
+
+the source term is\-: \[ f = [(\lambda_x-2\varepsilon)y+(\lambda_y-2\varepsilon)x]e^{(x+y)} [(\lambda_x-2\varepsilon)+(\lambda_y-2\varepsilon)]xye^{(x+y)} \] and the exact steady solution is\-: \[ u = xy\exp(x+y) \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em X} & Cartesian x coordinate \\
+\hline
+\mbox{\tt in}  & {\em Y} & Cartesian y coordinate \\
+\hline
+\mbox{\tt in}  & {\em A} & Cartesian x component of the convection speed, i.\-e. $\lambda_x$ \\
+\hline
+\mbox{\tt in}  & {\em B} & Cartesian y component of the convection speed, i.\-e. $\lambda_y$ \\
+\hline
+\mbox{\tt in}  & {\em E\-P\-S} & is the diffusion coefficient $\varepsilon$. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The pointwise value of the source term {\ttfamily f}. 
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author\-:}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision\-:}
+1.\-8 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date\-:}
+2013/08/20 14\-:48\-:46 
+\end{DoxyParagraph}

@@ -1,0 +1,86 @@
+\hypertarget{chkgcl_8f}{}\doxysection{src/geometry/chkgcl.f File Reference}
+\label{chkgcl_8f}\index{src/geometry/chkgcl.f@{src/geometry/chkgcl.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{chkgcl_8f_a6792b6f70618cb1d6e16733665d6dbe2}{C\+H\+K\+G\+CL}} (I\+C\+E\+L\+N\+OD, I\+C\+E\+L\+F\+AC, V\+F\+A\+C\+N\+OR, X\+Y\+Z\+D\+OT, V\+OL, Z\+R\+OE, N\+E\+L\+EM, N\+P\+O\+IN, N\+G\+H\+O\+ST, N\+P\+N\+OD, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+O\+F\+V\+AR, I\+T\+ER)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{chkgcl_8f_a6792b6f70618cb1d6e16733665d6dbe2}\label{chkgcl_8f_a6792b6f70618cb1d6e16733665d6dbe2}} 
+\index{chkgcl.f@{chkgcl.f}!CHKGCL@{CHKGCL}}
+\index{CHKGCL@{CHKGCL}!chkgcl.f@{chkgcl.f}}
+\doxysubsubsection{\texorpdfstring{CHKGCL()}{CHKGCL()}}
+{\footnotesize\ttfamily subroutine C\+H\+K\+G\+CL (\begin{DoxyParamCaption}\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+N\+OD,  }\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+F\+AC,  }\item[{double precision, dimension(ndim,$\ast$)}]{V\+F\+A\+C\+N\+OR,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+D\+OT,  }\item[{double precision, dimension(nelem)}]{V\+OL,  }\item[{double precision, dimension(nofvar,$\ast$)}]{Z\+R\+OE,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{integer}]{N\+G\+H\+O\+ST,  }\item[{integer}]{N\+P\+N\+OD,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{I\+T\+ER }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Checks the G\+CL on a cell basis when the following runtime option is set\+: \begin{DoxyVerb} -ale_check_gcl\end{DoxyVerb}
+ and writes some statistics to file {\ttfamily vol\+X\+X\+X\+X\+X.\+log} where {\ttfamily X\+X\+X\+XX} is the iteration number.
+
+In particular, we dump to file\+:
+\begin{DoxyEnumerate}
+\item the current iteration {\ttfamily I\+T\+ER} 
+\item $T_e|^{n+1}-|T_e|^n$
+\item $ \left(\nabla \cdot \mathrm{b} \right) |T_e| \Delta t $
+\item The ratio btw. items 2 and 3 which should be 1 as long as Eq.(1) is satisfied to machine accuracy
+\item $ |T_e|^{n+\alpha}$
+\item $ |T_e|^{n+1}$
+\item $|T_e|^n$
+\item $|T_e|^{n-1}$
+\end{DoxyEnumerate}
+
+To be more precise, we check that\+: \[ \frac{\mathrm{d}|T_e|}{\mathrm{d}t} = \frac{|T_e|^{n+1}-|T_e|^n}{\Delta t} = \nabla \cdot \mathbf{b}\, |T_e|^{n+\alpha} = \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{b}_j \cdot \mathbf{n}_j^{n+\alpha} \quad\quad \mbox{(1)} \] where\+: \[ \mathbf{b} = \frac{\mathbf{x}^{n+1}-\mathbf{x}^{n}}{\Delta t} \] and the cell normals $\mathbf{n}_j^{n+\alpha}$ are computed using the geometry at some intermediate time\+: \[ \mathbf{x}^{n+\alpha} = \alpha \mathbf{x}^{n} + \left(1-\alpha\right) \mathbf{x}^{n+1} \] where $\alpha = {\tt ALFALE}$ is a constant which is set using the runtime option \begin{DoxyVerb} -ale_grid_weight ALFALE\end{DoxyVerb}
+ It may be readily verified that only the choice $\alpha = 0.5$ makes Eq.(1) an identity.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+N\+OD} & Cell to node pointer\+: {\ttfamily I\+C\+E\+L\+N\+O\+D(i,j)} gives the global node number of the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+F\+AC} & Cell to face pointer\+: {\ttfamily I\+C\+E\+L\+F\+AC}(i,j\} gives the global face number of the face opposite the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+F\+A\+C\+N\+OR} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z\+D\+OT} & Cartesian components of the nodal grid velocities \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+OL} & area/volume of the simplicial elements (triangles,tetrahedra) \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & nodal values of the dependent variable \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & nof interior nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+G\+H\+O\+ST} & nof ghost nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+N\+OD} & nof periodic nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+T\+ER} & physical time iteration counter \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+4 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2014/04/15 10\+:08\+:13 
+\end{DoxyParagraph}

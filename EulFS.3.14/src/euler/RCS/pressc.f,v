@@ -1,0 +1,247 @@
+head	1.6;
+access
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.6
+	release3_13_0:1.6
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.6
+	release3_4_4:1.6
+	release3_4_3:1.6
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.3
+	release3_3_1:1.2
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.6
+date	2013.04.30.07.42.54;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.02.06.07.45.48;	author tesistim;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.02.05.08.10.33;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.01.26.11.33.32;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute pressure from parameter vector
+@
+
+
+1.6
+log
+@the integer addresses of the energy and momentum dofs
+are now in a common
+@
+text
+@      DOUBLE PRECISION FUNCTION PRESSC( NDIM , ZROE )
+C
+C    .. This function computes PRESSURE from Roe's
+C       parameter vector ..
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'pfcgas.com'
+C
+      INTEGER NDIM
+      DOUBLE PRECISION ZROE(*)
+      DOUBLE PRECISION TEMP
+C
+      TEMP       = ZROE(3)*ZROE(3) + ZROE(4)*ZROE(4)
+      IF( NDIM .EQ. 3 )TEMP = TEMP + ZROE(5)*ZROE(5)
+      TEMP = HALF * TEMP
+      PRESSC = GM1OG * ( ZROE(1)*ZROE(2) - TEMP )
+C
+      RETURN
+      END
+C
+       DOUBLE PRECISION FUNCTION PRESS4AR( NDIM , ZROE )
+C
+C    .. This function computes PRESSURE from Roe's
+C       parameter vector ..
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'plasma.h'
+      INCLUDE 'pfcgas.com'
+      INCLUDE 'dofs.com'
+C
+      INTEGER NDIM,ISP
+      DOUBLE PRECISION ZROE(*)
+      DOUBLE PRECISION SQRTR1,HELP1,PRESSC,ZRDR1,INVDENS,DR1(NSP)
+      DOUBLE PRECISION HELP,ZRDR,TEMP,ZRCHI,ERRORP
+      DOUBLE PRECISION SQRTR,DR(NSP),DE,DM(3),CHI(NSP),KAPPA
+C
+C
+      KAPPA = GM1   
+      DE = KAPPA
+C
+      HELP1 = KAPPA/(ONE + KAPPA)
+      HELP = ONE/(ONE+DE)
+C
+      TEMP       = ZROE(IX)*ZROE(IX) + ZROE(IY)*ZROE(IY)
+      IF( NDIM .EQ. 3 )TEMP = TEMP + ZROE(IZ)*ZROE(IZ)
+      TEMP = HALF * TEMP
+C
+C     VERIFICA
+C
+      SQRTR = ZERO
+      DO ISP = 1,NSP
+         SQRTR = SQRTR + ZROE(ISP)
+      ENDDO
+C
+      INVDENS = ONE/SQRTR
+      INVDENS = INVDENS*INVDENS 
+C
+      ZRDR = ZERO
+      ZRCHI = ZERO
+      DO ISP = 1,NSP         
+!         write(*,*) DR(ISP)
+         DR(ISP)=CHI(ISP)+KAPPA*TEMP*INVDENS  
+         ZRDR = ZRDR + ZROE(ISP)*DR(ISP)
+!         write(*,*) DR(ISP)
+         ZRCHI = ZRCHI + ZROE(ISP)*CHI(ISP)
+      ENDDO 
+      ZRDR = ZRDR * SQRTR  
+      ZRCHI = ZRCHI * SQRTR
+C      
+      PRESS4Ar = HELP *(ZRDR + DE*(SQRTR*ZROE(IE) - TWO*TEMP))  
+!      write(*,*)'press4Ar',PRESS4Ar
+C   
+!rpepe manca il termine dovuto a ZRDR  PRESSC = HELP1 * (ZROE(IE)*SQRTR - TEMP)
+!      write(*,*)'pressc Corretta',PRESSC      
+C      
+      PRESSC = ZRCHI/(ONE+KAPPA)+ HELP1 * (ZROE(IE)*SQRTR - TEMP)
+!      write(*,*)'pressc',PRESSC      
+
+!      ERRORP = (PRESS4Ar-PRESSC)/PRESS4Ar
+!      write(*,*)'errorP ',ERRORP 
+!      pause
+
+      RETURN
+      END
+C 
+@
+
+
+1.5
+log
+@avoids using cell averaged state
+@
+text
+@d34 1
+@
+
+
+1.4
+log
+@changes made by Raffaele in January 2013:
+needed to upgrade to his 3.2.11 release of the code
+@
+text
+@d33 1
+a33 2
+      INCLUDE 'three.com'
+      INCLUDE 'four.com'
+d39 1
+d42 2
+a43 2
+!      KAPPA = GM1   
+!      CHIi = -GM1*HF0i          
+@
+
+
+1.3
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@a34 1
+      INCLUDE 'pfcgas.com'
+d39 1
+a39 1
+      DOUBLE  PRECISION HELP,ZRDR,TEMP
+d42 2
+d63 1
+d69 1
+d72 1
+d75 1
+a75 1
+!      write(*,*)'pres avg',PRESS4Ar
+d77 8
+a84 2
+      PRESSC = HELP1 * (ZROE(IE)*SQRTR - TEMP)
+!      write(*,*)'press nodo',PRESSC
+d86 1
+@
+
+
+1.2
+log
+@added support for Ar plasma
+@
+text
+@d9 1
+d35 1
+a37 1
+!      INTEGER IE,IX,IY,IZ
+a41 4
+!      IE = NSP + 1
+!      IX = NSP + 2
+!      IY = NSP + 3
+!      IZ = NSP + 4
+a42 2
+!      KAPPA = GM1   
+!      CHIi = -GM1*HF0i          
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d8 1
+a8 1
+      INCLUDE 'constants'
+d22 62
+@

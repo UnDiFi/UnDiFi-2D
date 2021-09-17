@@ -1,0 +1,446 @@
+\hypertarget{motion__type_8f}{}\doxysection{src/geometry/motion\+\_\+type.f File Reference}
+\label{motion__type_8f}\index{src/geometry/motion\_type.f@{src/geometry/motion\_type.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a316d52085cfea0d96fe7dc73723b6723}{M\+O\+V\+E\+X\+YZ}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a371f9e75b17ed38dce80d4367c4fbde7}{M\+O\+V\+E\+X\+Y\+Z\+\_\+1}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a866652885730fdfe7ba347c79e1f465d}{M\+O\+V\+E\+X\+Y\+Z\+\_\+2}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a571228467a005ca1858910a392bc5e1f}{M\+O\+V\+E\+X\+Y\+Z\+\_\+3}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a720ea85e411776514a01716207b5f420}{M\+O\+V\+E\+X\+Y\+Z\+\_\+4}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a06a641f984b5f42db9df733510cdb971}{M\+O\+V\+E\+X\+Y\+Z\+\_\+5}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a5b8d845fb1fcc937196d0fd135fc2b70}{M\+O\+V\+E\+X\+Y\+Z\+\_\+6}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a0dfb605a6ea8724bde348246f45ef0f8}{M\+O\+V\+E\+X\+Y\+Z\+\_\+7}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_a04a0279c699930f0a41726bcd306c66f}{M\+O\+V\+E\+X\+Y\+Z\+\_\+8}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\item 
+subroutine \mbox{\hyperlink{motion__type_8f_aa18bbb34201f26ab63552ce404a6c3a2}{M\+O\+V\+E\+X\+Y\+Z\+\_\+9}} (X\+Y\+Z0, X\+Y\+Z\+N\+EW, N\+D\+IM, NP, T\+I\+ME)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{motion__type_8f_a316d52085cfea0d96fe7dc73723b6723}\label{motion__type_8f_a316d52085cfea0d96fe7dc73723b6723}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ@{MOVEXYZ}}
+\index{MOVEXYZ@{MOVEXYZ}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ()}{MOVEXYZ()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+YZ (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Driver routine for moving the grid\+: the behaviour depends on the integer {\ttfamily I\+A\+LE} which is stored in time.\+com
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{motion__type_8f_a371f9e75b17ed38dce80d4367c4fbde7}\label{motion__type_8f_a371f9e75b17ed38dce80d4367c4fbde7}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_1@{MOVEXYZ\_1}}
+\index{MOVEXYZ\_1@{MOVEXYZ\_1}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_1()}{MOVEXYZ\_1()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+1 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Rigidly oscillates the grid horizontally (along x)
+
+\begin{eqnarray*} x^{n+1} &=& x^0 + a\, \int_{0}^{n\,\Delta t}\sin\left(\omega t\right) \; \mathrm{d}t \\\ &=& x^0 + \frac{a}{\omega} \left[1-\cos\left(\omega \, n\,\Delta t\right)\right] \quad n = 0,1,...N \end{eqnarray*} The period of the oscillation coincides with the total running time $T$ so that at time $ N\Delta t = T $ the grid will return to its initial position; it follows that $ \omega = \frac{2\pi}{T} = \frac{2\pi}{N\Delta t} $
+
+the velocity $ a$ is set to 1
+
+Use\+: \begin{DoxyVerb} -ale_grid_motion_type 1\end{DoxyVerb}
+ to activate this kind of grid motion.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{motion__type_8f_a866652885730fdfe7ba347c79e1f465d}\label{motion__type_8f_a866652885730fdfe7ba347c79e1f465d}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_2@{MOVEXYZ\_2}}
+\index{MOVEXYZ\_2@{MOVEXYZ\_2}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_2()}{MOVEXYZ\_2()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+2 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Deforms the grid for the vortex\+: deforming grid
+
+In particular, we consider a mesh which deforms according to the following mapping\+: \begin{eqnarray*} \left(x^{n+1}-x_0\right) &=& \left(x^0-x_0\right) \left[B_0+A_1\sin\left(\omega t\right)+B_1\cos\left(\omega t\right)\right] \\\ \left(y^{n+1}-y_0\right) &=& \left(y^0-y_0\right) \left[B_0+A_1\sin\left(\omega t\right)+B_1\cos\left(\omega t\right)\right] \end{eqnarray*}
+
+Point $x_0,y_0$ is set equal to the initial location of the vortex centre, which can be set at runtime using the option\+: \begin{DoxyVerb} -ale_motion_origin [x0,y0,z0]\end{DoxyVerb}
+ One should use\+:
+\begin{DoxyEnumerate}
+\item (x0,y0) = (0.\+5d0,0.\+5d0) for the scalar case
+\item (x0,y0) = (0.\+d0,0.\+d0) for the compressible vortex case
+\end{DoxyEnumerate}
+
+Moreover, we choose $B_0+B_1 = 1$ so that the grid is un-\/deformed at $t = 0$ and $t = T$ and $A_1 = 0$, for simplicity. Finally, we set\+: $B_1 = 1/(3\pi)$.
+
+Use\+: \begin{DoxyVerb} -ale_grid_motion_type 2\end{DoxyVerb}
+ to activate this kind of grid motion.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{motion__type_8f_a571228467a005ca1858910a392bc5e1f}\label{motion__type_8f_a571228467a005ca1858910a392bc5e1f}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_3@{MOVEXYZ\_3}}
+\index{MOVEXYZ\_3@{MOVEXYZ\_3}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_3()}{MOVEXYZ\_3()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+3 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Move the grid for the oscillating N\+A\+CA. When using\+: \begin{DoxyVerb} -ale_grid move\end{DoxyVerb}
+ only the grid within an ellipse will be rigidly moved and it will only work with the grid stored in\+: \begin{DoxyVerb} $HOME/grids/2D/aerofoils/naca0012/euler/NP2355_within_ellipse\end{DoxyVerb}
+ Otherwise, when using\+: \begin{DoxyVerb} -ale_grid laplace \end{DoxyVerb}
+ it will (presumably) work with all N\+A\+C\+A0012 grids.
+
+Use \begin{DoxyVerb} -ale_grid_motion_type 3\end{DoxyVerb}
+ to activate this kind of grid motion.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of the grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{motion__type_8f_a720ea85e411776514a01716207b5f420}\label{motion__type_8f_a720ea85e411776514a01716207b5f420}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_4@{MOVEXYZ\_4}}
+\index{MOVEXYZ\_4@{MOVEXYZ\_4}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_4()}{MOVEXYZ\_4()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+4 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Move the grid for the piston in cylinder, using the testcase published here \href{http://dx.doi.org/doi:10.1002/(SICI)1097-0363(19990815)30:7<865::AID-FLD870>3.0.CO;2-5}{\texttt{ F\+L\+D870}}
+
+\[ x_{\mbox{piston}}/L = c + \frac{R}{L}\left[1-\cos\left(\omega^*t^*\right)\right] + \left(\frac{R}{2L}\right)^2\left[1-\cos\left(2\omega^*t^*\right)\right] \] where \[ t^* = t \frac{\sqrt{ R T^0 }}{L} \] is the dimensionless time and the dimensionless frequency $\omega^*$ is\+: \[ \omega^* = \Omega \frac{L}{\sqrt{ R T^0 }} \] the dimensional frequency is $\Omega$ = 100 Hz.
+
+grid files are in\+:
+
+\begin{DoxyVerb} $GRIDS/2D/misc/piston\end{DoxyVerb}
+
+
+The remeshing process is made by linear interpolation of node displacement between the fixed wall on the left and the moving wall on the right, i.\+e.
+
+\[ x_i\left(t\right) = \frac{x_i\left(t=0\right)}{x_{\mbox{piston}}\left(t=0\right)} \; x_{\mbox{piston}} \left(t\right) \]
+
+Use\+: \begin{DoxyVerb} -ale_grid_motion_type 4\end{DoxyVerb}
+ to activate this kind of grid motion.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of the grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{motion__type_8f_a06a641f984b5f42db9df733510cdb971}\label{motion__type_8f_a06a641f984b5f42db9df733510cdb971}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_5@{MOVEXYZ\_5}}
+\index{MOVEXYZ\_5@{MOVEXYZ\_5}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_5()}{MOVEXYZ\_5()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+5 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Move the grid for the Smooth inviscid flow in a piston (2D) testcase from J. Dobes\textquotesingle{} phD thesis
+
+grid files are in\+:
+
+\begin{DoxyVerb} $GRIDS/2D/misc/piston2 
+ $GRIDS/3D/misc/piston2 \end{DoxyVerb}
+
+
+The piston starts to accelerate with derivative of acceleration $ \left(\frac{\mathrm{d}a}{\mathrm{d}t}\right)_{t=0} = 0.2 $ so that the trajectory of the piston is\+:
+
+\[ x_{\mbox{piston}} = \left(\frac{\mathrm{d}a}{\mathrm{d}t}\right)_{t=0} \frac{t^3}{6} \]
+
+The numerical solution should be plotted at time t = 4, when the piston has reached position x = 2.\+133.
+
+The remeshing process is made by linear interpolation of node displacement between the fixed wall on the right and the moving wall on the left, i.\+e.
+
+\[ x_i\left(t\right) = \left(1-\alpha\right) x_{\mbox{piston}} \left(t\right) + \alpha l \] where\+: \[ \alpha = x_i\left(t=0\right)/l \]
+
+in the 3D case it is the $ z $ axis that is aligned with the cylinder\textquotesingle{}s axis
+
+Use\+: \begin{DoxyVerb} -ale_grid_motion_type 5\end{DoxyVerb}
+ to activate this kind of grid motion.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of the grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{motion__type_8f_a5b8d845fb1fcc937196d0fd135fc2b70}\label{motion__type_8f_a5b8d845fb1fcc937196d0fd135fc2b70}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_6@{MOVEXYZ\_6}}
+\index{MOVEXYZ\_6@{MOVEXYZ\_6}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_6()}{MOVEXYZ\_6()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+6 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Move the grid for the expantion due to a smoothly moving piston (2D)
+
+grid files are in\+:
+
+\begin{DoxyVerb} $GRIDS/2D/misc/piston3\end{DoxyVerb}
+
+
+We consider a piston moving (to the left of the origin) with the following velocity\+: \[ v_p\left(t\right) = v_1 \left( 1-\exp\left(-\alpha t\right)\right) \quad\quad\mbox{with}\quad\quad \alpha = 1 \; \mbox{s}^{-1} \] so that it will approach a constant velocity $v_1$ = -\/75 m/s after a sufficiently long time.
+
+The trajectory of the piston, having set $t_0 = 0$ as the initial time, is\+: \[ x_p\left(t\right) = v_1 \left[ t + \frac{1}{\alpha} \left( \exp\left(-\alpha t\right)-1\right)\right] \]
+
+The following settings should be used in the .petscrc file\+: \begin{DoxyVerb} -nondimensionalisation internal
+ -inlet_total_temperature  223.99203583872573419611
+ -inlet_total_pressure  2.e5
+ -reference_length 1000.
+ -inlet_mach_number 0.0\end{DoxyVerb}
+
+
+$T^0$ has been chosen in such a way that the sound speed in the cylinder is initially $a_0$ = 300 m/s; Total pressure is irrelevant.
+
+Reference quantities are\+:
+
+
+\begin{DoxyEnumerate}
+\item velocity is $a_T = \sqrt{R T^0} = a_0/\sqrt{\gamma} $ = 253.\+54627641855498 m/s.
+\item time-\/scale is $T^* = L/a_T $ = 3.\+9440531887330774
+\end{DoxyEnumerate}
+
+The numerical solution should be plotted at time $t_1^* $ = 0.\+75 which corresponds to a physical time $t_1 $ = 2.\+958039891549808050 s
+
+The various non-\/dimensional quantities are therefore\+: \begin{eqnarray*} v_1^* &=& v_1/a_T = -0.29580398915498080 \\ T^* &=& T/a_T = 3.9440531887330774 \\ \alpha^* &=& \alpha/a_T = 3.9440531887330774 \\ \end{eqnarray*}
+
+The remeshing process is made by linear interpolation of node displacement between the fixed wall on the right and the moving wall on the left, i.\+e.
+
+\[ x_i\left(t\right) = \left(1-\beta\right) x_{\mbox{piston}} \left(t\right) + \beta l \] where\+: \[ \beta = x_i\left(t=0\right)/l \]
+
+Use\+: \begin{DoxyVerb} -ale_grid_motion_type 6\end{DoxyVerb}
+ to activate this kind of grid motion/deformation.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of the grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{motion__type_8f_a0dfb605a6ea8724bde348246f45ef0f8}\label{motion__type_8f_a0dfb605a6ea8724bde348246f45ef0f8}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_7@{MOVEXYZ\_7}}
+\index{MOVEXYZ\_7@{MOVEXYZ\_7}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_7()}{MOVEXYZ\_7()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+7 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of the grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Move the grid for the expansion interacting with a moving shock
+
+grid files are in\+:
+
+\begin{DoxyVerb} $GRIDS/2D/misc/piston4\end{DoxyVerb}
+
+
+A planar piston is impulsively set into motion with dimensionless velocity $v_p^*$, so that a shock is created which moves to the right at constant speed $W$ = 450 m/s.
+
+The temperature in the undisturbed part of the cylinder is such that the shock Mach number is $M_{r_1} = W/\sqrt{\gamma\,R\,T_1}$ = 1.\+534; it follows that\+: $T_1$ = 214,172830291 K.
+
+We decide to solve the equations in non-\/dimensional form using the set of reference variables for internal flows\+: The following settings should be used in the .petscrc file\+: \begin{DoxyVerb} -nondimensionalisation internal
+ -inlet_total_temperature  247.92660034794133
+ -inlet_total_pressure  [whatever]
+ -reference_length 1.
+ -inlet_mach_number [whatever]\end{DoxyVerb}
+
+
+By doing so, we have to choose a (dimensional) reference temperature and pressure. In the present case, these are set equal to the corresponding (total) quantities in the gas at rest\+: \[ p_{\mbox{ref}} = \mbox{whatever} \quad\mbox{and}\quad T_{\mbox{ref}} = T_1 \] The reference velocity (which is the isothermal sound speed) follows\+: \[ u_{\mbox{ref}} = \sqrt{R\,T_{\mbox{ref}}} = 247.92660034794133 \; \mbox{m/s} \] Having set the upstream uniform state as the reference one, the non-\/dimensional upstream state becomes\+: \[ p_1^* = 1 \quad\quad \rho_1^* = 1 \quad\quad T_1^* = 1 \] using the jump relations in a reference frame moving with the shock, the (non-\/dimensional) downstream values are found to be\+: \[ p_2^* = 2.5786821287522521 \quad\quad \rho_2^* = 1.9201192819084407 \quad\quad T_2^* = 1.3429801747468804. \] Concerning the shock-\/downstream velocity, which is the same as the piston velocity, we have\+: \[ v_p = u_2 = W - M_{r_2} a_2 \] with $M_{r_2}$ = 0.\+68938584364157141. Therefore, the dimensionless piston velocity is\+: \[ v_p^* = \frac{u_2}{\sqrt{R T_1}} = \frac{W-M_{r_2} a_2}{\sqrt{R T_1}} = \sqrt{\gamma} \left( M_{r_1} - \sqrt{\frac{T_2}{T_1}} M_{r_2} \right) = 0.86977177750456247 \] The initial dimensions of the computational domain are\+: $[0,5L] \times [0,L]$.
+
+At time $t = 0$, when the shock is at $x/L$ = 0.\+3, the piston\textquotesingle{}s speed starts decreasing with the following law\+: \[ v_p^*\left(t\right) = v_p^* \, e^{-t} \] so that the trajectory of the piston is\+: \[ x_{\mbox{piston}}/L = v_p^* \, \left(1-e^{-t} \right) \]
+
+The remeshing process is made by linear interpolation of node displacement between the fixed wall on the right and the moving wall on the left, i.\+e.
+
+\[ x_i\left(t\right) = \left(1-\beta\right) x_{\mbox{piston}} \left(t\right) + \beta l \] where\+: \[ \beta = x_i\left(t=0\right)/l \]
+
+Use\+: \begin{DoxyVerb} -ale_grid_motion_type 7\end{DoxyVerb}
+ to activate this kind of grid motion/deformation. \mbox{\Hypertarget{motion__type_8f_a04a0279c699930f0a41726bcd306c66f}\label{motion__type_8f_a04a0279c699930f0a41726bcd306c66f}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_8@{MOVEXYZ\_8}}
+\index{MOVEXYZ\_8@{MOVEXYZ\_8}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_8()}{MOVEXYZ\_8()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+8 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of the grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & at the end of the current timestep \\
+\hline
+\end{DoxyParams}
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Move the grid for the centred compression\+: all $ \mathcal{C}^+$ characteristic lines meet in the focal point F; the focal point has dimensionless coordinates\+: $ x^*_F, t^*_F $.
+
+Grid files are in\+:
+
+\begin{DoxyVerb} $GRIDS/2D/misc/piston4/gridlev?\end{DoxyVerb}
+
+
+The computational domain is the rectangle $ \left[0,5 \right] \times \left[0,1\right]$.
+
+We choose $ x^*_F = 5 $ so that $ t^*_F = x^*_F / a_0^* = 4.22577127364258288756 $.
+
+The piston\textquotesingle{}s trajectory, velocity and acceleration are given below\+:
+
+\begin{eqnarray} x^*_p\left(t\right) &=& x^*_F + \frac{2 \, a_0^*}{\gamma-1} \left(t^*_F-t^*\right) \left\{ 1 - \frac{\gamma+1}{2} \left[ \left(1-\frac{t^*}{t_f}\right)^{-\frac{\gamma-1}{\gamma+1}} \right] \right\} \\ \dot{x}^*_p\left(t\right) &=& \frac{2 a_0^*}{\gamma-1} \left\{ \left(1-\frac{t^*}{t_f}\right)^{-\frac{\gamma-1}{\gamma+1}} -1 \right\} \\ \ddot{x}^*_p\left(t\right) &=& \frac{2 a_0^*}{\gamma+1} \left(1-\frac{t^*}{t_f}\right)^{-\frac{2\,\gamma}{\gamma+1}} \end{eqnarray}
+
+Before the piston is set into motion, the (dimensional) temperature in the cylinder is $T_0$ = 273.\+15 K.
+
+We solve the equations in non-\/dimensional form using the set of reference variables for internal flows; the following settings should be used in the .petscrc file\+: \begin{DoxyVerb} -nondimensionalisation internal
+ -inlet_total_temperature  273.15
+ -inlet_total_pressure  [whatever]
+ -reference_length 1.
+ -inlet_mach_number 0.d0\end{DoxyVerb}
+
+
+By doing so, we have to choose a (dimensional) reference temperature and pressure. In the present case, these are set equal to the corresponding (total) quantities in the gas at rest\+: \[ p_{\mbox{ref}} = \mbox{whatever} \quad\mbox{and}\quad T_{\mbox{ref}} = T_1 \] The reference velocity (which is the isothermal sound speed) follows\+: \[ u_{\mbox{ref}} = \sqrt{R\,T_{\mbox{ref}}} = 247.92660034794133 \; \mbox{m/s} \] Having set the upstream uniform state as the reference one, the non-\/dimensional upstream state becomes\+: \[ p_1^* = 1 \quad\quad \rho_1^* = 1 \quad\quad T_1^* = 1 \]
+
+Using characteristic theory, it is not difficult to show that for a given point $x^*,t^*$ in the space-\/time plane
+
+\begin{eqnarray} u^*\left(x^*,t^*\right) &=& \dot{x}^*_p\left(\tau\right) \\ a^*\left(x^*,t^*\right) &=& a_p\left(\tau\right) = a^*_0 + \delta \dot{x}^*_p\left(\tau\right) \end{eqnarray}
+
+$\tau < t$ being the time instant when the straight characteristic line passing through $x^*,t^*$ meets the piston\textquotesingle{}s trajectory.
+
+In order to find $\tau^*$, one has to solve the following non-\/linear equation (which represents the equation of the straight characteristic line $\mathcal{C}^+$ in the unknown $\tau^*$
+
+The remeshing process is made by linear interpolation of node displacement between the fixed wall on the right and the moving wall on the left, i.\+e.
+
+\[ x_i\left(t\right) = \left(1-\beta\right) x_{\mbox{piston}} \left(t\right) + \beta l \] where\+: \[ \beta = x_i\left(t=0\right)/l \]
+
+Use\+: \begin{DoxyVerb} -ale_grid_motion_type 8\end{DoxyVerb}
+ to activate this kind of grid motion/deformation. \mbox{\Hypertarget{motion__type_8f_aa18bbb34201f26ab63552ce404a6c3a2}\label{motion__type_8f_aa18bbb34201f26ab63552ce404a6c3a2}} 
+\index{motion\_type.f@{motion\_type.f}!MOVEXYZ\_9@{MOVEXYZ\_9}}
+\index{MOVEXYZ\_9@{MOVEXYZ\_9}!motion\_type.f@{motion\_type.f}}
+\doxysubsubsection{\texorpdfstring{MOVEXYZ\_9()}{MOVEXYZ\_9()}}
+{\footnotesize\ttfamily subroutine M\+O\+V\+E\+X\+Y\+Z\+\_\+9 (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z0,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+N\+EW,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{NP,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Move the grid for the pitching and plunging N\+A\+CA.
+
+The plunging motion is given by\+: \[ h\left(t\right) = h_0 \sin \left(k\,t\right) \] where\+: \[ h_0 = 0.75 \] is currently hardwired into the code.
+
+The pitching motion is given by\+: \[ \theta\left(t\right) = \theta_0 \sin \left(k\,t+\phi\right) \] where $ \theta_0 $ can be set through the variable {\ttfamily A\+P\+I\+T\+C\+H(3)} using the runtime option \begin{DoxyVerb} -ale_pitching_amplitude APITCH(1),APITCH(2),APITCH(3)\end{DoxyVerb}
+ and $ k$ can be set through the variable {\ttfamily O\+P\+I\+T\+C\+H(3)} using the runtime option\+: \begin{DoxyVerb} -ale_pitching_omega OPITCH(1),OPITCH(2),OPITCH(3)\end{DoxyVerb}
+
+
+The phase shift $ \phi $ is also currently hardwired into the code and set equal to 0.
+
+Use\+: \begin{DoxyVerb} -ale_grid laplace\end{DoxyVerb}
+ to move the grid.
+
+One suitable grid can be found in\+: \begin{DoxyVerb} $HOME/grids/2D/aerofoils/naca0012/euler/pitching/nohanging/\end{DoxyVerb}
+
+
+Use \begin{DoxyVerb} -ale_grid_motion_type 9\end{DoxyVerb}
+ to activate this kind of grid motion.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z0} & the coordinates of the fixed grid \\
+\hline
+\mbox{\texttt{ out}}  & {\em X\+Y\+Z\+N\+EW} & the coordinates of the grid at time T\+I\+ME \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em NP} & number of gridpoints = N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the at the end of the current timestep \\
+\hline
+\end{DoxyParams}

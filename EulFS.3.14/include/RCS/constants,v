@@ -1,0 +1,36 @@
+head	1.1;
+access;
+symbols
+	release3_3_0:1.1;
+locks
+	abonfi:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2013.01.25.08.19.47;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Constants of common use (such as 3.141593)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      REAL*8 ZERO,HALF,ONE,TWO,MONE,GAM,GM1,GOGM1,GINV,GM1OG,GP1OG
+      REAL*8 PI,RGAS
+C
+      PARAMETER (ZERO = 0.00d0 , HALF = 0.5d0 , ONE = 1.00d0 , 
+     . TWO = 2.00d0 , MONE = -ONE, GAM = 1.40d0 , GM1  = GAM - ONE , 
+!    . TWO = 2.00d0 , MONE = -ONE, GAM = 5.0d0/3.d0 , GM1  = GAM - ONE , 
+     . GOGM1 = GAM / GM1, GINV = ONE / GAM , GM1OG = GM1 * GINV , 
+     . GP1OG = (GAM+ONE)*GINV, RGAS = 287.d0,
+     . PI = 3.14159265358979323846d0)
+
+@

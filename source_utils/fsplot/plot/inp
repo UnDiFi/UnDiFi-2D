@@ -1,0 +1,69 @@
+mesh      : /msa20/home/abonfi/grids/2D/aerofoils/naca0012/euler/NP2355/
+solution  : file010.dat
+mesh      : c
+dplot     : .TRUE.
+tecplot   : .FALSE.
+          : 1.E+7
+          : 0.62
+iclr      : 1
+aa        : 0.
+bb        : 1.
+cc        : -0.000001
+          : 0
+# 3D rakes: 11
+          : -00.012 000.000 -01.000 -00.012 000.000 001.000
+          : -00.024 000.000 -01.000 -00.024 000.000 001.000
+          : -00.036 000.000 -01.000 -00.036 000.000 001.000
+          : -00.048 000.000 -01.000 -00.048 000.000 001.000
+          : -00.059 000.000 -01.000 -00.059 000.000 001.000
+          : -00.070 000.000 -01.000 -00.070 000.000 001.000
+          : -00.083 000.000 -01.000 -00.083 000.000 001.000
+          : -00.095 000.000 -01.000 -00.095 000.000 001.000
+          : -00.108 000.000 -01.000 -00.108 000.000 001.000
+          : -00.157 000.000 -01.000 -00.157 000.000 001.000
+          : -00.202 000.000 -01.000 -00.202 000.000 001.000
+          : T
+          : probedata
+
+----------------------------------------------------------------------
+
+----------------------------------------------------------------------
+mesh      : /home/aldo/grids/2D/scalar/burger/file001.dat
+mesh      : /home/aldo/grids/2D/aerofoils/3ea/file001.dat
+mesh      : /home/aldo/grids/2D/fplate/turbo/jcc/file001.dat
+mesh      : /home/aldo/grids/2D/aerofoils/naca0012/navier/jcc/file001.dat
+mesh      : /home/aldo/grids/2D/ldc/file001.dat
+mesh      : /home/aldo/grids/2D/fplate/laminar/Re_2000/coarse/file001.dat
+mesh      : /home/aldo/grids/2D/scalar/burger/file001.dat
+mesh      : /home/aldo/grids/2D/potential/naca0012/file001.dat
+mesh      : /home/aldo/grids/2D/potential/medium/file001.dat
+mesh      : /home/aldo/grids/2D/aerofoils/naca0012/navier/structgridc/file001.dat
+mesh      : /home/aldo/grids/2D/scalar/advdiff/21x21/file001.dat
+mesh      : /home/aldo/grids/2D/aerofoils/naca0012/navier/hybrid/file001.dat
+mesh      : /home/aldo/grids/2D/scalar/source/file001.dat
+mesh      : /home/aldo/grids/2D/fplate/laminar/Re_2000/coarse/file001.dat
+mesh      : /home/aldo/grids/2D/fplate/turbo/struct/file001.dat
+mesh      : /home/aldo/grids/2D/jets/fine/file001.dat
+solution  : sol.dat
+solution  : k.dat
+mesh      : /home/aldo/grids/2D/potential/naca0012/file001.dat
+mesh      : /home/aldo/grids/3D/potential/bump.3d/file001.dat
+solution  : /home/aldo/grids/2D/potential/small/file003.dat
+mesh      : /home/aldo/grids/2D/potential/medium/file001.dat
+mesh      : /home/aldo/grids/2D/aerofoils/wake/file001.dat
+mesh      : /home/aldo/cylinder/file001.dat
+mesh      : /home/aldo/cylinder/file001.dat
+mesh      : /home/aldo/grids/2D/channels/nozzle/file001.dat
+mesh      : /home/aldo/nozzle/file001.dat
+mesh      : /home/aldo/grids/2D/aerofoils/naca0012/hybrid/file001.dat
+mesh      : /home/aldo/grids/2D/blasius/medium/file001.dat
+mesh      : /home/aldo/grids/2D/airfoils/visnaca/file001.dat
+mesh      : /home/aldo/grids/2D/aerofoils/naca0012/file001.dat
+mesh      : mesh.dat
+mesh      : /home/aldo/grids/2D/aerofoils/naca0012/file001.dat
+mesh      : /usr/home/aldo/grids/2D/channels/wedge/file001.dat
+mesh      : /usr/home/aldo/grids/2D/channels/sinechan/structured/file001.dat
+mesh      : /usr/home/aldo/grids/3D/potential/smallNACA/file001.dat
+mesh      : /usr/home/aldo/grids/3D/potential/sfera1.3d/file001.dat
+mesh      : /usr/home/aldo/grids/2D/scalar/burger/file001.dat
+mesh      : /home/aldo/grids/2D/channels/gamm/file001.dat

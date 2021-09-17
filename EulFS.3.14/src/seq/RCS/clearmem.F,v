@@ -1,0 +1,505 @@
+head	1.14;
+access
+	tesistim;
+symbols
+	release3_14_0:1.14
+	release3_13_0:1.14
+	release3_12_0:1.14
+	release3_11_0:1.14
+	release3_10_0:1.14
+	release3_8_0:1.13
+	release3_7_1:1.12
+	release3_7_0:1.12
+	release3_4_5:1.11
+	release3_4_4:1.11
+	release3_4_3:1.11
+	release3_4_2:1.11
+	release3_4_1:1.8
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.6;
+locks; strict;
+comment	@c @;
+
+
+1.14
+date	2020.04.24.06.04.16;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2013.09.02.15.10.10;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2013.07.18.14.48.59;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.07.17.10.37.13;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.06.25.07.10.19;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.06.06.10.50.12;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.08.08.17.34.21;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.12.20.16.31.04;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2002.09.14.08.59.53;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.11.09.14.25.57;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@a routine that destroys a number of PETSc objects
+@
+
+
+1.14
+log
+@the Petsc matrices have been grouped in an array of derived types
+@
+text
+@!> \brief
+!> This routine destroys PETSc Objects
+!>
+!> @@param[in] ZROE PETSc Vec where Roe's parameter vector is stored
+!> @@param[in] VISCT PETSc Vec where turbulent viscosity is stored
+!> @@param[in] A PETSc Mat where the Jacobian matrix for the mean flow equations is stored
+!> @@param[in] B PETSc Mat where the Jacobian matrix for the turbulent transport equations is stored
+!> @@param[in] C PETSc Mat where the implicit matrix for Laplace's equations is stored
+!> @@param[in] NodalBcs PETSc Index Sets where the nodal boundary conditions are stored
+!> @@param[in] NOFVAR number of dofs and leading dimension of ZROE
+!> \author $Author: abonfi $
+!> \version $Revision: 1.13 $
+!> \date $Date: 2020/04/23 09:46:19 $
+C
+      SUBROUTINE CLEARMEM( ZROE, VISCT, PetscMatrix, NodalBcs, NOFVAR )
+C
+C     $Id: clearmem.F,v 1.13 2020/04/23 09:46:19 abonfi Exp abonfi $
+C
+C
+C
+#include "petsc/finclude/petscpc.h"
+      use petscpc
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'bnd.h' 
+      INCLUDE 'implicit.h'
+      INCLUDE 'iset.h'
+      INCLUDE 'flags.com'
+      INCLUDE 'bnd.com'
+      INCLUDE 'time.com'
+C
+#include "mapping.com"
+C
+      INTEGER NOFVAR 
+      INTEGER IFAIL , I
+      Mat, dimension(*) :: PetscMatrix
+      Vec ZROE,VISCT
+      IS, dimension(0:*) :: NodalBcs
+C
+C
+      CALL VecDestroy(ZROE,IFAIL)
+      IF(TURBULENT.AND.SEGREGATED) CALL VecDestroy(VISCT,IFAIL)
+C
+      IF( TIMEIMPL )THEN
+          CALL MatDestroy(PetscMatrix(1),IFAIL)
+          IF(TURBULENT.AND.SEGREGATED)THEN
+              CALL MatDestroy(PetscMatrix(2),IFAIL)
+          ENDIF
+      ENDIF
+C
+      IF( ALE_LAPLACE_GRID )THEN
+         CALL MatDestroy(PetscMatrix(3),IFAIL)
+         CALL ISDestroy(NodalBcs(MotionSolverBCS),IFAIL)
+      ENDIF 
+C
+C     clear Index sets
+C
+      IF(NOFVAR.EQ.1)THEN
+         CALL ISDestroy(NodalBcs(SupersonicNodes),IFAIL)
+      ELSE
+         CALL ISDestroy(NodalBcs(SupersonicVariables),IFAIL)
+      ENDIF
+      CALL ISDestroy(NodalBcs(NoSlipVelocities),IFAIL)
+      CALL ISDestroy(NodalBcs(Isothermal),IFAIL)
+      IF(TURBULENT.AND.SEGREGATED)THEN
+          CALL ISDestroy(NodalBcs(NoSlipNodes),IFAIL)
+          CALL ISDestroy(NodalBcs(FreestreamTurbulence),IFAIL)
+      ENDIF
+
+      DO I = 0,NCOLOR
+         IF( MCOLOR(I) .NE. 0 )CALL ISDestroy(NodalBcs(I),IFAIL)
+      ENDDO
+C
+C
+#ifdef MPI
+      IF(TIMEIMPL)THEN
+          CALL ISLocalToGlobalMappingDestroy(mapping(1),IFAIL)
+          IF(TURBULENT.AND.SEGREGATED)
+     +    CALL ISLocalToGlobalMappingDestroy(mapping(2),IFAIL)
+      ENDIF 
+#endif
+C
+      RETURN
+ 
+      END
+@
+
+
+1.13
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@d12 2
+a13 3
+!> \version $Revision: 1.12 $
+!> \date $Date: 2016/11/10 11:25:13 $
+      SUBROUTINE CLEARMEM( ZROE, VISCT, A, B, C, NodalBcs, NOFVAR )
+d15 3
+a17 1
+C     $Id: clearmem.F,v 1.12 2016/11/10 11:25:13 abonfi Exp abonfi $
+a20 3
+CCCC#include "petsc/finclude/petscvec.h"
+CCCC#include "petsc/finclude/petscmat.h"
+CCCC#include "petsc/finclude/petscis.h"
+d23 1
+d37 1
+a37 1
+      Mat  A,B,C
+d46 1
+a46 1
+          CALL MatDestroy(A,IFAIL)
+d48 1
+a48 1
+              CALL MatDestroy(B,IFAIL)
+d53 1
+a53 1
+         CALL MatDestroy(C,IFAIL)
+@
+
+
+1.12
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d9 1
+d12 3
+a14 3
+!> \version $Revision: 1.11 $
+!> \date $Date: 2013/09/02 15:10:10 $
+      SUBROUTINE CLEARMEM( ZROE, VISCT, A, B, C, NOFVAR )
+d16 1
+a16 1
+C     $Id: clearmem.F,v 1.11 2013/09/02 15:10:10 abonfi Exp abonfi $
+a18 1
+      IMPLICIT NONE
+d20 3
+a22 4
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscis.h"
+d24 2
+d29 1
+a32 1
+
+a33 1
+#include "iset.com"
+d40 1
+d55 1
+a55 1
+         CALL ISDestroy(MotionSolverBCS,IFAIL)
+d61 1
+a61 1
+         CALL ISDestroy(SupersonicNodes,IFAIL)
+d63 1
+a63 1
+         CALL ISDestroy(SupersonicVariables,IFAIL)
+d65 2
+a66 2
+      CALL ISDestroy(NoSlipVelocities,IFAIL)
+      CALL ISDestroy(Isothermal,IFAIL)
+d68 2
+a69 2
+          CALL ISDestroy(NoSlipNodes,IFAIL)
+          CALL ISDestroy(FreestreamTurbulence,IFAIL)
+d73 1
+a73 1
+         IF( MCOLOR(I) .NE. 0 )CALL ISDestroy(bndrynodes(I),IFAIL)
+@
+
+
+1.11
+log
+@updated Doxygen documentation
+@
+text
+@d11 2
+a12 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d15 1
+a15 1
+C     $Id: clearmem.F,v 1.10 2013/07/18 14:48:59 abonfi Exp abonfi $
+d20 5
+a24 5
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscis.h"
+#include "finclude/petscpc.h"
+@
+
+
+1.10
+log
+@introduced ALE_LAPLACE_GRID
+@
+text
+@d1 12
+d15 1
+a15 11
+C     $Id: clearmem.F,v 1.9 2013/07/17 10:37:13 abonfi Exp abonfi $
+C
+C     This routine destroys PETSc Objects
+C     Warnings:
+C     --------
+C
+C  =========================================================
+C     N.B. when INITIAL_GUESS_NONZERO is defined in update3.F
+C     the solution vector X is not destroyed
+C  =========================================================
+C
+@
+
+
+1.9
+log
+@removed the Petsc Vec XYZdot, i.e. the grid velocities
+@
+text
+@d3 1
+a3 1
+C     $Id: clearmem.F,v 1.8 2013/06/25 07:10:19 abonfi Exp abonfi $
+d50 1
+a50 1
+      IF( ALE_READ_GRID )THEN
+@
+
+
+1.8
+log
+@first steps towards the implementation of deformable grids
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE CLEARMEM( ZROE, VISCT, XYZdot, A, B, C, NOFVAR )
+d3 1
+a3 1
+C     $Id: clearmem.F,v 1.7 2013/06/06 10:50:12 abonfi Exp abonfi $
+d37 1
+a37 1
+      Vec ZROE,VISCT,XYZdot
+a50 1
+         CALL VecDestroy(XYZdot,IFAIL)
+d52 1
+@
+
+
+1.7
+log
+@removed unused Index Sets and added new ones
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE CLEARMEM( ZROE, VISCT, A, B, NOFVAR )
+d3 1
+a3 1
+C     $Id: clearmem.F,v 1.6 2011/09/16 07:19:48 abonfi Exp abonfi $
+d28 1
+d36 2
+a37 2
+      Mat  A,B
+      Vec ZROE,VISCT
+d49 5
+@
+
+
+1.6
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d3 1
+a3 1
+C     $Id: clearmem.F,v 1.5 2009/06/11 13:10:58 abonfi Exp abonfi $
+d24 5
+a28 1
+      INTEGER IFAIL 
+d34 1
+a38 3
+      INCLUDE 'implicit.h'
+      INCLUDE 'flags.com'
+C
+a56 4
+#if 0
+      CALL ISDestroy(CnstPressure,IFAIL)
+      CALL ISDestroy(Internal_inflow,IFAIL)
+#endif
+d62 4
+@
+
+
+1.5
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d3 1
+a3 1
+C     $Id: clearmem.F,v 1.4 2005/08/08 17:34:21 aldo Exp abonfi $
+d18 1
+a18 1
+#include "finclude/petsc.h"
+@
+
+
+1.4
+log
+@removed unused variables
+@
+text
+@d3 1
+a3 1
+C     $Id: clearmem.F,v 1.3 2004/12/20 16:31:04 aldo Exp aldo $
+d18 5
+a22 5
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscpc.h"
+@
+
+
+1.3
+log
+@removed shell preconditioners
+@
+text
+@d3 1
+a3 1
+C     $Id: clearmem.F,v 1.2 2002/09/14 08:59:53 abonfi Exp $
+a31 1
+      CHARACTER STRING*255
+a32 1
+      PetscTruth user_defined_pc
+@
+
+
+1.2
+log
+@now supports coupled solution strategy for RANS
+@
+text
+@d3 1
+a3 1
+C     $Id: clearmem.F,v 1.1 2001/11/09 14:25:57 abonfi Exp abonfi $
+a27 1
+#include "sssor.com"
+a75 14
+      call PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +    '-user_defined_pc',string,user_defined_pc,IFAIL)
+C 
+      IF (user_defined_pc .eq. PETSC_TRUE) THEN
+           IF( string(1:5) .EQ. "sssor" ) THEN
+      call PCSSSORDestroy( IFAIL )
+          ELSEIF( string(1:9) .EQ. "pierluigi" ) THEN
+      call PCPierluigiDestroy( IFAIL )
+          ELSEIF( string(1:4) .EQ. "aldo" ) THEN
+      call PCAldoDestroy( IFAIL )
+          ENDIF
+      ENDIF
+C
+C 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+C     $Id: iset.F,v 1.17 2001/07/19 09:55:54 abonfi Exp $
+d41 1
+a41 1
+      IF(TURBULENT) CALL VecDestroy(VISCT,IFAIL)
+d45 1
+a45 1
+          IF(TURBULENT)THEN
+d63 1
+a63 1
+      IF(TURBULENT)THEN
+d72 1
+a72 1
+          IF(TURBULENT)
+@

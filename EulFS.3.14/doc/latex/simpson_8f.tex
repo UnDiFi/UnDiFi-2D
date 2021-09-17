@@ -1,0 +1,61 @@
+\hypertarget{simpson_8f}{}\doxysection{src/util/simpson.f File Reference}
+\label{simpson_8f}\index{src/util/simpson.f@{src/util/simpson.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{simpson_8f_ab020f1e204629b20d9eb01726d1f3190}{S\+I\+M\+P\+S\+ON}} (N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+D\+OF, Z\+R\+OE, X\+Y\+Z\+D\+OT, F\+A\+CN, F\+L\+XN, F\+L\+U\+XF)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{simpson_8f_ab020f1e204629b20d9eb01726d1f3190}\label{simpson_8f_ab020f1e204629b20d9eb01726d1f3190}} 
+\index{simpson.f@{simpson.f}!SIMPSON@{SIMPSON}}
+\index{SIMPSON@{SIMPSON}!simpson.f@{simpson.f}}
+\doxysubsubsection{\texorpdfstring{SIMPSON()}{SIMPSON()}}
+{\footnotesize\ttfamily subroutine S\+I\+M\+P\+S\+ON (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+D\+OF,  }\item[{double precision, dimension(ndof,nofvert)}]{Z\+R\+OE,  }\item[{double precision, dimension(ndim,nofvert)}]{X\+Y\+Z\+D\+OT,  }\item[{double precision, dimension(ndim)}]{F\+A\+CN,  }\item[{double precision, dimension(ndof,nofvert)}]{F\+L\+XN,  }\item[{external}]{F\+L\+U\+XF }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the integral of the flux {\ttfamily F\+L\+U\+XF} through a linear/triangular face using Simpson\textquotesingle{}s rule
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices for a cell = N\+D\+I\+M+1 \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+OF} & nof degrees of freedom in vector Z\+R\+OE, also leading dimension of F\+L\+XN \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Roe\textquotesingle{}s parameter vector \\
+\hline
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z\+D\+OT} & the cartesian components of the grid velocity $ \mathbf{b}$ \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+A\+CN} & the cartesian components of the scaled inward normal to the face \\
+\hline
+\mbox{\texttt{ out}}  & {\em F\+L\+XN} & the eulerian (inviscid) nodal fluxes\+: the first N\+D\+IM columns return the fluxes in the N\+D\+IM vertices of the face, the last one (N\+O\+F\+V\+E\+RT) is used to store the face value computed according to Simpson\textquotesingle{}s rule \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+L\+U\+XF} & is the subroutine used to compute the flux the calling sequence is\+: \begin{DoxyVerb} FLUXF((NDIM,FACN,ZROE(1,I),XYZDOT,FLXN(1,I))\end{DoxyVerb}
+\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+7 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:54\+:05 
+\end{DoxyParagraph}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000011}{Bug}}]In 3D it uses the midpoint rule, N\+OT Simpson\textquotesingle{}s \end{DoxyRefDesc}

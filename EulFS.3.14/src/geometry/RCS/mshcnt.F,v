@@ -1,0 +1,733 @@
+head	1.17;
+access
+	caspur
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.17
+	release3_13_0:1.17
+	release3_12_0:1.16
+	release3_11_0:1.16
+	release3_10_0:1.16
+	release3_8_0:1.16
+	release3_7_1:1.16
+	release3_7_0:1.14
+	release3_4_5:1.14
+	release3_4_4:1.14
+	release3_4_3:1.14
+	release3_4_2:1.14
+	release3_4_1:1.14
+	release3_4_0:1.14
+	release3_3_5:1.14
+	release3_3_4:1.14
+	release3_3_3:1.14
+	release3_3_2:1.14
+	release3_3_1:1.14
+	release3_3_0:1.14;
+locks; strict;
+comment	@c @;
+
+
+1.17
+date	2020.09.30.08.32.35;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2020.03.28.10.05.17;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2020.03.28.09.46.06;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2012.12.20.10.58.17;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2005.10.22.11.10.05;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2004.03.17.20.30.55;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2002.10.25.06.04.07;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.09.29.09.50.56;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.09.14.09.45.41;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.09.03.10.55.16;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.08.31.15.17.29;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	99.08.31.09.43.04;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.11.17.17.06.29;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.08.24.10.17.13;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.07.13.28.29;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Redas in mesh connectivity informations
+@
+
+
+1.17
+log
+@fixed error when calling I4Mat_Print
+@
+text
+@      SUBROUTINE MSHCNT(VCORG,NP,NGHOST,GHOSTS,NDIM,ICELNOD,ICELCEL,
+     +                  NOFVERT,NELEM,IBNDFAC,NBFAC,NBINT,NHOLE,NFACE,
+     +                  MAP,NPNOD,A,JA,IA,DEGREE,RCLINE,LDA,NCL,NZR,
+     +                  IXDRS)
+C
+C     $Id: mshcnt.F,v 1.16 2020/03/28 10:05:17 abonfi Exp abonfi $
+C
+C     This routine reads the meshpoints, mesh connectivity
+C     and boundary structure ..
+C     in the sequential case NP = NPOIN+NPNOD
+C     in the parallel   case NP = NPOIN+NPNOD+NGHOST
+C
+C
+      IMPLICIT NONE
+      INCLUDE'verbose.com'
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+      INCLUDE'io.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER IXDRS(*),NBFAC,NDIM,NELEM,NFACE,NBINT,NHOLE,NOFVERT,
+     +        NP,NGHOST,NPNOD,NCL,LDA,NZR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION VCORG(NDIM,NP)
+      INTEGER IBNDFAC(3,NBFAC),ICELNOD(NOFVERT,NELEM),
+     +ICELCEL(NOFVERT,NELEM),GHOSTS(NGHOST),MAP(NPNOD),
+     +IA(NCL+1),JA(LDA,NZR),DEGREE(NCL)
+      DOUBLE PRECISION A(LDA,NZR),RCLINE(NCL)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IFAIL,NITEMS
+C     ..
+C     .. External Subroutines ..
+      INTEGER  IXDRCLOSE,IXDRIMAT
+      EXTERNAL IXDRCLOSE,IXDRIMAT
+      EXTERNAL R8Mat_Print,I4Mat_Print
+#ifdef PARCH_t3d
+      INTEGER  IXDRRMAT64
+      EXTERNAL IXDRRMAT64
+#else
+      INTEGER  IXDRDMAT
+      EXTERNAL IXDRDMAT
+#endif
+C     ..
+C     .. Data statements ..
+      DATA IFAIL/0/
+C     ..
+C
+C     Reading nodal coordinates ..
+C
+      WRITE (NOUT,FMT=2000) MY_PE,NP,NGHOST,
+     +NGHOST*100./REAL(NP),NDIM
+C
+C---------- COMPUTE THE NUMBER OF NORMALS ACCORDING TO Euler's FORMULA
+C
+C     NBINT is the number of interprocessor edges/faces
+C
+      IF (NDIM.EQ.2) THEN
+          NFACE = 3*NP - (NBFAC+NBINT) - 3 + 3*NHOLE
+      ELSE
+          NFACE = 2*NELEM + (NBFAC+NBINT)/2
+      ENDIF
+C
+#ifdef PARCH_t3d
+      IFAIL = IXDRRMAT64(IXDRS(1),NDIM*NP,VCORG)
+#else
+      IFAIL = IXDRDMAT(IXDRS(1),NDIM*NP,VCORG)
+#endif
+      IF (IVERBOSE.GT.1) CALL R8Mat_Print('General',' ',NDIM,NP,VCORG,
+     +                               NDIM,'Nodal coordinates',IFAIL)
+C
+C     Reading mesh connectivity
+C
+      WRITE (NOUT,FMT=3000) MY_PE,NELEM,NOFVERT
+C
+      IFAIL = IXDRIMAT(IXDRS(1),NOFVERT*NELEM,ICELNOD)
+      IF (IVERBOSE.GT.1) CALL I4Mat_Print('General',' ',NOFVERT,NELEM,
+     +                               ICELNOD,NOFVERT,
+     +                               'Mesh connectivity',IFAIL)
+C
+C     Reading boundary data
+C
+      WRITE (NOUT,FMT=4000) MY_PE,NBFAC,NBINT,NHOLE
+C
+      IFAIL = IXDRIMAT(IXDRS(1),3*NBFAC,IBNDFAC)
+      IF (IVERBOSE.GT.1) CALL I4Mat_Print('General',' ',3,NBFAC,
+     +                        IBNDFAC,3,'Boundary info',IFAIL)
+      IF(NGHOST.GT.0)IFAIL = IXDRIMAT(IXDRS(1),NGHOST,GHOSTS)
+      IFAIL = IXDRCLOSE(IXDRS(1))
+C
+C     Reading cell neighbours data
+C
+      IFAIL = IXDRIMAT( IXDRS(2) , NOFVERT*NELEM , ICELCEL )
+      IF (IVERBOSE.GT.1) CALL I4Mat_Print('General',' ',NOFVERT,NELEM,
+     +                   ICELCEL,NOFVERT,'Neighbouring elements',IFAIL)
+      IFAIL = IXDRCLOSE( IXDRS(2) )
+C
+C     Reading periodic nodes ..
+C
+      WRITE (NOUT,FMT=2100) MY_PE,NPNOD
+C
+C
+C MAP -- Integer MAP(1:NPNOD)
+C
+C     maps the NPNOD periodic nodes onto the interior and ghost
+C     nodes; 1<=MAP(1:NPNOD)<=NPOIN+NGHOST
+C
+      IF(NPNOD.NE.0)THEN
+        IFAIL = IXDRIMAT(IXDRS(4),NPNOD,MAP)
+        IF (IVERBOSE.GT.1)CALL I4Mat_Print('General',' ',1,NPNOD,
+     +            MAP,1,'Periodic nodes',IFAIL)
+        IFAIL = IXDRCLOSE(IXDRS(4))
+      ENDIF
+C
+C     .. Reading c-lines linked list from the mesh file ..
+C
+      IF(NCL.NE.0)THEN
+C
+C     Reading c-lines ..
+C
+          WRITE (NOUT,FMT=2300) MY_PE,NCL,NZR
+          IFAIL = IXDRDMAT( ixdrs(5) , NCL ,  RCLINE )
+          IFAIL = IXDRIMAT( ixdrs(5) , NCL+1 , IA )
+          IFAIL = IXDRIMAT( ixdrs(5) , NCL   , DEGREE )
+          NITEMS = IA(NCL+1)-IA(1)
+          IF( NZR .NE. NITEMS )STOP' aborted while reading c-lines '
+          IFAIL = IXDRIMAT( ixdrs(5) , LDA*NZR , JA )
+          IFAIL = IXDRDMAT( ixdrs(5) , LDA*NZR ,  A )
+          IFAIL = IXDRCLOSE( ixdrs(5) )
+          IF (IVERBOSE.GT.1)THEN
+               CALL I4Mat_Print('General',' ',1,NCL,DEGREE,1,
+     &         'DEGREE pointer ',IFAIL)
+               CALL I4Mat_Print('General',' ',1,NCL+1,IA,1,
+     &         'IA pointer ',IFAIL)
+               CALL I4Mat_Print('General',' ',LDA,NZR,JA,LDA,
+     &         'Meshpoints neighbours ',IFAIL)
+               CALL R8Mat_Print('General',' ',LDA,NZR,A,LDA,
+     &         'Area coord + theta ',IFAIL)
+          ENDIF
+      ENDIF
+C
+C
+      RETURN
+ 2000 FORMAT (/,/,' INPUT OF NODES',10X,'ON PROCESSOR ',I3,/,1X,
+     +       15 ('='),/,10X,
+     +       'MAX. NUMBER OF NODES (NPOIN+NGHOST+NPNOD)=',I7,/,10X,
+     +       'MAX. NUMBER OF GHOST NODES       (NGHOST)=',I6,/,10X,
+     +       'RATIO NGHOST/(NPOIN+NGHOST+NPNOD)        =',F6.2,/,10X,
+     +       'DIMENSIONS OF THE PROBLEM          (NDIM)=',I1,/)
+ 2100 FORMAT (/,/,' PERIODIC NODES',10X,'ON PROCESSOR ',I3,/,1X,
+     +       15 ('='),/,10X,
+     +       'NUMBER OF PERIODIC NODES   (NPOIN)=',I6,/)
+ 2300 FORMAT (/,/,' INPUT OF C-LINES ',10X,'ON PROCESSOR ',I3,/,1X,
+     +       15 ('='),/,10X,
+     +       'NUMBER OF C-LINES         (NCL)=',I3,/,10X,
+     +       'NUMBER OF NODES ON ALL C-LINES =',I6,/)
+ 3000 FORMAT (/,/,' INPUT OF ELEMENTS',10X,'ON PROCESSOR',I3,/,1X,
+     +       17 ('='),/,10X,
+     +       'NUMBER OF ELEMENTS            (NELEM)=',I8,/,10X,
+     +       'NUMBER OF NODES PER ELEMENT (NOFVERT)=',6X,I1,/)
+ 4000 FORMAT (/,/,' INPUT OF BOUNDARIES',10X,'ON PROCESSOR ',I3,/,1X,
+     +       19 ('='),/,10X,
+     +       'NUMBER OF BOUNDARY FACES     (NBFAC)=',I5,/,10X,
+     +       'NUMBER OF INTER-PROCS. FACES (NBINT)=',I5,/,10X,
+     +       'NUMBER OF HOLES              (NHOLE)=',I5,/)
+      END
+@
+
+
+1.16
+log
+@the 72 cols limit had been exceed, but the compiler did not warn
+@
+text
+@d6 1
+a6 1
+C     $Id: mshcnt.F,v 1.15 2020/03/28 09:46:06 abonfi Exp abonfi $
+d79 2
+a80 2
+     +                               ICELNOD,NOFVERT,'Mesh connectivity'
+     +                               ,IFAIL)
+d132 1
+a132 1
+               CALL I4Mat_Print('General',' ',IA,NCL,DEGREE,1,
+d134 1
+a134 1
+               CALL I4Mat_Print('General',' ',IA,NCL+1,IA,1,
+@
+
+
+1.15
+log
+@renamed a call
+@
+text
+@d6 1
+a6 1
+C     $Id: mshcnt.F,v 1.14 2012/12/20 10:58:17 abonfi Exp abonfi $
+d87 2
+a88 2
+      IF (IVERBOSE.GT.1) CALL I4Mat_Print('General',' ',3,NBFAC,IBNDFAC,3,
+     +                               'Boundary info',IFAIL)
+@
+
+
+1.14
+log
+@changed FORMAT statements
+@
+text
+@d6 1
+a6 1
+C     $Id: mshcnt.F,v 1.13 2005/10/22 11:10:05 abonfi Exp abonfi $
+d37 1
+a37 1
+      EXTERNAL X04CAF,X04EAF
+d70 1
+a70 1
+      IF (IVERBOSE.GT.1) CALL X04CAF('General',' ',NDIM,NP,VCORG,
+d78 1
+a78 1
+      IF (IVERBOSE.GT.1) CALL X04EAF('General',' ',NOFVERT,NELEM,
+d87 1
+a87 1
+      IF (IVERBOSE.GT.1) CALL X04EAF('General',' ',3,NBFAC,IBNDFAC,3,
+d95 1
+a95 1
+      IF (IVERBOSE.GT.1) CALL X04EAF('General',' ',NOFVERT,NELEM,
+d111 1
+a111 1
+        IF (IVERBOSE.GT.1)CALL X04EAF('General',' ',1,NPNOD,
+d132 1
+a132 1
+               CALL X04EAF('General',' ',IA,NCL,DEGREE,1,
+d134 1
+a134 1
+               CALL X04EAF('General',' ',IA,NCL+1,IA,1,
+d136 1
+a136 1
+               CALL X04EAF('General',' ',LDA,NZR,JA,LDA,
+d138 1
+a138 1
+               CALL X04CAF('General',' ',LDA,NZR,A,LDA,
+@
+
+
+1.13
+log
+@implemented c-lines
+@
+text
+@d6 1
+a6 1
+C     $Id: mshcnt.F,v 1.12 2004/03/17 20:30:55 aldo Exp $
+d147 1
+a147 1
+     +       'MAX. NUMBER OF NODES (NPOIN+NGHOST+NPNOD)=',I6,/,10X,
+d150 1
+a150 1
+     +       'DIMENSIONS OF THE PROBLEM          (NDIM)=',I5,/)
+d160 1
+a160 1
+     +       'NUMBER OF ELEMENTS            (NELEM)=',I7,/,10X,
+@
+
+
+1.12
+log
+@now reads ALL mesh info including cell neighbours
+and periodic mapping
+@
+text
+@d3 2
+a4 1
+     +                  MAP,NPNOD,IXDRS)
+d6 1
+a6 1
+C     $Id:$
+a17 1
+C
+a19 4
+C ICELNOD -- Integer ICELNOD(1:NOFVERT,1:NELEM)
+C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+C            global node number of the i-th vertex of the ielem-th cell
+C
+d22 1
+a22 1
+     +        NP,NGHOST,NPNOD
+d27 3
+a29 1
+     +ICELCEL(NOFVERT,NELEM),GHOSTS(NGHOST),MAP(NPNOD)
+d32 1
+a32 1
+      INTEGER IFAIL
+d113 4
+d118 23
+a140 1
+        IFAIL = IXDRCLOSE(IXDRS(4))
+d143 1
+d154 4
+@
+
+
+1.11
+log
+@minor cosmetic changes
+@
+text
+@d1 5
+a5 3
+      SUBROUTINE MSHCNT(VCORG,NP,NGHOST,GHOSTS,
+     +                  NDIM,ICELNOD,NOFVERT,NELEM,
+     +                  IBNDFAC,NBFAC,NBINT,NHOLE,NFACE,IXDRS,FILENAME)
+d8 1
+a8 1
+C        and boundary structure ..
+d25 2
+a26 3
+      INTEGER IXDRS,NBFAC,NDIM,NELEM,NFACE,NBINT,NHOLE,NOFVERT,
+     +        NP,NGHOST
+      CHARACTER FILENAME* (*)
+d30 2
+a31 1
+      INTEGER IBNDFAC(3,NBFAC),ICELNOD(NOFVERT,NELEM),GHOSTS(NGHOST)
+d37 1
+a37 1
+      INTEGER IXDRCLOSE,IXDRIMAT
+d41 1
+a41 1
+      INTEGER IXDRRMAT64
+d44 1
+a44 1
+      INTEGER IXDRDMAT
+a55 8
+
+ 2000 FORMAT (/,/,' INPUT OF NODES',10X,'ON PROCESSOR ',I3,/,1X,
+     +       15 ('='),/,10X,
+     +       'MAX. NUMBER OF NODES (NPOIN+NGHOST+NPNOD)=',I6,/,10X,
+     +       'MAX. NUMBER OF GHOST NODES       (NGHOST)=',I6,/,10X,
+     +       'RATIO NGHOST/(NPOIN+NGHOST+NPNOD)        =',F5.2,/,10X,
+     +       'DIMENSIONS OF THE PROBLEM          (NDIM)=',I5,/)
+C    4  10X,'WORKSPACE IN REAL*8 WORDS            (NVA)=',I10/)
+d68 1
+a68 1
+      IFAIL = IXDRRMAT64(IXDRS,NDIM*NP,VCORG)
+d70 1
+a70 1
+      IFAIL = IXDRDMAT(IXDRS,NDIM*NP,VCORG)
+a77 5
+
+ 3000 FORMAT (/,/,' INPUT OF ELEMENTS',10X,'ON PROCESSOR',I3,/,1X,
+     +       17 ('='),/,10X,
+     +       'MAX. NUMBER OF ELEMENTS            (NELEM)=',I7,/,10X,
+     +       'MAX. NUMBER OF NODES PER ELEMENT (NOFVERT)=',6X,I1,/)
+d79 1
+a79 1
+      IFAIL = IXDRIMAT(IXDRS,NOFVERT*NELEM,ICELNOD)
+a86 6
+
+ 4000 FORMAT (/,/,' INPUT OF BOUNDARIES',10X,'ON PROCESSOR ',I3,/,1X,
+     +       19 ('='),/,10X,
+     +       'MAX. NUMBER OF BOUNDARY FACES   (NBFAC)=',I5,/,10X,
+     +       'MAX. NUMBER OF INTER-PROCS. FACES   (NBINT)=',I5,/,10X,
+     +       '     NUMBER OF HOLES            (NHOLE)=',I5,/)
+d88 1
+a88 1
+      IFAIL = IXDRIMAT(IXDRS,3*NBFAC,IBNDFAC)
+d91 27
+a117 2
+      IF(NGHOST.GT.0)IFAIL = IXDRIMAT(IXDRS,NGHOST,GHOSTS)
+      IFAIL = IXDRCLOSE(IXDRS)
+d120 18
+a137 1
+
+@
+
+
+1.10
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d1 1
+a1 2
+C
+      SUBROUTINE MSHCNT(VCORG,NPOIN,nghost,ghosts,
+d7 3
+d24 1
+a24 1
+     +        NPOIN,nghost
+d28 2
+a29 2
+      DOUBLE PRECISION VCORG(NDIM,NPOIN)
+      INTEGER IBNDFAC(3,NBFAC),ICELNOD(NOFVERT,NELEM),ghosts(nghost)
+d52 2
+a53 2
+      WRITE (NOUT,FMT=2000) MY_PE,NPOIN,NGHOST,
+     +NGHOST*100./REAL(NPOIN),NDIM
+d57 5
+a61 5
+     +       'MAX. NUMBER OF NODES             (NPOIN)=',I6,/,10X,
+     +       'MAX. NUMBER OF GHOST NODES      (NGHOST)=',I6,/,10X,
+     +       'RATIO NGHOST/NPOIN                      =',F5.2,/,10X,
+     +       'DIMENSIONS OF THE PROBLEM         (NDIM)=',I5,/)
+C    4  10X,'WORKSPACE IN REAL*8 WORDS           (NVA)=',I10/)
+d68 1
+a68 1
+          NFACE = 3*NPOIN - (NBFAC+NBINT) - 3 + 3*NHOLE
+d74 1
+a74 1
+      IFAIL = IXDRRMAT64(IXDRS,NDIM*NPOIN,VCORG)
+d76 1
+a76 1
+      IFAIL = IXDRDMAT(IXDRS,NDIM*NPOIN,VCORG)
+d78 1
+a78 1
+      IF (IVERBOSE.GT.1) CALL X04CAF('General',' ',NDIM,NPOIN,VCORG,
+@
+
+
+1.9
+log
+@printing number of GHOST meshpoints
+@
+text
+@d14 1
+a14 1
+      INCLUDE'IO'
+@
+
+
+1.8
+log
+@changed PARCH_t3e into PARCH_t3d to reflect the fact
+that petscconf.h defines PARCH_t3d for the T3E
+@
+text
+@d50 2
+a51 1
+      WRITE (NOUT,FMT=2000) MY_PE,NPOIN,NDIM
+d55 3
+a57 2
+     +       'MAX. NUMBER OF NODES             (NPOIN)=',I5,/,10X,
+C    +       'MAX. NUMBER OF D.O.F. PER NODE  (NOFVAR)=',I5,/,10X,
+d97 1
+a97 1
+ 4000 FORMAT (/,/,' INPUT OF BOUNDARIES'10X,'ON PROCESSOR ',I3,/,1X,
+@
+
+
+1.7
+log
+@minor changes
+@
+text
+@d36 1
+a36 1
+#ifdef PARCH_t3e
+d69 1
+a69 1
+#ifdef PARCH_t3e
+@
+
+
+1.6
+log
+@version for CRAY t3e
+@
+text
+@d35 1
+a35 1
+      EXTERNAL X04CAF,X04EAF,IXDRCLOSE,IXDRDMAT,IXDRIMAT
+@
+
+
+1.5
+log
+@changed call to XDR routines to comply to rev. 2.0
+of that library
+@
+text
+@d33 2
+a34 2
+      INTEGER IXDRCLOSE,IXDRDMAT,IXDRIMAT
+      EXTERNAL IXDRCLOSE,IXDRDMAT,IXDRIMAT
+d36 7
+d69 3
+d73 1
+@
+
+
+1.4
+log
+@add the PE number in the messages
+@
+text
+@d33 3
+a35 1
+      EXTERNAL X04CAF,X04EAF,XDRCLOSE,XDRDMAT,XDRIMAT
+d62 1
+a62 1
+      CALL XDRDMAT(IXDRS,NDIM*NPOIN,VCORG)
+d75 1
+a75 1
+      CALL XDRIMAT(IXDRS,NOFVERT*NELEM,ICELNOD)
+d90 1
+a90 1
+      CALL XDRIMAT(IXDRS,3*NBFAC,IBNDFAC)
+d93 2
+a94 2
+      IF(NGHOST.GT.0)CALL XDRIMAT(IXDRS,NGHOST,GHOSTS)
+      CALL XDRCLOSE(IXDRS)
+@
+
+
+1.3
+log
+@add NBINT: the number of interprocessor boundaries
+@
+text
+@d11 2
+d39 1
+a39 1
+C     .. Reading nodal coordinates ..
+d41 1
+a41 1
+      WRITE (NOUT,FMT=2000) NPOIN,NDIM
+d43 2
+a44 1
+ 2000 FORMAT (/,/,' INPUT OF NODES ',/,' ',15 ('='),/,10X,
+d64 1
+a64 1
+C     Reading mesh connectivity ..
+d66 1
+a66 1
+      WRITE (NOUT,FMT=3000) NELEM,NOFVERT
+d68 2
+a69 1
+ 3000 FORMAT (/,/,' INPUT OF ELEMENTS ',/,' ',17 ('='),/,10X,
+d78 1
+a78 1
+C     Reading boundary data ..
+d80 1
+a80 1
+      WRITE (NOUT,FMT=4000) NBFAC,NHOLE
+d82 2
+a83 1
+ 4000 FORMAT (/,/,' INPUT OF BOUNDARIES ',/,' ',19 ('='),/,10X,
+d85 1
+d91 1
+a91 1
+      if(nghost.gt.0)CALL XDRIMAT(IXDRS,nghost,ghosts)
+@
+
+
+1.2
+log
+@handles ghost nodes in the parallel case
+@
+text
+@d4 1
+a4 1
+     +                  IBNDFAC,NBFAC,NHOLE,NFACE,IXDRS,FILENAME)
+d6 1
+a6 1
+C     .. This routine reads the meshpoints, mesh connectivity
+d19 2
+a20 1
+      INTEGER IXDRS,NBFAC,NDIM,NELEM,NFACE,NHOLE,NOFVERT,NPOIN,nghost
+d49 2
+d52 1
+a52 1
+          NFACE = 3*NPOIN - NBFAC - 3 + 3*NHOLE
+d54 1
+a54 4
+          NFACE = 2*NELEM + NBFAC/2
+caldo
+          nface = 1.5*nface
+caldo
+d61 1
+a61 1
+C     .. Reading mesh connectivity ..
+d74 1
+a74 1
+C     .. Reading boundary data ..
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 3
+a4 2
+      SUBROUTINE MSHCNT(VCORG,NPOIN,NDIM,ICELNOD,NOFVERT,NELEM,IBNDFAC,
+     +                  NBFAC,NHOLE,NFACE,IXDRS,FILENAME)
+d19 1
+a19 1
+      INTEGER IXDRS,NBFAC,NDIM,NELEM,NFACE,NHOLE,NOFVERT,NPOIN
+d24 1
+a24 1
+      INTEGER IBNDFAC(3,NBFAC),ICELNOD(NOFVERT,NELEM)
+d52 3
+d85 1
+@

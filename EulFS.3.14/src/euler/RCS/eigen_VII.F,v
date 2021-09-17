@@ -1,0 +1,755 @@
+head	1.10;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.10
+	release3_13_0:1.10
+	release3_12_0:1.10
+	release3_11_0:1.10
+	release3_10_0:1.10
+	release3_8_0:1.10
+	release3_7_1:1.10
+	release3_7_0:1.9
+	release3_4_5:1.9
+	release3_4_4:1.9
+	release3_4_3:1.9
+	release3_4_2:1.9
+	release3_4_1:1.9
+	release3_4_0:1.9
+	release3_3_5:1.9
+	release3_3_4:1.9
+	release3_3_3:1.9
+	release3_3_2:1.9
+	release3_3_1:1.8
+	release3_3_0:1.7;
+locks; strict;
+comment	@c @;
+
+
+1.10
+date	2020.03.28.09.51.14;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.01.29.14.33.34;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.01.26.11.24.25;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.10.04.12.43.05;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2002.09.13.08.42.01;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2002.08.24.10.10.37;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.10.13.13.16.37;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.08.22.06.58.50;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.02.09.17.34.06;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.01.03.17.23.34;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Eigenvalues for the compressible euler equations
+@
+
+
+1.10
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE Eigen_VII(Matrix,LDA,DVDZ,DUDV,NDIM,LDB)
+C
+C     $Id: eigen_VII.F,v 1.9 2013/01/29 14:33:34 abonfi Exp abonfi $
+C
+C     Symmetrizing variables (dS,dp/(r*a),velocity) variables
+C        as observed by E. van der Weide any choice of variables,
+C        at least when using linear schemes, gives the same result
+C
+C     define FSPL_USE_DEBUG for debugging purposes, i.e. when using
+C     -check
+C
+C
+C
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+      INCLUDE 'three.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'pfcgas.com'
+C
+C
+      INTEGER LDA,NDIM,LDB
+C
+      DOUBLE PRECISION Matrix(LDA,LDA,*),DVDZ(LDB,LDB),
+     +DUDV(LDB,LDB)
+#ifdef FSPL_USE_DEBUG
+      DOUBLE PRECISION WORK(NMAX*NMAX)
+      LOGICAL NULLMAT
+#endif
+C
+      DOUBLE PRECISION DENS,DENSABARINV,DENSINVABARINV,Z1SQRINV
+      INTEGER IDIM,ifail
+C
+C
+      DOUBLE PRECISION DDOT
+      EXTERNAL         DDOT
+C
+      DENS = UAVG(1)
+      DENSABARINV = DENS/ABAR
+      DENSINVABARINV = ONE/(DENS*ABAR)
+C
+C     Advection speed for entropy ..
+C
+      R_SPEED(1,1) = UAVG(3)
+      R_SPEED(2,1) = UAVG(4)
+      IF(NDIM.EQ.3)R_SPEED(3,1) = UAVG(5)
+C
+C     Symmetrizing variables ..
+C
+      IF(ICHECK.NE.0)THEN 
+C
+C     N.B. GRAD_CHAR  non serve, tranne quando ICHECK <> 0
+C          cosi` la matrice, tranne che si utilizzi la
+C          decomposizione numerica. 
+C
+          CALL GRADPRIM(-10,NDIM,NDIM+2)
+C
+          DO 11 IDIM = 1 , NDIM
+C
+             GRAD_CHAR(1,IDIM) = GRAD_PRIM(1,IDIM) -
+     &   GRAD_PRIM(2,IDIM)/ASQR
+             GRAD_CHAR(2,IDIM) = GRAD_PRIM(2,IDIM)*DENSINVABARINV
+             GRAD_CHAR(3,IDIM) = GRAD_PRIM(3,IDIM)
+             GRAD_CHAR(4,IDIM) = GRAD_PRIM(4,IDIM)
+             GRAD_CHAR(5,IDIM) = GRAD_PRIM(5,IDIM)
+caldo    R_SPEED(IDIM,1) = UAVG(2+IDIM)
+C
+   11 CONTINUE
+C
+          IDIM = 1
+C
+          Matrix(1,1,IDIM) = UAVG(3)
+          Matrix(1,2,IDIM) = ABAR
+          Matrix(1,3,IDIM) = ZERO
+          Matrix(1,4,IDIM) = ZERO
+C
+          Matrix(2,1,IDIM) = ABAR
+          Matrix(2,2,IDIM) = UAVG(3)
+          Matrix(2,3,IDIM) = ZERO
+          Matrix(2,4,IDIM) = ZERO
+C
+          Matrix(3,1,IDIM) = ZERO
+          Matrix(3,2,IDIM) = ZERO
+          Matrix(3,3,IDIM) = UAVG(3)
+          Matrix(3,4,IDIM) = ZERO
+C
+          Matrix(4,1,IDIM) = ZERO
+          Matrix(4,2,IDIM) = ZERO
+          Matrix(4,3,IDIM) = ZERO
+          Matrix(4,4,IDIM) = UAVG(3)
+C
+          IDIM = 2
+C
+          Matrix(1,1,IDIM) = UAVG(4)
+          Matrix(1,2,IDIM) = ZERO
+          Matrix(1,3,IDIM) = ABAR
+          Matrix(1,4,IDIM) = ZERO
+C
+          Matrix(2,1,IDIM) = ZERO
+          Matrix(2,2,IDIM) = UAVG(4)
+          Matrix(2,3,IDIM) = ZERO
+          Matrix(2,4,IDIM) = ZERO
+C
+          Matrix(3,1,IDIM) = ABAR
+          Matrix(3,2,IDIM) = ZERO
+          Matrix(3,3,IDIM) = UAVG(4)
+          Matrix(3,4,IDIM) = ZERO
+C
+          Matrix(4,1,IDIM) = ZERO
+          Matrix(4,2,IDIM) = ZERO
+          Matrix(4,3,IDIM) = ZERO
+          Matrix(4,4,IDIM) = UAVG(4)
+C
+          IDIM = 3
+C
+          Matrix(1,1,IDIM) = UAVG(5)
+          Matrix(1,2,IDIM) = ZERO
+          Matrix(1,3,IDIM) = ZERO
+          Matrix(1,4,IDIM) = ABAR
+C
+          Matrix(2,1,IDIM) = ZERO
+          Matrix(2,2,IDIM) = UAVG(5)
+          Matrix(2,3,IDIM) = ZERO
+          Matrix(2,4,IDIM) = ZERO
+C
+          Matrix(3,1,IDIM) = ZERO
+          Matrix(3,2,IDIM) = ZERO
+          Matrix(3,3,IDIM) = UAVG(5)
+          Matrix(3,4,IDIM) = ZERO
+C
+          Matrix(4,1,IDIM) = ABAR
+          Matrix(4,2,IDIM) = ZERO
+          Matrix(4,3,IDIM) = ZERO
+          Matrix(4,4,IDIM) = UAVG(5)
+C
+      ENDIF
+C
+C     Transformation matrix from symmetrizing to conserved variables ..
+C
+      DUDV(1,1) = ONE
+      DUDV(2,1) = KINETIC
+      DUDV(3,1) = UAVG(3)
+      DUDV(4,1) = UAVG(4)
+C
+      DUDV(1,2) = DENSABARINV
+      DUDV(2,2) = DENSABARINV*UAVG(2)
+      DUDV(3,2) = DENSABARINV*UAVG(3)
+      DUDV(4,2) = DENSABARINV*UAVG(4)
+C
+      DUDV(1,3) = ZERO
+      DUDV(2,3) = DENS*UAVG(3)
+      DUDV(3,3) = DENS
+      DUDV(4,3) = ZERO
+C
+      DUDV(1,4) = ZERO
+      DUDV(2,4) = DENS*UAVG(4)
+      DUDV(3,4) = ZERO
+      DUDV(4,4) = DENS
+C
+      IF(NDIM.EQ.3)THEN
+         DUDV(5,1) = UAVG(5)
+         DUDV(5,2) = DENSABARINV*UAVG(5)
+         DUDV(5,3) = ZERO
+         DUDV(5,4) = ZERO
+C
+         DUDV(1,5) = ZERO
+         DUDV(2,5) = DENS*UAVG(5)
+         DUDV(3,5) = ZERO
+         DUDV(4,5) = ZERO
+         DUDV(5,5) = DENS
+      ENDIF
+C
+      Z1SQRINV = ONE/(ZAVG(1)*ZAVG(1))
+C
+C     Transformation matrix from parameter vector to symmetrizing variables
+C
+      DVDZ(2,1) = GM1OG * DENSINVABARINV * ZAVG(2)
+      DVDZ(1,1) = TWO*ZAVG(1) - GM1OG * ZAVG(2) / ASQR
+      DVDZ(3,1) = - ZAVG(3) * Z1SQRINV
+      DVDZ(4,1) = - ZAVG(4) * Z1SQRINV
+C
+      DVDZ(2,2) = GM1OG * ZAVG(1) * DENSINVABARINV
+      DVDZ(1,2) = - GM1OG * ZAVG(1) / ASQR
+      DVDZ(3,2) = ZERO
+      DVDZ(4,2) = ZERO
+C
+      DVDZ(2,3) = - GM1OG * ZAVG(3) * DENSINVABARINV
+      DVDZ(1,3) = GM1OG * ZAVG(3) / ASQR
+      DVDZ(3,3) = ONE/ZAVG(1)
+      DVDZ(4,3) = ZERO
+C
+      DVDZ(2,4) = - GM1OG * ZAVG(4) * DENSINVABARINV
+      DVDZ(1,4) = GM1OG * ZAVG(4) / ASQR
+      DVDZ(3,4) = ZERO
+      DVDZ(4,4) = ONE/ZAVG(1)
+C
+      IF(NDIM.EQ.3)THEN
+      DVDZ(5,1) = - ZAVG(5) * Z1SQRINV
+      DVDZ(5,2) = ZERO
+      DVDZ(5,3) = ZERO
+      DVDZ(5,4) = ZERO
+C
+      DVDZ(2,5) = - GM1OG * ZAVG(5) * DENSINVABARINV
+      DVDZ(1,5) = GM1OG * ZAVG(5) / ASQR
+      DVDZ(3,5) = ZERO
+      DVDZ(4,5) = ZERO
+      DVDZ(5,5) = ONE/ZAVG(1)
+      ENDIF
+C
+#ifdef FSPL_USE_DEBUG
+C
+C    Tests two ways of computing the gradient of simmetrysing 
+C    variables 
+C
+            CALL DGEMM('N','N',NDIM+2,NDIM,NDIM+2,ONE,
+     +      DVDZ,NDIM+2,GRAD_PARM,NMAX,0.D0,WORK,NDIM+2)
+            CALL MATSUB(WORK,NDIM+2,GRAD_CHAR,LDW,
+     +      NDIM+2,NDIM)
+            IF( .NOT. NULLMAT(WORK,NDIM+2,NDIM+2,NDIM+2,1.D-14) )THEN
+            CALL R8Mat_Print('G',' ',NDIM+2,NDIM,WORK,NDIM+2,
+     +      'dZdU*dZ matrix ????',IFAIL)
+            CALL R8Mat_Print('G',' ',NDIM+2,NDIM,GRAD_CHAR,LDW,
+     +      'dW matrix ????',IFAIL)
+            PAUSE
+            ENDIF
+#endif
+C
+      RETURN
+      END
+@
+
+
+1.9
+log
+@The adiabatic index is not any longer a parameter, but a variable
+@
+text
+@d3 1
+a3 1
+C     $Id: eigen_VII.F,v 1.8 2013/01/26 11:24:25 abonfi Exp abonfi $
+d223 1
+a223 1
+            CALL X04CAF('G',' ',NDIM+2,NDIM,WORK,NDIM+2,
+d225 1
+a225 1
+            CALL X04CAF('G',' ',NDIM+2,NDIM,GRAD_CHAR,LDW,
+@
+
+
+1.8
+log
+@changed the name of included header/common
+@
+text
+@d3 1
+a3 1
+C     $Id: eigen_VII.F,v 1.7 2010/10/04 12:43:05 abonfi Exp abonfi $
+d22 1
+@
+
+
+1.7
+log
+@minor changes
+@
+text
+@d3 1
+a3 1
+C     $Id: eigen_VII.F,v 1.6 2002/09/13 08:42:01 abonfi Exp $
+d18 1
+a18 1
+      INCLUDE 'constants'
+d20 1
+a20 1
+      INCLUDE 'three'
+@
+
+
+1.6
+log
+@restored checks when ICHECK != 0
+@
+text
+@d3 1
+a3 1
+C     $Id: eigen_VII.F,v 1.5 2002/08/24 10:10:37 abonfi Exp abonfi $
+d58 1
+a58 1
+      CALL GRADPRIM(-10,NDIM,NDIM+2)
+d60 1
+a60 1
+      DO 11 IDIM = 1 , NDIM
+d62 1
+a62 1
+         GRAD_CHAR(1,IDIM) = GRAD_PRIM(1,IDIM) -
+d64 4
+a67 4
+         GRAD_CHAR(2,IDIM) = GRAD_PRIM(2,IDIM)*DENSINVABARINV
+         GRAD_CHAR(3,IDIM) = GRAD_PRIM(3,IDIM)
+         GRAD_CHAR(4,IDIM) = GRAD_PRIM(4,IDIM)
+         GRAD_CHAR(5,IDIM) = GRAD_PRIM(5,IDIM)
+d72 1
+a72 1
+      IDIM = 1
+d74 63
+a136 63
+      Matrix(1,1,IDIM) = UAVG(3)
+      Matrix(1,2,IDIM) = ABAR
+      Matrix(1,3,IDIM) = ZERO
+      Matrix(1,4,IDIM) = ZERO
+C
+      Matrix(2,1,IDIM) = ABAR
+      Matrix(2,2,IDIM) = UAVG(3)
+      Matrix(2,3,IDIM) = ZERO
+      Matrix(2,4,IDIM) = ZERO
+C
+      Matrix(3,1,IDIM) = ZERO
+      Matrix(3,2,IDIM) = ZERO
+      Matrix(3,3,IDIM) = UAVG(3)
+      Matrix(3,4,IDIM) = ZERO
+C
+      Matrix(4,1,IDIM) = ZERO
+      Matrix(4,2,IDIM) = ZERO
+      Matrix(4,3,IDIM) = ZERO
+      Matrix(4,4,IDIM) = UAVG(3)
+C
+      IDIM = 2
+C
+      Matrix(1,1,IDIM) = UAVG(4)
+      Matrix(1,2,IDIM) = ZERO
+      Matrix(1,3,IDIM) = ABAR
+      Matrix(1,4,IDIM) = ZERO
+C
+      Matrix(2,1,IDIM) = ZERO
+      Matrix(2,2,IDIM) = UAVG(4)
+      Matrix(2,3,IDIM) = ZERO
+      Matrix(2,4,IDIM) = ZERO
+C
+      Matrix(3,1,IDIM) = ABAR
+      Matrix(3,2,IDIM) = ZERO
+      Matrix(3,3,IDIM) = UAVG(4)
+      Matrix(3,4,IDIM) = ZERO
+C
+      Matrix(4,1,IDIM) = ZERO
+      Matrix(4,2,IDIM) = ZERO
+      Matrix(4,3,IDIM) = ZERO
+      Matrix(4,4,IDIM) = UAVG(4)
+C
+      IDIM = 3
+C
+      Matrix(1,1,IDIM) = UAVG(5)
+      Matrix(1,2,IDIM) = ZERO
+      Matrix(1,3,IDIM) = ZERO
+      Matrix(1,4,IDIM) = ABAR
+C
+      Matrix(2,1,IDIM) = ZERO
+      Matrix(2,2,IDIM) = UAVG(5)
+      Matrix(2,3,IDIM) = ZERO
+      Matrix(2,4,IDIM) = ZERO
+C
+      Matrix(3,1,IDIM) = ZERO
+      Matrix(3,2,IDIM) = ZERO
+      Matrix(3,3,IDIM) = UAVG(5)
+      Matrix(3,4,IDIM) = ZERO
+C
+      Matrix(4,1,IDIM) = ABAR
+      Matrix(4,2,IDIM) = ZERO
+      Matrix(4,3,IDIM) = ZERO
+      Matrix(4,4,IDIM) = UAVG(5)
+d163 10
+a172 10
+      DUDV(5,1) = UAVG(5)
+      DUDV(5,2) = DENSABARINV*UAVG(5)
+      DUDV(5,3) = ZERO
+      DUDV(5,4) = ZERO
+C
+      DUDV(1,5) = ZERO
+      DUDV(2,5) = DENS*UAVG(5)
+      DUDV(3,5) = ZERO
+      DUDV(4,5) = ZERO
+      DUDV(5,5) = DENS
+@
+
+
+1.5
+log
+@add a call to comput the GRADient of PRIMitive
+variables
+@
+text
+@d3 1
+a3 1
+C     $Id:$
+d21 1
+d52 1
+a52 1
+#ifdef FSPL_USE_DEBUG
+d138 1
+a138 1
+#endif
+@
+
+
+1.4
+log
+@a number of changes, both in the calling sequence and in the storage
+of certain arrays
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE Eigen_VII(Matrix,LDA,DVDZ,DUDV,NDIM,NOFVAR)
+d3 2
+d9 6
+a17 1
+C     INCLUDE 'implicit.h'
+d23 1
+a23 1
+      INTEGER LDA,NDIM,NOFVAR
+d25 3
+a27 2
+      DOUBLE PRECISION Matrix(LDA,LDA,*),DVDZ(NOFVAR,NOFVAR),
+     +DUDV(NOFVAR,NOFVAR)
+d29 2
+d43 2
+d51 2
+a52 1
+#if 0
+d57 1
+d67 1
+a67 4
+C
+C     Advection speed for entropy ..
+C
+         R_SPEED(IDIM,1) = UAVG(2+IDIM)
+d136 1
+d211 4
+a214 1
+C    Test if GRAD_CHAR = DVDZ * GRAD_PARM
+d216 12
+a227 7
+C           CALL DGEMM('N','N',NDIM+2,NDIM,NDIM+2,ONE,
+C    +      DVDZ,5,GRAD_PARM,NMAX,0.D0,WORK,NDIM+2)
+C           CALL X04CAF('G',' ',NDIM+2,NDIM,WORK,NDIM+2,
+C    +      'dZdU*dZ matrix ????',IFAIL)
+C           CALL X04CAF('G',' ',NDIM+2,NDIM,GRAD_CHAR,LDW,
+C    +      'dW matrix ????',IFAIL)
+C           PAUSE
+@
+
+
+1.3
+log
+@array R renamed to dUdV
+@
+text
+@d1 1
+a1 2
+CC
+      SUBROUTINE Eigen_VII(Matrix,LDA,NDIM)
+d10 1
+a10 1
+      INCLUDE 'implicit.h'
+d16 1
+a16 1
+      INTEGER LDA,NDIM
+d18 2
+a19 1
+      DOUBLE PRECISION Matrix(LDA,LDA,*)
+a28 1
+C
+d33 4
+d39 1
+d81 1
+a81 1
+*
+d103 1
+a103 1
+*
+d125 1
+d129 32
+a160 29
+      dUdV(1,1) = ONE
+      dUdV(2,1) = KINETIC
+      dUdV(3,1) = UAVG(3)
+      dUdV(4,1) = UAVG(4)
+      dUdV(5,1) = UAVG(5)
+C
+      dUdV(1,2) = DENSABARINV
+      dUdV(2,2) = DENSABARINV*UAVG(2)
+      dUdV(3,2) = DENSABARINV*UAVG(3)
+      dUdV(4,2) = DENSABARINV*UAVG(4)
+      dUdV(5,2) = DENSABARINV*UAVG(5)
+C
+      dUdV(1,3) = ZERO
+      dUdV(2,3) = DENS*UAVG(3)
+      dUdV(3,3) = DENS
+      dUdV(4,3) = ZERO
+      dUdV(5,3) = ZERO
+C
+      dUdV(1,4) = ZERO
+      dUdV(2,4) = DENS*UAVG(4)
+      dUdV(3,4) = ZERO
+      dUdV(4,4) = DENS
+      dUdV(5,4) = ZERO
+C
+      dUdV(1,5) = ZERO
+      dUdV(2,5) = DENS*UAVG(5)
+      dUdV(3,5) = ZERO
+      dUdV(4,5) = ZERO
+      dUdV(5,5) = DENS
+d166 32
+a197 29
+      dVdU(2,1) = GM1OG * DENSINVABARINV * ZAVG(2)
+      dVdU(1,1) = TWO*ZAVG(1) - GM1OG * ZAVG(2) / ASQR
+      dVdU(3,1) = - ZAVG(3) * Z1SQRINV
+      dVdU(4,1) = - ZAVG(4) * Z1SQRINV
+      dVdU(5,1) = - ZAVG(5) * Z1SQRINV
+C
+      dVdU(2,2) = GM1OG * ZAVG(1) * DENSINVABARINV
+      dVdU(1,2) = - GM1OG * ZAVG(1) / ASQR
+      dVdU(3,2) = ZERO
+      dVdU(4,2) = ZERO
+      dVdU(5,2) = ZERO
+C
+      dVdU(2,3) = - GM1OG * ZAVG(3) * DENSINVABARINV
+      dVdU(1,3) = GM1OG * ZAVG(3) / ASQR
+      dVdU(3,3) = ONE/ZAVG(1)
+      dVdU(4,3) = ZERO
+      dVdU(5,3) = ZERO
+C
+      dVdU(2,4) = - GM1OG * ZAVG(4) * DENSINVABARINV
+      dVdU(1,4) = GM1OG * ZAVG(4) / ASQR
+      dVdU(3,4) = ZERO
+      dVdU(4,4) = ONE/ZAVG(1)
+      dVdU(5,4) = ZERO
+C
+      dVdU(2,5) = - GM1OG * ZAVG(5) * DENSINVABARINV
+      dVdU(1,5) = GM1OG * ZAVG(5) / ASQR
+      dVdU(3,5) = ZERO
+      dVdU(4,5) = ZERO
+      dVdU(5,5) = ONE/ZAVG(1)
+d199 1
+a199 1
+C    Test if GRAD_CHAR = dVdU * GRAD_PARM
+d202 1
+a202 1
+C    +      dVdU,5,GRAD_PARM,NMAX,0.D0,WORK,NDIM+2)
+@
+
+
+1.2
+log
+@Improved linearization
+@
+text
+@d4 1
+a4 1
+C     .. Symmetrizing variables (dS,dp/(r*a),velocity) variables
+d36 5
+d54 1
+a54 1
+   11 CONTINUE ! End loop on IDIM
+d124 29
+a152 31
+      R(1,1) = ONE
+      R(2,1) = KINETIC
+      R(3,1) = UAVG(3)
+      R(4,1) = UAVG(4)
+      R(5,1) = UAVG(5)
+C
+      R(1,2) = DENSABARINV
+      R(2,2) = DENSABARINV*UAVG(2)
+      R(3,2) = DENSABARINV*UAVG(3)
+      R(4,2) = DENSABARINV*UAVG(4)
+      R(5,2) = DENSABARINV*UAVG(5)
+C
+      R(1,3) = ZERO
+      R(2,3) = DENS*UAVG(3)
+      R(3,3) = DENS
+      R(4,3) = ZERO
+      R(5,3) = ZERO
+C
+      R(1,4) = ZERO
+      R(2,4) = DENS*UAVG(4)
+      R(3,4) = ZERO
+      R(4,4) = DENS
+      R(5,4) = ZERO
+C
+      R(1,5) = ZERO
+      R(2,5) = DENS*UAVG(5)
+      R(3,5) = ZERO
+      R(4,5) = ZERO
+      R(5,5) = DENS
+C
+      IF( .NOT. TIMEIMPL )RETURN
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+C     .. Symmetrizing variables (dS,dp/(r*a),velocity) variables ..
+d6 1
+a6 3
+C        at least when using linear schemes, gives the same
+C        result: see also "EulerV.f" where conserved variables
+C        are used ..
+d20 1
+d22 1
+a22 1
+      DOUBLE PRECISION DENS,DENSABARINV,DENSINVABARINV
+d151 1
+a151 1
+C     Transformation matrix from conserved to symmetrizing variables ..
+d153 1
+a153 5
+      dVdU(1,1) = ONE - HALF * GM1 * MACHSQR
+      dVdU(2,1) = GM1 * DENSINVABARINV * KINETIC
+      dVdU(3,1) = - UAVG(3) / DENS
+      dVdU(4,1) = - UAVG(4) / DENS
+      dVdU(5,1) = - UAVG(5) / DENS
+d155 8
+a162 2
+      dVdU(1,2) = - GM1 / ASQR
+      dVdU(2,2) = GM1 * DENSINVABARINV
+d167 3
+a169 3
+      dVdU(1,3) = GM1 / ASQR * UAVG(3)
+      dVdU(2,3) = - GM1 * DENSINVABARINV * UAVG(3)
+      dVdU(3,3) = ONE/DENS
+d173 2
+a174 2
+      dVdU(1,4) = GM1 / ASQR * UAVG(4)
+      dVdU(2,4) = - GM1 * DENSINVABARINV * UAVG(4)
+d176 1
+a176 1
+      dVdU(4,4) = ONE/DENS
+d179 2
+a180 2
+      dVdU(1,5) = GM1 / ASQR * UAVG(5)
+      dVdU(2,5) = - GM1 * DENSINVABARINV * UAVG(5)
+d183 1
+a183 1
+      dVdU(5,5) = ONE/DENS
+d185 1
+a185 1
+C    .. Test if VRIGHT*VLEFT = Identity ..
+d187 6
+a192 4
+C           CALL DGEMM('N','N',NDIM+2,NDIM+2,NDIM+2,1.D0,R,NMAX,
+C    +      dVdU,5,0.D0,WORK,5)
+C           CALL X04CAF('G',' ',NDIM+2,NDIM+2,WORK,5,
+C    +      'Identity matrix ????',IFAIL)
+a196 2
+CC
+CC
+@

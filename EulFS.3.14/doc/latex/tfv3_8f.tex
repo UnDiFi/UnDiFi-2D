@@ -1,0 +1,59 @@
+\hypertarget{tfv3_8f}{}\doxysection{src/turbo/tfv3.f File Reference}
+\label{tfv3_8f}\index{src/turbo/tfv3.f@{src/turbo/tfv3.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+double precision function \mbox{\hyperlink{tfv3_8f_aa78eec67e6de20461bcaa53b2ffd6482}{T\+F\+V3}} (T\+C\+HI, F\+V2)
+\begin{DoxyCompactList}\small\item\em {\bfseries{T\+F\+V3}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{tfv3_8f_aa78eec67e6de20461bcaa53b2ffd6482}\label{tfv3_8f_aa78eec67e6de20461bcaa53b2ffd6482}} 
+\index{tfv3.f@{tfv3.f}!TFV3@{TFV3}}
+\index{TFV3@{TFV3}!tfv3.f@{tfv3.f}}
+\doxysubsubsection{\texorpdfstring{TFV3()}{TFV3()}}
+{\footnotesize\ttfamily double precision function T\+F\+V3 (\begin{DoxyParamCaption}\item[{double precision}]{T\+C\+HI,  }\item[{double precision}]{F\+V2 }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{T\+F\+V3}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+(Spalart \& Allmaras model\+: version\+: S\+A-\/fv3)
+
+Compute the function
+
+\[ f_{v_3} = \frac{\left(1+\chi \,f_{v_1}\right)\left(1-f_{v_2}\right)}{\chi} \]
+
+In the denominator we take $ \max\left(\chi,0.001\right) $ following a suggestions by G.\+A. Ashford
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em T\+C\+HI} & is $ \frac{\tilde{\nu}}{\nu} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+V2} & is $ f_{v_2}\left(\chi\right) $ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+3 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2015/05/11 07\+:23\+:09 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+Is is maybe not such a good idea to pass F\+V2\+: it saves a calculation, but maybe prone to errors 
+\end{DoxyWarning}

@@ -1,0 +1,4 @@
+C
+      INTEGER NVA
+      PARAMETER (NVA=82400000)
+C

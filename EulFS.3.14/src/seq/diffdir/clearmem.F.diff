@@ -1,0 +1,60 @@
+9d8
+< !> @param[in] NodalBcs PETSc Index Sets where the nodal boundary conditions are stored
+14c13
+<       SUBROUTINE CLEARMEM( ZROE, VISCT, A, B, C, NodalBcs, NOFVAR )
+---
+>       SUBROUTINE CLEARMEM( ZROE, VISCT, A, B, C, NOFVAR )
+16c15
+< C     $Id: clearmem.F,v 1.12 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: clearmem.F,v 1.12 2016/11/10 11:25:13 abonfi Exp $
+18a18
+>       IMPLICIT NONE
+20,22c20,23
+< CCCC#include "petsc/finclude/petscvec.h"
+< CCCC#include "petsc/finclude/petscmat.h"
+< CCCC#include "petsc/finclude/petscis.h"
+---
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+> #include "petsc/finclude/petscis.h"
+24,25d24
+<       use petscpc
+<       IMPLICIT NONE
+29d27
+<       INCLUDE 'iset.h'
+32a31
+> 
+33a33
+> #include "iset.com"
+40d39
+<       IS, dimension(0:*) :: NodalBcs
+55c54
+<          CALL ISDestroy(NodalBcs(MotionSolverBCS),IFAIL)
+---
+>          CALL ISDestroy(MotionSolverBCS,IFAIL)
+61c60
+<          CALL ISDestroy(NodalBcs(SupersonicNodes),IFAIL)
+---
+>          CALL ISDestroy(SupersonicNodes,IFAIL)
+63c62
+<          CALL ISDestroy(NodalBcs(SupersonicVariables),IFAIL)
+---
+>          CALL ISDestroy(SupersonicVariables,IFAIL)
+65,66c64,65
+<       CALL ISDestroy(NodalBcs(NoSlipVelocities),IFAIL)
+<       CALL ISDestroy(NodalBcs(Isothermal),IFAIL)
+---
+>       CALL ISDestroy(NoSlipVelocities,IFAIL)
+>       CALL ISDestroy(Isothermal,IFAIL)
+68,69c67,68
+<           CALL ISDestroy(NodalBcs(NoSlipNodes),IFAIL)
+<           CALL ISDestroy(NodalBcs(FreestreamTurbulence),IFAIL)
+---
+>           CALL ISDestroy(NoSlipNodes,IFAIL)
+>           CALL ISDestroy(FreestreamTurbulence,IFAIL)
+73c72
+<          IF( MCOLOR(I) .NE. 0 )CALL ISDestroy(NodalBcs(I),IFAIL)
+---
+>          IF( MCOLOR(I) .NE. 0 )CALL ISDestroy(bndrynodes(I),IFAIL)

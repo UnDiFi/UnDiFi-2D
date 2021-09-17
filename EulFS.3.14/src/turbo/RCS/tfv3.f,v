@@ -1,0 +1,129 @@
+head	1.3;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2015.05.11.07.23.09;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.09.22.12.10.27;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.06.03.08.00.55;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Model upgrade according to the suggestions in Ashford's PhD thesis
+this is a new function compared to the original model
+@
+
+
+1.3
+log
+@added Doxygen documentation
+@
+text
+@!> \brief \b TFV3
+!> \par Purpose
+!>
+!> (Spalart & Allmaras model: version: SA-fv3)
+!>
+!> Compute the function
+!>
+!> \f[
+!> f_{v_3} = \frac{\left(1+\chi \,f_{v_1}\right)\left(1-f_{v_2}\right)}{\chi}
+!> \f]
+!>
+!> In the denominator we take \f$ \max\left(\chi,0.001\right) \f$ following a suggestions by G.A. Ashford
+!>
+!> @@param[in] TCHI is \f$ \frac{\tilde{\nu}}{\nu} \f$
+!> @@param[in] FV2 is \f$ f_{v_2}\left(\chi\right) \f$
+!> \author $Author: abonfi $
+!> \version $Revision: 1.14 $
+!> \date $Date: 2013/08/22 15:10:57 $
+!> \warning Is is maybe not such a good idea to pass FV2: it saves a calculation, but maybe prone to errors
+      DOUBLE PRECISION FUNCTION TFV3(TCHI,FV2)
+
+      implicit none
+      include 'constants.h'
+
+C     .. Parameters ..
+      DOUBLE PRECISION EPS
+      PARAMETER (EPS=0.001d0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION FV2,TCHI
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TFV1
+      EXTERNAL TFV1
+C     ..
+      TFV3 = (ONE+TCHI*TFV1(TCHI))* (ONE-FV2)/MAX(TCHI,EPS)
+      RETURN
+      END
+@
+
+
+1.2
+log
+@following a suggestion from P.Guezaine's thesis
+@
+text
+@d1 19
+d23 1
+d26 2
+a27 2
+      DOUBLE PRECISION ONE,eps
+      PARAMETER (ONE=1.d0,EPS=0.001d0)
+a36 1
+
+a37 1
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+d6 2
+a7 2
+      DOUBLE PRECISION ONE
+      PARAMETER (ONE=1.d0)
+d16 1
+a16 1
+      TFV3 = (ONE+TCHI*TFV1(TCHI))* (ONE-FV2)/TCHI
+@

@@ -1,0 +1,81 @@
+\hypertarget{matspl_v_i_i_8_f}{}\doxysection{src/euler/matspl\+V\+II.F File Reference}
+\label{matspl_v_i_i_8_f}\index{src/euler/matsplVII.F@{src/euler/matsplVII.F}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{matspl_v_i_i_8_f_ac2728f9a64e014026c02a5826fef01ca}{Mat\+Split\+V\+II}} (I\+E\+L\+EM, N\+D\+IM, N\+O\+R\+D\+ER, V\+E\+CN, Jacobian\+Matrix, L\+DJ, K\+M\+AT, K\+P\+OS, K\+N\+EG, V\+L\+E\+FT, V\+R\+I\+G\+HT, L\+DA, WR, L\+P\+OS, L\+N\+EG, E\+I\+G\+E\+N\+D\+E\+CO)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{matspl_v_i_i_8_f_ac2728f9a64e014026c02a5826fef01ca}\label{matspl_v_i_i_8_f_ac2728f9a64e014026c02a5826fef01ca}} 
+\index{matsplVII.F@{matsplVII.F}!MatSplitVII@{MatSplitVII}}
+\index{MatSplitVII@{MatSplitVII}!matsplVII.F@{matsplVII.F}}
+\doxysubsubsection{\texorpdfstring{MatSplitVII()}{MatSplitVII()}}
+{\footnotesize\ttfamily subroutine Mat\+Split\+V\+II (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+R\+D\+ER,  }\item[{double precision, dimension(ndim)}]{V\+E\+CN,  }\item[{double precision, dimension(ldj,$\ast$)}]{Jacobian\+Matrix,  }\item[{integer}]{L\+DJ,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+M\+AT,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+P\+OS,  }\item[{double precision, dimension(lda,$\ast$)}]{K\+N\+EG,  }\item[{double precision, dimension(lda,$\ast$)}]{V\+L\+E\+FT,  }\item[{double precision, dimension(lda,$\ast$)}]{V\+R\+I\+G\+HT,  }\item[{integer}]{L\+DA,  }\item[{double precision, dimension($\ast$)}]{WR,  }\item[{double precision, dimension($\ast$)}]{L\+P\+OS,  }\item[{double precision, dimension($\ast$)}]{L\+N\+EG,  }\item[{logical}]{E\+I\+G\+E\+N\+D\+E\+CO }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute positive and negative inflow parameters when the equations are written in Euler symmetrising variables; the split matrices. i.\+e. {\ttfamily K\+P\+OS} and {\ttfamily K\+N\+EG} are\+: \[ \tilde{K}_{\mathbf{n}}^{\pm} = \frac{1}{d} \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} {\lambda_{0}}^{\pm} & 0 & \mathbf{0} \\\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} + \lambda_-^{\pm} \right) & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n}^t \\\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n} & \lambda_0^{\pm} I + \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \mathbf{n} \mathbf{n} \end{array} \right) \]
+
+Matrix {\ttfamily K\+M\+AT} $ = \tilde{K}_{\mathbf{n}} = \tilde{K}_{\mathbf{n}}^+ + \tilde{K}_{\mathbf{n}}^- $ is\+: \[ \tilde{K}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} u_n & 0 & \mathbf{0}^t \\\ 0 & u_n & a \mathbf{n}^t \\\ \mathbf{0} & a \mathbf{n} & u_n I_{d \times d} \end{array} \right) \] The left {\ttfamily R\+I\+G\+HT} and {\ttfamily L\+E\+FT} eigenvector matrices are\+: \[ \tilde{R}_{\mathbf{n}} = \left( \begin{array}{ccccc} 1 &0 & 0 & 0 & 0 \\\ 0& 0 & 1 & 1 & 0 \\\ 0& \mathbf{s} & \mathbf{n} & -\mathbf{n} & \mathbf{t} \\\ \end{array} \right) \quad \mbox{and} \quad \tilde{L}_{\mathbf{n}} = \left( \begin{array}{ccc} 1& 0 & 0 \\\ 0& 0 & \mathbf{s}^t \\\ 0& \frac{1}{2} & \frac{1}{2} \mathbf{n}^t \\\ 0& \frac{1}{2} &-\frac{1}{2} \mathbf{n}^t \\\ 0& 0 & \mathbf{t}^t \end{array} \right). \]
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & the current simplicial element \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+R\+D\+ER} & the order of the system to be solved \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+E\+CN} & the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em Jacobian\+Matrix} & is the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DJ} & leading dimension of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+M\+AT} & the jacobian matrix times the face normal \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+P\+OS} & is the \char`\"{}positive\char`\"{} part of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em K\+N\+EG} & is the \char`\"{}negative\char`\"{} part of the jacobian matrix \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+L\+E\+FT} & is the left eigenvector matrix of the jacobian matrix, i.\+e. $ \tilde{L}_{\mathbf{n}} $ \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+R\+I\+G\+HT} & is the right eigenvector matrix of the jacobian matrix, i.\+e. $ \tilde{R}_{\mathbf{n}} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DA} & is the leading dimension of the matrices K\+M\+AT, K\+P\+OS, K\+N\+EG, V\+L\+E\+FT, V\+R\+I\+G\+HT \\
+\hline
+\mbox{\texttt{ out}}  & {\em WR} & are the eigenvalues of the jacobian matrix\+: $ \lambda_0, \lambda_0, \lambda_+, \lambda_-, \lambda_0 $ \\
+\hline
+\mbox{\texttt{ out}}  & {\em L\+P\+OS} & are the positive eigenvalues of the jacobian matrix\+: $ \lambda_k^+ $ \\
+\hline
+\mbox{\texttt{ out}}  & {\em L\+N\+EG} & are the negative eigenvalues of the jacobian matrix\+: $ \lambda_k^- $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em E\+I\+G\+E\+N\+D\+E\+CO} & .T\+R\+UE. if the eigenvector decomposition of the matrix is needed, if .F\+A\+L\+SE. only the K\+M\+AT matrix is computed\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+9 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+When the pre-\/processor flag F\+S\+P\+L\+\_\+\+U\+S\+E\+\_\+\+D\+E\+B\+UG is defined, the analyical expression for $ K^{\pm} $ is compared with the one obtained as $ R \Lambda^{\pm} L $. Should only be used for debugging purposes 
+
+The eigenvectors V\+L\+E\+FT and V\+R\+I\+G\+HT are only computed when the pre-\/processor flag F\+S\+P\+L\+\_\+\+U\+S\+E\+\_\+\+D\+E\+B\+UG is defined 
+\end{DoxyWarning}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000002}{Bug}}]Does N\+OT support moving grids \end{DoxyRefDesc}

@@ -1,0 +1,27 @@
+Il valore di tft1 in SA: 1 o 10? 
+-------------------------------------------------------------------------
+23.11.2007
+the problem occurs
+
+consider the flow over a flat plate: the grid
+is partitioned as follows
+
+   proc#1                 proc#2
+   symmetry               no-slip wall
+o----o----o----o----o----+----+----+----+----+
+                    ^
+                    | l.e.  here is the plate
+
+nodes o/+ are internal to a given proc, say e.g. 0/1,  
+
+the l.e. node will NOT be correctly set as a NoSlipNode
+because:
+
+the l.e. is a ghost node for proc 2 where all no-slip faces are
+hence it will NOT be a NoSlipNode for proc#2
+(Isets are set for interior nodes only)
+
+proc#1 does not have no-slip faces, hence it will never pick-up
+the l.e. node as a NoSlipNode
+
+np?bis are subdivided in such a way...

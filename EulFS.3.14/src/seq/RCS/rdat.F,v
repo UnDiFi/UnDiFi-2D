@@ -1,0 +1,6038 @@
+head	1.89;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.89
+	release3_13_0:1.88
+	release3_12_0:1.86
+	release3_11_0:1.86
+	release3_10_0:1.86
+	release3_8_0:1.86
+	release3_7_1:1.85
+	release3_7_0:1.85
+	release3_4_5:1.83
+	release3_4_4:1.81
+	release3_4_3:1.81
+	release3_4_2:1.79
+	release3_4_1:1.77
+	release3_4_0:1.75
+	release3_3_5:1.75
+	release3_3_4:1.73
+	release3_3_3:1.72
+	release3_3_2:1.71
+	release3_3_1:1.71
+	release3_3_0:1.70;
+locks; strict;
+comment	@c @;
+
+
+1.89
+date	2021.03.07.09.21.53;	author abonfi;	state Exp;
+branches;
+next	1.88;
+
+1.88
+date	2020.11.21.11.13.16;	author abonfi;	state Exp;
+branches;
+next	1.87;
+
+1.87
+date	2020.11.21.09.43.54;	author abonfi;	state Exp;
+branches;
+next	1.86;
+
+1.86
+date	2020.04.23.09.38.48;	author abonfi;	state Exp;
+branches;
+next	1.85;
+
+1.85
+date	2016.11.11.08.56.11;	author abonfi;	state Exp;
+branches
+	1.85.1.1;
+next	1.84;
+
+1.84
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.83;
+
+1.83
+date	2015.12.09.08.50.16;	author abonfi;	state Exp;
+branches;
+next	1.82;
+
+1.82
+date	2015.05.20.07.44.31;	author abonfi;	state Exp;
+branches;
+next	1.81;
+
+1.81
+date	2013.10.23.10.50.25;	author abonfi;	state Exp;
+branches;
+next	1.80;
+
+1.80
+date	2013.09.23.11.24.39;	author abonfi;	state Exp;
+branches;
+next	1.79;
+
+1.79
+date	2013.08.19.09.02.09;	author abonfi;	state Exp;
+branches;
+next	1.78;
+
+1.78
+date	2013.07.18.14.48.59;	author abonfi;	state Exp;
+branches;
+next	1.77;
+
+1.77
+date	2013.06.07.15.30.07;	author abonfi;	state Exp;
+branches;
+next	1.76;
+
+1.76
+date	2013.06.04.16.04.29;	author abonfi;	state Exp;
+branches;
+next	1.75;
+
+1.75
+date	2013.05.15.09.45.17;	author abonfi;	state Exp;
+branches;
+next	1.74;
+
+1.74
+date	2013.04.29.10.41.13;	author abonfi;	state Exp;
+branches;
+next	1.73;
+
+1.73
+date	2013.03.28.10.18.17;	author abonfi;	state Exp;
+branches;
+next	1.72;
+
+1.72
+date	2013.03.05.09.05.07;	author abonfi;	state Exp;
+branches;
+next	1.71;
+
+1.71
+date	2013.01.26.11.48.03;	author abonfi;	state Exp;
+branches;
+next	1.70;
+
+1.70
+date	2012.08.09.07.29.18;	author abonfi;	state Exp;
+branches;
+next	1.69;
+
+1.69
+date	2012.04.03.12.15.07;	author abonfi;	state Exp;
+branches;
+next	1.68;
+
+1.68
+date	2011.12.14.09.53.31;	author abonfi;	state Exp;
+branches;
+next	1.67;
+
+1.67
+date	2011.09.16.07.25.40;	author abonfi;	state Exp;
+branches;
+next	1.66;
+
+1.66
+date	2011.03.30.09.00.06;	author abonfi;	state Exp;
+branches;
+next	1.65;
+
+1.65
+date	2010.10.04.12.30.32;	author abonfi;	state Exp;
+branches;
+next	1.64;
+
+1.64
+date	2009.10.13.08.13.31;	author abonfi;	state Exp;
+branches;
+next	1.63;
+
+1.63
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.62;
+
+1.62
+date	2009.06.11.08.56.32;	author abonfi;	state Exp;
+branches;
+next	1.61;
+
+1.61
+date	2008.06.10.10.10.50;	author abonfi;	state Exp;
+branches;
+next	1.60;
+
+1.60
+date	2008.04.19.08.28.57;	author abonfi;	state Exp;
+branches;
+next	1.59;
+
+1.59
+date	2008.02.25.09.45.04;	author abonfi;	state Exp;
+branches;
+next	1.58;
+
+1.58
+date	2006.03.28.08.49.04;	author abonfi;	state Exp;
+branches;
+next	1.57;
+
+1.57
+date	2005.10.22.11.03.52;	author abonfi;	state Exp;
+branches;
+next	1.56;
+
+1.56
+date	2005.09.09.15.32.12;	author abonfi;	state Exp;
+branches;
+next	1.55;
+
+1.55
+date	2005.09.09.08.47.41;	author abonfi;	state Exp;
+branches;
+next	1.54;
+
+1.54
+date	2005.08.08.11.02.44;	author abonfi;	state Exp;
+branches;
+next	1.53;
+
+1.53
+date	2004.12.20.14.36.13;	author aldo;	state Exp;
+branches;
+next	1.52;
+
+1.52
+date	2002.10.25.06.02.17;	author abonfi;	state Exp;
+branches;
+next	1.51;
+
+1.51
+date	2002.09.14.09.02.43;	author abonfi;	state Exp;
+branches;
+next	1.50;
+
+1.50
+date	2002.03.02.01.38.08;	author abonfi;	state Exp;
+branches;
+next	1.49;
+
+1.49
+date	2001.10.17.15.34.39;	author abonfi;	state Exp;
+branches;
+next	1.48;
+
+1.48
+date	2001.10.08.15.50.37;	author abonfi;	state Exp;
+branches;
+next	1.47;
+
+1.47
+date	2001.01.20.13.50.34;	author aldo;	state Exp;
+branches;
+next	1.46;
+
+1.46
+date	2000.12.06.13.41.09;	author aldo;	state Exp;
+branches;
+next	1.45;
+
+1.45
+date	2000.11.22.14.34.26;	author aldo;	state Exp;
+branches;
+next	1.44;
+
+1.44
+date	2000.11.16.13.36.58;	author aldo;	state Exp;
+branches;
+next	1.43;
+
+1.43
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.42;
+
+1.42
+date	2000.11.10.17.11.19;	author aldo;	state Exp;
+branches;
+next	1.41;
+
+1.41
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	2000.08.18.14.07.09;	author aldo;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	2000.07.31.12.42.33;	author aldo;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	2000.07.07.15.56.51;	author aldo;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2000.06.23.16.46.52;	author aldo;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2000.03.31.08.56.39;	author aldo;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2000.03.24.15.10.32;	author aldo;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	99.12.27.09.20.28;	author aldo;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	99.12.06.12.14.01;	author aldo;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	99.11.05.21.00.47;	author aldo;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	99.09.29.09.51.30;	author aldo;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	99.09.15.14.45.16;	author aldo;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	99.09.03.11.09.17;	author aldo;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	99.08.17.08.13.09;	author aldo;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	99.01.18.18.53.08;	author aldo;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	98.11.25.17.01.31;	author aldo;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	98.11.17.17.01.14;	author aldo;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	98.11.03.17.39.01;	author aldo;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	98.10.07.17.57.51;	author aldo;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	98.08.25.06.21.16;	author aldo;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	98.08.24.12.46.01;	author aldo;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	98.08.24.10.17.50;	author aldo;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	98.08.13.13.19.03;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	98.08.07.13.23.13;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	98.07.23.10.25.48;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	98.05.17.08.51.17;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	98.03.16.17.11.43;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	98.03.09.17.01.24;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	98.02.25.17.40.50;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	98.02.10.08.53.46;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.01.26.16.12.01;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.01.16.17.58.09;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.01.12.16.25.36;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.01.09.13.02.17;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.01.05.10.32.51;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.03.17.21.44;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.02.15.33.14;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.01.22.12.32;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+1.85.1.1
+date	2020.04.16.14.31.32;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Reads in DATAIN.DAT
+@
+
+
+1.89
+log
+@re-formatted some WRITE stmts dealing with the ALE formulation
+@
+text
+@      SUBROUTINE READVAL(MESHFILE,NGHBFILE,STARFILE,FOLDFILE,BAKFILE,
+     +                   VISCTFILE,WDISTFILE,PBCSFILE,PTOTFILE,CLFILE,
+     +                   SKINFILE,DATADIR,NTURB)
+C
+C     $Id: rdat.F,v 1.88 2020/11/21 11:13:16 abonfi Exp abonfi $
+C
+C
+CCC#include "petsc/finclude/petscts.h"
+CCC#include "petsc/finclude/petscviewer.h"
+#include "petsc/finclude/petscsys.h"
+      use petscsys 
+C
+      IMPLICIT NONE
+C
+      PetscBool IFLAG
+C
+      INCLUDE 'paramt.h'
+      include 'bnd.h'
+      INCLUDE 'bctype.h'
+C
+C
+      INCLUDE 'implicit.h'
+      INCLUDE 'visco.com'
+      INCLUDE 'constants.h'
+      INCLUDE 'conv.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'chorin.com'
+      INCLUDE 'scalar.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'bodyf.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'turb.com'
+      INCLUDE 'bnd.com'
+      INCLUDE 'ibc2.com'
+      INCLUDE 'io.com'
+      INCLUDE 'verbose.com'
+C
+      INCLUDE 'time.h'
+      INCLUDE 'time.com'
+C
+      INTEGER NTURB
+      CHARACTER*(*) MESHFILE,NGHBFILE,STARFILE,BAKFILE,DATADIR,
+     +              WDISTFILE,VISCTFILE,PBCSFILE,PTOTFILE,CLFILE,
+     2              SKINFILE,FOLDFILE
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+      CHARACTER*80 STRINGA
+      CHARACTER*72 ERRMSG
+      CHARACTER*3 EXT
+      INTEGER I,J,IERR,NVALS,KSPACE
+      INTEGER NERR,IOPT
+C
+      INTEGER I1MACH
+C
+C     Executable Statements ..
+C
+C
+C     Number of turbulence eqns.
+C
+      NTURB = 0
+      TURBULENT = .FALSE.
+      COUPLED = .FALSE.
+      SEGREGATED = .FALSE.
+C     when using turbulent viscosity multiplied
+C     by \sqrt{\rho} set to .TRUE.
+      LTSQR = .FALSE.
+C
+      WRITE(EXT,FMT='(I3.3)')MY_PE+1
+      WRITE(NOUT,200)
+#ifdef MPI
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,200)
+#endif
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,202)
+C
+C     ********************************************
+C     Some debugging options
+C     ********************************************
+C
+C     dump to file the rhs and V/dt PETSc Vecs
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +     '-dump_nodal_residual',IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_TRUE )THEN
+          LDUMP(1) = .TRUE.
+      ELSE
+          LDUMP(1) = .FALSE.
+      ENDIF
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +     '-dump_pseudo_timestep',IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_TRUE )THEN
+          LDUMP(2) = .TRUE.
+      ELSE
+          LDUMP(2) = .FALSE.
+      ENDIF
+C
+C     dump to file the jacobian matrix
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +     '-dump_jacobian_matrix',IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_TRUE )THEN
+          LDUMP(3) = .TRUE.
+      ELSE
+          LDUMP(3) = .FALSE.
+      ENDIF
+C
+C     dump to file in unit IHST4 the integral over the domain
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +     '-dump_integral',IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_TRUE )THEN
+          LDUMP(5) = .TRUE.
+      ELSE
+          LDUMP(5) = .FALSE.
+      ENDIF
+C
+C
+C
+C     ********************************************
+C     Check options for time stepping
+C     ********************************************
+C
+C     0. either time accurate or not
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-time_accurate',IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+C
+C     steady-state is the default
+C
+          LTIME = .FALSE.
+          NTIMLEVS = 1
+      ELSE
+          LTIME = .TRUE.
+          NTIMLEVS = MAXTIMLEVS
+      ENDIF
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=205)LTIME,NTIMLEVS
+C
+C     1. choose dual time stepping (should be checked only when LTIME == .TRUE.)
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-dual_ts',
+     &                           STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+C
+C     dual time-stepping is the default
+C
+          DUALTS = .TRUE.
+      ELSE 
+          IF(STRINGA(1:1).EQ.'n'.OR.STRINGA(1:1).EQ.'N')THEN
+             DUALTS = .FALSE.
+          ELSEIF(STRINGA(1:1).EQ.'y'.OR.STRINGA(1:1).EQ.'Y')THEN
+             DUALTS = .TRUE.
+          ELSE
+             WRITE(ERRMSG,310)STRINGA,'-dual_ts'
+             NERR = 4
+             IOPT = 1
+             CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ENDIF
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=208)DUALTS
+C
+C     1. either implicit or explicit
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-timestepping',
+     &                           STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+C
+C     implicit time-stepping is the default
+C
+          TIMEIMPL = .TRUE.
+      ELSE
+          IF(STRINGA(1:8).EQ.'implicit') THEN
+              TIMEIMPL = .TRUE.
+          ELSEIF(STRINGA(1:8).EQ.'explicit') THEN
+              TIMEIMPL = .FALSE.
+          ELSE
+              WRITE(ERRMSG,310)STRINGA,'-timestepping'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ENDIF
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=210)TIMEIMPL
+C
+C     2. either local or global timestep
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-timestep',
+     &                           STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          IGLOB = 1
+      ELSE
+          IF(STRINGA(1:3).EQ.'loc') THEN
+              IGLOB = 1
+          ELSEIF(STRINGA(1:3).EQ.'glo') THEN
+              IGLOB = 0
+          ELSE
+              WRITE(ERRMSG,310)STRINGA,'-timestep'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ENDIF
+C
+C     2a. characteristic time-stepping: each equation has a different time step;
+C         default behaviour is: NO characteristic time-stepping
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,
+     &                           '-characteristic_timestepping',
+     &                           STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          CHAR_TIMESTEPPING = .FALSE.
+      ELSE
+          CHAR_TIMESTEPPING = .TRUE.
+      ENDIF
+C
+C     local time-stepping is the default, unless we are doing
+C     explicit time-accurate in which case we should use global
+C     time-stepping
+C
+      IF(LTIME.AND.(.NOT. TIMEIMPL))THEN
+         IGLOB = 0
+      ENDIF
+      IF(MY_PE.EQ.0)THEN
+         IF( IGLOB .EQ. 1 )THEN
+                WRITE(IWUNIT,FMT=212)'LOCAL',IGLOB
+         ELSE
+                WRITE(IWUNIT,FMT=212)'GLOBAL',IGLOB
+         ENDIF
+      ENDIF
+C
+      IF(LTIME)THEN ! time accurate
+C
+C     3. timestep size for time accurate calculations
+C
+         CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,'-time_step_size',DELT,IFLAG,IERR)
+         IF( IFLAG .EQV. PETSC_FALSE )THEN
+             DELT = 0.01
+         ENDIF
+         IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=214)DELT
+C
+C     4. number of timesteps for time accurate calculations
+C
+         CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-nof_time_steps',
+     &                           ITSTEP,IFLAG,IERR)
+         IF( IFLAG .EQV. PETSC_FALSE )THEN
+             ITSTEP = 100
+         ENDIF
+C
+C        concerning the meaning of GAMT and THETAT
+C        see Hirsh Vol I pag 426 where xi = THETAT/2
+C
+         CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,'-gammat',GAMT,IFLAG,IERR)
+         IF( IFLAG .EQV. PETSC_FALSE )THEN
+             GAMT = ONE ! use three time levels scheme by default
+         ENDIF
+         GAMTBAK = GAMT ! make a backup copy
+         TCOEF(-1) = (HALF*GAMT)
+         TCOEF( 0) =-(ONE+GAMT)
+         TCOEF( 1) = (ONE+HALF*GAMT)
+         IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=218)GAMT,(tcoef(i),i=-1,1,1)
+C
+         CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,'-thetat',THETAT,IFLAG,IERR)
+         IF( IFLAG .EQV. PETSC_FALSE )THEN
+             THETAT = ONE
+         ENDIF
+         IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=220)THETAT
+C
+C     4. mass matrix type
+C
+         CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+     &                           PETSC_NULL_CHARACTER,
+     +                           '-mass_matrix_type',MMTYPE,IFLAG,IERR)
+         IF( IFLAG .EQV. PETSC_FALSE )THEN
+             MMTYPE = MM_PETROV_GALERKIN
+         ENDIF
+         IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=222)MMTYPE
+C
+         CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+     &        PETSC_NULL_CHARACTER,'-ale',IFLAG,IERR)
+         WRITE(IWUNIT,"(5X,'ALE  is: ',L)")IFLAG
+         IF( IFLAG .EQV. PETSC_FALSE )THEN
+            LALE  = .FALSE.
+         ELSE
+            LALE  = .TRUE.
+            CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +           PETSC_NULL_CHARACTER,'-ale_grid',STRINGA,IFLAG,IERR)
+            IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  WRITE(ERRMSG,300)'-ale_grid'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,72,NERR,IOPT)
+            ELSE ! IFLAG == .TRUE.
+               IF (STRINGA(1:4).EQ."read")THEN
+                  ALE_READ_GRID  = .TRUE.
+                  ALE_MOVE_GRID  = .FALSE.
+                  ALE_LAPLACE_GRID  = .FALSE.
+                  STOP '-ale_grid read is NOT implemented any longer' 
+               ELSEIF (STRINGA(1:4).EQ."move")THEN
+                  ALE_MOVE_GRID  = .TRUE.
+                  ALE_READ_GRID  = .FALSE.
+                  ALE_LAPLACE_GRID  = .FALSE.
+               WRITE(IWUNIT,"(5X,'ALE: grid motion type is: ',A)")
+     &"Move"
+               ELSEIF (STRINGA(1:4).EQ."lapl")THEN
+                  ALE_MOVE_GRID  = .FALSE.
+                  ALE_READ_GRID  = .FALSE.
+                  ALE_LAPLACE_GRID  = .TRUE.
+               WRITE(IWUNIT,"(5X,'ALE: grid motion type is: ',A)")
+     &"Laplace"
+               ELSE
+                  WRITE(ERRMSG,310)STRINGA,'-ale_grid'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,72,NERR,IOPT)
+               ENDIF
+               NVALS = 3
+               CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,'-ale_motion_origin',XYZ_C,NVALS,IFLAG,IERR)
+C
+C     If no origin is given, it is set equal to the 0,0,0
+C
+               IF( IFLAG .EQV. PETSC_FALSE )THEN
+                   XYZ_C(1) = ZERO
+                   XYZ_C(2) = ZERO
+                   XYZ_C(3) = ZERO
+               ENDIF
+               WRITE(IWUNIT,FMT="(5X,'ALE: Motion origin is in: ',
+     &3(E12.4,1X))")(XYZ_C(I),I=1,3)
+C     Read the angular velocity
+               NVALS = 3
+               CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+     +              PETSC_NULL_CHARACTER,'-ale_pitching_omega',OPITCH,
+     +              NVALS,IFLAG,IERR)
+C
+C     If no angular velocity is given, it is set equal to the 0,0,0
+C
+               IF( IFLAG .EQV. PETSC_FALSE )THEN
+                   OPITCH(1) = ZERO
+                   OPITCH(2) = ZERO
+                   OPITCH(3) = ZERO
+               ENDIF
+               WRITE(IWUNIT,FMT="(5X,'ALE: Pitching omega is: ',
+     &3(E12.4,1X))")(OPITCH(I),I=1,3)
+C     Read the pitching amplitude
+               NVALS = 3
+               CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+     +              PETSC_NULL_CHARACTER,'-ale_pitching_amplitude',
+     +              APITCH,NVALS,IFLAG,IERR)
+C
+C     If no pitching amplitude is given, it is set equal to the 0,0,0
+C
+               IF( IFLAG .EQV. PETSC_FALSE )THEN
+                   APITCH(1) = ZERO
+                   APITCH(2) = ZERO
+                   APITCH(3) = ZERO
+               ENDIF
+               WRITE(IWUNIT,FMT="(5X,'ALE: Pitching amplitude is: ',
+     &3(E12.4,1X))")(APITCH(I),I=1,3)
+            ENDIF ! test on option: -ale
+C
+C     Should we read the grid velocities from files?
+C
+            CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+     &           PETSC_NULL_CHARACTER,'-ale_read_grid_velocities',
+     &           ALE_READ_GRIDVEL,IERR)
+C
+C     Should we check the GCL on a per cell basis ?
+C
+            CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+     &           PETSC_NULL_CHARACTER,'-ale_check_gcl',GCLCHK,IERR)
+C
+C     Read the weight used to compute the intermediate grid configuration; defaults to 0.5
+C
+            CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +           PETSC_NULL_CHARACTER,'-ale_grid_weight',ALFALE,IFLAG,
+     &           IERR)
+            IF( IFLAG .EQV. PETSC_FALSE )THEN
+                ALFALE = HALF 
+            ENDIF
+C
+C     Read the kind of grid motion; un-needed if grid velocities are read from files  
+C     depending on the value IALE, different kinds of grid motion are implemented,
+C     see subroutine geometry/motion_type.f 
+C
+            IF( .NOT. ALE_READ_GRIDVEL )THEN
+               CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+     +              PETSC_NULL_CHARACTER,'-ale_grid_motion_type',IALE,
+     &              IFLAG,IERR)
+               IF( IFLAG .EQV. PETSC_FALSE )THEN
+                     WRITE(ERRMSG,300)'-ale_grid_motion_type'
+                     NERR = 4
+                     IOPT = 1
+                     CALL SETERR(ERRMSG,72,NERR,IOPT)
+               ENDIF ! IFLAG
+            ELSE 
+               IALE = -1 
+            ENDIF ! ALE_READ_GRIDVEL
+         ENDIF ! IFLAG
+C
+      ELSE ! steady-state (LTIME == .FALSE.)
+         ITSTEP = 1
+         LALE  = .FALSE.
+      ENDIF ! LTIME
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=216)ITSTEP
+C
+C     ********************************************
+C     Check options for linearization
+C     ********************************************
+C
+      IF(TIMEIMPL)THEN
+          CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-linearization',STRINGA,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+C
+C         Picard linearization is the default
+C
+              PICARD = .TRUE.
+              NEWTON = .FALSE.
+          ELSE
+              IF(STRINGA(1:6).EQ.'picard') THEN
+                  PICARD = .TRUE.
+                  NEWTON = .FALSE.
+              ELSEIF(STRINGA(1:6).EQ.'newton') THEN
+                  PICARD = .FALSE.
+                  NEWTON = .TRUE.
+              ELSE
+                  WRITE(ERRMSG,310)STRINGA,'-linearization'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,72,NERR,IOPT)
+              ENDIF
+          ENDIF
+      ELSE
+          PICARD = .FALSE.
+          NEWTON = .FALSE.
+      ENDIF
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=224)'NEWTON',NEWTON
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=224)'PICARD',PICARD
+C
+C     maximum number of NON linear iterations
+C
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-itmax',ITMAX,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )ITMAX = 0
+C
+C     If time-accurate and explicit set sub-iterations to 1
+C
+      IF(LTIME.AND.(.NOT.TIMEIMPL))THEN
+            ITMAX = 1
+      ENDIF
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=226)ITMAX
+C
+C     convergence will be written to STDOUT each ISTMP iterations
+C
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-istmp',ISTMP,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )ISTMP = 1
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=228)ISTMP
+C
+C     solution will be damped to disk each IBAK iterations
+C
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-ibak',IBAK,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )IBAK = 10
+      IF(MY_PE.EQ.0)THEN
+         IF(LTIME)THEN
+             WRITE(IWUNIT,FMT=230)IBAK,"TIME STEPS      "
+         ELSE
+             WRITE(IWUNIT,FMT=230)IBAK,"NON-LINEAR STEPS"
+         ENDIF
+      ENDIF
+C
+C     variable upon which convergence is tested
+C     need to be careful: at this stage the code does not know
+C     how many (NOFVAR) variables we are solving for:
+C     must ensure 1 <= IVCNVG <= NOFVAR 
+C
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +                        '-ivcnvg',IVCNVG,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )IVCNVG = 1
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=232)IVCNVG
+C
+C     threshold for terminating NON linear iterations
+C
+      CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +                         '-tolerance',TOLER,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )TOLER = -20.
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=234)TOLER
+C
+      CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +                         '-cfl',CFL(1),IFLAG,IERR)
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=236)"INITIAL",CFL(1)
+C
+      CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +                         '-cflmax',CFLMAX(1),IFLAG,IERR)
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=236)"MAXIMUM",CFLMAX(1)
+C
+C     time step ramp: either SER or exponential 
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,
+     &                           '-cfl_ramping_strategy',STRINGA,IFLAG,
+     3                           IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+C
+C         Switched Evolution Relaxation is the default
+C
+               CFL_RAMP = CFL_SER
+      ELSE
+           IF(STRINGA(1:6).EQ.'SER') THEN
+               CFL_RAMP = CFL_SER
+           ELSEIF(STRINGA(1:6).EQ.'EXP') THEN
+               CFL_RAMP = CFL_EXP
+           ELSE
+               WRITE(ERRMSG,310)STRINGA,'-cfl_ramping_strategy'
+               NERR = 4
+               IOPT = 1
+               CALL SETERR(ERRMSG,72,NERR,IOPT)
+           ENDIF
+      ENDIF
+C
+C     ********************************************
+C     Boundary colouring for the mean flow equations
+C     ********************************************
+C
+      NVALS = NCOLOR+1
+      CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+     +     PETSC_NULL_CHARACTER,'-colors',ICOLOR(0,1),NVALS,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG,300)'-colors'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+C     ********************************************
+C     Boundary fluxes
+C     ********************************************
+C
+      NBFLX(1) = NCOLOR+1
+      CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+     +     PETSC_NULL_CHARACTER,'-dump_boundary_fluxes',IBFLX,NBFLX(1),
+     2     IFLAG,IERR)
+C
+C     If you want to dump the fluxes along the boundaries 1 and 3, use:
+C     -dump_boundary_fluxes 1,3
+C
+C     According to the petsc manual, The array can be passed as 
+C     1. a comma separated list: 0,1,2,3,4,5,6,7 
+C     2. a range (start-end+1): 0-8 
+C     3. a range with given increment (start-end+1:inc): 0-7:2 
+C     4. a combination of values and ranges separated by commas: 0,1-8,8-15:2
+C
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          NBFLX(1) = 0 ! nof patches
+          NBFLX(2) = 0 ! nof boundary edges/faces
+          LDUMP(4) = .FALSE. 
+      ELSE
+          LDUMP(4) = .TRUE. 
+          DO I = 1,NBFLX(1) ! nof patches where we want to dump the fluxes
+             J = IBFLX(I) ! patch we want to dump
+             IF(MY_PE.EQ.0)WRITE(NOUT,FMT=360)J,ICOLOR(J,1)
+          ENDDO
+      ENDIF
+  360 FORMAT(5X,'Dumping bndry fluxes along bndry #',1X,I3,
+     &' with colour ',I3)
+C
+C     check the type of inviscid wall boundary conditions we are
+C     using for Euler/N-S calculations
+C     by default we use weak wall bcs 
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,
+     &                           '-slip_free_bc_type',STRINGA,IFLAG,
+     &                           IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          SLIP_FREE_BC_TYPE = BC_TYPE_FLUX
+      ELSE
+          IF( STRINGA(1:4) .EQ. "flux" )THEN
+             SLIP_FREE_BC_TYPE = BC_TYPE_FLUX
+          ELSEIF( STRINGA(1:6) .EQ. "mirror" )THEN
+             SLIP_FREE_BC_TYPE = BC_TYPE_MIRROR
+          ELSE
+              WRITE(ERRMSG,310)STRINGA,'-slip_free_bc_type'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+              WRITE(I1MACH(4),320)
+          ENDIF
+      ENDIF
+C
+C     ********************************************
+C     type of flow analysis
+C     ********************************************
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,
+     &                           '-equation',STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG,300)'-equation'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+          WRITE(I1MACH(4),320)
+      ENDIF
+C
+      IF( STRINGA(1:19) .EQ. 'advection-diffusion' )THEN
+          KAN = +1
+          CALL CheckPetscOptionsScalar
+          KSCHEME = 1
+      ELSEIF( STRINGA(1:9) .EQ. 'advection' )THEN
+          KAN = -1
+          CALL CheckPetscOptionsScalar
+          KSCHEME = 1
+      ELSEIF( STRINGA(1:5) .EQ. 'Euler' )THEN
+          CALL CheckPetscOptionsEuler
+          KSCHEME = 1
+      ELSEIF( STRINGA(1:13) .EQ. 'Navier-Stokes' )THEN
+          CALL CheckPetscOptionsNS
+          KSCHEME = 1
+      ELSEIF( STRINGA(1:4) .EQ. 'RANS' )THEN
+          CALL CheckPetscOptionsNS
+          CALL CheckPetscOptionsTurb
+          NTURB = 1
+          TURBULENT = .TRUE.
+      ELSE
+          WRITE(ERRMSG,310)STRINGA,'-equation'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+          WRITE(I1MACH(4),320)
+      ENDIF
+C
+C
+      IF(TURBULENT)THEN
+C
+C     boundary conditions for the turbulent variable(s)
+C
+          NVALS = NCOLOR+1
+          CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-turb_colors',ICOLOR(0,2),NVALS,
+     +         IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:44),300)'-turb_colors'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+C
+C     time-stepping strategy for the turbulent variable(s)
+C
+          CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-turb_ts_type',
+     +         STRINGA,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:44),300)'-turb_ts_type'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ELSE
+              IF(STRINGA(1:7).EQ.'coupled') THEN
+                  COUPLED = .TRUE.
+                  SEGREGATED = .FALSE.
+              ELSEIF(STRINGA(1:10).EQ.'segregated') THEN
+                  COUPLED = .FALSE.
+                  SEGREGATED = .TRUE.
+              ELSE
+                  WRITE(ERRMSG,310)STRINGA,'-turb_ts_type'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,72,NERR,IOPT)
+              ENDIF
+          ENDIF
+      ENDIF
+C
+      IF(ABS(KAN).EQ.2)THEN
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +         PETSC_NULL_CHARACTER,'-artificial_sound_speed',BETA,
+     &         IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )BETA = ONE
+      ENDIF 
+C
+C     for the incompressible UNpreconditioned eqns. no scalar scheme
+C     is required, however a reasonable value for ISCHEME is still
+C     required, since this is used in subroutine SCLSCH()
+C
+      IF(ABS(KAN).EQ.2.AND.DECOMP.EQ.7)THEN
+         ISCHEME = 1
+         KSCHEME = 1
+         GOTO 70 
+      ENDIF
+C
+C     ********************************************
+C     choose scalar and matrix schemes 
+C     ********************************************
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-scalar_scheme',
+     &                           STRINGA,IFLAG,IERR)
+C
+      IF( IFLAG .EQV. PETSC_FALSE )THEN 
+          WRITE(ERRMSG(1:44),300)'-scalar_scheme'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+C     be careful with schemes like: N,NL,etc. 
+C     test first the longer ones
+C
+      IF( STRINGA(1:3).EQ.'NL2' )THEN 
+          ISCHEME = 7
+      ELSEIF( STRINGA(1:3).EQ.'LW2' )THEN 
+          ISCHEME = 12
+      ELSEIF( STRINGA(1:2).EQ.'NL' )THEN 
+          ISCHEME = 4
+      ELSEIF( STRINGA(1:2).EQ.'NS' )THEN 
+          ISCHEME = 9
+      ELSEIF( STRINGA(1:2).EQ.'LW' )THEN 
+          ISCHEME = 8
+      ELSEIF( STRINGA(1:1).EQ.'N' )THEN 
+          ISCHEME = 1
+      ELSEIF( STRINGA(1:3).EQ.'PSI' )THEN 
+          ISCHEME = 2
+      ELSEIF( STRINGA(1:6).EQ.'LDASqr' )THEN 
+          ISCHEME = 13
+      ELSEIF( STRINGA(1:4).EQ.'LDA2' )THEN 
+          ISCHEME = 11
+      ELSEIF( STRINGA(1:3).EQ.'LDA' )THEN 
+          ISCHEME = 3
+      ELSEIF( STRINGA(1:3).EQ.'FCT' )THEN 
+          ISCHEME = 6
+      ELSEIF( STRINGA(1:2).EQ.'FV' )THEN 
+          ISCHEME = 5
+      ELSEIF( STRINGA(1:3).EQ.'SDK' )THEN 
+          ISCHEME = 14
+      ELSEIF( STRINGA(1:4).EQ.'SUPG' )THEN 
+          ISCHEME = 10
+      ELSE
+          WRITE(ERRMSG,FMT=310)STRINGA(1:22),'-scalar_scheme'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+   70 CONTINUE
+C
+C     if it is a scalar problem, we do not have to care about
+C        the matrix scheme or the scalar scheme for tubulent
+C        transport
+C
+      IF(ABS(KAN).EQ.1)THEN
+          JSCHEME = 1
+          KSCHEME = 1
+          GOTO 140
+      ENDIF
+C
+C     ********************************************
+C     choose matrix scheme
+C     ********************************************
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,     '-matrix_scheme',STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN 
+          WRITE(ERRMSG(1:44),300)'-matrix_scheme'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+C     be careful with schemes like: LDA,LDA2,etc. 
+C     test first the longer ones
+C
+      IF    ( STRINGA(1:1).EQ.'N' )THEN 
+          JSCHEME = 1
+      ELSEIF( STRINGA(1:1).EQ.'B' )THEN 
+          JSCHEME = 10
+      ELSEIF( STRINGA(1:4).EQ.'LDAF' )THEN 
+          JSCHEME = 2
+      ELSEIF( STRINGA(1:4).EQ.'LDA2' )THEN 
+          JSCHEME = 6
+      ELSEIF( STRINGA(1:3).EQ.'LDA' )THEN 
+          JSCHEME = 3
+      ELSEIF( STRINGA(1:3).EQ.'CDS' )THEN 
+          JSCHEME = 7
+      ELSEIF( STRINGA(1:3).EQ.'LW2' )THEN 
+          JSCHEME = 4
+      ELSEIF( STRINGA(1:4).EQ.'LWT' )THEN
+          JSCHEME = 11
+      ELSEIF( STRINGA(1:4).EQ.'LimN' )THEN
+          JSCHEME = 9
+      ELSEIF( STRINGA(1:2).EQ.'LW' )THEN 
+          JSCHEME = 8
+      ELSEIF( STRINGA(1:2).EQ.'FV' )THEN 
+          JSCHEME = 5
+      ELSEIF( STRINGA(1:4).EQ.'UCV' )THEN
+          JSCHEME = 12
+      ELSE
+          WRITE(ERRMSG,FMT=310)STRINGA(1:22),'-matrix_scheme'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+C
+  140 CONTINUE
+C
+C     PetscOptions that do NOT depend on the type of eqns. being solved 
+C
+C     ********************************************
+C     debugging option
+C     ********************************************
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +     '-check',IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_TRUE )THEN
+          ICHECK = 1
+      ELSE 
+          ICHECK = 0
+      ENDIF
+C
+C     *******************************************
+C     meshfile(s)
+C     *******************************************
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,     '-data_dir',DATADIR,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG(1:44),300)'-data_dir'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+      KSPACE = INDEX(DATADIR,' ')
+C
+#ifdef MPI
+C
+      MESHFILE(1:KSPACE+10)  = DATADIR(1:KSPACE-1)//'mesh'//ext//'.dat'
+      NGHBfILE(1:KSPACE+10)  = DATADIR(1:KSPACE-1)//'neig'//ext//'.dat'
+      WDISTFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'wdis'//ext//'.dat'
+      PBCSFILE(1:KSPACE+10)  = DATADIR(1:KSPACE-1)//'pbcs'//ext//'.dat'
+      PTOTFILE(1:KSPACE+10)  = DATADIR(1:KSPACE-1)//'ptot'//ext//'.dat'
+      CLFILE(1:KSPACE+10)    = DATADIR(1:KSPACE-1)//'clin'//ext//'.dat'
+C
+C     file containing the flow variables and viscosity are kept under
+C     the current (working) directory
+C
+      VISCTFILE(1:11) = 'vist'//ext//'.dat'
+      BAKFILE(1:11)   = 'file'//ext//'.dat'
+      STARFILE(1:11)  = 'file'//ext//'.dat'
+      FOLDFILE(1:11)  = 'fold'//ext//'.dat'
+      SKINFILE(1:11) = 'skin'//ext//'.dat'
+C
+#else
+C
+      MESHFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'file001.dat'
+      NGHBfILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'file002.dat'
+      STARFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'file003.dat'
+      FOLDFILE(1:11) = 'fold010.dat'
+      PBCSFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'file004.dat'
+      WDISTFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'file019.dat'
+      PTOTFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'file005.dat'
+      CLFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'file006.dat'
+      BAKFILE(1:11) = 'file010.dat'
+      VISCTFILE(1:11) = 'file015.dat'
+      SKINFILE(1:11) = 'file016.dat'
+#endif
+C
+C
+C     ********************************************
+C     restart from a previous solution
+C     ********************************************
+C
+      IF(IABS(KAN).EQ.1)GOTO 60
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,     '-restart_file',STRINGA,IFLAG,IERR)
+C
+      IF( IFLAG .EQV. PETSC_TRUE )THEN
+
+      ISTART = 1
+C
+C     in the parallel case the restart file cannot be changed from 
+C     file$np$.dat
+C
+#ifndef MPI
+          STARFILE = STRINGA
+#endif
+      ELSE 
+          ISTART = 0
+      ENDIF
+   60 CONTINUE
+cxxxx
+!         TURBULENT = .TRUE.
+!         SEGREGATED = .FALSE.
+!         COUPLED = .TRUE.
+cxxxx
+C
+C 
+C     ********************************************
+C     Body forces
+C     ********************************************
+C
+      NVALS = 3
+      CALL PetscOptionsGetRealArray(PETSC_NULL_OPTIONS,
+     +     PETSC_NULL_CHARACTER,'-body_force',GRAV,NVALS,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              GRAV(1) = ZERO
+              GRAV(2) = ZERO
+              GRAV(3) = ZERO
+          ENDIF
+C
+C     type of boundary conditions: inflow/outflow
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +PETSC_NULL_CHARACTER,     '-bc_type',STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG(1:44),300)'-bc_type'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,44,NERR,IOPT)
+      ELSE
+          IF(    STRINGA(1:4).EQ.'weak')THEN 
+             IBCTYPE = BC_TYPE_WEAK
+          ELSEIF(STRINGA(1:6).EQ.'strong')THEN 
+             IBCTYPE = BC_TYPE_STRONG
+          ELSE 
+             WRITE(ERRMSG,FMT=310)STRINGA(1:20),'-bc_type'
+             NERR = 4
+             IOPT = 1
+             CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ENDIF
+C
+C     type of periodic conditions: annular or linear
+C
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +     '-number_of_blades',NBLADES,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          ANNULAR = .FALSE.
+      ELSE
+          ANNULAR = .TRUE.
+          PITCH = TWO*PETSC_PI/REAL(NBLADES)
+          COSALPHA = COS(PITCH)
+          SINALPHA = SIN(PITCH)
+      ENDIF
+C
+C     type of periodic conditions: annular or linear
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-radial_equilibrium',IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          RAD_EQUI = .FALSE.
+      ELSE
+          RAD_EQUI = .TRUE.
+          IF(.NOT.ANNULAR)THEN
+             STOP 'Cannot use ISRE on linear cascades'
+          ENDIF
+      ENDIF
+C
+      RETURN
+C
+  200 FORMAT(/,
+     115X,'#######                 #######  #####',/,
+     215X,'#        #    #  #      #       #     #',/,
+     315X,'#        #    #  #      #       #',/,
+     415X,'#####    #    #  #      #####    #####',/,
+     515X,'#        #    #  #      #             #',/,
+     615X,'#        #    #  #      #       #     #',/,
+     715X,'#######   ####   ###### #        #####',/)
+  202 FORMAT(5X,'RUN TIME OPTIONS ARE :'/15("="))
+  205 FORMAT(5X,'LTIME = ',L,' MAX NOF TIME LEVELS = ',I1)
+  208 FORMAT(5X,'DUAL TIME STEPPING (DUALTS) IS SET TO = ',L)
+  210 FORMAT(5X,'IMPLICIT TIME STEPPING (TIMEIMPL) IS SET TO = ',L)
+  212 FORMAT(5X,'TIME STEPPING IS ',A6,' (IGLOB) IS SET TO = ',I1)
+  214 FORMAT(5X,'TIME STEP SIZE (DELT) IS SET TO = ',E12.6)
+  216 FORMAT(5X,'NOF OF TIME STEPS (ITSTEP) IS SET TO = ',I8)
+  218 FORMAT(5X,'GAMT IS SET TO = ',E12.6,' TIME COEFF ARE : ',
+     &3(E12.6,1X))
+  220 FORMAT(5X,'RHS WEIGHTING (THETAT) IS SET TO = ',E12.6)
+  222 FORMAT(5X,'MASS MATRIX TYPE IS SET TO = ',I2)
+  224 FORMAT(5X,A6,' LINEARIZATION IS SET TO = ',L)
+  226 FORMAT(5X,'MAXIMUM NOF INNER ITERATIONS IS SET TO = ',I8)
+  228 FORMAT(5X,'CONVERGENCE IS MONITORED EACH ',I6,' INNER ITERATIONS')
+  230 FORMAT(5X,'SOLUTION IS SAVED EACH ',I6,1X,A16)
+  232 FORMAT(5X,'CONVERGENCE IS CHECKED ON DOF # ',I1)
+  234 FORMAT(5X,'CONVERGENCE THRESHOLD IS SET TO ',E12.6)
+  236 FORMAT(5X,A7,1X,'CFL IS SET TO ',E12.6)
+  300 FORMAT('Need to specify option: ',A20)
+  310 FORMAT('Invalid argument: ',A22,' for option ',A18)
+C
+  320 FORMAT(5X,'Valid options are:'/,
+     +       15X,'advection'/, 
+     +       15X,'advection-diffusion'/, 
+     +       15X,'Euler'/, 
+     +       15X,'Navier-Stokes'/, 
+     +       15X,'RANS')
+C
+      END
+C
+      SUBROUTINE CheckPetscOptionsScalar
+C
+#include "petsc/finclude/petscsys.h"
+      use petscsys 
+C
+      IMPLICIT NONE
+C
+C
+C
+      PetscBool IFLAG
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'scalar.com'
+C
+      INTEGER I1MACH
+      INTEGER IERR
+      INTEGER NERR,IOPT
+      CHARACTER*72 ERRMSG
+C
+C     ********************************************
+C     check for testcase
+C
+C     the convection speed is computed depending on the testcase,
+C     similarly for the source term, if present 
+C     ********************************************
+C
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +                        '-testcase',ICASE,IFLAG,IERR)
+      IF(IFLAG .EQV. PETSC_FALSE)THEN
+          WRITE(I1MACH(4),300)'-testcase'
+          WRITE(I1MACH(4),330)
+          WRITE(I1MACH(4),340)
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+C     ********************************************
+C     force restart to read boundary/initial data
+C     ********************************************
+C
+      ISTART = 1 
+C
+      IF(KAN.EQ.1)THEN
+C
+C     read diffusion parameter
+C
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +                             PETSC_NULL_CHARACTER,'-Reynolds',RE,
+     3                             IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )THEN
+              WRITE(ERRMSG(1:44),300)'-Reynolds'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+          REINV=1.d0/RE 
+      ELSEIF(KAN.EQ.-1)THEN
+          RE = 1.E+38
+          REINV=0.d0
+      ELSE
+          WRITE(I1MACH(4),FMT=*)
+          STOP
+      ENDIF
+C 
+  300 FORMAT(5X,'Need to specify option: ',A20)
+  330 FORMAT(5X,'Implemented testcases in TWO dimensions are:'/,
+     +       15X,'1. Linear convection a = (2.,1.)'/, 
+     +       15X,'2. Burger equation   a = (u.,1.)'/, 
+     +       15X,'3. Linear convection a = (1.,1.)'/, 
+     +15X,'4. Linear convection a = (1.,1.) + source term 4*x - 2*y'/, 
+     +15X,'5. Linear convection a = (1.,1.) + source term '/, 
+     +15X,'6. Linear convection a = (cos(d),sin(d)) + source term')
+C
+  340 FORMAT(5X,'Implemented testcases in THREE dimensions are:'/,
+     +       15X,'1. Linear convection a = (0.75,0.875,1.)'/, 
+     +       15X,'2. Linear convection a = (z,.2,-x)')
+C
+      RETURN
+      END
+C
+      SUBROUTINE CheckPetscOptionsEuler
+C
+C
+#include "petsc/finclude/petscsys.h"
+      use petscsys 
+C
+      IMPLICIT NONE
+C
+C
+      PetscBool IFLAG
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'io.com'
+      INCLUDE 'merkle.com'
+C
+      INTEGER IERR,NERR,IOPT
+      CHARACTER*80 STRINGA
+      CHARACTER*72 ERRMSG
+      CHARACTER*1 ANSW
+C
+C
+C     type of fluid: compressible OR incompressible
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-fluid',STRINGA,
+     &                           IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG,FMT=310)STRINGA(1:20),'-fluid'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ELSE
+          IF(    STRINGA(1:12).EQ.'compressible')THEN 
+             KAN = -4
+          ELSEIF(STRINGA(1:14).EQ.'incompressible')THEN 
+             KAN = -2
+          ELSEIF(STRINGA(1:6).EQ.'plasma')THEN 
+             KAN = -3
+          ELSE 
+             WRITE(ERRMSG,FMT=310)STRINGA(1:20),'-fluid'
+             NERR = 4
+             IOPT = 1
+             CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ENDIF
+C
+C     Test option for preconditioner
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,
+     &                           '-preconditioning',STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG,300)'-preconditioning'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ELSE
+          ANSW = STRINGA(1:1)
+          IF(ANSW.EQ.'y'.OR.ANSW.EQ.'Y')THEN 
+              IF    (KAN.EQ.-4)THEN
+                  DECOMP = 3
+              ELSEIF(KAN.EQ.-2)THEN
+                  DECOMP = 9
+              ENDIF 
+          ELSEIF(ANSW.EQ.'h'.OR.ANSW.EQ.'H')THEN
+                  DECOMP = 2
+          ELSEIF(ANSW.EQ.'m'.OR.ANSW.EQ.'M')THEN
+                   DECOMP = 6
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +                                 PETSC_NULL_CHARACTER,
+     3                                 '-merkle_cutoff',MERKLE_CUTOFF,
+     4                                 IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )MERKLE_CUTOFF=ZERO
+              WRITE(IWUNIT,234)MERKLE_CUTOFF
+          ELSEIF(ANSW.EQ.'t'.OR.ANSW.EQ.'T')THEN
+                   DECOMP = 5
+          ELSEIF(ANSW.EQ.'n'.OR.ANSW.EQ.'N')THEN 
+              IF    (KAN.EQ.-4)THEN
+                  DECOMP = 7
+              ELSEIF(KAN.EQ.-2)THEN
+                  DECOMP = 8
+              ENDIF 
+          ELSE 
+              WRITE(ERRMSG,310)ANSW,'-preconditioning'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+C
+C         Ad hoc fix for plasma
+C
+          IF( KAN .EQ. -3 )DECOMP = 10
+      ENDIF
+C
+C         Ad hoc test for plasma
+C
+      IF( IABS(KAN) .EQ. 3)THEN
+         CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,
+     +                            PETSC_NULL_CHARACTER,'-solve_laplace',
+     3                            IFLAG,IERR)
+         IF( IFLAG .EQV. PETSC_TRUE )THEN
+            LAPLACE = .TRUE. 
+            CALL CheckPetscOptionsPoisson
+         ELSE
+            LAPLACE = .FALSE.
+         ENDIF
+      ELSE
+         LAPLACE = .FALSE.
+      ENDIF
+C
+      RE = 0.d0
+      REINV = 1.D+38
+C 
+C
+  234 FORMAT(5X,"USING Merkle's PRECONDITIONER WITH THRESHOLD SET TO ",
+     &E12.6)
+  300 FORMAT('Need to specify option: ',A30)
+  310 FORMAT('Invalid argument: ',A22,' for option ',A18)
+C
+      RETURN
+      END 
+
+      SUBROUTINE CheckPetscOptionsNS
+C
+C
+#include "petsc/finclude/petscsys.h"
+      use petscsys 
+C
+      IMPLICIT NONE
+C
+C
+      PetscBool IFLAG
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'io.com'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'merkle.com'
+C
+      INTEGER I1MACH
+      INTEGER IERR
+      INTEGER NERR,IOPT
+      CHARACTER*80 STRINGA
+      CHARACTER*72 ERRMSG
+      CHARACTER*1 ANSW
+C
+C     type of fluid: compressible OR incompressible
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-fluid',STRINGA,
+     &                           IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG(1:44),300)'-fluid'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,44,NERR,IOPT)
+      ELSE
+          IF(    STRINGA(1:12).EQ.'compressible')THEN 
+             KAN = 4
+             DECOMP = 7
+          ELSEIF(STRINGA(1:14).EQ.'incompressible')THEN
+             KAN = 2
+             DECOMP = 8
+          ELSEIF(STRINGA(1:6).EQ.'plasma')THEN
+             STOP 'N-S still un-implemented for plasma' 
+          ELSE 
+             WRITE(ERRMSG,FMT=310)STRINGA(1:20),'-fluid'
+             NERR = 4
+             IOPT = 1
+             CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ENDIF
+C
+C     Test option for preconditioner
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,
+     &                           '-preconditioning',STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG,300)'-preconditioning [y,Y,n,N]'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ELSE
+          ANSW = STRINGA(1:1)
+          IF(ANSW.EQ.'y'.OR.ANSW.EQ.'Y')THEN 
+              IF    (KAN.EQ.4)THEN
+                  DECOMP = 3
+              ELSEIF(KAN.EQ.2)THEN
+                  DECOMP = 9
+              ENDIF 
+          ELSEIF(ANSW.EQ.'h'.OR.ANSW.EQ.'H')THEN
+                  DECOMP = 4
+          ELSEIF(ANSW.EQ.'t'.OR.ANSW.EQ.'T')THEN
+                   DECOMP = 5
+          ELSEIF(ANSW.EQ.'m'.OR.ANSW.EQ.'M')THEN
+                   DECOMP = 6
+              CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     +                                 PETSC_NULL_CHARACTER,
+     3                                 '-merkle_cutoff',MERKLE_CUTOFF,
+     4                                 IFLAG,IERR)
+              IF( IFLAG .EQV. PETSC_FALSE )MERKLE_CUTOFF=ZERO
+              WRITE(IWUNIT,234)MERKLE_CUTOFF
+          ELSEIF(ANSW.EQ.'n'.OR.ANSW.EQ.'N')THEN 
+              IF    (KAN.EQ.4)THEN
+                  DECOMP = 7
+              ELSEIF(KAN.EQ.2)THEN
+                  DECOMP = 8
+              ENDIF 
+          ELSE 
+              WRITE(I1MACH(4),310)ANSW,'-preconditioning'
+              STOP
+          ENDIF
+      ENDIF
+      RETURN
+  234 FORMAT(5X,"USING Merkle's PRECONDITIONER WITH THRESHOLD SET TO ",
+     &E12.6)
+  300 FORMAT('Need to specify option: ',A48)
+  310 FORMAT('Invalid argument: ',A22,' for option ',A18)
+      END 
+C
+      SUBROUTINE CheckPetscOptionsTurb
+C
+C
+#include "petsc/finclude/petscsys.h"
+      use petscsys 
+C
+      IMPLICIT NONE
+C
+      PetscBool IFLAG
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'turb.com'
+C
+!     INTEGER I1MACH
+      INTEGER IERR
+      INTEGER NERR,IOPT
+      CHARACTER*80 STRINGA
+      CHARACTER*72 ERRMSG
+C
+C
+C****************************************************************
+C     
+C     Time stepping (turbulence eqn.)
+C     
+C****************************************************************
+C
+      CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-cfl_max',CFLMAX(2),IFLAG,IERR)
+C
+      CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-cfl_start',CFL(2),IFLAG,IERR)
+C
+      CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-cfl_ratio',CFLRATIO,IFLAG,IERR)
+C
+C     ********************************************
+C     turbulence modeling (Spalart-Allmaras model)
+C     ********************************************
+C
+C     Trip term on/off
+C
+      CALL PetscOptionsHasName(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +'-trip_term',IFLAG,IERR)
+C
+      IF( IFLAG .EQV. PETSC_TRUE )THEN
+              TTFLAG = 1
+C
+          CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,
+     2                            PETSC_NULL_CHARACTER,'-trip_cell',
+     +                            TTELEM,IFLAG,IERR)
+          CALL PetscOptionsGetReal(PETSC_NULL_OPTIONS,
+     2                             PETSC_NULL_CHARACTER,
+     3                             '-trip_spacing',TDXT,IFLAG,IERR)
+C
+      ELSE
+              TTFLAG = 0
+      ENDIF
+C
+C     number of sub iterations on the turbulence equation
+C
+      CALL PetscOptionsGetInt(PETSC_NULL_OPTIONS,PETSC_NULL_CHARACTER,
+     +                        '-turb_sub_iter',NSUBIT,IFLAG,IERR)
+C
+      IF( IFLAG .EQV. PETSC_FALSE .OR. NSUBIT .LE. 0 )NSUBIT = 1
+C 
+C
+C     ********************************************
+C     choose scalar scheme for the turbulence
+C     transport eqn
+C     ********************************************
+C
+      CALL PetscOptionsGetString(PETSC_NULL_OPTIONS,
+     +                           PETSC_NULL_CHARACTER,'-turb_scheme',
+     &                           STRINGA,IFLAG,IERR)
+C
+C     if unspecified, use the same scalar scheme
+C
+      IF( IFLAG .EQV. PETSC_FALSE )THEN 
+          KSCHEME = ISCHEME
+      ENDIF
+C
+C     be careful with schemes like: N,NL,etc. 
+C     test first the longer ones
+C
+      IF( STRINGA(1:3).EQ.'NL2' )THEN 
+          KSCHEME = 7
+      ELSEIF( STRINGA(1:3).EQ.'LW2' )THEN 
+          KSCHEME = 12
+      ELSEIF( STRINGA(1:2).EQ.'NL' )THEN 
+          KSCHEME = 4
+      ELSEIF( STRINGA(1:2).EQ.'NS' )THEN 
+          KSCHEME = 9
+      ELSEIF( STRINGA(1:2).EQ.'LW' )THEN 
+          KSCHEME = 8
+      ELSEIF( STRINGA(1:1).EQ.'N' )THEN 
+          KSCHEME = 1
+      ELSEIF( STRINGA(1:3).EQ.'PSI' )THEN 
+          KSCHEME = 2
+      ELSEIF( STRINGA(1:6).EQ.'LDASqr' )THEN 
+          KSCHEME = 13
+      ELSEIF( STRINGA(1:4).EQ.'LDA2' )THEN 
+          KSCHEME = 11
+      ELSEIF( STRINGA(1:3).EQ.'LDA' )THEN 
+          KSCHEME = 3
+      ELSEIF( STRINGA(1:3).EQ.'FCT' )THEN 
+          KSCHEME = 6
+      ELSEIF( STRINGA(1:2).EQ.'FV' )THEN 
+          KSCHEME = 5
+      ELSEIF( STRINGA(1:3).EQ.'SDK' )THEN 
+          KSCHEME = 14
+      ELSEIF( STRINGA(1:4).EQ.'SUPG' )THEN 
+          KSCHEME = 10
+      ELSE
+          WRITE(ERRMSG,FMT=310)STRINGA(1:22),'-turb_scheme'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+  310 FORMAT('Invalid argument: ',A22,' for option ',A18)
+      RETURN
+      END
+C
+      SUBROUTINE CheckPetscOptionsPoisson
+C
+C
+#include "petsc/finclude/petscsys.h"
+      use petscsys 
+C
+      IMPLICIT NONE
+C
+      PetscBool IFLAG
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd.com'
+      INCLUDE 'flags.com'
+C
+      INTEGER IERR,NVALS
+      INTEGER NERR,IOPT
+      CHARACTER*72 ERRMSG
+C
+C
+C****************************************************************
+C     
+C     Time stepping (turbulence eqn.)
+C     
+C****************************************************************
+C
+      NVALS = NCOLOR+1
+      CALL PetscOptionsGetIntArray(PETSC_NULL_OPTIONS,
+     1                             PETSC_NULL_CHARACTER,
+     3                             '-poisson_colors',ICOLOR(0,3),NVALS,
+     4                            IFLAG,IERR)
+      IF( IFLAG .EQV. PETSC_FALSE )THEN
+          WRITE(ERRMSG(1:44),300)'-poisson_colors'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+C
+C
+  300 FORMAT('Need to specify option: ',A20)
+      RETURN
+      END
+C
+@
+
+
+1.88
+log
+@made a write stmt a bit more descriptive
+@
+text
+@d5 1
+a5 1
+C     $Id: rdat.F,v 1.87 2020/11/21 09:43:54 abonfi Exp abonfi $
+d290 1
+d312 2
+d318 2
+d337 2
+a338 1
+               WRITE(*,*)'ALE: Motion origin is in ',(XYZ_C(I),I=1,3)
+d352 2
+a353 1
+               WRITE(*,*)'ALE: Pitching omega is ',(OPITCH(I),I=1,3)
+d367 2
+a368 1
+               WRITE(*,*)'ALE: Pitching amplitude is ',(APITCH(I),I=1,3)
+@
+
+
+1.87
+log
+@added a comment concerning the -dump_boundary_fluxes option
+@
+text
+@d5 1
+a5 1
+C     $Id: rdat.F,v 1.86 2020/04/23 09:38:48 abonfi Exp abonfi $
+d542 1
+a542 1
+      NBFLX = NCOLOR+1
+d548 1
+a548 1
+C     -dump_boundary_fluxes 1,3 2
+d550 5
+d562 3
+a564 4
+          DO I = 1,NBFLX(1)
+             J = IBFLX(I)
+             IF(MY_PE.EQ.0)
+     &WRITE(NOUT,*)'Dumping bndry fluxes along bndry # ',J
+d567 2
+@
+
+
+1.86
+log
+@changes required by petsc release 3.8
+@
+text
+@d5 1
+a5 1
+C     $Id: rdat.F,v 1.86 2020/04/16 14:45:46 abonfi Exp abonfi $
+d546 5
+@
+
+
+1.85
+log
+@In Petsc 3.7 the Options take an optional PetscOptions object as the first argument
+@
+text
+@d5 1
+a5 1
+      IMPLICIT NONE
+a6 1
+C     $Id: rdat.F,v 1.84 2016/11/10 11:25:13 abonfi Exp abonfi $
+d8 4
+d13 1
+a13 2
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscviewer.h"
+d83 1
+a83 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d91 1
+a91 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d101 1
+a101 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d111 1
+a111 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d127 1
+a127 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d143 3
+a145 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                          '-dual_ts',STRINGA,IFLAG,IERR)
+d167 3
+a169 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +'-timestepping',                      STRINGA,IFLAG,IERR)
+d191 3
+a193 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +'-timestep',                      STRINGA,IFLAG,IERR)
+d212 4
+a215 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +     '-characteristic_timestepping',STRINGA,IFLAG,IERR)
+d241 1
+a241 1
+         CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d250 3
+a252 2
+         CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                      '-nof_time_steps',ITSTEP,IFLAG,IERR)
+d260 1
+a260 1
+         CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d271 1
+a271 1
+         CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d280 3
+a282 2
+         CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                      '-mass_matrix_type',MMTYPE,IFLAG,IERR)
+d288 1
+a288 1
+         CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+d294 1
+a294 1
+            CALL PetscOptionsGetString(PETSC_NULL_OBJECT,
+d322 1
+a322 1
+               CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+d335 1
+a335 1
+               CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+d349 1
+a349 1
+               CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+d365 1
+a365 1
+            CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+d371 1
+a371 1
+            CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+d376 1
+a376 1
+            CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d388 1
+a388 1
+               CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,
+d413 1
+a413 1
+          CALL PetscOptionsGetString(PETSC_NULL_OBJECT,
+d444 1
+a444 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d457 1
+a457 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d464 1
+a464 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d480 1
+a480 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d487 1
+a487 1
+      CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d492 1
+a492 1
+      CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d496 1
+a496 1
+      CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d502 3
+a504 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                           '-cfl_ramping_strategy',STRINGA,IFLAG,
+d529 1
+a529 1
+      CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,
+d543 1
+a543 1
+      CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,
+d554 2
+a555 2
+             IF(MY_PE.EQ.0)WRITE(NOUT,*)'Dumping bndry fluxes along bndr
+     &y # ',J
+d563 4
+a566 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +     '-slip_free_bc_type',STRINGA,IFLAG,IERR)
+d587 3
+a589 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                           '-equation',STRINGA,IFLAG,IERR)
+d631 1
+a631 1
+          CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,
+d643 1
+a643 1
+          CALL PetscOptionsGetString(PETSC_NULL_OBJECT,
+d668 1
+a668 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d688 3
+a690 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +     '-scalar_scheme',STRINGA,IFLAG,IERR)
+d752 2
+a753 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +     '-matrix_scheme',STRINGA,IFLAG,IERR)
+d804 1
+a804 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d816 2
+a817 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +     '-data_dir',DATADIR,IFLAG,IERR)
+d867 2
+a868 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +     '-restart_file',STRINGA,IFLAG,IERR)
+d896 1
+a896 1
+      CALL PetscOptionsGetRealArray(PETSC_NULL_OBJECT,
+d906 2
+a907 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +     '-bc_type',STRINGA,IFLAG,IERR)
+d928 1
+a928 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d941 1
+a941 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d994 4
+a997 1
+      IMPLICIT NONE 
+a998 1
+#include "petsc/finclude/petscsys.h"
+d1022 1
+a1022 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d1043 1
+a1043 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+a1078 1
+      IMPLICIT NONE 
+d1081 3
+d1103 3
+a1105 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                           '-fluid',STRINGA,IFLAG,IERR)
+d1128 3
+a1130 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                           '-preconditioning',STRINGA,IFLAG,IERR)
+d1148 1
+a1148 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d1177 1
+a1177 1
+         CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+a1203 1
+      IMPLICIT NONE 
+d1206 3
+d1229 3
+a1231 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                           '-fluid',STRINGA,IFLAG,IERR)
+d1256 3
+a1258 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +         '-preconditioning',STRINGA,IFLAG,IERR)
+d1278 1
+a1278 1
+              CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+a1303 1
+      IMPLICIT NONE 
+d1306 1
+d1308 1
+d1332 1
+a1332 1
+      CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d1335 1
+a1335 1
+      CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d1338 1
+a1338 1
+      CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d1347 1
+a1347 1
+      CALL PetscOptionsHasName(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d1353 1
+a1353 1
+          CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,
+d1356 1
+a1356 1
+          CALL PetscOptionsGetReal(PETSC_NULL_OBJECT,
+d1366 1
+a1366 1
+      CALL PetscOptionsGetInt(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+d1377 3
+a1379 2
+      CALL PetscOptionsGetString(PETSC_NULL_OBJECT,PETSC_NULL_CHARACTER,
+     +                           '-turb_scheme',STRINGA,IFLAG,IERR)
+a1429 1
+      IMPLICIT NONE 
+d1432 1
+d1434 1
+d1456 1
+a1456 1
+      CALL PetscOptionsGetIntArray(PETSC_NULL_OBJECT,
+@
+
+
+1.85.1.1
+log
+@fixed a FORMAT error picked up by the PGI compiler
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.86 2020/04/15 16:08:10 abonfi Exp $
+d544 2
+a545 2
+             IF(MY_PE.EQ.0)
+     &WRITE(NOUT,*)'Dumping bndry fluxes along bndry # ',J
+@
+
+
+1.84
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.83 2015/12/09 08:50:16 abonfi Exp abonfi $
+d81 1
+a81 1
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+d89 1
+a89 1
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+d99 1
+a99 1
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+d109 1
+a109 1
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+d125 2
+a126 2
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,'-time_accurate',
+     +IFLAG,IERR)
+d141 1
+a141 1
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+d164 2
+a165 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-timestepping',
+     +                      STRINGA,IFLAG,IERR)
+d187 2
+a188 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-timestep',
+     +                      STRINGA,IFLAG,IERR)
+d207 1
+a207 1
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+d234 2
+a235 2
+         CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +                      '-time_step_size',DELT,IFLAG,IERR)
+d243 1
+a243 1
+         CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+d252 2
+a253 2
+         CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +                      '-gammat',GAMT,IFLAG,IERR)
+d263 2
+a264 2
+         CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +                      '-thetat',THETAT,IFLAG,IERR)
+d272 1
+a272 1
+         CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+d279 2
+a280 2
+         CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,'-ale',
+     &                            IFLAG,IERR)
+d285 2
+a286 2
+            CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +                          '-ale_grid',STRINGA,IFLAG,IERR)
+d313 2
+a314 2
+               CALL PetscOptionsGetRealArray(PETSC_NULL_CHARACTER,
+     +         '-ale_motion_origin',XYZ_C,NVALS,IFLAG,IERR)
+d326 3
+a328 2
+               CALL PetscOptionsGetRealArray(PETSC_NULL_CHARACTER,
+     +         '-ale_pitching_omega',OPITCH,NVALS,IFLAG,IERR)
+d340 3
+a342 2
+               CALL PetscOptionsGetRealArray(PETSC_NULL_CHARACTER,
+     +         '-ale_pitching_amplitude',APITCH,NVALS,IFLAG,IERR)
+d356 3
+a358 3
+            CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+     &                               '-ale_read_grid_velocities',
+     3                               ALE_READ_GRIDVEL,IERR)
+d362 2
+a363 2
+            CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+     &                            '-ale_check_gcl',GCLCHK,IERR)
+d367 3
+a369 2
+            CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +                          '-ale_grid_weight',ALFALE,IFLAG,IERR)
+d379 3
+a381 2
+               CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+     +                          '-ale_grid_motion_type',IALE,IFLAG,IERR)
+d404 2
+a405 2
+          CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +                          '-linearization',STRINGA,IFLAG,IERR)
+d435 2
+a436 2
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-itmax',ITMAX,
+     +IFLAG,IERR)
+d448 2
+a449 2
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-istmp',ISTMP,
+     +IFLAG,IERR)
+d455 2
+a456 2
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-ibak',IBAK,IFLAG,
+     +IERR)
+d471 2
+a472 2
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-ivcnvg',IVCNVG,
+     +                   IFLAG,IERR)
+d478 2
+a479 2
+      CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-tolerance',
+     +                      TOLER,IFLAG,IERR)
+d483 2
+a484 2
+      CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-cfl',CFL(1),
+     +                      IFLAG,IERR)
+d487 2
+a488 2
+      CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-cflmax',
+     +                      CFLMAX(1),IFLAG,IERR)
+d493 3
+a495 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +     '-cfl_ramping_strategy',STRINGA,IFLAG,IERR)
+d519 2
+a520 2
+      CALL PetscOptionsGetIntArray(PETSC_NULL_CHARACTER,'-colors',
+     +                        ICOLOR(0,1),NVALS,IFLAG,IERR)
+d533 3
+a535 2
+      CALL PetscOptionsGetIntArray(PETSC_NULL_CHARACTER,
+     +     '-dump_boundary_fluxes',IBFLX,NBFLX(1),IFLAG,IERR)
+d553 2
+a554 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +                      '-slip_free_bc_type',STRINGA,IFLAG,IERR)
+d575 2
+a576 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-equation',
+     +                      STRINGA,IFLAG,IERR)
+d618 3
+a620 3
+          CALL PetscOptionsGetIntArray(PETSC_NULL_CHARACTER,
+     +                            '-turb_colors',ICOLOR(0,2),NVALS,
+     +                            IFLAG,IERR)
+d630 3
+a632 3
+          CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +                     '-turb_ts_type',
+     +                     STRINGA,IFLAG,IERR)
+d655 4
+a658 3
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +         '-artificial_sound_speed',BETA,IFLAG,IERR)
+          IF( IFLAG .EQV. PETSC_FALSE )BETA = 1.d0
+d675 2
+a676 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-scalar_scheme',
+     +                      STRINGA,IFLAG,IERR)
+d738 2
+a739 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-matrix_scheme',
+     +                      STRINGA,IFLAG,IERR)
+d790 2
+a791 2
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,'-check',
+     +IFLAG,IERR)
+d802 2
+a803 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-data_dir',
+     +                      DATADIR,IFLAG,IERR)
+d853 2
+a854 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +                      '-restart_file',STRINGA,IFLAG,IERR)
+d882 2
+a883 2
+      CALL PetscOptionsGetRealArray(PETSC_NULL_CHARACTER,
+     +'-body_force',GRAV,NVALS,IFLAG,IERR)
+d892 2
+a893 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-bc_type',
+     +                      STRINGA,IFLAG,IERR)
+d914 2
+a915 2
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-number_of_blades',
+     +                   NBLADES,IFLAG,IERR)
+d927 1
+a927 1
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+a939 3
+   10 FORMAT(A)
+   66 FORMAT(7(I10))
+C
+a975 5
+  325 FORMAT(5X,'Valid options are:'/,
+     +       15X,'weak'/, 
+     +       15X,'mirror')
+  330 FORMAT(5X,'Boundary type ',I2,' associated with color ',I2,
+     &' does NOT exist')
+a996 1
+      CHARACTER*80 STRINGA
+d1006 2
+a1007 2
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-testcase',ICASE,
+     +                   IFLAG,IERR)
+d1027 3
+a1029 2
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-Reynolds',
+     +                          RE,IFLAG,IERR)
+a1045 2
+  310 FORMAT('Invalid argument: ',A22,' for option ',A18)
+  320 FORMAT(5X,'in order to set up initial/boundary conditions')
+a1076 1
+      INTEGER I1MACH
+d1085 2
+a1086 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-fluid',
+     +                      STRINGA,IFLAG,IERR)
+d1109 2
+a1110 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+     +         '-preconditioning',STRINGA,IFLAG,IERR)
+d1128 4
+a1131 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +                      '-merkle_cutoff',MERKLE_CUTOFF,IFLAG,IERR)
+d1157 3
+a1159 2
+         CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,
+     +     '-solve_laplace',IFLAG,IERR)
+d1207 2
+a1208 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-fluid',
+     +                      STRINGA,IFLAG,IERR)
+d1233 1
+a1233 1
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,
+d1254 4
+a1257 2
+              CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +                      '-merkle_cutoff',MERKLE_CUTOFF,IFLAG,IERR)
+d1294 1
+a1294 1
+      INTEGER I1MACH
+d1307 2
+a1308 2
+      CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-cfl_max',
+     +                      CFLMAX(2),IFLAG,IERR)
+d1310 2
+a1311 2
+      CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-cfl_start',
+     +                      CFL(2),IFLAG,IERR)
+d1313 2
+a1314 2
+      CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,'-cfl_ratio',
+     +                      CFLRATIO,IFLAG,IERR)
+d1322 2
+a1323 2
+      CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,'-trip_term',
+     +IFLAG,IERR)
+d1328 6
+a1333 4
+          CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-trip_cell',
+     +                       TTELEM,IFLAG,IERR)
+          CALL PetscOptionsGetReal(PETSC_NULL_CHARACTER,
+     +                       '-trip_spacing',TDXT,IFLAG,IERR)
+d1341 2
+a1342 2
+      CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,'-turb_sub_iter',
+     +                   NSUBIT,IFLAG,IERR)
+d1352 2
+a1353 2
+      CALL PetscOptionsGetString(PETSC_NULL_CHARACTER,'-turb_scheme',
+     +                      STRINGA,IFLAG,IERR)
+a1397 1
+  300 FORMAT(5X,'Need to specify option: ',A20)
+a1416 1
+      INTEGER I1MACH
+a1418 1
+      CHARACTER*80 STRINGA
+d1429 4
+a1432 3
+      CALL PetscOptionsGetIntArray(PETSC_NULL_CHARACTER,
+     +                            '-poisson_colors',ICOLOR(0,3),NVALS,
+     +                            IFLAG,IERR)
+a1440 10
+C
+C     ********************************************
+C     ********************************************
+C
+C
+C     ********************************************
+C     choose scalar scheme for the turbulence
+C     transport eqn
+C     ********************************************
+C
+a1441 3
+  310 FORMAT('Invalid argument: ',A22,' for option ',A18)
+! 330 FORMAT(5X,'Boundary type ',I2,' associated with color ',I2,
+!    &' does NOT exist')
+@
+
+
+1.83
+log
+@added comments for -ale_grid_motion_type
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.82 2015/05/20 07:44:31 abonfi Exp abonfi $
+d10 2
+a11 2
+#include "finclude/petscsys.h"
+#include "finclude/petscviewer.h"
+d983 1
+a983 1
+#include "finclude/petscsys.h"
+d1068 1
+a1068 1
+#include "finclude/petscsys.h"
+d1187 1
+a1187 1
+#include "finclude/petscsys.h"
+d1281 1
+a1281 1
+#include "finclude/petscsys.h"
+d1404 1
+a1404 1
+#include "finclude/petscsys.h"
+@
+
+
+1.82
+log
+@Added run time options for the pitching amplitude and frequency
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.81 2013/10/23 10:50:25 abonfi Exp abonfi $
+d372 2
+d384 2
+@
+
+
+1.81
+log
+@added runtime option -ale_read_grid_velocities
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.80 2013/09/23 11:24:39 abonfi Exp abonfi $
+d323 28
+a350 1
+            ENDIF
+@
+
+
+1.80
+log
+@added the option -ale_check_gcl to check the GCL on a cell basis
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.79 2013/08/19 09:02:09 abonfi Exp abonfi $
+d297 1
+a297 1
+                  STOP '-ale_grid read is NOT implemented' 
+d324 9
+d335 3
+d343 5
+a347 1
+            CALL PetscOptionsGetInt(PETSC_NULL_CHARACTER,
+d349 7
+a355 6
+            IF( IFLAG .EQV. PETSC_FALSE )THEN
+                  WRITE(ERRMSG,300)'-ale_grid_motion_type'
+                  NERR = 4
+                  IOPT = 1
+                  CALL SETERR(ERRMSG,72,NERR,IOPT)
+            ENDIF
+@
+
+
+1.79
+log
+@now reads MOTION_ORIGIN_X from the configuration file and stores
+into XYZ_C
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.78 2013/07/18 14:48:59 abonfi Exp abonfi $
+d324 2
+@
+
+
+1.78
+log
+@introduced ALE_LAPLACE_GRID
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.77 2013/06/07 15:30:07 abonfi Exp abonfi $
+d311 11
+@
+
+
+1.77
+log
+@the array ICOLOR included from bnd.com has changed
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.76 2013/06/04 16:04:29 abonfi Exp abonfi $
+d296 2
+d301 5
+d317 8
+@
+
+
+1.76
+log
+@added support for solving Laplace's equation
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.75 2013/05/15 09:45:17 abonfi Exp abonfi $
+d434 1
+a434 1
+C     Boundary colouring
+d439 1
+a439 1
+     +                        ICOLOR,NVALS,IFLAG,IERR)
+d537 1
+a537 1
+     +                            '-turb_colors',ICOLOR_T,NVALS,
+d1087 1
+d1321 57
+@
+
+
+1.75
+log
+@A bit more informative concerning Merkle's cutoff parameter
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.74 2013/04/29 10:41:13 abonfi Exp abonfi $
+d1079 15
+@
+
+
+1.74
+log
+@introduces characteristic time stepping
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.73 2013/03/28 10:18:17 abonfi Exp abonfi $
+d1001 1
+a1052 1
+!                 DECOMP = 4
+d1059 1
+d1083 2
+d1102 1
+d1166 1
+d1179 2
+@
+
+
+1.73
+log
+@added the option -dump_integral for calculating
+the integral of the conserved variables
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.72 2013/03/05 09:05:07 abonfi Exp abonfi $
+d202 11
+@
+
+
+1.72
+log
+@added support for the UCV scheme
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.71 2013/01/26 11:48:03 abonfi Exp abonfi $
+d107 11
+d246 1
+@
+
+
+1.71
+log
+@added support for an Argon plasma
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.69 2012/04/03 12:15:07 abonfi Exp abonfi $
+d666 2
+@
+
+
+1.70
+log
+@now handles a new option for ALE calculations
+@
+text
+@d22 1
+a22 1
+      INCLUDE 'constants'
+d999 2
+d1048 4
+d1098 1
+a1098 1
+          ELSEIF(STRINGA(1:14).EQ.'incompressible')THEN 
+d1101 2
+@
+
+
+1.69
+log
+@changes needed for the ALE formulation
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.68 2011/12/14 09:53:31 abonfi Exp abonfi $
+d282 5
+@
+
+
+1.68
+log
+@changes required due to the upgrade to petsc-3.2
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.67 2011/09/16 07:25:40 abonfi Exp abonfi $
+d256 28
+d287 1
+@
+
+
+1.67
+log
+@now allows to dump the boundary fluxes
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.66 2011/03/30 09:00:06 abonfi Exp abonfi $
+d13 1
+a13 1
+      PetscTruth IFLAG
+a168 2
+!             SETERRQ(NERR,ERRMSG,ierr)
+              SETERRQ(NERR,'invalid option for timestepping',ierr)
+d851 1
+a851 1
+      PetscTruth IFLAG
+d936 1
+a936 1
+      PetscTruth IFLAG
+d1030 1
+a1030 1
+      PetscTruth IFLAG
+d1118 1
+a1118 1
+      PetscTruth IFLAG
+@
+
+
+1.66
+log
+@added options to dump the jacobian matrix and time-step
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.65 2010/10/04 12:30:32 abonfi Exp abonfi $
+d10 1
+a10 1
+#include "finclude/petsc.h"
+d50 1
+a50 1
+      INTEGER I,IERR,NVALS,KSPACE
+d392 20
+d850 1
+a850 1
+#include "finclude/petsc.h"
+d935 1
+a935 1
+#include "finclude/petsc.h"
+d1029 1
+a1029 1
+#include "finclude/petsc.h"
+d1117 1
+a1117 1
+#include "finclude/petsc.h"
+@
+
+
+1.65
+log
+@support for choosing Merkle's cutoff and
+for using mirror (ghost-cell) bcs on inviscid walls
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.64 2009/10/13 08:13:31 abonfi Exp abonfi $
+d76 33
+d554 2
+d1201 2
+@
+
+
+1.64
+log
+@Added support for choosing the scalar advection scheme in the Spalart-Allmaras model
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.63 2009/06/11 13:10:58 abonfi Exp abonfi $
+d359 22
+d885 2
+d889 1
+a889 1
+      INCLUDE 'implicit.h'
+d942 3
+d979 2
+d983 1
+a983 1
+      INCLUDE 'implicit.h'
+d1039 3
+@
+
+
+1.63
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.62 2009/06/11 08:56:32 abonfi Exp abonfi $
+a91 1
+          MMAT_ZERO_FIRST_ROW = .FALSE.
+d376 1
+d380 1
+d383 1
+d386 1
+a399 4
+!     IF(LTIME.AND.ABS(KAN).EQ.2)THEN
+!        MMAT_ZERO_FIRST_ROW = .TRUE.
+!        write(6,*)MMAT_ZERO_FIRST_ROW
+!     ENDIF
+d454 1
+d510 2
+a511 1
+C        the matrix scheme
+d515 1
+d916 2
+d1008 2
+d1092 50
+@
+
+
+1.62
+log
+@now sets solution file for time level n-1
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.61 2008/06/10 10:10:50 abonfi Exp abonfi $
+d10 2
+a11 2
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscviewer.h"
+d83 1
+a83 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d100 1
+a100 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d123 1
+a123 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d148 1
+a148 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d184 1
+a184 1
+         IF( IFLAG .EQ. PETSC_FALSE )THEN
+d193 1
+a193 1
+         IF( IFLAG .EQ. PETSC_FALSE )THEN
+d202 1
+a202 1
+         IF( IFLAG .EQ. PETSC_FALSE )THEN
+d212 1
+a212 1
+         IF( IFLAG .EQ. PETSC_FALSE )THEN
+d221 1
+a221 1
+         IF( IFLAG .EQ. PETSC_FALSE )THEN
+d239 1
+a239 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d270 1
+a270 1
+      IF( IFLAG .EQ. PETSC_FALSE )ITMAX = 0
+d283 1
+a283 1
+      IF( IFLAG .EQ. PETSC_FALSE )ISTMP = 1
+d290 1
+a290 1
+      IF( IFLAG .EQ. PETSC_FALSE )IBAK = 10
+d306 1
+a306 1
+      IF( IFLAG .EQ. PETSC_FALSE )IVCNVG = 1
+d313 1
+a313 1
+      IF( IFLAG .EQ. PETSC_FALSE )TOLER = -20.
+d328 1
+a328 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d353 1
+a353 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d366 1
+a366 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d410 1
+a410 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d422 1
+a422 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d446 1
+a446 1
+          IF( IFLAG .EQ. PETSC_FALSE )BETA = 1.d0
+d465 1
+a465 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN 
+d523 1
+a523 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN 
+d573 1
+a573 1
+      IF( IFLAG .EQ. PETSC_TRUE )THEN
+d585 1
+a585 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d637 1
+a637 1
+      IF( IFLAG .EQ. PETSC_TRUE )THEN
+d665 1
+a665 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d675 1
+a675 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d697 1
+a697 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d710 1
+a710 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d771 1
+a771 1
+#include "include/finclude/petsc.h"
+d798 1
+a798 1
+      IF(IFLAG.EQ.PETSC_FALSE)THEN
+d819 1
+a819 1
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+d856 1
+a856 1
+#include "include/finclude/petsc.h"
+d876 1
+a876 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d898 1
+a898 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d943 1
+a943 1
+#include "include/finclude/petsc.h"
+d963 1
+a963 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d987 1
+a987 1
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+d1024 1
+a1024 1
+#include "include/finclude/petsc.h"
+d1067 1
+a1067 1
+      IF( IFLAG .EQ. PETSC_TRUE )THEN
+d1084 1
+a1084 1
+      IF( IFLAG .EQ. PETSC_FALSE .OR. NSUBIT .LE. 0 )NSUBIT = 1
+@
+
+
+1.61
+log
+@introduced a number of changes to allow
+time accurate calculations
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE READVAL(MESHFILE,NGHBFILE,STARFILE,BAKFILE,VISCTFILE,
+     +                   WDISTFILE,PBCSFILE,PTOTFILE,CLFILE,SKINFILE,
+     +                   DATADIR,NTURB)
+d7 1
+a7 1
+C     $Id: rdat.F,v 1.60 2008/04/19 08:28:57 abonfi Exp abonfi $
+d42 1
+a42 1
+     2              SKINFILE
+a68 1
+C
+d73 1
+d88 1
+d91 25
+d117 1
+d142 1
+d149 1
+d170 7
+a185 2
+         ELSE
+             write(6,*)' *** dt = ',DELT
+d187 1
+d197 30
+d229 2
+a230 1
+      ENDIF
+a231 1
+C 
+d263 2
+d277 1
+d284 1
+d291 7
+d307 1
+d314 1
+d318 1
+d322 1
+d397 5
+d489 2
+d547 2
+d599 3
+a601 3
+      PBCSFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'pbcs'//ext//'.dat'
+      PTOTFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'ptot'//ext//'.dat'
+      CLFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'clin'//ext//'.dat'
+d609 1
+d617 1
+d724 26
+a764 8
+  200 FORMAT(/,
+     115X,'#######                 #######  #####',/,
+     215X,'#        #    #  #      #       #     #',/,
+     315X,'#        #    #  #      #       #',/,
+     415X,'#####    #    #  #      #####    #####',/,
+     515X,'#        #    #  #      #             #',/,
+     615X,'#        #    #  #      #       #     #',/,
+     715X,'#######   ####   ###### #        #####',/)
+@
+
+
+1.60
+log
+@added exponential CFL ramping
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.59 2008/02/25 09:45:04 abonfi Exp abonfi $
+d36 2
+d79 15
+d115 3
+a120 4
+C
+C     local time-stepping is the default
+C
+          IGLOB = 1
+d133 33
+a198 2
+C
+C
+d205 6
+d392 2
+@
+
+
+1.59
+log
+@add support for skin friction data in parallel runs
+and increased number of boundary patches
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.58 2006/03/28 08:49:04 abonfi Exp abonfi $
+d191 22
+@
+
+
+1.58
+log
+@an included common has been renamed plus cosmetic changes
+@
+text
+@d2 1
+a2 1
+     +                   WDISTFILE,PBCSFILE,PTOTFILE,CLFILE,
+d7 1
+a7 1
+C     $Id: rdat.F,v 1.57 2005/10/22 11:03:52 abonfi Exp abonfi $
+d39 2
+a40 1
+     +              WDISTFILE,VISCTFILE,PBCSFILE,PTOTFILE,CLFILE
+a49 2
+      DOUBLE PRECISION WKSP(3)
+      DATA WKSP/3*ZERO/
+d93 2
+d195 1
+a195 1
+      NVALS = 14 
+d246 1
+d443 1
+a453 1
+      VISCTFILE(1:KSPACE+10) = 'file015.dat'
+d455 2
+@
+
+
+1.57
+log
+@implemented c-lines
+@
+text
+@d7 1
+a7 1
+C     $Id: rdat.F,v 1.56 2005/09/09 15:32:12 abonfi Exp abonfi $
+d31 1
+a31 1
+      INCLUDE 'bnd'
+d524 1
+a524 1
+     +                   I,IFLAG,IERR)
+d529 1
+a529 1
+          PITCH = TWO*PETSC_PI/REAL(I)
+@
+
+
+1.56
+log
+@the angular pitch was buggy
+@
+text
+@d2 2
+a3 1
+     +                   WDISTFILE,PBCSFILE,PTOTFILE,DATADIR,NTURB)
+d7 1
+a7 1
+C     $Id: rdat.F,v 1.55 2005/09/09 08:47:41 abonfi Exp abonfi $
+d32 1
+d39 1
+a39 1
+     +              WDISTFILE,VISCTFILE,PBCSFILE,PTOTFILE
+d433 1
+d450 1
+d529 16
+a544 2
+          COSALPHA = COS(TWO*PETSC_PI/REAL(I))
+          SINALPHA = SIN(TWO*PETSC_PI/REAL(I))
+@
+
+
+1.55
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.54 2005/08/08 11:02:44 abonfi Exp abonfi $
+d525 2
+a526 2
+          COSALPHA = COS(PETSC_PI/REAL(I))
+          SINALPHA = SIN(PETSC_PI/REAL(I))
+@
+
+
+1.54
+log
+@PETSc now places blanks at the end of F77 char
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.53 2004/12/20 14:36:13 aldo Exp abonfi $
+d28 1
+d516 13
+@
+
+
+1.53
+log
+@timestepping and scheme-related options
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.52 2002/10/25 06:02:17 abonfi Exp aldo $
+d322 2
+d421 1
+a421 1
+      KSPACE = INDEX(DATADIR,CHAR(0))
+@
+
+
+1.52
+log
+@re-implemented strong bcs for inlet/outlet
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.51 2002/09/14 09:02:43 abonfi Exp abonfi $
+d94 19
+d326 4
+d380 2
+a457 3
+C     CALL PetscOptionsHasName(PETSC_NULL_CHARACTER,'-restart',
+C    +                    IFLAG,IERR)
+C
+d459 2
+a460 1
+          ISTART = 1
+@
+
+
+1.51
+log
+@supports coupled solution strategy for RANS
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.50 2002/03/02 01:38:08 abonfi Exp abonfi $
+d16 1
+d27 1
+d46 2
+d60 3
+d455 35
+@
+
+
+1.50
+log
+@changed PetscOptionsGetDouble into PetscOptionsGetReal
+as erquired with PETSc 2.1.1
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.49 2001/10/17 15:34:39 abonfi Exp abonfi $
+d54 2
+d213 3
+d225 25
+d442 5
+@
+
+
+1.49
+log
+@changed Options into PetscOptions as required by petsc-2.1.0
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.48 2001/10/08 15:50:37 abonfi Exp abonfi $
+d149 1
+a149 1
+      CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-tolerance',
+d153 1
+a153 1
+      CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl',CFL(1),
+d156 1
+a156 1
+      CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-cflmax',
+d223 1
+a223 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+d493 1
+a493 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-Reynolds',
+d725 1
+a725 1
+      CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_max',
+d728 1
+a728 1
+      CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_start',
+d731 1
+a731 1
+      CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_ratio',
+d748 1
+a748 1
+          CALL PetscOptionsGetDouble(PETSC_NULL_CHARACTER,
+@
+
+
+1.48
+log
+@add NS scheme; also HE splitting for 2D supersonic flows
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.47 2001/01/20 13:50:34 aldo Exp abonfi $
+d66 1
+a66 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-timestepping',
+d91 1
+a91 1
+          CALL OptionsGetString(PETSC_NULL_CHARACTER,
+d122 2
+a123 1
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-itmax',ITMAX,IFLAG,IERR)
+d128 2
+a129 1
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-istmp',ISTMP,IFLAG,IERR)
+d134 2
+a135 1
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-ibak',IBAK,IFLAG,IERR)
+d143 2
+a144 2
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-ivcnvg',IVCNVG,IFLAG,
+     +                   IERR)
+d149 2
+a150 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-tolerance',TOLER,
+     +                      IFLAG,IERR)
+d153 2
+a154 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl',CFL(1),IFLAG,
+     +                      IERR)
+d156 2
+a157 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cflmax',CFLMAX(1),
+     +                      IFLAG,IERR)
+d164 1
+a164 1
+      CALL OptionsGetIntArray(PETSC_NULL_CHARACTER,'-colors',
+d177 1
+a177 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-equation',
+d189 1
+a189 1
+          CALL CheckOptionsScalar
+d192 1
+a192 1
+          CALL CheckOptionsScalar
+d194 1
+a194 1
+          CALL CheckOptionsEuler
+d196 1
+a196 1
+          CALL CheckOptionsNS
+d198 2
+a199 2
+          CALL CheckOptionsNS
+          CALL CheckOptionsTurb
+d211 3
+a213 3
+          CALL OptionsGetIntArray(PETSC_NULL_CHARACTER,
+     +                            '-turb_colors',ICOLOR_T,NVALS,IFLAG,
+     +                            IERR)
+d223 1
+a223 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+d241 1
+a241 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-scalar_scheme',
+d290 1
+a290 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-matrix_scheme',
+d330 1
+a330 1
+C     Options that do NOT depend on the type of eqns. being solved 
+d336 2
+a337 1
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-check',IFLAG,IERR)
+d348 1
+a348 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-data_dir',
+d393 1
+a393 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,
+d396 1
+a396 1
+C     CALL OptionsHasName(PETSC_NULL_CHARACTER,'-restart',
+d443 1
+a443 1
+      SUBROUTINE CheckOptionsScalar
+d472 2
+a473 2
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-testcase',ICASE,IFLAG,
+     +                   IERR)
+d493 2
+a494 2
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-Reynolds',RE,
+     +                          IFLAG,IERR)
+d528 1
+a528 1
+      SUBROUTINE CheckOptionsEuler
+d550 1
+a550 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-fluid',
+d572 1
+a572 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,
+d615 1
+a615 1
+      SUBROUTINE CheckOptionsNS
+d637 1
+a637 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-fluid',
+d661 1
+a661 1
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,
+d696 1
+a696 1
+      SUBROUTINE CheckOptionsTurb
+d725 2
+a726 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_max',CFLMAX(2),
+     +                      IFLAG,IERR)
+d728 1
+a728 1
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_start',
+d731 1
+a731 1
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_ratio',
+d740 2
+a741 1
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-trip_term',IFLAG,IERR)
+d746 1
+a746 1
+          CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-trip_cell',
+d748 2
+a749 2
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-trip_spacing',
+     +                       TDXT,IFLAG,IERR)
+d757 1
+a757 1
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-turb_sub_iter',
+@
+
+
+1.47
+log
+@add variable inlet profile for total pressure and also
+extended to INcompressible flows
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.46 2000/12/06 13:41:09 aldo Exp $
+d255 2
+d301 2
+d584 2
+a585 1
+                  DECOMP = 4
+@
+
+
+1.46
+log
+@changes to make periodic b.c. work in parallel
+@
+text
+@d2 1
+a2 1
+     +                   WDISTFILE,PBCSFILE,DATADIR,NTURB)
+d6 1
+a6 1
+C     $Id: rdat.F,v 1.45 2000/11/22 14:34:26 aldo Exp aldo $
+d34 1
+a34 1
+     +              WDISTFILE,VISCTFILE,PBCSFILE
+d357 1
+d373 1
+@
+
+
+1.45
+log
+@new scalar scheme NL2
+@
+text
+@d2 1
+a2 1
+     +                   WDISTFILE,DATADIR,NTURB)
+d6 1
+a6 1
+C     $Id: rdat.F,v 1.44 2000/11/16 13:36:58 aldo Exp aldo $
+a29 1
+      INCLUDE 'periodic.com'
+d34 1
+a34 1
+     +              WDISTFILE,VISCTFILE
+a348 9
+      DO 778 I = 1,80
+         MESHFILE(I:I)  = CHAR(0)
+         NGHBFILE(I:I)  = CHAR(0)
+         STARFILE(I:I)  = CHAR(0)
+         BAKFILE(I:I)   = CHAR(0)
+         WDISTFILE(I:I) = CHAR(0)
+         VISCTFILE(I:I) = CHAR(0)
+  778 CONTINUE
+C
+d356 1
+d370 1
+a401 11
+C
+C     for periodic boundary conditions (turbomachinery flows)
+C
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-periodic',NPNOD,
+     +IFLAG,IERR) 
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+          PERIODIC_MESH = .FALSE.
+          NPNOD = 0
+      ELSE
+          PERIODIC_MESH = .TRUE.
+      ENDIF
+@
+
+
+1.44
+log
+@chenged location where some of the datafiles are read/written
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.43 2000/11/15 09:15:09 aldo Exp aldo $
+d252 3
+a254 1
+      IF( STRINGA(1:2).EQ.'NL' )THEN 
+@
+
+
+1.43
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.42 2000/11/10 17:11:19 aldo Exp $
+d349 4
+a352 4
+         MESHFILE(I:I) = CHAR(0)
+         NGHBFILE(I:I) = CHAR(0)
+         STARFILE(I:I) = CHAR(0)
+         BAKFILE(I:I) = CHAR(0)
+d361 2
+a362 3
+      MESHFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'mesh'//ext//'.dat'
+      NGHBfILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'neig'//ext//'.dat'
+C     STARFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'data'//ext//'.dat'
+a363 3
+      VISCTFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'vist'//ext//'.dat'
+      BAKFILE(1:11) = 'file'//ext//'.dat'
+      STARFILE(1:13) = './file'//ext//'.dat'
+d365 7
+d397 4
+@
+
+
+1.42
+log
+@removed NSTAGES
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.41 2000/10/19 16:10:34 aldo Exp aldo $
+d28 1
+a28 1
+      INCLUDE 'IO'
+d59 3
+@
+
+
+1.41
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.40 2000/08/18 14:07:09 aldo Exp aldo $
+a26 1
+      INCLUDE 'rk.com'
+a116 3
+C     NSTAGES survives from the time RK integration was implemented
+C
+      NSTAGES = 1
+@
+
+
+1.40
+log
+@removed operations related to the freestream variables
+now in subr. setibc
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.39 2000/07/31 12:42:33 aldo Exp aldo $
+d10 1
+a10 1
+#include "include/finclude/viewer.h"
+@
+
+
+1.39
+log
+@using subroutine SETERR for error messages
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.38 2000/07/07 15:56:51 aldo Exp aldo $
+a402 18
+      NVALS = 5 
+      CALL OptionsGetDoubleArray(PETSC_NULL_CHARACTER,'-freestream',
+     +                           U_infty,NVALS,IFLAG,IERR)
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+          WRITE(ERRMSG(1:44),300)'-freestream'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,44,NERR,IOPT)
+      ENDIF
+C
+C     outlet pressure
+C
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-outlet_pressure',
+     +                      POUTLET,IFLAG,IERR)
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+          POUTLET = 1.
+      ENDIF
+C
+a690 43
+C
+C    read Reynolds number
+C
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-Reynolds',RE,
+     +                      IFLAG,IERR)
+      IF( IFLAG .EQ. PETSC_FALSE )THEN
+          WRITE(ERRMSG,FMT=300)'-Reynolds'
+          NERR = 4
+          IOPT = 1
+          CALL SETERR(ERRMSG,72,NERR,IOPT)
+      ENDIF
+      REINV=1.d0/RE 
+C
+      IF(KAN.EQ.2)RETURN
+C
+C     The following options need to checked ONLY for compressible flows
+C
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-Prandtl',PRANDTL,
+     +                      IFLAG,IERR)
+C
+C     Prandtl number Defaults to the value for air, if not
+C             explicitely given
+C
+      IF( IFLAG .EQ. PETSC_FALSE )PRANDTL = 0.72d0
+C
+C     the following options is NOT implemented in the code
+C
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-isothermal_wall',
+     +                   IFLAG,IERR)
+      IF( IFLAG .EQ. PETSC_TRUE )THEN
+          IADIA = 1
+          CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+     +                      '-wall_temperature',TWALL,IFLAG,IERR)
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+              WRITE(ERRMSG,FMT=300)'-wall_temperature'
+              NERR = 4
+              IOPT = 1
+              CALL SETERR(ERRMSG,72,NERR,IOPT)
+          ENDIF
+      ELSE
+          IADIA = 0
+      ENDIF
+C
+a760 28
+C     ********************************************
+C     Check options for linearization for the eddy
+C     viscosity transport eqn.
+C     ********************************************
+C
+      IF(TIMEIMPL)THEN
+          CALL OptionsGetString(PETSC_NULL_CHARACTER,
+     +                          '-linearization',STRINGA,IFLAG,IERR)
+          IF( IFLAG .EQ. PETSC_FALSE )THEN
+C
+C         Newton linearization is the default
+C
+              PICARD = .FALSE.
+              NEWTON = .TRUE.
+          ELSE
+              IF(STRINGA(1:6).EQ.'picard') THEN
+                  PICARD = .TRUE.
+                  NEWTON = .FALSE.
+              ELSEIF(STRINGA(1:6).EQ.'newton') THEN
+                  PICARD = .FALSE.
+                  NEWTON = .TRUE.
+              ELSE
+                  WRITE(I1MACH(4),310)STRINGA,'-linearization'
+                  STOP
+              ENDIF
+          ENDIF
+      ENDIF
+C
+@
+
+
+1.38
+log
+@options for trip term in the turbulence model
+and hybrid scheme for viscous flows
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.37 2000/06/23 16:46:52 aldo Exp aldo $
+d42 1
+d45 1
+d78 4
+a81 2
+              WRITE(I1MACH(4),310)STRINGA,'-timestepping'
+              STOP
+d106 4
+a109 2
+                  WRITE(I1MACH(4),310)STRINGA,'-linearization'
+                  STOP
+d152 1
+a152 1
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl',CFL,IFLAG,
+d155 1
+a155 1
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cflmax',CFLMAX,
+d166 4
+a169 2
+          WRITE(I1MACH(4),300)'-colors'
+          STOP
+d179 4
+a182 1
+          WRITE(I1MACH(4),300)'-equation'
+a183 1
+          STOP
+d202 4
+a205 1
+          WRITE(I1MACH(4),310)STRINGA,'-equation'
+a206 1
+          STOP 
+d214 4
+a217 2
+              WRITE(I1MACH(4),300)'-turb_colors'
+              STOP
+d244 4
+a247 2
+          WRITE(I1MACH(4),FMT=300)'-scalar_scheme'
+          STOP
+d266 4
+a269 2
+          WRITE(I1MACH(4),FMT=310)STRINGA(1:20),'-scalar_scheme'
+          STOP
+d288 4
+a291 2
+          WRITE(I1MACH(4),FMT=300)'-matrix_scheme'
+          STOP
+d314 4
+a317 2
+          WRITE(I1MACH(4),FMT=310)STRINGA(1:20),'-matrix_scheme'
+          STOP
+d343 4
+a346 2
+          WRITE(I1MACH(4),300)'-data_dir'
+          STOP
+d407 12
+a418 2
+          WRITE(I1MACH(4),300)'-freestream'
+          STOP
+d437 2
+a438 2
+  300 FORMAT(5X,'Need to specify option: ',A20)
+  310 FORMAT(5X,'Invalid argument: ',A20,' for option: ',A20)
+d480 1
+d482 1
+d497 3
+a499 1
+          STOP
+d515 4
+a518 2
+              WRITE(I1MACH(4),300)'-Reynolds'
+              STOP
+d530 1
+a530 1
+  310 FORMAT(5X,'Invalid argument: ',A20,' for option: ',A20)
+d561 1
+a561 1
+      INTEGER IERR
+d563 1
+d572 4
+a575 2
+          WRITE(I1MACH(4),300)'-fluid'
+          STOP
+d582 4
+a585 2
+             WRITE(I1MACH(4),FMT=310)STRINGA(1:20),'-fluid'
+             STOP
+d594 4
+a597 2
+          WRITE(I1MACH(4),300)'-preconditioning [y,Y,n,N]'
+          STOP
+d617 4
+a620 2
+              WRITE(I1MACH(4),310)ANSW,'-preconditioning'
+              STOP
+d627 2
+a628 2
+  300 FORMAT(5X,'Need to specify option: ',A30)
+  310 FORMAT(5X,'Invalid argument: ',A20,' for option: ',A20)
+d648 1
+d650 1
+d658 4
+a661 2
+          WRITE(I1MACH(4),300)'-fluid'
+          STOP
+d670 4
+a673 2
+             WRITE(I1MACH(4),FMT=310)STRINGA(1:20),'-fluid'
+             STOP
+d682 4
+a685 2
+          WRITE(I1MACH(4),300)'-preconditioning [y,Y,n,N]'
+          STOP
+d715 4
+a718 2
+          WRITE(I1MACH(4),300)'-Reynolds'
+          STOP
+d743 4
+a746 2
+              WRITE(I1MACH(4),FMT=300)'-wall_temperature'
+              STOP
+d753 2
+a754 2
+  300 FORMAT(5X,'Need to specify option: ',A20)
+  310 FORMAT(5X,'Invalid argument: ',A20,' for option: ',A20)
+d775 1
+d777 1
+d786 1
+a786 1
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_max',CFL_MAX,
+d790 1
+a790 1
+     +                      CFLSTART,IFLAG,IERR)
+d799 1
+a799 1
+C     Trip term on/off (not implemented)
+d851 1
+a851 1
+  310 FORMAT(5X,'Invalid argument: ',A20,' for option: ',A20)
+@
+
+
+1.37
+log
+@add isothermal b.c., turbulent colours and hybrid schemes
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.37 2000/05/24 10:48:24 aldo Exp aldo $
+d340 1
+a340 1
+      STARFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'data'//ext//'.dat'
+d344 1
+d371 1
+d373 1
+d600 1
+d622 31
+d742 6
+@
+
+
+1.36
+log
+@changed IFLAG to PetscTruth, PETSv 2.0.28
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.35 2000/03/24 15:10:32 aldo Exp aldo $
+d197 9
+d287 4
+d298 1
+d330 2
+d342 1
+d351 1
+d556 4
+d648 4
+a651 2
+          WRITE(I1MACH(4),FMT=300)'-wall_temperature'
+          STOP
+@
+
+
+1.35
+log
+@minor cosmetic changes and a bug fix: the
+scalar scheme was not properly chosen for
+the incompressible, preconditioned equations
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.34 1999/12/27 09:20:28 aldo Exp aldo $
+d12 1
+d43 1
+a43 1
+      INTEGER I,IFLAG,IERR,NVALS,KSPACE
+d65 1
+a65 1
+      IF( IFLAG .EQ. 0 )THEN
+d88 1
+a88 1
+          IF( IFLAG .EQ. 0 )THEN
+d119 1
+a119 1
+      IF( IFLAG .EQ. 0 )ITMAX = 0
+d124 1
+a124 1
+      IF( IFLAG .EQ. 0 )ISTMP = 1
+d129 1
+a129 1
+      IF( IFLAG .EQ. 0 )IBAK = 10
+d138 1
+a138 1
+      IF( IFLAG .EQ. 0 )IVCNVG = 1
+d144 1
+a144 1
+      IF( IFLAG .EQ. 0 )TOLER = -20.
+d159 1
+a159 1
+      IF( IFLAG .EQ. 0 )THEN
+d170 1
+a170 1
+      IF( IFLAG .EQ. 0 )THEN
+d201 1
+a201 1
+          IF( IFLAG .EQ. 0 )BETA = 1.d0
+d220 1
+a220 1
+      IF( IFLAG .EQ. 0 )THEN 
+d260 1
+a260 1
+      IF( IFLAG .EQ. 0 )THEN 
+d294 1
+a294 1
+      IF( IFLAG .EQ. 1 )THEN
+d306 1
+a306 1
+      IF( IFLAG .EQ. 0 )THEN
+d350 1
+a350 1
+      IF( IFLAG .EQ. 1 )THEN
+d361 1
+a361 1
+      IF( IFLAG .EQ. 0 )THEN
+d370 1
+a370 1
+      IF( IFLAG .EQ. 0 )THEN
+d413 3
+d424 1
+a424 1
+      INTEGER IERR,IFLAG
+d436 1
+a436 1
+      IF(IFLAG.EQ.0)THEN
+d455 1
+a455 1
+          IF( IFLAG .EQ. 0 )THEN
+d492 3
+d500 1
+a500 1
+      INTEGER IERR,IFLAG
+d509 1
+a509 1
+      IF( IFLAG .EQ. 0 )THEN
+d527 1
+a527 1
+      IF( IFLAG .EQ. 0 )THEN
+d565 3
+d573 1
+a573 1
+      INTEGER IERR,IFLAG
+d580 1
+a580 1
+      IF( IFLAG .EQ. 0 )THEN
+d600 1
+a600 1
+      IF( IFLAG .EQ. 0 )THEN
+d616 1
+a616 1
+      IF( IFLAG .EQ. 0 )PRANDTL = 0.72d0
+d622 1
+a622 1
+      IF( IFLAG .EQ. 1 )THEN
+d643 3
+d654 1
+a654 1
+      INTEGER IERR,IFLAG
+d681 1
+a681 1
+      IF( IFLAG .EQ. 1 )THEN
+d692 1
+a692 1
+      IF( IFLAG .EQ. 0 .OR. NSUBIT .LE. 0 )NSUBIT = 1
+d702 1
+a702 1
+          IF( IFLAG .EQ. 0 )THEN
+@
+
+
+1.34
+log
+@checking for linearization only once
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.33 1999/12/06 12:14:01 aldo Exp aldo $
+d42 1
+a42 1
+      INTEGER I,IFLAG,IERR,NVALS,NERR,KSPACE
+a53 4
+C     set NERR to stderr
+C
+      NERR = I1MACH(4)
+C
+d75 1
+a75 1
+              WRITE(NERR,310)STRINGA,'-timestepping'
+d101 1
+a101 1
+                  WRITE(NERR,310)STRINGA,'-linearization'
+d159 1
+a159 1
+          WRITE(NERR,300)'-colors'
+d170 2
+a171 2
+          WRITE(NERR,300)'-equation'
+          WRITE(NERR,320)
+d191 2
+a192 2
+          WRITE(NERR,310)STRINGA,'-equation'
+          WRITE(NERR,320)
+a195 21
+C     For Euler, Navier-Stokes needs to specify which type  
+C     of boundary conditions for inviscid walls
+C
+      IF(ABS(KAN).EQ.1)GOTO 75
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-wall_bc',
+     +                      STRINGA,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )THEN
+          WRITE(NERR,300)'-wall_bc'
+          WRITE(NERR,325)
+          STOP
+      ENDIF
+      IF( STRINGA(1:4) .EQ. 'weak' )THEN
+          WBCTYP = 1
+      ELSEIF( STRINGA(1:6) .EQ. 'mirror' )THEN
+          WBCTYP = 0
+      ELSE
+          WRITE(NERR,310)STRINGA,'-wall_bc'
+          WRITE(NERR,325)
+          STOP 
+      ENDIF
+   75 CONTINUE
+d207 1
+a207 1
+      IF(ABS(KAN).EQ.2.AND.DECOMP.NE.2)THEN
+d220 1
+a220 1
+          WRITE(NERR,FMT=300)'-scalar_scheme'
+d227 1
+a227 1
+      IF( STRINGA(1:2).EQ.'nl'.OR.STRINGA(1:2).EQ.'NL' )THEN 
+d229 3
+a231 1
+      ELSEIF( STRINGA(1:1).EQ.'n'.OR.STRINGA(1:1).EQ.'N' )THEN 
+d233 1
+a233 1
+      ELSEIF( STRINGA(1:3).EQ.'psi'.OR.STRINGA(1:3).EQ.'PSI' )THEN 
+d235 1
+a235 1
+      ELSEIF( STRINGA(1:3).EQ.'lda'.OR.STRINGA(1:3).EQ.'LDA' )THEN 
+d237 1
+a237 1
+      ELSEIF( STRINGA(1:3).EQ.'fct'.OR.STRINGA(1:3).EQ.'FCT' )THEN 
+d240 1
+a240 1
+          WRITE(NERR,FMT=310)STRINGA(1:20),'-scalar_scheme'
+d260 1
+a260 1
+          WRITE(NERR,FMT=300)'-matrix_scheme'
+d267 1
+a267 1
+      IF    ( STRINGA(1:1).EQ.'n'.OR.STRINGA(1:1).EQ.'N' )THEN 
+d269 1
+a269 1
+      ELSEIF( STRINGA(1:4).EQ.'ldaf'.OR.STRINGA(1:4).EQ.'LDAF' )THEN 
+d271 1
+a271 1
+      ELSEIF( STRINGA(1:4).EQ.'lda2'.OR.STRINGA(1:4).EQ.'LDA2' )THEN 
+d273 1
+a273 1
+      ELSEIF( STRINGA(1:3).EQ.'lda'.OR.STRINGA(1:3).EQ.'LDA' )THEN 
+d275 1
+a275 1
+      ELSEIF( STRINGA(1:3).EQ.'cds'.OR.STRINGA(1:3).EQ.'CDS' )THEN 
+d277 1
+a277 1
+      ELSEIF( STRINGA(1:2).EQ.'lw'.OR.STRINGA(1:2).EQ.'LW' )THEN 
+d280 1
+a280 1
+          WRITE(NERR,FMT=310)STRINGA(1:20),'-matrix_scheme'
+d306 1
+a306 1
+          WRITE(NERR,300)'-data_dir'
+d361 1
+a361 1
+          WRITE(NERR,300)'-freestream'
+a375 2
+      write(6,*)timeimpl,picard,newton
+C
+d420 1
+a420 1
+      INTEGER IERR,IFLAG,NERR
+a422 2
+      NERR = I1MACH(2)
+C
+d433 3
+a435 3
+          WRITE(NERR,300)'-testcase'
+          WRITE(NERR,330)
+          WRITE(NERR,340)
+d452 1
+a452 1
+              WRITE(NERR,300)'-Reynolds'
+d460 1
+a460 1
+          WRITE(NERR,FMT=*)
+d493 1
+a493 1
+      INTEGER IERR,IFLAG,NERR
+a496 1
+      NERR = I1MACH(2)
+d503 1
+a503 1
+          WRITE(NERR,300)'-fluid'
+d511 1
+a511 1
+             WRITE(NERR,FMT=310)STRINGA(1:20),'-fluid'
+d521 1
+a521 1
+          WRITE(NERR,300)'-preconditioning [y,Y,n,N]'
+d538 1
+a538 1
+              WRITE(NERR,310)ANSW,'-preconditioning'
+d563 1
+a563 1
+      INTEGER IERR,IFLAG,NERR
+a565 2
+      NERR = I1MACH(2)
+C
+d571 1
+a571 1
+          WRITE(NERR,300)'-fluid'
+d581 1
+a581 1
+             WRITE(NERR,FMT=310)STRINGA(1:20),'-fluid'
+d591 1
+a591 1
+          WRITE(NERR,300)'-Reynolds'
+d616 1
+a616 1
+          WRITE(NERR,FMT=300)'-wall_temperature'
+d641 1
+a641 1
+      INTEGER IERR,IFLAG,NERR
+a643 1
+      NERR = I1MACH(4)
+d703 1
+a703 1
+                  WRITE(NERR,310)STRINGA,'-linearization'
+@
+
+
+1.33
+log
+@option for linearisation also in the Euler/NS case
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.32 1999/11/05 21:00:47 aldo Exp aldo $
+d83 31
+d393 1
+d399 2
+a490 27
+C     ********************************************
+C     Check options for linearization
+C     ********************************************
+C
+      IF(TIMEIMPL)THEN
+          CALL OptionsGetString(PETSC_NULL_CHARACTER,
+     +                          '-linearization',STRINGA,IFLAG,IERR)
+          IF( IFLAG .EQ. 0 )THEN
+C
+C         Picard linearization is the default
+C
+              PICARD = .TRUE.
+              NEWTON = .FALSE.
+          ELSE
+              IF(STRINGA(1:6).EQ.'picard') THEN
+                  PICARD = .TRUE.
+                  NEWTON = .FALSE.
+              ELSEIF(STRINGA(1:6).EQ.'newton') THEN
+                  PICARD = .FALSE.
+                  NEWTON = .TRUE.
+              ELSE
+                  WRITE(NERR,310)STRINGA,'-linearization'
+                  STOP
+              ENDIF
+          ENDIF
+      ENDIF
+C
+a572 27
+C     ********************************************
+C     Check options for linearization
+C     ********************************************
+C
+      IF(TIMEIMPL)THEN
+          CALL OptionsGetString(PETSC_NULL_CHARACTER,
+     +                          '-linearization',STRINGA,IFLAG,IERR)
+          IF( IFLAG .EQ. 0 )THEN
+C
+C         Picard linearization is the default
+C
+              PICARD = .TRUE.
+              NEWTON = .FALSE.
+          ELSE
+              IF(STRINGA(1:6).EQ.'picard') THEN
+                  PICARD = .TRUE.
+                  NEWTON = .FALSE.
+              ELSEIF(STRINGA(1:6).EQ.'newton') THEN
+                  PICARD = .FALSE.
+                  NEWTON = .TRUE.
+              ELSE
+                  WRITE(NERR,310)STRINGA,'-linearization'
+                  STOP
+              ENDIF
+          ENDIF
+      ENDIF
+C
+a650 28
+C 
+C     ********************************************
+C     Check options for linearization
+C     ********************************************
+C
+      IF(TIMEIMPL)THEN
+          CALL OptionsGetString(PETSC_NULL_CHARACTER,
+     +                          '-linearization',STRINGA,IFLAG,IERR)
+          IF( IFLAG .EQ. 0 )THEN
+C
+C         Picard linearization is the default
+C
+              PICARD = .TRUE.
+              NEWTON = .FALSE.
+          ELSE
+              IF(STRINGA(1:6).EQ.'picard') THEN
+                  PICARD = .TRUE.
+                  NEWTON = .FALSE.
+              ELSEIF(STRINGA(1:6).EQ.'newton') THEN
+                  PICARD = .FALSE.
+                  NEWTON = .TRUE.
+              ELSE
+                  WRITE(NERR,310)STRINGA,'-linearization'
+                  STOP
+              ENDIF
+          ENDIF
+      ENDIF
+C
+@
+
+
+1.32
+log
+@minor change
+@
+text
+@d2 1
+a2 1
+     +WDISTFILE,DATADIR,NTURB)
+d6 1
+a6 1
+C     $Id: rdat.F,v 1.31 1999/09/29 09:51:30 aldo Exp aldo $
+a26 1
+      INCLUDE 'projct.com'
+d42 1
+a42 1
+      INTEGER I,IFLAG,IERR,NVALS,NERR
+d44 3
+a46 1
+      INTEGER KSPACE 
+a47 1
+C     Data Statements ..
+d49 1
+a49 1
+C     Executable Statements ..
+d52 5
+a56 1
+      NERR = 6
+d83 1
+d85 1
+d104 3
+d124 1
+d126 1
+d136 1
+d138 1
+d169 21
+a189 6
+  320 FORMAT(5X,'Valid options are:'/,
+     +       15X,'advection'/, 
+     +       15X,'advection-diffusion'/, 
+     +       15X,'Euler'/, 
+     +       15X,'Navier-Stokes'/, 
+     +       15X,'RANS')
+d240 4
+a243 1
+      IF(ABS(KAN).EQ.1)GOTO 140
+a279 1
+C
+a327 5
+c     write(6,*)meshfile
+c     write(6,*)nghbfile
+c     write(6,*)starfile
+c     write(6,*)wdistfile
+c     write(6,*)bakfile
+d335 6
+a340 2
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-restart',
+     +                    IFLAG,IERR)
+d343 1
+d357 2
+a366 3
+cccc  CALL GAUSS(3)
+C
+C
+d374 11
+a384 1
+C 320 FORMAT(5X,'Density is constant; IVCNVG must NOT be 1')
+d510 1
+d550 1
+a550 1
+                  DECOMP = 2
+d565 28
+d608 1
+d671 28
+d722 1
+a722 2
+      NERR = I1MACH(2)
+      NERR = 6
+@
+
+
+1.31
+log
+@TOLER is now defined al the logarithm of the threshold
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.30 1999/09/15 14:45:16 aldo Exp aldo $
+a524 1
+      write(6,*)kan,decomp,re,reinv
+@
+
+
+1.30
+log
+@major changes in the options
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.28 1999/08/17 08:13:09 aldo Exp aldo $
+d107 1
+a107 1
+      IF( IFLAG .EQ. 0 )TOLER = 1.0d-20
+@
+
+
+1.29
+log
+@minor change
+@
+text
+@d41 1
+a41 1
+      CHARACTER*40 ANALYSIS_TYPE
+d43 1
+a43 1
+      INTEGER I,IFLAG,IERR,NVALS
+a44 1
+#ifdef MPI
+a45 10
+#endif
+C
+      CHARACTER*4 SCHEMI(9)
+C
+C
+      DOUBLE PRECISION DNRM2,DDOT
+      EXTERNAL         DNRM2,DDOT
+C
+C
+      INTRINSIC FLOAT
+d49 1
+a49 1
+      DATA SCHEMI/ 'N','PSI','LDA','NL','FV','FVL1','FVL2','LW', 'LDC'/
+d51 2
+a52 1
+C     Executable Statements ..
+a53 1
+C     CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IERR)
+a57 9
+C     type of flow analysis
+C
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-kan',KAN,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )STOP 'KAN must be specified'
+       
+C
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-decomp',DECOMP,IFLAG,
+     +                   IERR)
+C
+d59 1
+a59 1
+C     turbulence modeling (Spalart-Allmaras model)
+d62 3
+a64 2
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-turbulent',IFLAG,IERR)
+      TURBULENT = ( IFLAG .EQ. 1 )
+d66 1
+a66 1
+C     Trip term on/off
+d68 6
+a73 5
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-trip_term',IFLAG,IERR)
+C
+      IF( TURBULENT )THEN
+          IF( IFLAG .EQ. 1 )THEN
+                  TTFLAG = 1
+d75 2
+a76 1
+                  TTFLAG = 0
+a77 2
+C
+          VISCTFILE = 'visct' // EXT // '.dat'
+d79 2
+d82 1
+a82 52
+C     reset TURBULENT to .FALSE. if dealing with scalar or Euler problems
+C
+      IF( ABS(KAN) .EQ. 1 .OR. KAN .LT. 0 )TURBULENT = .FALSE.
+C
+C     number of sub iterations on the turbulence equation
+C
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-turb_sub_iter',
+     +                   NSUBIT,IFLAG,IERR)
+C
+      IF( IFLAG .EQ. 0 .OR. NSUBIT .LE. 0 )NSUBIT = 1
+C
+C     ********************************************
+C     testcase for scalar problems
+C     ********************************************
+C
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-testcase',ICASE,IFLAG,
+     +                   IERR)
+      IF( IFLAG .EQ. 0 .AND. ABS(KAN) .EQ. 1 )THEN
+	  STOP' Must specify "-testcase" with KAN=+/-1'
+      ENDIF
+C
+C     ********************************************
+C     set scalar and matrix schemes 
+C     ********************************************
+C
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-scalar_scheme',ISCHEME,
+     +                   IFLAG,IERR)
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-matrix_scheme',JSCHEME,
+     +                   IFLAG,IERR)
+C
+C     ********************************************
+C     debugging option
+C     ********************************************
+C
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-check',IFLAG,IERR)
+      IF( IFLAG .EQ. 1 )THEN
+          ICHECK = 1
+      ELSE 
+          ICHECK = 0
+      ENDIF
+C
+C     ********************************************
+C     restart from a previous solution
+C     ********************************************
+C
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-restart_file',
+     +                      STARFILE,IFLAG,IERR)
+      IF( IFLAG .EQ. 1 )THEN
+          ISTART = 1
+      ELSE 
+          ISTART = 0
+      ENDIF
+d87 2
+d92 2
+d97 2
+d103 5
+a107 5
+C****************************************************************
+C     
+C     Time stepping (Euler/Navier-Stokes eqn.)
+C     
+C****************************************************************
+d115 1
+a115 5
+C****************************************************************
+C     
+C     Time stepping (turbulence eqn.)
+C     
+C****************************************************************
+d117 7
+d125 1
+a125 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_max',CFL_MAX,
+     +                      IFLAG,IERR)
+d127 50
+a176 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_start',
+     +                      CFLSTART,IFLAG,IERR)
+d178 3
+a180 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-cfl_ratio',
+     +                      CFLRATIO,IFLAG,IERR)
+d182 2
+a183 1
+C     implicit time-stepping is the default
+d185 23
+a207 1
+      TIMEIMPL = .TRUE.
+d209 2
+a210 1
+C     linearization
+d212 1
+a212 3
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-Newton',IFLAG,IERR)
+      NEWTON = ( IFLAG .EQ. 1 )
+      PICARD = ( IFLAG .EQ. 0 )
+d214 3
+a216 1
+C     timestepping
+d218 25
+a242 5
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-explicit',IFLAG,IERR) 
+      IF( IFLAG .EQ. 1 )THEN
+          TIMEIMPL = .FALSE.
+          NEWTON = .FALSE.
+          PICARD = .FALSE.
+d245 3
+a247 2
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-tolerance',TOLER,
+     +                      IFLAG,IERR)
+a248 10
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-Reynolds',RE,IFLAG,
+     +                      IERR)
+      IF( IFLAG .EQ. 0 )THEN
+          IF( KAN .GT. 0 )THEN
+              STOP 'Need to specify "-Reynolds"'
+          ELSE 
+              RE = 1.E+38
+          ENDIF
+      ENDIF
+
+d250 3
+a252 4
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-Prandtl',PRANDTL,
+     +                      IFLAG,IERR)
+      IF( IFLAG .EQ. 0 .AND. KAN .EQ. 4 )
+     +STOP 'Need to specify "-Prandtl"'
+d254 1
+a254 2
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-isothermal_wall',
+     +                   IFLAG,IERR)
+d256 3
+a258 3
+          IADIA = 1
+      ELSE
+          IADIA = 0
+d261 3
+a263 10
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,'-wall_temperature',
+     +                      TWALL,IFLAG,IERR)
+      IF( IADIA .EQ. 1 .AND. IFLAG .EQ. 0 )
+     +STOP 'Need to specify "-wall_temperature" with "-isothermal_wall"'
+C
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+     +                   '-artificial_sound_speed',BETA,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 .AND. IABS(KAN) .EQ. 2 )THEN
+          STOP 'Need to specify "-artificial_sound_speed"'
+      ENDIF
+a264 15
+      NVALS = 5 
+      CALL OptionsGetDoubleArray(PETSC_NULL_CHARACTER,'-freestream',
+     +                           U_infty,NVALS,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )THEN
+          STOP 'MUST specify "-freestream"'
+      ENDIF
+C
+      NVALS = 14 
+      CALL OptionsGetIntArray(PETSC_NULL_CHARACTER,'-colors',
+     +                        ICOLOR,NVALS,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )THEN
+          STOP 'MUST SPECIFY "-color" for boundary coloring'
+      ENDIF
+C
+#ifdef MPI
+d268 2
+a269 1
+          STOP 'MUST SPECIFY "-data_dir"'
+d280 3
+d286 1
+a286 1
+      WDISTFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'wdist'//ext//'.dat'
+d289 20
+a308 2
+C     write(6,'(A)')meshfile
+C     write(6,'(A)')nGHBfile
+d310 6
+a315 5
+#else
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-mesh_file',
+     +                      MESHFILE,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )THEN
+          STOP 'MUST SPECIFY "-mesh_file"'
+d317 5
+a321 2
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-neighbours_file',
+     +                      NGHBFILE,IFLAG,IERR)
+d323 2
+a324 13
+          STOP 'MUST SPECIFY "-neighbours_file"'
+      ENDIF
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-backup_file',
+     +                      BAKFILE,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )THEN
+          BAKFILE = 'file010.dat'
+      ENDIF
+      IF( TURBULENT )THEN
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-wall_dist_file',
+     +                      WDISTFILE,IFLAG,IERR)
+          IF( IFLAG .EQ. 0 )THEN
+              STOP 'MUST SPECIFY "-wall_dist_file"'
+          ENDIF
+a325 1
+#endif
+d335 7
+d343 14
+a356 1
+C -------------------- + --------------------
+d358 1
+a358 1
+      REINV = ONE/RE
+d360 1
+a360 5
+      IF( TURBULENT )THEN
+         NTURB=1
+      ELSE
+         NTURB=0
+      ENDIF
+d362 1
+d364 6
+d371 3
+d375 1
+d377 2
+d380 3
+a382 1
+C -------------------- + --------------------
+d384 8
+a391 1
+c           Analysis type (KAN) 
+d393 3
+a395 1
+C -------------------- + --------------------
+d397 1
+a397 4
+      GOTO(100,110,120,130,140)IABS(KAN) 
+         CALL P01ABY(KAN,'KAN',-1,0,'RDAT')
+         STOP
+  100 CONTINUE
+d399 1
+a399 1
+C	SCALAR(KAN=+/-1)
+d401 1
+a401 16
+        IF( KAN .GT. 0 )THEN
+	   ANALYSIS_TYPE = 'SCALAR ADVECTION/DIFFUSION'
+        ELSE 
+	   ANALYSIS_TYPE = 'SCALAR ADVECTION'
+        ENDIF
+	IVCNVG = 1
+	GOTO 190
+C ----------------------------------- + -----------------------------------
+C	InCompressible Euler (KAN=+/-2) Artificial compressibility
+C ----------------------------------- + -----------------------------------
+  110 CONTINUE
+        IF( KAN .EQ. -2 )THEN 
+           ANALYSIS_TYPE = 'InCompressible Euler '
+        ELSE
+           ANALYSIS_TYPE = 'InCompressible Navier-Stokes '
+        ENDIF
+d403 10
+a412 19
+C       DECOMP = 8
+	GOTO 190
+C ----------------------------------- + -----------------------------------
+C	Compressible Euler (KAN=+/-3)
+C ----------------------------------- + -----------------------------------
+  120 CONTINUE
+        STOP 'KAN =3 not really implemented any more'
+        IF( KAN .EQ. -3 )THEN
+        ANALYSIS_TYPE = 'Compressible Euler NON Conservative'
+        ELSE
+        ANALYSIS_TYPE = 'Compressible Euler Conservative'
+        ENDIF
+        GOTO 190
+C ----------------------------------- + -----------------------------------
+C	Compressible Euler (KAN=+/-4) Unsteady and pseudo-unsteady
+C ----------------------------------- + -----------------------------------
+  130 CONTINUE
+      IF( KAN .EQ. -4 )THEN
+         ANALYSIS_TYPE = 'Compressible Euler Equations'
+d414 2
+a415 1
+         ANALYSIS_TYPE = 'Compressible Navier-Stokes Equations'
+d417 4
+d422 4
+a425 1
+C for compressible flows DECOMP must be either 5 or 6 or 7
+d427 17
+a443 3
+      IF( .NOT. (DECOMP .EQ. 5 .OR. DECOMP .EQ. 6 .OR. DECOMP .EQ. 7
+     +.OR. DECOMP .EQ. 2 .OR. DECOMP .EQ. 3 .OR. DECOMP .EQ. 9) )
+     +CALL SETERR(25HINVALID -DECOMP- IN INPUT,25,1,2)
+d445 14
+a458 3
+C when solving in conserved variables, element stiffness matrices
+C do not have to be transformed into conserved variable ( since they
+C are already)
+d460 11
+a470 8
+      GOTO 190
+C ----------------------------------- + -----------------------------------
+C	(KAN=5) scalar potential
+C ----------------------------------- + -----------------------------------
+  140 CONTINUE
+      ANALYSIS_TYPE = 'scalar potential'
+      IVCNVG = 1
+      GOTO 190
+d472 4
+a475 1
+  190 CONTINUE
+d477 1
+a477 1
+C -------------------- + --------------------
+d479 1
+d481 15
+a495 1
+C -------------------- + --------------------
+d497 1
+a497 1
+C           Scalar Scheme
+d499 27
+a525 1
+C -------------------- + --------------------
+d527 2
+a528 4
+        IF( ISCHEME .LT. 1 .OR. ISCHEME .GT. 9 )THEN
+           CALL P01ABY(ISCHEME,'ISCHEME',-1,0,'RDAT')
+                STOP
+        ENDIF
+d530 4
+a533 1
+C -------------------- + --------------------
+d535 1
+a535 1
+C           System Scheme
+d537 1
+a537 1
+C -------------------- + --------------------
+d539 2
+a540 4
+        IF( JSCHEME .GT. 8)THEN 
+           CALL P01ABY(JSCHEME,'JSCHEME',-1,0,'RDAT')
+           STOP
+        ENDIF
+d542 3
+a544 1
+C -------------------- + --------------------
+d546 1
+a546 1
+C           CONVERGENCE CRITERION
+d548 1
+a548 1
+C -------------------- + --------------------
+d550 17
+a566 4
+        IF( IVCNVG .LT. 1 .OR. IVCNVG .GT. NMAX )THEN
+           CALL P01ABY(IVCNVG,'IVCNVG',-1,0,'RDAT')
+                STOP
+        ENDIF
+d568 1
+a568 1
+C -------------------- + --------------------
+d570 7
+a576 1
+C           Boundary colors
+d578 1
+a578 1
+C -------------------- + --------------------
+d580 1
+a580 6
+	DO 80 I = 0 , 13
+	  IF( ICOLOR(I) .LT. 0 .OR. ICOLOR(I) .GT. 7 )THEN
+           WRITE(NOUT,330)ICOLOR(I),I
+           STOP
+	  ENDIF
+   80	CONTINUE
+d582 2
+a583 1
+C -------------------- + --------------------
+d585 2
+d588 1
+a588 1
+C -------------------- + --------------------
+d590 1
+a590 1
+C           Runge - Kutta
+d592 11
+a602 1
+C -------------------- + --------------------
+d604 4
+a607 24
+      NSTAGES = 1
+      GOTO(1,2,3,4,5,6)NSTAGES
+	CALL P01ABY(NSTAGES,'NSTAGES',-1,0,'RDAT')
+        STOP
+    2 ALPHA(1) = .7003
+        GOTO 1
+    3 ALPHA(1) = .2846
+      ALPHA(2) = .6067
+        GOTO 1
+    4 ALPHA(1) = .1599
+      ALPHA(2) = .3253
+      ALPHA(3) = .5667
+        GOTO 1
+    5 ALPHA(1) = .1033
+      ALPHA(2) = .2057
+      ALPHA(3) = .3383
+      ALPHA(4) = .5465
+        GOTO 1
+    6 ALPHA(1) = .0722
+      ALPHA(2) = .1425
+      ALPHA(3) = .2268
+      ALPHA(4) = .3425
+      ALPHA(5) = .5349
+    1 ALPHA(NSTAGES) = ONE
+d609 1
+a609 1
+C -------------------- + --------------------
+d611 1
+a611 1
+C            Implicit Time Integration
+d613 1
+a613 1
+C -------------------- + --------------------
+d615 6
+d622 3
+d626 2
+a627 1
+C -------------------- + --------------------
+d629 5
+a633 1
+C           Gauss - Points
+d635 2
+a636 1
+C -------------------- + --------------------
+d638 2
+a639 1
+      CALL GAUSS(3)
+d641 2
+a642 1
+C -------------------- + --------------------
+d644 3
+a646 1
+C            Boundary Conditions routines
+d648 1
+a648 1
+C -------------------- + --------------------
+d650 1
+a650 3
+C     GOTO(11,12,13)IPAR(19)
+C     CALL P01ABY(IPAR(19),'IPAR(19)',-1,0,'RDAT')
+C     STOP
+d652 5
+a656 1
+C     IPAR(19) = 1          mirror cell approach
+d658 1
+a658 2
+C  11 CONTINUE
+C     GOTO 19
+d660 2
+a661 1
+C     IPAR(19) = 2          weak b.c. with 1/d distribution
+d663 6
+a668 2
+C  12 IPAR(1)  = 0 ! Face based normals 
+C     GOTO 19
+d670 4
+a673 1
+C     IPAR(19) = 3          weak b.c. with matching gradient
+d675 1
+a675 4
+C  13 IPAR(15) = 1 ! Reordering of the elements
+C     IPAR(1)  = 0 ! Face based normals
+C     GOTO 19
+C  19 CONTINUE
+d677 15
+a691 5
+      WRITE(NOUT,116)ANALYSIS_TYPE,999,ITMAX,ISTMP,IBAK,ISTART,ICASE,
+     $ICHECK,NSTAGES,CFL,69,DECOMP,SCHEMI(ISCHEME),SCHEMI(JSCHEME),
+     $MESHFILE,NGHBFILE,STARFILE,BAKFILE
+ 
+C     CALL OptionsPrint(VIEWER_STDOUT_WORLD,IERR)
+d693 2
+a695 33
+C
+   10 FORMAT(A)
+   66 FORMAT(7(I10))
+  320 FORMAT(5X,'Density is constant; IVCNVG must NOT be 1')
+  330 FORMAT(5X,'Boundary type ',I2,' associated with color ',I2,
+     &' does NOT exist')
+ 1305 FORMAT(5X,'KAN = ',I1,' is OUT of range (1 to 3)')
+  116 FORMAT(5X,'TYPE OF ANALYSIS ..... ',A30,/,
+     .       5X,'NUMBER OF VARIABLES .. ',I4,
+     .       5X,'MAX # OF ITERATIONS... ',I4,/,
+     .       5X,'PRINTOUT FREQUENCY.... ',I4,
+     .       5X,'BACKUP FREQUENCY ..... ',I4,/,
+     .       5X,'RESTART .............. ',I4,
+     .       5X,'TESTCASE ............. ',I4,/,
+     .       5X,'CHECK DECOMPOSITION .. ',I4,
+     .       5X,'NSTAGES .............. ',I4,/,
+     .       5X,'CFL .................. ',F5.3,
+     .       5X,'TIME STEPPING ........ ',I2,/,
+     .       5X,'DECOMPOSITION MODEL... ',I4,/,
+     .       5X,'SCALAR SCHEME ........ ',A4,
+     .       5X,'SYSTEM SCHEME ........ ',A4,/,
+     .       5X,'Mesh and Connectivity. ',A40,/,
+     .       5X,'Neighbouring cells.... ',A40,/,
+     .       5X,'Restart file      .... ',A40,/,
+     .       5X,'Backup file .......... ',A40)
+  200 FORMAT(/,
+     115X,'#######                 #######  #####',/,
+     215X,'#        #    #  #      #       #     #',/,
+     315X,'#        #    #  #      #       #',/,
+     415X,'#####    #    #  #      #####    #####',/,
+     515X,'#        #    #  #      #             #',/,
+     615X,'#        #    #  #      #       #     #',/,
+     715X,'#######   ####   ###### #        #####',/)
+@
+
+
+1.28
+log
+@some minor changes: MY_PE is now in common and a call to
+SETERRA has been removed
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.27 1999/01/18 18:53:08 aldo Exp aldo $
+d45 3
+d250 1
+a250 1
+      nvals = 5 
+d252 1
+a252 1
+     +                           U_infty,nvals,IFLAG,IERR)
+d257 1
+a257 1
+      nvals = 14 
+d259 1
+a259 1
+     +                        ICOLOR,nvals,IFLAG,IERR)
+@
+
+
+1.27
+log
+@handles DECOMP=9 i.e. H-E for incompressible flows
+@
+text
+@d6 1
+a6 1
+C     $Id: rdat.F,v 1.26 1998/11/25 17:01:31 aldo Exp aldo $
+d36 1
+a36 1
+     +WDISTFILE,VISCTFILE
+d38 2
+d43 1
+a43 1
+      INTEGER I,IFLAG,IERR,NVALS,MY_PE,KSPACE
+d61 1
+a61 1
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IERR)
+d69 2
+a70 1
+      IF( IFLAG .EQ. 0 )SETERRA(IERR,21,'KAN must be specified')
+@
+
+
+1.26
+log
+@naming of I/O devices has changed
+@
+text
+@d6 1
+a6 1
+C     $Id$
+d361 1
+a361 1
+        DECOMP = 8
+d387 1
+a387 1
+     +.OR. DECOMP .EQ. 2 .OR. DECOMP .EQ. 3 ) )
+@
+
+
+1.25
+log
+@add two new filenames: one for the nearest wall distance,
+the other one for the turbulent viscosity
+@
+text
+@d62 1
+a62 1
+      WRITE(6,200)
+d531 1
+a531 1
+      WRITE(6,116)ANALYSIS_TYPE,999,ITMAX,ISTMP,IBAK,ISTART,ICASE,
+@
+
+
+1.24
+log
+@Add automatic identification flag
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE READVAL(MESHFILE,NGHBFILE,STARFILE,BAKFILE,DATADIR,
+     +NTURB)
+d35 2
+a36 1
+      CHARACTER*(*) MESHFILE,NGHBFILE,STARFILE,BAKFILE,DATADIR
+d60 1
+d78 3
+d89 2
+a271 1
+      WRITE(EXT,FMT='(I3.3)')MY_PE+1
+d276 1
+d297 7
+@
+
+
+1.23
+log
+@new implementation of periodic b.c.s
+@
+text
+@d6 3
+a11 1
+C     Parameters ..
+a15 1
+C     Commons ..
+a32 1
+C     Scalar Arguments ..
+a36 1
+C     Local Scalars ..
+a41 1
+C     Local Arrays ..
+a44 1
+C     External Functions ..
+a48 1
+C     Intrinsic Functions ..
+@
+
+
+1.22
+log
+@bug fixed with option -backup_file in the MPI case
+@
+text
+@d30 1
+d297 7
+a303 2
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-periodic',IFLAG,IERR) 
+      PERIODIC_MESH = (IFLAG .EQ. 1)
+@
+
+
+1.21
+log
+@modified test on parameter DECOMP
+@
+text
+@a288 1
+#endif
+d294 1
+@
+
+
+1.20
+log
+@removed unused unit number NTI
+@
+text
+@d371 1
+a371 1
+     +.OR. DECOMP .EQ. 2) )
+@
+
+
+1.19
+log
+@correctly sets BAKFILE STARFILE in the parallel case
+@
+text
+@d40 1
+a40 1
+      INTEGER I,NTI,IFLAG,IERR,NVALS,MY_PE,KSPACE
+a520 1
+      CLOSE(NTI)
+@
+
+
+1.18
+log
+@removed unused variable
+@
+text
+@d272 2
+a273 2
+C     STARFILE(1:KSPACE+10) = DATADIR(1:KSPACE-1)//'data'//ext//'.dat'
+C     BAKFILE(1:11) = 'file'//ext//'.dat'
+d275 2
+a276 2
+      write(6,'(A)')meshfile
+      write(6,'(A)')nGHBfile
+@
+
+
+1.17
+log
+@handles the parallel case (add DATADIR)
+@
+text
+@a245 5
+      CALL OptionsGetDouble(PETSC_NULL_CHARACTER,
+     +                   '-pressure_ratio',PRATIO,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )THEN
+          PRATIO = 1.d0
+      ENDIF
+@
+
+
+1.16
+log
+@add maximum cfl for turbulent computations
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE READVAL(MESHFILE,NGHBFILE,STARFILE,BAKFILE,NTURB)
+d34 1
+a34 1
+      CHARACTER*(*) MESHFILE,NGHBFILE,STARFILE,BAKFILE
+d39 2
+a40 2
+      CHARACTER*3 ANSW
+      INTEGER LEN,I,NTI,IFLAG,IERR,NVALS
+d61 2
+d259 25
+a283 1
+      LEN=80
+d294 1
+@
+
+
+1.15
+log
+@Periodic boundary conditions disabled
+@
+text
+@d154 1
+a154 1
+C     Time stepping 
+d162 10
+@
+
+
+1.14
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d164 6
+@
+
+
+1.13
+log
+@now handles periodic meshes
+@
+text
+@d5 2
+a6 2
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/viewer.h"
+a77 5
+C             IF( ANSW .EQ. 'y' .OR. ANSW .EQ. 'Y' )THEN
+C             ELSEIF( ANSW .EQ. 'n' .OR. ANSW .EQ. 'N' )THEN
+C                 TTFLAG = 0
+C                 pause "Need to specify '-trip_term Y(y) or N(n)'"
+C
+d89 7
+@
+
+
+1.12
+log
+@restored explicit timestepping for scalar problems
+@
+text
+@a22 1
+      INCLUDE 'solver.com'
+d25 1
+a25 1
+C     INCLUDE 'skit_p.com'
+a85 1
+                  write(6,*)'ttflag = ',ttflag
+d95 1
+d97 1
+d105 1
+d107 1
+d114 1
+d116 1
+d125 1
+d127 1
+d225 5
+d255 2
+@
+
+
+1.11
+log
+@Add an option for the trip term in the Spalart-Allmaras
+model
+@
+text
+@d144 6
+d156 6
+d166 9
+a244 1
+      TIMEIMPL = .TRUE.
+@
+
+
+1.10
+log
+@Unused variables removed
+@
+text
+@d24 1
+a24 1
+C     INCLUDE 'ndpcg.com'
+d39 1
+d71 3
+a73 1
+C     turbulence modeling
+d77 15
+d123 2
+a124 1
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-restart',IFLAG,IERR)
+a220 5
+      ENDIF
+      CALL OptionsGetString(PETSC_NULL_CHARACTER,'-restart_file',
+     +                      STARFILE,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 .AND. ISTART .NE. 0 )THEN
+          STOP 'MUST SPECIFY "-restart_file" when restarting'
+@
+
+
+1.9
+log
+@add a call to OptionsPrint
+@
+text
+@d39 1
+a39 4
+      CHARACTER*80 TITLE1
+      CHARACTER*80 TEXT
+      INTEGER LEN,I,J,NTI,ITIME,IFLAG,IERR,NVALS
+      DOUBLE PRECISION TEMP
+@
+
+
+1.8
+log
+@test on validity of Reynolds number has been introduced
+@
+text
+@d6 1
+d433 2
+@
+
+
+1.7
+log
+@modified test on -freestream
+@
+text
+@d142 8
+a149 2
+      IF( IFLAG .EQ. 0 .AND. KAN .GT. 0 )
+     +STOP 'Need to specify "-Reynolds"'
+@
+
+
+1.6
+log
+@modified to handle the -Newton option
+@
+text
+@d172 2
+a173 2
+      IF( IFLAG .EQ. 0 .AND. ISTART .EQ. 0 )THEN
+          STOP 'MUST specify "-freestream" when starting from scratch'
+@
+
+
+1.5
+log
+@Minor changes to handle turbulence
+@
+text
+@d133 4
+d142 2
+d147 2
+a159 1
+C
+d161 1
+a161 1
+     +STOP 'Must specify "-isothermal_wall" and "-wall_temperature"'
+a206 2
+      PICARD = .TRUE.
+      NEWTON = .FALSE.
+@
+
+
+1.4
+log
+@test on -restart fixed
+@
+text
+@d64 1
+a64 1
+C -------------------- + --------------------
+d72 11
+d96 1
+d105 2
+d142 8
+d153 2
+a154 3
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-adiabatic_wall',
+     +                   IADIA,IFLAG,IERR)
+      IF( IFLAG .EQ. 0 )IADIA = 0
+d207 5
+a211 3
+      IF(NTURB.GT.1)NTURB=1 
+      TURBULENT = (NTURB.EQ.1)
+      TURBULENT = .FALSE.
+@
+
+
+1.3
+log
+@now using OptionsHasName for some otions
+@
+text
+@d173 1
+a173 1
+      IF( IFLAG .EQ. 0 )THEN
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@a58 1
+      DATA NTI / 52 /
+a63 2
+      OPEN(NTI,FILE='FILES.DAT',STATUS='OLD')
+C
+d86 6
+a91 3
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-icheck',ICHECK,IFLAG,
+     +                   IERR)
+      IF( IFLAG .EQ. 0 )ICHECK = 0
+d93 6
+a98 3
+      CALL OptionsGetInt(PETSC_NULL_CHARACTER,'-restart',ISTART,IFLAG,
+     +                   IERR)
+      IF( IFLAG .EQ. 0 )ISTART = 0
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 3
+a7 1
+C     .. Parameters ..
+d12 1
+a12 1
+C     .. Commons ..
+d23 1
+a23 1
+      INCLUDE 'ndpcg.com'
+d25 1
+a25 1
+      INCLUDE 'skit_p.com'
+d30 1
+a30 1
+C     .. Scalar Arguments ..
+d35 1
+a35 1
+C     .. Local Scalars ..
+d40 1
+a40 1
+      INTEGER NTI,I,J,IDUMMY,ITIME
+d43 1
+a43 1
+C     .. Local Arrays ..
+d47 1
+a47 1
+C     .. External Functions ..
+d52 1
+a52 1
+C     .. Intrinsic Functions ..
+d56 1
+a56 1
+C     .. Data Statements ..
+d61 1
+a61 1
+C     .. Executable Statements ..
+d65 1
+a65 1
+      OPEN(NTI,FILE='DATAIN.DAT',STATUS='OLD')
+d69 33
+d103 48
+a150 1
+C -------------------- + --------------------
+d152 20
+a171 23
+c
+9     READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 9
+      READ(TEXT,10)TITLE1
+c
+65    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 65
+      READ(TEXT,66)KAN,DECOMP,ICASE,ITIME,ISCHEME,JSCHEME,ICHECK
+C
+      IF( ITIME .EQ. 0 )THEN
+          TIMEIMPL = .FALSE.
+          PICARD = .FALSE.
+          NEWTON = .FALSE.
+      ELSEIF( ITIME .EQ. 1 )THEN
+          TIMEIMPL = .TRUE.
+          PICARD = .TRUE.
+          NEWTON = .FALSE.
+      ELSEIF( ITIME .EQ. 2 )THEN
+          TIMEIMPL = .TRUE.
+          PICARD = .FALSE.
+          NEWTON = .TRUE.
+      ELSE
+          CALL SETERR(29HINVALID -ITIME- IN INPUT FILE,29,1,2)
+a172 31
+c
+c     .. Backup/restart section ..
+c
+64    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 64
+      READ(TEXT,66)ISTART,ITMAX,ISTMP,IBAK,IVERBOSE,IDUMMY,IDUMMY
+c
+c     .. Convergence section ..
+c
+67    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 67
+      READ(TEXT,'(I10,3G10.3)')IVCNVG,CFL,CFLMAX,TOLER
+c
+c     .. Runge-Kutta section ..
+c
+68    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 68
+      READ(TEXT,'(2I10)')ITSTEP,NSTAGES
+c
+c     .. Implicit section ..
+c
+75    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 75
+      READ(TEXT,'(I10)')IREORD
+c
+c     .. Navier-Stokes section ..
+c
+69    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 69
+      READ(TEXT,'(3G10.4,2I10)')RE,PRANDTL,TWALL,IADIA,NTURB
+      REINV = ONE/RE
+a173 2
+      IF(NTURB.GT.1)NTURB=1 
+      TURBULENT = (NTURB.EQ.1)
+d175 3
+a177 47
+77    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 77
+      READ(TEXT,'(G10.3)') BETA
+c
+c     .. Freestream section ..
+c
+71    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 71
+      READ(TEXT,'(5G10.3)') (U_infty(j),j=1,5)
+C
+C ---------- Boundary colors ----------
+C
+72    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 72
+      READ(TEXT,66)(ICOLOR(I),I=0,6)
+C
+73    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 73
+      READ(TEXT,66)(ICOLOR(I),I=7,13)
+C
+C ---------- Sparsekit ----------
+C
+74    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 74
+      READ(TEXT,'(3I10,4G10.3)')IPRE,NWK,LFIL,DROPTOL,PERMTOL,ALPH,
+     &temp
+c
+76    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 76
+      READ(TEXT,'(5I10,2G10.3)')IMETH,IDUMMY,IDUMMY,
+     &IDUMMY,IDUMMY,temp,temp
+c
+70    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 70
+      READ(TEXT,'(A80)')MESHFILE
+C
+79    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 79
+      READ(TEXT,'(A80)')NGHBFILE
+C
+81    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 81
+      READ(TEXT,'(A80)')STARFILE
+C
+82    READ(NTI,10) TEXT
+      IF(TEXT(1:2).EQ.'CC')GOTO 82
+      READ(TEXT,'(A80)')BAKFILE
+d181 1
+a181 1
+C           End reading DATAFILE
+d183 3
+a185 1
+C -------------------- + --------------------
+a186 1
+      CLOSE(NTI)
+a267 8
+C           Bandwidth Minimization
+C
+C -------------------- + --------------------
+C
+        IF( IREORD .LT. 0 .OR. IREORD .GT. 7 )THEN
+           CALL P01ABY(IREORD,'IREORD',-1,0,'RDAT')
+                STOP
+        ENDIF
+d324 1
+a355 21
+C     ICALL is needed to distinguish among the different calling
+C     sequences in the accelerators
+C
+      IF    ( IMETH .LE.  10)THEN
+        ICALL = 1
+        CALL RSKIT
+      ELSEIF( IMETH .GE.  11 .AND. IMETH .LE. 17)THEN
+        ICALL = 2
+        CALL RSLAP
+      ELSEIF( IMETH .GT.  21 .AND. IMETH .LE. 41)THEN
+        ICALL = 3
+        CALL RNSPCG
+      ELSE
+        STOP 'Invalid IMETH in datafile' 
+      ENDIF
+C 
+      IF( ICALL .EQ. 3 )THEN
+         IQLR = IPARM(22) 
+      ELSE
+         IQLR = 3
+      ENDIF
+a391 1
+C
+d395 2
+a432 220
+C ------------------------------ + ------------------------------
+C
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE RSKIT
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+C
+C     .. Commons ..
+C
+      INCLUDE 'skit.com'
+      INCLUDE 'IO'
+C
+C     .. Scalar Arguments ..
+C
+C
+C     .. Local Scalars ..
+C
+      CHARACTER*80 TEXT
+      INTEGER NTI,I
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Functions ..
+C
+C
+C     .. Intrinsic Functions ..
+C
+      INTRINSIC FLOAT
+C
+C     .. Data Statements ..
+C
+      DATA NTI / 53 /
+C
+C     .. Executable Statements ..
+C
+      CALL DFAULT1
+C
+      OPEN(NTI,FILE='SKIT.DAT',STATUS='OLD')
+C
+C -------------------- + --------------------
+C
+C
+C -------------------- + --------------------
+C
+      WRITE(NOUT,90)
+C
+9     READ(NTI,'(A20)') TEXT
+      IF    ( TEXT(1:2) .EQ. 'CC')THEN
+         GOTO 9
+      ELSEIF( TEXT(1:3) .EQ. 'END' )THEN
+         CLOSE(NTI)
+         RETURN
+      ELSEIF( TEXT(1:1) .EQ. 'I' )THEN
+         READ(TEXT,'(8X,I2,I10)')I,IPAR(I)
+         WRITE(NOUT,100)I,IPAR(I)
+      ELSEIF( TEXT(1:1) .EQ. 'F' )THEN
+         READ(TEXT,'(8X,I2,G10.3)')I,FPAR(I)
+         WRITE(NOUT,110)I,FPAR(I)
+      ELSE
+         WRITE(6,*)'Unrecognizable card: check file SKIT.DAT'
+         STOP
+      ENDIF
+      GOTO 9
+C
+   90 FORMAT(//15X,'Running accelerators from SPARSKIT'//)
+  100 FORMAT(15X,'Parameter IPAR(',I2,') has been reset to ',I6)
+  110 FORMAT(15X,'Parameter FPAR(',I2,') has been reset to ',D10.4)
+      END
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE RNSPCG
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+C
+C     .. Commons ..
+C
+      INCLUDE 'ndpcg.com'
+      INCLUDE 'IO'
+C
+C     .. Scalar Arguments ..
+C
+C
+C     .. Local Scalars ..
+C
+      CHARACTER*80 TEXT
+      INTEGER NTI,I
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Functions ..
+C
+C
+C     .. Intrinsic Functions ..
+C
+C
+C     .. Data Statements ..
+C
+      DATA NTI / 54 /
+C
+C     .. Executable Statements ..
+C
+      CALL DFAULT(IPARM,RPARM)
+C
+      OPEN(NTI,FILE='NSPCG.DAT',STATUS='OLD')
+C
+C -------------------- + --------------------
+C
+C	READ TITLE OF THE TEST CASE
+C
+C -------------------- + --------------------
+C
+C     IF( TIMEIMPL )WRITE(NOUT,90)
+C
+9     READ(NTI,'(A20)') TEXT
+      IF    ( TEXT(1:2) .EQ. 'CC')THEN
+         GOTO 9
+      ELSEIF( TEXT(1:3) .EQ. 'END' )THEN
+         CLOSE(NTI)
+         RETURN
+      ELSEIF( TEXT(1:1) .EQ. 'I' )THEN
+         READ(TEXT,'(8X,I2,I10)')I,IPARM(I)
+         WRITE(NOUT,100)I,IPARM(I)
+      ELSEIF( TEXT(1:1) .EQ. 'F' )THEN
+         READ(TEXT,'(8X,I2,G10.3)')I,RPARM(I)
+         WRITE(NOUT,110)I,RPARM(I)
+      ELSE
+         WRITE(6,*)'Unrecognizable card: check file NSPCG.DAT'
+         STOP
+      ENDIF
+      GOTO 9
+C
+   90 FORMAT(//15X,'Running accelerators from NSPCG'//)
+  100 FORMAT(15X,'Parameter IPARM(',I2,') has been reset to ',I6)
+  110 FORMAT(15X,'Parameter RPARM(',I2,') has been reset to ',D10.4)
+      END
+C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE RSLAP
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+C
+C     .. Commons ..
+C
+      INCLUDE 'slap.com'
+      INCLUDE 'IO'
+C
+C     .. Scalar Arguments ..
+C
+C
+C     .. Local Scalars ..
+C
+      CHARACTER*80 TEXT
+      INTEGER NTI,I
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Functions ..
+C
+C
+C     .. Intrinsic Functions ..
+C
+C
+C     .. Data Statements ..
+C
+      DATA NTI / 55 /
+C
+C     .. Executable Statements ..
+C
+      CALL DFAULT2
+C
+      OPEN(NTI,FILE='SLAP.DAT',STATUS='OLD')
+C
+C -------------------- + --------------------
+C
+C
+C -------------------- + --------------------
+C
+      WRITE(NOUT,90)
+C
+9     READ(NTI,'(A20)') TEXT
+      IF    ( TEXT(1:2) .EQ. 'CC')THEN
+         GOTO 9
+      ELSEIF( TEXT(1:3) .EQ. 'END' )THEN
+         CLOSE(NTI)
+         RETURN
+      ELSEIF( TEXT(1:1) .EQ. 'I' )THEN
+         READ(TEXT,'(8X,I2,I10)')I,IGWK(I)
+         IF( I .EQ. 6 )ITOL = IGWK(I)
+         IF( I .EQ. 7 )ITMAX = IGWK(I)
+         IF( I .EQ. 8 )NSAVE = IGWK(I)
+         WRITE(NOUT,100)I,IGWK(I)
+      ELSEIF( TEXT(1:1) .EQ. 'F' )THEN
+         READ(TEXT,'(8X,I2,G10.3)')I,TOL
+         WRITE(NOUT,110)TOL
+      ELSE
+         WRITE(6,*)'Unrecognizable card: check file SLAP.DAT'
+         STOP
+      ENDIF
+      GOTO 9
+C
+   90 FORMAT(//15X,'Running accelerators from SLAP'//)
+  100 FORMAT(15X,'Parameter IGWK(',I2,') has been reset to ',I6)
+  110 FORMAT(15X,'Parameter TOL has been reset to ',D10.4)
+      END
+@

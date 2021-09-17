@@ -1,0 +1,87 @@
+head	1.1;
+access
+	tesistim;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2009.01.09.10.28.30;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute cell averaged state
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE LINAVG(VCZ,ZAVG,NDIM,NOFVERT,NOFVAR)
+C
+      IMPLICIT NONE 
+C
+C THIS SUBROUTINE COMPUTES:
+C a) The averaged state ZAVG(1:NOFVAR) over the cell (in cart. coord.)
+C
+      INCLUDE 'constants.h'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NDIM,NOFVAR,NOFVERT
+      DOUBLE PRECISION VCZ(NOFVAR,NOFVERT),ZAVG(NOFVAR)
+C
+C     .. Local Scalars ..
+C
+      INTEGER I,IVAR,JVERT
+      DOUBLE PRECISION DUM,HELP
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Functions ..
+C
+C
+C     .. Executable Statements ..
+C
+C *********************************************************************
+C AVERAGED STATE OVER THE CELL (in cartesian coordinates)
+C *********************************************************************
+C
+      HELP = ONE/REAL(NOFVERT)
+      DO 10 IVAR = 1 , NOFVAR
+       DUM = ZERO
+            DO 12 JVERT = 1 , NOFVERT
+               DUM = DUM + VCZ( IVAR , JVERT )
+   12       CONTINUE
+      ZAVG(IVAR) = DUM * HELP
+   10 CONTINUE
+C
+      RETURN
+      END
+@

@@ -1,0 +1,117 @@
+head	1.4;
+access;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.3
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@ * @;
+
+
+1.4
+date	2013.08.21.07.56.05;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.06.08.07.25.12;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.01.29.14.46.34;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.25.08.19.47;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Constants of common use (such as 3.141593)
+@
+
+
+1.4
+log
+@added Doxygen documentation
+@
+text
+@!> \par Purpose
+!>
+!> Define some commonly used constants, including \f$\pi\f$
+!>
+!>    \author $Author: abonfi $
+!>    \version $Revision: 1.8 $
+!>    \date $Date: 2013/08/20 14:48:46 $
+!
+      REAL*8 ZERO,HALF,ONE,TWO,MONE,PI
+!
+      PARAMETER (ZERO = 0.00d0 )
+      PARAMETER (HALF = 0.5d0)
+      PARAMETER (ONE = 1.0d0)
+      PARAMETER (MONE = -ONE)
+      PARAMETER (TWO = 2.0d0)
+      PARAMETER (PI = 3.14159265358979323846d0)
+
+@
+
+
+1.3
+log
+@reformatted so that it can be included from an f90 source file
+@
+text
+@d1 8
+@
+
+
+1.2
+log
+@the adiabatic index has been moved to a common
+@
+text
+@d2 7
+a8 4
+C
+      PARAMETER (ZERO = 0.00d0 , HALF = 0.5d0 , ONE = 1.00d0 , 
+     . TWO = 2.00d0 , MONE = -ONE,
+     . PI = 3.14159265358979323846d0)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 2
+      REAL*8 ZERO,HALF,ONE,TWO,MONE,GAM,GM1,GOGM1,GINV,GM1OG,GP1OG
+      REAL*8 PI,RGAS
+d4 1
+a4 4
+     . TWO = 2.00d0 , MONE = -ONE, GAM = 1.40d0 , GM1  = GAM - ONE , 
+!    . TWO = 2.00d0 , MONE = -ONE, GAM = 5.0d0/3.d0 , GM1  = GAM - ONE , 
+     . GOGM1 = GAM / GM1, GINV = ONE / GAM , GM1OG = GM1 * GINV , 
+     . GP1OG = (GAM+ONE)*GINV, RGAS = 287.d0,
+@

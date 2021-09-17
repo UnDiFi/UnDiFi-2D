@@ -1,0 +1,352 @@
+head	1.7;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.7
+	release3_11_0:1.7
+	release3_10_0:1.7
+	release3_8_0:1.7
+	release3_7_1:1.7
+	release3_7_0:1.7
+	release3_4_5:1.7
+	release3_4_4:1.7
+	release3_4_3:1.7
+	release3_4_2:1.7
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.7
+	release3_3_3:1.7
+	release3_3_2:1.7
+	release3_3_1:1.7
+	release3_3_0:1.7;
+locks; strict;
+comment	@c @;
+
+
+1.7
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2009.01.02.12.35.13;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2008.12.02.12.53.42;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2008.12.01.08.53.32;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.12.20.14.17.06;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2004.12.19.12.11.53;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.03.24.15.06.55;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@SUPG scalar scheme
+@
+
+
+1.7
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@!> \copydetails LDA_SCHEME()
+      SUBROUTINE SUPG_SCHEME(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     2                       NODRES,BETA,STIFC,NDIM,NOFVERT,
+     3                       MATRIX_ASSEMBLY)
+C
+C     $Id: SUPG_scheme.f,v 1.6 2009/01/02 12:35:13 abonfi Exp abonfi $
+C
+      IMPLICIT NONE 
+C
+C     ..
+C     .. Parameters ..
+C     ..
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+C     SUPG type scheme with distribution coefficients:
+C
+C          beta_i = 1/(d+1) + TAU * k_i / V
+C          TAU = C_1 * h / |a|
+C          a is the convection speed
+C          take h = |x_+ - x_-| = (|a| * V) / \sum k^+
+C          C_1 = d/(d+1) or 2.
+C
+C
+C
+C ugly,ugly,ugly
+C
+      INCLUDE 'visco.com'
+C     ..
+C     .. Scalars in Common .. common ABC is also in scalar/scalar.f
+      DOUBLE PRECISION VOLUME
+      COMMON /ABC/VOLUME
+C
+C ugly,ugly,ugly
+C
+C
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION CELRES,SOURCE
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ADVECTION(NDIM),STIFC(NOFVERT,NOFVERT),
+     +                 DT(NOFVERT),NODRES(NOFVERT),Q(NOFVERT),
+     +                 VCN(NDIM,NOFVERT),BETA(NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION C_1,GALERKIN,KPOS,S,TAU,Z,PEH,XI
+      PARAMETER(C_1=HALF)
+      INTEGER I,IVERT,J
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION K(MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+C     ..
+C     .. External Subroutines ..
+C     EXTERNAL MYFUN
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC MAX,REAL,DTANH
+C     ..
+C     .. Statement Functions ..
+      DOUBLE PRECISION COTH
+C     COTH(Z)=(EXP(2.d0*Z)+1.d0)/(EXP(2.d0*Z)-1.d0)
+      COTH(Z)=ONE/DTANH(Z)
+C
+      CELRES = ZERO
+      KPOS = ZERO
+C
+      DO 10 IVERT = 1,NOFVERT
+c
+c Dotting advection speed with the face normal
+c
+          K(IVERT) = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)/NDIM
+c
+          CELRES = CELRES + Q(IVERT)*K(IVERT)
+c
+          IF (K(IVERT).GT.ZERO) KPOS = KPOS + K(IVERT)
+   10 CONTINUE
+C
+      CELRES = CELRES
+C
+      GALERKIN = ONE/REAL(NDIM+1)
+C
+!     PEH = DDOT(NDIM,ADVECTION,1,ADVECTION,1)*VOLUME/(2.0d0*REINV*KPOS)
+      PEH = DDOT(NDIM,ADVECTION,1,ADVECTION,1)*VOLUME/(REINV*KPOS)
+!     XI = COTH(PEH)-1.d0/PEH
+c
+c     this is the optimal design, see e.g. Carette PhD (2.30) 
+c
+      XI = COTH(HALF*PEH)-TWO/PEH
+C     XI = 1.d0 ! advection dominated limit
+      TAU = C_1*XI/KPOS
+C
+C Loops over downstream nodes
+C
+
+      DO 20 I = 1,NOFVERT
+          BETA(I) = GALERKIN + TAU*K(I)
+          S = BETA(I)*CELRES
+   22     NODRES(I) = -S
+          DT(I) = DT(I) + MAX(K(I),ZERO)
+   20 CONTINUE
+C
+C     CALL FSOU(NDIM,NOFVERT,TAU,K,NODRES,VCP,myfun)
+C
+      IF (MATRIX_ASSEMBLY) THEN
+          DO 30 I = 1,NOFVERT
+              S = -BETA(I)
+              DO 28 J = 1,NOFVERT
+                  STIFC(I,J) = S*K(J)
+   28         CONTINUE
+   30     CONTINUE
+      ENDIF
+C
+      RETURN
+
+      END
+@
+
+
+1.6
+log
+@minor changes; experiments with the xi function
+@
+text
+@d1 1
+d3 2
+a4 1
+     +                       NODRES,CMAT,NDIM,NOFVERT,TIMEIMPL)
+d6 1
+a6 1
+C     $Id: SUPG_scheme.f,v 1.5 2008/12/02 12:53:42 abonfi Exp abonfi $
+d41 1
+a41 1
+      LOGICAL TIMEIMPL
+d44 1
+a44 1
+      DOUBLE PRECISION ADVECTION(NDIM),CMAT(NOFVERT,NOFVERT),
+d46 1
+a46 1
+     +                 VCN(NDIM,NOFVERT)
+d54 1
+a54 1
+      DOUBLE PRECISION BETA(4),K(4)
+d111 1
+a111 1
+      IF (TIMEIMPL) THEN
+d115 1
+a115 1
+                  CMAT(I,J) = S*K(J)
+@
+
+
+1.5
+log
+@now using TANH intrinsic
+@
+text
+@d4 1
+a4 1
+C     $Id: SUPG_scheme.f,v 1.4 2008/12/01 08:53:32 abonfi Exp abonfi $
+d8 3
+a34 3
+C     .. Parameters ..
+!     DOUBLE PRECISION ZERO,ONE
+!     PARAMETER (ZERO=0.D0,ONE=1.D0)
+d47 1
+a47 1
+      DOUBLE PRECISION C_1,GALERKIN,KPOS,S,TAU,Z,PEH,ALPHA
+d89 1
+a89 1
+!     ALPHA = COTH(PEH)-1.d0/PEH
+d93 3
+a95 3
+      ALPHA = COTH(HALF*PEH)-TWO/PEH
+C     ALPHA = 1.d0 ! advection dominated limit
+      TAU = C_1*ALPHA/KPOS
+@
+
+
+1.4
+log
+@time scale depends upon cell Peclet Reynolds number
+implemented while at ENSAM
+@
+text
+@d4 1
+a4 1
+C     $Id: SUPG_scheme.f,v 1.3 2004/12/20 14:17:06 aldo Exp abonfi $
+d8 2
+d33 2
+a34 2
+      DOUBLE PRECISION ZERO,ONE
+      PARAMETER (ZERO=0.D0,ONE=1.D0)
+d48 1
+a48 1
+      PARAMETER(C_1=0.5d0)
+d62 1
+a62 1
+      INTRINSIC MAX,REAL
+d66 2
+a67 1
+      COTH(Z)=(EXP(2.d0*Z)+1.d0)/(EXP(2.d0*Z)-1.d0)
+d87 8
+a94 3
+      PEH = DDOT(NDIM,ADVECTION,1,ADVECTION,1)*VOLUME/(2.0d0*REINV*KPOS)
+      ALPHA = COTH(PEH)-1.d0/PEH
+C     ALPHA = 1.d0
+@
+
+
+1.3
+log
+@minor change in the time scale
+@
+text
+@d4 1
+a4 1
+C     $Id: SUPG_scheme.f,v 1.2 2004/12/19 12:11:53 aldo Exp aldo $
+d19 1
+d21 5
+d27 1
+d45 1
+a45 1
+      DOUBLE PRECISION C_1,GALERKIN,KPOS,S,TAU
+d62 4
+d83 5
+a87 1
+      TAU = C_1/KPOS
+@
+
+
+1.2
+log
+@Umich version
+@
+text
+@d4 1
+a4 1
+C     $Id:$
+d14 2
+a15 2
+C          take h = |x_+ - x_-| = |a| / \sum k^+ * V
+C          C_1 = d/(d+1)
+a16 3
+C          following Phil in this release we take
+C          tau = V/(d+1)/\sum k^+ 
+C          should be third order
+d38 2
+a39 1
+      DOUBLE PRECISION CNST,GALERKIN,KPOS,S,TAU
+d72 1
+a72 1
+      TAU = GALERKIN/KPOS
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 2
+d17 3
+a19 2
+C
+C
+d74 1
+a74 2
+      CNST = NDIM*GALERKIN
+      TAU = CNST/KPOS
+@

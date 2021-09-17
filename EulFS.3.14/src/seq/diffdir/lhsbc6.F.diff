@@ -1,0 +1,46 @@
+4d3
+< !> @param[in] NodalBcs is the PETSc IS where nodal bndry conditions are stored
+10c9
+<       subroutine isothwall(A,X,NodalBcs,IBGN,NDIM,NOFVAR,COMPRESSIBLE)
+---
+>       subroutine isothwall(A,X,IBGN,NDIM,NOFVAR,COMPRESSIBLE)
+12c11
+< C     $Id: lhsbc6.F,v 1.14 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: lhsbc6.F,v 1.14 2016/11/10 11:25:13 abonfi Exp $
+15a15,17
+>       implicit none
+> C
+> #include "petsc/finclude/petscsys.h"
+19,23d20
+<       use petscvec
+<       use petscmat
+<       use petscis
+< C
+<       implicit none
+26d22
+<       INCLUDE 'constants.h'
+28c24
+<       INCLUDE 'iset.h'
+---
+>       INCLUDE 'constants.h'
+32a29
+> #include "iset.com"
+39d35
+<       IS, dimension(0:*) :: NodalBcs
+47a44
+>       double precision vals(maxcols)
+52,53c49,50
+<       call ISGetIndices(NodalBcs(Isothermal),is_array,i_is,IFAIL)
+<       call ISGetSize(NodalBcs(Isothermal),Nrows,IFAIL)
+---
+>       call ISGetIndices(Isothermal,is_array,i_is,IFAIL)
+>       call ISGetSize(Isothermal,Nrows,IFAIL)
+67c64
+<          CALL MatSetValues(A,1,irow,1,icol,y,INSERT_VALUES,IFAIL)
+---
+>          CALL MatSetValues(A,1,irow,1,icol(1),y(1),INSERT_VALUES,IFAIL)
+71c68
+<       CALL ISRestoreIndices(NodalBcs(Isothermal),is_array,i_is,IFAIL)
+---
+>       CALL ISRestoreIndices(Isothermal,is_array,i_is,IFAIL)

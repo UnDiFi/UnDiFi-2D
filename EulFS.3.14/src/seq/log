@@ -1,0 +1,75 @@
+Fri Apr 2 06:22:57 PM CEST 2021
+setupRHS.F
+38c38
+< C     $Id: setupRHS.F,v 1.35 2021/02/02 10:23:18 abonfi Exp $
+---
+> C     $Id: setupRHS.F,v 1.32 2020/04/23 09:51:45 abonfi Exp $
+59c59
+< C#define PRINT_MATRICES
+---
+> CCC#define PRINT_MATRICES
+391,392c391,392
+<              CALL MatSetValuesLocal(PetscMatA,NOFVERT,ICN(1),NOFVERT,
+<      +                ICN(1),STIFEL(1,1,1,1),ADD_VALUES,
+---
+>              CALL MatSetValuesLocal(PetscMatA,NOFVERT,ICN,NOFVERT,
+>      +                ICN,STIFEL(1,1,1,1),ADD_VALUES,
+395,396c395,396
+<              CALL MatSetValues(PetscMatA,NOFVERT,ICN(1),NOFVERT,
+<      +                ICN(1),STIFEL(1,1,1,1),ADD_VALUES,
+---
+>              CALL MatSetValues(PetscMatA,NOFVERT,ICN,NOFVERT,
+>      +                ICN,STIFEL(1,1,1,1),ADD_VALUES,
+406,416c406,416
+<               DO 37 IVERT = 1,NOFVERT
+<                   DO 37 JVERT = 1,NOFVERT
+<                       CALL DCOPY(NOFVAR*NOFVAR,STIFEL(1,1,IVERT,JVERT),
+<      &                           1,DUMMY,1)
+< #ifdef MPI
+<                       CALL MatSetValuesBlockedLocal(PetscMatA,1,
+<      +                ICN(IVERT),1,ICN(JVERT),DUMMY,ADD_VALUES, IFAIL)
+< #else
+<                       CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,
+<      +                ICN(JVERT),DUMMY,ADD_VALUES,IFAIL)
+< #endif
+---
+>               DO JVERT = 1,NOFVERT
+>                  m = (jvert-1)*NOFVERT*NOFVAR*NOFVAR
+>                  DO IVERT = 1,NOFVERT
+>                     ioff = m + (IVERT-1)*NOFVAR
+>                     do j = 1, NOFVAR
+>                        iaddr = ioff + (j-1)*NOFVAR*NOFVERT
+>                        do i = 1, NOFVAR
+>                           DUMMY(iaddr+i) = STIFEL(i,j,IVERT,JVERT)
+>                        enddo ! i
+>                     enddo ! j
+>                  enddo ! IVERT
+418,422c418,421
+<                       ERRMSG(1:32) = 'Jacobian Matrix in setupRHS (1) '
+<                       write(ERRMSG(33:59),FMT=120)IELEM,IVERT,JVERT 
+<                       CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+<      +                stifel(1,1,ivert,jvert),Nofvar,ERRMSG(1:59),
+<      &                IFAIL)
+---
+>                      write(6,*)ivert,jvert
+>                      CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+>      +               stifel(1,1,ivert,jvert), Nofvar,
+>      &               'Jacobian Matrix in setupRHS (1) ',IFAIL)
+424c423,425
+<    37         CONTINUE
+---
+>               enddo ! JVERT
+> C
+> C Insert all at once
+425a427,435
+> #ifdef MPI
+>               CALL MatSetValuesBlockedLocal(PetscMatA,NOFVERT,
+>      +                        ICN,NOFVERT,ICN,DUMMY,
+>      +                         ADD_VALUES, IFAIL)
+> #else
+>               CALL MatSetValuesBlocked(PetscMatA,NOFVERT,ICN,
+>      +                               NOFVERT,ICN,DUMMY,ADD_VALUES,
+>      +                            IFAIL)
+> #endif
+475d484
+<   120 FORMAT(1X,'ie = ',I6,' iv = ',I1,' jv = ',I1)

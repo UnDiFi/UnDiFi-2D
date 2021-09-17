@@ -1,0 +1,451 @@
+\form#0:\[ \beta_i^{LDA} = \delta_i^+ = \frac{ k_{i}^{+} }{ \sum_{\ell=1}^{d+1} k_{\ell}^{+} } \]
+\form#1:\[ \phi_i^{N} = - \left( \sum_{\ell=1}^{d+1} k_{\ell}^+ \right) \delta_i^+ \left( u_i - u_- \right) = - k_i^+ \left( u_i - u_- \right) \]
+\form#2:\begin{equation} \tilde{A}_{\mathbf{n}}^{\pm} = \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \end{equation}
+\form#3:$ K^{n+1}Z^{n+1}-K^{n}Z^{n} = R\left(Z^n\right) $
+\form#4:$ Z^{n+1} = Z^n + RHS $
+\form#5:$ K = V/\Delta t $
+\form#6:$ \mbox{RHS} = \left(K^{n}\right)^{-1} R\left(Z^n\right) $
+\form#7:$ (K^{n+1})^{-1}*K^n = I $
+\form#8:\[ F = \rho \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \]
+\form#9:\[ F = \rho \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} , \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) H, \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} + p \mathbf{n} \right) \]
+\form#10:\[ F = \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} , \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) H, \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} + p \mathbf{n} \right) \]
+\form#11:\[ F = -\left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} , \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} \right) \]
+\form#12:\[ F = -\left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} , \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) H, \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} \right) \]
+\form#13:\[ \frac{\partial U}{\partial Z} = \left[ \begin{array}{ccccc} 2 z_1 & 0 & 0 & 0 & 0 \\ \frac{z_2}{\gamma} & \frac{z_1}{\gamma} & \frac{\gamma-1}{\gamma} z_3 & \frac{\gamma-1}{\gamma} z_4 & \frac{\gamma-1}{\gamma} z_5 \\ z_3 & 0 & z_1 & 0 & 0 \\ z_4 & 0 & 0 & z_1 & 0 \\ z_5 & 0 & 0 & 0 & z_1 \end{array} \right] \]
+\form#14:$ \frac{\partial U}{\partial Z} $
+\form#15:$ \mathbf{b} $
+\form#16:\[ \frac{\partial F_{n}}{\partial Z} \left( \begin{array}{ccccc} \sqrt{\rho} u_n - 2z_1b_n & 0 & z_1 n_x & z_1 n_y & z_1 n_z \\ -b_n\,z_2 & \sqrt{\rho}\left(u_n-b_n\right) & z_2 n_x & z_2 n_y & z_2 n_z \\ -b_n\,z_3 & 0 & \sqrt{\rho}\left(u_n-b_n\right)+ z_3 n_x & z_3 n_y & z_3 n_z \\ -b_n\,z_4 & 0 & z_4 n_x & \sqrt{\rho}\left(u_n-b_n\right) + z_4 n_y & z_4 n_z \\ -b_n\,z_5 & 0 & z_5 n_x & z_5 n_y & \sqrt{\rho}\left(u_n-b_n\right) + z_5 n_z \end{array} \right) \]
+\form#17:\[ \sqrt{\rho}\left(u_n-b_n\right) = \sqrt{\rho}\left(\mathbf{u}-\mathbf{b}\right)\cdot\mathbf{n} = z_3\,n_x+z_4\,n_y+z_5\,n_z-z_1\,\left(\mathbf{b}\cdot\mathbf{n}\right) \]
+\form#18:$ F $
+\form#19:\[ \frac{ \partial F}{\partial U} = \left( \begin{array}{cccc} 0 & n_x & n_y & n_z \\ 0 & u_n + u n_x & u n_y & u n_z \\ 0 & v n_x & u_n + v n_y & v n_z \\ 0 & w n_x & w n_y & u_n + w n_z \end{array} \right) \]
+\form#20:\[ \frac{\partial F_{n}}{\partial Z} = \left( \begin{array}{ccccc} \sqrt{\rho} u_n - 2z_1b_n & 0 & z_1 n_x & z_1 n_y & z_1 n_z \\ -b_n\,z_2 & \sqrt{\rho}\left(u_n-b_n\right) & z_2 n_x & z_2 n_y & z_2 n_z \\ -b_n\,z_3 & 0 & \sqrt{\rho}\left(u_n-b_n\right)+ z_3 n_x & z_3 n_y & z_3 n_z \\ -b_n\,z_4 & 0 & z_4 n_x & \sqrt{\rho}\left(u_n-b_n\right) + z_4 n_y & z_4 n_z \\ -b_n\,z_5 & 0 & z_5 n_x & z_5 n_y & \sqrt{\rho}\left(u_n-b_n\right) + z_5 n_z \end{array} \right) \]
+\form#21:\[ \tilde{A}_{\mathbf{n}}^{\pm} = \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \]
+\form#22:\[ \tilde{A}_{\mathbf{n}}^{\pm} = \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \left( \begin{array}{ccc} a & b & c \end{array} \right) \]
+\form#23:\[ \tilde{A}_{\mathbf{n}}^{\pm} = \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \left( \begin{array}{ccc} {\lambda_{0}}^{\pm} & 0 & \mathbf{0} \end{array} \right) \]
+\form#24:\[ \tilde{A}_{\mathbf{n}}^{\pm} = \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \left( \begin{array}{ccc} {\lambda_{0}}^{\pm} & 0 & \mathbf{0} \\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} + \lambda_-^{\pm} \right) & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n}^t \\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n} & \lambda_0^{\pm} I + \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \mathbf{n} \mathbf{n} \end{array} \right) \]
+\form#25:$ K^{\pm} $
+\form#26:$ R \Lambda^{\pm} L $
+\form#27:$ = \tilde{K} = \tilde{A}_{\mathbf{n}}^+ + \tilde{A}_{\mathbf{n}}^- $
+\form#28:$ \lambda_0, \lambda_0, \lambda_+, \lambda_-, \lambda_0 $
+\form#29:$ \lambda^+ $
+\form#30:$ \lambda^- $
+\form#31:$ \tilde{L}_{\mathbf{n}} $
+\form#32:$ \tilde{R}_{\mathbf{n}} $
+\form#33:$ \lambda_k^+ $
+\form#34:$ \lambda_k^- $
+\form#35:\begin{eqnarray*} \frac{\partial \tilde{U}}{\partial Z} &=& \sqrt{\rho} \left[ \begin{array}{ccccc} 2 - \frac{\gamma-1 }{\gamma} \frac{H}{a^2} & -\frac{\gamma-1}{\gamma} \frac{1}{a^2} & \frac{\gamma-1}{\gamma} \frac{u}{a^2} & \frac{\gamma-1}{\gamma} \frac{v}{a^2} & \frac{\gamma-1}{\gamma} \frac{w}{a^2} \\\ \frac{\gamma-1}{\gamma} \frac{H}{\rho a} & \frac{\gamma-1}{\gamma} \frac{1}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{u}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{v}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{w}{\rho a} \\\ -\frac{u}{\rho} & 0 & \frac{1}{\rho} & 0 & 0 \\\ -\frac{v}{\rho} & 0 & 0 & \frac{1}{\rho} & 0 \\\ -\frac{w}{\rho} & 0 & 0 & 0 & \frac{1}{\rho} \end{array} \right] \\\ &=& \left[ \begin{array}{ccccc} 2 z_1 - \frac{\gamma-1 }{\gamma} \frac{z_2}{a^2} & -\frac{\gamma-1}{\gamma} \frac{z_1}{ a^2} & \frac{\gamma-1}{\gamma} \frac{z_3}{a^2} & \frac{\gamma-1}{\gamma} \frac{z_4}{a^2} & \frac{\gamma-1}{\gamma} \frac{z_5}{a^2} \\\ \frac{\gamma-1}{\gamma} \frac{z_2}{\rho a} & \frac{\gamma-1}{\gamma} \frac{z_1}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_3}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_4}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_5}{\rho a} \\\ -\frac{z_3}{z_1^2} & 0 & \frac{1}{z_1} & 0 & 0 \\\ -\frac{z_4}{z_1^2} & 0 & 0 & \frac{1}{z_1} & 0 \\\ -\frac{z_5}{z_1^2} & 0 & 0 & 0 & \frac{1}{z_1} \end{array} \right] \end{eqnarray*}
+\form#36:$ \frac{\partial \tilde{U}}{\partial Z} $
+\form#37:\[ \frac{\partial \tilde{U}}{\partial Z} = \sqrt{\rho} \left[ \begin{array}{ccccc} 2 - \frac{\gamma-1 }{\gamma} \frac{H}{a^2} & -\frac{\gamma-1}{\gamma} \frac{1}{a^2} & \frac{\gamma-1}{\gamma} \frac{u}{a^2} & \frac{\gamma-1}{\gamma} \frac{v}{a^2} & \frac{\gamma-1}{\gamma} \frac{w}{a^2} \\\ \frac{\gamma-1}{\gamma} \frac{H}{\rho a} & \frac{\gamma-1}{\gamma} \frac{1}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{u}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{v}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{w}{\rho a} \\\ -\frac{u}{\rho} & 0 & \frac{1}{\rho} & 0 & 0 \\\ -\frac{v}{\rho} & 0 & 0 & \frac{1}{\rho} & 0 \\\ -\frac{w}{\rho} & 0 & 0 & 0 & \frac{1}{\rho} \end{array} \right] = \left[ \begin{array}{ccccc} 2 z_1 - \frac{\gamma-1 }{\gamma} \frac{z_2}{a^2} & -\frac{\gamma-1}{\gamma} \frac{z_1}{ a^2} & \frac{\gamma-1}{\gamma} \frac{z_3}{a^2} & \frac{\gamma-1}{\gamma} \frac{z_4}{a^2} & \frac{\gamma-1}{\gamma} \frac{z_5}{a^2} \\\ \frac{\gamma-1}{\gamma} \frac{z_2}{\rho a} & \frac{\gamma-1}{\gamma} \frac{z_1}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_3}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_4}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_5}{\rho a} \\\ -\frac{z_3}{z_1^2} & 0 & \frac{1}{z_1} & 0 & 0 \\\ -\frac{z_4}{z_1^2} & 0 & 0 & \frac{1}{z_1} & 0 \\\ -\frac{z_5}{z_1^2} & 0 & 0 & 0 & \frac{1}{z_1} \end{array} \right] \]
+\form#38:$ = \frac{\partial Z}{\partial \tilde{U}} $
+\form#39:\[ \frac{\partial Z}{\partial \tilde{U}} = \frac{1}{\sqrt{\rho}} \left[ \begin{array}{ccc} \frac{1}{2} & \frac{1}{2} \rho / a & \mathbf{0} \\\ \frac{1}{2} \left( 2 k - H \right) & \frac{\rho}{a} \left[ \left(\gamma-\frac{1}{2}\right) H -\left(\gamma-1\right) k \right] & \rho \mathbf{u}^t \\\ \frac{1}{2} \mathbf{u} & \frac{1}{2} \rho \mathbf{u} / a & \rho \, I_{d\times d} \end{array} \right] \\\ = \left[ \begin{array}{ccccc} \frac{1}{2 z_1} & \frac{z_1}{2 \,a} & 0 & 0 & 0 \\ \frac{1}{2 z_1^2} \left( \left( z_3^2+z_4^2+z_5^2 \right)/z_1 - z_2 \right) & \frac{1}{a} \left[ \left(\gamma-\frac{1}{2}\right) z_2 -\frac{\gamma-1 }{2} \left( z_3^2+z_4^2+z_5^2 \right)/z_1 \right] & z_3 & z_4 & z_5 \\ \frac{z_3}{2 \, z_1^2} & \frac{1}{2a} z_3 & z_1 & 0 & 0 \\ \frac{z_4}{2 \, z_1^2} & \frac{1}{2a} z_4 & 0 & z_1 & 0 \\ \frac{z_5}{2 \, z_1^2} & \frac{1}{2a} z_5 & 0 & 0 & z_1 \end{array} \right] \]
+\form#40:$ \frac{\partial Z}{\partial \tilde{U}} $
+\form#41:$ \mathbf{b}$
+\form#42:\[ \tilde{K}_{\mathbf{n}}^{\pm} = \frac{1}{d} \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} {\lambda_{0}}^{\pm} & 0 & \mathbf{0} \\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} + \lambda_-^{\pm} \right) & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n}^t \\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n} & \lambda_0^{\pm} I + \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \mathbf{n} \mathbf{n} \end{array} \right) \]
+\form#43:$ = \tilde{K}_{\mathbf{n}} = \tilde{K}_{\mathbf{n}}^+ + \tilde{K}_{\mathbf{n}}^- $
+\form#44:\[ \tilde{A}_{\mathbf{n}} = \tilde{A}_j n_j = \left( \begin{array}{c|cc} a & b & c \end{array} \right) \]
+\form#45:\[ \tilde{A}_{\mathbf{n}} = \tilde{A}_j n_j = \left( \begin{array}{ccc} u_n & 0 & \mathbf{0}^t \\ 0 & u_n & a \mathbf{n}^t \\ \mathbf{0} & a \mathbf{n} & u_n I_{d \times d} \end{array} \right) \]
+\form#46:\[ \tilde{K}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} u_n & 0 & \mathbf{0}^t \\ 0 & u_n & a \mathbf{n}^t \\ \mathbf{0} & a \mathbf{n} & u_n I_{d \times d} \end{array} \right) \]
+\form#47:\[ \tilde{R}_{\mathbf{n}} = \left( \begin{array}{ccccc} 1 &0 & 0 & 0 & 0 \\ 0& 0 & 1 & 1 & 0 \\ 0& \mathbf{s} & \mathbf{n} & -\mathbf{n} & \mathbf{t} \\ \end{array} \right) \quad \mbox{and} \quad \tilde{L}_{\mathbf{n}} = \left( \begin{array}{ccc} 1& 0 & 0 \\ 0& 0 & \mathbf{s}^t \\ 0& \frac{1}{2} & \frac{1}{2} \mathbf{n}^t \\ 0& \frac{1}{2} &-\frac{1}{2} \mathbf{n}^t \\ 0& 0 & \mathbf{t}^t \end{array} \right). \]
+\form#48:$ \left( \sum_{j=1}^{d+1} |K_j|\right) $
+\form#49:\[ \beta_i = \frac{1}{d+1} \]
+\form#50:\[ B_i = \frac{1}{d+1} \, I_{m\times m} + \frac{d}{d+1} \left( \sum_{j=1}^{d+1} |K_j|\right)^{-1} K_i \]
+\form#51:$ K_i^+ $
+\form#52:$ \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} $
+\form#53:\[ B_i = K_i^+ \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} \]
+\form#54:\[ B_i = \frac{1}{d+1} \left[ I_{m\times m} + d \, \left( \sum_{j=1}^{d+1} |K_j|\right)^{-1} K_i \right] \]
+\form#55:\[ B_i = \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} K_i^+ \]
+\form#56:$ \left( \sum_{j=1}^{d+1} K_j^+ \right) $
+\form#57:$ \left( \sum_{j=1}^{d+1} K_j^+\right) $
+\form#58:\begin{eqnarray*} Z^{n+1} &=& Z^{n} + \Delta Z \\\ &=& \left(K^{n+1}\right)^{-1}\left[K^{n}Z^{n}+R\left(Z^n\right)\right] + Z^n - Z^n \\ \end{eqnarray*}
+\form#59:\begin{eqnarray*} Z^{n+1} &=& Z^{n} + \Delta Z \\\ &=& \left(K^{n+1}\right)^{-1}\left[K^{n}Z^{n}+R\left(Z^n\right)\right] + Z^n - Z^n \\ &=& Z^n + \left\{ \left\{ \left(K^{n+1}\right)^{-1}K^n-I\right\}Z^n+\left(K^{n+1}\right)^{-1}R\left(Z^n\right)\right\} \\ \end{eqnarray*}
+\form#60:\begin{eqnarray*} Z^{n+1} &=& Z^{n} + \Delta Z \\\ &=& \left(K^{n+1}\right)^{-1}\left[K^{n}Z^{n}+R\left(Z^n\right)\right] + Z^n - Z^n \\ &=& Z^n + \left\{ \left\{ \left(K^{n+1}\right)^{-1}K^n-I\right\}Z^n+\left(K^{n+1}\right)^{-1}R\left(Z^n\right)\right\} \\ &=& Z^n + \left\{ \left(K^{n+1}\right)^{-1}K^n \left(Z^n+R\left(Z^n\right)\right) - Z^n \right\} \end{eqnarray*}
+\form#61:$ K^{n+1} Z^{n+1}-K^{n} Z^{n} = R\left(Z^n\right) $
+\form#62:$ Z^{n+1} = Z^n + \mbox{RHS} $
+\form#63:$ \mbox{RHS} = \left\{\left[(K^{n+1})^{-1}*K^n-I\right]\right\}*Z^n + (K^{n+1})^{-1}*R(Z^n) $
+\form#64:$ \mbox{RHS} $
+\form#65:$ RHS = (K^{n})^{-1}*Res(z^n) $
+\form#66:$ \mbox{DT} = K^n $
+\form#67:$ \mbox{RHS} = (K^n)^{-1} R(Z^n) $
+\form#68:$ \mbox{RHS} = \left\{\left[(K^{n+1})^{-1}K^n-I\right]\right\}Z^n + (K^{n+1})^{-1}R(Z^n) $
+\form#69:$ RHS = (K^{n})^{-1}*R(Z^n) $
+\form#70:\begin{eqnarray*} Z^{n+1} &=& Z^{n} + \Delta Z \\\ &=& \left(K^{n+1}\right)^{-1}\left[K^{n}Z^{n}+R\left(Z^n\right)\right] + Z^n - Z^n \\ &=& Z^n + \left\{ \left[ \left(K^{n+1}\right)^{-1}K^n-I\right]Z^n+\left(K^{n+1}\right)^{-1}R\left(Z^n\right)\right\} \\ &=& Z^n + \left\{ \left(K^{n+1}\right)^{-1}K^n \left(Z^n+R\left(Z^n\right)\right) - Z^n \right\} \end{eqnarray*}
+\form#71:$ K = V/ \Delta t $
+\form#72:\begin{eqnarray*} U^{n+1} &=& U^{n} + \Delta Z \\ X &=& \left(K^{n+1}\right)^{-1} \left[K^{n}U^{n}+R\left(U^n\right)\right] - U^n \\ &=& \left\{ \left[ \left(K^{n+1}\right)^{-1}K^n-I\right]U^n+\left(K^{n+1}\right)^{-1}R\left(U^n\right)\right\} \\ &=& \left\{ \left(K^{n+1}\right)^{-1}K^n \left[U^n+\left(K^n\right)^{-1}R\left(U^n\right)\right] - U^n \right\} \\ &=& \left(K^{n+1}\right)^{-1}K^n \left(U^n + RHS\right) - U_n \\ &=& \left[\left(K^{n+1}\right)^{-1}K^n -I\right]U^n + \left(K^{n+1}\right)^{-1} \,K^n\, RHS \end{eqnarray*}
+\form#73:$ U^{n+1} = U^n + \mbox{RHS} $
+\form#74:\begin{eqnarray*} RHS &=& \left(K^{n+1}\right)^{-1} \left[K^{n}U^{n}+R\left(U^n\right)\right] - U^n \\ &=& \left\{ \left[ \left(K^{n+1}\right)^{-1}K^n-I\right]U^n+\left(K^{n+1}\right)^{-1}R\left(U^n\right)\right\} \\ &=& \left\{ \left(K^{n+1}\right)^{-1}K^n \left[U^n+\left(K^n\right)^{-1}R\left(U^n\right)\right] - U^n \right\} \\ &=& \left(K^{n+1}\right)^{-1}K^n \left(U^n + RHS\right) - U_n \\ &=& \left[\left(K^{n+1}\right)^{-1}K^n -I\right]U^n + \left(K^{n+1}\right)^{-1} \,K^n\, RHS \end{eqnarray*}
+\form#75:$ \left(K^{n+1}\right)^{-1} \,K^n = V^n/V^{n+1} $
+\form#76:\begin{eqnarray*} x^{n+1} &=& x^0 + a\, \int_{0}^{n\,\Delta t}\sin\left(\omega t\right) \; \mathrm{d}t \\\ &=& x^0 + \frac{a}{\omega} \left[1-\cos\left(\omega \, n\,\Delta t\right)\right] \quad n = 0,1,...N \end{eqnarray*}
+\form#77:$ N\Delta t = T $
+\form#78:$ \omega = \frac{2\pi}{T} = \frac{2\pi}{N\Delta t} $
+\form#79:\begin{eqnarray*} \left(x^{n+1}-x_0\right) &=& \left(x^0-x_0\right) \left[B_0+A_1\sin\left(\omega t\right)+B_1\cos\left(\omega t\right)\right] \\\ \left(y^{n+1}-y_0\right) &=& \left(y^0-y_0\right) \left[B_0+A_1\sin\left(\omega t\right)+B_1\cos\left(\omega t\right)\right] \end{eqnarray*}
+\form#80:$B_0+B_1 = 1$
+\form#81:$t = 0$
+\form#82:$t = T$
+\form#83:$A_1 = 0$
+\form#84:$B_1 = 1/(3\pi)$
+\form#85:$x_0,y_0$
+\form#86:$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) $
+\form#87:$ Z = \left( p, \stream \right) $
+\form#88:$ Z = \left( p, \mathbf{u} \right) $
+\form#89:$Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right)$
+\form#90:$Z = \left( p, \mathbf{u} \right)$
+\form#91:$(n+1)\Delta t$
+\form#92:\[ |T| = \frac{1}{d^2} \sum_{j=1}^{d+1} \mathbf{x}_j \cdot \mathbf{n}_j. \]
+\form#93:\begin{eqnarray*} d \, |T| &=& \int_{T} \nabla \cdot \mathbf{x} \, \mathrm{d}V = - \oint_{\partial T} \mathbf{}x \cdot d \mathbf{}n \\\ &=& - \underline{\sum_{j=1}^{d+1} \frac{1}{d} \left( \sum_{\ell \neq j} \mathbf{}x_{\ell} \right) \cdot \mathbf{}n_j} \\\ &=& - \frac{1}{d} \sum_{j=1}^{d+1} \left[ \mathbf{x}_j \cdot \underbrace{ \left( \sum_{\ell \neq j} \mathbf{n}_{\ell} \right) }_{ - \mathbf{n}_j } \right] = \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{x}_j \cdot \mathbf{n}_j. \end{eqnarray*}
+\form#94:$x$
+\form#95:\begin{eqnarray*} d \, |T| &=& \int_{T} \nabla \cdot \mathbf{x} \, \mathrm{d}V = - \oint_{\partial T} \mathbf{x} \cdot d \mathbf{n} = - \underline{\sum_{j=1}^{d+1} \frac{1}{d} \left( \sum_{\ell \neq j} \mathbf{x}_{\ell} \right) \cdot \mathbf{n}_j} \\\ &=& - \frac{1}{d} \sum_{j=1}^{d+1} \left[ \mathbf{x}_j \cdot \underbrace{ \left( \sum_{\ell \neq j} \mathbf{n}_{\ell} \right) }_{ - \mathbf{n}_j } \right] = \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{x}_j \cdot \mathbf{n}_j. \end{eqnarray*}
+\form#96:\begin{eqnarray*} d \, |T| &=& \int_{T} \nabla \cdot \mathbf{x} \, \mathrm{d}V = - \oint_{\partial T} \mathbf{x} \cdot d \mathbf{n} = - \underline{\sum_{j=1}^{d+1} \frac{1}{d} \left( \sum_{\ell \neq j} \mathbf{x}_{\ell} \right)} \cdot \mathbf{n}_j \\\ &=& - \frac{1}{d} \sum_{j=1}^{d+1} \left[ \mathbf{x}_j \cdot \underbrace{ \left( \sum_{\ell \neq j} \mathbf{n}_{\ell} \right) }_{ - \mathbf{n}_j } \right] = \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{x}_j \cdot \mathbf{n}_j. \end{eqnarray*}
+\form#97:\[ \mbox{{\tt KMAT}} = K_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} 0 & 0 & \mathbf{n}^t \\ \left[-H + \left(\gamma-1\right)k\right] u_n & \gamma u_n & H\mathbf{n}^t -\left(\gamma -1\right) u_n \mathbf{u}^t \\ -\mathbf{u} u_n + \left(\gamma -1\right) k\mathbf{n} & \left(\gamma-1\right) \mathbf{n} & \mathbf{u}\mathbf{n} -\left(\gamma-1\right)\mathbf{n}\mathbf{u} + u_n I_{d\times d} \end{array} \right) \]
+\form#98:\[ \mbox{{\tt KMAT}} = K_{\mathbf{n}} = \frac{1}{d} {\bf A}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} 0 & 0 & \mathbf{n}^t \\ \left[-H + \left(\gamma-1\right)k\right] u_n & \gamma u_n & H\mathbf{n}^t -\left(\gamma -1\right) u_n \mathbf{u}^t \\ -\mathbf{u} u_n + \left(\gamma -1\right) k\mathbf{n} & \left(\gamma-1\right) \mathbf{n} & \mathbf{u}\mathbf{n} -\left(\gamma-1\right)\mathbf{n}\mathbf{u} + u_n I_{d\times d} \end{array} \right) \]
+\form#99:\[ {\bf A}_{\mathbf{n}}^{\pm} = \left( \begin{array}{ccc} a_{11}^{\pm} & a_{12}^{\pm} & a_{13}^{\pm} \ a_{21}^{\pm} & a_{22}^{\pm} & \mathbf{a}_{23}^{\pm} \ \mathbf{a}_{31}^{\pm} & \mathbf{a}_{32}^{\pm} & A_{33}^{\pm} \ \end{array} \right). \]
+\form#100:$ {\bf A}_{\mathbf{n}}^{\pm} $
+\form#101:\begin{eqnarray*} a_{13}^{\pm}&=& \frac{1}{a} \left[ -\left(\gamma-1\right) \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ a_{21}^{\pm} &=& \lambda_0^{\pm} k \left(1-\delta M^2\right) - \lambda_0^{\pm} \left(S^2 + T^2\right) \\ &+& \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} \left[ k \left(1+\delta M^2\right) - N^2 \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ &=& \left[ k \left(1+\delta M^2\right) - N^2 \right] \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) \\ &+& \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\ a_{22}^{\pm} &=& \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} + \delta M^2 \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\gamma-1\right) M_n \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \\ \mathbf{a}_{23}^{\pm} &=& \left[ N \mathbf{n} - \left( 1 +\delta M^2 \right) \mathbf{u} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\\ &+& \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \left[ \frac{H}{a} \mathbf{n} - \left(\gamma-1\right) \mathbf{u} M_n \right] \\ \mathbf{a}_{31}^{\pm} &=& \left( \delta M^2 \mathbf{u} - N \mathbf{n} \right) \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right) \\ &+&\left( \delta M^2 a \mathbf{n} - M_n \mathbf{u} \right) \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm} }{2} \right) \\ \mathbf{a}_{32}^{\pm}&=& \frac{\left(\gamma-1\right)}{a} \left[ \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right)+ \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ A_{33}^{\pm}&=& \left[ \mathbf{n}\mathbf{n} - \left(\gamma-1\right)\frac{\mathbf{u}\mathbf{u}}{a^2} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \\ &+& \left(\mathbf{u} \mathbf{n} - \left(\gamma-1\right) \mathbf{n} \mathbf{u} \right) \frac{1}{a} \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right) + \lambda_0^{\pm} I_{d\times d} \end{eqnarray*}
+\form#102:\begin{eqnarray*} a_{11}^{\pm} &=& \lambda_0^{\pm} + \delta M^2 \left[ \frac{\lambda_{+}^{\pm} + \lambda_{-}^{\pm} }{2} -\lambda_{0}^{\pm} \right] -M_{n} \frac{\lambda_{+}^{\pm} - \lambda_{-}^{\pm}}{2} \\ a_{12}^{\pm} &=& \frac{\left(\gamma-1\right)}{a^2}\left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\ a_{13}^{\pm}&=& \frac{1}{a} \left[ -\left(\gamma-1\right) \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ a_{21}^{\pm} &=& \lambda_0^{\pm} k \left(1-\delta M^2\right) - \lambda_0^{\pm} \left(S^2 + T^2\right) \\ &+& \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} \left[ k \left(1+\delta M^2\right) - N^2 \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ &=& \left[ k \left(1+\delta M^2\right) - N^2 \right] \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) \\ &+& \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\ a_{22}^{\pm} &=& \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} + \delta M^2 \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\gamma-1\right) M_n \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \\ \mathbf{a}_{23}^{\pm} &=& \left[ N \mathbf{n} - \left( 1 +\delta M^2 \right) \mathbf{u} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\\ &+& \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \left[ \frac{H}{a} \mathbf{n} - \left(\gamma-1\right) \mathbf{u} M_n \right] \\ \mathbf{a}_{31}^{\pm} &=& \left( \delta M^2 \mathbf{u} - N \mathbf{n} \right) \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right) \\ &+&\left( \delta M^2 a \mathbf{n} - M_n \mathbf{u} \right) \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm} }{2} \right) \\ \mathbf{a}_{32}^{\pm}&=& \frac{\left(\gamma-1\right)}{a} \left[ \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right)+ \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ A_{33}^{\pm}&=& \left[ \mathbf{n}\mathbf{n} - \left(\gamma-1\right)\frac{\mathbf{u}\mathbf{u}}{a^2} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \\ &+& \left(\mathbf{u} \mathbf{n} - \left(\gamma-1\right) \mathbf{n} \mathbf{u} \right) \frac{1}{a} \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right) + \lambda_0^{\pm} I_{d\times d} \end{eqnarray*}
+\form#103:\[ \mathbf{A}_{\mathbf{n}}^{\pm} = \left( \begin{array}{ccc} a_{11}^{\pm} & a_{12}^{\pm} & a_{13}^{\pm} \\ a_{21}^{\pm} & a_{22}^{\pm} & \mathbf{a}_{23}^{\pm} \\ \mathbf{a}_{31}^{\pm} & \mathbf{a}_{32}^{\pm} & A_{33}^{\pm} \\ \end{array} \right). \]
+\form#104:\begin{eqnarray*} a_{11}^{\pm} &=& \lambda_0^{\pm} + \delta M^2 \left[ \frac{\lambda_{+}^{\pm} + \lambda_{-}^{\pm} }{2} -\lambda_{0}^{\pm} \right] -M_{n} \frac{\lambda_{+}^{\pm} - \lambda_{-}^{\pm}}{2} \\ a_{12}^{\pm} &=& \frac{\left(\gamma-1\right)}{a^2}\left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\ a_{13}^{\pm}&=& \frac{1}{a} \left[ -\left(\gamma-1\right) \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ a_{21}^{\pm} &=& \lambda_0^{\pm} k \left(1-\delta M^2\right) - \lambda_0^{\pm} \left(S^2 + T^2\right) + \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} \left[ k \left(1+\delta M^2\right) - N^2 \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ &=& \left[ k \left(1+\delta M^2\right) - N^2 \right] \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) \\ &+& \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\ a_{22}^{\pm} &=& \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} + \delta M^2 \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\gamma-1\right) M_n \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \\ \mathbf{a}_{23}^{\pm} &=& \left[ N \mathbf{n} - \left( 1 +\delta M^2 \right) \mathbf{u} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\\ &+& \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \left[ \frac{H}{a} \mathbf{n} - \left(\gamma-1\right) \mathbf{u} M_n \right] \\ \mathbf{a}_{31}^{\pm} &=& \left( \delta M^2 \mathbf{u} - N \mathbf{n} \right) \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right) +\left( \delta M^2 a \mathbf{n} - M_n \mathbf{u} \right) \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm} }{2} \right) \\ \mathbf{a}_{32}^{\pm}&=& \frac{\left(\gamma-1\right)}{a} \left[ \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right)+ \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ A_{33}^{\pm}&=& \left[ \mathbf{n}\mathbf{n} - \left(\gamma-1\right)\frac{\mathbf{u}\mathbf{u}}{a^2} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\mathbf{u} \mathbf{n} - \left(\gamma-1\right) \mathbf{n} \mathbf{u} \right) \frac{1}{a} \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right) + \lambda_0^{\pm} I_{d\times d} \end{eqnarray*}
+\form#105:\begin{eqnarray*} a_{11}^{\pm} &=& \lambda_0^{\pm} + \delta M^2 \left[ \frac{\lambda_{+}^{\pm} + \lambda_{-}^{\pm} }{2} -\lambda_{0}^{\pm} \right] -M_{n} \frac{\lambda_{+}^{\pm} - \lambda_{-}^{\pm}}{2} \\ a_{12}^{\pm} &=& \frac{\left(\gamma-1\right)}{a^2}\left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\ a_{13}^{\pm}&=& \frac{1}{a} \left[ -\left(\gamma-1\right) \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ a_{21}^{\pm} &=& \lambda_0^{\pm} k \left(1-\delta M^2\right) - \lambda_0^{\pm} \left(S^2 + T^2\right) + \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} \left[ k \left(1+\delta M^2\right) - N^2 \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ &=& \left[ k \left(1+\delta M^2\right) - N^2 \right] \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\ a_{22}^{\pm} &=& \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} + \delta M^2 \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\gamma-1\right) M_n \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \\ \mathbf{a}_{23}^{\pm} &=& \left[ N \mathbf{n} - \left( 1 +\delta M^2 \right) \mathbf{u} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \left[ \frac{H}{a} \mathbf{n} - \left(\gamma-1\right) \mathbf{u} M_n \right] \\ \mathbf{a}_{31}^{\pm} &=& \left( \delta M^2 \mathbf{u} - N \mathbf{n} \right) \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right) +\left( \delta M^2 a \mathbf{n} - M_n \mathbf{u} \right) \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm} }{2} \right) \\ \mathbf{a}_{32}^{\pm}&=& \frac{\left(\gamma-1\right)}{a} \left[ \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right)+ \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\ A_{33}^{\pm}&=& \left[ \mathbf{n}\mathbf{n} - \left(\gamma-1\right)\frac{\mathbf{u}\mathbf{u}}{a^2} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\mathbf{u} \mathbf{n} - \left(\gamma-1\right) \mathbf{n} \mathbf{u} \right) \frac{1}{a} \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right) + \lambda_0^{\pm} I_{d\times d} \end{eqnarray*}
+\form#106:\[ \mathbf{K}_{\mathbf{n}}^{\pm} = \frac{1}{d} \mathbf{A}_{\mathbf{n}}^{\pm} \quad\quad \mathbf{A}_{\mathbf{n}}^{\pm} = \left( \begin{array}{ccc} a_{11}^{\pm} & a_{12}^{\pm} & a_{13}^{\pm} \\ a_{21}^{\pm} & a_{22}^{\pm} & \mathbf{a}_{23}^{\pm} \\ \mathbf{a}_{31}^{\pm} & \mathbf{a}_{32}^{\pm} & A_{33}^{\pm} \\ \end{array} \right). \]
+\form#107:\begin{eqnarray*} N \mathbf{n} + S \mathbf{s} + T \mathbf{t} &=& \mathbf{u} \\ N^2 + S^2 + T^2 &=& 2 k \\ \mathbf{n}\mathbf{n} + \mathbf{s}\mathbf{s} + \mathbf{t}\mathbf{t} &=& I_{d\times d} \end{eqnarray*}
+\form#108:\[ u_n = \mathbf{u} \cdot \mathbf{n} = N \quad \mathbf{u} \cdot \mathbf{s} = S \quad \mathbf{u} \cdot \mathbf{t} = T \quad \delta = \frac{\gamma-1}{2} \]
+\form#109:\[ \mbox{{\tt KMAT}} = K_{\mathbf{n}} = \frac{1}{d} {\bf A}_{\mathbf{n}} = \frac{1}{d} {\bf R}_{\mathbf{n}} {\bf \Lambda}_{\mathbf{n}} {\bf L}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} 0 & 0 & \mathbf{n}^t \\ \left[-H + \left(\gamma-1\right)k\right] u_n & \gamma u_n & H\mathbf{n}^t -\left(\gamma -1\right) u_n \mathbf{u}^t \\ -\mathbf{u} u_n + \left(\gamma -1\right) k\mathbf{n} & \left(\gamma-1\right) \mathbf{n} & \mathbf{u}\mathbf{n} -\left(\gamma-1\right)\mathbf{n}\mathbf{u} + u_n I_{d\times d} \end{array} \right) \]
+\form#110:\[ \mathbf{K}_{\mathbf{n}}^{\pm} = \frac{1}{d} \mathbf{A}_{\mathbf{n}}^{\pm} \quad\quad \mathbf{A}_{\mathbf{n}}^{\pm} = \frac{1}{d} {\bf R}_{\mathbf{n}} {\bf \Lambda}^{\pm}_{\mathbf{n}} {\bf L}_{\mathbf{n}} = \left( \begin{array}{ccc} a_{11}^{\pm} & a_{12}^{\pm} & a_{13}^{\pm} \\ a_{21}^{\pm} & a_{22}^{\pm} & \mathbf{a}_{23}^{\pm} \\ \mathbf{a}_{31}^{\pm} & \mathbf{a}_{32}^{\pm} & A_{33}^{\pm} \\ \end{array} \right). \]
+\form#111:\[ \mathbf{L}_{\mathbf{n}} = \left( \begin{array}{ccc} 1-\frac{(\gamma-1)}{2} M^2 & -\frac{(\gamma-1)}{a^2} & \frac{(\gamma-1)}{a^2} \mathbf{u}^t \\ -\mathbf{u} \cdot \mathbf{s} / \rho & 0 & \mathbf{s}^t / \rho \\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k - \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t + \mathbf{n}^t \right] \\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k + \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t - \mathbf{n}^t \right] \\ -\mathbf{u} \cdot \mathbf{t} / \rho & 0 & \mathbf{t}^t / \rho \end{array} \right) \quad\quad \]
+\form#112:\[ \mathbf{L}_{\mathbf{n}} = \left( \begin{array}{ccc} 1-\frac{(\gamma-1)}{2} M^2 & -\frac{(\gamma-1)}{a^2} & \frac{(\gamma-1)}{a^2} \mathbf{u}^t \\ -\mathbf{u} \cdot \mathbf{s} / \rho & 0 & \mathbf{s}^t / \rho \\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k - \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t + \mathbf{n}^t \right] \\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k + \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t - \mathbf{n}^t \right] \\ -\mathbf{u} \cdot \mathbf{t} / \rho & 0 & \mathbf{t}^t / \rho \end{array} \right) \quad\quad \mathbf{R}_{\mathbf{n}} = \left( \begin{array}{ccccc} 1 & 0 & \frac{\rho}{a} & \frac{\rho}{a} & 0 \\ k & \rho \mathbf{u} \cdot \mathbf{s} & \rho \left[ \frac{H}{a} + \mathbf{u} \cdot \mathbf{ n} \right] & \rho \left[ \frac{H}{a} - \mathbf{u} \cdot \mathbf{ n} \right] & \rho \mathbf{ u} \cdot \mathbf{ t} \\ \mathbf{ u} & \rho \mathbf{s} & \rho \left( \frac{\mathbf{ u}}{a} + \mathbf{ n} \right) & \rho \left( \frac{\mathbf{u}}{a} - \mathbf{ n} \right) & \rho \mathbf{t} \end{array} \right) \]
+\form#113:\[ \mbox{{\tt KMAT}} = K_{\mathbf{n}} = \frac{1}{d} {\bf A}_{\mathbf{n}} = \frac{1}{d} {\bf R}_{\mathbf{n}} {\bf \Lambda}_{\mathbf{n}} {\bf L}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} -b_n & 0 & \mathbf{n}^t \\ \left[-H + \left(\gamma-1\right)k\right] u_n & \gamma u_n - b_n & H\mathbf{n}^t -\left(\gamma -1\right) u_n \mathbf{u}^t \\ -\mathbf{u} u_n + \left(\gamma -1\right) k\mathbf{n} & \left(\gamma-1\right) \mathbf{n} & \mathbf{u}\mathbf{n} -\left(\gamma-1\right)\mathbf{n}\mathbf{u} + \left(u_n-b_n\right) I_{d\times d} \end{array} \right) \]
+\form#114:\[ u_n = \mathbf{u} \cdot \mathbf{n} = N \quad \mathbf{u} \cdot \mathbf{s} = S \quad \mathbf{u} \cdot \mathbf{t} = T \quad \delta = \frac{\gamma-1}{2} \quad b_n = \mathbf{b} \cdot \mathbf{n} \]
+\form#115:\[ F_n^{ALE} = - \left(\mathbf{b}\cdot\mathbf{n}\right) \left(\begin{array}{c} \rho \\\ \rho E \\\ \rho \mathbf{u} \end{array} \right) \]
+\form#116:$\mathbf{n}$
+\form#117:\[ F_n^{ALE} = - \left(\mathbf{b}\cdot\mathbf{n}\right) \left(\begin{array}{c} \rho \\\ \rho E \\\ \rho \mathbf{u} \end{array} \right) = - \frac{1}{2} \left(\mathbf{b}\cdot\mathbf{n}\right) \left( \frac{\partial U}{\partial Z} \right) Z \]
+\form#118:\[ \left( \begin{array}{ccc} 3\left(b_1^{n_3} + b_1^{n_2} \right) + b_2^{n_3} + b_3^{n_2} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & 3\left(b_2^{n_3}+b_2^{n_1}\right) + b_1^{n_3} + b_3^{n_1} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & 3\left(b_3^{n_1}+b_3^{n_2}\right) + b_2^{n_1} + b_1^{n_2} \end{array} \right) \]
+\form#119:\[ \left( \begin{array}{ccc} -2\,b_1^{n_1} + c_{12} + c_{13} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & -2\,b_2^{n_2} + c_{21} + c_{23} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & -2\,b_3^{n_3} + c_{13} + c_{23} \end{array} \right) \]
+\form#120:$F_n^{ALE}$
+\form#121:$Z$
+\form#122:$\mathbf{b}$
+\form#123:$\frac{\partial U}{\partial Z}$
+\form#124:\[ I = I_{12} + I_{23} + I_{31} = \frac{1}{24} \, \sum_{i=1}^{3} \left(\frac{\partial U}{\partial Z}\right)_i \left[ \sum_{j=1}^{3} c_{ij} Z_j \right] \]
+\form#125:$C_{ij}$
+\form#126:\[ \left( \begin{array}{ccc} 3\left(b_1^{n_3} + b_1^{n_2} \right) + b_2^{n_3} + b_3^{n_2} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & 3\left(b_2^{n_3}+b_2^{n_1}\right) + b_1^{n_3} + b_3^{n_1} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & 3\left(b_3^{n_1}+b_3^{n_2}\right) + b_2^{n_1} + b_1^{n_2} \end{array} \right) \quad = \quad \left( \begin{array}{ccc} -2\,b_1^{n_1} + c_{12} + c_{13} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & -2\,b_2^{n_2} + c_{21} + c_{23} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & -2\,b_3^{n_3} + c_{13} + c_{23} \end{array} \right) \]
+\form#127:\[ b_i^{n_j} = \mathbf{b}_i\cdot\mathbf{n}_j \]
+\form#128:\[ \sum_j \mathbf{n}_j = 0 \quad \rightarrow \quad \sum_j b_i^{n_j} = 0 \]
+\form#129:$c_{ij}$
+\form#130:$C$
+\form#131:\[ C = \left( \begin{array}{ccc} 3\left(b_1^{n_3} + b_1^{n_2} \right) + b_2^{n_3} + b_3^{n_2} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & 3\left(b_2^{n_3}+b_2^{n_1}\right) + b_1^{n_3} + b_3^{n_1} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & 3\left(b_3^{n_1}+b_3^{n_2}\right) + b_2^{n_1} + b_1^{n_2} \end{array} \right) \quad = \quad \left( \begin{array}{ccc} -2\,b_1^{n_1} + c_{12} + c_{13} & b_1^{n_3} + b_2^{n_3} & b_3^{n_2} + b_1^{n_2} \\\ c_{12} & -2\,b_2^{n_2} + c_{21} + c_{23} & b_2^{n_1} + b_3^{n_1} \\\ c_{13} & c_{23} & -2\,b_3^{n_3} + c_{13} + c_{23} \end{array} \right) \]
+\form#132:$\rho\left(1,E,\mathbf{u}\right)$
+\form#133:\[ x_{\mbox{piston}}/L = c + \frac{R}{L}\left[1-\cos\left(\omega^*t^*\right)\right] + \left(\frac{R}{2L}\right)^2\left[1-\cos\left(2\omega^*t^*\right)\right] \]
+\form#134:\[ t^* = t \frac{\sqrt{ R T^0 }}{L} \]
+\form#135:$\omega^*$
+\form#136:\[ \omega^* = \Omega \frac{L}{\sqrt{ R T^0 }} \]
+\form#137:$\Omega$
+\form#138:\[ x_i\left(t\right) = \frac{x_i\left(t=0\right)}{x_{\mbox{piston}}\left(t=0\right)} x_{\mbox{piston}} \left(t\right) \]
+\form#139:\[ x_i\left(t\right) = \frac{x_i\left(t=0\right)}{x_{\mbox{piston}}\left(t=0\right)} \; x_{\mbox{piston}} \left(t\right) \]
+\form#140:\begin{eqnarray*} <U>\,|\Omega| &=& \int_{\Omega} U \, \mathrm{d}V \\\ &=& \frac{1}{2} \, \sum_{e=1}^{NE} \int_{T_e} \left(\frac{\partial U}{\partial Z}\right) \, Z \, \mathrm{d}V = \frac{1}{2} \sum_{e=1}^{NE} \, \sum_{j \in e} \sum_{k \in e} \gamma_{jk}^e \left(\frac{\partial U}{\partial Z}\right)_{Z=Z_j} Z_k \end{eqnarray*}
+\form#141:\[ U = \frac{1}{2} \left(\frac{\partial U}{\partial Z}\right) \, Z \]
+\form#142:$\partial U/\partial Z$
+\form#143:$\mathbf{x}$
+\form#144:\[ \gamma^e_{jk} = |T_e| \times \left\{ \begin{array}{cc} \frac{1}{20} & j \ne k \\ \frac{1}{10} & j = k \end{array} \right. \quad\quad \beta^e_{ijk} = |T_e| \times \left\{ \begin{array}{cc} \frac{1}{20} & i = j = k \\ \frac{1}{120} & i \ne j \ne k \\ \frac{1}{60} & \mbox{two indices are equal} \end{array} \right. \]
+\form#145:$\gamma_{jk}^e$
+\form#146:\[ \gamma^e_{jk} = |T_e| \times \left\{ \begin{array}{cc} \frac{1}{20} & j \ne k \\ \frac{1}{10} & j = k \end{array} \right. \]
+\form#147:$ \frac{\mathrm{d}a}{\mathrm{d}t}_{t=0} = 0.2 $
+\form#148:\[ x_{\mbox{piston}} = \frac{\mathrm{d}a}{\mathrm{d}t}_{t=0} \frac{t^3}{6} \]
+\form#149:$ \left(\frac{\mathrm{d}a}{\mathrm{d}t}\right)_{t=0} = 0.2 $
+\form#150:\[ x_{\mbox{piston}} = \left(\frac{\mathrm{d}a}{\mathrm{d}t}\right)_{t=0} \frac{t^3}{6} \]
+\form#151:\[ x_i\left(t\right) = \left(1-\alpha\right) x_{\mbox{piston}} \left(t\right) + \alpha l \]
+\form#152:\[ \alpha = x_i\left(t=0\right)/l \]
+\form#153:\[ A = \begin{array}{ccc} a & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\ a & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \end{array} \]
+\form#154:$ \beta_i $
+\form#155:$ Z(*,1) = u^{n+1,k}; $
+\form#156:$ Z(*,1) = u^{n+1,k}; Z(*,2) = u^{n}; Z(*,3) = u^{n-1} $
+\form#157:\[ A = \begin{array}{ccc} {\tt MTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\ a & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \end{array} \]
+\form#158:\[ \begin{array}{ccc} {\tt MTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\ {\tt MM_LUMPED} & & \delta_{ij} \\\ {\tt MM_PETROV_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\ {\tt MM_CONS_UPWIND} & & \\\ {\tt MM_SIMPLE_UPWIND} & & \\\ {\tt MM_CENTRED} & & \\\ {\tt MM_NEW} & & \end{array} \]
+\form#159:\[ \begin{array}{ccc} {\tt MTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\ {\tt MM\_LUMPED} & & \delta_{ij} \\\ {\tt MM\_PETROV\_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\ {\tt MM\_CONS\_UPWIND} & & \\\ {\tt MM\_SIMPLE\_UPWIND} & & \\\ {\tt MM\_CENTRED} & & \\\ {\tt MM\_NEW} & & \end{array} \]
+\form#160:\[ \begin{array}{ccc} {\tt MYTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\ {\tt MM\_LUMPED} & & \delta_{ij} |T_e| \\\ {\tt MM\_PETROV\_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\ {\tt MM\_CONS\_UPWIND} & & \beta_i \left(1+\delta_{ij}-\beta_j\right) |T_e| \\\ {\tt MM\_SIMPLE\_UPWIND} & & \beta_i |T_e| \\\ {\tt MM\_CENTRED} & & \frac{|T_e|}{d+1} \\\ {\tt MM\_NEW} & & \end{array} \]
+\form#161:\[ \tilde{R}_i\left(u^{n+1,k}\right) := \tilde{R}_i\left(u^{n+1,k}\right) - \sum_{j} m_{ij} \frac{\left(1+\gamma_t/2\right)u_j^{n+1}-\left(1+\gamma_t\right)u_j^n +\left(\gamma_t/2\right)u_j^{n-1}}{\Delta t} \]
+\form#162:$\tilde{R}$
+\form#163:\[ \begin{array}{ccc} {\tt MYTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\ {\tt MM\_LUMPED} & & \frac{\delta_{ij}}{d+1} |T_e| \\\ {\tt MM\_PETROV\_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\ {\tt MM\_CONS\_UPWIND} & & \frac{1}{d+1} \beta_i \left(1+\delta_{ij}-\beta_j\right) |T_e| \\\ {\tt MM\_SIMPLE\_UPWIND} & \beta_i & \frac{1}{d+1} \beta_i |T_e| \\\ {\tt MM\_CENTRED} & & \frac{|T_e|}{d+1} \\\ {\tt MM\_NEW} & & \end{array} \]
+\form#164:\[ \begin{array}{ccc} {\tt MYTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\\hline {\tt MM\_LUMPED} & & \frac{\delta_{ij}}{d+1} |T_e| \\\ {\tt MM\_PETROV\_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\ {\tt MM\_CONS\_UPWIND} & & \frac{1}{d+1} \beta_i \left(1+\delta_{ij}-\beta_j\right) |T_e| \\\ {\tt MM\_SIMPLE\_UPWIND} & \beta_i & \frac{1}{d+1} \beta_i |T_e| \\\ {\tt MM\_CENTRED} & & \frac{|T_e|}{d+1} \\\ {\tt MM\_NEW} & & \end{array} \]
+\form#165:\[ \begin{array}{ccc} {\tt MYTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\\\hline {\tt MM\_LUMPED} & & \frac{\delta_{ij}}{d+1} |T_e| \\\ {\tt MM\_PETROV\_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\ {\tt MM\_CONS\_UPWIND} & & \frac{1}{d+1} \beta_i \left(1+\delta_{ij}-\beta_j\right) |T_e| \\\ {\tt MM\_SIMPLE\_UPWIND} & \beta_i & \frac{1}{d+1} \beta_i |T_e| \\\ {\tt MM\_CENTRED} & & \frac{|T_e|}{d+1} \\\ {\tt MM\_NEW} & & \end{array} \]
+\form#166:\[ \begin{array}{c|c|c} {\tt MYTYPE} & \omega^e_i\left(\mathbf{x}\right) & m^e_{ij} \\\\\hline {\tt MM\_LUMPED} & & \frac{\delta_{ij}}{d+1} |T_e| \\\ {\tt MM\_PETROV\_GALERKIN} & N^e_i\left(\mathbf{x}\right) + \beta_i^e - \frac{1}{d+1} & \frac{|T_e|}{d+1} \left( \frac{1+\delta_{ij}}{d+2} + \beta_i^e - \frac{1}{d+1} \right) \\\ {\tt MM\_CONS\_UPWIND} & & \frac{1}{d+1} \beta_i \left(1+\delta_{ij}-\beta_j\right) |T_e| \\\ {\tt MM\_SIMPLE\_UPWIND} & \beta_i & \frac{1}{d+1} \beta_i |T_e| \\\ {\tt MM\_CENTRED} & & \frac{|T_e|}{d+1} \\\ {\tt MM\_NEW} & & \end{array} \]
+\form#167:\[ \mathbf{b} = \frac{\mathbf{x}^{n+1}-\mathbf{x}^n}{\Delta t} \]
+\form#168:$R$
+\form#169:\[ R_i\left(u^{n+1,k}\right) := R_i\left(u^{n+1,k}\right) - \sum_{j} m_{ij} \frac{\left(1+\gamma_t/2\right)u_j^{n+1}-\left(1+\gamma_t\right)u_j^n +\left(\gamma_t/2\right)u_j^{n-1}}{\Delta t} \]
+\form#170:\[ R_i\left(u^{n+1,k}\right) := R_i\left(u^{n+1,k}\right) - \sum_{j} m_{ij} \frac{\left(1+\gamma_t/2\right)|T^e|^{n+1}u_j^{n+1}-\left(1+\gamma_t\right)|T^e|^{n}u_j^n +\left(\gamma_t/2\right)|T^e|^{n-1}u_j^{n-1}}{\Delta t} - \frac{\left(1+\gamma_t/2\right)|T^e|^{n+1}-\left(1+\gamma_t\right)|T^e|^{n} +\left(\gamma_t/2\right)|T^e|^{n-1}}{\Delta t} \sum_{j} m_{ij} u_j^{n+1,k} \]
+\form#171:$V_i/\\Delta t_i$
+\form#172:$ C_{ij} = \frac{\partial R_i}{\partial u_j}$
+\form#173:$\hat{\lambda}-\hat{\mathbf{b}}$
+\form#174:$(\mathbf{b} = 0)$
+\form#175:$\int_{T_e} f \mathrm{d}V$
+\form#176:$\int_{T_e}\left(\hat{\lambda}-\hat{\mathbf{b}}\right)\cdot\nabla u\,\mathrm{d}V$
+\form#177:$V_i/\Delta t_i$
+\form#178:\[ \hat{\lambda} = \frac{1}{d+1} \sum_{j=1}^{d+1} u_j \quad\quad \hat{\mathbf{b}} = \frac{1}{d+1} \sum_{j=1}^{d+1} \mathbf{b}_j \]
+\form#179:\[ \frac{\partial u}{\partial t} + \mathbf{\lambda} \cdot \nabla u = f \]
+\form#180:${\tt SOURCE} = -\int_{T_e} f \mathrm{d}V$
+\form#181:$\hat{\lambda}$
+\form#182:$\int_{T_e}f\,\mathrm{d}V$
+\form#183:${\tt -testcase}$
+\form#184:$ \lambda = 2 \mathbf{e}_x + \mathbf{e}_y $
+\form#185:$ \lambda = \frac{1}{d+1}\left( \sum_{j=1}^{d+1} u_j \right) \mathbf{e}_x + \mathbf{e}_y $
+\form#186:$ \lambda = 2 \mathbf{e}_x + \mathbf{e}_y \quad\quad f = 0.$
+\form#187:$ \lambda = \frac{1}{d+1}\left( \sum_{j=1}^{d+1} u_j \right) \mathbf{e}_x + \mathbf{e}_y \quad\quad f = 0$
+\form#188:$ f = 4x -2y$
+\form#189:$ f = xye^{\left(x+y\right)}$
+\form#190:$ \lambda = 2 \mathbf{e}_x + \mathbf{e}_y \quad\quad f = 0$
+\form#191:$ \lambda = 2 \mathbf{e}_x + \mathbf{e}_y \quad\quad f = 4x -2y$
+\form#192:$ \lambda = 2 \mathbf{e}_x + \mathbf{e}_y \quad\quad f = xye^{\left(x+y\right)}$
+\form#193:$ \lambda = \cos\delta \mathbf{e}_x + \sin\delta \mathbf{e}_y \quad\quad f(x,y) = -\left(x\cos\delta+x\sin\delta\right)$
+\form#194:$ \lambda = \mathbf{e}_x + 2 \mathbf{e}_y \quad\quad f = 0$
+\form#195:$ \lambda = \mathbf{e}_x \quad\quad f = 0$
+\form#196:$ \lambda = 0.75 \mathbf{e}_x + 0.875 \mathbf{e}_y + 1. \mathbf{e}_z \quad\quad f = 0$
+\form#197:$ \lambda = x \mathbf{e}_x + 0.2 \mathbf{e}_y + y \mathbf{e}_z \quad\quad f = 0$
+\form#198:$ \lambda = 2\pi y \mathbf{e}_x - 2\pi x \mathbf{e}_y \quad\quad f = 0$
+\form#199:\[ \lambda_x*U_X+\lambda_y*U_Y - \varepsilon*(U_{XX}+U_{YY}) = f \]
+\form#200:$\lambda_x\mathbf{e}_x+\lambda_y\mathbf{e}_y$
+\form#201:$\varepsilon$
+\form#202:\[ [(\lambda_x-2*\varepsilon)*y+(\lambda_y-2*\varepsilon)*x]*e^{(x+y)} [(\lambda_x-2*\varepsilon)+(\lambda_y-2*\varepsilon)]*x*y*e^{(x+y)} \]
+\form#203:\[ u = x*y*\exp(x+y) \]
+\form#204:$\lambda_x$
+\form#205:$\lambda_y$
+\form#206:\[ u_t + \lambda_x*u_X+\lambda_y*u_Y - \varepsilon*(u_{xx}+u_{yy}) = f \]
+\form#207:\[ f = [(\lambda_x-2\varepsilon)y+(\lambda_y-2\varepsilon)x]e^{(x+y)} [(\lambda_x-2\varepsilon)+(\lambda_y-2\varepsilon)]xye^{(x+y)} \]
+\form#208:\[ u_t + \lambda_xu_x+\lambda_yu_y - \varepsilon(u_{xx}+u_{yy}) = f \]
+\form#209:$1/\varepsilon$
+\form#210:\[ u = xy\exp(x+y) \]
+\form#211:\[ u_t + \lambda_x u_x+\lambda_y u_y = f \]
+\form#212:\[ u = \sin\left(2\pi\left(y\cos\delta-x\sin\delta\right)\right)+ x'y' -xy \]
+\form#213:\begin{eqnarray*} x' &=& x - \cos(\delta)* (x*\cos(\delta)+y*\sin(\delta)) \\ y' &=& y - \sin(\delta)* (x*\cos(\delta)+y*\sin(\delta)) \end{eqnarray*}
+\form#214:$\delta$
+\form#215:\[ f = -\left(x\cos\delta+x\sin\delta\right) \]
+\form#216:\begin{eqnarray*} x' &=& x - \cos(\delta) (x\cos(\delta)+y\sin(\delta)) \\ y' &=& y - \sin(\delta) (x\cos(\delta)+y\sin(\delta)) \end{eqnarray*}
+\form#217:\[ \beta_i^{UCV} = \left( \frac{1}{d+1} + \frac{2}{3} \frac{ k_{i} }{ \sum_{\ell=1}^{d+1} |k_{\ell}| } \right) \left( \frac{1}{d+1} + \frac{2}{3} \frac{ k_{i} }{ \sum_{\ell=1}^{d+1} \left( k_{\ell}^{+} - k_{\ell}^{-} \right) } \right) \]
+\form#218:\[ \beta_i^{UCV} = \left( \frac{1}{d+1} + \frac{2}{3} \frac{ k_{i} }{ \sum_{\ell=1}^{d+1} |k_{\ell}| } \right) = \left( \frac{1}{d+1} + \frac{2}{3} \frac{ k_{i} }{ \sum_{\ell=1}^{d+1} \left( k_{\ell}^{+} - k_{\ell}^{-} \right) } \right) \]
+\form#219:$C_{ij} = -\beta_i k_j$
+\form#220:\[ \frac{\mathrm{d}|T_e|}{\mathrm{d}t} = \frac{|T_e|^{n+1}-|T_e|^n}{\Delta t} = div \mathbf{b} = \sum_{j=1}^{d+1} \mathbf{b}_j \cdot \mathbf{n}_j^{n+\alpha} \]
+\form#221:$T_e|^{n+1}-|T_e|^n$
+\form#222:$ \left(\nabla \cdot \mathrm{b} \right) \Delta t $
+\form#223:$ |T_e|^{n+\alpha}$
+\form#224:$ |T_e|^{n+1}$
+\form#225:$|T_e|^n$
+\form#226:$T_e|^{n-1}$
+\form#227:\[ \frac{\mathrm{d}|T_e|}{\mathrm{d}t} = \frac{|T_e|^{n+1}-|T_e|^n}{\Delta t} = \nabla \cdot \mathbf{b} = \sum_{j=1}^{d+1} \mathbf{b}_j \cdot \mathbf{n}_j^{n+\alpha} \quad\quad \mbox{(1)} \]
+\form#228:\[ \mathbf{b} = \frac{\mathbf{b}^{n+1}}-\mathbf{b}^{n}{\Delta t} \]
+\form#229:$\mathbf{n}_j^{n+\alpha}$
+\form#230:\[ \mathbf{x}^{n+\alpha} = \alpha \mathbf{x}^{n} + \left(1-\alpha\right) \mathbf{x}^{n+1} \]
+\form#231:$\alpha = 0.5$
+\form#232:\[ \mathbf{b} = \frac{\mathbf{x}^{n+1}-\mathbf{x}^{n}}{\Delta t} \]
+\form#233:$\alpha = {\tt ALFALE}$
+\form#234:$|T_e|^{n-1}$
+\form#235:\[ \frac{\mathrm{d}|T_e|}{\mathrm{d}t} = \frac{|T_e|^{n+1}-|T_e|^n}{\Delta t} = \nabla \cdot \mathbf{b} = \frac{1}{d|T_e|} \sum_{j=1}^{d+1} \mathbf{b}_j \cdot \mathbf{n}_j^{n+\alpha} \quad\quad \mbox{(1)} \]
+\form#236:\[ \frac{\mathrm{d}|T_e|}{\mathrm{d}t} = \frac{|T_e|^{n+1}-|T_e|^n}{\Delta t} = \nabla \cdot \mathbf{b}\, |T_e|^{n+\alpha} = \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{b}_j \cdot \mathbf{n}_j^{n+\alpha} \quad\quad \mbox{(1)} \]
+\form#237:$T$
+\form#238:\[ v_p\left(t\right) = v_1 \left( 1-\exp\left(-\alpha t\right)\right) \quad\quad\mbox{with}\quad\quad \alpha = 1 \; \mbox{s}^{-1} \]
+\form#239:$v_1$
+\form#240:$t_0 = 0$
+\form#241:\[ x_p\left(t\right) = v_1 \left[ t + \frac{1}{\alpha} \left( \exp\left(-\alpha t\right)-1\right)\right] \]
+\form#242:$T^0$
+\form#243:$a_0$
+\form#244:$a_T = \sqrt{R T^0} = a_0/\sqrt{\gamma} $
+\form#245:$T^* = L/a_T $
+\form#246:$t_1 $
+\form#247:\begin{eqnarray*} v_1^* &=& v_1/a_T = -0.29580398915498080 \\ T^* &=& T/a_T = 3.9440531887330774 \\ \alpha^* &=& \alpha/a_T = 3.9440531887330774 \\ t_1^* &=& t_1/T^* = .76063882925566491237 \end{eqnarray*}
+\form#248:\[ x_i\left(t\right) = \left(1-\beta\right) x_{\mbox{piston}} \left(t\right) + \beta l \]
+\form#249:\[ \beta = x_i\left(t=0\right)/l \]
+\form#250:$t_1^* $
+\form#251:\begin{eqnarray*} v_1^* &=& v_1/a_T = -0.29580398915498080 \\ T^* &=& T/a_T = 3.9440531887330774 \\ \alpha^* &=& \alpha/a_T = 3.9440531887330774 \\ \end{eqnarray*}
+\form#252:$ a$
+\form#253:$ Z(*,1) = Z^{n+1,k}; Z(*,2) = Z^{n}; Z(*,3) = Z^{n-1} $
+\form#254:\begin{eqnarray} R_1 &:=& R_1 + \frac{\alpha}{d} + \frac{1-\alpha}{d\left(d-1\right)} F_2 \\ R_1 &:=& R_1 + \frac{\alpha}{d} + \frac{1-\alpha}{d\left(d-1\right)} F_2 \end{eqnarray}
+\form#255:\begin{eqnarray} R_1 &:=& R_1 + \frac{\alpha}{2} F_1 + \frac{1-\alpha}{2} F_2 \\ R_2 &:=& R_2 + \frac{\alpha}{2} F_2 + \frac{1-\alpha}{2} F_1 \end{eqnarray}
+\form#256:\begin{eqnarray} R_1 &:=& R_1 + \frac{\alpha}{3} F_1 + \frac{1-\alpha}{6} F_2 + \frac{1-\alpha}{6} F_3 \\ R_2 &:=& R_2 + \frac{\alpha}{3} F_2 + \frac{1-\alpha}{6} F_3 + \frac{1-\alpha}{6} F_1 \\ R_3 &:=& R_3 + \frac{\alpha}{3} F_3 + \frac{1-\alpha}{6} F_1 + \frac{1-\alpha}{6} F_2 \\ \end{eqnarray}
+\form#257:$\alpha$
+\form#258:\begin{eqnarray*} R_1 &:=& R_1 + \frac{\alpha}{2} F_1 + \frac{1-\alpha}{2} F_2 \\ R_2 &:=& R_2 + \frac{\alpha}{2} F_2 + \frac{1-\alpha}{2} F_1 \end{eqnarray*}
+\form#259:\begin{eqnarray*} R_1 &:=& R_1 + \frac{\alpha}{3} F_1 + \frac{1-\alpha}{6} F_2 + \frac{1-\alpha}{6} F_3 \\ R_2 &:=& R_2 + \frac{\alpha}{3} F_2 + \frac{1-\alpha}{6} F_3 + \frac{1-\alpha}{6} F_1 \\ R_3 &:=& R_3 + \frac{\alpha}{3} F_3 + \frac{1-\alpha}{6} F_1 + \frac{1-\alpha}{6} F_2 \end{eqnarray*}
+\form#260:$v_p^*$
+\form#261:$W$
+\form#262:$M_{r_1} = W/\sqrt{\gamma\,R\,T_1}$
+\form#263:$T_1$
+\form#264:\[ p_{\mbox{ref}} = \mbox{whatever} \quad\mbox{and}\quad T_{\mbox{ref}} = T_1 \]
+\form#265:\[ u_{\mbox{ref}} = \sqrt{R\,T_{\mbox{ref}}} = 247.92660034794133 \; \mbox{m/s} \]
+\form#266:\[ p_1^* = 1 \quad\quad \rho_1^* = 1 \quad\quad T_1^* = 1 \]
+\form#267:\[ p_2^* = 2.5786821287522521 \quad\quad \rho_2^* = 1.9201192819084407 \quad\quad T_2^* = 1.3429801747468804. \]
+\form#268:\[ v_p = u_2 = W - M_{r_2} a_2 \]
+\form#269:$M_{r_2}$
+\form#270:\[ v_p^* = \frac{u_2}{\sqrt{R T_1}} = \frac{W-M_{r_2} a_2}{\sqrt{R T_1}} = \sqrt{\gamma} \left( M_{r_1} - \sqrt{\frac{T_2}{T_1}} M_{r_2} \right) = 0.86977177750456247 \]
+\form#271:$x/L$
+\form#272:\[ v_p^*\left(t\right) = v_p^* \, e^{-t} \]
+\form#273:\[ x_{\mbox{piston}}/L = v_p^* \, \left(1-e^{-t} \right) \]
+\form#274:\[ R_i\left(u^{n+1,k}\right) := R_i\left(u^{n+1,k}\right) - \sum_{j} m_{ij} \frac{\left(1+\gamma_t/2\right)|T^e|^{n+1}u_j^{n+1}-\left(1+\gamma_t\right)|T^e|^{n}u_j^n +\left(\gamma_t/2\right)|T^e|^{n-1}u_j^{n-1}}{\Delta t} + \frac{\left(1+\gamma_t/2\right)|T^e|^{n+1}-\left(1+\gamma_t\right)|T^e|^{n} +\left(\gamma_t/2\right)|T^e|^{n-1}}{\Delta t} \sum_{j} m_{ij} u_j^{n+1,k} \]
+\form#275:$[0,5L] \times [0,L]$
+\form#276:$ z $
+\form#277:\begin{eqnarray*} \nabla \cdot \mathbf{b} |T_e| &=& - \sum_{\ell=1}^{d} \left(\mathbf{b}_i+\mathbf{b}_j+\mathbf{b}_k\right) \cdot \mathbf{n}_{\ell} \\ \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{n}_j \cdot \mathbf{b}_j \end{eqnarray*}
+\form#278:\begin{eqnarray*} \nabla \cdot \mathbf{b} \; |T_e| &=& - \sum_{\ell=1}^{d} \left(\mathbf{b}_i+\mathbf{b}_j+\mathbf{b}_k\right) \cdot \mathbf{n}_{\ell} \\ &=& \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{n}_j \cdot \mathbf{b}_j \end{eqnarray*}
+\form#279:$ \left(\nabla \cdot \mathrm{b} \right) |T_e| \Delta t $
+\form#280:\begin{eqnarray*} \nabla \cdot \mathbf{b} \; |T_e| &=& - \sum_{\ell=1}^{d} \frac{1}{d+1} \left(\mathbf{b}_i+\mathbf{b}_j+\mathbf{b}_k\right) \cdot \mathbf{n}_{\ell} \\ &=& \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{n}_j \cdot \mathbf{b}_j \end{eqnarray*}
+\form#281:\begin{eqnarray*} x_p\left(t\right)^* &=& x^*_F + \frac{2}{\gamma-1} \sqrt{\gamma} \times \\ &\times& \left(t^*_F-t^*\right) \left\{ 1 - \frac{\gamma+1}{2} \left[ \left(1-\frac{t^*}{t_f}\right)^{-frac{\gamma-1}{\gamma+1}} \right] \right\} \end{eqnarray*}
+\form#282:$T_0$
+\form#283:\[ B_i = \]
+\form#284:\begin{equation} x^*_p\left(t\right) = x^*_F + \frac{2 \sqrt{\gamma}}{\gamma-1} \left(t^*_F-t^*\right) \left\{ 1 - \frac{\gamma+1}{2} \left[ \left(1-\frac{t^*}{t_f}\right)^{-\frac{\gamma-1}{\gamma+1}} \right] \right\} \end{equation}
+\form#285:\begin{equation} x^*_p\left(t\right) = x^*_F + \frac{2 \, a_0^*}{\gamma-1} \left(t^*_F-t^*\right) \left\{ 1 - \frac{\gamma+1}{2} \left[ \left(1-\frac{t^*}{t_f}\right)^{-\frac{\gamma-1}{\gamma+1}} \right] \right\} \end{equation}
+\form#286:\begin{equation} \dot{x}^*_p\left(t\right) = \frac{2 a_0^*}{\gamma-1} \left\{ \left(1-\frac{t^*}{t_f}\right)^{-\frac{\gamma-1}{\gamma+1}} -1 \right\} \end{equation}
+\form#287:$ \mathcal{C}^+$
+\form#288:$ x_F, t_F $
+\form#289:$ x^*_F, t^*_F $
+\form#290:$ x^*_F = 5 $
+\form#291:$ t^*_F = x^*_F / a_0^* $
+\form#292:$ \left[0,5 \right] \times \left[0,1\right]$
+\form#293:$ t^*_F = x^*_F / a_0^* = 4.22577127364258288756 $
+\form#294:\begin{equation} \ddot{x}^*_p\left(t\right) = \frac{2 a_0^*}{\gamma+1} \left(1-\frac{t^*}{t_f}\right)^{-\frac{2\,\gamma}{\gamma+1}} \end{equation}
+\form#295:\begin{eqnarray} x^*_p\left(t\right) &=& x^*_F + \frac{2 \, a_0^*}{\gamma-1} \left(t^*_F-t^*\right) \left\{ 1 - \frac{\gamma+1}{2} \left[ \left(1-\frac{t^*}{t_f}\right)^{-\frac{\gamma-1}{\gamma+1}} \right] \right\} \\ \dot{x}^*_p\left(t\right) &=& \frac{2 a_0^*}{\gamma-1} \left\{ \left(1-\frac{t^*}{t_f}\right)^{-\frac{\gamma-1}{\gamma+1}} -1 \right\} \\ \ddot{x}^*_p\left(t\right) &=& \frac{2 a_0^*}{\gamma+1} \left(1-\frac{t^*}{t_f}\right)^{-\frac{2\,\gamma}{\gamma+1}} \end{eqnarray}
+\form#296:$x^*,t^*$
+\form#297:\begin{eqnarray} u^*\left(x^*,t^*\right) &=& \dot{x}^*_p\left(\tau\right) \\ a^*\left(x^*,t^*\right) &=& a_p\left(\tau\right) = ia^*_0 + \delta \dot{x}^*_p\left(\tau\right) \end{eqnarray}
+\form#298:$\tau < t$
+\form#299:\begin{eqnarray} u^*\left(x^*,t^*\right) &=& \dot{x}^*_p\left(\tau\right) \\ a^*\left(x^*,t^*\right) &=& a_p\left(\tau\right) = a^*_0 + \delta \dot{x}^*_p\left(\tau\right) \end{eqnarray}
+\form#300:$\tau^*$
+\form#301:$\mathcal{C}^+$
+\form#302:$ = -\Phi = \sum_{k=j}^{d+1} K_j U_j $
+\form#303:$ = -\int S \mathrm{d}V $
+\form#304:\[ \tilde{S} = f_{v_3} \, \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2} \]
+\form#305:\[ f_{v_2} = \frac{1}{\left(1+\chi/c_{v_2}\right)^3} \]
+\form#306:\[ f_{v_3} = \frac{\left(1+\chi \,f_{v_1}\right)\left(1-f_{v_2}\right)}{\chi} \]
+\form#307:\[ c_{v_3} = 5 \]
+\form#308:$ \Omega $
+\form#309:$ \tilde{\nu} $
+\form#310:\[ \tilde{S} = \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2} \]
+\form#311:\[ f_{v_1} = \frac{\chi^3}{\left(\chi^3+c_{v_1}^3\right)} \]
+\form#312:\[ f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)} \]
+\form#313:$ f_{v_2} = \frac{1}{\left(1+\chi/c_{v_2}\right)^3} $
+\form#314:$ \tilde{nu}/\nu $
+\form#315:$ f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)} $
+\form#316:$ \tilde{\nu}/\nu $
+\form#317:$ \max\left(\chi,0.001\right) $
+\form#318:$ \frac{\tilde{\nu}}{\nu} $
+\form#319:$ f_{v_2}\left(\chi\right) $
+\form#320:\[ f_{w} = g \, \left(\frac{1+c_{w_3}**6}{g^6+c_{w_3}^6}\right)^{1/6} \]
+\form#321:\[ where: g = r + c_{w_3} \left(r^6-r\right) \]
+\form#322:\[ r = \frac{\tilde{\nu}}{\tilde{S}\,\kappa^2\,d^2} \]
+\form#323:$ \frac{\tilde{\nu}}{\tilde{S}\,\kappa^2\,d^2} $
+\form#324:\[ f_{w} = g \, \left(\frac{1+c_{w_3}^6}{g^6+c_{w_3}^6}\right)^{1/6} \]
+\form#325:\[ g = r + c_{w_2} \left(r^6-r\right) \]
+\form#326:\begin{eqnarray*} \frac{D\tilde{\nu}}{Dt} &=& c_{b_1} \left[ 1 - f_{t_2} \right] \tilde{S} \tilde{\nu} \ \end{eqnarray*}
+\form#327:\begin{eqnarray*} \frac{D\tilde{\nu}}{Dt} &=& c_{b_1} \left[ 1 - f_{t_2} \right] \tilde{S} \tilde{\nu} \end{eqnarray*}
+\form#328:\[ \frac{D\tilde{\nu}}{Dt} = c_{b_1} \left[ 1 - f_{t_2} \right] \tilde{S} \tilde{\nu} + \frac{1}{\sigma Re} \left[ \nabla \cdot \left( \left( \nu + \tilde{\nu} \right) \nabla \tilde{\nu} \right) + c_{b_2} \left( \nabla \tilde{\nu} \right)^2 \right] - \frac{1}{Re} \left[ c_{w_1} f_{w} - \frac{c_{b_1}}{\kappa^2} f_{t_2} \right] \left[ \frac{\tilde{\nu}}{d} \right]^2 \]
+\form#329:\[ \frac{D\tilde{\nu}}{Dt} = c_{b_1} \left[ 1 - f_{t_2} \right] \tilde{S} \tilde{\nu} - \frac{1}{Re} \left[ c_{w_1} f_{w} - \frac{c_{b_1}}{\kappa^2} f_{t_2} \right] \left[ \frac{\tilde{\nu}}{d} \right]^2 + \frac{1}{\sigma Re} \left[ \nabla \cdot \left( \left( \nu + \tilde{\nu} \right) \nabla \tilde{\nu} \right) + c_{b_2} \left( \nabla \tilde{\nu} \right)^2 \right] \]
+\form#330:$ \tilde{S} $
+\form#331:$r$
+\form#332:\[ \tilde{S} \equiv \frac{U_{0}}{L_{0}} \left( S + \frac{1}{Re_{0}} \frac{\tilde{\nu} f_{v2}} {\kappa^2 d^2 } \right) \]
+\form#333:\[ r \equiv \frac{1}{Re_{0}} \, \frac{\tilde{\nu}}{\tilde{S} \kappa^2 d^2 } \]
+\form#334:\[ \tilde{S} = \max \left( \tilde{S}, 0.3\,\Omega \right) \]
+\form#335:\[ \tilde{S} \equiv \frac{U_{0}}{L_{0}} \left( \Omega + \frac{1}{Re_{0}} \frac{\tilde{\nu} f_{v2}} {\kappa^2 d^2 } \right) \]
+\form#336:\[ B_i = K_i^+ N^{-1} \quad\quad \mbox{wehre} \quad\quad N = \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} \]
+\form#337:\[ \Phi_i^B = \Phi_i^N + \left( \begin{array}{llll} \alpha_1 & 0 & ... & 0 \\ 0 & \alpha_2 & ... & 0 \\ 0 & 0 & ... & \alpha_m \end{array} \right) \left( \Phi_i^{LDA} - \Phi_i^N \right) \]
+\form#338:\[ B_i = K_i^+ N^{-1} \quad\quad \mbox{where} \quad\quad N = \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} \]
+\form#339:\[ \Phi_i^B = \Phi_i^N + \left( \begin{array}{llll} \alpha_1 & 0 & ... & 0 \\ 0 & \alpha_2 & ... & 0 \\ 0 & 0 & ... & \alpha_m \end{array} \right) \left( \Phi_i^{LDA_2} - \Phi_i^N \right) \]
+\form#340:\[ B_i^{LDA_2} = K_i^+ N^{-1} \quad\quad \mbox{where} \quad\quad N = \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} \]
+\form#341:\[ \Phi_i^{LDA_2} = -K_i^+ \left( U_{+} - U_{-} \right) \]
+\form#342:\[ \Phi_i^{N} = -K_i^+ \left( U_i - U_{-} \right) \]
+\form#343:\[ \Phi^{B}_i = -K_i^+ \left( U_i - U_{-} \right) + \left( \begin{array}{llll} \alpha_1 & 0 & ... & 0 \\ 0 & \alpha_2 & ... & 0 \\ 0 & 0 & ... & \alpha_m \end{array} \right) K_i^+ \left( U_i - U_{+} \right) \]
+\form#344:\[ B_i^{LDA_2} = K_i^+ N^{-1} \quad\quad \mbox{where} \quad\quad N = \left( \sum_{j=1}^{d+1} K_j^+ \right) \]
+\form#345:\[ \alpha = 1 - \frac{|\sum_{j=1}^{d+1} \phi_j^N|}{\sum_{j=1}^{d+1} |\phi_j^N|} \]
+\form#346:\[ s_{P} = c_{b1}\left(1-f_{t2}\right) \tilde{S} \tilde{\nu} \]
+\form#347:$ \nu $
+\form#348:\[ s_{D} = -\left[c_wf_w -\frac{c_{b1}{\kappa^2} f_{t2} \right]\left(\frac{\nu}{d^2}\right)^2 \]
+\form#349:\[ s_{D} = -\left[c_w f_w -\frac{c_{b1}}{\kappa^2} f_{t2} \right]\left(\frac{\nu}{d}\right)^2 \]
+\form#350:$ d $
+\form#351:\[ h\left(t\right) = h_0 \sin \left(k\,t\right) \]
+\form#352:\[ h_0 = 0.75 \]
+\form#353:\[ \theta\left(t\right) = \theta \sin \left(k\,t+\phi\right) \]
+\form#354:\[ \theta\left(t\right) = \theta_0 \sin \left(k\,t+\phi\right) \]
+\form#355:$ \theta_0 $
+\form#356:$ k$
+\form#357:$ \phi $
+\form#358:\[ \tilde{K}_{\mathbf{n}}^{\pm} = \frac{1}{d} \tilde{R}_{\mathbf{n}} \Lambda_{\mathbf{n}}^{\pm} \tilde{L}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} {\lambda_{0}}^{\pm} & 0 & \mathbf{0} \\\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} + \lambda_-^{\pm} \right) & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n}^t \\\ 0 & \frac{1}{2} \left( \lambda_+^{\pm} - \lambda_-^{\pm} \right) \mathbf{n} & \lambda_0^{\pm} I + \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] \mathbf{n} \mathbf{n} \end{array} \right) \]
+\form#359:\[ \tilde{K}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} u_n & 0 & \mathbf{0}^t \\\ 0 & u_n & a \mathbf{n}^t \\\ \mathbf{0} & a \mathbf{n} & u_n I_{d \times d} \end{array} \right) \]
+\form#360:\[ \tilde{R}_{\mathbf{n}} = \left( \begin{array}{ccccc} 1 &0 & 0 & 0 & 0 \\\ 0& 0 & 1 & 1 & 0 \\\ 0& \mathbf{s} & \mathbf{n} & -\mathbf{n} & \mathbf{t} \\\ \end{array} \right) \quad \mbox{and} \quad \tilde{L}_{\mathbf{n}} = \left( \begin{array}{ccc} 1& 0 & 0 \\\ 0& 0 & \mathbf{s}^t \\\ 0& \frac{1}{2} & \frac{1}{2} \mathbf{n}^t \\\ 0& \frac{1}{2} &-\frac{1}{2} \mathbf{n}^t \\\ 0& 0 & \mathbf{t}^t \end{array} \right). \]
+\form#361:\[ \mbox{{\tt KMAT}} = K_{\mathbf{n}} = \frac{1}{d} {\bf A}_{\mathbf{n}} = \frac{1}{d} {\bf R}_{\mathbf{n}} {\bf \Lambda}_{\mathbf{n}} {\bf L}_{\mathbf{n}} = \frac{1}{d} \left( \begin{array}{ccc} -b_n & 0 & \mathbf{n}^t \\\ \left[-H + \left(\gamma-1\right)k\right] u_n & \gamma u_n - b_n & H\mathbf{n}^t -\left(\gamma -1\right) u_n \mathbf{u}^t \\\ -\mathbf{u} u_n + \left(\gamma -1\right) k\mathbf{n} & \left(\gamma-1\right) \mathbf{n} & \mathbf{u}\mathbf{n} -\left(\gamma-1\right)\mathbf{n}\mathbf{u} + \left(u_n-b_n\right) I_{d\times d} \end{array} \right) \]
+\form#362:\[ \mathbf{K}_{\mathbf{n}}^{\pm} = \frac{1}{d} \mathbf{A}_{\mathbf{n}}^{\pm} \quad\quad \mathbf{A}_{\mathbf{n}}^{\pm} = \frac{1}{d} {\bf R}_{\mathbf{n}} {\bf \Lambda}^{\pm}_{\mathbf{n}} {\bf L}_{\mathbf{n}} = \left( \begin{array}{ccc} a_{11}^{\pm} & a_{12}^{\pm} & a_{13}^{\pm} \\\ a_{21}^{\pm} & a_{22}^{\pm} & \mathbf{a}_{23}^{\pm} \\\ \mathbf{a}_{31}^{\pm} & \mathbf{a}_{32}^{\pm} & A_{33}^{\pm} \\\ \end{array} \right). \]
+\form#363:\begin{eqnarray*} a_{11}^{\pm} &=& \lambda_0^{\pm} + \delta M^2 \left[ \frac{\lambda_{+}^{\pm} + \lambda_{-}^{\pm} }{2} -\lambda_{0}^{\pm} \right] -M_{n} \frac{\lambda_{+}^{\pm} - \lambda_{-}^{\pm}}{2} \\\ a_{12}^{\pm} &=& \frac{\left(\gamma-1\right)}{a^2}\left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] \\\ a_{13}^{\pm}&=& \frac{1}{a} \left[ -\left(\gamma-1\right) \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\\ a_{21}^{\pm} &=& \lambda_0^{\pm} k \left(1-\delta M^2\right) - \lambda_0^{\pm} \left(S^2 + T^2\right) + \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} \left[ k \left(1+\delta M^2\right) - N^2 \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ &=& \left[ k \left(1+\delta M^2\right) - N^2 \right] \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right) + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} M_n \left[ \left(\gamma -1\right) k - H \right]\\\ a_{22}^{\pm} &=& \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} + \delta M^2 \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\gamma-1\right) M_n \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \\\ \mathbf{a}_{23}^{\pm} &=& \left[ N \mathbf{n} - \left( 1 +\delta M^2 \right) \mathbf{u} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right] + \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \left[ \frac{H}{a} \mathbf{n} - \left(\gamma-1\right) \mathbf{u} M_n \right] \\\ \mathbf{a}_{31}^{\pm} &=& \left( \delta M^2 \mathbf{u} - N \mathbf{n} \right) \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm} }{2} -\lambda_0^{\pm} \right) +\left( \delta M^2 a \mathbf{n} - M_n \mathbf{u} \right) \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm} }{2} \right) \\\ \mathbf{a}_{32}^{\pm}&=& \frac{\left(\gamma-1\right)}{a} \left[ \frac{\mathbf{u}}{a} \left( \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right)+ \mathbf{n} \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right] \\\ A_{33}^{\pm}&=& \left[ \mathbf{n}\mathbf{n} - \left(\gamma-1\right)\frac{\mathbf{u}\mathbf{u}}{a^2} \right] \left[ \frac{\lambda_+^{\pm} + \lambda_-^{\pm}}{2} -\lambda_0^{\pm} \right] + \left(\mathbf{u} \mathbf{n} - \left(\gamma-1\right) \mathbf{n} \mathbf{u} \right) \frac{1}{a} \left( \frac{\lambda_+^{\pm} - \lambda_-^{\pm}}{2} \right) + \lambda_0^{\pm} I_{d\times d} \end{eqnarray*}
+\form#364:\begin{eqnarray*} N \mathbf{n} + S \mathbf{s} + T \mathbf{t} &=& \mathbf{u} \\\ N^2 + S^2 + T^2 &=& 2 k \\\ \mathbf{n}\mathbf{n} + \mathbf{s}\mathbf{s} + \mathbf{t}\mathbf{t} &=& I_{d\times d} \end{eqnarray*}
+\form#365:\[ \mathbf{L}_{\mathbf{n}} = \left( \begin{array}{ccc} 1-\frac{(\gamma-1)}{2} M^2 & -\frac{(\gamma-1)}{a^2} & \frac{(\gamma-1)}{a^2} \mathbf{u}^t \\\ -\mathbf{u} \cdot \mathbf{s} / \rho & 0 & \mathbf{s}^t / \rho \\\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k - \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t + \mathbf{n}^t \right] \\\ \frac{1}{2 \rho} \left[ \frac{(\gamma-1)}{a} k + \mathbf{u} \cdot \mathbf{n} \right] & \frac{1}{2 \rho} \frac{(\gamma-1)}{a} & \frac{1}{2 \rho} \left[ -\frac{(\gamma-1)}{a} \mathbf{u}^t - \mathbf{n}^t \right] \\\ -\mathbf{u} \cdot \mathbf{t} / \rho & 0 & \mathbf{t}^t / \rho \end{array} \right) \quad\quad \mathbf{R}_{\mathbf{n}} = \left( \begin{array}{ccccc} 1 & 0 & \frac{\rho}{a} & \frac{\rho}{a} & 0 \\\ k & \rho \mathbf{u} \cdot \mathbf{s} & \rho \left[ \frac{H}{a} + \mathbf{u} \cdot \mathbf{ n} \right] & \rho \left[ \frac{H}{a} - \mathbf{u} \cdot \mathbf{ n} \right] & \rho \mathbf{ u} \cdot \mathbf{ t} \\\ \mathbf{ u} & \rho \mathbf{s} & \rho \left( \frac{\mathbf{ u}}{a} + \mathbf{ n} \right) & \rho \left( \frac{\mathbf{u}}{a} - \mathbf{ n} \right) & \rho \mathbf{t} \end{array} \right) \]
+\form#366:\begin{eqnarray*} RHS &=& \left(K^{n+1}\right)^{-1} \left[K^{n}U^{n}+R\left(U^n\right)\right] - U^n \\\ &=& \left\{ \left[ \left(K^{n+1}\right)^{-1}K^n-I\right]U^n+\left(K^{n+1}\right)^{-1}R\left(U^n\right)\right\} \\\ &=& \left\{ \left(K^{n+1}\right)^{-1}K^n \left[U^n+\left(K^n\right)^{-1}R\left(U^n\right)\right] - U^n \right\} \\\ &=& \left(K^{n+1}\right)^{-1}K^n \left(U^n + RHS\right) - U_n \\\ &=& \left[\left(K^{n+1}\right)^{-1}K^n -I\right]U^n + \left(K^{n+1}\right)^{-1} \,K^n\, RHS \end{eqnarray*}
+\form#367:\[ - \frac{1}{d} \mathbf{n}_{{\tt KVERT}}^{{\tt IELEM}} \cdot \mathbf{G} \]
+\form#368:\[ - \frac{1}{d} \mathbf{n}_{k}^{ie} \cdot \mathbf{G} \]
+\form#369:\[ -\frac{1}{d} \mathbf{n}_i^T \cdot \mathbf{G}^T \]
+\form#370:\[ {\tt GRAD_PRIM} = \begin{array}{ccc} \rho_x & \rho_x & \rho_x \\ p_x & p_x & p_x \\ u_x & u_x & u_x \\ v_x & v_x & v_x \\ w_x & w_x & w_x \end{array} \]
+\form#371:\[ \mathbf{G} = \left( \begin{array}{c} 0 \\ \mathbf{u} \cdot \mathbf{\tau} \\ \mathbf{\tau} \end{array} \right) \]
+\form#372:\[ {\tt TAU} = \mu \left[ \nabla \mathbf{u} + \left(\nabla \mathbf{u}\right)^t \right] + \lambda \left(\nabla \cdot \mathbf{u}\right) \]
+\form#373:\[ \nabla \mathbf{u} = \frac{1}{d\,V^T} \sum_{j=1}^{d+1} \mathbf{u}_j \mathbf{n}_j \]
+\form#374:\[ {\tt GRAD\_PRIM} = \left( \begin{array}{ccc} \rho_x & \rho_x & \rho_x \\ p_x & p_x & p_x \\ u_x & u_x & u_x \\ v_x & v_x & v_x \\ w_x & w_x & w_x \end{array} \right) \]
+\form#375:\[ \mathbf{G}^T = \left( \begin{array}{c} 0 \\ \mathbf{u} \cdot \mathbf{\tau} \\ \mathbf{\tau} \end{array} \right) \]
+\form#376:\begin{eqnarray*} {\tt TAU} &=& \mu \left[ \nabla \mathbf{u} + \left(\nabla \mathbf{u}\right)^t \right] \\ &=& \left( \begin{array}{ccc} 2\mu\,u_x +\lambda\,{\tt DIVV} & \mu\left(u_y+v_x\right) & \mu\left(u_z+w_x\right) \end{array} \right) \end{eqnarray*}
+\form#377:$\left(\rho,p,u,v,w\right)$
+\form#378:${\tt GRAD\_PRIM}$
+\form#379:\begin{eqnarray*} {\tt TAU} &=& \mu \left[ \nabla \mathbf{u} + \left(\nabla \mathbf{u}\right)^t \right] \\ &=& \left( \begin{array}{ccc} 2\mu\,u_x +\lambda\,{\tt DIVV} & \mu\left(u_y+v_x\right) & \mu\left(u_z+w_x\right) \\ \mu\left(v_x+u_y\right) & 2\mu\,v_y +\lambda\,{\tt DIVV} & \mu\left(v_z+w_y\right) \\ \mu\left(w_x+u_z\right) & \mu\left(w_y+v_z\right) & 2\mu\,w_z +\lambda\,{\tt DIVV} \end{array} \right) \end{eqnarray*}
+\form#380:${\tt DIVV} = u_x + v_y + w_z$
+\form#381:\begin{eqnarray*} {\tt TAU} &=& \mu \left[ \nabla \mathbf{u} + \left(\nabla\mathbf{u}\right)^t \right] + \lambda \left(\nabla \cdot \mathbf{u} \right)\\ &=& \left( \begin{array}{ccc} 2\mu\,u_x +\lambda\,{\tt DIVV} & \mu\left(u_y+v_x\right) & \mu\left(u_z+w_x\right) \\ \mu\left(v_x+u_y\right) & 2\mu\,v_y +\lambda\,{\tt DIVV} & \mu\left(v_z+w_y\right) \\ \mu\left(w_x+u_z\right) & \mu\left(w_y+v_z\right) & 2\mu\,w_z +\lambda\,{\tt DIVV} \end{array} \right) \end{eqnarray*}
+\form#382:\[ {\tt GFLUX(:,IVERT} = -\frac{1}{d} \mathbf{n}_i^T \cdot \mathbf{G}^T \]
+\form#383:$\mu = {\tt VISCL} + {\tt VISCT}$
+\form#384:${\tt TAU}$
+\form#385:\begin{eqnarray*} {\tt TAU} &=& \mu \left[ \nabla \mathbf{u} + \left(\nabla\mathbf{u}\right)^t \right] + \lambda \left(\nabla \cdot \mathbf{u} \right)\\ &=& \left( \begin{array}{ccc} 2\,\mu\,u_x +\lambda\,{\tt DIVV} & \mu\left(u_y+v_x\right) & \mu\left(u_z+w_x\right) \\ \mu\left(v_x+u_y\right) & 2\,\mu\,v_y +\lambda\,{\tt DIVV} & \mu\left(v_z+w_y\right) \\ \mu\left(w_x+u_z\right) & \mu\left(w_y+v_z\right) & 2\,\mu\,w_z +\lambda\,{\tt DIVV} \end{array} \right) \end{eqnarray*}
+\form#386:$\lambda = -2/3\,\mu$
+\form#387:\[ \nabla q = -\frac{1}{\gamma-1} \left( \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T} \right) \; \nabla a^2 \]
+\form#388:\[ \nabla a^2 = \gamma \nabla \left( \frac{p}{\rho} \right) = \frac{1}{\rho} \left[\gamma\,\nabla p - a^2\,\nabla\rho\right] \]
+\form#389:\[ {\tt GFLUX(:,IVERT)} = -\frac{1}{d} \mathbf{n}_i^T \cdot \mathbf{G}^T \]
+\form#390:\[ \mathbf{G}^T = \left( \begin{array}{c} 0 \\ \mathbf{u} \cdot \mathbf{\tau} + \nabla q \\ \mathbf{\tau} \end{array} \right) \]
+\form#391:\[ \nabla a^2 = \gamma \nabla \left( \frac{p}{\rho} \right) = \frac{1}{\hat{\rho}} \left[\gamma\,\nabla p - \hat{a}^2\,\nabla\rho\right] \]
+\form#392:\[ {\tt CNST} = \frac{1}{\left(\gamma-1\right)\hat{\rho}} \left( \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T} \right) \]
+\form#393:${\tt TAU(:,4)}$
+\form#394:\[ {\tt TAU(:,4)} = {\tt CNST} \left[\gamma\,\nabla p - \hat{a}^2\,\nabla\rho\right] + \hat{\mathbf{u}} \cdot \mathbf{\tau} \]
+\form#395:$\hat{\mathbf{u}}$
+\form#396:${UAVG(3:5)}$
+\form#397:${UAVG}$
+\form#398:$\left(\hat{\rho},\hat{H},\hat{u},\hat{v},\hat{w}\right)$
+\form#399:\begin{eqnarray*} \hat{\rho} &=& \hat{Z}_1^2 \\ \hat{H} &=& \hat{Z}_2/\hat{Z}_1 \\ \end{eqnarray*}
+\form#400:\begin{eqnarray*} \hat{\rho} &=& \widehat{Z}_1^2 \\ \hat{H} &=& \widehat{Z}_2/\widehat{Z}_1 \\ \hat{u} &=& \widehat{Z}_3/\widehat{Z}_1 \\ \hat{v} &=& \widehat{Z}_4/\widehat{Z}_1 \\ \hat{w} &=& \widehat{Z}_5/\widehat{Z}_1 \end{eqnarray*}
+\form#401:\[ \nabla q = \frac{1}{\gamma-1} \left( \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T} \right) \; \nabla a^2 \]
+\form#402:\[ \hat{Z} = \frac{1}{d+1} \sum_{j=1}^{d+1} Z_j \]
+\form#403:\[ \hat{\rho} = \widehat{Z}_1^2, \; \hat{H} = \widehat{Z}_2/\widehat{Z}_1 \; \hat{u} = \widehat{Z}_3/\widehat{Z}_1 \; \hat{v} = \widehat{Z}_4/\widehat{Z}_1 \; \hat{w} = \widehat{Z}_5/\widehat{Z}_1 \]
+\form#404:\[ \hat{\rho} = \widehat{Z}_1^2, \quad \hat{H} = \widehat{Z}_2/\widehat{Z}_1, \quad \hat{u} = \widehat{Z}_3/\widehat{Z}_1, \quad \hat{v} = \widehat{Z}_4/\widehat{Z}_1, \quad \hat{w} = \widehat{Z}_5/\widehat{Z}_1 \]
+\form#405:\[ {\tt CNST} = -\frac{1}{Re} \]
+\form#406:$\nu$
+\form#407:\[ \frac{\Delta t}{V_i} \le \frac{\nu}{d^2 \,V^T} \sum_{j=1}^{d+1} \mathbf{n}_i \cdot \mathbf{n}_j \]
+\form#408:\[ \frac{\Delta t}{V_i} \le \frac{1}{d^2 \, \mbox{Re} \, V^T} \sum_{j=1}^{d+1} \mathbf{n}_i \cdot \mathbf{n}_j \]
+\form#409:\[ -\frac{1}{d} \mathbf{n}_i^T \cdot \mathbf{G}^T = \sum_{j=1}^{d+1} D_{ij} U_j \]
+\form#410:$U_j$
+\form#411:\[ D_{ij}^T = \frac{1}{d^2 \, V^T \, \mbox{Re}} \left[ D_{ij}^{\tau} + D_{ij}^{\nabla q} \right] 2 \left( \frac{\partial U}{\partial Z} \right)_{Z_j}. \]
+\form#412:\[ D_{ij}^{\tau} = \frac{1}{\widehat{\sqrt{\rho}}} \left( \begin{array}{ccc} 0 & 0 & {\bf 0} \\ - {\bf d}_{ij} \cdot \widehat{\mathbf{u}} & 0 & {\bf d}_{ij}^t \\ -D_{ij} \cdot \widehat{\mathbf{u}} & 0 & D_{ij} \end{array} \right), \qquad D_{ij}^{\nabla q} = \frac{1}{\widehat{\sqrt{\rho}}\, \mbox{Pr}} \left( \begin{array}{ccr} 0 & 0 & {\bf 0}^t \\ \widehat{H} - \frac{2 \widehat{a}^2}{\gamma - 1} & 1 & -\widehat{\mathbf{u}} \\ {\bf 0} & {\bf 0} & {\bf 0} \end{array} \right) \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) \]
+\form#413:\[ D_{ij}^{\tau} = \frac{1}{\widehat{\sqrt{\rho}}} \left( \begin{array}{ccc} 0 & 0 & {\bf 0} \\ - {\bf d}_{ij} \cdot \hat{\mathbf{u}} & 0 & {\bf d}_{ij}^t \\ -D_{ij} \cdot \hat{\mathbf{u}} & 0 & D_{ij} \end{array} \right), \qquad D_{ij}^{\nabla q} = \frac{1}{\widehat{\sqrt{\rho}}\, \mbox{Pr}} \left( \begin{array}{ccr} 0 & 0 & {\bf 0}^t \\ \hat{H} - \hat{a}^2/\delta & 1 & -\hat{\mathbf{u}} \\ {\bf 0} & {\bf 0} & {\bf 0} \end{array} \right) \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) \]
+\form#414:\[ \hat{D}_{ij} = \left[ \mu \left( \mathbf{n}_j \mathbf{n}_i \right) + \mu \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) I + \lambda \left( \mathbf{n}_i \mathbf{n}_j \right) \right] \]
+\form#415:\[ {\bf d}_{ij} = \mu \left( \hat{\mathbf{u}} \cdot \mathbf{n}_j \right) \mathbf{n}_i + \mu \left( \mathbf{n}_j \cdot \mathbf{n}_i \right) \hat{\mathbf{u}} + \lambda \left( \hat{\mathbf{u}} \cdot \mathbf{n}_i \right) \mathbf{n}_j \]
+\form#416:\[ \tilde{D}_{ij} = \left[ \mu \left( \mathbf{n}_j \mathbf{n}_i \right) + \mu \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) I + \lambda \left( \mathbf{n}_i \mathbf{n}_j \right) \right] \]
+\form#417:${\bf d}_{ij}$
+\form#418:${\tt WORK(2,3:5)}$
+\form#419:$\tilde{D}_{ij}$
+\form#420:${\tt WORK(3:5,3:5)}$
+\form#421:$-{\bf d}_{ij}\cdot\hat{\mathbf{u}}$
+\form#422:${\tt WORK(2,1)}$
+\form#423:$-\tilde{D}_{ij}\cdot\hat{\mathbf{u}}$
+\form#424:${\tt WORK(3:5,1)}$
+\form#425:\[ D_{ij}^{\tau} = \frac{1}{\widehat{\sqrt{\rho}}} \left( \begin{array}{ccc} 0 & 0 & {\bf 0} \\ - {\bf d}_{ij} \cdot \hat{\mathbf{u}} & 0 & {\bf d}_{ij}^t \\ -\tilde{D}_{ij} \cdot \hat{\mathbf{u}} & 0 & \tilde{D}_{ij} \end{array} \right), \qquad D_{ij}^{\nabla q} = \frac{1}{\widehat{\sqrt{\rho}}\, \mbox{Pr}} \left( \begin{array}{ccr} 0 & 0 & {\bf 0}^t \\ \hat{H} - \hat{a}^2/\delta & 1 & -\hat{\mathbf{u}} \\ {\bf 0} & {\bf 0} & {\bf 0} \end{array} \right) \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) \]
+\form#426:$\tilde{D}_{ij} = \tilde{D}^{t}_{ji}$
+\form#427:$D_{ij}^{\tau}$
+\form#428:${\tt TEMPA} = \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T}$
+\form#429:${\tt TEMPB} = \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T} \; \mathbf{n}_i \cdot \mathbf{n}_j$
+\form#430:${\tt TEMPC} = \frac{1}{d^2\,\hat{Z_1}\,\mbox{Re}\,V^T}$
+\form#431:${\tt TEMPB} = {\tt TEMPA} \left( \mathbf{n}_i \cdot \mathbf{n}_j\right)$
+\form#432:\[ {\tt TEMPC} = \frac{1}{d^2\,\widehat{\sqrt{\rho}}\,\mbox{Re}\,V^T} \]
+\form#433:$\widehat{\sqrt{\rho}}$
+\form#434:${\tt WORK}$
+\form#435:\[ D_{ij}^{\tau} = \frac{1}{\widehat{\sqrt{\rho}}} \left( \begin{array}{ccc} 0 & 0 & {\bf 0} \\ - {\bf d}_{ij} \cdot \hat{\mathbf{u}} & 0 & {\bf d}_{ij}^t \\ -\tilde{D}_{ij} \cdot \hat{\mathbf{u}} & 0 & \tilde{D}_{ij} \end{array} \right), \]
+\form#436:\[ D_{ij}^{\nabla q} = \frac{1}{\widehat{\sqrt{\rho}}\,\left(\frac{\mu}{\mbox{Pr}}+\frac{\mu}{\mbox{Pr}}\right) \left( \begin{array}{ccr} 0 & 0 & {\bf 0}^t \\ \hat{H} - \hat{a}^2/\delta & 1 & -\hat{\mathbf{u}} \\ {\bf 0} & {\bf 0} & {\bf 0} \end{array} \right) \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) \]
+\form#437:\[ D_{ij}^{\nabla q} = \frac{1}{\widehat{\sqrt{\rho}}}\,\left(\frac{\mu}{\mbox{Pr}}+\frac{\mu_T}{\mbox{Pr}_T}\right) \left( \begin{array}{ccr} 0 & 0 & {\bf 0}^t \\ \hat{H} - \hat{a}^2/\delta & 1 & -\hat{\mathbf{u}} \\ {\bf 0} & {\bf 0} & {\bf 0} \end{array} \right) \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) \]
+\form#438:\[ \nabla q = \frac{1}{\gamma-1} \; k \; \nabla a^2 \]
+\form#439:\[ k = \left( \frac{\mu}{\mbox{Pr}} + \frac{\mu_T}{\mbox{Pr}_T} \right) = {\tt VISCL/PRANDTL+VISCT/TPR} \]
+\form#440:\[ {\tt CNST} = \frac{k}{\left(\gamma-1\right)\hat{\rho}} \]
+\form#441:$j$
+\form#442:\[ \frac{\Delta t}{V_i} \le \frac{1}{\sum d_{ij}} \quad\quad\mbox{where}\quad\quad d_{ij} = \frac{\nu}{d^2 \,V^T} \sum_{j=1}^{d+1} \mathbf{n}_i \cdot \mathbf{n}_j \]
+\form#443:$\nu = \mu/\hat{\rho}$
+\form#444:\[ d_{ij} = \frac{1}{d^2 \, \mbox{Re} \, V^T} \sum_{j=1}^{d+1} \mathbf{n}_i \cdot \mathbf{n}_j \]
+\form#445:\[ \frac{\Delta t}{V_i} \le \frac{1}{\sum d_{ij}} \quad\quad\mbox{where}\quad\quad d_{ij} = \frac{\nu}{d^2 \,V^T} \mathbf{n}_i \cdot \mathbf{n}_j \]
+\form#446:\[ d_{ij} = \frac{1}{d^2 \, \mbox{Re} \, V^T} \mathbf{n}_i \cdot \mathbf{n}_j \]
+\form#447:\[ D_{ij}^{\nabla q} = \frac{k}{\widehat{\sqrt{\rho}}}\, \left( \begin{array}{ccr} 0 & 0 & {\bf 0}^t \\ \hat{H} - \hat{a}^2/\delta & 1 & -\hat{\mathbf{u}} \\ {\bf 0} & {\bf 0} & {\bf 0} \end{array} \right) \left( \mathbf{n}_i \cdot \mathbf{n}_j \right) \]
+\form#448:$D_{ij}^{\nabla q}$
+\form#449:$\mathbf{n}_i \cdot \mathbf{n}_j$
+\form#450:$D_{ij}$

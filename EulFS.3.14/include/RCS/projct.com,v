@@ -1,0 +1,64 @@
+head     1.2;
+access   abonfi;
+symbols  ;
+locks    abonfi:1.2; strict;
+comment  @# @;
+
+
+1.2
+date     99.09.02.08.04.40;  author aldo;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     97.12.01.14.43.43;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Common block for projectors
+„
+@
+
+
+1.2
+log
+@dimensions have been changed w.r.t. to previous versions
+@
+text
+@      DOUBLE PRECISION PPOSU(25),PNEGU(25),
+     &                 PPOSZ(25),PNEGZ(25)
+      COMMON/COMPRJ/PPOSU,PNEGU,PPOSZ,PNEGZ
+C
+C     Applicability: KAN = -2,+2,-4,+4
+C
+C     Common block for projectors
+C     projectors are used for inviscid boundary conditions
+C
+C     projectors are defined as:
+C
+C     P^{\pm} = 1/2 * R * ( I \pm sign( 1., lambda ) ) * L
+C
+C     where lambda are the eigenvalues of the jacobian matrix
+C     A = R \Lambda L
+C     of the problem being solved and R,L the corresponding
+C     right and left eigenvectors.
+C
+C     PPOS(NEG)U PPOS(NEG)Z are the projectors in conserved
+C     and parameter vector, respectively. For incompressible 
+C     flows these coincide.
+C
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+      DOUBLE PRECISION PPOSU(5,5),PNEGU(5,5),
+     &                 PPOSZ(5,5),PNEGZ(5,5)
+@

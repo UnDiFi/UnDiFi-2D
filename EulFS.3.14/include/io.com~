@@ -1,0 +1,15 @@
+      INTEGER      NOUT,IWUNIT,ITIM1,ITIM2,IHST1,IHST2,IHST3
+      COMMON/IODEV/NOUT,IWUNIT,ITIM1,ITIM2,IHST1,IHST2,IHST3
+C
+C	NOUT   is the OUTPUT device number where processor related
+C              info are written
+C	IWUNIT is the OUTPUT device number where global info are
+C              written
+C
+C       ITIM1  is the unit for timing
+C       ITIM2  is the unit for timing
+C       IHST1  is the unit for convergence history
+C       IHST2  is the unit for convergence history
+C       IHST3  is the unit for convergence history
+C
+C

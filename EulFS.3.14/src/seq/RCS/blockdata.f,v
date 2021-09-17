@@ -1,0 +1,863 @@
+head	1.33;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.33
+	release3_13_0:1.33
+	release3_12_0:1.33
+	release3_11_0:1.33
+	release3_10_0:1.33
+	release3_8_0:1.33
+	release3_7_1:1.33
+	release3_7_0:1.33
+	release3_4_5:1.33
+	release3_4_4:1.33
+	release3_4_3:1.33
+	release3_4_2:1.33
+	release3_4_1:1.32
+	release3_4_0:1.32
+	release3_3_5:1.32
+	release3_3_4:1.31
+	release3_3_3:1.31
+	release3_3_2:1.31
+	release3_3_1:1.31
+	release3_3_0:1.30;
+locks
+	abonfi:1.33; strict;
+comment	@c @;
+
+
+1.33
+date	2013.07.18.11.23.42;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2013.03.28.10.25.17;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2013.01.26.11.49.51;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2013.01.24.07.33.13;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2012.03.29.11.29.21;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2011.09.16.07.22.00;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2010.10.04.12.17.18;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2009.06.11.09.01.31;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2008.02.25.09.34.46;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2005.12.23.10.04.59;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2005.10.22.11.04.54;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2004.08.13.14.57.31;	author aldo;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2004.08.13.14.56.46;	author aldo;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2003.08.08.04.00.56;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2001.01.20.13.49.58;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2000.12.06.13.34.47;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2000.11.16.13.06.09;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.10.20.10.46.03;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.10.20.08.30.14;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.08.18.13.48.45;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.06.23.16.44.25;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.03.31.08.57.30;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.12.03.20.15.27;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.09.03.11.00.08;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.08.22.06.58.11;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.08.13.13.22.58;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.08.07.13.28.29;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.04.21.21.08.24;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.02.09.07.37.01;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.02.15.31.56;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.00.52.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Blockdata subroutine
+@
+
+
+1.33
+log
+@IALE has been renamed into IOALE
+@
+text
+@      BLOCK DATA
+C
+      IMPLICIT NONE
+C
+C BLOCK DATA for EulFS
+C
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'implicit.h'
+      INTEGER V3,VN,N2,N3,LENB
+      PARAMETER(V3=MAXNOFVAR*3,VN=MAXNOFVAR*NMAX,N2=2*MAXNOFVAR,
+     &N3=MAXTIMLEVS*MAXNOFVAR,LENB=(MAXNOFVERT-1)*(MAXNOFEQN**2))
+C
+C     .. Commons ..
+C
+      INCLUDE 'bnd.com'
+      INCLUDE 'io.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'transf.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'verbose.com'
+      INCLUDE 'three.com'
+      INTEGER LXX(30)
+      COMMON/NLOC/LXX
+C
+C     .. Local Scalars ..
+C
+      INTEGER I,J
+C
+C     .. Executable Statements ..
+C
+C
+C============================================================
+C       INITIALIZE LABELLED COMMONS
+C============================================================
+C
+C---------- COMMON /io.com/
+C
+      DATA IHST1,IHST2,IHST3,IHST4,ITIM1,IPROBE/1,2,3,116,4,55/
+C
+C---------- COMMON /VERBOSE/
+C
+      DATA IVERBOSE/0/
+C
+C---------- COMMON /CONV/
+C
+      DATA RESMAX,RESL2,DELMAX,DELL2,RESL20,RESMAX0,CFL,CFLMAX,TOLER,
+     &OMEGA/N2*ZERO,N2*ZERO,N2*ZERO,N2*ZERO,8*ONE,ZERO,ONE/
+      DATA INMAX,INDEL,NITER,ITMAX,IVCNVG,ISTMP,ISTART,IBAK
+     &/N2*1,N2*1,0,5*1/
+C
+C     The right eigenvectors matrix is initialized to the identity matrix
+C
+      DATA (dUdV(J) , J=1,5   ) / ONE,ZERO,ZERO,ZERO,ZERO/
+      DATA (dUdV(J) , J=6,10  ) / ZERO,ONE,ZERO,ZERO,ZERO/
+      DATA (dUdV(J) , J=11,15 ) / ZERO,ZERO,ONE,ZERO,ZERO/
+      DATA (dUdV(J) , J=16,20 ) / ZERO,ZERO,ZERO,ONE,ZERO/
+      DATA (dUdV(J) , J=21,25 ) / ZERO,ZERO,ZERO,ZERO,ONE/
+C
+      DATA (dVdZ(J) , J=1,5   ) / ONE,ZERO,ZERO,ZERO,ZERO/
+      DATA (dVdZ(J) , J=6,10  ) / ZERO,ONE,ZERO,ZERO,ZERO/
+      DATA (dVdZ(J) , J=11,15 ) / ZERO,ZERO,ONE,ZERO,ZERO/
+      DATA (dVdZ(J) , J=16,20 ) / ZERO,ZERO,ZERO,ONE,ZERO/
+      DATA (dVdZ(J) , J=21,25 ) / ZERO,ZERO,ZERO,ZERO,ONE/
+C
+      DATA DZDU/LENB*ZERO/ 
+C
+C---------- COMMON /THREE/
+C
+      DATA ZAVG/N3*ZERO/
+      DATA UAVG/NMAX*ZERO/
+C
+C---------- COMMON /FIX/
+C
+caldo DATA STAGFIX / ONE /
+C
+C---------- COMMON /NLOC/
+C
+      DATA LXX/30*1/
+C
+C---------- COMMON /bnd/
+C
+      DATA (IMUNIT(J),J=0,NCOLOR) / 11,12,13,14,15,16,17,18,19,20,21,22,
+     1                              23,24,25,26,27,28,29,30,31,32,33,34,
+     2                              35,36,37,38,39,40,41,42,43,44,45,46,
+     3                              47,48,49,50,51,52,53,54,100,101,102,
+     4                              103,104,105,106/
+      DATA (IFUNIT(J),J=0,NCOLOR) / 99,98,97,96,95,94,93,92,91,90,89,88,
+     1                              87,86,85,84,83,82,81,80,79,78,77,76,
+     2                              75,74,73,72,71,70,69,68,67,66,65,64,
+     4                              63,62,61,60,59,58,57,56,107,108,109,
+     4                              110,111,112,113/
+      DATA (MCOLOR(J),J=0,NCOLOR) / 51*0 /
+      DATA (SCOLOR(J),J=0,NCOLOR) / 51*ZERO /
+      DATA (CBTYPE(J),J=0,NBTYPE) /'PERIODIC            ',
+     1'SUPERSONIC INLET    ','SUBSONIC OUTLET     ',
+     2'SUPERSONIC OUTLET   ','INVISCID WALL       ',
+     3'FAR FIELD           ','VISCOUS WALL        ',
+     4'PRESCRIBED VELOCITY ','SUBSONIC INLET      ',
+     5'X SYMMETRY          ','Y SYMMETRY          ',
+     6'Z SYMMETRY          ','PRESCIBED FLUX      '/
+      DATA IOALE/115/
+C
+C
+C----6----- COMMON /impsol/
+C
+      DATA TIMEIMPL,PICARD,NEWTON/2*.TRUE.,.FALSE./
+C
+C---------- COMMON /nboun/
+C
+      DATA NPOIN1,NPOIN6,NPOIN7/3*0/
+C
+      END
+@
+
+
+1.32
+log
+@added unit IHST4 where the integral of the conserved variables
+is recorded
+@
+text
+@d106 1
+a106 1
+      DATA IALE/115/
+@
+
+
+1.31
+log
+@changed the name of an included header file
+@
+text
+@d43 1
+a43 1
+      DATA IHST1,IHST2,IHST3,ITIM1,IPROBE/1,2,3,4,55/
+@
+
+
+1.30
+log
+@Initializes the IALE flag
+@
+text
+@d12 3
+a14 2
+      INCLUDE 'constants'
+      INTEGER V3,VN,N2,N3
+d16 1
+a16 1
+     &N3=MAXTIMLEVS*MAXNOFVAR)
+a23 1
+      INCLUDE 'implicit.h'
+d70 1
+a70 1
+      DATA DZDU/100*ZERO/ 
+@
+
+
+1.29
+log
+@new pointer for grid velocities
+@
+text
+@d106 1
+@
+
+
+1.28
+log
+@new pointers have been added
+@
+text
+@d27 1
+a27 1
+      INTEGER LXX(29)
+d83 1
+a83 1
+      DATA LXX/29*1/
+@
+
+
+1.27
+log
+@extended range of boundary patches
+@
+text
+@d27 1
+a27 1
+      INTEGER LXX(27)
+d83 1
+a83 1
+      DATA LXX/27*1/
+d105 1
+a105 1
+     6'Z SYMMETRY          '/
+@
+
+
+1.26
+log
+@added OMEGA
+@
+text
+@d27 1
+a27 1
+      INTEGER LXX(25)
+d43 1
+a43 1
+      DATA IHST1,IHST2,IHST3,ITIM1/7,8,9,10/
+d56 1
+a56 1
+C	The right eigenvectors matrix is initialized to the identity matrix
+d83 1
+a83 1
+      DATA LXX/25*1/
+d87 12
+a98 8
+      DATA (IMUNIT(J),J=0,NCOLOR) / 20,21,22,23,24,25,26,27,28,29,30,31,
+     >                              32,33,34,35,36,37,38,39,40,41,42,43,
+     >                              44,45,46,47,48,49,50,51,52,53,54/
+      DATA (IFUNIT(J),J=0,NCOLOR) / 60,61,62,63,66,67,66,67,68,69,70,71,
+     >                              72,77,78,75,76,77,78,79,80,81,82,87,
+     >                              88,89,86,87,88,89,90,91,92,93,98/
+      DATA (MCOLOR(J),J=0,NCOLOR) / 35*0 /
+      DATA (SCOLOR(J),J=0,NCOLOR) / 35*ZERO /
+@
+
+
+1.25
+log
+@add support for more boundary patches
+@
+text
+@d13 3
+a15 2
+      INTEGER V3,VN,N2
+      PARAMETER(V3=VMAX*3,VN=VMAX*NMAX,N2=2*NMAX)
+d26 1
+a26 1
+      INCLUDE 'three'
+d49 1
+a49 1
+C---------- COMMON /FOUR/
+d51 2
+a52 2
+      DATA RESMAX,RESL2,DELMAX,DELL2,RESL20,RESMAX0,CFL,CFLMAX,TOLER
+     &/N2*ZERO,N2*ZERO,N2*ZERO,N2*ZERO,8*ONE,ZERO/
+d74 1
+a74 1
+      DATA ZAVG/NMAX*ZERO/
+@
+
+
+1.24
+log
+@an included common has been renamed
+@
+text
+@d87 7
+a93 5
+     >                              32,33,34/
+      DATA (IFUNIT(J),J=0,NCOLOR) / 40,41,42,43,44,45,46,47,48,49,50,51,
+     >                              52,53,54/
+      DATA (MCOLOR(J),J=0,NCOLOR) / 15*0 /
+      DATA (SCOLOR(J),J=0,NCOLOR) / 15*ZERO /
+@
+
+
+1.23
+log
+@add support for writing mass flux to a file
+@
+text
+@d18 1
+a18 1
+      INCLUDE 'bnd'
+@
+
+
+1.22
+log
+@implemented c-lines
+@
+text
+@d88 2
+@
+
+
+1.21
+log
+@add a new pointer (LMEDIAN) in nloc include file
+@
+text
+@d26 1
+a26 1
+      INTEGER LXX(19)
+d42 1
+a42 1
+      DATA IHST1,IHST2,IHST3,ITIM1,ITIM2/7,8,9,10,11/
+d82 1
+a82 1
+      DATA LXX/19*1/
+@
+
+
+1.20
+log
+@add X,Y,Z SYMMETRIC flags for corresponding bcs
+@
+text
+@d26 1
+a26 1
+      INTEGER LXX(18)
+d82 1
+a82 1
+      DATA LXX/18*1/
+@
+
+
+1.19
+log
+@type 0 boundary faces has become "periodic"
+@
+text
+@d90 1
+a90 2
+      DATA (CBTYPE(J),J=0,NBTYPE) /
+     >'PERIODIC            ',
+d92 5
+a96 3
+     3'SUPERSONIC OUTLET   ','INVISCID WALL       ',
+     5'FAR FIELD           ','VISCOUS WALL        ',
+     7'PRESCRIBED VELOCITY ','SUBSONIC INLET      '/
+d99 1
+a99 1
+C---------- COMMON /impsol/
+@
+
+
+1.18
+log
+@room for now pointer LPTOT
+@
+text
+@d91 1
+a91 1
+     >'***NOT IMPLEMENTED**',
+@
+
+
+1.17
+log
+@add an entry to the common pointer
+@
+text
+@d26 1
+a26 1
+      INTEGER LXX(17)
+d82 1
+a82 1
+      DATA LXX/17*1/
+@
+
+
+1.16
+log
+@add UNITs to write aerodynamic data
+@
+text
+@d26 1
+a26 1
+      INTEGER LXX(16)
+d82 1
+a82 1
+      DATA LXX/16*1/
+@
+
+
+1.15
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d40 1
+a40 1
+C---------- COMMON /***/
+d86 2
+@
+
+
+1.14
+log
+@correct length for the strings
+@
+text
+@d19 1
+a19 1
+C     INCLUDE 'fix'
+d39 4
+@
+
+
+1.13
+log
+@reflect changes in some included files
+@
+text
+@d85 5
+a89 5
+     >'***NOT IMPLEMENTED***',
+     1'SUPERSONIC INLET     ','SUBSONIC OUTLET      ',
+     3'SUPERSONIC OUTLET    ','INVISCID WALL        ',
+     5'FAR FIELD            ','VISCOUS WALL         ',
+     7'PRESCRIBED VELOCITY  ','SUBSONIC INLET       '/
+@
+
+
+1.12
+log
+@minor changes
+@
+text
+@d19 1
+a19 1
+      INCLUDE 'fix'
+d21 1
+d51 16
+a68 21
+c	The right eigenvectors matrix is initialized to the identity matrix
+c
+      DATA (dUdV(1,J) , J=1,10 ) / ONE,ZERO,ZERO,ZERO,ZERO,ZERO,
+     &				ZERO,ZERO,ZERO,ZERO /
+      DATA (dUdV(2,J) , J=1,10 ) / ZERO,ONE,ZERO,ZERO,ZERO,ZERO,
+     &				ZERO,ZERO,ZERO,ZERO /
+      DATA (dUdV(3,J) , J=1,10 ) / ZERO,ZERO,ONE,ZERO,ZERO,ZERO,
+     &				ZERO,ZERO,ZERO,ZERO /
+      DATA (dUdV(4,J) , J=1,10 ) / ZERO,ZERO,ZERO,ONE,ZERO,ZERO,
+     &				ZERO,ZERO,ZERO,ZERO /
+      DATA (dUdV(5,J) , J=1,10 ) / ZERO,ZERO,ZERO,ZERO,ONE,ZERO,
+     &				ZERO,ZERO,ZERO,ZERO /
+      DATA (dUdV(6,J) , J=1,10 ) / ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,
+     &				ZERO,ZERO,ZERO,ZERO /
+C
+      DATA (dVdU(1,J) , J=1,5 ) / ONE,ZERO,ZERO,ZERO,ZERO/
+      DATA (dVdU(2,J) , J=1,5 ) / ZERO,ONE,ZERO,ZERO,ZERO/
+      DATA (dVdU(3,J) , J=1,5 ) / ZERO,ZERO,ONE,ZERO,ZERO/
+      DATA (dVdU(4,J) , J=1,5 ) / ZERO,ZERO,ZERO,ONE,ZERO/
+      DATA (dVdU(5,J) , J=1,5 ) / ZERO,ZERO,ZERO,ZERO,ONE/
+C
+d74 1
+a74 1
+      DATA STAGFIX / ONE /
+@
+
+
+1.11
+log
+@add a new pointer in common NLOC
+@
+text
+@d13 2
+a14 2
+      INTEGER V3,VN
+      PARAMETER(V3=VMAX*3,VN=VMAX*NMAX)
+a18 1
+C     INCLUDE 'cell'
+d46 1
+a46 1
+     &/NMAX*ZERO,NMAX*ZERO,NMAX*ZERO,NMAX*ZERO,4*ONE,ZERO/
+d48 1
+a48 1
+     &/NMAX*1,NMAX*1,0,5*1/
+d89 5
+a93 8
+     >'SUBSONIC INLET       ',
+     1'SUPERSONIC INLET     ',
+     2'SUBSONIC OUTLET      ',
+     3'SUPERSONIC OUTLET    ',
+     4'INVISCID WALL        ',
+     5'FAR FIELD            ',
+     6'VISCOUS WALL         ',
+     6'PRESCRIBED VELOCITY  '/
+@
+
+
+1.10
+log
+@initialised IVERBOSE, removed ``trash'' COMMON
+@
+text
+@d26 1
+a26 1
+      INTEGER LXX(14)
+d83 1
+a83 1
+      DATA LXX/14*1/
+@
+
+
+1.9
+log
+@initialising SCOLOR to 0.
+@
+text
+@d24 1
+a25 2
+      integer nghost
+      common/trash/nghost 
+d40 4
+a79 4
+C
+C---------- COMMON /FIX/
+C
+      DATA nghost / 0 /
+@
+
+
+1.8
+log
+@DATA stmt. changed so that it compiles on CRAY t3e
+@
+text
+@d89 1
+@
+
+
+1.7
+log
+@array R renamed to dUdV
+@
+text
+@d90 8
+a97 8
+     &20HSUBSONIC INLET       ,
+     120HSUPERSONIC INLET     ,
+     220HSUBSONIC OUTLET      ,
+     320HSUPERSONIC OUTLET    ,
+     420HINVISCID WALL        ,
+     520HFAR FIELD            ,
+     620HVISCOUS WALL         ,
+     620HPRESCRIBED VELOCITY  /
+@
+
+
+1.6
+log
+@removed deleted common block
+@
+text
+@d52 1
+a52 1
+      DATA (R(1,J) , J=1,10 ) / ONE,ZERO,ZERO,ZERO,ZERO,ZERO,
+d54 1
+a54 1
+      DATA (R(2,J) , J=1,10 ) / ZERO,ONE,ZERO,ZERO,ZERO,ZERO,
+d56 1
+a56 1
+      DATA (R(3,J) , J=1,10 ) / ZERO,ZERO,ONE,ZERO,ZERO,ZERO,
+d58 1
+a58 1
+      DATA (R(4,J) , J=1,10 ) / ZERO,ZERO,ZERO,ONE,ZERO,ZERO,
+d60 1
+a60 1
+      DATA (R(5,J) , J=1,10 ) / ZERO,ZERO,ZERO,ZERO,ONE,ZERO,
+d62 1
+a62 1
+      DATA (R(6,J) , J=1,10 ) / ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,
+@
+
+
+1.5
+log
+@add a TRASH common
+@
+text
+@a98 7
+C---------- COMMON /cell/
+C**Modified for turbo
+C     DATA (ICN(J),J=1,VMAX)/VMAX*0/
+C     DATA ((VCN(I,J),J=1,VMAX),I=1,3)/V3*ZERO/
+C     DATA ((VCS(I,J),J=1,VMAX),I=1,3)/V3*ZERO/
+C     DATA ((VCT(I,J),J=1,VMAX),I=1,3)/V3*ZERO/
+C     DATA ((VCZ(I,J),J=1,VMAX),I=1,NMAX)/VN*ZERO/
+d102 1
+a102 1
+      DATA SORTED,REORDERING/2*.FALSE./
+@
+
+
+1.4
+log
+@COMMON CELL has been removed
+@
+text
+@d25 2
+d77 4
+@
+
+
+1.3
+log
+@Changed length of array LXX
+@
+text
+@d19 1
+a19 1
+      INCLUDE 'cell'
+d95 5
+a99 5
+      DATA (ICN(J),J=1,VMAX)/VMAX*0/
+      DATA ((VCN(I,J),J=1,VMAX),I=1,3)/V3*ZERO/
+      DATA ((VCS(I,J),J=1,VMAX),I=1,3)/V3*ZERO/
+      DATA ((VCT(I,J),J=1,VMAX),I=1,3)/V3*ZERO/
+      DATA ((VCZ(I,J),J=1,VMAX),I=1,NMAX)/VN*ZERO/
+@
+
+
+1.2
+log
+@Add nboun.com
+@
+text
+@d25 1
+a25 1
+      INTEGER LXX(27)
+d78 1
+a78 1
+      DATA LXX/27*1/
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d23 1
+a23 1
+      INCLUDE 'skit_p.com'
+d105 1
+a105 1
+C---------- COMMON /SKIT/
+d107 1
+a107 7
+C     COMMON IPAR/0,2,0,0,15,-1,10*0/
+C     COMMON FPAR/2*1.D-10,14*ZERO/
+C
+C---------- COMMON /SLAP/
+C
+C     COMMON ISYM,ITOL,ITMAX,IGWK/0,1,100,10,10,0,-1,10/
+C     COMMON TOL/1.D-10/
+@

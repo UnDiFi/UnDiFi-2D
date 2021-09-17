@@ -1,0 +1,233 @@
+3,7c3,14
+< !> @param[in] FACNOR Cartesian components of the normals to a face, multiplied by the face area
+< !> @param[in] XYZDOT Cartesian components of the nodal grid velocities
+< !> @param[in,out] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+< !> @param[in,out] CORG Cartesian coordinates of the meshpoints; CORG(1,2*NP+1) stores the grid at time level 0, i.e. the fixed grid; new grid coordinates are put into CORG(1,NP+1) and the grid velocity is computed accordingly
+< !> @param[in] NELEM nof boundary faces
+---
+> !> @param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+> !> @param[in] XYZDOT the cartesian components of the grid velocity
+> !> @param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+> !> @param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+> !> @param[in] ZTURB Nodal values of the turbulent variable(s); for both the compressible and incompressible equations: \f$ \tilde{\nu} \f$
+> !> @param[in,out] STIFEL elemental stiffness matrix
+> !> @param[in,out] NODRES 
+> !> @param[in,out] NEWRES 
+> !> @param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCDZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+> !> @param[in] NELEM is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+12,15c19,27
+< !> @param[in] NOFVERT nof boundary faces
+< !> @param[in] NOFVAR nof boundary faces
+< !> @param[in] NTURB turbulence-model PDEs (1-eqn; 2-eqns.)
+< !>
+---
+> !> @param[in] NOFVERT number of vertices per element (=NDIM+1, since only triangles or tetrahedra are allowed)
+> !> @param[in] NOFVAR number of variables (degrees of freedom) in each meshpoint
+> !> @param[in] NTURB nof turbulent dofs =1 for SA
+> !> @param[in,out] PetscVecDT Petsc Vec where time-step is stored
+> !> @param[in,out] PetscVecRHS Petsc Vec where the nodal residual is stored
+> !> @param[in,out] PetscMatA Petsc Mat where the implicit matrix is stored
+> !> @param[in] ScalarScheme is the SUBROUTINE used to discretize scalar equation
+> !> @param[in] MatrixScheme is the SUBROUTINE used to discretize hyperbolic systems of equations
+> !> @param[in] Model is the SUBROUTINE used to discretize the turbulence transport equations
+18,19c30,31
+<      3                    NPOIN,NGHOST,NPNOD,NDIM,
+<      +                    NOFVERT,NOFVAR,NTURB,DT,RHS,A,
+---
+>      3                    NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,NTURB,
+>      &                    PetscVecDT,PetscVecRHS,PetscMatA,
+22c34,36
+< C     $Id: setupRHS_t.F,v 1.20 2020/03/28 09:42:51 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: setupRHS_t.F,v 1.21 2020/04/21 16:47:49 abonfi Exp $
+26a41
+> #include "petsc/finclude/petscsys.h"
+29,33d43
+<       use petscvec
+<       use petscmat
+< C
+<       IMPLICIT NONE
+< C
+38,39c48,49
+<       Vec DT,RHS
+<       Mat A
+---
+>       Vec PetscVecDT,PetscVecRHS
+>       Mat PetscMatA
+49,58d58
+< C     On entry:
+< C     --------
+< C
+< C     NDIM    dimension of the space (2 or 3)
+< C     NOFVERT number of vertices per element (=NDIM+1, since
+< C             only triangles or tetrahedra are allowed)
+< C     NTURB  number of variables (degrees of freedom)
+< C             in each meshpoint
+< C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+< C             global number of elements in the uni-processor case
+62,64d61
+< C     ICELNOD(1:NOFVERT,1:NELEM)
+< C            Cell to Node pointer : ICELNOD(i,ielem) gives the
+< C            global node number of the i-th vertex of the ielem-th cell
+67,72c64,67
+<      1                 ZROE(NOFVAR,*), ZTURB(NTURB,*),
+<      2                 STIFEL(NTURB,NTURB,NOFVERT,NOFVERT),
+<      3                 NODRES(NTURB,NOFVERT),
+<      3                 NEWRES(NTURB,NOFVERT),
+<      5                 VCZ(NTURB,NOFVERT),VCDZ(NTURB,NOFVERT),
+<      4                 VCB(NDIM,NOFVERT)
+---
+>      1 ZROE(NOFVAR,*), ZTURB(NTURB,*),
+>      +STIFEL(NTURB,NTURB,NOFVERT,NOFVERT), NODRES(NTURB,NOFVERT),
+>      +NEWRES(NTURB,NOFVERT), VCZ(NTURB,NOFVERT),VCDZ(NTURB,NOFVERT),
+>      4VCB(NDIM,NOFVERT)
+74,75d68
+< C     FACNOR(1:NDIM,1:NFACE)  cartesian components
+< C                             of the NFACE faces/edges
+82c75,77
+< C         and then scatter it to the PETSc vector DT
+---
+> C
+> C     ICN stores the vertices of the current element (0-based indexing)
+> C         and then scatter it to the PETSc vector PetscVecDT
+86c81
+<       INTEGER JVAR,IVAR,IVERT,JVERT,IELEM,NP
+---
+>       INTEGER JVAR,IVAR,IVERT,JVERT,IELEM,NP,M,IOFF,IADDR
+90,92c85
+<       DOUBLE PRECISION TSTEP(MAXNOFVERT),Y(MAXNOFVERT)
+< C
+< C     ICN stores the vertices of the current element (0-based indexing)
+---
+>       DOUBLE PRECISION TSTEP(MAXNOFVERT)
+113a107,108
+> C     the "implicit" matrix is only computed by FDs
+> C
+114a110
+> C
+158a155
+> C
+176a174
+> C
+179c177,178
+<           CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+---
+>           CALL VecSetValues(PetscVecDT,NOFVERT,ICN,TSTEP,ADD_VALUES,
+>      &                      IFAIL)
+181,183c180,181
+<               CALL VecSetValues(RHS,NOFVERT,ICN,NODRES, ADD_VALUES,
+< !             CALL VecSetValues(RHS,NOFVERT,ICN,Y, ADD_VALUES,
+<      +        IFAIL)
+---
+>               CALL VecSetValues(PetscVecRHS,NOFVERT,ICN,NODRES,
+>      +                          ADD_VALUES,IFAIL)
+185,186c183,184
+<               CALL VecSetValuesBlocked(RHS,NOFVERT,ICN,NODRES,
+<      +        ADD_VALUES,IFAIL)
+---
+>               CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT,ICN,NODRES,
+>      +                                 ADD_VALUES,IFAIL)
+205a204
+>  
+216c215
+<               ENDDO ! IVAR
+---
+>              ENDDO ! IVAR
+224c223
+< C     1-eqn turbulence models ******************
+---
+> C     Scalar problems, i.e. 1-eqn turbulence model ******************
+226,227d224
+<               DO IVERT = 1,NOFVERT
+<                   DO JVERT = 1,NOFVERT
+229,230c226,227
+<                       CALL MatSetValuesLocal(A,1,ICN(IVERT),1, ICN
+<      +                (JVERT),STIFEL(1,1,IVERT,JVERT), ADD_VALUES,IFAIL)
+---
+>              CALL MatSetValuesLocal(PetscMatA,NOFVERT,ICN,NOFVERT,ICN,
+>      +                STIFEL(1,1,1,1),ADD_VALUES,IFAIL)
+233,234c230,231
+<                       CALL MatSetValues(A,1,ICN(IVERT),1,ICN(JVERT),
+<      +                STIFEL(1,1,IVERT,JVERT),ADD_VALUES,IFAIL)
+---
+>              CALL MatSetValues(PetscMatA,NOFVERT,ICN,NOFVERT,ICN,
+>      +                STIFEL(1,1,1,1),ADD_VALUES,IFAIL)
+236,238c233,235
+<                   ENDDO ! JVERT
+<               ENDDO ! IVERT
+<           ELSE
+---
+>           ELSE ! NTURB
+> C
+> C     2-eqn (or more) turbulence model
+240c237,259
+< C     2-eqn turbulence models ******************
+---
+> C     this part has NEVER been tested, because only SA is available
+> C
+>               DO JVERT = 1,NOFVERT
+>                  m = (jvert-1)*NOFVERT*NTURB*NTURB
+>                  DO IVERT = 1,NOFVERT
+>                     ioff = m + (IVERT-1)*NTURB
+>                     do jvar = 1, NTURB
+>                        iaddr = ioff + (jvar-1)*NTURB*NOFVERT
+>                        do ivar = 1, NTURB
+>                           DUMMY(iaddr+ivar) = 
+>      &                         STIFEL(ivar,jvar,IVERT,JVERT)
+>                        enddo ! i
+>                     enddo ! j
+> #ifdef PRINT_MATRICES
+>                      write(6,*)ivert,jvert
+>                      CALL R8Mat_Print('General',' ',NTURB,NTURB,
+>      +               stifel(1,1,ivert,jvert), NTURB,
+>      &               'Jacobian Matrix in setupRHS_t (1) ',IFAIL)
+> #endif
+>                  enddo ! IVERT
+>               enddo ! JVERT
+> C
+> C Insert all at once
+242,243d260
+<               DO IVERT = 1,NOFVERT
+<                   DO JVERT = 1,NOFVERT
+245,247c262,264
+<                       CALL MatSetValuesBlockedLocal(A,1,ICN(IVERT),1,
+<      +                ICN(JVERT),STIFEL(1,1,IVERT,JVERT), ADD_VALUES,
+<      +                IFAIL)
+---
+>               CALL MatSetValuesBlockedLocal(PetscMatA,NOFVERT,
+>      +                        ICN,NOFVERT,ICN,DUMMY,
+>      +                         ADD_VALUES, IFAIL)
+249,250c266,268
+<                       CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN
+<      +                (JVERT), STIFEL(1,1,IVERT,JVERT),ADD_VALUES,IFAIL)
+---
+>               CALL MatSetValuesBlocked(PetscMatA,NOFVERT,ICN,
+>      +                               NOFVERT,ICN,DUMMY,ADD_VALUES,
+>      +                            IFAIL)
+252,261c270
+< #if 0
+<                       write(6,*)ivert,jvert
+<                       CALL R8Mat_Print('General',' ',Nofvar,Nofvar,
+<      +                stifel(1,1,ivert,jvert), Nofvar,
+<      &                'Jacobian Matrix in SetupRHS_t (1) ',IFAIL)
+< #endif
+<                   ENDDO ! JVERT
+<               ENDDO ! IVERT
+<    37         CONTINUE
+<           ENDIF
+---
+>          ENDIF ! NTURB
+274c283
+<       call daxpy(npoin,1.d0,tmpdif2,1,tmpdiff,1)
+---
+>       call daxpy(npoin,ONE,tmpdif2,1,tmpdiff,1)
+277,278c286,287
+<       call daxpy(npoin,1.d0,tmpsou1,1,tmpsum,1)
+<       call daxpy(npoin,1.d0,tmpsou2,1,tmpsum,1)
+---
+>       call daxpy(npoin,ONE,tmpsou1,1,tmpsum,1)
+>       call daxpy(npoin,ONE,tmpsou2,1,tmpsum,1)

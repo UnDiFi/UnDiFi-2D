@@ -1,0 +1,46 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2002.02.19.09.16.58;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2002.02.19.09.16.29;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@common variable for the Sm.SSOR preconditioner
+@
+
+
+1.2
+log
+@changed Scalar into PetscScalar (ver.2.1.1)
+@
+text
+@      Vec w,z,invD,shift
+      Mat Amat
+      PetscScalar alpha,omega
+      COMMON/Vecsssor/w,z,invD,shift
+      COMMON/Matsssor/Amat
+      COMMON/Scalsssor/alpha,omega
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+      Scalar alpha,omega
+@

@@ -1,0 +1,767 @@
+head	1.8;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.8
+	release3_13_0:1.8
+	release3_12_0:1.8
+	release3_11_0:1.8
+	release3_10_0:1.8
+	release3_8_0:1.8
+	release3_7_1:1.8
+	release3_7_0:1.8
+	release3_4_5:1.8
+	release3_4_4:1.8
+	release3_4_3:1.8
+	release3_4_2:1.8
+	release3_4_1:1.8
+	release3_4_0:1.8
+	release3_3_5:1.8
+	release3_3_4:1.8
+	release3_3_3:1.8
+	release3_3_2:1.8
+	release3_3_1:1.8
+	release3_3_0:1.8;
+locks; strict;
+comment	@c @;
+
+
+1.8
+date	2012.04.26.16.27.09;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2012.04.26.16.16.34;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.04.15.13.43.34;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.03.30.09.13.43;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.03.25.13.11.27;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.06.11.09.21.40;	author abonfi;	state Exp;
+branches
+	1.3.1.1;
+next	1.2;
+
+1.2
+date	2009.04.08.15.11.27;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.09.21.07.20.13;	author abonfi;	state Exp;
+branches;
+next	;
+
+1.3.1.1
+date	2011.09.16.07.37.33;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Limited N scheme in scalar version; the limiting strategy
+follows Edwin vanderWeide[D[D[D[D[D[D[D[D[D[VanderWeide
+@
+
+
+1.8
+log
+@same as 1.3.1.1 except for the doxygen-style comments
+@
+text
+@!> \copydetails LDA_SCHEME()
+      SUBROUTINE NL2_SCHEME(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     2                      NODRES,BETA,STIFC,NDIM,NOFVERT,
+     3                      MATRIX_ASSEMBLY)
+C
+C     $Id: NL2_scheme.f,v 1.3.1.1 2011/09/16 07:37:33 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C This routine computes the NL scheme on one triangle/tetrahedron
+C
+C the limiting procedure is based on the formula
+C
+C \beta_i = \max(0,\phi_i^N\phi)/[\sum_j \max(0,\phi_j^N\phi)]
+C
+C
+C it SHOULD be the same as the PSI scheme as long as 
+C there is not a source term
+C
+C the source term is treated as in
+C Sidilkover and Roe ICASE Report No. 95-10
+C
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      INCLUDE "paramt.h"
+      INCLUDE "constants.h"
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION CELRES,SOURCE
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ADVECTION(NDIM),BETA(NOFVERT),
+     2                 STIFC(NOFVERT,NOFVERT),DT(NOFVERT),
+     3                 NODRES(NOFVERT),Q(NOFVERT),
+     +                 VCN(NDIM,NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,HELP,UIN,PHIT
+      INTEGER I,I1,IROW,IVERT,J,JCOL,NEGI,POSI
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION K(MAXNOFVERT),PHI(MAXNOFVERT),TMP(MAXNOFVERT)
+      INTEGER POS(MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,MINMOD
+      INTEGER ICYCL
+      EXTERNAL DDOT,MINMOD,ICYCL
+C     ..
+      POSI = 0
+      NEGI = NOFVERT + 1
+      CELRES = ZERO
+      KPOS = ZERO
+      UIN = ZERO
+C
+C Loops over all vertices
+C
+      DO 10 IVERT = 1,NOFVERT
+c
+c Dotting advection speed with normal
+c
+          K(IVERT) =  DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)/NDIM
+c
+          CELRES = CELRES + Q(IVERT)*K(IVERT)
+c
+          IF (K(IVERT).GT.ZERO) THEN
+              POSI = POSI + 1
+              POS(POSI) = IVERT
+              KPOS = KPOS + K(IVERT)
+          ELSE
+              NEGI = NEGI - 1
+              POS(NEGI) = IVERT
+              UIN = UIN - K(IVERT)*Q(IVERT)
+              NODRES(IVERT) = ZERO
+              BETA(IVERT) = ZERO
+          ENDIF
+c
+   10 CONTINUE
+C
+      UIN = UIN/KPOS
+      PHIT=-CELRES-SOURCE
+      DENOM=ZERO
+!     IF(ABS(PHIT).LE.1.E-14)RETURN
+C
+C     we distinguish de
+C
+      IF(POSI.EQ.1)THEN ! 1-target case
+         J = POS(1)
+         BETA(J) = ONE
+         NODRES(J)=PHIT
+      ELSEIF(POSI.EQ.0)THEN ! 0-target case: should not occur
+         WRITE(6,*) 'IE = ',IELEM
+         WRITE(6,*) 'K = ',(K(IVERT),IVERT=1,NOFVERT)
+         WRITE(6,*) 'U = ',(ADVECTION(J),J=1,NDIM)
+         WRITE(6,*) 'Cannot handle this in NL2'
+         DO I = 1, NOFVERT
+            NODRES(I) = ZERO
+         ENDDO 
+      ELSE ! multiple target case
+C
+C Target tracking
+C
+         DO 30 I = 1,POSI
+             J = POS(I)
+C N-scheme contribution for the convective part and
+C LDA-scheme contribution for the source term
+             PHI(J) = -K(J)* ( (Q(J)-UIN) + SOURCE/KPOS )
+c
+c Linear time-step for all the downstream nodes
+c
+             DT(J) = DT(J) + K(J)
+c
+             TMP(J) = MAX(ZERO,PHIT*PHI(J))
+             DENOM=DENOM+TMP(J)
+c
+   30    CONTINUE
+C
+C Loop over downstream nodes (TARGET UPDATING)
+C
+!        IF(ABS(DENOM).LE.1.D-16)then
+!        write(6,*) ielem,denom,posi,(phi(pos(i)),i=1,posi)
+!        DENOM=SIGN(ONE,DENOM)*1.D-16
+!        ENDIF 
+C
+C        we avoid testing DENOM, since this tipically hamper convergence
+C
+         PHIT=PHIT/DENOM
+         HELP = ZERO
+         DO 20 I = 1,POSI
+             J = POS(I)
+             BETA(J) = TMP(J)/DENOM
+             HELP = HELP+BETA(J) ! this is a check
+             NODRES(J)=PHIT*TMP(J)
+   20    CONTINUE
+      ENDIF ! check on POSI
+!     WRITE(6,*)posi,HELP,(BETA(POS(I)),i=1,posi)
+C
+C  the element stiffness matrix is that of the N scheme
+C
+      IF (MATRIX_ASSEMBLY) THEN
+          KNEGINV = -ONE/KPOS
+C
+C     The convection matrix has to be zeroth since in the
+C     subsequent loops (28,30) not all vertices are touched
+C
+          DO 40 J = 1,NOFVERT
+              DO 40 I = 1,NOFVERT
+                  STIFC(I,J) = ZERO
+   40     CONTINUE
+C
+          DO 32 I = 1,POSI
+              IROW = POS(I)
+              S = K(IROW)
+              DO 28 J = NOFVERT,NEGI,-1
+                  JCOL = POS(J)
+                  STIFC(IROW,JCOL) = S*K(JCOL)*KNEGINV
+   28         CONTINUE
+              STIFC(IROW,IROW) = -S
+   32     CONTINUE
+      ENDIF
+C
+C
+C     IF( MATRIX_ASSEMBLY )THEN
+C
+C        DENOM = CELRES+SOURCE
+C
+C        IF(DENOM.LT.1.D-15)RETURN
+C
+C        DO 40 J = 1 , NOFVERT
+C           DO 40 I = 1 , NOFVERT
+C              STIFC(I,J) = ZERO
+C  40    CONTINUE
+C        DO 34 I = 1 , POSI
+C           IROW = POS(I)
+C           S =-PHI(IROW)*DENOM
+C           DO 28 JCOL = 1, NOFVERT
+C              STIFC(IROW,JCOL) = S * K(JCOL)
+C  28       CONTINUE
+C  34    CONTINUE
+C     ENDIF
+
+      RETURN
+
+      END
+C
+@
+
+
+1.7
+log
+@Added doxygen comments
+@
+text
+@d3 1
+a3 1
+     +                      NODRES,BETA,STIFC,NDIM,NOFVERT,
+d6 1
+a6 1
+C     $Id:
+d16 1
+d44 2
+a45 4
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,HELP,UIN,PHIT,TEST,
+     &TEMP,SLDA
+      INTEGER I,I1,IROW,IVERT,J,JCOL,NEGI,POSI,TAGI
+      LOGICAL LWARN 
+d48 2
+a49 4
+      DOUBLE PRECISION K(MAXNOFVERT),PHIN(MAXNOFVERT),
+     &DQ(MAXNOFVERT)
+      INTEGER POS(MAXNOFVERT),TAG(MAXNOFVERT)
+ 
+a55 1
+C
+a56 1
+      TAGI = 0
+d68 1
+a68 2
+          HELP = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)
+          K(IVERT) = HELP/NDIM
+a71 1
+          BETA(IVERT) = ZERO
+a75 1
+
+d77 2
+d81 1
+a85 5
+      IF (POSI.EQ.0) THEN
+          WRITE(*,*)' POSI = 0 in NL2' 
+          CALL EXIT(1) 
+      ENDIF 
+C
+d87 19
+a105 2
+      SLDA  = +SOURCE/KPOS
+      CELRES = CELRES+SOURCE
+d109 5
+a113 13
+      HELP = ZERO
+c ... Looping over downstream nodes
+      DO 30 I = 1,POSI
+          J = POS(I)
+          DQ(J) = (Q(J) - UIN) + SLDA ! N scheme + LDA
+c
+c there might be NO target whenever DQ(J)*CELRES is ZERO
+c
+          IF (DQ(J)*CELRES.GT.ZERO) THEN
+              TAGI = TAGI + 1
+              TAG(TAGI) = J
+              HELP = HELP + DQ(J)*K(J)
+          ENDIF
+d117 1
+a117 17
+          DT(J) = DT(J) + K(J)
+   30 CONTINUE
+C
+C
+C Loops over downstream nodes (TARGET UPDATING)
+C
+      IF(TAGI.EQ.0)THEN
+         TEMP = ONE/REAL(POSI)
+         DO I = 1,POSI
+            J = POS(I) 
+            BETA(J)  = TEMP
+         ENDDO 
+      ELSE ! at least 1 target
+          DO 20 I = 1,TAGI
+              J = TAG(I)
+              TEMP = DQ(J)*K(J)
+              S = CELRES/HELP*TEMP
+d119 2
+a120 2
+              BETA(J) = TEMP/HELP 
+              NODRES(J) = -S
+d122 3
+a124 22
+   20     CONTINUE
+      ENDIF 
+
+         TEST = ZERO
+         DO IVERT = 1,NOFVERT
+            TEST = TEST + BETA(IVERT)
+         ENDDO
+!     IF(LWARN)then
+!           write(6,*) 'Denominator too small in ie = ',ielem
+!           write(6,*) ' denom = ',denom,' phi(e) = ',phit
+!           write(6,*)' pos =   ',(pos(i),i=1,posi)
+!           write(6,*)' tag =   ',(tag(i),i=1,tagi)
+!           write(6,*)'***beta =   ',(beta(i),i=1,nofvert),test
+!     ENDIF
+      IF(ABS(TEST-ONE).GT.1.D-14)then
+            write(6,*) 'Error on betas in ie = ',ielem
+            write(6,*) ' denom = ',help,' phi(e) = ',celres
+            write(6,*)' pos =   ',(pos(i),i=1,posi)
+            write(6,*)' tag =   ',(tag(i),i=1,tagi)
+            write(6,*)'***beta =   ',(beta(i),i=1,nofvert),test
+            write(6,*)'***res =   ',(nodres(i),i=1,nofvert)
+      ENDIF
+d126 17
+a142 1
+  100 CONTINUE
+d169 19
+@
+
+
+1.6
+log
+@handles the source term
+does not give the same results as version 1.3 for unknown reasons
+@
+text
+@d1 1
+d3 2
+a4 1
+     +                     NODRES,BETA,STIFC,NDIM,NOFVERT,PICARD)
+d34 1
+a34 1
+      LOGICAL PICARD
+d166 1
+a166 1
+      IF (PICARD) THEN
+@
+
+
+1.5
+log
+@major re-writing (does not handle source terms)
+@
+text
+@d41 2
+a42 2
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,HELP,UIN,PHIT,TEST,SB,SR,
+     &TEMP
+d76 1
+a84 1
+              BETA(IVERT) = ZERO
+d89 4
+a92 1
+      IF (POSI.EQ.0) RETURN
+d95 2
+d104 1
+a104 1
+          DQ(J) = Q(J) - UIN
+d119 1
+d137 1
+a137 1
+   20 CONTINUE
+@
+
+
+1.4
+log
+@another version of the NL scheme; not working properly
+@
+text
+@a13 1
+C
+d41 2
+a42 1
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,HELP,UIN,PHIT,TEST,SB,SR
+d48 1
+a48 1
+     &PHINL(MAXNOFVERT)
+d57 1
+d59 1
+d71 2
+a72 1
+          K(IVERT) =  DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)/NDIM
+d80 1
+a81 2
+              NEGI = NEGI - 1
+              POS(NEGI) = IVERT
+a84 1
+              PHIN(IVERT) = ZERO
+d89 2
+a91 22
+      PHIT=-CELRES-SOURCE
+      DENOM=ZERO
+      HELP = ZERO
+C
+      DENOM = ABS(PHIT)
+      IF(ABS(PHIT).LE.1.D-24)THEN
+         LWARN = .TRUE.
+      ELSE
+         LWARN = .FALSE.
+      ENDIF
+!        DENOM = ZERO
+C
+C     we distinguish
+C
+      IF    (POSI.EQ.0)THEN ! 0-target case: should not occur
+         STOP 'Cannot handle this in NL2'
+      ELSEIF(POSI.EQ.1)THEN ! 1-target case
+         J = POS(1)
+         BETA(J) = ONE
+         NODRES(J)=PHIT
+         GOTO 100
+      ELSE ! multiple target case
+d95 13
+a107 8
+         TAGI = 0 
+         DO 30 I = 1,POSI
+             IVERT = POS(I)
+C N-scheme contribution for the convective part and
+C LDA-scheme contribution for the source term
+             PHIN(IVERT) = -K(IVERT)* ( (Q(IVERT)-UIN) + SOURCE/KPOS )
+             DENOM = DENOM + ABS(PHIN(IVERT))
+caldo        DENOM = DENOM + MAX(ZERO,PHIN(IVERT)*PHIT)
+d111 2
+a112 16
+             DT(IVERT) = DT(IVERT) + K(IVERT)
+c
+             IF( (PHIN(IVERT)*PHIT) .LT. ZERO )THEN ! not a target
+                 BETA(IVERT) = ZERO
+                 NODRES(IVERT) = ZERO 
+             ELSE
+                 TAGI = TAGI + 1
+                 TAG(TAGI) = IVERT
+             ENDIF 
+c
+   30    CONTINUE
+!     IF(DENOM.LE.1.D-24)THEN
+!        LWARN = .TRUE.
+!     ELSE
+!        LWARN = .FALSE.
+!     ENDIF
+d114 1
+a114 1
+C Loop over targets nodes (TARGET UPDATING)
+d116 17
+a132 32
+C        we avoid testing DENOM, since this tipically hampers convergence
+C
+         IF    (TAGI.EQ.0)THEN
+            STOP 'Cannot handle TAGI == 0 in NL2'
+         ELSEIF(TAGI.EQ.1)THEN
+            NODRES(IVERT) = PHIT
+            BETA(IVERT) = ONE
+         ELSE ! more than a target
+            IF(LWARN)THEN
+               DO I = 1,TAGI
+                  IVERT = TAG(I)
+                  BETA(IVERT) = ONE/REAL(TAGI)
+                  NODRES(IVERT)=PHIT*BETA(IVERT)
+               ENDDO
+            ELSE
+               DENOM = ONE/DENOM
+               SB = ZERO
+               SR = ZERO
+               DO 20 I = 1,TAGI-1
+                  IVERT = TAG(I)
+                  BETA(IVERT) = (SIGN(ONE,PHIT)*PHIN(IVERT)+
+     &                           ABS(PHIN(IVERT)))*DENOM
+caldo             BETA(IVERT) = MAX(ZERO,PHIT*PHIN(IVERT))*DENOM
+                  SB = SB + BETA(IVERT)
+                  NODRES(IVERT)=PHIT*BETA(IVERT)
+                  SR = SR + NODRES(IVERT)
+   20          CONTINUE
+               IVERT = TAG(TAGI)
+               BETA(IVERT) = ONE - SB
+               NODRES(IVERT) = PHIT - SR
+            ENDIF
+         ENDIF
+d134 4
+a137 4
+!        TEST = ZERO
+!        DO IVERT = 1,NOFVERT
+!           TEST = TEST + BETA(IVERT)
+!        ENDDO
+d145 8
+a152 8
+!     IF(ABS(TEST-ONE).GT.1.D-14)then
+!           write(6,*) 'Error on betas in ie = ',ielem
+!           write(6,*) ' denom = ',denom,' phi(e) = ',phit
+!           write(6,*)' pos =   ',(pos(i),i=1,posi)
+!           write(6,*)' tag =   ',(tag(i),i=1,tagi)
+!           write(6,*)'***beta =   ',(beta(i),i=1,nofvert),test
+!     ENDIF
+      ENDIF ! check on POSI
+@
+
+
+1.3
+log
+@substantially changed to avoid division by zero
+@
+text
+@d42 3
+a44 2
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,HELP,UIN,PHIT
+      INTEGER I,I1,IROW,IVERT,J,JCOL,NEGI,POSI
+d47 4
+a50 2
+      DOUBLE PRECISION K(MAXNOFVERT),PHI(MAXNOFVERT),TMP(MAXNOFVERT)
+      INTEGER POS(MAXNOFVERT)
+d83 1
+d91 1
+a91 1
+!     IF(ABS(PHIT).LE.1.E-14)RETURN
+d93 9
+a101 1
+C     we distinguish de
+d103 3
+a105 1
+      IF(POSI.EQ.1)THEN ! 1-target case
+d109 1
+a109 2
+      ELSEIF(POSI.EQ.0)THEN ! 0-target case: should not occur
+         STOP 'Cannot handle this in NL2'
+d114 1
+d116 1
+a116 1
+             J = POS(I)
+d119 3
+a121 1
+             PHI(J) = -K(J)* ( (Q(J)-UIN) + SOURCE/KPOS )
+d125 1
+a125 1
+             DT(J) = DT(J) + K(J)
+d127 7
+a133 2
+             TMP(J) = MAX(ZERO,PHIT*PHI(J))
+             DENOM=DENOM+TMP(J)
+d136 60
+d197 1
+a197 19
+C Loop over downstream nodes (TARGET UPDATING)
+C
+!        IF(ABS(DENOM).LE.1.D-16)then
+!        write(6,*) ielem,denom,posi,(phi(pos(i)),i=1,posi)
+!        DENOM=SIGN(ONE,DENOM)*1.D-16
+!        ENDIF 
+C
+C        we avoid testing DENOM, since this tipically hamper convergence
+C
+         PHIT=PHIT/DENOM
+         HELP = ZERO
+         DO 20 I = 1,POSI
+             J = POS(I)
+             BETA(J) = TMP(J)/DENOM
+             HELP = HELP+BETA(J) ! this is a check
+             NODRES(J)=PHIT*TMP(J)
+   20    CONTINUE
+      ENDIF ! check on POSI
+!     WRITE(6,*)posi,HELP,(BETA(POS(I)),i=1,posi)
+a223 19
+C     IF( PICARD )THEN
+C
+C        DENOM = CELRES+SOURCE
+C
+C        IF(DENOM.LT.1.D-15)RETURN
+C
+C        DO 40 J = 1 , NOFVERT
+C           DO 40 I = 1 , NOFVERT
+C              STIFC(I,J) = ZERO
+C  40    CONTINUE
+C        DO 34 I = 1 , POSI
+C           IROW = POS(I)
+C           S =-PHI(IROW)*DENOM
+C           DO 28 JCOL = 1, NOFVERT
+C              STIFC(IROW,JCOL) = S * K(JCOL)
+C  28       CONTINUE
+C  34    CONTINUE
+C     ENDIF
+
+@
+
+
+1.3.1.1
+log
+@More descriptive error report
+@
+text
+@d4 1
+a4 1
+C     $Id:$
+d96 1
+a96 7
+         WRITE(6,*) 'IE = ',IELEM
+         WRITE(6,*) 'K = ',(K(IVERT),IVERT=1,NOFVERT)
+         WRITE(6,*) 'U = ',(ADVECTION(J),J=1,NDIM)
+         WRITE(6,*) 'Cannot handle this in NL2'
+         DO I = 1, NOFVERT
+            NODRES(I) = ZERO
+         ENDDO 
+@
+
+
+1.2
+log
+@added BETA among the arguments of the call; also re-name the
+edge matrix
+@
+text
+@d42 2
+a43 2
+      DOUBLE PRECISION DENOM,KNEGINV,KPOS,S,SUM,UIN,PHIT
+      INTEGER I,I1,IROW,IVERT,J,J1,J2,JCOL,NEGI,POSI
+d66 1
+a66 2
+          SUM = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)
+          K(IVERT) = SUM/NDIM
+a73 1
+
+d79 1
+d87 11
+a97 1
+      IF(ABS(PHIT).LE.1.E-14)RETURN
+d101 3
+a103 4
+      DO 30 I = 1,POSI
+          J = POS(I)
+C N-scheme contribution for the convective part
+          PHI(J) = -K(J)* (Q(J)-UIN)
+d105 1
+a105 2
+          S = -K(J)*SOURCE/KPOS
+          PHI(J) = PHI(J) + S
+d109 1
+a109 1
+          DT(J) = DT(J) + K(J)
+d111 2
+a112 2
+          TMP(J) = MAX(0.d0,PHIT*PHI(J))
+          DENOM=DENOM+TMP(J)
+d114 1
+a114 1
+   30 CONTINUE
+d118 17
+a134 5
+      PHIT=PHIT/DENOM
+      DO 20 I = 1,POSI
+          J = POS(I)
+          NODRES(J)=PHIT*TMP(J)
+   20 CONTINUE
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+     +                     NODRES,CMAT,NDIM,NOFVERT,PICARD)
+d27 2
+a28 2
+      DOUBLE PRECISION ZERO,ONE,TWO
+      PARAMETER (ZERO=0.D0,ONE=1.D0,TWO=2.D0)
+d36 3
+a38 2
+      DOUBLE PRECISION ADVECTION(NDIM),CMAT(NOFVERT,NOFVERT),
+     +                 DT(NOFVERT),NODRES(NOFVERT),Q(NOFVERT),
+d46 2
+a47 2
+      DOUBLE PRECISION K(4),PHI(4),TMP(4)
+      INTEGER POS(4)
+d127 1
+a127 1
+                  CMAT(I,J) = ZERO
+d135 1
+a135 1
+                  CMAT(IROW,JCOL) = S*K(JCOL)*KNEGINV
+d137 1
+a137 1
+              CMAT(IROW,IROW) = -S
+d150 1
+a150 1
+C              CMAT(I,J) = ZERO
+d156 1
+a156 1
+C              CMAT(IROW,JCOL) = S * K(JCOL)
+@

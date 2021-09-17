@@ -1,0 +1,22 @@
+Face	type
+1	 5
+2	 5 
+3	 5
+4	 5 
+5	 3
+6	-1
+7	-1
+8	-1
+9	-1
+10	-1
+
+#
+# boundary #1-2-3-4 is the far field
+# boundary #3 is the NACA profile
+#
+#
+# THIS FILE IS read by Triangle2grd
+#
+# bndry code 5 is far-field condition 
+# bndry code 3 is inviscid wall
+#

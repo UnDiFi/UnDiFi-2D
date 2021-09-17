@@ -1,0 +1,42 @@
+      SUBROUTINE CONS2PARM(ZROE,dZdU,NDIM,NOFVAR)
+      ENTRY MatdZdU(ZROE,dZdU,NDIM,NOFVAR)
+C
+      IMPLICIT NONE
+      INCLUDE 'constants.h' 
+      INCLUDE 'pfcgas.com'
+C
+      INTEGER NDIM,NOFVAR
+      DOUBLE PRECISION ZROE(NOFVAR),dZdU(NOFVAR,*)
+      DOUBLE PRECISION Z1INV,Z1SQRINV,KINETIC
+C
+C     Assembles the dZdU matrix ...
+C
+      Z1INV = ONE/ZROE(1)
+      Z1SQRINV = Z1INV*Z1INV
+C
+      KINETIC = ZROE(3)*ZROE(3) + ZROE(4)*ZROE(4)
+      IF (NDIM.EQ.3) KINETIC = KINETIC + ZROE(5)*ZROE(5)
+      KINETIC = HALF*KINETIC*Z1SQRINV
+C
+      dZdU(1,1) = HALF*Z1INV
+C
+      dZdU(2,1) = (GM1*KINETIC-HALF*Z1INV*ZROE(2))*Z1INV
+      dZdU(2,2) = GAM*Z1INV
+      dZdU(2,3) = -GM1*ZROE(3)*Z1SQRINV
+      dZdU(2,4) = -GM1*ZROE(4)*Z1SQRINV
+C
+      dZdU(3,1) = -HALF*ZROE(3)*Z1SQRINV
+      dZdU(3,3) = Z1INV
+C
+      dZdU(4,1) = -HALF*ZROE(4)*Z1SQRINV
+      dZdU(4,4) = Z1INV
+C
+      IF (NDIM.EQ.2) RETURN
+C
+      dZdU(2,5) = -GM1*ZROE(5)*Z1SQRINV
+      dZdU(5,1) = -HALF*ZROE(5)*Z1SQRINV
+      dZdU(5,5) = Z1INV
+C
+      RETURN
+
+      END

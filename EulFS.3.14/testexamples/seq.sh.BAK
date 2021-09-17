@@ -1,0 +1,25 @@
+include ${PETSC_DIR}/bmake/${PETSC_ARCH}/base.site
+#
+# SEQ_CODE = ${HOME}/bin/${PETSC_ARCH}/eulfs
+# if the full path is set for the seq code then the output is sent
+# to ${HOME}/bin/${PETSC_ARCH} !!! at least on alpha
+#
+SEQ_CODE = eulfs
+MPI_CODE = ${HOME}/bin/${PETSC_ARCH}/peulfs
+#
+runseq:
+	@cp .petscrc ${HOME}
+	@echo "current directory is `pwd`
+	@${SEQ_CODE} -itmax ${ITMAX} -linearization ${SNES} -data_dir ${DATA_DIR} > out.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.seq.${PETSC_ARCH}
+diff:
+	@if (diff convhst.seq.${ARCH1} convhst.seq.${ARCH2} >> ${LOGFILE} ) \
+	then true; else echo "Possible problem, check for differences"; fi
+vdiff:
+	@cp .petscrc ${HOME}
+	@eulfs -itmax ${ITMAX} -linearization ${SNES} -data_dir ${DATA_DIR} > out.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.NEW.${PETSC_ARCH}
+	@eulfs12 -itmax ${ITMAX} -linearization ${SNES} -data_dir ${DATA_DIR} > out.${PETSC_ARCH}; \
+	cut -c1-10,33- convhst.l2 > convhst.OLD.${PETSC_ARCH}
+	@if (diff convhst.OLD.${PETSC_ARCH} convhst.NEW.${PETSC_ARCH} >> ${LOGFILE} ) \
+	then true; else echo "Possible problem, check for differences"; fi

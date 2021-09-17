@@ -1,0 +1,166 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2001.07.04.06.47.06;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@part of the multiplicative Swartz preconditioner
+written by P.Amodio; makes a copy of the matrices
+used in the preconditioner
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      subroutine copia(A,B,ierr)
+c
+c     $Id:$
+c
+c     inserisce in B gli elementi di A
+c     un algoritmo scritto da P.Amodio
+c
+      implicit none
+c
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscmat.h"
+c
+      double precision one
+      parameter (one=1.d0)
+c
+      Mat         A,Ad,Ao
+      Mat         B,Bd,Bo
+      integer     ierr,rank,d_nz
+      integer     i,j,k,l,n,shift
+      PetscTruth  done
+      integer     ia(1),ja(1),na,iacol(1),jabgn,jaend,ija
+      integer     ib(1),jb(1),nb,ibcol(1),jbbgn,jbend,ijb
+      PetscOffset iia,jja,aaa,iiacol
+      PetscOffset iib,jjb,bbb,iibcol
+      Scalar      aa(1),bb(1)
+      character*8 fname1,fname2
+c---------------------------------------------------------------------- 
+      integer ptitle,iin,iout,nlines,mode,idummy
+      real size
+      character title*72, key*8, guesol*2, munt*2 , fname*9
+      data iin /5/, iout/6/, size/5.0/, nlines/0/, ptitle/0/,mode/0/
+      data munt/'in'/, key/'01223467'/
+      data title /"il mattino ha l'oro in bocca il mattino ha l'oro in b
+     +occa il mattino ha "/
+c-----------------------------------------------------------------------
+C
+C     estrae la parte diagonale ed extradiagonale di A
+C
+      call MatMPIAIJGetSeqAIJ(A,Ad,Ao,iacol,iiacol,ierr)
+C
+C     estrae la parte diagonale ed extradiagonale di B
+C
+      call MatMPIAIJGetSeqAIJ(B,Bd,Bo,ibcol,iibcol,ierr)
+c
+c   Access diagonal portions of both matrices
+c
+      shift = 1
+      call MatGetRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+      call MatGetRowIJ(Bd,shift,PETSC_FALSE,n,ib,iib,jb,jjb,done,ierr)
+caldo
+caldo call MPI_Barrier(PETSC_COMM_WORLD,ierr)
+caldo call MPI_Abort(PETSC_COMM_WORLD,-1,ierr)
+caldo
+c
+c     access entries of both matrices
+c
+      call MatGetArray(Ad,aa,aaa,ierr)
+      call MatGetArray(Bd,bb,bbb,ierr)
+c
+      do 30, i=1,n
+c
+c       jbbgn,jbend first and last entries in jb(*)
+c
+          jbbgn = ib(iib+i)
+          jbend = ib(iib+i+1)-1
+c
+          d_nz = jbend-jbbgn+1
+c
+c       how many cols in B ?
+c
+c       se ncols = 1 c'e` solo l'elemento diagonale (=1)
+c
+          if( d_nz .EQ. 1 )then
+              bb(bbb+jbbgn) = one
+          elseif( d_nz .GT. 1 )then
+c
+c       copy corresponding entries of A in B
+c
+c       jabgn,jaend first and last entries in ja(i)
+c
+              jabgn = ia(iia+i)
+              jaend = ia(iia+i+1)-1
+c
+c       ciclo sulle colonne di B, riga i
+c
+              do 60 j = jbbgn,jbend
+                  ijb = jb(jjb+j)
+c
+c       cerca la colonna ijb in A
+c
+                  do 65 k = jabgn,jaend
+                      ija = ja(jja+k)
+                      if( ija .EQ. ijb )then
+                          bb(bbb+j) = aa(aaa+k)
+                          goto 60
+                      endif
+   65             continue
+c
+c     if it gets here there must smthg. wrong since B must be a subset of A
+c
+                  write(6,*)'cannot find elmt. ij = ',i,ijb,' of B in A'
+                  stop
+   60         continue
+          else
+              write(6,*)'smthg wrong with jbbgn > jbend ',jbbgn,jbend
+              stop
+          endif
+   30 continue
+caldo
+caldo CALL MPI_Comm_rank(PETSC_COMM_WORLD,rank,ierr)
+caldo write(fname1,FMT="(A5,I3.3)")"matA.",rank
+caldo write(fname2,FMT="(A5,I3.3)")"matB.",rank
+caldo write(6,FMT=*)rank,fname1,fname2
+caldo open(unit=7+rank,file=fname1)
+caldo open(unit=8+rank,file=fname2)
+caldo call dump(1,n,.TRUE.,aa(aaa+1),ja(jja+1),ia(iia+1),7+rank)
+caldo call dump(1,n,.TRUE.,bb(bbb+1),jb(jjb+1),ib(iib+1),8+rank)
+caldo close(unit=7+rank)
+caldo close(unit=8+rank)
+c
+c     call post script generator
+c     
+caldo iout = 20+rank
+caldo write(fname,FMT="(A3,I3.3,A3)")"mat",iout,".ps"
+caldo write(6,FMT=*)fname
+caldo open(iout,FILE=fname)
+caldo call pspltm(n,n,mode,jb(jjb+1),ib(iib+1),title,ptitle,size,munt,
+caldo*     nlines,idummy,iout)
+caldo close(iout)
+c
+      call MatRestoreArray(Ad,aa,aaa,ierr)
+      call MatRestoreArray(Bd,bb,bbb,ierr)
+      call MatRestoreRowIJ(Ad,1,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+      call MatRestoreRowIJ(Bd,1,PETSC_FALSE,n,ib,iib,jb,jjb,done,ierr)
+c
+      call MatAssemblyBegin(B,MAT_FINAL_ASSEMBLY,ierr)
+      call MatAssemblyEnd(B,MAT_FINAL_ASSEMBLY,ierr)
+c
+      return
+      end
+@

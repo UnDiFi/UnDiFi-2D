@@ -1,0 +1,343 @@
+head	1.8;
+access
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.8
+	release3_13_0:1.8
+	release3_12_0:1.8
+	release3_11_0:1.8
+	release3_10_0:1.8
+	release3_8_0:1.8
+	release3_7_1:1.8
+	release3_7_0:1.7
+	release3_4_5:1.7
+	release3_4_4:1.7
+	release3_4_3:1.7
+	release3_4_2:1.7
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.8
+date	2020.03.28.09.51.14;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.05.03.09.56.12;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.01.26.11.39.21;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2012.12.20.10.45.56;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.09.10.09.21.26;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2002.08.24.10.05.26;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.12.27.09.28.14;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.12.05.18.13.08;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@far field boundary conditions for incompressible flows
+@
+
+
+1.8
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE BC5VIII(IELEM,VCN,VCZ,VCB,KPOS,NODRES,TSTEP,NDIM,
+     +                   NOFVERT,NOFVAR)
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute far-field boundary conditions for INcompressible
+C     flows (ghost cell approach)
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'bnd.h'
+      include 'stream.com'
+      include 'time.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVAR,NOFVERT
+C
+C     IELEM  current boundary element
+C     NDIM   dimension of the space (2 or 3)
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION KPOS(NOFVAR,NOFVAR,NOFVERT-1),
+     +                 NODRES(NOFVAR,NOFVERT-1),TSTEP(NOFVAR,NOFVERT-1),
+     +                 VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT),
+     4                 VCB(NDIM,NOFVERT)
+C
+C     On entry:
+C     --------
+C     VCN(1:NDIM,1:NOFVERT) cartesian components of the normals 
+C                           to the element sides/faces
+C                           the normal to the boundary face need
+C                           to be stored in VCN(1:NDIM,NOFVERT)
+C     VCZ(1:NOFVAR,1:NOFVERT) dependent variables in the vertices
+C                           of the current (IELEM) element
+C                           the freestream values need
+C                           to be stored in VCZ(1:NOFVAR,NOFVERT)
+C     Upon return:
+C     -----------
+C     KPOS(1:NOFVAR,1:NOFVAR,1:NOFVERT-1) positive inflow parameters
+C                   in the NOFVERT-1 vertices of the boundary face
+C     NODRES(1:NOFVAR,1:NOFVERT-1) nodal residual due to the incoming
+C                   characteristics in the NOFVERT-1 vertices 
+C                   of the boundary face
+C     TSTEP(NOFVAR,1:NOFVERT) contribution to the time-step in the
+C                   vertices of the current element
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION VOLUME,HELP
+      INTEGER IFAIL,IVAR,IVERT,NOFEQN
+C     ..
+C     .. Local Arrays ..
+C
+C     matrices KMAT,DUMMY,etc. must be dimensioned at least as
+C     KPOS(NOFVAR,NOFVAR,*) because of the call to MatSplit
+C
+      DOUBLE PRECISION DUMMY(25),KMAT(25),KNEG(25),VLEFT(25),VRIGHT(25),
+     +                 WNEG(4),WPOS(4),WR(4)
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DCOPY,DGEMM,LINEARIZE,MATSPLITVIII
+C     ..
+      VOLUME = ONE
+      NOFEQN = NDIM+1
+      CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,NOFVAR,
+     2               VOLUME)
+C
+      CALL MATSPLITVIII(IELEM,NDIM,NOFVAR,VCN(1,NOFVERT),DUMMY,NOFVAR,
+     +                  KMAT,KPOS,KNEG,VLEFT,VRIGHT,NOFVAR,WR,WPOS,WNEG,
+     +                  .TRUE.)
+      HELP = ZERO
+      DO IVAR = 1, NOFEQN
+         IF( CHAR_TIMESTEPPING )THEN
+            HELP = MAX(HELP,WPOS(IVAR))
+         ELSE
+            HELP = HELP + WPOS(IVAR)
+         ENDIF
+      ENDDO
+C
+Cifdef PRINT
+C     CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,KPOS,
+C    +NOFVAR,'KPOSITIVE matrix ',IFAIL)
+Cendif
+C
+C     Looping over the vertices of the boundary face;
+C     notice that the vertex facing the boundary face is NOFVERT
+C     and is skipped in the following loop
+C     Compute U(i) := [U(i) - U(\infty)] and store in DUMMY
+C
+      CALL DCOPY(NOFVAR*(NOFVERT-1),VCZ,1,DUMMY,1)
+      DO 50 IVERT = 1,NOFVERT - 1
+         CALL DAXPY(NOFVAR,MONE,U_INFTY,1,DUMMY((IVERT-1)*NOFVAR+1),1)
+         IF (IVERT.GT.1) CALL DCOPY(NOFVAR*NOFVAR,KPOS(1,1,1),1,
+     +                                            KPOS(1,1,IVERT),1)
+         DO 50 IVAR = 1,NOFEQN
+            TSTEP(IVAR,IVERT) = HELP
+   50 CONTINUE
+C
+C     Compute NODRES(i) = -K(+)*[U(i) - U(\infty)]
+C
+      CALL DGEMM('No','No',NOFEQN,NOFVERT-1,NOFEQN,MONE,KPOS,NOFVAR,
+     +           DUMMY,NOFVAR,ZERO,NODRES,NOFVAR)
+C
+C
+      RETURN
+
+      END
+@
+
+
+1.7
+log
+@characteristic time stepping: each V/dt is chosen and stored
+independently
+@
+text
+@d88 1
+a88 1
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS,
+@
+
+
+1.6
+log
+@changed the name of an header file
+@
+text
+@d56 1
+a56 1
+      DOUBLE PRECISION SUM,VOLUME
+d78 9
+a91 5
+      SUM = ZERO
+      DO 3 IVAR = 1,NOFEQN
+          SUM = SUM + WPOS(IVAR)
+    3 CONTINUE
+C
+d99 5
+a103 4
+          CALL DAXPY(NOFVAR,-ONE,U_INFTY,1,DUMMY((IVERT-1)*NOFVAR+1),1)
+          TSTEP(1,IVERT) = SUM
+          IF (IVERT.GT.1) CALL DCOPY(NOFVAR*NOFVAR,KPOS(1,1,1),1,
+     +                               KPOS(1,1,IVERT),1)
+d108 1
+a108 1
+      CALL DGEMM('No','No',NOFEQN,NOFVERT-1,NOFEQN,-ONE,KPOS,NOFVAR,
+@
+
+
+1.5
+log
+@now passing the grid velocity among the arguments of the call
+@
+text
+@d12 1
+a12 1
+      include 'constants'
+@
+
+
+1.4
+log
+@the timestep array is now dimensioned NOFVAR x NOFVERT
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE BC5VIII(IELEM,VCN,VCZ,KPOS,NODRES,TSTEP,NDIM,NOFVERT,
+     +                   NOFVAR)
+d15 1
+d31 2
+a32 1
+     +                 VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT)
+d72 2
+a73 1
+      CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+@
+
+
+1.3
+log
+@towards the implementation of a coupled approach
+for RANS: the number of variables NOFVAR can now
+be different from the number of mean flow equations
+(hereafter called NOFEQN)
+@
+text
+@d29 1
+a29 1
+     +                 NODRES(NOFVAR,NOFVERT-1),TSTEP(NOFVERT-1),
+d49 1
+a49 1
+C     TSTEP(1:NOFVERT) contribution to the time-step in the
+d55 1
+a55 1
+      INTEGER IFAIL,IVAR,IVERT,NONAME
+d69 1
+a69 1
+      NONAME = NDIM+1
+d81 1
+a81 1
+      DO 3 IVAR = 1,NONAME
+d93 1
+a93 1
+          TSTEP(IVERT) = SUM
+d100 1
+a100 1
+      CALL DGEMM('No','No',NONAME,NOFVERT-1,NONAME,-ONE,KPOS,NOFVAR,
+@
+
+
+1.2
+log
+@some cleanup
+@
+text
+@d55 1
+a55 1
+      INTEGER IFAIL,IVAR,IVERT
+d58 5
+a62 1
+      DOUBLE PRECISION DUMMY(16),KMAT(16),KNEG(16),VLEFT(16),VRIGHT(16),
+d69 1
+d81 1
+a81 1
+      DO 3 IVAR = 1,NOFVAR
+d100 1
+a100 1
+      CALL DGEMM('No','No',NOFVAR,NOFVERT-1,NOFVAR,-ONE,KPOS,NOFVAR,
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 5
+d18 8
+d31 21
+d83 1
+a83 1
+C     Compute U(i) := [U(i) - U(\infty)]
+d85 1
+d87 1
+a87 1
+          CALL DAXPY(NOFVAR,-ONE,U_INFTY,1,VCZ(1,IVERT),1)
+d93 1
+a93 1
+C     Compute -K(+)*[U(i) - U(\infty)]
+d95 2
+a96 2
+      CALL DGEMM('No','No',NOFVAR,NOFVERT-1,NOFVAR,-ONE,KPOS,NOFVAR,VCZ,
+     +           NOFVAR,ZERO,NODRES,NOFVAR)
+@

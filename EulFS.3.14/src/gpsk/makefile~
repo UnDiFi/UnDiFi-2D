@@ -1,0 +1,22 @@
+# $Id: makefile,v 1.47 2001/01/16 18:17:28 balay Exp $ 
+
+ALL: lib
+
+CFLAGS   =
+FFLAGS   =
+SOURCEC  = spgpsk.c 
+SOURCEF  = exrcm.f getdia2.f \
+gpskca.f gpskcb.f gpskcc.f gpskcd.f gpskce.f gpskcf.f gpskcg.f gpskch.f \
+gpskci.f gpskcj.f gpskck.f gpskcl.f gpskcm.f gpskcn.f gpskco.f gpskcp.f gpskcq.f
+SOURCEH  = aij.h
+OBJSC    = spgpsk.o
+OBJSF    = exrcm.o getdia2.o \
+gpskca.o gpskcb.o gpskcc.o gpskcd.o gpskce.o gpskcf.o gpskcg.o gpskch.o \
+gpskci.o gpskcj.o gpskck.o gpskcl.o gpskcm.o gpskcn.o gpskco.o gpskcp.o gpskcq.o
+LIBNAME  = gpsk
+LIBBASE  =
+DIRS     = 
+MANSEC   =
+LOCDIR   = ${HOME}/lib/
+
+include ${PETSC_DIR}/bmake/${PETSC_ARCH}/base

@@ -1,0 +1,6 @@
+3,5d2
+< #include "petsc/finclude/petscsys.h"
+<       use petscsys
+< C
+7a5
+> #include "petsc/finclude/petscsys.h"

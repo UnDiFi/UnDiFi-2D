@@ -1,0 +1,50 @@
+head	1.1;
+access
+	abonfi;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks
+	abonfi:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	99.09.02.08.03.10;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@sets up a stream-aligned reference frame
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION RotationMatrix(3,3)
+      COMMON / STRFRM / RotationMatrix
+C
+C     RotationMatrix relates a stream-aligned ref. frame
+C     to a cartesian one
+C
+@

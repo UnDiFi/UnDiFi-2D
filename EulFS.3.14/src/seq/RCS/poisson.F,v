@@ -1,0 +1,687 @@
+head	1.2;
+access;
+symbols
+	release3_4_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2013.06.03.10.54.59;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.05.27.06.43.43;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@The poisson solver
+@
+
+
+1.2
+log
+@The Poisson solver can now use PETSc as well
+@
+text
+@!23456789012345678901234567890123456789012345678901234567890123456789012
+      subroutine setup_poisson(element_num,element_order,element_node,  &
+     &node_num,node_xy)
+
+!*****************************************************************************80
+!
+!! MAIN is the main program of FEM2D_POISSON_SPARSE.
+!
+!  Discussion:
+!
+!    This program is a variant of FEM2D_POISSON.  That program is
+!    particularly limited because of its use of banded matrix storage and
+!    solving routines.
+!
+!    This program discards the banded approach.  Instead, it uses a
+!    sparse matrix storage format and an iterative solver,
+!    which allow this program to solve larger problems faster.
+!
+!    This program solves the Poisson equation
+!
+!      -DEL H(X,Y) DEL U(X,Y) + K(X,Y) * U(X,Y) = F(X,Y)
+!
+!    in a triangulated region in the plane.
+!
+!    Along the boundary of the region, Dirichlet conditions
+!    are imposed:
+!
+!      U(X,Y) = G(X,Y)
+!
+!    The code uses continuous piecewise linear basis functions on
+!    triangles.
+!
+!  Problem specification:
+!
+!    The user defines the geometry by supplying two data files
+!    which list the node coordinates, and list the nodes that make up
+!    each element.
+!
+!    The user specifies the right hand side of the Dirichlet boundary
+!    conditions by supplying a function
+!
+!      subroutine dirichlet_condition ( node_num, node_xy, node_bc )
+!
+!    The user specifies the coefficient function H(X,Y) of the Poisson
+!    equation by supplying a routine of the form
+!
+!      subroutine h_coef ( node_num, node_xy, node_h )
+!
+!    The user specifies the coefficient function K(X,Y) of the Poisson
+!    equation by supplying a routine of the form
+!
+!      subroutine k_coef ( node_num, node_xy, node_k )
+!
+!    The user specifies the right hand side of the Poisson equation
+!    by supplying a routine of the form
+!
+!      subroutine rhs ( node_num, node_xy, node_f )
+!
+!  Usage:
+!
+!    fem2d_poisson_sparse prefix
+!
+!    where
+!
+!    * prefix_nodes.txt is the file containing the coordinates of the nodes;
+!
+!    * prefix_elements.txt is the file containing the indices of nodes
+!      that make up each element.
+!
+!    Files created include:
+!
+!    * prefix_nodes.eps, an image of the nodes;
+!    * prefix_elements.eps, an image of the elements;
+!    * prefix_solution.txt, the value of the solution at every node.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2010
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Local parameters:
+!
+!    Local, real ( kind = 8 ) A(NZ_NUM), the nonzero entries of the coefficient
+!    matrix.
+!
+!    Local, integer ( kind = 4 ) ELEMENT_NODE(3,ELEMENT_NUM);
+!    ELEMENT_NODE(I,J) is the global index of local node I in element J.
+!
+!    Local, integer ( kind = 4 ) ELEMENT_NUM, the number of elements.
+!
+!    Local, integer ( kind = 4 ) ELEMENT_ORDER, the element order.
+!
+!    Local, real ( kind = 8 ) F(NODE_NUM), the right hand side.
+!
+!    Local, integer ( kind = 4 ) IA(NZ_NUM), the row indices of the nonzero
+!    entries of the coefficient matrix.
+!
+!    Local, integer ( kind = 4 ) JA(NZ_NUM), the column indices of the nonzero
+!    entries of the coefficient matrix.
+!
+!    Local, logical NODE_BOUNDARY(NODE_NUM), is TRUE if the node is
+!    found to lie on the boundary of the region.
+!
+!    Local, integer ( kind = 4 ) NODE_CONDITION(NODE_NUM),
+!    indicates the condition used to determine the variable at a node.
+!    0, there is no condition (and no variable) at this node.
+!    1, a finite element equation is used;
+!    2, a Dirichlet condition is used.
+!    3, a Neumann condition is used.
+!
+!    Local, integer ( kind = 4 ) NODE_NUM, the number of nodes.
+!
+!    Local, real ( kind = 8 ) NODE_U(NODE_NUM), the finite element coefficients.
+!
+!    Local, real ( kind = 8 ) NODE_XY(2,NODE_NUM), the coordinates of nodes.
+!
+!    Local, integer ( kind = 4 ) NZ_NUM, the number of nonzero entries
+!    in the coefficient matrix.
+!
+!    Local, integer ( kind = 4 ) QUAD_NUM, the number of quadrature points
+!    used for assembly.  This is currently set to 3, the lowest reasonable
+!    value.  Legal values are 1, 3, 4, 6, 7, 9, 13, and for some problems,
+!    a value of QUAD_NUM greater than 3 may be appropriate.
+!
+!234567
+#define USE_PETSC
+      implicit none
+
+      real ( kind = 8 ), allocatable, dimension (:) :: a
+      integer   ( kind = 4 ), allocatable, dimension (:) :: adj_col
+      integer   ( kind = 4 ), allocatable, dimension (:) :: iwk
+      logical, parameter :: debug = .false.
+! logical, parameter :: debug = .true.
+      integer   ( kind = 4 ) dim_num
+      character ( len = 255 ) element_eps_filename
+      character ( len = 255 ) element_filename
+      integer   ( kind = 4 ) element_num
+      integer   ( kind = 4 ), dimension(3,*) :: element_node
+      integer   ( kind = 4 ), allocatable, dimension(:,:) :: element_nei&
+     &ghbor
+      integer   ( kind = 4 ) element_order
+      integer   ( kind = 4 ) element_show
+      real ( kind = 8 ), allocatable, dimension (:) :: f
+      integer   ( kind = 4 ), allocatable, dimension (:) :: ia
+      integer   ( kind = 4 ) ierr
+      integer   ( kind = 4 ) ios
+      integer   ( kind = 4 ) itr_max
+      integer   ( kind = 4 ), allocatable, dimension (:) :: ja
+      integer   ( kind = 4 ) k
+      integer   ( kind = 4 ) mr
+      integer   ( kind = 4 ) iwrite
+      integer   ( kind = 4 ) job
+      integer   ( kind = 4 ) node
+      integer   ( kind = 4 ) shift
+      integer ( kind = 4 ), dimension(1) :: ival
+      complex ( kind = 4 ), dimension(1) :: cval
+      logical, allocatable, dimension(:) :: node_boundary
+      integer   ( kind = 4 ), allocatable, dimension(:) :: node_conditio&
+     &n
+      character ( len = 255 ) node_eps_filename
+      character ( len = 255 ) node_filename
+      logical                node_label
+      integer   ( kind = 4 ) node_num
+      integer   ( kind = 4 ) node_show
+      real ( kind = 8 ), dimension(2,*) :: node_xy
+      real ( kind = 8 ), allocatable, dimension (:) :: node_u
+      integer   ( kind = 4 ) num_arg
+      integer   ( kind = 4 ) nz_num
+      integer   ( kind = 4 ), parameter :: quad_num = 3
+      character ( len = 255 ) prefix
+      integer   ( kind = 4 ) seed
+      character ( len = 255 ) solution_filename
+      real ( kind = 8 ) s
+      real ( kind = 8 ) tol_abs
+      real ( kind = 8 ) tol_rel
+      character ( len=10 ) rep
+      character ( len=7 ) field 
+      character ( len=19 ) symm
+!
+!     real ( kind = 8 ), dimension(2,*) :: node_xy
+!
+#include <finclude/petscsys.h>
+#include <finclude/petscvec.h>
+#include <finclude/petscmat.h>
+#include <finclude/petscksp.h>
+#include <finclude/petscpc.h>
+!
+      Mat PetscMatA
+      Vec PetscVecf
+      Vec PetscVecu
+      KSP PoissonSolver
+      PetscInt iao(1), jao(1)
+      PetscScalar mat_array(1)
+      PetscOffset iia, jja,i_mat
+      PetscBool done,blockcompressed
+
+
+      call timestamp ( )
+
+      write ( *, '(a)' ) ' '
+      write ( *, '(a)' ) 'FEM2D_POISSON_SPARSE'
+      write ( *, '(a)' ) '  FORTRAN90 version:'
+      write ( *, '(a)' ) ' '
+!234567890123456789012345678901234567890123456789012345678901234567890123
+      write ( *, '(a)' ) "  A version of FEM2D_POISSON using sparse stor&
+     &age"
+      write ( *, '(a)' ) '  and an iterative solver.'
+      write ( *, '(a)' ) ' '
+      write ( *, '(a)' ) '  Solution of the Poisson equation in an arbit&
+     &rary region'
+      write ( *, '(a)' ) '  in 2 dimensions.'
+      write ( *, '(a)' ) ' '
+      write ( *, '(a)' ) '  - DEL H(x,y) DEL U(x,y) + K(x,y) * U(x,y) = &
+     &F(x,y) in the region'
+      write ( *, '(a)' ) ' '
+      write ( *, '(a)' ) "                    U(x,y) = G(x,y) on the bou&
+     &ndary."
+      write ( *, '(a)' ) ' '
+      write ( *, '(a)' ) '  The finite element method is used,'
+      write ( *, '(a)' ) '  with triangular elements,'
+      write ( *, '(a)' ) '  which must be a 3 node linear triangle.'
+!
+
+      write ( *, '(a,i8)' ) '  Number of nodes =          ', node_num
+
+      allocate ( node_boundary(node_num) )
+      allocate ( node_condition(node_num) )
+
+      write ( *, '(a)' ) ' '
+      write ( *, '(a,i8)' ) '  Element order =            ', 
+     &element_order
+      write ( *, '(a,i8)' ) '  Number of elements =       ', 
+     &element_num
+
+      if ( element_order /= 3 ) then
+        write ( *, '(a)' ) ' '
+        write ( *, '(a)' ) 'FEM2D_POISSON_SPARSE - Fatal error!'
+        write ( *, '(a,i8)' ) '  The input triangulation has order ',   &
+     &element_order
+!23456789012345678901234567890123456789012345678901234567890123456789012
+        write ( *, '(a)' ) '  However, a triangulation of order 3 is req&
+     &uired.'
+        stop
+      end if
+
+      call i4mat_transpose_print_some ( 3, element_num,                 &
+     &  element_node, 1, 1, 3, 10, '  First 10 elements' )
+
+      write ( *, '(a)' ) ' '
+      write ( *, '(a,i8)' ) '  Quadrature order =          ', quad_num
+!
+!  Determine which nodes are boundary nodes and which have a
+!  finite element unknown.  Then set the boundary values.
+!
+      call triangulation_order3_boundary_node ( node_num, element_num,  &
+     &  element_node, node_boundary )
+!
+!  Determine the node conditions.
+!  For now, we'll just assume all boundary nodes are Dirichlet.
+!
+      node_condition(1:node_num) = 1
+
+      do node = 1, node_num
+        if ( node_boundary(node) ) then
+          node_condition(node) = 2
+        end if
+      end do
+!
+!  Make a picture of the nodes.
+!
+      if ( node_num <= 1000 ) then
+
+        if ( node_num <= 100 ) then
+          node_label = .true.
+        else
+          node_label = .false.
+        end if
+
+!23456789012345678901234567890123456789012345678901234567890123456789012
+        call points_plot ( node_eps_filename, node_num, node_xy,        &
+     &node_label )
+
+      end if
+!
+!  Make a picture of the elements.
+!
+      if ( node_num <= 1000 ) then
+
+        if ( node_num <= 100 ) then
+          node_show = 2
+        else if ( node_num <= 250 ) then
+          node_show = 1
+        else
+          node_show = 0
+        end if
+
+        if ( element_num <= 100 ) then
+          element_show = 2
+        else
+          element_show = 1
+        end if
+
+!23456789012345678901234567890123456789012345678901234567890123456789012
+        call triangulation_order3_plot ( element_eps_filename, node_num,&
+     &node_xy, element_num, element_node, node_show, element_show )
+
+      end if
+!
+!  Determine the element neighbor array, just so we can estimate
+!  the nonzeros.
+!
+      allocate ( element_neighbor(3,element_num) )
+
+!23456789012345678901234567890123456789012345678901234567890123456789012
+      call triangulation_order3_neighbor_triangles ( element_num,
+     &   element_node, element_neighbor )
+!
+!  Count the number of nonzeros.
+!
+      allocate ( adj_col(1:node_num+1) )
+
+      call triangulation_order3_adj_countf90 ( node_num, element_num,
+     & element_node,  element_neighbor, nz_num, adj_col )
+
+      write ( *, '(a)' ) ' '
+      write ( *, '(a,i8)' ) '  Number of nonzero coefficients NZ_NUM = '&
+     &, nz_num
+!
+!  Set up the sparse row and column index vectors.
+!
+      allocate ( ia(nz_num) )
+      allocate ( ja(nz_num) )
+
+      call triangulation_order3_adj_set2 ( node_num, element_num, 
+     &   element_node, element_neighbor, nz_num, adj_col, ia, ja )
+
+      deallocate ( adj_col )
+      deallocate ( element_neighbor )
+!
+!  Allocate space for the coefficient matrix A and right hand side F.
+!
+      allocate ( a(nz_num) )
+      allocate ( f(node_num) )
+      allocate ( node_u(node_num) )
+#ifdef USE_PETSC
+      call VecCreateSeqWithArray(PETSC_COMM_SELF,1,node_num,f,PetscVecf,
+     &ierr)
+      call VecCreateSeqWithArray(PETSC_COMM_SELF,1,node_num,node_u,
+     &PetscVecu,ierr)
+#endif
+!
+!  Assemble the finite element coefficient matrix A and the right-hand side F.
+!
+      call assemble_poisson_dsp ( node_num, node_xy, element_num,
+     &  element_node, quad_num, nz_num, ia, ja, a, f )
+!
+      if ( debug ) then
+
+        call dsp_print_some ( node_num, node_num, nz_num, ia, ja, a, 1, 
+     &1, 10, 10, '  Part of Finite Element matrix A:' )
+
+        call r8vec_print_some ( node_num, f, 1, 10,
+     &'  Part of right hand side vector F:' )
+
+      end if
+!
+!  Adjust the linear system to account for Dirichlet boundary conditions.
+!
+      call dirichlet_apply_dsp ( node_num, node_xy, node_condition,
+     &    nz_num, ia, ja, a, f )
+!
+      if ( debug ) then
+c
+c        writing pattern
+c
+         iwrite = 99
+         write(6,*)'Dumping matrix to file'
+         open(iwrite,FILE="pattern.mm")
+         rep = "coordinate"
+         field = "pattern"
+         field = "real"
+         symm = "general"
+         write(6,*)'Calling mmwrite'
+         call mmwrite(iwrite,rep,field,symm,node_num,node_num,nz_num,
+     *                    ia,ja,ival,a,cval)
+!        template
+!        call mmwrite(ounit,rep,field,symm,rows,cols,nnz,
+!    *                    indx,jndx,ival,rval,cval)
+         close(iwrite)
+         write(6,*)'Done! '
+      endif
+#ifdef USE_PETSC
+      call VecAssemblyBegin(PetscVecf,ierr)
+      call VecAssemblyBegin(PetscVecu,ierr)
+      call VecAssemblyEnd(PetscVecu,ierr)
+      call VecAssemblyEnd(PetscVecf,ierr)
+#endif
+
+      if ( debug ) then
+
+!23456789012345678901234567890123456789012345678901234567890123456789012
+        call dsp_print_some ( node_num, node_num, nz_num, ia, ja, a, 1, &
+     &     1, 10, 10, 
+     &     '  Part of A after adjustment for Dirichlet condition:' )
+
+        call r8vec_print_some ( node_num, f, 1, 10,
+     &'  Part of F after adjustment for Dirichlet condition:' )
+
+      end if
+!23456789012345678901234567890123456789012345678901234567890123456789012
+#ifdef USE_PETSC
+      allocate ( iwk(node_num+1) )
+      write(6,*)'Transforming into CSR format'
+      call coicsr(node_num,nz_num,job,a,ja,ia,iwk)
+      deallocate ( iwk )
+      write(6,*)'Shifting CSR format'
+      do k = 1,nz_num
+         ja(k) = ja(k)-1
+      enddo
+      do k = 1,node_num+1
+         ia(k) = ia(k)-1
+      enddo
+      call MatCreateSeqAIJWithArrays(PETSC_COMM_SELF,node_num,node_num, &
+     &ia,ja,a,PetscMatA,ierr)
+      if(ierr.NE.0)write(6,*)'MatCreateSeqAIJWithArrays says ',ierr
+      call MatAssemblyBegin(PetscMatA,ierr)
+      if(ierr.NE.0)write(6,*)'MatAssemblyBegin says ierr = ',ierr
+      call MatAssemblyEnd(PetscMatA,ierr)
+      if(ierr.NE.0)write(6,*)'MatAssemblyEnd says ierr = ',ierr
+      if ( debug ) then
+         done = PETSC_FALSE
+c     use Fortran based indexing
+         shift = 1
+         blockcompressed = PETSC_FALSE
+         write(6,*)'blockcompressed = ',blockcompressed,
+     &' TRUE = ',PETSC_TRUE
+         CALL MatGetRowIJ(PetscMatA,shift,PETSC_FALSE,blockcompressed,
+     &   node_num,iao,iia,jao,jja,done,ierr)
+!PetscErrorCode MatGetRowIJ(Mat mat,PetscInt shift,PetscBool symmetric,PetscBool inodecompressed,PetscInt *n,const PetscInt *ia[],const PetscInt *ja[],PetscBool  *done)
+         IF((done.NEQV.PETSC_TRUE) .OR. (ierr.NE.0) )then
+            write(6,*)' MatGetRowIJ has ret done = ',done,PETSC_FALSE
+            write(6,*)' MatGetRowIJ has ret ierr = ',ierr
+            call EXIT(ierr)
+         else
+            write(6,*)'Nr beyond MatGetRowIJ is ',node_num
+         endif
+         call MatSeqAIJGetArray(PetscMatA,mat_array,i_mat,Ierr)
+         IF(ierr.NE.0)THEN
+            write(6,*)' MatSeqAIJGetArray has ret ierr = ',ierr
+            CALL EXIT(ierr)
+         ENDIF
+!
+         call dump (1,node_num,.TRUE.,mat_array(i_mat+1),jao(jja+1),
+     &           iao(iia+1),22)
+         write(6,*)' dump has ret nr = ',node_num
+         CALL MatRestoreRowIJ(PetscMatA,shift,PETSC_FALSE,
+     &   blockcompressed,node_num,iao,iia,jao,jja,done,ierr)
+         IF((done.NEQV.PETSC_TRUE) .OR. (ierr.NE.0) )then
+            write(6,*)' MatGetRowIJ has ret done = ',done,PETSC_FALSE
+            write(6,*)' MatGetRowIJ has ret ierr = ',ierr
+            call EXIT(ierr)
+         else
+            call MatGetSize(PetscMatA,node_num,PETSC_NULL_INTEGER,ierr)
+            write(6,*)'Nr = ',node_num
+         endif
+         call MatSeqAIJRestoreArray(PetscMatA,mat_array,i_mat,Ierr)
+         if(ierr.NE.0)write(6,*)' MatSeqAIJRestoreArray has ret ierr = '
+     &,ierr
+         call VecNorm(PetscVecu,NORM_2,s,ierr)
+         write(6,*)'solution norm was ',s
+!
+      endif ! debug
+!
+!23456789012345678901234567890123456789012345678901234567890123456789012
+      call KSPCreate(PETSC_COMM_SELF,PoissonSolver,ierr)
+      if(ierr.NE.0)write(6,*)'KSPCreate says ierr = ',ierr
+      call KSPSetOperators(PoissonSolver,PetscMatA,PetscMatA,
+     &                     SAME_PRECONDITIONER,ierr)
+      if(ierr.NE.0)write(6,*)'KSPSetOperators says ierr = ',ierr
+      call KSPSetFromOptions(PoissonSolver,ierr)
+      call KSPSolve(PoissonSolver,PetscVecf,PetscVecu,ierr)
+      if(ierr.NE.0)write(6,*)'KSPSolve says ierr = ',ierr
+      call VecNorm(PetscVecu,NORM_2,s,ierr)
+      if ( debug ) then
+         write(6,*)'solution norm now is ',s
+         write(6,*)'node_num now is ',node_num
+      endif
+#else
+!
+!
+!  Solve the linear system using an iterative solver.
+!
+      do k = 1, nz_num
+        if ( ia(k) < 1 .or. node_num < ia(k) ) then
+          write ( *, * ) '  Illegal IA(K)'
+          stop
+        end if
+        if ( ja(k) < 1 .or. node_num < ja(k) ) then
+          write ( *, * ) '  Illegal JA(K)'
+          stop
+        end if
+      end do
+
+      itr_max = 20
+      mr = 20
+      tol_abs = 0.000001D+00
+      tol_rel = 0.000001D+00
+
+      seed = 123456789
+      call r8vec_uniform_01 ( node_num, seed, node_u )
+
+!23456789012345678901234567890123456789012345678901234567890123456789012
+      call mgmres ( a, ia, ja, node_u, f, node_num, nz_num, itr_max, mr,&
+     &  tol_abs, tol_rel )
+#endif
+      write(6,*)'nr = ',node_num
+
+!     if ( debug ) then
+
+        call r8vec_print_some ( node_num, node_u, 1, 10, 
+     &'  Part of the solution vector U:' )
+
+!     end if
+!
+!  Write an ASCII file that can be read into MATLAB.
+!
+      solution_filename = "solution.txt"
+      call r8mat_write ( solution_filename, 1, node_num, node_u )
+
+      write ( *, '(a)' ) ' '
+      write ( *, '(a)' ) 'FEM2D_POISSON_SPARSE:'
+      write ( *, '(a)' ) '  Wrote an ASCII file'
+      write ( *, '(a)' ) '    "' // trim ( solution_filename ) // '"'
+      write ( *, '(a)' ) '  of the form'
+      write ( *, '(a)' ) '    U ( X(I), Y(I) )'
+      write ( *, '(a)' ) '  which can be used for plotting.'
+!
+!  Deallocate memory.
+!
+      deallocate ( a )
+      deallocate ( f )
+! deallocate ( element_node )
+      deallocate ( ia )
+      deallocate ( ja )
+      deallocate ( node_boundary )
+      deallocate ( node_condition )
+      deallocate ( node_u )
+! deallocate ( node_xy )
+!
+!  Terminate.
+!
+      write ( *, '(a)' ) ' '
+      write ( *, '(a)' ) 'FEM2D_POISSON_SPARSE:'
+      write ( *, '(a)' ) '  Normal end of execution.'
+
+      write ( *, '(a)' ) ' '
+      call timestamp ( )
+
+      stop
+      end
+!
+      subroutine dirichlet_condition ( node_num, node_xy, node_bc )
+      implicit none
+      integer   ( kind = 4 ) node_num
+      integer   ( kind = 4 ) i
+      real ( kind = 8 ), dimension(node_num) :: node_bc
+      real ( kind = 8 ), dimension(2,node_num) :: node_xy
+      do i = 1,node_num
+       node_bc(i) = node_xy(1,i)**2-node_xy(2,i)**2
+      enddo
+      return
+      end
+!
+!    The user specifies the coefficient function H(X,Y) of the Poisson
+!    equation by supplying a routine of the form
+!
+      subroutine h_coef ( node_num, node_xy, node_h )
+      implicit none
+!
+!    The user specifies the coefficient function K(X,Y) of the Poisson
+!    equation by supplying a routine of the form
+!
+      integer   ( kind = 4 ) node_num
+      integer   ( kind = 4 ) i
+      real ( kind = 8 ), dimension(2,node_num) :: node_xy
+      real ( kind = 8 ), dimension(node_num) :: node_h
+      do i = 1,node_num
+       node_h(i) = 1.d0
+      enddo
+      return
+      end
+      subroutine k_coef ( node_num, node_xy, node_k )
+      implicit none
+!
+!    The user specifies the right hand side of the Poisson equation
+!    by supplying a routine of the form
+!
+      integer   ( kind = 4 ) node_num
+      integer   ( kind = 4 ) i
+      real ( kind = 8 ), dimension(2,node_num) :: node_xy
+      real ( kind = 8 ), dimension(node_num) :: node_k
+      do i = 1,node_num
+       node_k(i) = 0.d0
+      enddo
+      return
+      end
+      subroutine rhs ( node_num, node_xy, node_f )
+      implicit none
+      integer   ( kind = 4 ) node_num
+      integer   ( kind = 4 ) i
+      real ( kind = 8 ), dimension(2,node_num) :: node_xy
+      real ( kind = 8 ), dimension(node_num) :: node_f
+      do i = 1,node_num
+       node_f(i) = 0.d0
+      enddo
+       return
+       end
+!
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d133 1
+d138 1
+d158 2
+d161 3
+d180 1
+d183 5
+a193 1
+
+d196 8
+d352 6
+d378 27
+d417 7
+a429 1
+!23456789012345678901234567890123456789012345678901234567890123456789012
+d432 64
+a495 1
+      write(6,*)'MatCreateSeqAIJWithArrays says ',ierr
+d522 2
+d525 1
+a525 1
+      if ( debug ) then
+d530 1
+a530 1
+      end if
+@

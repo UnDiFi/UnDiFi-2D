@@ -1,0 +1,50 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2013.01.25.08.12.46;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Variables used in the Hyperbolic-Elliptic Splitting
+for compressible flows
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION	BETA,BETASQR,nu_p,nu_m,X
+      COMMON / blkEulerII / BETA,BETASQR,nu_p,nu_m,X
+C
+C     $Id$
+C
+C     Variables used in the Hyperbolic-Elliptic Splitting
+C     for compressible flows
+@

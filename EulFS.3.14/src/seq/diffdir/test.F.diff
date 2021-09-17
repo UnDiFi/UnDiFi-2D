@@ -1,0 +1,15 @@
+2a3,4
+>       IMPLICIT NONE
+> C
+11c13
+< C     $Id: test.F,v 1.14 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: test.F,v 1.14 2016/11/10 11:25:13 abonfi Exp $
+13a16
+> #include "petsc/finclude/petscsys.h"
+16,20d18
+<       use petscvec
+<       use petscmat
+< C
+<       IMPLICIT NONE
+< C

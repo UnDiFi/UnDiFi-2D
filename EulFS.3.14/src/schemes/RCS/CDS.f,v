@@ -1,0 +1,732 @@
+head	1.7;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.5
+	release3_4_5:1.5
+	release3_4_4:1.5
+	release3_4_3:1.5
+	release3_4_2:1.5
+	release3_4_1:1.5
+	release3_4_0:1.5
+	release3_3_5:1.5
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.7
+date	2020.09.30.07.33.48;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2020.03.28.09.49.28;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.03.30.09.13.11;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2004.12.20.14.14.38;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2002.09.10.09.37.00;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2002.08.24.10.22.32;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.03.24.15.02.16;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@pure Galerkin system scheme
+@
+
+
+1.7
+log
+@added IMPLICIT NONE and some undefined variables
+@
+text
+@      SUBROUTINE CDSSYS_SCHEME(MATRIXSPLITTER,W,NodRes,TSTEP,BETA,STIFC,
+     +                       NORDER,NDOF,NOFVERT,VCN,NDIM,DFGHDU,LDJ,
+     +                       CELRES,SOURCE,IELEM,MATRIX_ASSEMBLY)
+C
+      IMPLICIT NONE
+C
+C
+C
+C NORDER                IN Integer
+C                       is the order of the system to solve for, i.e.
+C                       the order of the matrix DFGHDU.
+C IELEM                 IN Integer
+C                       is the current element.
+C DFGHDU(LDJ,*) is the Jacobian Matrix of the system.
+C LDJ                   IN Integer
+C                       is the leading dimension of DFGHDU.
+C W(NORDER:NOFVERT)     stores by columns the NORDER variables of the
+C                       NOFVERT vertices.
+C LNodRes                   IN Integer
+C                       is the leading dimension of Q.
+C CELRES[1:2*NORDER]  OUT Real
+C CELRES[1:NORDER]    stores the residual computed by the Matrix scheme
+C                       as \sum K_j U_j (explicit part of the scheme)
+C CELRES[NORDER+1:2*NORDER]
+C                       stores the residual computed by the Matrix scheme
+C                       as \sum C_{ij} U_j (implicit part of the scheme)
+C MatrixSplitter        is the procedure used to compute the eigenvector
+C                       decomposition of the matrix DFGHDU.
+C TSTEP                 is the nodal timestep.
+C NodRes(NORDER,NOFVERT)    is the nodal residual.
+C
+C
+C
+C
+C This routine computes the system N scheme on one tetrahedron
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C
+cnag  EXTERNAL F07ADF,F07AEF,DSCAL
+C
+C
+C
+C     .. Parameters ..
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'flags.com'
+C
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER IELEM,LDJ,NDIM,NOFVERT,NORDER
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DFGHDU(LDJ,*),NodRes(NDOF,NOFVERT),
+     +                 TSTEP(NDOF,NOFVERT),CELRES(*),SOURCE(*),
+     +                 STIFC(NDOF,NDOF,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NDOF,NOFVERT),BETA(*)
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL MATRIXSPLITTER
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION DUM,TEMP,S
+      INTEGER I,INFO,IROW,IVAR,IVERT,J,JCOL,NDOF,IADD,ORDSQR
+      LOGICAL LFLAG
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION KMAT(MAXNOFVAR,MAXNOFVAR),
+     +KNEG(MAXNOFVAR,MAXNOFVAR,VMAX),KPOS(MAXNOFVAR,MAXNOFVAR,VMAX),
+     +SUM_K_NEG(MAXNOFVAR,MAXNOFVAR),UNEG(MAXNOFVAR),
+     +VLEFT(MAXNOFVAR,MAXNOFVAR),VRIGHT(MAXNOFVAR,MAXNOFVAR),
+     +WKSP1(MAXNOFVAR),WKSP2(MAXNOFVAR),WKSP3(MAXNOFVAR,MAXNOFVAR),
+     +WNEG(MAXNOFVAR),WPOS(MAXNOFVAR),WR(MAXNOFVAR)
+      INTEGER IPIV(MAXNOFVAR)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DNRM2
+      LOGICAL NULLMAT,UNITMAT
+      EXTERNAL DNRM2,NULLMAT,UNITMAT
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DGEMM,DGEMV,DGETRF,DGETRS,DINIT,DSCAL,MATSUB,
+     +         MATSUM,R8Mat_Print
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DABS
+C     ..
+      DO 1 J = 1,MAXNOFVAR
+          UNEG(J) = ZERO
+          DO 1 I = 1,MAXNOFVAR
+              SUM_K_NEG(I,J) = ZERO
+    1 CONTINUE
+      DO 3 I = 1,2*NORDER
+          CELRES(I) = ZERO
+    3 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+          CALL DINIT(MAXNOFVAR,ZERO,WKSP1,1)
+          CALL DINIT(MAXNOFVAR,ZERO,WKSP2,1)
+          CALL DINIT(MAXNOFVAR**2,ZERO,WKSP3,1)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+      DO 10 IVERT = 1,NOFVERT
+C
+C
+C    The matrix is split into its positive and negative parts
+C
+C    Numerically or Analitically ..
+C
+          CALL MATRIXSPLITTER(IELEM,NDIM,NORDER,VCN(1,IVERT),DFGHDU,LDJ,
+     +         KMAT,KPOS(1,1,IVERT),KNEG(1,1,IVERT),
+     +         VLEFT,VRIGHT,MAXNOFVAR,WR,WPOS,WNEG,.TRUE.)
+C
+C    The negative jacobians are accumulated in SUM_K_NEG ..
+C
+          DO 15 JCOL = 1,NORDER
+              DO 15 IROW = 1,NORDER
+                  SUM_K_NEG(IROW,JCOL) = SUM_K_NEG(IROW,JCOL) +
+     +                                   KNEG(IROW,JCOL,IVERT)
+   15     CONTINUE
+C
+C    Computes KNEG(IVERT)*U(IVERT) and adds it to UNEG ..
+C
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,KNEG(1,1,IVERT),MAXNOFVAR,W
+cblas+   (1,IVERT),1,ONE,UNEG,1)
+C
+          DO 11 I = 1,NORDER
+              DUM = ZERO
+              DO 13 J = 1,NORDER
+                  DUM = DUM + KNEG(I,J,IVERT)*W(J,IVERT)
+   13         CONTINUE
+              UNEG(I) = UNEG(I) + DUM
+   11     CONTINUE
+C
+C
+C --------------- Debugging code starts here ---------------
+C
+caldo     IF (ICHECK.NE.0) THEN
+C
+C    the residual is computes as Sum_j K(j) * U(j) ..
+C
+              CALL DGEMV('N',NORDER,NORDER,ONE,KMAT,MAXNOFVAR,
+     +                   W(1,IVERT),1,ONE,CELRES,1)
+caldo     ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C    Timestep ..
+C
+          DO 34 I = 1,NORDER
+              TSTEP(1,IVERT) = TSTEP(1,IVERT) + WPOS(I)
+   34     CONTINUE
+C
+   10 CONTINUE
+C
+C    Finds the generalized inflow point
+C       solving [\sum_j K_j^-] U_{-} = \sum_j K_j^- U_j
+C
+C    LU factorization ..
+C
+cnag  CALL F07ADF(NORDER,NORDER,SUM_K_NEG,MAXNOFVAR,IPIV,INFO)
+      CALL DGETRF(NORDER,NORDER,SUM_K_NEG,MAXNOFVAR,IPIV,INFO)
+C
+      IF (INFO.GT.0) THEN
+          WRITE (6,FMT=99999) IELEM
+
+99999     FORMAT (5X,'Matrix SUM_K_NEG is singular in IELEM = ',I6)
+*
+          DO 9 IVERT = 1,NOFVERT
+              WRITE (6,FMT=*) '    Vertice # ',IVERT
+              CALL R8Mat_Print('G',' ',NORDER,NORDER,KPOS(1,1,IVERT),
+     +                    MAXNOFVAR,'K(+) ',INFO)
+              CALL R8Mat_Print('G',' ',NORDER,NORDER,KNEG(1,1,IVERT),
+     +                    MAXNOFVAR,'K(-) ',INFO)
+    9     CONTINUE
+          CALL R8Mat_Print('G',' ',NORDER,NORDER,SUM_K_NEG,MAXNOFVAR,
+     +                'SUM_j K(-) ',INFO)
+          STOP
+
+      ENDIF
+C
+C    solution ..
+C
+cnag  CALL F07AEF('N',NORDER,1,SUM_K_NEG,MAXNOFVAR,IPIV,UNEG,MAXNOFVAR,INFO)
+      CALL DGETRS('N',NORDER,1,SUM_K_NEG,MAXNOFVAR,IPIV,UNEG,
+     +            MAXNOFVAR,INFO)
+C
+C Loops over nodes
+C
+      S = ONE/REAL(NOFVERT)
+C
+      DO 30 IVERT = 1,NOFVERT
+C
+          DO 35 IVAR = 1,NORDER
+              W(IVAR,IVERT) = W(IVAR,IVERT) - UNEG(IVAR)
+   35     CONTINUE
+C
+C    NodRes[INODE] = - KPOS(IVERT)*[U(IVERT)-UNEG]
+C
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,KPOS(1,1,IVERT),MAXNOFVAR, W
+cblas+   (1,IVERT),1,ZERO,WKSP,1)
+C
+          DO 23 IVAR = 1,NORDER
+              NodRes(IVAR,IVERT) = -(CelRes(ivar)+SOURCE(ivar))*S
+   23     CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+          IF (ICHECK.NE.0) THEN
+C
+C    The residual is computed as Sum_j KPOS(j) * [U(j)-Uin]
+C       and stored in WKSP1
+C
+              CALL DAXPY(NORDER,-ONE,NodRes(1,IVERT),1,WKSP1,1)
+          ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+   30 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      include 'test1.inc'
+C
+C --------------- Debugging code ends here ---------------
+C
+      IF (.NOT.MATRIX_ASSEMBLY) RETURN
+C
+C     Assembling the element stiffness matrix for the N scheme ..
+C
+      DO 31 J = 1,NOFVERT
+C
+C     Solve [\sum_K^{-}] Delta_j^{-} = K_j^{-}
+C         Delta_j^{-} is overwritten onto K_j^{-}
+C
+          CALL DGETRS('N',NORDER,NORDER,SUM_K_NEG,MAXNOFVAR,IPIV,
+     +                KNEG(1,1,J),MAXNOFVAR,INFO)
+C
+          DO 31 I = 1,NOFVERT
+C
+              IF (I.EQ.J) GOTO 31
+C
+C     C_{ij}^N = K_i^{+} Delta_j^{-} i neq j
+C
+              CALL DGEMM('N','N',NORDER,NORDER,NORDER,ONE,KPOS(1,1,I),
+     +             MAXNOFVAR,KNEG(1,1,J),MAXNOFVAR,ZERO,STIFC(1,1,I,J),
+     +             NDOF)
+C
+C     C_{ii} = - \sum_{j \neq i} C_{ij}
+C                = - K_i^{+} [ \sum_{j \neq i} \Delta_j^- ] ...
+C
+              CALL MATSUB(STIFC(1,1,I,I),NDOF,STIFC(1,1,I,J),NDOF,
+     +                    NORDER,NORDER)
+C
+   31 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+C
+C        check that \sum_j \Delta_j^- = Identity matrix
+C
+          CALL DINIT(MAXNOFVAR**2,ZERO,WKSP3,1)
+          DO 14 J = 1,NOFVERT
+              CALL MATSUM(WKSP3,MAXNOFVAR,KNEG(1,1,J),MAXNOFVAR,
+     +        NORDER,NORDER)
+   14     CONTINUE
+          LFLAG = UNITMAT(WKSP3,NORDER,NORDER,MAXNOFVAR,1.D-14)
+          IF (.NOT.LFLAG) THEN
+              WRITE (6,FMT=*) IELEM,I
+              CALL R8Mat_Print('General',' ',NORDER,NORDER,WKSP3,
+     +             MAXNOFVAR,' Sum Delta_j^- equals identity ?',INFO)
+              PAUSE
+
+          ENDIF
+      ENDIF
+C
+      include 'test2.inc'
+C
+C --------------- Debugging code ends here ---------------
+C
+      RETURN
+
+      END
+@
+
+
+1.6
+log
+@renamed subroutine call
+@
+text
+@d5 1
+a21 2
+C*PL*ERROR* Comment line too long
+C*PL*ERROR* Comment line too long
+a24 2
+C*PL*ERROR* Comment line too long
+C*PL*ERROR* Comment line too long
+d55 1
+d73 2
+a74 2
+      DOUBLE PRECISION SUM,TEMP
+      INTEGER I,INFO,IROW,IVAR,IVERT,J,JCOL,NDOF
+d142 1
+a142 1
+              SUM = ZERO
+d144 1
+a144 1
+                  SUM = SUM + KNEG(I,J,IVERT)*W(J,IVERT)
+d146 1
+a146 1
+              UNEG(I) = UNEG(I) + SUM
+@
+
+
+1.5
+log
+@renamed some variables
+@
+text
+@d95 1
+a95 1
+     +         MATSUM,X04CAF
+d187 1
+a187 1
+              CALL X04CAF('G',' ',NORDER,NORDER,KPOS(1,1,IVERT),
+d189 1
+a189 1
+              CALL X04CAF('G',' ',NORDER,NORDER,KNEG(1,1,IVERT),
+d192 1
+a192 1
+          CALL X04CAF('G',' ',NORDER,NORDER,SUM_K_NEG,MAXNOFVAR,
+d287 2
+a288 2
+              CALL X04CAF('General',' ',NORDER,NORDER,WKSP3,MAXNOFVAR,
+     +                    ' Sum Delta_j^- equals identity ?',INFO)
+@
+
+
+1.4
+log
+@add source term
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE CDSSYS_SCHEME(MATRIXSPLITTER,W,NodRes,TSTEP,STIFC,
+d3 1
+a3 1
+     +                       CELRES,SOURCE,IELEM,TIMEIMPL)
+a39 3
+      include 'paramt.h'
+      include 'flags.com'
+C
+d56 4
+a59 2
+      DOUBLE PRECISION ZERO,ONE
+      PARAMETER (ZERO=0.D0,ONE=1.D0)
+d63 1
+a63 1
+      LOGICAL TIMEIMPL
+d69 1
+a69 1
+     +                 VCN(NDIM,NOFVERT),W(NDOF,NOFVERT)
+d243 1
+a243 1
+      IF (.NOT.TIMEIMPL) RETURN
+@
+
+
+1.3
+log
+@the timestep array is now dimensioned NOFVAR x NOFVERT
+@
+text
+@d2 2
+a3 2
+     +                       NORDER,NOFVAR,NOFVERT,VCN,NDIM,DFGHDU,LDJ,
+     +                       CELRES,IELEM,TIMEIMPL)
+a56 3
+cblas CALL DSCAL(NORDER,ZERO,CELRES,1)! residual = - fluctuation
+cblas CALL DSCAL(NMAX,ZERO,UNEG,1)! Inflow point
+cblas CALL DSCAL(NMAX*NMAX,ZERO,SUM_K_NEG,1)! sum of the negative k's
+d67 4
+a70 4
+      DOUBLE PRECISION DFGHDU(LDJ,*),NodRes(NOFVAR,NOFVERT),
+     +                 TSTEP(NOFVAR,NOFVERT),CELRES(*),
+     +                 STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NOFVAR,NOFVERT)
+d77 1
+a77 1
+      INTEGER I,INFO,IROW,IVAR,IVERT,J,JCOL,NOFVAR
+d81 7
+a87 6
+      DOUBLE PRECISION KMAT(NMAX,NMAX),KNEG(NMAX,NMAX,VMAX),
+     +                 KPOS(NMAX,NMAX,VMAX),SUM_K_NEG(NMAX,NMAX),
+     +                 UNEG(NMAX),VLEFT(NMAX,NMAX),VRIGHT(NMAX,NMAX),
+     +                 WKSP1(NMAX),WKSP2(NMAX),WKSP3(NMAX,NMAX),
+     +                 WNEG(NMAX),WPOS(NMAX),WR(NMAX)
+      INTEGER IPIV(NMAX)
+d101 1
+a101 1
+      DO 1 J = 1,NMAX
+d103 1
+a103 1
+          DO 1 I = 1,NMAX
+d113 3
+a115 3
+          CALL DINIT(NMAX,ZERO,WKSP1,1)
+          CALL DINIT(NMAX,ZERO,WKSP2,1)
+          CALL DINIT(NMAX**2,ZERO,WKSP3,1)
+d128 2
+a129 2
+     +                        KMAT,KPOS(1,1,IVERT),KNEG(1,1,IVERT),
+     +                        VLEFT,VRIGHT,NMAX,WR,WPOS,WNEG,.TRUE.)
+d141 1
+a141 1
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,KNEG(1,1,IVERT),NMAX,W
+d159 2
+a160 2
+              CALL DGEMV('N',NORDER,NORDER,ONE,KMAT,NMAX,W(1,IVERT),1,
+     +                   ONE,CELRES,1)
+d178 2
+a179 2
+cnag  CALL F07ADF(NORDER,NORDER,SUM_K_NEG,NMAX,IPIV,INFO)
+      CALL DGETRF(NORDER,NORDER,SUM_K_NEG,NMAX,IPIV,INFO)
+d188 4
+a191 4
+              CALL X04CAF('G',' ',NORDER,NORDER,KPOS(1,1,IVERT),NMAX,
+     +                    'K(+) ',INFO)
+              CALL X04CAF('G',' ',NORDER,NORDER,KNEG(1,1,IVERT),NMAX,
+     +                    'K(-) ',INFO)
+d193 1
+a193 1
+          CALL X04CAF('G',' ',NORDER,NORDER,SUM_K_NEG,NMAX,
+d201 3
+a203 2
+cnag  CALL F07AEF('N',NORDER,1,SUM_K_NEG,NMAX,IPIV,UNEG,NMAX,INFO)
+      CALL DGETRS('N',NORDER,1,SUM_K_NEG,NMAX,IPIV,UNEG,NMAX,INFO)
+d207 2
+d217 1
+a217 1
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,KPOS(1,1,IVERT),NMAX, W
+d221 1
+a221 1
+              NodRes(IVAR,IVERT) = -CelRes(ivar)/real(nofvert)
+d240 1
+a240 1
+      include 'test1.f'
+d253 2
+a254 2
+          CALL DGETRS('N',NORDER,NORDER,SUM_K_NEG,NMAX,IPIV,KNEG(1,1,J),
+     +                NMAX,INFO)
+d263 2
+a264 1
+     +             NMAX,KNEG(1,1,J),NMAX,ZERO,STIFC(1,1,I,J),NOFVAR)
+d269 1
+a269 1
+              CALL MATSUB(STIFC(1,1,I,I),NOFVAR,STIFC(1,1,I,J),NOFVAR,
+d280 1
+a280 1
+          CALL DINIT(NMAX**2,ZERO,WKSP3,1)
+d282 2
+a283 1
+              CALL MATSUM(WKSP3,NMAX,KNEG(1,1,J),NMAX,NORDER,NORDER)
+d285 1
+a285 1
+          LFLAG = UNITMAT(WKSP3,NORDER,NORDER,NMAX,1.D-14)
+d288 1
+a288 1
+              CALL X04CAF('General',' ',NORDER,NORDER,WKSP3,NMAX,
+d295 1
+a295 1
+      include 'test2.f'
+@
+
+
+1.2
+log
+@towards the implementation of a coupled approach
+for RANS: the number of variables NOFVAR can now
+be different from the number of mean flow equations
+(hereafter called NOFEQN); NOFVAR has been add among the
+arguments of the call
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE CDSSYS_SCHEME(MATRIXSPLITTER,W,NodRes,DT,STIFC,NORDER,
+     +                       NOFVAR,NOFVERT,VCN,NDIM,DFGHDU,LDJ,
+d32 1
+a32 1
+C DT                 is the nodal timestep.
+d70 3
+a72 2
+      DOUBLE PRECISION DFGHDU(LDJ,*),NodRes(NOFVAR,NOFVERT),DT(NOFVERT),
+     +                 CELRES(*),STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+d170 1
+a170 1
+              DT(IVERT) = DT(IVERT) + WPOS(I)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE CDSSYS_SCHEME(MATRIXSPLITTER,W,DQ,DT,STIFC,NORDER,
+     +                       NOFVERT,VCN,NDIM,DFGHDU,LDJ,RESIDUAL,IELEM,
+     +                       TIMEIMPL)
+d18 1
+a18 1
+C LDQ                   IN Integer
+d20 1
+a20 1
+C RESIDUAL[1:2*NORDER]  OUT Real
+d23 1
+a23 1
+C RESIDUAL[1:NORDER]    stores the residual computed by the Matrix scheme
+d25 1
+a25 1
+C RESIDUAL[NORDER+1:2*NORDER]
+d33 1
+a33 1
+C DQ(NORDER,NOFVERT)    is the nodal residual.
+d57 1
+a57 1
+cblas CALL DSCAL(NORDER,ZERO,RESIDUAL,1)! residual = - fluctuation
+d70 3
+a72 3
+      DOUBLE PRECISION DFGHDU(LDJ,*),DQ(NORDER,NOFVERT),DT(NOFVERT),
+     +                 RESIDUAL(*),STIFC(NORDER,NORDER,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NORDER,NOFVERT)
+d108 1
+a108 1
+          RESIDUAL(I) = ZERO
+d161 1
+a161 1
+     +                   ONE,RESIDUAL,1)
+d213 1
+a213 1
+C    DQ[INODE] = - KPOS(IVERT)*[U(IVERT)-UNEG]
+d219 1
+a219 1
+              DQ(IVAR,IVERT) = -residual(ivar)/real(nofvert)
+d229 1
+a229 1
+              CALL DAXPY(NORDER,-ONE,DQ(1,IVERT),1,WKSP1,1)
+d238 1
+a238 15
+      IF (ICHECK.NE.0) THEN
+C
+C     WKSP1 is the residual computed as \sum \Phi_j^{N}
+C     it is compared with RESIDUAL[1:NORDER] = - \sum K_j U_j
+C
+          DO 12 IVAR = 1,NORDER
+              TEMP = WKSP1(IVAR) - RESIDUAL(IVAR)
+              IF (DABS(TEMP).GT.1.D-15) THEN
+                  WRITE (6,FMT=*) 'N system scheme, elem ',IELEM,
+     +              ' var # ',IVAR,' computed ',WKSP1(IVAR),' "true" ',
+     +              RESIDUAL(IVAR)
+              ENDIF
+
+   12     CONTINUE
+      ENDIF
+d261 1
+a261 1
+     +             NMAX,KNEG(1,1,J),NMAX,ZERO,STIFC(1,1,I,J),NORDER)
+d266 1
+a266 1
+              CALL MATSUB(STIFC(1,1,I,I),NORDER,STIFC(1,1,I,J),NORDER,
+d289 1
+a289 24
+C
+C     Check that \sum_{j} C_{i,j} = 0
+C
+          DO 16 I = 1,NOFVERT
+              CALL DINIT(NMAX*NMAX,ZERO,WKSP3,1)
+              DO 17 J = 1,NOFVERT
+                  CALL MATSUM(WKSP3,NMAX,STIFC(1,1,I,J),NORDER,NORDER,
+     +                        NORDER)
+   17         CONTINUE
+              LFLAG = NULLMAT(WKSP3,NORDER,NORDER,NMAX,1.D-14)
+              IF (.NOT.LFLAG) THEN
+                  WRITE (6,FMT=*) IELEM,I
+                  CALL X04CAF('General',' ',NORDER,NORDER,WKSP3,NMAX,
+     +                        ' Sum_j C_{i,j} equals the null matrix ?',
+     +                        INFO)
+                  PAUSE
+
+              ENDIF
+
+   16     CONTINUE
+C
+          GOTO 69
+C
+C        print the element stiffness matrix
+d291 1
+a291 39
+          DO 19 J = 1,NOFVERT
+              DO 19 I = 1,NOFVERT
+                  WRITE (6,FMT=*) 'IELEM = ',IELEM,'I,J = ',I,J
+                  CALL X04CAF('General',' ',NOFVAR,NOFVAR,
+     +                        STIFC(1,1,I,J),NORDER,
+     +                        ' Element stiffness matrix ',INFO)
+   19     CONTINUE
+          PAUSE
+
+   69     CONTINUE
+C
+C*PL*ERROR* Comment line too long
+C*PL*ERROR* Comment line too long
+C     RESIDUAL[NORDER+1:2*NORDER] stores the residual in the "V" variable
+C         computed as - \sum_{i,j} C_{i,j} U_j
+C
+          DO 22 J = 1,NOFVERT
+              DO 22 I = 1,NOFVERT
+                  CALL DGEMV('N',NORDER,NORDER,-ONE,STIFC(1,1,I,J),
+     +                       NORDER,W(1,J),1,ONE,RESIDUAL(NORDER+1),1)
+   22     CONTINUE
+C
+C
+C
+          LFLAG = .FALSE.
+          DO 27 IVAR = 1,NORDER
+              TEMP = RESIDUAL(IVAR) - RESIDUAL(NORDER+IVAR)
+              IF (DABS(TEMP).GT.1.D-14) LFLAG = .TRUE.
+   27     CONTINUE
+          IF (LFLAG .EQV. .TRUE.) THEN
+              WRITE (6,FMT=*) 'N system scheme, elem ',IELEM
+              WRITE (6,FMT=*) 'var #     implicit        "true"'
+              DO 25 IVAR = 1,NORDER
+                  WRITE (6,FMT=*) IVAR,RESIDUAL(NORDER+IVAR),
+     +              RESIDUAL(IVAR)
+   25         CONTINUE
+          ENDIF
+C
+      ENDIF
+@

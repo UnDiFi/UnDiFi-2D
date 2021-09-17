@@ -1,0 +1,602 @@
+head	1.20;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.20
+	release3_13_0:1.20
+	release3_12_0:1.20
+	release3_11_0:1.20
+	release3_10_0:1.20
+	release3_8_0:1.20
+	release3_7_1:1.19
+	release3_7_0:1.19
+	release3_4_5:1.18
+	release3_4_4:1.18
+	release3_4_3:1.18
+	release3_4_2:1.18
+	release3_4_1:1.18
+	release3_4_0:1.16
+	release3_3_5:1.16
+	release3_3_4:1.16
+	release3_3_3:1.16
+	release3_3_2:1.16
+	release3_3_1:1.16
+	release3_3_0:1.16;
+locks; strict;
+comment	@c @;
+
+
+1.20
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2013.06.06.10.34.38;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2013.06.04.15.37.04;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2011.12.14.09.53.31;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2005.07.17.19.16.22;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.10.26.15.27.49;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.06.23.16.51.43;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.06.19.13.53.28;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.11.05.20.57.38;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.11.05.20.56.25;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.11.17.18.47.27;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.02.10.08.53.46;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.05.10.32.51;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Set boundary conditions for the turbulence equation
+@
+
+
+1.20
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@C
+      SUBROUTINE LHSBC5( B, NodalBcs )
+C
+C     This routine applies the Dirichlet boundary conditions to the
+C     stiffness matrix for the turbulence one-eqn. model.
+C     For a no-slip wall node (NODCODE=1000) A_ij j \neq i is set to 0.d0
+C     and the diagonal entry is left unchanged
+C
+C     $Id: lhsbc5.F,v 1.19 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscis.h"
+      use petscmat
+      use petscis
+C
+      IMPLICIT NONE
+C
+      INCLUDE "constants.h"
+      INCLUDE "bnd.h"
+      INCLUDE "iset.h"
+C
+C
+      IS, dimension(0:*) :: NodalBcs
+      Mat B
+C
+      INTEGER IFAIL
+C
+C     zero-out rows of nodes where no-slip and free-stream nodal bcs
+C     apply
+C
+      CALL MatZeroRowsIS(B,NodalBcs(NoSlipNodes),ONE,PETSC_NULL_VEC,
+     &                   PETSC_NULL_VEC,IFAIL)
+      CALL MatZeroRowsIS(B,NodalBcs(FreestreamTurbulence),ONE,
+     &                   PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+C
+      CALL MatAssemblyBegin(B,MAT_FINAL_ASSEMBLY,IFAIL)
+      CALL MatAssemblyEnd(B,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+C     This will remove the entries from the matrix; but when 
+C     you assemble the matrix for the next time-step it will not 
+C     insert those unneeded values (the values that would be zeroed
+C     in the next call to MatZeroRows()). This is a very efficient
+C     way to do multiple linear systems BUT assumes
+C
+C     1) the rows you want to zero remain the same for each successive
+C        linear system in the series
+C     2) you are not adding new nonzeros in other parts of the matrix
+C        at later timesteps (because the above option will cause those 
+C        new values to be ignored).
+C
+      CALL MatSetOption(B,MAT_NEW_NONZERO_LOCATIONS,PETSC_FALSE,IFAIL)
+C
+      RETURN
+      END
+C
+@
+
+
+1.19
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d2 1
+a2 3
+      SUBROUTINE LHSBC5( B )
+C
+      IMPLICIT NONE
+d9 1
+a9 1
+C     $Id: lhsbc5.F,v 1.18 2013/06/06 10:34:38 abonfi Exp abonfi $
+a11 1
+#include "petsc/finclude/petscsys.h"
+d14 4
+d21 1
+a22 1
+#include "iset.com"
+d24 1
+d29 7
+a35 4
+      CALL MatZeroRowsIS(B,NoSlipNodes,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+      CALL MatZeroRowsIS(B,FreestreamTurbulence,ONE,PETSC_NULL_OBJECT,
+     &                   PETSC_NULL_OBJECT,IFAIL)
+@
+
+
+1.18
+log
+@now includes bnd.h
+@
+text
+@d11 1
+a11 1
+C     $Id: lhsbc5.F,v 1.17 2013/06/04 15:37:04 abonfi Exp abonfi $
+d14 3
+a16 3
+#include "finclude/petscsys.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscis.h"
+@
+
+
+1.17
+log
+@removed the RCS Header
+@
+text
+@d11 1
+a11 1
+C     $Id: lhsbc5.F,v 1.16 2011/12/14 09:53:31 abonfi Exp abonfi $
+d19 1
+@
+
+
+1.16
+log
+@changes required due to the upgrade to petsc-3.2
+@
+text
+@d11 1
+a11 2
+C     $Id: lhsbc5.F,v 1.15 2011/09/16 07:19:48 abonfi Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.3.2.0/src/seq/RCS/lhsbc5.F,v 1.15 2011/09/16 07:19:48 abonfi Exp abonfi $
+@
+
+
+1.15
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.14 2009/06/11 13:10:58 abonfi Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.3.1.0/src/seq/RCS/lhsbc5.F,v 1.14 2009/06/11 13:10:58 abonfi Exp abonfi $
+d27 4
+a30 2
+      CALL MatZeroRowsIS(B,NoSlipNodes,ONE,IFAIL)
+      CALL MatZeroRowsIS(B,FreestreamTurbulence,ONE,IFAIL)
+@
+
+
+1.14
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.13 2005/07/17 19:16:22 aldo Exp abonfi $
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.0.15.0/src/seq/RCS/lhsbc5.F,v 1.13 2005/07/17 19:16:22 aldo Exp abonfi $
+d15 1
+a15 1
+#include "finclude/petsc.h"
+@
+
+
+1.13
+log
+@changes required to upgrade to petsc-2.3.0
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.12 2000/10/26 15:27:49 aldo Exp $
+C     $Header: /home1/navier/abonfi/EulFS.0.10.13/src/seq/RCS/lhsbc5.F,v 1.12 2000/10/26 15:27:49 aldo Exp $
+d15 3
+a17 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscis.h"
+d19 1
+a19 2
+      DOUBLE PRECISION ONE
+      PARAMETER (ONE=1.d0)
+d45 1
+a45 1
+      CALL MatSetOption(B,MAT_NO_NEW_NONZERO_LOCATIONS,IFAIL)
+@
+
+
+1.12
+log
+@changed MatZeroRowsLocal into MatZeroRows
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.11 2000/10/19 16:10:34 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/lhsbc5.F,v 1.11 2000/10/19 16:10:34 aldo Exp aldo $
+d28 2
+a29 2
+      CALL MatZeroRows(B,NoSlipNodes,ONE,IFAIL)
+      CALL MatZeroRows(B,FreestreamTurbulence,ONE,IFAIL)
+@
+
+
+1.11
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.10 2000/06/23 16:51:43 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/lhsbc5.F,v 1.10 2000/06/23 16:51:43 aldo Exp aldo $
+a27 4
+#ifdef MPI
+      CALL MatZeroRowsLocal(B,NoSlipNodes,ONE,IFAIL)
+      CALL MatZeroRowsLocal(B,FreestreamTurbulence,ONE,IFAIL)
+#else
+a29 1
+#endif
+@
+
+
+1.10
+log
+@uses MatZeroRowsLocal
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.9 2000/06/19 13:53:28 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.7/src/seq/RCS/lhsbc5.F,v 1.9 2000/06/19 13:53:28 aldo Exp aldo $
+d16 2
+a17 2
+#include "include/finclude/mat.h"
+#include "include/finclude/is.h"
+@
+
+
+1.9
+log
+@noe including common block COMISET
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.8 1999/11/05 20:57:38 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.5/src/seq/RCS/lhsbc5.F,v 1.8 1999/11/05 20:57:38 aldo Exp aldo $
+d30 1
+d33 1
+@
+
+
+1.8
+log
+@minor change
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.7 1999/11/05 20:56:25 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/lhsbc5.F,v 1.7 1999/11/05 20:56:25 aldo Exp aldo $
+a20 5
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/COMISET/SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+d22 1
+@
+
+
+1.7
+log
+@replaced integer with IS
+@
+text
+@d11 2
+a12 2
+C     $Id: lhsbc5.F,v 1.6 1998/11/17 18:47:27 aldo Exp $
+C     $Header: /home/aldo/EulFS.0.9.5/src/seq/RCS/lhsbc5.F,v 1.6 1998/11/17 18:47:27 aldo Exp $
+a34 1
+      pause 'before MatZeroRows'
+@
+
+
+1.6
+log
+@now using Index Sets to address no-slip nodes
+@
+text
+@d11 2
+a12 2
+C     $Id$
+C     $Header$
+d17 1
+d21 6
+a26 1
+      INCLUDE 'iset.com' 
+d35 1
+@
+
+
+1.5
+log
+@Add automatic identification flag
+@
+text
+@d2 1
+a2 1
+      SUBROUTINE LHSBC5( NR, NODCODE, B, IWORK )
+d12 1
+a16 1
+#include "include/finclude/is.h"
+d18 3
+a20 2
+      DOUBLE PRECISION ZERO,ONE
+      PARAMETER (ZERO=0.D0,ONE=1.d0)
+a22 1
+      IS  ISet
+d24 1
+a24 1
+      INTEGER NR
+d26 5
+a30 19
+      INTEGER IFAIL,IWORK(*)
+      INTEGER NODCODE(*)
+C
+      INTEGER INODE,IC
+C
+      IC = 0 
+      DO 3 INODE = 1 , NR
+         IF( NODCODE(INODE) .EQ. 1000 )THEN
+            IC = IC + 1
+C     zero based indexing
+            IWORK(IC) = INODE-1
+         ENDIF
+    3 CONTINUE
+C
+      CALL ISCreateGeneral(MPI_COMM_WORLD,IC,IWORK,ISet,IFAIL)
+C
+      CALL MatZeroRows(B,ISet,ONE,IFAIL)
+C
+      CALL ISDestroy(ISet,IFAIL)
+@
+
+
+1.4
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@a5 4
+#include "include/finclude/petsc.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/is.h"
+C
+d10 7
+@
+
+
+1.3
+log
+@Unused variables removed
+@
+text
+@d6 3
+a8 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/is.h"
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@d26 1
+a26 1
+      INTEGER INODE,IBGN,IEND,ICODE,I,IC
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 3
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE SETBC4( NR, NBLK, NODCODE, A, JA, IA )
+d6 3
+a8 17
+C     This routine applies the boundary conditions to the
+C     turbulence equations by modifying the stiffness matrix.
+C     Dirichlet boundary conditions are set on no-slip
+C     solid wall boundary nodes,
+C     which is correct for Spalart-Allmaras
+C     Equations are assumed to be written in delta-form
+C     therefore turbulent viscosity must be set to zero
+C     on no-slip walls before starting to compute
+C
+C     NBLK is the dimension of each block (i.e. the number of 
+C          turbulence variables = 1)
+C
+C     .. Parameters ..
+C
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+d10 4
+a13 2
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+d15 2
+a16 1
+      INTEGER NR,NBLK,NVAR
+d18 2
+a19 1
+C     .. Array Arguments ..
+d21 1
+a21 2
+      DOUBLE PRECISION A(*)
+      INTEGER NODCODE(*),JA(*),IA(*)
+d23 2
+a24 1
+C     .. Local Scalars ..
+d26 1
+a26 1
+      INTEGER INODE,IBGN,IEND,ICODE,IR,IC,I,ifail,U
+d28 8
+a35 1
+C     .. Executable Statements ..
+d37 1
+d39 1
+a39 2
+      DO 1 INODE = 1 , NR
+         ICODE = NODCODE(INODE)
+d41 1
+a41 1
+C     Dirichlet boundary conditions on no-slip walls
+d43 2
+a44 3
+         IF( ICODE .NE. 1000 )GOTO 1
+            IBGN = IA(INODE)
+            IEND = IA(INODE+1)-1
+d46 5
+a50 1
+         DO 3 I = IBGN, IEND
+d52 5
+a56 1
+C                .. diagonal block ..
+d58 1
+a58 1
+                 IF( JA(I) .NE. INODE )A(I) = ZERO
+a59 2
+    3    CONTINUE
+    1 CONTINUE
+@

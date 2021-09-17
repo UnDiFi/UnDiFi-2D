@@ -1,0 +1,13 @@
+10c10,12
+< C     $Id: nodres_t.F,v 1.19 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: nodres_t.F,v 1.19 2016/11/10 11:25:13 abonfi Exp $
+13a16
+> #include "petsc/finclude/petscsys.h"
+16,19d18
+<       use petscvec 
+<       use petscmat 
+< C
+<       IMPLICIT NONE

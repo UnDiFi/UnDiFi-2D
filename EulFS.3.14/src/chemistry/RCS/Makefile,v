@@ -1,0 +1,187 @@
+head	1.4;
+access;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2016.11.10.11.52.18;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2013.06.25.07.35.44;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.06.08.09.34.32;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.26.12.18.52;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Makefile in the chemistry dir
+@
+
+
+1.4
+log
+@Changed the location of the petsc header files
+@
+text
+@FFLAGS	      = -I../../include
+
+include $(PETSC_DIR)/lib/petsc/conf/variables
+include $(PETSC_DIR)/lib/petsc/conf/rules
+
+DEST	      = $(FSPL_DIR)/lib/$(PETSC_ARCH)
+
+EXTHDRS	      = ../../include/paramt.h \
+		../../include/plasma.h \
+		../../include/chem.h \
+		../../include/paramchem.h \
+		../../include/commonv.inc \
+		../../include/commonchem.inc
+		
+HDRS	      =
+
+INSTALL	      = cp
+
+LIBRARY	      = libchem.a
+
+MAKEFILE      = Makefile
+
+OBJS	      = chemsource.o \
+		currentflux.o \
+		electcond.o \
+		massaction.o \
+		ohmsource.o \
+		rate.o \
+                readArgon.o \
+		massactionSU2.o \
+		boltzeq4Ar.o \
+		iondegree4Ar.o \
+		getsigma.o \
+		plasflow_inf.o
+		
+PRINT	      = pr
+
+SHELL	      = /bin/sh
+
+SRCS	      = chemsource.f90 \
+		currentflux.F \
+		electcond.f90 \
+		massaction.f90 \
+		ohmsource.f90 \
+		rate.f90 \
+		readArgon.f90 \
+		massactionSU2.f90 \
+		boltzeq4Ar.f \
+		iondegree4Ar.f \
+		getsigma.f90 \
+		plasflow_inf.f
+		
+SYSHDRS	      =
+
+all:		$(LIBRARY)
+
+$(LIBRARY):	$(OBJS)
+		@@echo "Loading $(LIBRARY) ..."
+		@@ar cru $(LIBRARY) $(OBJS)
+		@@echo "done"
+
+clobber:;	@@rm -f $(OBJS) $(LIBRARY) core tags
+
+depend:;	@@mkmf -f $(MAKEFILE)
+
+echo:;		@@echo $(HDRS) $(SRCS)
+
+extract:;	@@ar x $(DEST)/$(LIBRARY)
+
+index:;		@@ctags -wx $(HDRS) $(SRCS)
+
+install:	$(LIBRARY)
+		@@echo Installing $(LIBRARY) in $(DEST)
+		@@if [ $(DEST) != . ]; then \
+		(rm -f $(DEST)/$(LIBRARY); $(INSTALL) $(LIBRARY) $(DEST)); fi
+
+print:;		@@$(PRINT) $(HDRS) $(SRCS)
+
+tags:           $(HDRS) $(SRCS); @@ctags $(HDRS) $(SRCS)
+
+####include $(PETSC_DIR)/bmake/$(PETSC_ARCH)/base
+
+###
+chemsource.o: ../../include/paramt.h ../../include/plasma.h ../../include/constants.h \
+        ../../include/paramchem.h ../../include/commonv.inc ../../include/chem.h \
+	../../include/commonchem.inc        
+massaction.o: ../../include/paramt.h ../../include/paramchem.h \
+        ../../include/commonv.inc ../../include/chem.h \
+	../../include/commonchem.inc
+rate.o: ../../include/paramchem.h ../../include/commonv.inc \
+	../../include/commonchem.inc
+massactionSU2.o: ../../include/plasma.h ../../include/paramchem.h \
+          
+@
+
+
+1.3
+log
+@added currentflux.F getsigma.f90
+@
+text
+@d3 2
+a4 2
+include $(PETSC_DIR)/conf/variables
+include $(PETSC_DIR)/conf/rules
+@
+
+
+1.2
+log
+@added electcond.f90 and ohmsource.f90
+@
+text
+@d24 1
+d33 1
+d41 1
+d50 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d24 1
+d26 1
+d39 1
+d41 1
+@

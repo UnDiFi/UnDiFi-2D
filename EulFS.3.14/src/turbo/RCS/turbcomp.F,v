@@ -1,0 +1,1679 @@
+head	1.25;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.25
+	release3_13_0:1.25
+	release3_12_0:1.25
+	release3_11_0:1.25
+	release3_10_0:1.25
+	release3_8_0:1.25
+	release3_7_1:1.24
+	release3_7_0:1.24
+	release3_4_5:1.23
+	release3_4_4:1.23
+	release3_4_3:1.23
+	release3_4_2:1.22
+	release3_4_1:1.22
+	release3_4_0:1.22
+	release3_3_5:1.22
+	release3_3_4:1.22
+	release3_3_3:1.22
+	release3_3_2:1.22
+	release3_3_1:1.22
+	release3_3_0:1.22;
+locks; strict;
+comment	@c @;
+
+
+1.25
+date	2020.04.23.09.55.35;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2016.12.09.13.31.37;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2013.09.17.11.05.13;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2013.01.24.08.56.39;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2009.10.13.08.20.04;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2009.06.11.09.50.14;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2007.11.14.10.34.04;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2002.09.13.16.01.20;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2001.07.06.09.43.05;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2000.11.14.17.11.25;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2000.10.26.15.34.56;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.06.07.08.12.02;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	99.09.02.08.29.18;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	98.11.17.18.49.07;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches
+	1.11.1.1;
+next	1.10;
+
+1.10
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.04.07.12.52.50;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.03.09.17.02.14;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.03.02.17.26.55;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.02.25.17.40.50;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.02.03.15.01.05;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.26.16.12.01;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.09.13.02.17;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.05.10.32.51;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.09;	author aldo;	state Exp;
+branches;
+next	;
+
+1.11.1.1
+date	99.08.19.16.36.21;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Driver routine for turbulent (Spalart-Allmaras) computations
+@
+
+
+1.25
+log
+@now calling R8Mat_Print
+@
+text
+@      SUBROUTINE TURBO(IELEM,VCN,VCZ,VCB,NDIM,NOFVERT,
+     +         NTURB,NODRES,
+     +         TSTEP,STIFEL,VOLUME,MATRIX_ASSEMBLY,
+     +         SCALARSCHEME,MATRIXSCHEME,RWORK)
+C
+      IMPLICIT NONE
+C
+C     Driver routine for the Spalart-Allmaras model
+C     un-coupled approach
+C     this routine is used for both compressible and INcompressible flows
+C
+C     $Id: turbcomp.F,v 1.24 2016/12/09 13:31:37 abonfi Exp abonfi $
+C
+C
+C     define BUDGET to write to file the budget of the
+C     turbulent quantities
+C
+C#define DEBUG 
+C#define BUDGET 
+C#define PRINT 
+C
+C
+C     .. Parameters ..
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+C     ..
+C     .. Common blocks ..
+C
+      INCLUDE 'nloc.com'
+      INCLUDE 'three.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'time.com'
+      INCLUDE 'turb.com'
+      INCLUDE 'visco.com'
+C
+#ifdef BUDGET
+      double precision s1,s2,s3,d1(4),d2,s4
+      common /diffune/d1,d2
+      double precision tgt,tdu,tft1
+      include 'tdebug.com'
+#endif
+#ifdef DEBUG
+      DOUBLE PRECISION tfw,tr
+      EXTERNAL tfw
+#endif
+C
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NTURB,NOFVERT
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION TSTEP(*),NODRES(*),
+     +                 VCZ(NTURB,NOFVERT),RWORK(*),STIFEL(*),
+     3                 VCB(NDIM,*),VOLUME(*)
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL SCALARSCHEME,MATRIXSCHEME
+C     ..
+C     .. Arrays in Common ..
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION RESIDUAL,SOURCE,
+     +                 TS,TV,VI,TD
+#ifdef BUDGET
+      DOUBLE PRECISION BETA
+      INTEGER I,INODE
+#endif
+      INTEGER IELEM,IVERT
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION STIFC(MAX_NOFVERT_SQR),STIFD(MAX_NOFVERT_SQR),
+     +                 VCN(3*MAXNOFVERT)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TBDEST,TBPROD,TBTRIP,TSC,TBDIFF
+      EXTERNAL         TBDEST,TBPROD,TBTRIP,TSC,TBDIFF
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DINIT,LINEARIZE,TDIFF,VISCO
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC MAX,SQRT
+C     ..
+C     .. Equivalences ..
+C     ..
+C
+C
+C
+C
+#ifdef BUDGET
+#endif
+#ifdef DEBUG
+C     CALL DINIT(NELEM,ZERO,vort,1)
+C     CALL DINIT(NELEM,ZERO,stilde,1)
+#endif
+C
+C
+C     COMPUTES THE GRADIENT OF THE turbulent viscosity
+C
+      CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,NTURB,
+     2               VOLUME(1))
+C     write(6,*)'elmt. ',ielem
+C     write(6,*)GRAD_PARM(1,1),GRAD_PARM(1,2),GRAD_PARM(1,3)
+C     CALL R8Mat_Print('General',' ',NTURB,NOFVERT,VCZ,NTURB,
+C    +         'Nodal values ',IFAIL)
+C
+      TD = RWORK(1)
+      VI = RWORK(2)
+C
+C ****************************************************
+C          computation of the source term
+C ****************************************************
+C
+C     the cell averaged turbulent viscosity is the aritmetic mean
+C     of the nodal turbulent viscosity
+C
+          TV = ZAVG(1)
+C
+C     compute vorticity
+C
+          TS = TSC(RWORK(3),TD,TV,VI)
+C
+!     write(6,*)td,RWORK(3),ts,tv
+!     if(myflag.NE.0)write(6,*)ielem,(RWORK(j),j=1,7)
+!     pause
+          SOURCE = TBPROD(TV,VI,TS) + TBDEST(TD,TS,TV,VI)
+C
+#ifdef BUDGET
+c        write(6,*)td,rwork(7),s3,tgt(tdu(rwork(4),rwork(5),rwork(6)))
+c        write(6,*)ielem,rwork(7),tgt(tdu(rwork(4),rwork(5),rwork(6)))
+c        write(6,*)ielem,rwork(7),tft1(td,rwork(7),
+c    &   tdu(rwork(4),rwork(5),rwork(6)))
+#endif
+c        s3=TBTRIP(TD,rwork(7),rwork(4),rwork(5),rwork(6))*VOLUME  
+c        s1=TBPROD(TV,VI,TS)*volume
+c        s2=TBDEST(TD,TS,TV,VI)*volume
+c        s3min=min(s3,s3min) 
+c        s3max=max(s3,s3max) 
+c        s1min=min(s1,s1min) 
+c        s1max=max(s1,s1max) 
+c        s2min=min(s2,s2min) 
+c        s2max=max(s2,s2max) 
+#ifdef DEBUG
+         write(6,*)'TD,TS,TV,VI',TD,TS,TV,VI
+         write(6,*)'prod.',TV,VI,ts,TBPROD(TV,VI,TS)
+         write(6,*)'dest.',TD,TS,TV,VI,TBDEST(TD,TS,TV,VI)
+         tr = TV/ (TS* (TK*TD)**2.)*REINV
+         TR = (TV/(TS*RE)) / ((TK*TD)**2)
+C        vort(ielem) = TBTRIP(TD,TTD,ZAVG(2),ZAVG(3),ZAVG(4))
+C        stilde(ielem) = tfw(tr)
+#endif
+C
+          IF (TTFLAG.EQ.1) THEN
+              SOURCE=SOURCE+TBTRIP(TD,RWORK(7),RWORK(4),
+     >RWORK(5),RWORK(6))
+C
+          ENDIF
+C
+caldo
+          SOURCE = SOURCE + TBDIFF(GRAD_PARM,NDIM)
+caldo
+          SOURCE = -SOURCE*VOLUME(1)
+C
+          CALL DINIT(NOFVERT,ZERO,NODRES,1)
+          CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+C
+C        the convection speed is the velocity vector
+C
+C        STIFD is being used as a dummy for BETA
+C
+C
+          CALL SCALARSCHEME(IELEM,VCN,RWORK(4),RESIDUAL,SOURCE,VCZ,
+     +                      TSTEP,NODRES,STIFD,STIFC,NDIM,NOFVERT,
+     &                      MATRIX_ASSEMBLY)
+C
+#ifdef BUDGET
+         s1=TBPROD(TV,VI,TS)*volume
+         s2=TBDEST(TD,TS,TV,VI)*volume
+         IF(TTFLAG.EQ.1)THEN
+            s3=TBTRIP(TD,rwork(7),rwork(4),rwork(5),rwork(6))*VOLUME(1)
+         ELSE
+            s3=0.d0
+         ENDIF
+         s4=TBDIFF(GRAD_PARM,ndim)*VOLUME(1)
+      do 43 i = 1,nofvert
+         inode = kcn(i)+1
+         beta =-nodres(i)/(source+residual)
+! write(6,*)ielem,kcn(i),beta
+         beta =1./3.
+         tmpconv(inode) = tmpconv(inode) + beta * residual
+         tmpsou1(inode) = tmpsou1(inode) + beta * s1
+         tmpsou2(inode) = tmpsou2(inode) + beta * s2
+         tmpsou3(inode) = tmpsou3(inode) + beta * s3
+         tmpdif2(inode) = tmpdif2(inode) + beta * s4
+   43 continue
+#endif
+C
+C     Diffusion term ...
+C
+          CALL VISCO(IELEM,VCZ,NODRES,TSTEP,NTURB,VCN,NDIM,NOFVERT,
+     1               VOLUME(1),STIFD,(TV+VI)*REINV/TPR1,ZERO,
+     2               MATRIX_ASSEMBLY)
+C
+#ifdef PRINT
+      write(6,*)'IELEM = ',ielem
+      write(6,*)(nodres(i),i=1,nofvert)
+#if 1
+!     CALL R8Mat_Print('General',' ',NTURB,NOFVERT,NODRES,NTURB,
+!    +         'Nodal update (segregated) ',IFAIL)
+!     write(6,*)'TD,TS,TV,SOU ',td,ts,tv,source
+!     write(6,*)'RWK = ',(rwork(i),i=3,5)
+      write(6,*)td,ts,tv,source
+      write(6,*)(rwork(i),i=3,5)
+      write(6,*)'prod = ',TBPROD(TV,VI,TS)
+      write(6,*)'dest = ',TBDEST(TD,TS,TV,VI)
+      write(6,*)'diff = ',TBDIFF(GRAD_PARM,NDIM)
+      write(6,*)'celr = ',RESIDUAL
+#endif
+!     pause
+#endif
+C
+C
+C     Non conservative diffusion term
+C
+caldo     CALL TDIFF(IELEM,TCB2*REINV/TPR1,VCZ,NODRES,TSTEP,VCN,STIFD,
+caldo+               NDIM,NOFVERT,VOLUME(1))
+C
+#ifdef BUDGET
+!     do 35 i = 1,nofvert
+!        inode = kcn(i)+1
+!        tmpdif1(inode) = tmpdif1(inode) + d1(i)
+!  35 continue
+#endif
+C
+C     **** The computation of the residual (r.h.s.) ends HERE ****
+C
+caldo     write(6,*)'after TDIFF',(nodres(i),i=1,nofvert)
+caldo     pause
+C
+          IF (MATRIX_ASSEMBLY) THEN
+          DO 34 IVERT = 1, NOFVERT*NOFVERT
+              STIFEL(IVERT) = STIFD(IVERT)-STIFC(IVERT) 
+   34     CONTINUE
+          ENDIF
+C
+#ifdef DEBUG
+C     call SOLZNE('vorticity.dat',vort,1,NELEM,'w')
+C     call SOLZNE('stilde.dat',stilde,1,NELEM,'w')
+C     STOP
+#endif
+C
+!     write(6,FMT="(I6,2(1X,F12.6))")ielem,zavg(1),TBPROD(TV,VI,TS),
+!    &TBDEST(TD,TS,TV,VI),TBDIFF(GRAD_PARM,NDIM)
+      RETURN
+      END
+@
+
+
+1.24
+log
+@unused stuff removed
+@
+text
+@d12 1
+a12 1
+C     $Id: turbcomp.F,v 1.23 2013/09/17 11:05:13 abonfi Exp abonfi $
+d107 1
+a107 1
+C     CALL X04CAF('General',' ',NTURB,NOFVERT,VCZ,NTURB,
+d211 1
+a211 1
+!     CALL X04CAF('General',' ',NTURB,NOFVERT,NODRES,NTURB,
+@
+
+
+1.23
+log
+@VOLUME is now an array used to store volumes at previous time levels (ALE formulation)
+@
+text
+@d12 1
+a12 1
+C     $Id: turbcomp.F,v 1.22 2013/01/24 08:56:39 abonfi Exp abonfi $
+d51 1
+a51 1
+      INTEGER NDIM,NELEM,NTURB,NOFVERT
+d65 1
+a65 1
+     +                 TS,TTD,TV,VI,TD
+d68 1
+d70 1
+a70 1
+      INTEGER I,IELEM,IFAIL,INODE,IVERT,J
+d75 1
+a75 1
+     +                 VCN(3*MAXNOFVERT),VCP(3*MAXNOFVERT)
+a160 1
+   19 CONTINUE
+a257 7
+
+  200 FORMAT (5X,'Error on scalar residual in ELEM # ',I6,/,12X,'true',
+     +       17X,'computed',14X,'error',/,3 (10X,D12.5))
+C     print*, 'MatSetValues RHS has returned ',ifail
+C     print*, 'VecSetValues DT has returned ',ifail
+C     print*, 'VecSetValues RHS has returned ',ifail
+
+@
+
+
+1.22
+log
+@Added support for moving grid (un-tested, though)
+@
+text
+@d12 1
+a12 1
+C     $Id: turbcomp.F,v 1.21 2009/10/13 08:20:04 abonfi Exp abonfi $
+a51 1
+      DOUBLE PRECISION VOLUME
+d56 1
+a56 1
+     3                 VCB(NDIM,*)
+d103 1
+a103 1
+     2               VOLUME)
+d165 1
+a165 1
+          SOURCE = -SOURCE*VOLUME
+d183 1
+a183 1
+            s3=TBTRIP(TD,rwork(7),rwork(4),rwork(5),rwork(6))*VOLUME  
+d187 1
+a187 1
+         s4=TBDIFF(GRAD_PARM,ndim)*VOLUME  
+d204 1
+a204 1
+     1               VOLUME,STIFD,(TV+VI)*REINV/TPR1,ZERO,
+d229 1
+a229 1
+caldo+               NDIM,NOFVERT,VOLUME)
+@
+
+
+1.21
+log
+@Added support for choosing the scalar advection scheme
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE TURBO(IELEM,VCN,VCZ,NDIM,NOFVERT,
+d12 1
+a12 1
+C     $Id: turbcomp.F,v 1.20 2009/06/11 09:50:14 abonfi Exp abonfi $
+d33 2
+a36 1
+      INCLUDE 'nboun.com'
+d56 2
+a57 1
+     +                 VCZ(NTURB,NOFVERT),RWORK(*),STIFEL(*)
+d103 2
+a104 1
+      CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,NTURB,VOLUME)
+@
+
+
+1.20
+log
+@passing BETA in the call to the scalar scheme
+@
+text
+@d12 1
+a12 1
+C     $Id: turbcomp.F,v 1.19 2007/11/14 10:34:04 abonfi Exp abonfi $
+d173 1
+a173 1
+          CALL NL_SCHEME(IELEM,VCN,RWORK(4),RESIDUAL,SOURCE,VCZ,
+@
+
+
+1.19
+log
+@minor cosmetic changes
+@
+text
+@d12 1
+a12 1
+C     $Id: turbcomp.F,v 1.18 2002/09/13 16:01:20 abonfi Exp abonfi $
+d25 1
+d30 2
+a31 3
+      INCLUDE 'constants'
+      INCLUDE 'nloc'
+      INCLUDE 'three'
+d165 3
+d170 1
+a171 2
+          CALL DINIT(NOFVERT,ZERO,NODRES,1)
+          CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+d174 1
+a174 1
+     +                      TSTEP,NODRES,STIFC,NDIM,NOFVERT,
+@
+
+
+1.18
+log
+@calls the NL2 scheme
+@
+text
+@d9 2
+d12 1
+a12 2
+C
+C     $Id: turbcomp.F,v 1.17 2001/07/06 09:43:05 abonfi Exp abonfi $
+d20 2
+d23 1
+d26 2
+a47 3
+C     Sets residual and local timestep to zero
+C
+C     .. Parameters ..
+d53 4
+d72 2
+a73 4
+      DOUBLE PRECISION TSTEP(*),NODRES(*),
+     +                 STIFC(VMAX*VMAX),STIFD(VMAX*VMAX),VCN(3*VMAX),
+     +                 VCP(3*VMAX),VCZ(NTURB,NOFVERT),RWORK(*),
+     +                 STIFEL(*)
+d76 2
+a77 2
+      DOUBLE PRECISION DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,TSC,TBDIFF
+      EXTERNAL DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,TSC,TBDIFF
+d83 1
+a83 3
+      INTRINSIC ABS,MAX,SIGN,SQRT
+C     ..
+C     .. Common blocks ..
+d89 2
+d104 2
+a105 2
+!     CALL X04CAF('General',' ',NTURB,NOFVERT,VCZ,NTURB,
+!    +         'Nodal values ',IFAIL)
+d124 1
+d171 1
+a171 1
+          CALL NL2_SCHEME(IELEM,VCN,RWORK(4),RESIDUAL,SOURCE,VCZ,
+d203 4
+a206 1
+!     write(6,*)ielem
+d208 10
+a217 7
+!    +         'Nodal update ',IFAIL)
+!     write(6,*)ielem,td,ts,tv,source
+!     write(6,*)(rwork(i),i=3,5)
+!     write(6,*)'prod = ',TBPROD(TV,VI,TS)
+!     write(6,*)'dest = ',TBDEST(TD,TS,TV,VI)
+!     write(6,*)'diff = ',TBDIFF(GRAD_PARM,NDIM)
+!     write(6,*)'celr = ',RESIDUAL
+d219 1
+d251 2
+@
+
+
+1.17
+log
+@changed the calling sequence for the viscous routine
+@
+text
+@d11 1
+a11 2
+C     $Id: turbcomp.F,v 1.16 2000/11/14 17:11:25 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.11/src/turbo/RCS/turbcomp.F,v 1.16 2000/11/14 17:11:25 aldo Exp aldo $
+a27 1
+C     INCLUDE 'trip.com'
+a30 4
+      double precision s3min,s3max,s3
+      double precision s1min,s1max,s1
+      double precision s2min,s2max,s2
+      common/trashcom/s3min,s3max,s2min,s2max,s1min,s1max
+d32 1
+a32 2
+      double precision s1,s2,s3,d1(4),d2
+      common /sorgente/s1,s2,s3
+d35 1
+a36 3
+caldo double precision tmpconv(*),tmpdif1(*),tmpdif2(*),tmpsou1(*),
+caldo&tmpdiff(*),tmpsum(*),tmpsou2(*),tmpsou3(*)
+caldo INTEGER ICN(4)
+a37 2
+C     DOUBLE PRECISION vort(33000)
+C     DOUBLE PRECISION stilde(33000)
+d99 2
+d118 2
+a122 4
+         s1=TBPROD(TV,VI,TS)*volume
+         s2=TBDEST(TD,TS,TV,VI)*volume
+c        s3=TBDIFF(GRAD_PARM,ndim)*VOLUME  
+         s3=TBTRIP(TD,rwork(7),rwork(4),rwork(5),rwork(6))*VOLUME  
+d165 1
+a165 1
+          CALL SCALARSCHEME(IELEM,VCN,RWORK(4),RESIDUAL,SOURCE,VCZ,
+d170 8
+d179 1
+a179 1
+         inode = icn(i)+1
+d181 1
+d187 1
+d197 12
+d215 4
+a218 5
+      do 35 i = 1,nofvert
+         inode = icn(i)+1
+         tmpdif1(inode) = tmpdif1(inode) + d1(i)
+         tmpdif2(inode) = tmpdif2(inode) + d2
+   35 continue
+@
+
+
+1.16
+log
+@un-used include file removed
+@
+text
+@d11 2
+a12 2
+C     $Id: turbcomp.F,v 1.15 2000/10/26 15:34:56 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/turbo/RCS/turbcomp.F,v 1.15 2000/10/26 15:34:56 aldo Exp aldo $
+d194 3
+a196 2
+          CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,VCZ,NODRES,TSTEP,VCN,
+     +               STIFD,NDIM,NOFVERT,VOLUME)
+@
+
+
+1.15
+log
+@dropped arguments from the subroutine call
+@
+text
+@d11 2
+a12 2
+C     $Id: turbcomp.F,v 1.14 2000/06/07 08:12:02 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.5/src/turbo/RCS/turbcomp.F,v 1.14 2000/06/07 08:12:02 aldo Exp aldo $
+a31 1
+      INCLUDE 'IO'
+@
+
+
+1.14
+log
+@major rewriting
+@
+text
+@d11 2
+a12 2
+C     $Id: turbcomp.F,v 1.13 1999/09/02 08:29:18 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.5/src/seq/RCS/turbcomp.F,v 1.13 1999/09/02 08:29:18 aldo Exp aldo $
+d34 4
+a38 8
+      DOUBLE PRECISION tmpconv(16500)
+      DOUBLE PRECISION tmpdif1(16500)
+      DOUBLE PRECISION tmpdif2(16500)
+      DOUBLE PRECISION tmpsou1(16500)
+      DOUBLE PRECISION tmpsou2(16500)
+      DOUBLE PRECISION tmpsou3(16500)
+      DOUBLE PRECISION tmpdiff(16500)
+      DOUBLE PRECISION tmpsum(16500)
+d42 1
+d44 3
+d48 2
+a49 2
+      DOUBLE PRECISION vort(33000)
+      DOUBLE PRECISION stilde(33000)
+a80 1
+      INTEGER ICN(VMAX)
+d83 2
+a84 2
+      DOUBLE PRECISION DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,TSC
+      EXTERNAL DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,TSC
+a98 5
+      CALL DINIT(NPOIN,ZERO,tmpconv,1)
+      CALL DINIT(NPOIN,ZERO,tmpsou1,1)
+      CALL DINIT(NPOIN,ZERO,tmpsou2,1)
+      CALL DINIT(NPOIN,ZERO,tmpdif1,1)
+      CALL DINIT(NPOIN,ZERO,tmpdif2,1)
+d101 2
+a102 2
+      CALL DINIT(NELEM,ZERO,vort,1)
+      CALL DINIT(NELEM,ZERO,stilde,1)
+a127 1
+c         write(6,*)'TD,TS,TV,VI',TD,TS,TV,VI
+a128 2
+c         write(6,*)'prod.',TV,VI,ts,TBPROD(TV,VI,TS)
+c         write(6,*)'dest.',TD,TS,TV,VI,TBDEST(TD,TS,TV,VI)
+d133 16
+a148 2
+         s3=TBTRIP(TD,TTD,ZAVG(2),ZAVG(3),ZAVG(4))*VOLUME  
+#endif
+d150 3
+d155 2
+a156 2
+         vort(ielem) = TBTRIP(TD,TTD,ZAVG(2),ZAVG(3),ZAVG(4))
+         stilde(ielem) = tfw(tr)
+d166 3
+a179 1
+caldo     write(6,*)'after advection',(nodres(i),i=1,nofvert)
+d185 1
+a196 1
+caldo     write(6,*)'after VISCO',(nodres(i),i=1,nofvert)
+d200 2
+a201 2
+          CALL TDIFF(IELEM,TCB2*REINV/TPR1,VCZ,NODRES,TSTEP,VCN,STIFD,
+     +               NDIM,NOFVERT,VOLUME)
+a221 35
+#ifdef BUDGET
+      loc = istkgt(npoin,4)
+      call median(dstak(loc),dstak(lvol),istak(lcelnod),nofvert,
+     +            nelem)
+C
+      call dcopy(npoin,tmpdif1,1,tmpdiff,1)
+      call daxpy(npoin,1.d0,tmpdif2,1,tmpdiff,1)
+C
+      call dcopy(npoin,tmpdiff,1,tmpsum,1)
+      call daxpy(npoin,1.d0,tmpsou1,1,tmpsum,1)
+      call daxpy(npoin,1.d0,tmpsou2,1,tmpsum,1)
+C
+C     SUM = PROD - DESTR + DIFF
+C
+      call scala(npoin,tmpconv,dstak(loc))
+      call scala(npoin,tmpdif1,dstak(loc))
+      call scala(npoin,tmpdif2,dstak(loc))
+      call scala(npoin,tmpsou1,dstak(loc))
+      call scala(npoin,tmpsou2,dstak(loc))
+      call scala(npoin,tmpdiff,dstak(loc))
+      call scala(npoin,tmpsum,dstak(loc))
+C
+      call scala(npoin,tmpsou3,dstak(loc))
+C
+      call istkrl(1)
+      call SOLZNE('file030.dat',tmpconv,1,NPOIN,'w')
+      call SOLZNE('file031.dat',tmpdif1,1,NPOIN,'w')
+      call SOLZNE('file032.dat',tmpdif2,1,NPOIN,'w')
+      call SOLZNE('file033.dat',tmpsou1,1,NPOIN,'w')
+      call SOLZNE('file034.dat',tmpsou2,1,NPOIN,'w')
+      call SOLZNE('file036.dat',tmpdiff,1,NPOIN,'w')
+      call SOLZNE('file037.dat',tmpsum,1,NPOIN,'w')
+C     call SOLZNE('file035.dat',tmpsou3,1,NPOIN,'w')
+      stop
+#endif
+d223 3
+a225 3
+      call SOLZNE('vorticity.dat',vort,1,NELEM,'w')
+      call SOLZNE('stilde.dat',stilde,1,NELEM,'w')
+      STOP
+a234 19
+
+      END
+C
+      SUBROUTINE SCALA(NPOIN,V,DT)
+
+
+C     .. Scalar Arguments ..
+      INTEGER NPOIN
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DT(*),V(*)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I
+C     ..
+      DO 1 I = 1,NPOIN
+          V(I) = V(I)/DT(I)
+    1 CONTINUE
+      RETURN
+@
+
+
+1.13
+log
+@call to CELPTR has been changed
+@
+text
+@d1 4
+a4 2
+      SUBROUTINE TURBO(NPOIN,NELEM,NDIM,NOFVERT,NOFVAR,RHS,DT,B,
+     +SCALARSCHEME)
+d11 2
+a12 2
+C     $Id: turbcomp.F,v 1.12 1998/11/17 18:49:07 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/turbcomp.F,v 1.12 1998/11/17 18:49:07 aldo Exp aldo $
+a13 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+a22 2
+      Vec RHS,DT
+      Mat B
+d29 1
+a29 1
+      INCLUDE 'trip.com'
+a31 1
+      INCLUDE 'implicit.h'
+a56 2
+      DOUBLE PRECISION ROOT_MACHINE_EPS
+      PARAMETER (ROOT_MACHINE_EPS=1.d-07)
+d59 2
+a60 1
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+d63 1
+a63 1
+      EXTERNAL SCALARSCHEME
+a65 1
+      DOUBLE PRECISION DSTAK(1)
+d68 2
+a69 2
+      DOUBLE PRECISION EPS,OMEGA,OMEGAX,OMEGAY,OMEGAZ,RESIDUAL,SOURCE,
+     +                 TD,TS,TTD,TV,VI,VOLUME
+d73 2
+a74 2
+      INTEGER I,IELEM,IFAIL,INODE,IVERT,J,LOC,NNZR,LIWORK,LRWORK
+      LOGICAL COMPRESSIBLE
+d77 1
+a77 1
+      DOUBLE PRECISION TSTEP(VMAX),NODRES(VMAX),NODRES2(VMAX),
+d79 3
+a81 5
+     +                 VCP(3*VMAX),VCZ(NMAX*VMAX),VISCT(VMAX),
+     +                 WORK1(VMAX),WORK2(VMAX),STIFEL(VMAX*VMAX)
+CXXX  DOUBLE PRECISION STIFC_COPY(VMAX*VMAX)
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX),ISTAK(1),KCN(VMAX)
+d84 2
+a85 2
+      DOUBLE PRECISION DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,TSC,TVIC
+      EXTERNAL DDOT,DNRM2,TBDEST,TBPROD,TBTRIP,TSC,TVIC
+d88 1
+a88 2
+      EXTERNAL CELPTR,DGTHR,DINIT,LINEARIZE,PARM2PRIM,
+     +         TDIFF,VISCO
+a93 1
+      COMMON /CSTAK/DSTAK
+a95 1
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+a97 2
+      CALL VecSet(ZERO,rhs,IFAIL)
+      CALL VecSet(ZERO,dt,IFAIL)
+a110 1
+      COMPRESSIBLE = (KAN.EQ.4)
+a111 41
+      IF (TIMEIMPL) THEN
+          CALL MatZeroEntries(B,IFAIL)
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFD,1)
+      ENDIF
+C
+C     compute vorticity at trip points
+C
+      IF(TTFLAG.EQ.1)CALL TTST(ISTAK(LOCTJA),ISTAK(LOCTIA),
+     +ISTAK(LOCTRP),DSTAK(LOCTST),NTRIP,
+     +ISTAK(LCELNOD),ISTAK(LCELCEL),ISTAK(LCELFAC),
+     +               DSTAK(LFACNOR),DSTAK(LVOL),NDIM,
+     +               NOFVERT,NOFVAR,NELEM,NPOIN,COMPRESSIBLE)
+C
+C     Loops over cells
+C
+      DO 100 IELEM = 1,NELEM
+C
+C
+      CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   DSTAK(LZROE), DSTAK(LFACNOR), NDIM, NOFVERT, NOFVAR, ICN,
+     +   VCZ, VCN, VOLUME)
+
+C
+C     COMPUTES THE GRADIENT OF THE flow VARIABLES
+C
+          CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +                   VOLUME)
+C
+          IF (COMPRESSIBLE) CALL PARM2PRIM(NDIM,IELEM)
+C
+C     set a cell to node pointer with 1 based indexing
+C
+          DO 7 IVERT = 1,NOFVERT
+             KCN(IVERT)=ICN(IVERT)+1
+    7     CONTINUE
+C
+C     retrieve turbulent viscosity and store in VCZ
+C
+          CALL DGTHR(NOFVERT,DSTAK(LTURB),VCZ,KCN)
+C
+d114 3
+a116 1
+          CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,1,VOLUME)
+d118 2
+a119 2
+C     note that the gradient and cell average state of
+C     turbulent viscosity are overwritten on density/pressure
+a124 16
+C  retrieve wall distance (TD) from global arrays
+C
+          CALL DGTHR(NOFVERT,DSTAK(LTTD),WORK1,KCN)
+          CALL DGTHR(NOFVERT,DSTAK(LTD),WORK2,KCN)
+C
+C     compute a cell averaged wall distance
+C
+          TD = ZERO
+          TTD = ZERO
+          DO 10 IVERT = 1,NOFVERT
+              TD = TD + WORK2(IVERT)
+              TTD = TTD + WORK1(IVERT)
+   10     CONTINUE
+          TD = TD/NOFVERT
+          TTD = TTD/NOFVERT
+C
+a129 4
+C     compute laminar viscosity
+C
+          VI = TVIC(COMPRESSIBLE)
+C
+d132 1
+a132 1
+          TS = TSC(COMPRESSIBLE,OMEGA,TD,TV,VI)
+d134 1
+d136 2
+d152 2
+a153 2
+C
+C     index of closest trip point 1 <= IDXTRP <= NTRIP
+a154 16
+C     TST vorticity at closest trip point
+C     TDXT spacing at closest trip point
+C
+              I= ISTAK(LTTI+IELEM-1)
+              TST = DSTAK(LOCTST+I-1)
+              TDXT = DSTAK(LOCDXT+I-1)
+C
+              IF (COMPRESSIBLE) THEN
+                  SOURCE = SOURCE + TBTRIP(TD,TTD,UAVG(3),UAVG(4),
+     +                     UAVG(5))
+
+              ELSE
+                  SOURCE = SOURCE + TBTRIP(TD,TTD,ZAVG(2),ZAVG(3),
+     +                     ZAVG(4))
+              ENDIF
+
+a161 10
+          IF (COMPRESSIBLE) THEN
+              R_SPEED(1,1) = UAVG(3)
+              R_SPEED(2,1) = UAVG(4)
+              R_SPEED(3,1) = UAVG(5)
+
+          ELSE
+              R_SPEED(1,1) = ZAVG(2)
+              R_SPEED(2,1) = ZAVG(3)
+              R_SPEED(3,1) = ZAVG(4)
+          ENDIF
+d166 4
+a169 2
+          CALL SCALARSCHEME(IELEM,VCN,R_SPEED(1,1),RESIDUAL,SOURCE,VCZ,
+     +                      TSTEP,NODRES,STIFC,NDIM,NOFVERT,PICARD)
+d186 1
+a200 5
+C     Scatter and add nodal update and timestep to global arrays
+C
+          CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+          CALL VecSetValues(RHS,NOFVERT,ICN,NODRES,ADD_VALUES,IFAIL)
+C
+d203 2
+a204 1
+C     Add element Stiffness matrix to the global one
+d206 1
+a206 1
+          IF (PICARD) THEN
+a209 96
+          CALL MatSetValues(B,NOFVERT,ICN,NOFVERT,ICN,STIFEL,
+     +                      ADD_VALUES,IFAIL)
+C
+          ELSEIF (NEWTON) THEN
+C
+C     I is the vertex we perturb
+C
+              DO 110 I = 1,NOFVERT
+C
+C     make a copy of the local variables
+C
+                  DO 11 J = 1,NOFVERT
+                      VISCT(J) = VCZ(J)
+   11             CONTINUE
+C
+C     perturb
+C
+                  EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(I)),ONE)*
+     +                  SIGN(ONE,VCZ(I))
+                  VISCT(I) = VCZ(I) + EPS
+C
+C     We neglect dependence of the flow variables upon
+C     turbulent viscosity; therefore local vorticity and
+C     velocity will not be recomputed; also laminar viscosity
+C     need NOT to be recomputed
+C
+C     COMPUTE THE GRADIENT OF THE turbulent viscosity
+C
+                  CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VISCT,1,
+     +                           VOLUME)
+C
+C ****************************************************
+C          computation of the source term
+C ****************************************************
+C
+C     the cell averaged turbulent viscosity is the aritmetic mean
+C     of the nodal turbulent viscosity
+C
+                  TV = ZAVG(1)
+C
+C     compute vorticity (this depends upon turb. viscosity)
+C
+                  TS = TSC(COMPRESSIBLE,OMEGA,TD,TV,VI)
+C
+                  SOURCE = TBPROD(TV,VI,TS) + TBDEST(TD,TS,TV,VI)
+C
+                  IF (TTFLAG.EQ.1) THEN
+                      IF (COMPRESSIBLE) THEN
+                          SOURCE = SOURCE + TBTRIP(TD,TTD,UAVG(3),
+     +                             UAVG(4),UAVG(5))
+
+                      ELSE
+                          SOURCE = SOURCE + TBTRIP(TD,TTD,ZAVG(2),
+     +                             ZAVG(3),ZAVG(4))
+                      ENDIF
+
+                  ENDIF
+C
+                  SOURCE = -SOURCE*VOLUME
+C
+                  CALL SCALARSCHEME(IELEM,VCN,R_SPEED,RESIDUAL,SOURCE,
+     +                              VISCT,TSTEP,NODRES2,STIFC,NDIM,
+     +                              NOFVERT,.FALSE.)
+CXXX +                              .true.)
+C                                      ^
+C                                      |
+C     do NOT compute element stiffness matrix
+C
+CXXX  call dcopy(nofvert*nofvert,stifc,1,stifc_copy,1)
+C
+C     Diffusion term ...
+C
+                  CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,VISCT,NODRES2,
+     +                       TSTEP,VCN,STIFD,NDIM,NOFVERT,VOLUME)
+CXXX  call daxpy(nofvert*nofvert,-1.d0,stifd,1,stifc_copy,1)
+C     Non conservative diffusion term
+                  CALL TDIFF(IELEM,TCB2*REINV/TPR1,VISCT,NODRES2,TSTEP,
+     +                       VCN,STIFD,NDIM,NOFVERT,VOLUME)
+C
+C        compute jacobian by finite differences
+C
+                  LOC = (I-1)*NOFVERT
+                  DO 13 J = 1,NOFVERT
+                      STIFC(LOC+J) =-(NODRES2(J)-NODRES(J))/EPS
+   13             CONTINUE
+  110         CONTINUE
+C
+CXXX  CALL X04CAF('General',' ',nofvert,nofvert,STIFC,nofvert,
+CXXX +'Newton',Ifail)
+CXXX  CALL X04CAF('General',' ',nofvert,nofvert,STIFc_copy,nofvert,
+CXXX +'Picard',Ifail)
+CXXX   pause
+C
+          CALL MatSetValues(B,NOFVERT,ICN,NOFVERT,ICN,STIFC,
+     +                      ADD_VALUES,IFAIL)
+C
+a211 2
+  100 CONTINUE
+C
+a252 14
+C     Must assembly RHS now, since a call to VecSetValues()
+C     with the INSERT_VALUES option will follow in rhsbc1()
+C
+      CALL VecAssemblyBegin(rhs,IFAIL)
+      CALL VecAssemblyBegin(dt,IFAIL)
+      CALL MatAssemblyBegin(B,MAT_FINAL_ASSEMBLY,IFAIL)
+      CALL VecAssemblyEnd(rhs,IFAIL)
+      CALL VecAssemblyEnd(dt,IFAIL)
+      CALL MatAssemblyEnd(B,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+C     Applies boundary conditions to the nodal residual (RHS Vector)
+C
+      CALL RHSBC5(RHS)
+c
+@
+
+
+1.12
+log
+@changed call to RHSBC5
+@
+text
+@d9 2
+a10 2
+C     $Id$
+C     $Header$
+d79 1
+a79 1
+      INTEGER I,IELEM,IFAIL,INODE,ISTKGT,IVERT,J,LOC,NNZR,LIWORK,LRWORK
+d144 5
+a148 3
+          CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),
+     +                NDIM,NOFVERT,NOFVAR,NELEM,1,ICN,ICF,VCP,VCZ,VCN,
+     +                VOLUME,IDX_P,IDX_V,IDX_F)
+@
+
+
+1.11
+log
+@Add automatic identification flag
+@
+text
+@d10 1
+a455 3
+C
+C     set boundary conditions on the r.h.s.
+C
+d458 1
+a458 5
+      LIWORK = ISTKGT(NPOIN6+NPOIN7,2)
+      LRWORK = ISTKGT(NPOIN6+NPOIN7,4)
+      CALL RHSBC5(NPOIN,NDIM,RHS,ISTAK(LIWORK),DSTAK(LRWORK),
+     +            ISTAK(LNODCOD))
+      CALL ISTKRL(2) 
+@
+
+
+1.11.1.1
+log
+@changed calling sequence for CELPTR
+@
+text
+@d9 1
+a9 1
+C     $Id: turbcomp.F,v 1.11 1998/11/07 09:01:00 aldo Exp aldo $
+d143 3
+a145 3
+      CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   DSTAK(LZROE), DSTAK(LFACNOR), NDIM, NOFVERT, NOFVAR, ICN,
+     +   VCZ, VCN, VOLUME)
+@
+
+
+1.10
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d4 2
+d8 2
+a9 1
+      IMPLICIT NONE
+@
+
+
+1.9
+log
+@now dealing with edges type 7
+@
+text
+@d8 3
+a10 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+@
+
+
+1.8
+log
+@small changes in the debugging stuff
+@
+text
+@d457 2
+a458 2
+      LIWORK = ISTKGT(NPOIN6,2)
+      LRWORK = ISTKGT(NPOIN6,4)
+@
+
+
+1.7
+log
+@newer implementation of the trip term
+@
+text
+@d35 8
+a42 8
+      DOUBLE PRECISION tmpconv(5000)
+      DOUBLE PRECISION tmpdif1(5000)
+      DOUBLE PRECISION tmpdif2(5000)
+      DOUBLE PRECISION tmpsou1(5000)
+      DOUBLE PRECISION tmpsou2(5000)
+      DOUBLE PRECISION tmpsou3(5000)
+      DOUBLE PRECISION tmpdiff(5000)
+      DOUBLE PRECISION tmpsum(5000)
+d48 2
+a49 2
+      DOUBLE PRECISION vort(10000)
+      DOUBLE PRECISION stilde(10000)
+a105 1
+C     print*, 'VecSet RHS has returned ',ifail
+a106 1
+C     print*, 'VecSet DT has returned ',ifail
+a123 1
+C     print*, 'MatZeroEntries has returned ',ifail
+a290 1
+C     print*, 'VecSetValues DT has returned ',ifail
+a291 1
+C     print*, 'VecSetValues RHS has returned ',ifail
+a302 1
+C     print*, 'MatSetValues RHS has returned ',ifail
+d426 8
+a433 8
+C     call SOLZNE('file030.dat',tmpconv,1,NPOIN,'w')
+C     call SOLZNE('file031.dat',tmpdif1,1,NPOIN,'w')
+C     call SOLZNE('file032.dat',tmpdif2,1,NPOIN,'w')
+C     call SOLZNE('file033.dat',tmpsou1,1,NPOIN,'w')
+C     call SOLZNE('file034.dat',tmpsou2,1,NPOIN,'w')
+C     call SOLZNE('file036.dat',tmpdiff,1,NPOIN,'w')
+C     call SOLZNE('file037.dat',tmpsum,1,NPOIN,'w')
+      call SOLZNE('file035.dat',tmpsou3,1,NPOIN,'w')
+d467 3
+@
+
+
+1.6
+log
+@Now correctly computes the trip term
+@
+text
+@d28 1
+d131 1
+a131 3
+C     compute trip point vorticity
+C     questo pezzo va modificato per tenere in conto la
+C     possibilita che vi sia piu di un trip point
+d133 5
+a137 22
+      CALL CELPTR(TNTRIP,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),NDIM,
+     +            NOFVERT,NOFVAR,NELEM,1,ICN,ICF,VCP,VCZ,VCN,VOLUME,
+     +            IDX_P,IDX_V,IDX_F)
+C
+      CALL LINEARIZE(TNTRIP,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +               VOLUME)
+C
+      IF (COMPRESSIBLE) THEN
+C
+          OMEGAX = GRAD_PRIM(5,2) - GRAD_PRIM(4,3)
+          OMEGAY = GRAD_PRIM(3,3) - GRAD_PRIM(5,1)
+          OMEGAZ = GRAD_PRIM(4,1) - GRAD_PRIM(3,2)
+C
+      ELSE
+C
+          OMEGAX = GRAD_PRIM(4,2) - GRAD_PRIM(3,3)
+          OMEGAY = GRAD_PRIM(2,3) - GRAD_PRIM(4,1)
+          OMEGAZ = GRAD_PRIM(3,1) - GRAD_PRIM(2,2)
+C
+      ENDIF
+
+      TST = SQRT(OMEGAX*OMEGAX+OMEGAY*OMEGAY+OMEGAZ*OMEGAZ)
+d175 1
+a175 2
+C  retrieve trip point distance (TTD)
+C  and wall distance (TD) from global arrays
+d180 3
+a183 1
+          TD = ZERO
+d185 1
+a185 1
+C     compute a cell averaged trip point distance
+a186 2
+C     compute a cell averaged wall distance
+              TD = TD + WORK2(IVERT)
+d188 1
+a189 1
+          TD = TD/NOFVERT
+d218 10
+a227 1
+C     GOTO 19
+a228 1
+          IF (TTFLAG.EQ.1) THEN
+@
+
+
+1.5
+log
+@Changed arguments list for function TST()
+Defined the DEBUG preprocessore flag
+@
+text
+@d39 1
+d228 1
+d233 1
+a233 1
+         vort(ielem) = tr
+d237 1
+a237 1
+      GOTO 19
+d280 1
+d440 1
+a440 1
+C     call scala(npoin,tmpsou3,dstak(loc))
+d443 8
+a450 8
+      call SOLZNE('file030.dat',tmpconv,1,NPOIN,'w')
+      call SOLZNE('file031.dat',tmpdif1,1,NPOIN,'w')
+      call SOLZNE('file032.dat',tmpdif2,1,NPOIN,'w')
+      call SOLZNE('file033.dat',tmpsou1,1,NPOIN,'w')
+      call SOLZNE('file034.dat',tmpsou2,1,NPOIN,'w')
+      call SOLZNE('file036.dat',tmpdiff,1,NPOIN,'w')
+      call SOLZNE('file037.dat',tmpsum,1,NPOIN,'w')
+C     call SOLZNE('file035.dat',tmpsou3,1,NPOIN,'w')
+@
+
+
+1.4
+log
+@add a call to OptionsPrint
+@
+text
+@d11 5
+a15 1
+C#include "include/FINCLUDE/viewer.h"
+d34 7
+a40 1
+      INCLUDE 'debug.com'
+d45 6
+d68 5
+a72 2
+      DOUBLE PRECISION EPS,OMEGAX,OMEGAY,OMEGAZ,RESIDUAL,SOURCE,TD,TEMP,
+     +                 TS,TTD,TV,VI,VOLUME
+d104 1
+d106 1
+d115 4
+d124 1
+d220 1
+a220 1
+          TS = TSC(COMPRESSIBLE,TD,TV,VI)
+d228 6
+d235 1
+d248 1
+d273 5
+a277 5
+      inode = icn(i)+1
+      temp = -nodres(i)/(source+residual)
+      tmpconv(inode) = tmpconv(inode) - temp * residual
+      tmpsou1(inode) = tmpsou1(inode) + temp * s1
+      tmpsou2(inode) = tmpsou2(inode) + temp * s2
+d285 1
+d287 1
+d293 3
+a295 3
+      inode = icn(i)+1
+      tmpdif1(inode) = tmpdif1(inode) - d1(i)
+      tmpdif2(inode) = tmpdif2(inode) - d2
+d302 1
+d304 1
+d316 1
+a316 3
+C
+C             CALL ASSMBS(KAN,IELEM,ICN,STIFC,STIFD,NOFVERT,
+C    +                    DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR))
+d357 1
+a357 1
+                  TS = TSC(COMPRESSIBLE,TD,TV,VI)
+d427 2
+d449 5
+@
+
+
+1.3
+log
+@restored computation of the jacobian by finite differences
+@
+text
+@d12 1
+d29 6
+a34 12
+C     INCLUDE 'debug.com'
+C     double precision s1,s2,s3,d1(4),d2
+C     common /sorgente/s1,s2,s3
+C     common /diffune/d1,d2
+C
+C
+C
+C
+C
+C
+C
+C
+d87 7
+a93 5
+CXXX  CALL DINIT(NPOIN,ZERO,tmpconv,1)
+CXXX  CALL DINIT(NPOIN,ZERO,tmpsou1,1)
+CXXX  CALL DINIT(NPOIN,ZERO,tmpsou2,1)
+CXXX  CALL DINIT(NPOIN,ZERO,tmpdif1,1)
+CXXX  CALL DINIT(NPOIN,ZERO,tmpdif2,1)
+a129 7
+C     write header for the .node file
+C
+C     write(36,*)nelem,2,1,0
+C     write(37,*)nelem,2,1,0
+C     write(38,*)nelem,2,1,0
+C     write(39,*)nelem,2,1,0
+C
+d198 5
+a202 8
+CXXX     s1=TBPROD(TV,VI,TS)*volume
+CXXX     s2=TBDEST(TD,TS,TV,VI)*volume
+C        s3=TBTRIP(TD,TTD,ZAVG(2),ZAVG(3),ZAVG(4))
+C
+C        write(6,*)ielem,tv,vi,ts,td
+C        CALL X04CAF('General',' ',NOFVAR,NDIM,GRAD_PRIM,5,
+C    +            'Grad Prim (after) ',IFAIL)
+C        write(6,*)ielem,s1,s2,s3
+a217 3
+C        write(6,*)ielem,td,tv,vi,ts,TBPROD(TV,VI,TS),
+C    +TBDEST(TD,TS,TV,VI)
+C
+d237 9
+a245 14
+CXXX  do i = 1,nofvert
+CXXX  inode = icn(i)
+CXXX  temp = -nodres(i)/(source+residual)
+CXXX  tmpconv(inode) = tmpconv(inode) - temp * residual
+CXXX  tmpsou1(inode) = tmpsou1(inode) + temp * s1
+CXXX  tmpsou2(inode) = tmpsou2(inode) + temp * s2
+CXXX  enddo
+C
+C     call cellcenters(ielem,vcp,ndim,36,s1)
+C     call cellcenters(ielem,vcp,ndim,37,s2)
+C     call cellcenters(ielem,vcp,ndim,38,s3)
+C     call cellcenters(ielem,vcp,ndim,39,
+C    + residual+(s1+s2) )
+C
+d255 7
+a261 5
+CXXX  do i = 1,nofvert
+CXXX  inode = icn(i)
+CXXX  tmpdif1(inode) = tmpdif1(inode) - d1(i)
+CXXX  tmpdif2(inode) = tmpdif2(inode) - d2
+CXXX  enddo
+d379 20
+a398 12
+CXXX  loc = istkgt(npoin,4)
+CXXX  call median(dstak(loc),dstak(lvol),istak(lcelnod),nofvert,
+CXXX +nelem)
+C     CALL X04CAF('General',' ',1,NPOIN,DSTAK(LRESID),1,
+C    +            'Nodal Residual',IFAIL)
+C     CALL X04CAF('General',' ',1,NPOIN,DSTAK(LDTLIN),1,
+C    +            'Nodal Timestep',IFAIL)
+CXXX  call scala(npoin,tmpconv,dstak(loc))
+CXXX  call scala(npoin,tmpdif1,dstak(loc))
+CXXX  call scala(npoin,tmpdif2,dstak(loc))
+CXXX  call scala(npoin,tmpsou1,dstak(loc))
+CXXX  call scala(npoin,tmpsou2,dstak(loc))
+d400 9
+a408 6
+CXXX  call istkrl(1)
+CXXX  call SOLZNE('file030.dat',tmpconv,1,NPOIN,'w')
+CXXX  call SOLZNE('file031.dat',tmpdif1,1,NPOIN,'w')
+CXXX  call SOLZNE('file032.dat',tmpdif2,1,NPOIN,'w')
+CXXX  call SOLZNE('file033.dat',tmpsou1,1,NPOIN,'w')
+CXXX  call SOLZNE('file034.dat',tmpsou2,1,NPOIN,'w')
+d410 2
+a411 3
+ccc   write(6,*)'nodal residual ',dnrm2(npoin,va(lresid),1)
+CCC   CALL X04CAF('General',' ',NTURB,NPOIN,DSTAK(LRESID),NTURB,
+CCC  +            'Nodal update',IFAIL)
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@d155 2
+a284 2
+          if(ifail.ne.0) 
+     +    write(6,*)ielem,'dt ',ifail,(icn(i),i=1,nofvert)
+a285 2
+          if(ifail.ne.0) 
+     +    write(6,*)ielem,'rhs ',ifail,(idx_v(i),i=1,nofvert)
+a301 1
+          STOP 'Newton not imlemented yet' 
+d381 1
+a381 1
+                      STIFC(LOC+J) = (NODRES2(J)-NODRES(J))/EPS
+d391 2
+a392 4
+C     use a dummy KAN = -1 so that STIFD is not add
+C
+CXXX          CALL ASSMBS(-1,IELEM,ICN,STIFC,STIFD,NOFVERT,DSTAK(LACSR),
+CXXX +                    ISTAK(LJACSR),ISTAK(LIACSR))
+d422 11
+a434 1
+CXXX  CALL SETBC4A(NPOIN,DSTAK(LRESID),ISTAK(LNODCOD))
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE TURBO(NPOIN,NELEM,NDIM,NOFVERT,NOFVAR,SCALARSCHEME)
+d8 5
+d15 2
+d24 1
+d59 1
+a59 1
+      INTEGER I,IELEM,IFAIL,INODE,ISTKGT,IVERT,J,LOC,NNZR
+d63 1
+a63 1
+      DOUBLE PRECISION DT(VMAX),NODRES(VMAX),NODRES2(VMAX),
+d66 1
+a66 1
+     +                 WORK1(VMAX),WORK2(VMAX)
+d69 1
+a69 1
+     +        IDX_V(NMAX*VMAX),ISTAK(1)
+a72 1
+      INTEGER NNZERO
+d76 2
+a77 2
+      EXTERNAL ASSMBS,CELPTR,DAXPYI,DGTHR,DINIT,LINEARIZE,PARM2PRIM,
+     +         SETBC4A,TDIFF,VISCO
+d88 3
+a90 2
+      CALL DINIT(NPOIN,ZERO,DSTAK(LDTLIN),1)
+      CALL DINIT(NPOIN,ZERO,DSTAK(LRESID),1)
+d101 1
+a101 2
+          NNZR = NNZERO(ISTAK(LIACSR),NPOIN)
+          CALL DINIT(NNZR,ZERO,DSTAK(LACSR),1)
+d108 1
+a108 1
+C     possibilita` che vi sia piu` di un trip point
+d155 4
+d161 1
+a161 1
+          CALL DGTHR(NOFVERT,DSTAK(LTURB),VCZ,ICN)
+d177 2
+a178 2
+          CALL DGTHR(NOFVERT,DSTAK(LTTD),WORK1,ICN)
+          CALL DGTHR(NOFVERT,DSTAK(LTD),WORK2,ICN)
+a213 1
+C        pause
+d246 1
+a246 1
+          CALL DINIT(NOFVERT,ZERO,DT,1)
+d249 1
+a249 1
+     +                      DT,NODRES,STIFC,NDIM,NOFVERT,PICARD)
+d268 4
+a271 1
+          CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,VCZ,NODRES,DT,VCN,STIFD,
+a272 3
+C     Non conservative diffusion term
+          CALL TDIFF(IELEM,TCB2*REINV/TPR1,VCZ,NODRES,DT,VCN,STIFD,NDIM,
+     +               NOFVERT,VOLUME)
+d282 6
+a287 2
+          CALL DAXPYI(NOFVERT,1.D0,DT,ICN,DSTAK(LDTLIN))
+          CALL DAXPYI(NOFVAR,1.D0,NODRES,ICN,DSTAK(LRESID))
+d289 1
+a289 1
+C     **** The computation of the residual (r.h.s.) end HERE ****
+d294 8
+a301 2
+              CALL ASSMBS(KAN,IELEM,ICN,STIFC,STIFD,NOFVERT,
+     +                    DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR))
+d304 1
+d324 1
+a324 1
+C     velocity won't be recomputed; also laminar viscosity
+d362 2
+a363 2
+     +                              VISCT,DT,NODRES2,STIFC,NDIM,NOFVERT,
+     +                              .FALSE.)
+d373 2
+a374 2
+                  CALL VISCO(IELEM, (TV+VI)*REINV/TPR1,VISCT,NODRES2,DT,
+     +                       VCN,STIFD,NDIM,NOFVERT,VOLUME)
+d377 2
+a378 2
+                  CALL TDIFF(IELEM,TCB2*REINV/TPR1,VISCT,NODRES2,DT,VCN,
+     +                       STIFD,NDIM,NOFVERT,VOLUME)
+d396 2
+a397 2
+              CALL ASSMBS(-1,IELEM,ICN,STIFC,STIFD,NOFVERT,DSTAK(LACSR),
+     +                    ISTAK(LJACSR),ISTAK(LIACSR))
+d429 8
+a436 1
+      CALL SETBC4A(NPOIN,DSTAK(LRESID),ISTAK(LNODCOD))
+@

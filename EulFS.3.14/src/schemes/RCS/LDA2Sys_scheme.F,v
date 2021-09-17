@@ -1,0 +1,1037 @@
+head	1.14;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.14
+	release3_13_0:1.14
+	release3_12_0:1.14
+	release3_11_0:1.14
+	release3_10_0:1.14
+	release3_8_0:1.14
+	release3_7_1:1.14
+	release3_7_0:1.13
+	release3_4_5:1.13
+	release3_4_4:1.13
+	release3_4_3:1.13
+	release3_4_2:1.13
+	release3_4_1:1.12
+	release3_4_0:1.12
+	release3_3_5:1.12
+	release3_3_4:1.11
+	release3_3_3:1.11
+	release3_3_2:1.11
+	release3_3_1:1.11
+	release3_3_0:1.11;
+locks; strict;
+comment	@c @;
+
+
+1.14
+date	2020.03.28.09.49.28;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.08.22.15.10.57;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.04.27.09.33.46;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2009.06.11.09.09.00;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2009.01.02.09.12.09;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2008.07.08.07.52.11;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2004.09.06.09.22.54;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2002.09.13.08.34.53;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2002.09.10.09.37.00;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.08.24.10.22.32;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.11.28.10.55.21;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.03.24.15.03.57;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.04.21.16.29.04;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@LDA scheme: Edwin's version
+@
+
+
+1.14
+log
+@renamed subroutine call
+@
+text
+@!> \brief \b LDA2SYS_SCHEME
+!> \par Purpose
+!>
+!> This routine computes the LDA version 2 system scheme on one tetrahedron;
+!>
+!> it differs from the LDA version 1 system scheme since here the matrix \f$ K_i^+ \f$
+!> multiplies \f$ \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1} \f$ from the left, i.e.
+!>
+!> the distribution matrix for the LDA verion 2 scheme reads:
+!> \f[
+!> B_i = K_i^+ \left( \sum_{j=1}^{d+1} K_j^+ \right)^{-1}
+!> \f]
+!>
+!>
+!> @@param[in] MATRIXSPLITTER is the subroutine use to split the Jacobian matrix
+!> @@param[in] W is the set of NORDER dependent variables in the NOFVERT vertices of the current cell
+!> @@param[out] NODRES are the signals sent to each of the NOFVERT vertices
+!> @@param[in,out] TSTEP is the elemental contribution to the (inverse of the) time step
+!> @@param[out] BETA the NOFVERT distribution matrices
+!> @@param[out] STIFC the elemental contribution to the implicit matrix (computed only if MATRIX_ASSEMBLY is true)
+!> @@param[in] NORDER is the order of the hyperbolic system being solved, it could be < than NDOF
+!> @@param[in] NDOF is the number of dofs in the gridpoints, also the leading dimension of W, STIFC, NODRES, TSTEP
+!> @@param[out] NOFVERT is number of vertices of the simplicial elements (= NDIM+1)
+!> @@param[in] VCN the NDIM cartesian component of the inward face normal to all NOFVERT vertices, scaled by its measure
+!> @@param[in] NDIM is the dimension of the space
+!> @@param[in] DFGHDU the NDIM cartesian components of the Jacobian matrix
+!> @@param[in] LDJ is the leading dimension of DFGHDU
+!> @@param[out] CELRES the elemental residual
+!> @@param[in] SOURCE the elemental source term
+!> @@param[in] IELEM is the current simplicial element
+!> @@param[in] MATRIX_ASSEMBLY when set == .TRUE. the STIFC matrix will be assembled
+!> \author $Author: abonfi $
+!> \version $Revision: 1.13 $
+!> \date $Date: 2013/08/22 15:10:57 $
+!> \warning Define \c FSPL_USE_PETSC_KERNELS if you want to use PETSc's kernels to invert matrix \f$ \left( \sum_{j=1}^{d+1} K_j^+ \right) \f$ (the preferred choice)
+!> \warning Define \c FSPL_USE_LAPACK if you want to use LAPACK to invert matrix \f$ \left( \sum_{j=1}^{d+1} K_j^+ \right) \f$ (presumably much slower than the former)
+!> \bug The source term is NOT distributed in the current release
+      SUBROUTINE LDA2SYS_SCHEME(MATRIXSPLITTER,W,NODRES,TSTEP,BETA,
+     &                         STIFC,NORDER,NDOF,NOFVERT,VCN,NDIM,
+     &                         DFGHDU,LDJ,CELRES,SOURCE,IELEM,
+     &                         MATRIX_ASSEMBLY)
+C
+C     $Id: LDA2Sys_scheme.F,v 1.13 2013/08/22 15:10:57 abonfi Exp abonfi $
+C     
+C     Only one of the following can be defined
+C
+#define FSPL_USE_PETSC_KERNELS
+CCCC#define FSPL_USE_LAPACK
+C
+C
+      IMPLICIT NONE
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'flags.com'
+C
+cnag  EXTERNAL F07ADF,F07AEF,DSCAL
+C
+C     .. Parameters ..
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER IELEM,LDJ,NDIM,NOFVERT,NDOF,NORDER
+      DOUBLE PRECISION VOLUME
+      LOGICAL MATRIX_ASSEMBLY
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DFGHDU(LDJ,*),NODRES(NDOF,NOFVERT),
+     &                 TSTEP(NDOF,NOFVERT),SOURCE(*),
+     &                 CELRES(*),BETA(*),
+     &                 STIFC(NDOF,NDOF,NOFVERT,NOFVERT),
+     &                 VCN(NDIM,NOFVERT),W(NDOF,NOFVERT)
+C     ..
+C     .. Subroutine Arguments ..
+      EXTERNAL MATRIXSPLITTER
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TEMP,HELP
+      INTEGER I,J,INFO,IVAR,IVERT,JVERT,IADD,JADD,ORDSQR,N,M
+      LOGICAL LFLAG
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION K(MAX_NOFVAR_SQR*VMAX),SUM_K_POS(MAX_NOFVAR_SQR),
+     &KNEG(MAX_NOFVAR_SQR*MAXNOFVERT),KPOS(MAX_NOFVAR_SQR*MAXNOFVERT),
+     &VLEFT(MAX_NOFVAR_SQR),VRIGHT(MAX_NOFVAR_SQR),
+     &WNEG(MAXNOFVAR),WPOS(MAXNOFVAR),WR(MAXNOFVAR),
+     &WKSP2(MAXNOFVAR,MAXNOFVAR)
+C
+#ifdef FSPL_USE_LAPACK
+      INTEGER LWORK
+      PARAMETER(LWORK=2*MAXNOFVAR)
+      INTEGER IPIV(MAXNOFVAR)
+      DOUBLE PRECISION WORK(LWORK)
+#endif
+C
+C     ..
+C     .. External Functions ..
+      LOGICAL  NULLMAT,UNITMAT
+      EXTERNAL NULLMAT,UNITMAT
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DGEMM,DGEMV,DGETRF,DGETRS,DINIT,DSCAL,MATSUM,R8Mat_Print
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DABS
+C     ..
+C     .. Statement Functions ..
+C     ..
+      ORDSQR = NORDER*NORDER
+      CALL DINIT(MAX_NOFVAR_SQR,ZERO,SUM_K_POS,1)
+C
+C residual = - fluctuation
+      DO 3 I = 1,2*NDOF
+          CELRES(I) = ZERO
+    3 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+          CALL DINIT(MAX_NOFVAR_SQR,ZERO,WKSP2,1)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C       .. Loop over the vertices of the element ..
+C
+      DO 10 IVERT = 1,NOFVERT
+C
+          IADD = (IVERT-1)*ORDSQR+1
+C
+C       .. The matrix is split into its positive and negative parts
+C
+C       Numerically or Analitically ..
+C
+          CALL MATRIXSPLITTER(IELEM,NDIM,NORDER,VCN(1,IVERT),DFGHDU,LDJ,
+     +                        K(IADD),KPOS(IADD),
+     +                        KNEG(IADD),VLEFT,VRIGHT,NORDER,WR,WPOS,
+     +                        WNEG,.TRUE.)
+C
+C       The positive jacobians are accumulated in SUM_K_POS ..
+C
+          CALL DAXPY(ORDSQR,ONE,KPOS(IADD),1,SUM_K_POS,1)
+C
+C       Timestep ..
+C
+          DO 32 IVAR = 1,NORDER
+              TSTEP(IVAR,IVERT) = TSTEP(IVAR,IVERT) + WPOS(IVAR)
+   32     CONTINUE
+C
+C       the residual is computes as Sum_j K(j) * U(j) ..
+C
+          CALL DGEMV('N',NORDER,NORDER,ONE,K(IADD),NORDER,W(1,IVERT),1,
+     +    ONE,CELRES,1) ! should be + source !!
+C
+   10 CONTINUE
+C
+C       .. LU factorization of SUM_K_POS ..
+C
+#ifdef FSPL_USE_LAPACK
+C
+cnag  CALL F07ADF(NORDER,NORDER,SUM_K_POS,MAXNOFVAR,IPIV,INFO)
+      CALL DGETRF(NORDER,NORDER,SUM_K_POS,NORDER,IPIV,INFO)
+C
+      IF (INFO.GT.0) THEN
+          WRITE (6,FMT=99999) IELEM
+99999     FORMAT (5X,'Matrix SUM_K_POS is singular in IELEM = ',I6)
+          CALL EXIT(INFO)
+      ENDIF
+C
+C     compute the inverse of \sum K^+
+C
+      CALL DGETRI(NORDER,SUM_K_POS,NORDER,IPIV,WORK,LWORK,INFO)
+C
+#endif
+#ifdef FSPL_USE_PETSC_KERNELS
+      CALL SOLVEN( NORDER, SUM_K_POS )
+#endif
+C
+C       .. Loop again over all vertices to compute the distribution
+C               matrices (overwritten on KPOS)  ..
+C
+      DO 30 IVERT = 1,NOFVERT
+          IADD = (IVERT-1)*ORDSQR+1
+C
+C     compute the distribution matrices as B_i =  K^+ (\sum K^+)^{-1}
+C
+          CALL DGEMM('No Transpose','No Transpose',NORDER,NORDER,NORDER,
+     +              ONE,KPOS(IADD),NORDER,SUM_K_POS,NORDER,ZERO,
+     +              BETA(IADD),NORDER)
+caldo
+!             CALL R8Mat_Print('G',' ',NORDER,NORDER,beta(IADD),
+!    +                    NORDER,'Beta matrix',INFO)
+caldo
+C
+C       NODRES(IVERT) = -BETA(IVERT)*CELRES
+C
+         CALL DGEMV('N',NORDER,NORDER,MONE,BETA(IADD),NORDER,
+     +   CELRES,1,ZERO,NODRES(1,IVERT),1)
+C
+C --------------- Debugging code starts here ---------------
+C
+          IF (ICHECK.NE.0) THEN
+C
+C       .. Sum up the distribution matrices ..
+C
+              CALL MATSUM(WKSP2,MAXNOFVAR,BETA(IADD),
+     &                    NORDER,NORDER,NORDER)
+C
+          ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C
+   30 CONTINUE ! End loop over vertices
+C
+C --------------- Debugging code starts here ---------------
+C
+      include 'test1.inc'
+C
+C --------------- Debugging code ends here ---------------
+C
+      IF (MATRIX_ASSEMBLY) THEN
+C
+C     .. Assembling the element stiffness matrix for the LDA scheme ..
+C
+      DO 31 J = 1,NOFVERT
+          JADD = (J-1)*ORDSQR+1
+C
+          DO 31 I = 1,NOFVERT
+          IADD = (I-1)*ORDSQR+1
+C
+C     ... C_{ij}^{LDA} = - Delta_i^{+} K_j
+C         Delta_i^{+} had been overwritten onto KPOS
+C
+              CALL DGEMM('N','N',NORDER,NORDER,NORDER,MONE,BETA(IADD),
+     +             NORDER,K(JADD),NORDER,ZERO,STIFC(1,1,I,J),NDOF)
+C
+   31 CONTINUE
+C
+C --------------- Debugging code starts here ---------------
+C
+      include 'test2.inc'
+C
+C --------------- Debugging code ends here ---------------
+C
+      ENDIF
+      RETURN
+
+      END
+@
+
+
+1.13
+log
+@Improved Doxygen documentation
+@
+text
+@d33 2
+a34 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d43 1
+a43 1
+C     $Id: LDA2Sys_scheme.F,v 1.12 2013/04/27 09:33:46 abonfi Exp abonfi $
+d100 1
+a100 1
+      EXTERNAL DGEMM,DGEMV,DGETRF,DGETRS,DINIT,DSCAL,MATSUM,X04CAF
+d189 1
+a189 1
+!             CALL X04CAF('G',' ',NORDER,NORDER,beta(IADD),
+@
+
+
+1.12
+log
+@the contribution to the timestep is now added
+separately for each variable
+@
+text
+@d1 37
+a37 1
+!> \copydetails LDASYS_SCHEME()
+d43 1
+a43 1
+C     $Id: LDA2Sys_scheme.F,v 1.11 2013/01/24 07:46:33 abonfi Exp abonfi $
+a48 3
+C
+C
+!> This routine computes the LDA system scheme on one tetrahedron
+@
+
+
+1.11
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@d7 1
+a7 1
+C     $Id: LDA2Sys_scheme.F,v 1.10 2009/06/11 09:09:00 abonfi Exp abonfi $
+d112 1
+a112 1
+              TSTEP(1,IVERT) = TSTEP(1,IVERT) + WPOS(IVAR)
+@
+
+
+1.10
+log
+@added BETA among the arguments of the call
+@
+text
+@d1 1
+d3 3
+a5 3
+     +                         STIFC,NORDER,NDOF,NOFVERT,VCN,NDIM,
+     +                         DFGHDU,LDJ,CELRES,SOURCE,IELEM,
+     +                         MATRIX_ASSEMBLY)
+d7 1
+a7 1
+C     $Id: LDA2Sys_scheme.F,v 1.9 2009/01/02 09:12:09 abonfi Exp abonfi $
+d15 1
+a15 24
+C NORDER                is the order of the system to solve for, i.e.
+C                       the order of the matrix dFGHdU.
+C FrstEq                is the first among the NDOF variable which
+C                       appears into the system of order NORDER.
+C IELEM                 is the current element.
+C dFGHdU(LDJ,*) is the Jacobian Matrix of the system.
+C LDJ                   is the leading dimension of dFGHdU.
+C W                  stores by columns the NORDER variables of the
+C                       NOFVERT vertices.
+C LNODRES                   is the leading dimension of W.
+C CELRES[1:2*NORDER]  OUT Real
+C CELRES[1:NORDER]    stores the residual computed by the Matrix scheme
+C                       as \sum K_j U_j (explicit part of the scheme)
+C CELRES[NORDER+1:2*NORDER]
+C                       stores the residual computed by the Matrix scheme
+C                       as \sum C_{ij} U_j (implicit part of the scheme)
+C MatrixSplitter        is the procedure used to compute the eigenvector
+C                       decomposition of the matrix dFGHdU.
+C TSTEP                 is the nodal timestep.
+C DU(NDOF,*)               is the nodal residual.
+C
+C
+C
+C This routine computes the LDA system scheme on one tetrahedron
+d34 4
+a37 4
+     +                 TSTEP(NDOF,NOFVERT),SOURCE(*),
+     +                 CELRES(*),BETA(*),
+     +                 STIFC(NDOF,NDOF,NOFVERT,NOFVERT),
+     4                 VCN(NDIM,NOFVERT),W(NDOF,NOFVERT)
+d50 3
+a52 3
+     +VLEFT(MAX_NOFVAR_SQR),VRIGHT(MAX_NOFVAR_SQR),
+     +WNEG(MAXNOFVAR),WPOS(MAXNOFVAR),WR(MAXNOFVAR),
+     +WKSP2(MAXNOFVAR,MAXNOFVAR)
+a72 2
+cold  INTEGER IDX
+cold  IDX(I,J,N,M) = (((J-1)*M+I-1)*N*N)+1
+d132 1
+a132 1
+          STOP
+@
+
+
+1.9
+log
+@time accurate version√
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE LDA2SYS_SCHEME(MATRIXSPLITTER,W,NODRES,TSTEP,STIFC,
+     +                         NORDER,NDOF,NOFVERT,VCN,NDIM,DFGHDU,
+     +                         LDJ,CELRES,SOURCE,IELEM,
+d6 1
+a6 1
+C     $Id: LDA2Sys_scheme.F,v 1.8 2008/07/08 07:52:11 aldo Exp aldo $
+a42 1
+      INCLUDE 'time.h'
+a43 1
+      INCLUDE 'time.com'
+d57 3
+a59 2
+     +                 CELRES(*),STIFC(NDOF,NDOF,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NDOF,NOFVERT)
+a70 1
+     +BETA(MAX_NOFVAR_SQR*MAXNOFVERT),
+a235 4
+      IF(LTIME)THEN
+         CALL UNSTEADYS(BETA,W,NODRES,STIFC,NORDER,NDIM,NOFVERT,
+     &                  MATRIX_ASSEMBLY)
+      ENDIF
+@
+
+
+1.8
+log
+@changed NMAX into NORDER; also renamed a bunch of variables
+@
+text
+@d6 1
+a6 1
+C     $Id: LDA2Sys_scheme.F,v 1.9 2004/08/27 11:56:14 aldo Exp $
+d42 2
+d45 1
+a49 2
+      DOUBLE PRECISION ZERO,ONE,MONE
+      PARAMETER (ZERO=0.D0,ONE=1.D0,MONE=-1.d0)
+d54 1
+a54 1
+      LOGICAL MATRIX_ASSEMBLY,LTIME
+a75 1
+     +MASSMAT(MAX_NOFVAR_SQR*MAX_NOFVERT_SQR),
+d97 2
+a98 2
+      INTEGER IDX
+      IDX(I,J,N,M) = (((J-1)*M+I-1)*N*N)+1
+d182 2
+a183 2
+!             CALL X04CAF('G',' ',NORDER,NORDER,kpos(IADD),
+!    +                    MAXNOFVAR,'Beta matrix',INFO)
+d238 4
+a241 1
+C     include 'massmat.f'
+@
+
+
+1.7
+log
+@renamed a few variables
+@
+text
+@d3 2
+a4 1
+     +                         LDJ,CELRES,SOURCE,IELEM,MATRIX_ASSEMBLY)
+d6 1
+a6 1
+C     $Id: LDA2Sys_scheme.F,v 1.6 2002/09/13 08:34:53 abonfi Exp abonfi $
+d10 2
+a11 2
+CCCC#define FSPL_USE_PETSC_KERNELS
+#define FSPL_USE_LAPACK
+a43 4
+      INTEGER LWORK
+      PARAMETER(LWORK=2*NMAX)
+C
+C
+a45 2
+C
+C
+d47 2
+a48 2
+      DOUBLE PRECISION ZERO,ONE
+      PARAMETER (ZERO=0.D0,ONE=1.D0)
+d52 2
+a53 1
+      LOGICAL MATRIX_ASSEMBLY
+d65 2
+a66 2
+      DOUBLE PRECISION SUM,TEMP
+      INTEGER I,INFO,IROW,IVAR,IVERT,J,JCOL,IADDR,JADDR,NSQR
+d70 15
+a84 5
+      DOUBLE PRECISION K(NMAX*NMAX*VMAX),KNEG(NMAX*NMAX*VMAX),
+     +BETA(NMAX,NMAX,VMAX),KPOS(NMAX*NMAX*4),SUM_K_POS(NMAX*NMAX),
+     +WORK(LWORK),VLEFT(NMAX*NMAX),VRIGHT(NMAX*NMAX),WKSP1(NMAX),
+     +WKSP2(NMAX,NMAX),WNEG(NMAX),WPOS(NMAX),WR(NMAX)
+      INTEGER IPIV(NMAX)
+d87 1
+a87 1
+      LOGICAL NULLMAT,UNITMAT
+d96 6
+a101 7
+caldo DO 1 J = 1,NMAX
+caldo     DO 1 I = 1,NMAX
+caldo         SUM_K_POS(I,J) = ZERO
+caldo CONTINUE
+C
+      NSQR = NORDER*NORDER
+      CALL DINIT(NMAX*NMAX,ZERO,SUM_K_POS,1)
+d111 1
+a111 2
+          CALL DINIT(NMAX,ZERO,WKSP1,1)
+          CALL DINIT(NMAX*NMAX,ZERO,WKSP2,1)
+d120 1
+a120 1
+          IADDR = (IVERT-1)*NSQR+1
+d127 2
+a128 2
+     +                        K(IADDR),KPOS(IADDR),
+     +                        KNEG(IADDR),VLEFT,VRIGHT,NORDER,WR,WPOS,
+d133 1
+a133 6
+caldo     DO 15 JCOL = 1,NORDER
+caldo         DO 15 IROW = 1,NORDER
+caldo             SUM_K_POS(IROW,JCOL) = SUM_K_POS(IROW,JCOL) +
+caldo+                                   KPOS(IROW,JCOL,IVERT)
+cal15     CONTINUE
+	  CALL DAXPY(NSQR,ONE,KPOS(IADDR),1,SUM_K_POS,1)
+d143 2
+a144 10
+         CALL DGEMV('N',NORDER,NORDER,ONE,K(IADDR),NORDER,W(1,IVERT),1,
+     +   ONE,CELRES,1)
+C
+caldo     DO 11 I = 1,NORDER
+caldo         SUM = ZERO
+caldo         DO 13 J = 1,NORDER
+caldo             SUM = SUM + K(I,J,IVERT)*W(J,IVERT)
+cal13         CONTINUE
+caldo         CELRES(I) = CELRES(I) + SUM
+cal11     CONTINUE
+d152 1
+a152 1
+cnag  CALL F07ADF(NORDER,NORDER,SUM_K_POS,NMAX,IPIV,INFO)
+a156 1
+
+a157 1
+
+a158 1
+
+d174 1
+a174 1
+          IADDR = (IVERT-1)*NSQR+1
+d179 2
+a180 2
+     +              ONE,KPOS(IADDR),NORDER,SUM_K_POS,NORDER,ZERO,
+     +              BETA(1,1,IVERT),NMAX)
+d182 2
+a183 2
+!             CALL X04CAF('G',' ',NORDER,NORDER,kpos(IADDR),NORDER,
+!    +                    'Beta matrix',INFO)
+d188 2
+a189 10
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,KPOS(1,1,IVERT),NMAX,CELRES,
+cblas+   1,ZERO,WKSP,1)
+C
+          DO 23 I = 1,NORDER
+              SUM = ZERO
+              DO 21 J = 1,NORDER
+                  SUM = SUM + BETA(I,J,IVERT)*(CELRES(J)+SOURCE(J))
+   21         CONTINUE
+              NODRES(I,IVERT) = -SUM
+   23     CONTINUE
+d197 2
+a198 1
+              CALL MATSUM(WKSP2,NMAX,BETA(1,1,IVERT),NMAX,NORDER,NORDER)
+d205 1
+a205 1
+   30 CONTINUE
+d213 1
+a213 1
+      IF (.NOT.MATRIX_ASSEMBLY) RETURN
+d218 1
+a218 1
+      JADDR = (J-1)*NSQR+1
+d221 1
+d226 2
+a227 2
+              CALL DGEMM('N','N',NORDER,NORDER,NORDER,-ONE,BETA(1,1,I),
+     +             NMAX,K(JADDR),NORDER,ZERO,STIFC(1,1,I,J),NDOF)
+d237 2
+@
+
+
+1.6
+log
+@off 72nd column
+@
+text
+@d2 2
+a3 2
+     +                         NORDER,NOFVAR,NOFVERT,VCN,NDIM,DFGHDU,
+     +                         LDJ,CELRES,IELEM,MATRIX_ASSEMBLY)
+d5 1
+a5 1
+C     $Id: LDA2Sys_scheme.F,v 1.5 2002/09/10 09:37:00 abonfi Exp abonfi $
+d15 1
+a15 1
+C FrstEq                is the first among the NOFVAR variable which
+d32 1
+a32 1
+C DU(NOFVAR,*)               is the nodal residual.
+d56 1
+a56 1
+      INTEGER IELEM,LDJ,NDIM,NOFVERT,NOFVAR,NORDER
+d60 4
+a63 4
+      DOUBLE PRECISION DFGHDU(LDJ,*),NODRES(NOFVAR,NOFVERT),
+     +                 TSTEP(NOFVAR,NOFVERT),
+     +                 CELRES(*),STIFC(NOFVAR,NOFVAR,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NOFVAR,NOFVERT)
+d74 4
+a77 4
+      DOUBLE PRECISION K(NMAX*NMAX*4),KNEG(NMAX*NMAX*4),WORK(LWORK),
+     +BETA(NMAX,NMAX,4),KPOS(NMAX*NMAX*4),SUM_K_POS(NMAX*NMAX),
+     +                 VLEFT(NMAX*NMAX),VRIGHT(NMAX*NMAX),WKSP1(NMAX),
+     +                 WKSP2(NMAX,NMAX),WNEG(NMAX),WPOS(NMAX),WR(NMAX)
+d98 2
+a99 2
+cblas CALL DSCAL(NORDER,ZERO,CELRES,1)! residual = - fluctuation
+      DO 3 I = 1,2*NOFVAR
+d116 1
+a116 1
+      IADDR = (IVERT-1)*NSQR+1
+d186 1
+a186 7
+      IADDR = (IVERT-1)*NSQR+1
+C
+C        this gives the same distribution as the other LDA scheme
+C
+caldo    CALL DGEMM('No Transpose','No Transpose',NORDER,NORDER,NORDER,
+caldo+              ONE,SUM_K_POS,NMAX,KPOS(1,1,IVERT),NMAX,ZERO,
+caldo+              BETA(1,1,IVERT),NMAX)
+d190 1
+a190 1
+         CALL DGEMM('No Transpose','No Transpose',NORDER,NORDER,NORDER,
+d194 2
+a195 2
+caldo         CALL X04CAF('G',' ',NORDER,NORDER,kpos(1,1,ivert),NMAX,
+caldo+                    'Beta matrix',INFO)
+d206 1
+a206 1
+                  SUM = SUM + BETA(I,J,IVERT)*CELRES(J)
+d228 1
+a228 1
+      include 'test1.f'
+d245 1
+a245 1
+     +             NMAX,K(JADDR),NORDER,ZERO,STIFC(1,1,I,J),NOFVAR)
+d251 1
+a251 1
+      include 'test2.f'
+@
+
+
+1.5
+log
+@the timestep array is now dimensioned NOFVAR x NOFVERT
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE LDA2SYS_SCHEME(MATRIXSPLITTER,W,NODRES,TSTEP,STIFC,NORDER,
+     +                         NOFVAR,NOFVERT,VCN,NDIM,DFGHDU,LDJ,
+     +                         CELRES,IELEM,MATRIX_ASSEMBLY)
+d5 1
+a5 1
+C     $Id: LDA2Sys_scheme.F,v 1.4 2002/08/24 10:22:32 abonfi Exp abonfi $
+@
+
+
+1.4
+log
+@towards the implementation of a coupled approach
+for RANS: the number of variables NOFVAR can now
+be different from the number of mean flow equations
+(hereafter called NOFEQN); NOFVAR has been add among the
+arguments of the call
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE LDA2SYS_SCHEME(MATRIXSPLITTER,W,NODRES,DT,STIFC,NORDER,
+d5 1
+a5 1
+C     $Id: LDA2Sys_scheme.F,v 1.3 2001/11/28 10:55:21 abonfi Exp abonfi $
+d31 1
+a31 1
+C DT                 is the nodal timestep.
+d60 2
+a61 1
+      DOUBLE PRECISION DFGHDU(LDJ,*),NODRES(NOFVAR,NOFVERT),DT(NOFVERT),
+d139 1
+a139 1
+              DT(IVERT) = DT(IVERT) + WPOS(IVAR)
+@
+
+
+1.3
+log
+@inflow parameters and their positive parts are
+now packed into 1D arrays so that PETSc kernels
+for matrix inversion can be used in the future
+@
+text
+@d1 3
+a3 3
+      SUBROUTINE LDA2SYS_SCHEME(MATRIXSPLITTER,W,DQ,DT,STIFC,NORDER,
+     +                         NOFVERT,VCN,NDIM,DFGHDU,LDJ,RESIDUAL,
+     +                         IELEM,TIMEIMPL)
+d5 1
+a5 1
+C     $Id:$
+d22 3
+a24 3
+C LDQ                   is the leading dimension of W.
+C RESIDUAL[1:2*NORDER]  OUT Real
+C RESIDUAL[1:NORDER]    stores the residual computed by the Matrix scheme
+d26 1
+a26 1
+C RESIDUAL[NORDER+1:2*NORDER]
+d56 2
+a57 2
+      INTEGER IELEM,LDJ,NDIM,NOFVERT,NORDER
+      LOGICAL TIMEIMPL
+d60 3
+a62 3
+      DOUBLE PRECISION DFGHDU(LDJ,*),DQ(NORDER,NOFVERT),DT(NOFVERT),
+     +                 RESIDUAL(*),STIFC(NORDER,NORDER,NOFVERT,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),W(NORDER,NOFVERT)
+d97 3
+a99 3
+cblas CALL DSCAL(NORDER,ZERO,RESIDUAL,1)! residual = - fluctuation
+      DO 3 I = 1,2*NORDER
+          RESIDUAL(I) = ZERO
+d144 1
+a144 1
+     +   ONE,RESIDUAL,1)
+d151 1
+a151 1
+caldo         RESIDUAL(I) = RESIDUAL(I) + SUM
+a177 1
+caldo stop 'here I am chap'
+d203 1
+a203 1
+C       DQ(IVERT) = -BETA(IVERT)*RESIDUAL
+d205 1
+a205 1
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,KPOS(1,1,IVERT),NMAX,RESIDUAL,
+d211 1
+a211 1
+                  SUM = SUM + BETA(I,J,IVERT)*RESIDUAL(J)
+d213 1
+a213 1
+              DQ(I,IVERT) = -SUM
+d233 1
+a233 12
+      IF (ICHECK.NE.0) THEN
+C
+C       .. Check that the BETA's sum up to zero ..
+C
+          LFLAG = UNITMAT(WKSP2,NORDER,NORDER,NMAX,1.D-14)
+          IF (.NOT.LFLAG) THEN
+              WRITE (6,FMT=*) 'Element # ',IELEM
+              CALL X04CAF('G',' ',NORDER,NORDER,WKSP2,NMAX,
+     +                    'Sum of the distribution matrices',INFO)
+              PAUSE
+
+          ENDIF
+a234 2
+      ENDIF
+C
+d237 1
+a237 1
+      IF (.NOT.TIMEIMPL) RETURN
+d250 1
+a250 1
+     +             NMAX,K(JADDR),NORDER,ZERO,STIFC(1,1,I,J),NORDER)
+a253 2
+      IF (ICHECK.EQ.0) RETURN
+C
+d256 1
+a256 57
+C     GOTO 69
+C
+C        print the element stiffness matrix
+C
+      DO 65 J = 1,NOFVERT
+          DO 65 I = 1,NOFVERT
+              WRITE (6,FMT=*) 'IELEM = ',IELEM,'I,J = ',I,J
+              CALL X04CAF('General',' ',NORDER,NORDER,STIFC(1,1,I,J),
+     +             NORDER,'Element convection matrix (LDA2)',INFO)
+   65 CONTINUE
+      PAUSE
+
+   69 CONTINUE
+C
+C     ... Check that \sum_{j} C_{i,j} = 0
+C
+      DO 61 I = 1,NOFVERT
+          CALL DINIT(NMAX*NMAX,ZERO,WKSP2,1)
+          DO 63 J = 1,NOFVERT
+              CALL MATSUM(WKSP2,NMAX,STIFC(1,1,I,J),NORDER,NORDER,
+     +                    NORDER)
+   63     CONTINUE
+          LFLAG = NULLMAT(WKSP2,NORDER,NORDER,NMAX,1.D-14)
+          IF (.NOT.LFLAG) THEN
+              WRITE (6,FMT=*) IELEM,I
+              CALL X04CAF('General',' ',NORDER,NORDER,WKSP2,NMAX,
+     +                   ' Sum_j C_{i,j} equals the null matrix ? (LDA)'
+     +                    ,INFO)
+              PAUSE
+
+          ENDIF
+
+   61 CONTINUE
+C
+C*PL*ERROR* Comment line too long
+C*PL*ERROR* Comment line too long
+C     ... RESIDUAL[NORDER+1:2*NORDER] stores the residual in the "V" variable
+C         computed as - \sum_{i,j} C_{i,j} U_j
+C
+      DO 59 J = 1,NOFVERT
+          DO 59 I = 1,NOFVERT
+              CALL DGEMV('N',NORDER,NORDER,-ONE,STIFC(1,1,I,J),NORDER,
+     +                   W(1,J),1,ONE,RESIDUAL(NORDER+1),1)
+   59 CONTINUE
+C
+      LFLAG = .FALSE.
+      DO 57 IVAR = 1,NORDER
+          TEMP = RESIDUAL(IVAR) - RESIDUAL(NORDER+IVAR)
+          IF (DABS(TEMP).GT.1.D-14) LFLAG = .TRUE.
+   57 CONTINUE
+      IF (LFLAG .EQV. .TRUE.) THEN
+          WRITE (6,FMT=*) 'LDA2 system scheme, elem ',IELEM
+          WRITE (6,FMT=*) 'var #     implicit        "true"'
+          DO 55 IVAR = 1,NORDER
+              WRITE (6,FMT=*) IVAR,RESIDUAL(NORDER+IVAR),RESIDUAL(IVAR)
+   55     CONTINUE
+      ENDIF
+@
+
+
+1.2
+log
+@correct version, with (\sum K^+)^{-1} POST multiplying K^+
+@
+text
+@d5 3
+d9 2
+a46 11
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C
+C
+a49 2
+cblas CALL DSCAL(NORDER,ZERO,RESIDUAL,1)! residual = - fluctuation
+cblas CALL DSCAL(NMAX*NMAX,ZERO,SUM_K_POS,1)! sum of the positive k's
+d69 1
+a69 1
+      INTEGER I,INFO,IROW,IVAR,IVERT,J,JCOL
+d73 3
+a75 3
+      DOUBLE PRECISION K(NMAX,NMAX,4),KNEG(NMAX,NMAX,4),WORK(LWORK),
+     +BETA(NMAX,NMAX,4),KPOS(NMAX,NMAX,4),SUM_K_POS(NMAX,NMAX),
+     +                 VLEFT(NMAX,NMAX),VRIGHT(NMAX,NMAX),WKSP1(NMAX),
+d89 9
+a97 4
+      DO 1 J = 1,NMAX
+          DO 1 I = 1,NMAX
+              SUM_K_POS(I,J) = ZERO
+    1 CONTINUE
+a110 1
+C
+d115 2
+d122 2
+a123 2
+     +                        K(1,1,IVERT),KPOS(1,1,IVERT),
+     +                        KNEG(1,1,IVERT),VLEFT,VRIGHT,NMAX,WR,WPOS,
+d128 6
+a133 5
+          DO 15 JCOL = 1,NORDER
+              DO 15 IROW = 1,NORDER
+                  SUM_K_POS(IROW,JCOL) = SUM_K_POS(IROW,JCOL) +
+     +                                   KPOS(IROW,JCOL,IVERT)
+   15     CONTINUE
+d143 2
+a144 2
+cblas    CALL DGEMV('N',NORDER,NORDER,ONE,K,NMAX,W(1,IVERT),1,
+cblas+   ONE,RESIDUAL,1)
+d146 7
+a152 7
+          DO 11 I = 1,NORDER
+              SUM = ZERO
+              DO 13 J = 1,NORDER
+                  SUM = SUM + K(I,J,IVERT)*W(J,IVERT)
+   13         CONTINUE
+              RESIDUAL(I) = RESIDUAL(I) + SUM
+   11     CONTINUE
+d158 2
+d161 1
+a161 1
+      CALL DGETRF(NORDER,NORDER,SUM_K_POS,NMAX,IPIV,INFO)
+d174 7
+a180 1
+      CALL DGETRI(NORDER,SUM_K_POS,NMAX,IPIV,WORK,LWORK,INFO)
+d186 1
+d197 1
+a197 1
+     +              ONE,KPOS(1,1,IVERT),NMAX,SUM_K_POS,NMAX,ZERO,
+d256 1
+d264 1
+a264 1
+     +                   NMAX,K(1,1,J),NMAX,ZERO,STIFC(1,1,I,J),NORDER)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d180 1
+a180 1
+C     compute the distribution matrices K^+ (\sum K^+)^{-1}
+d182 6
+d189 1
+a189 1
+     +              ONE,SUM_K_POS,NMAX,KPOS(1,1,IVERT),NMAX,ZERO,
+d191 4
+d215 1
+a215 1
+              CALL MATSUM(WKSP2,NMAX,KPOS(1,1,IVERT),NMAX,NORDER,NORDER)
+d263 1
+a263 1
+      GOTO 69
+d271 1
+a271 1
+     +                    NORDER,' Element stiffness matrix ',INFO)
+@

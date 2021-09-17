@@ -1,0 +1,748 @@
+head	1.19;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.19
+	release3_13_0:1.19
+	release3_12_0:1.19
+	release3_11_0:1.19
+	release3_10_0:1.19
+	release3_8_0:1.19
+	release3_7_1:1.19
+	release3_7_0:1.18
+	release3_4_5:1.18
+	release3_4_4:1.18
+	release3_4_3:1.18
+	release3_4_2:1.17
+	release3_4_1:1.17
+	release3_4_0:1.17
+	release3_3_5:1.17
+	release3_3_4:1.17
+	release3_3_3:1.17
+	release3_3_2:1.17
+	release3_3_1:1.17
+	release3_3_0:1.17;
+locks; strict;
+comment	@c @;
+
+
+1.19
+date	2020.03.25.11.05.33;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2013.09.17.09.57.31;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2012.08.09.07.28.06;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2012.03.29.11.31.17;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.04.11.07.46.20;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2011.04.11.06.57.58;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.04.01.11.54.13;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2008.06.10.10.10.50;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2005.10.22.11.04.28;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2002.10.25.06.04.07;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.11.15.09.16.28;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.12.27.09.09.59;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.09.03.11.05.21;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	99.09.02.08.40.45;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.11.17.17.06.15;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.08.24.10.17.13;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.02.09.07.38.05;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.00.52.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Driver for the geometric routines
+@
+
+
+1.19
+log
+@removed calls to NAG routines
+@
+text
+@      SUBROUTINE EXGEO(NELEM,NOFVAR,NPOIN,NGHOST,NPNOD,NP,NBPOIN,NFACE,
+     +                 NBFAC,NBINT,NWFAC,NBODY4,NBODY6,NHOLE,NOFVERT,
+     3                 NDIM)
+C
+C     $Id: exgeo.F,v 1.18 2013/09/17 09:57:31 abonfi Exp abonfi $
+C
+C     This routine computes geometrical entities and 
+C     performs some checks
+C     in the sequential case NP = NPOIN+NPNOD (NGHOST=0)
+C     in the parallel   case NP = NPOIN+NPNOD+NGHOST
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'time.h'
+      INCLUDE 'datatype.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'time.com'
+      INCLUDE 'io.com'
+      INCLUDE 'ibc2.com'
+      INCLUDE 'nloc.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER NOFVAR,NBFAC,NBODY4,NBODY6,NBPOIN,NDIM,NELEM,NFACE,NHOLE,
+     +        NOFVERT,NP,NWFAC,NBINT,NPOIN,NGHOST,NPNOD
+C
+C     On entry:
+C     --------
+C     NELEM    no. of processor owned elements (triangles/tetrahedra);
+C              global number of elements in the uni-processor case
+C     NBFAC    no. of processor owned boundary faces/edges;
+C              global number of boundary faces/edges 
+C              in the uni-processor case
+C
+C     Upon return:
+C     -----------
+C
+C
+C
+C
+C
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+      INTEGER MY_PE 
+C     ..
+C     .. Local Scalars ..
+      INTEGER I,IFAIL,IOFF,LINDX,LWORK,LWKSP,NITEMS
+      LOGICAL LFLAG
+      CHARACTER*12 FNAME
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+C     ..
+C     .. External Functions ..
+      INTEGER ISTKGT,ISTKQU
+      EXTERNAL ISTKGT,ISTKQU
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL CHKBND,CMPVOL,DINIT,FF,ICOPY,IINIT,ISORTRX,ISTKRL,REORDR
+C     ..
+C     .. Common blocks ..
+      COMMON /MPICOM/MY_PE
+      COMMON /CSTAK/DSTAK
+C
+      LOGICAL VERBOSE
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+C     ..
+C
+C     set VERBOSE = .TRUE. if you want to dump the boundary nodes and colours
+C
+      VERBOSE = .FALSE.
+C
+C---------- PRINT BLOCK PARAMETERS
+C
+      WRITE (NOUT,FMT=2000) MY_PE
+      WRITE (NOUT,FMT=2005) NFACE
+C
+C     allocate an array to store the edges/faces of the mesh 
+C
+      LFACNOR = ISTKGT(NDIM* (NFACE+1),KIND_REAL8)
+      CALL DINIT(NDIM* (NFACE+1),ZERO,DSTAK(LFACNOR),1)
+C
+C     allocate cell to face pointers
+C
+      LCELFAC = ISTKGT(NOFVERT*NELEM,KIND_INTEGER)
+      CALL IINIT(NOFVERT*NELEM,0,ISTAK(LCELFAC),1)
+C
+C     Finds all faces of the mesh
+C
+      CALL FF(ISTAK(LCELNOD),ISTAK(LCELCEL),ISTAK(LCELFAC),NOFVERT,
+     +        NELEM,DSTAK(LCORG),NDIM,NP,DSTAK(LFACNOR),NFACE,NBFAC,
+     +        NBINT)
+C
+C     Allocate space to store the volumes ..
+C
+      NITEMS = NELEM
+      IF(LALE)NITEMS=NITEMS*(MAXTIMLEVS+1) ! leaves room for time levels: n+a,n+1,n,n-1
+      LVOL = ISTKGT(NITEMS,KIND_REAL8)
+      CALL DINIT(NITEMS,ZERO,DSTAK(LVOL),1)
+C
+C     The volume of EACH element is computed
+C
+      CALL CMPVOL(ISTAK(LCELNOD),ISTAK(LCELFAC),NOFVERT,NELEM,
+     +            DSTAK(LFACNOR),NFACE,DSTAK(LCORG),NDIM,NP,
+     +            DSTAK(LVOL),ZERO)
+C
+      IF( LTIME )THEN ! if time-accurate
+C
+C     Allocate space to store the median dual cell volumes ..
+C
+         NITEMS = NP
+         IF(LALE)NITEMS = NITEMS*MAXTIMLEVS
+         LMEDIAN = ISTKGT(NITEMS,KIND_REAL8)
+         CALL DINIT(NITEMS,ZERO,DSTAK(LMEDIAN),1)
+C
+         CALL MEDIAN(DSTAK(LMEDIAN),NPOIN,NGHOST,NPNOD,NP,DSTAK(LVOL),
+     &   ISTAK(LCELNOD),ISTAK(LPMAP),NOFVERT,NELEM)
+      ENDIF
+C
+C     Sort boundary info for ascending color
+C
+      LWORK = ISTKGT(NBFAC,KIND_INTEGER)
+      LINDX = ISTKGT(NBFAC,KIND_INTEGER)
+C
+      IOFF = 2
+C     copy colours into the work-array
+      CALL ICOPY(NBFAC,ISTAK(LBNDFAC+IOFF),3,ISTAK(LWORK),1)
+      CALL ISORTRX(NBFAC,ISTAK(LWORK),ISTAK(LINDX))
+      CALL REORDR(NBFAC,ISTAK(LBNDFAC+IOFF),3,ISTAK(LINDX),ISTAK(LWORK))
+C
+C     now sort IBNDFAC(1:2,*) according to the permutation
+C
+      DO 10 IOFF = 0,1
+          CALL ICOPY(NBFAC,ISTAK(LBNDFAC+IOFF),3,ISTAK(LWORK),1)
+          CALL REORDR(NBFAC,ISTAK(LBNDFAC+IOFF),3,ISTAK(LINDX),
+     +                ISTAK(LWORK))
+   10 CONTINUE
+      IF(NCL.NE.0)THEN
+C
+C     RNKIDX INVERTS A PERMUTATION, AND HENCE CONVERTS A RANK VECTOR TO
+C     AN INDEX VECTOR, OR VICE VERSA.
+C
+cnag      CALL M01ZAF(ISTAK(LINDX),1,NBFAC,IFAIL)
+          CALL RNKIDX(ISTAK(LINDX),1,NBFAC,IFAIL)
+          IF (IFAIL.NE.0) THEN
+              WRITE (6,FMT=*) 'M01ZAF RNKIDX within exgeo '
+              CALL EXIT(IFAIL)
+          ENDIF
+          CALL RANKCL(ISTAK(LINDX),DSTAK(LCLA),ISTAK(LCLJA),
+     &            ISTAK(LCLIA),LCLDA,NCL)
+      ENDIF
+C
+C     Free INDX and IWORK
+C
+      CALL ISTKRL(2)
+C
+C     perform some checks on the boundary data structure
+C
+      IF(VERBOSE)THEN
+         LWORK = ISTKGT(NOFVERT*NBFAC,KIND_INTEGER)
+         CALL IINIT(NOFVERT*NBFAC,0,ISTAK(LWORK),1)
+      ELSE
+         LWORK = 1
+      ENDIF
+      CALL CHKBND(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELFAC),ISTAK(LCELNOD),
+     +            NOFVERT,NELEM,DSTAK(LFACNOR),DSTAK(LCORG),NDIM,NFACE,
+     +            NWFAC,NBODY4,NBODY6,DSTAK(LCLA),ISTAK(LCLJA),
+     &            ISTAK(LCLIA),LCLDA,NCL,VERBOSE,ISTAK(LWORK))
+      IF(VERBOSE)CALL ISTKRL(1)
+C
+C     allocate space for storing the skin friction coefficient
+C
+      IF (NWFAC.NE.0) THEN
+          LSKINF = ISTKGT(NWFAC,KIND_REAL8)
+          LHEAT = ISTKGT(NWFAC,KIND_REAL8)
+      ENDIF
+C
+C     prescribed flux boundary condition
+C
+      IF(.NOT.LREAD(2))GOTO 120
+      IF(MY_PE.NE.0)THEN
+         WRITE(6,*)'Reading bflux files un-implemented in MPI'
+         CALL EXIT(128)
+      ENDIF
+      FNAME = "bflux000.dat"
+      WRITE(FNAME(6:8),FMT="(I3.3)")MY_PE
+      OPEN(120,FILE=FNAME,STATUS="OLD")
+      READ(120,*)NBFLX(2) ! nof bndry faces with prescribed flux
+      LBNDFLX(1) = ISTKGT(NOFVAR*NBFLX(2),KIND_REAL8) ! store fluxes
+      LBNDFLX(2) = ISTKGT(NBFLX(2),KIND_INTEGER) ! store pointer
+      LWORK = ISTKGT((NOFVERT-1)*NBFLX(2),KIND_INTEGER) ! temporary pointer storage
+      LWKSP = ISTKGT(NBFLX(2),KIND_REAL8) ! temporary storage for sorting
+      CALL SETBNDFLXPTR(DSTAK(LBNDFLX(1)),ISTAK(LWORK),
+     2                  ISTAK(LBNDFLX(2)),NOFVAR,NDIM,NOFVERT,
+     3                  ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     4                  DSTAK(LWKSP),120,1)
+      CALL SETBNDFLXPTR(DSTAK(LBNDFLX(1)),ISTAK(LWORK),
+     2                  ISTAK(LBNDFLX(2)),NOFVAR,NDIM,NOFVERT,
+     3                  ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     4                  DSTAK(LWKSP),120,2)
+      
+      CALL ISTKRL(2) ! release both work arrays
+  120 CONTINUE
+C
+      RETURN
+C
+C     I/O FORMATS
+C
+ 2000 FORMAT (/,/,' COMPUTATION OF THE NORMALS ',10X,
+     +'ON PROCESSOR ',I3,/,' ',26 ('='))
+ 2005 FORMAT (10X,'ESTIMATED NUMBER OF FACES(EDGES) : ',I8,/)
+
+      END
+@
+
+
+1.18
+log
+@VOLUME has become an array so that cell volumes at the previous
+time instants can be stored
+@
+text
+@d5 1
+a5 1
+C     $Id: exgeo.F,v 1.17 2012/08/09 07:28:06 abonfi Exp abonfi $
+d145 1
+a145 1
+C     M01ZAF INVERTS A PERMUTATION, AND HENCE CONVERTS A RANK VECTOR TO
+d148 2
+a149 1
+          CALL M01ZAF(ISTAK(LINDX),1,NBFAC,IFAIL)
+d151 1
+a151 1
+              WRITE (6,FMT=*) 'M01ZAF failed within exgeo '
+@
+
+
+1.17
+log
+@updated due to a new argument in CMPVOL
+@
+text
+@d5 1
+a5 1
+C     $Id: exgeo.F,v 1.16 2012/03/29 11:31:17 abonfi Exp abonfi $
+d102 1
+a102 1
+      IF(LALE)NITEMS=NITEMS*MAXTIMLEVS
+@
+
+
+1.16
+log
+@added support for moving grids
+@
+text
+@d5 1
+a5 1
+C     $Id: exgeo.F,v 1.15 2011/09/16 07:19:48 abonfi Exp abonfi $
+d110 1
+a110 1
+     +            DSTAK(LVOL))
+@
+
+
+1.15
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d5 1
+a5 1
+C     $Id: exgeo.F,v 1.14 2011/04/11 07:46:20 abonfi Exp abonfi $
+d50 1
+a50 1
+      INTEGER I,IFAIL,IOFF,LINDX,LWORK,LWKSP
+d90 2
+a91 2
+      LCELFAC = ISTKGT(NOFVERT* (NELEM+1),KIND_INTEGER)
+      CALL IINIT(NOFVERT* (NELEM+1),0,ISTAK(LCELFAC),1)
+d101 4
+a104 2
+      LVOL = ISTKGT(NELEM+1,KIND_REAL8)
+      CALL DINIT(NELEM+1,ZERO,DSTAK(LVOL),1)
+d116 4
+a119 2
+         LMEDIAN = ISTKGT(NP,KIND_REAL8)
+         CALL DINIT(NP,ZERO,DSTAK(LMEDIAN),1)
+@
+
+
+1.14
+log
+@dumps boundary nodes and colours upon request
+@
+text
+@d5 1
+a5 1
+C     $Id: exgeo.F,v 1.13 2011/04/11 06:57:58 abonfi Exp abonfi $
+d180 1
+a180 3
+      FNAME = "bflux000.dat"
+      INQUIRE(FILE=FNAME,EXIST=LFLAG) 
+      IF(.NOT.LFLAG)GOTO 120
+d185 1
+d187 1
+a187 1
+      OPEN(120,FILE=FNAME)
+@
+
+
+1.13
+log
+@added support for reading boundary fluxes
+@
+text
+@d5 1
+a5 1
+C     $Id: exgeo.F,v 1.12 2011/04/01 11:54:13 abonfi Exp abonfi $
+d67 2
+d74 4
+d159 6
+d168 2
+a169 1
+     &            ISTAK(LCLIA),LCLDA,NCL)
+@
+
+
+1.12
+log
+@added arrays to store the boundary fluxes;
+these are not really needed when only writing the fluxes
+@
+text
+@d5 1
+a5 1
+C     $Id: exgeo.F,v 1.11 2008/06/10 10:10:50 abonfi Exp abonfi $
+d18 2
+d50 1
+a50 1
+      INTEGER I,IFAIL,IOFF,LINDX,LWORK,NITEMS,LWKSP
+d167 1
+a167 23
+      write(6,*)'ldump *********** ',ldump
+      IF(LDUMP(4))THEN
+         FNAME = "bflux000.dat"
+         LBNDFLX(1) = ISTKGT(0,KIND_REAL8) ! dummy allocation
+         LBNDFLX(2) = ISTKGT(0,KIND_INTEGER) ! dummy allocation
+         LWORK = ISTKGT(0,KIND_INTEGER) ! dummy allocation
+         LWKSP = ISTKGT(0,KIND_REAL8) ! dummy allocation
+         CALL SETBNDFLXPTR(DSTAK(LBNDFLX(1)),ISTAK(LBNDFLX(2)),
+     2                     ISTAK(LWORK),NOFVAR,NDIM,NOFVERT,NITEMS,
+     3                     ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     4                     DSTAK(LWKSP),120,3)
+         CALL ISTKRL(4)
+         LBNDFLX(1) = ISTKGT(NOFVAR*NITEMS,KIND_REAL8) ! store fluxes
+         LBNDFLX(2) = ISTKGT(NITEMS,KIND_INTEGER) ! store pointer
+         LWORK = ISTKGT((NOFVERT-1)*NITEMS,KIND_INTEGER) ! temporary pointer storage
+         LWKSP = ISTKGT(NITEMS,KIND_REAL8) ! temporary pointer storage
+         CALL SETBNDFLXPTR(DSTAK(LBNDFLX(1)),ISTAK(LBNDFLX(2)),
+     2                     ISTAK(LWORK),NOFVAR,NDIM,NOFVERT,NITEMS,
+     3                     ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     4                     DSTAK(LWKSP),120,4)
+         CALL ISTKRL(2)
+      ENDIF
+      GOTO 120
+d176 7
+a182 7
+      READ(120,*)NITEMS ! nof bndry faces with prescribed flux
+      LBNDFLX(1) = ISTKGT(NOFVAR*NITEMS,KIND_REAL8) ! store fluxes
+      LBNDFLX(2) = ISTKGT(NITEMS,KIND_INTEGER) ! store pointer
+      LWORK = ISTKGT((NOFVERT-1)*NITEMS,KIND_INTEGER) ! temporary pointer storage
+      LWKSP = ISTKGT(NITEMS,KIND_REAL8) ! temporary pointer storage
+      CALL SETBNDFLXPTR(DSTAK(LBNDFLX(1)),ISTAK(LBNDFLX(2)),
+     2                  ISTAK(LWORK),NOFVAR,NDIM,NOFVERT,NITEMS,
+d184 3
+a186 3
+     4                  DSTAK(LWKSP),120,0)
+      CALL SETBNDFLXPTR(DSTAK(LBNDFLX(1)),ISTAK(LBNDFLX(2)),
+     2                  ISTAK(LWORK),NOFVAR,NDIM,NOFVERT,NITEMS,
+d188 1
+a188 1
+     4                  DSTAK(LWKSP),120,1)
+@
+
+
+1.11
+log
+@introduced a number of changes to allow
+time accurate calculations
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE EXGEO(NELEM,NPOIN,NGHOST,NPNOD,NP,NBPOIN,NFACE,NBFAC,
+     +                 NBINT,NWFAC,NBODY4,NBODY6,NHOLE,NOFVERT,NDIM)
+d5 1
+a5 1
+C     $Id: exgeo.F,v 1.10 2005/10/22 11:04:28 abonfi Exp abonfi $
+d17 2
+d22 1
+a22 1
+      INCLUDE 'nloc'
+d25 2
+a26 2
+      INTEGER NBFAC,NBODY4,NBODY6,NBPOIN,NDIM,NELEM,NFACE,NHOLE,NOFVERT,
+     +        NP,NWFAC,NBINT,NPOIN,NGHOST,NPNOD
+d48 3
+a50 1
+      INTEGER I,IFAIL,IOFF,LINDX,LWORK
+d77 1
+a77 1
+      LFACNOR = ISTKGT(NDIM* (NFACE+1),4)
+d82 1
+a82 1
+      LCELFAC = ISTKGT(NOFVERT* (NELEM+1),2)
+d93 1
+a93 1
+      LVOL = ISTKGT(NELEM+1,4)
+d106 1
+a106 1
+         LMEDIAN = ISTKGT(NP,4)
+d115 2
+a116 2
+      LWORK = ISTKGT(NBFAC,2)
+      LINDX = ISTKGT(NBFAC,2)
+d159 2
+a160 2
+          LSKINF = ISTKGT(NWFAC,4)
+          LHEAT = ISTKGT(NWFAC,4)
+d162 50
+@
+
+
+1.10
+log
+@implemented c-lines
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE EXGEO(NELEM,NP,NBPOIN,NFACE,NBFAC,NBINT,NWFAC,
+     +                 NBODY4,NBODY6,NHOLE,NOFVERT,NDIM)
+d4 1
+a4 1
+C     $Id:$
+d14 3
+a16 1
+      INCLUDE 'constants'
+d23 1
+a23 1
+     +        NP,NWFAC,NBINT
+d97 11
+d134 1
+a134 1
+              STOP
+@
+
+
+1.9
+log
+@minor cosmetic changes
+@
+text
+@d4 2
+d13 2
+d16 1
+a16 2
+      INCLUDE 'constants'
+C
+a94 1
+C
+d101 1
+d113 13
+d135 2
+a136 1
+     +            NWFAC,NBODY4,NBODY6)
+@
+
+
+1.8
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE EXGEO(NELEM,NPOIN,NBPOIN,NFACE,NBFAC,NBINT,NWFAC,
+d4 5
+d18 1
+a18 1
+     +        NPOIN,NWFAC,NBINT
+d78 1
+a78 1
+     +        NELEM,DSTAK(LCORG),NDIM,NPOIN,DSTAK(LFACNOR),NFACE,NBFAC,
+d89 1
+a89 1
+     +            DSTAK(LFACNOR),NFACE,DSTAK(LCORG),NDIM,NPOIN,
+@
+
+
+1.7
+log
+@removed IREAL
+@
+text
+@d6 1
+a6 1
+      INCLUDE 'IO'
+@
+
+
+1.6
+log
+@now includes rsize.com
+@
+text
+@a9 1
+      INCLUDE 'rsize.com'
+d14 16
+a29 1
+C     ..
+d60 3
+a62 1
+      LFACNOR = ISTKGT(NDIM* (NFACE+1),IREAL)
+d65 2
+d78 1
+a78 1
+      LVOL = ISTKGT(NELEM+1,IREAL)
+d110 2
+d119 2
+a120 2
+          LSKINF = ISTKGT(NWFAC,IREAL)
+          LHEAT = ISTKGT(NWFAC,IREAL)
+@
+
+
+1.5
+log
+@trying to makes things work on CRAY: last argument
+of ISTKRL changed to IREAL
+@
+text
+@d10 1
+@
+
+
+1.4
+log
+@add the PE number in the messages
+@
+text
+@d45 1
+a45 1
+      LFACNOR = ISTKGT(NDIM* (NFACE+1),4)
+d59 1
+a59 1
+      LVOL = ISTKGT(NELEM+1,4)
+d98 2
+a99 2
+          LSKINF = ISTKGT(NWFAC,4)
+          LHEAT = ISTKGT(NWFAC,4)
+@
+
+
+1.3
+log
+@add NBINT: the number of interprocessor boundaries
+@
+text
+@d17 1
+d33 1
+d42 1
+a42 1
+      WRITE (NOUT,FMT=2000)
+d106 2
+a107 1
+ 2000 FORMAT (/,/,' COMPUTATION OF THE NORMALS ',/,' ',26 ('='))
+@
+
+
+1.2
+log
+@Now allocates space to store the wall heat flux
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE EXGEO(NELEM,NPOIN,NBPOIN,NFACE,NBFAC,NWFAC,NBODY4,
+     +                 NBODY6,NHOLE,NOFVERT,NDIM)
+d13 1
+a13 1
+     +        NPOIN,NWFAC
+d52 2
+a53 1
+     +        NELEM,DSTAK(LCORG),NDIM,NPOIN,DSTAK(LFACNOR),NFACE,NBFAC)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d94 4
+a97 1
+      IF (NWFAC.NE.0) LSKINF = ISTKGT(NWFAC,4)
+@

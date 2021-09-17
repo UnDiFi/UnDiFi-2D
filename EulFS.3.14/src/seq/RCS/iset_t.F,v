@@ -1,0 +1,652 @@
+head	1.16;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.16
+	release3_13_0:1.16
+	release3_12_0:1.16
+	release3_11_0:1.16
+	release3_10_0:1.16
+	release3_8_0:1.16
+	release3_7_1:1.15
+	release3_7_0:1.15
+	release3_4_5:1.14
+	release3_4_4:1.14
+	release3_4_3:1.14
+	release3_4_2:1.14
+	release3_4_1:1.14
+	release3_4_0:1.13
+	release3_3_5:1.13
+	release3_3_4:1.13
+	release3_3_3:1.13
+	release3_3_2:1.13
+	release3_3_1:1.13
+	release3_3_0:1.13;
+locks; strict;
+comment	@c @;
+
+
+1.16
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2013.06.07.15.30.07;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2012.03.21.10.40.37;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2008.02.25.09.35.13;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2005.12.27.11.49.19;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.10.22.11.06.23;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2003.08.08.03.37.30;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2002.09.14.08.59.53;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.11.16.13.35.53;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.10.26.15.22.01;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.10.20.08.21.46;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.06.23.16.46.04;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@builds index sets peculiar to turbulence modeling eqns.
+@
+
+
+1.16
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE ISET_T(NodalBcs, IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+     &NODCODE, NDIM, NOFVAR, NPOIN, NGHOST, ROWBGN, COMPRESSIBLE )
+C
+C     $Id: iset_t.F,v 1.15 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C     This routine creates PETSc Index Sets addressing
+C          boundary meshpoints with various types of
+C          boundary conditions pertaining to the turbulence modeling.
+C     In the parallel case it is important that
+C          the routine is called with NPOIN=# of processor
+C          owned nodes, since the index sets are local
+C          and shoud not address ghost nodes 
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscis.h"
+      use petscvec 
+      use petscis 
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+C
+      INCLUDE 'bnd.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'io.com'
+      INCLUDE 'visco.com'
+C
+C
+#ifdef MPI
+      integer istatus(MPI_STATUS_SIZE)
+      integer isum,source,dest,total,p,tag
+#endif
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE 
+C
+C     Scalar arguments:
+C
+      INTEGER NPOIN,NDIM,NOFVAR,NOFVERT,NGHOST,NBFAC,ROWBGN
+      LOGICAL COMPRESSIBLE
+C
+C     Array arguments:
+C
+      INTEGER NODCODE(NPOIN+NGHOST),IDX(NPOIN),IBNDFAC(3,NBFAC)
+      INTEGER ICELNOD(NOFVERT,*)
+C
+C     Local scalars:
+C
+      INTEGER IPOIN,NI,IFAIL,IVERT,I,ICLR,IFACE,IELEM,
+     &        NOFEQN,ICLRT
+      INTEGER ICYCL
+C
+      IS, dimension(0:*) :: NodalBcs
+C
+      WRITE(NOUT,FMT=1000) MY_PE
+#ifdef MPI
+      IF(MY_PE.EQ.0)WRITE(IWUNIT,FMT=1000) MY_PE
+#endif
+C
+C     set the number of mean flow eqns.
+C
+      IF( COMPRESSIBLE )THEN
+          NOFEQN = NDIM + 2
+      ELSE
+          NOFEQN = NDIM + 1 
+      ENDIF 
+C
+C
+C     +-----------------------------------------------------+
+C     Test for no-slip b.c. (IBC=6) 
+C     and prescribed velocity-profile (IBC=7) 
+C     +-----------------------------------------------------+
+C
+C
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1) 
+C
+      DO 1 IFACE = 1 , NBFAC 
+C
+         ICLR  = ICOLOR(IBNDFAC(3,IFACE),1) ! colours for the mean flow equations
+         ICLRT = ICOLOR(IBNDFAC(3,IFACE),2) ! colours for the turbulence transport equations
+C
+C        faces with no-slip b.c.
+C        we do not consider faces with prescribed velocity profile
+C        this should be handled with the b.c. freestream_turbulence
+C        however we use -turbulence_colours to set 
+C        the turbulent variable to zero on boundaries were
+C        a bc other than no-slip is used for the mean vars
+C
+         IF( .NOT.(ICLR  .EQ. BC_TYPE_NO_SLIP
+     &       .OR.  ICLRT .EQ. BC_TYPE_NO_SLIP) )   GOTO 1
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+C
+         DO 2 I = 1 , NOFVERT - 1
+C
+            IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+            NODCODE(IPOIN) = 1000
+C
+    2    CONTINUE
+    1 CONTINUE ! loop over faces
+C
+C     +-----------------------------------------------------+
+C     Create an index set containing the node numbers
+C     (0-based indexing) of meshpoints belonging to
+C     a solid wall no-slip boundary (IBC=6) 
+C     (to be used to set b.c. for turb model in N-S computations)
+C     +-----------------------------------------------------+
+C
+C
+      NI=0
+      DO 200 IPOIN = 1, NPOIN
+         IF(NODCODE(IPOIN).EQ.1000)THEN 
+             NI=NI+1
+             IF( SEGREGATED ) THEN
+                 IDX(NI) = IPOIN-1+ROWBGN
+             ELSE
+                 IDX(NI) = (IPOIN-1)*NOFVAR+NOFEQN+ROWBGN
+             ENDIF
+         ENDIF 
+  200 CONTINUE
+C
+      WRITE(NOUT,2000)NI,CBTYPE(BC_TYPE_NO_SLIP)
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+     +                     PETSC_COPY_VALUES,NodalBcs(NoSlipNodes),
+     &                     IFAIL)
+C
+#ifdef MPI
+      call MPI_COMM_SIZE(PETSC_COMM_WORLD, p, ifail)
+      tag = 50
+      dest = 0
+      if (MY_PE .EQ. 0) then
+          total = NI
+          do source = 1, p-1
+              call MPI_RECV(isum, 1, MPI_INTEGER, source, tag, 
+     +              PETSC_COMM_WORLD, istatus, ifail)
+              total = total + isum
+          enddo 
+          WRITE(IWUNIT,2000)total,CBTYPE(BC_TYPE_NO_SLIP)
+      else
+          call MPI_SEND(NI, 1, MPI_INTEGER, dest, 
+     +          tag, PETSC_COMM_WORLD, ifail)
+      endif
+#endif
+C
+      CALL IINIT(NPOIN+NGHOST,0,NODCODE,1) 
+C
+      DO 3 IFACE = 1 , NBFAC 
+C
+         ICLR = ICOLOR(IBNDFAC(3,IFACE),2) ! col 2 means colour for the turbulent quantity
+C
+C        ICLR .EQ. 1 means prescribed turbulent quantity
+C
+         IF( ICLR .NE. 1 )GOTO 3
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+C
+         DO 4 I = 1 , NOFVERT - 1
+C
+            IPOIN = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+            NODCODE(IPOIN) = 1
+C
+    4 CONTINUE
+C
+    3 CONTINUE
+C
+C     Create an index set containing the node numbers
+C     (0-based indexing) of meshpoints belonging to
+C     a boundary where the turbulent variable should be held fixed.
+C
+      NI=0
+      DO 100 IPOIN = 1, NPOIN
+         IF(NODCODE(IPOIN).EQ.1)THEN 
+             NI=NI+1
+C
+C     0-based indexing
+C
+             IF( SEGREGATED )THEN
+                 IDX(NI) = (IPOIN-1)+ROWBGN
+             ELSE ! coupled
+                 IDX(NI) = (IPOIN-1)*NOFVAR+NOFEQN+ROWBGN
+             ENDIF 
+         ENDIF 
+  100 CONTINUE
+C
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,PETSC_COPY_VALUES,
+     +                     NodalBcs(FreestreamTurbulence),IFAIL)
+      WRITE(NOUT,2000)NI,'FREESTREAM TURBULENCE'
+C
+#ifdef MPI
+      call MPI_COMM_SIZE(PETSC_COMM_WORLD, p, ifail)
+      tag = 50
+      dest = 0
+      if (MY_PE .EQ. 0) then
+          total = NI
+          do source = 1, p-1
+              call MPI_RECV(isum, 1, MPI_INTEGER, source, tag, 
+     +              PETSC_COMM_WORLD, istatus, ifail)
+              total = total + isum
+          enddo 
+          WRITE(IWUNIT,2000)total,'FREESTREAM TURBULENCE'
+      else
+          call MPI_SEND(NI, 1, MPI_INTEGER, dest, 
+     +          tag, PETSC_COMM_WORLD, ifail)
+      endif
+#endif
+C
+      RETURN
+ 1000 FORMAT(/,5X,'NODAL BOUNDARY CONDITIONS (TURBULENCE) ON PE # ',I4,/
+     &       5X,47("="))
+ 2000 FORMAT(I7,' NODES with B.C. ',A)
+      END 
+C
+@
+
+
+1.15
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ISET_T(IDX, IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+d4 1
+a4 1
+C     $Id: iset_t.F,v 1.14 2013/06/07 15:30:07 abonfi Exp abonfi $
+a13 3
+      IMPLICIT NONE
+C
+#include "petsc/finclude/petscsys.h"
+d16 4
+d22 2
+a28 1
+#include "iset.com"
+d50 1
+a50 1
+      INTEGER IPOIN,NI,IFAIL,IOFF,IFRST,J,IVERT,I,ICLR,IFACE,IELEM,
+d54 2
+d126 2
+a127 1
+     +                     PETSC_COPY_VALUES,NoSlipNodes,IFAIL)
+d189 1
+a189 1
+     +                     FreestreamTurbulence,IFAIL)
+@
+
+
+1.14
+log
+@the array ICOLOR included from bnd.com has changed
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.13 2012/03/21 10:40:37 abonfi Exp abonfi $
+d16 3
+a18 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.13
+log
+@changed calls to PETSc functions to upgrade to petsc release 3.2
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.12 2011/09/16 07:19:48 abonfi Exp abonfi $
+d76 2
+a77 2
+         ICLR  = ICOLOR  (IBNDFAC(3,IFACE))
+         ICLRT = ICOLOR_T(IBNDFAC(3,IFACE))
+d146 1
+a146 1
+         ICLR = ICOLOR_T(IBNDFAC(3,IFACE))
+@
+
+
+1.12
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.11 2009/06/11 13:10:58 abonfi Exp abonfi $
+d121 2
+a122 2
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,NoSlipNodes,
+     +                     IFAIL)
+d183 1
+a183 1
+      CALL ISCreateGeneral(PETSC_COMM_SELF,NI,IDX,
+@
+
+
+1.11
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.10 2008/02/25 09:35:13 abonfi Exp abonfi $
+d16 1
+a16 1
+#include "finclude/petsc.h"
+@
+
+
+1.10
+log
+@add global checking for parallel runs
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.9 2005/12/27 11:49:19 abonfi Exp abonfi $
+d16 3
+a18 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscis.h"
+@
+
+
+1.9
+log
+@an included common has been renamed
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.8 2005/10/22 11:06:23 abonfi Exp abonfi $
+d28 5
+d53 3
+a78 2
+C
+C
+d97 2
+a98 2
+    2 CONTINUE
+    1 CONTINUE
+d124 18
+d177 1
+a177 1
+             ELSE
+d187 18
+@
+
+
+1.8
+log
+@allows to set zero turbulent viscosity
+on prescribed velocity boundary
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.7 2003/08/08 03:37:30 abonfi Exp $
+d21 1
+a21 1
+      INCLUDE 'bnd'
+@
+
+
+1.7
+log
+@boundary types for faces(edges) have been made more descriptive
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.6 2002/09/14 08:59:53 abonfi Exp abonfi $
+d44 1
+a44 1
+     &        NOFEQN
+d68 4
+a71 1
+         ICLR = ICOLOR(IBNDFAC(3,IFACE))
+d76 3
+d80 2
+a81 1
+         IF( .NOT.(ICLR .EQ. BC_TYPE_NO_SLIP) )   GOTO 1
+@
+
+
+1.6
+log
+@now supports coupled solution strategy for RANS
+@
+text
+@d4 1
+a4 1
+C     $Id: iset_t.F,v 1.5 2000/11/16 13:35:53 aldo Exp abonfi $
+d74 1
+a74 1
+         IF( .NOT.(ICLR .EQ. BC_NO_SLIP) )   GOTO 1
+d107 1
+a107 1
+      WRITE(NOUT,2000)NI,CBTYPE(BC_NO_SLIP)
+@
+
+
+1.5
+log
+@faces prescribed velocity profile are not any more included in the ISet NoSlipNodes
+@
+text
+@d4 2
+a13 3
+C
+C     $Id: iset_t.F,v 1.4 2000/11/15 09:15:09 aldo Exp aldo $
+C
+d22 1
+d43 2
+a44 1
+      INTEGER IPOIN,NI,IFAIL,IOFF,IFRST,J,IVERT,I,ICLR,IFACE,IELEM
+d49 9
+d99 5
+a103 1
+             IDX(NI) = IPOIN-1+ROWBGN
+d144 5
+a148 1
+             IDX(NI) = (IPOIN-1)+ROWBGN
+@
+
+
+1.4
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d13 1
+a13 1
+C     $Id: iset_t.F,v 1.3 2000/10/26 15:22:01 aldo Exp aldo $
+d60 3
+a62 1
+C        faces with no-slip b.c. or prescribed velocity profile 
+d64 1
+a64 2
+         IF( .NOT.(ICLR .EQ. BC_NO_SLIP .OR. ICLR .EQ. BC_PROFILE) )
+     +   GOTO 1
+@
+
+
+1.3
+log
+@bugs fixed for the parallel case (ROWBGN)
+@
+text
+@d13 1
+a13 1
+C     $Id: iset_t.F,v 1.2 2000/10/20 08:21:46 aldo Exp aldo $
+d23 1
+a23 1
+      INCLUDE 'IO'
+@
+
+
+1.2
+log
+@major changes: all turbulence related Index Sets are now here
+@
+text
+@d13 1
+a13 1
+C     $Id: iset3.F,v 1.1 2000/06/23 16:46:04 aldo Exp aldo $
+d46 1
+d88 1
+a88 1
+             IDX(NI) = IPOIN-1-ROWBGN
+d96 21
+d124 1
+a124 1
+         IF(NODCODE(IPOIN).LT.0)THEN 
+d129 1
+a129 1
+             IDX(NI) = NOFVAR*(IPOIN-1)-ROWBGN
+d138 1
+a138 1
+ 1000 FORMAT(5X,'NODAL BOUNDARY CONDITIONS (TURBULENCE) ON PE # ',I4,/
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE ISET3(IDX,NODCODE,NDIM,NOFVAR,NPOIN,ROWBGN)
+d6 1
+a6 1
+C          boundary conditions.
+d13 1
+a13 1
+C     $Id$
+d18 2
+a19 2
+#include "include/finclude/vec.h"
+#include "include/finclude/is.h"
+d21 5
+d28 37
+a64 3
+      INTEGER NPOIN,NDIM,NOFVAR
+      INTEGER IPOIN,NI,IFAIL,IOFF,IBGN,J,ROWBGN
+      INTEGER NODCODE(NPOIN),IDX(*)
+d66 30
+d98 1
+a98 2
+C     a supersonic (or Dirichlet) boundary 
+C     to be used mainly for scalar problems 
+d107 1
+a107 1
+             IDX(NI) = NOFVAR*(IPOIN-1)
+d113 1
+a113 1
+      write(6,*)'ISCreateGeneral FreestreamTurbulence',ifail
+d116 3
+d120 1
+@

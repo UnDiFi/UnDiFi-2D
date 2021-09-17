@@ -1,0 +1,158 @@
+\hypertarget{tsc_8f}{}\doxysection{src/turbo/tsc.f File Reference}
+\label{tsc_8f}\index{src/turbo/tsc.f@{src/turbo/tsc.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+double precision function \mbox{\hyperlink{tsc_8f_a57b3ccaea78c1e8adc86e4843af1059c}{T\+SC}} (O\+M\+E\+GA, TD, T\+VI, VI)
+\begin{DoxyCompactList}\small\item\em {\bfseries{T\+SC}} \end{DoxyCompactList}\item 
+double precision function \mbox{\hyperlink{tsc_8f_a0666f643b3c1e80617ba21ccea27e5f1}{T\+S\+C\+SA}} (O\+M\+E\+GA, TD, T\+VI, VI)
+\begin{DoxyCompactList}\small\item\em {\bfseries{T\+S\+C\+SA}} \end{DoxyCompactList}\item 
+double precision function \mbox{\hyperlink{tsc_8f_ad64fea54bac70fa1c97dbd56a9d62d6a}{T\+S\+C\+S\+Ac}} (O\+M\+E\+GA, TD, T\+VI, VI)
+\begin{DoxyCompactList}\small\item\em {\bfseries{T\+S\+C\+S\+Ac}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{tsc_8f_a57b3ccaea78c1e8adc86e4843af1059c}\label{tsc_8f_a57b3ccaea78c1e8adc86e4843af1059c}} 
+\index{tsc.f@{tsc.f}!TSC@{TSC}}
+\index{TSC@{TSC}!tsc.f@{tsc.f}}
+\doxysubsubsection{\texorpdfstring{TSC()}{TSC()}}
+{\footnotesize\ttfamily double precision function T\+SC (\begin{DoxyParamCaption}\item[{double precision}]{O\+M\+E\+GA,  }\item[{double precision}]{TD,  }\item[{double precision}]{T\+VI,  }\item[{double precision}]{VI }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{T\+SC}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+(Spalart \& Allmaras model\+: version\+: S\+A-\/fv3) vorticity module computation
+
+The equations are the same as for the \char`\"{}standard\char`\"{} version (SA), with the following exceptions\+:
+
+\[ \tilde{S} = f_{v_3} \, \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2} \] \[ f_{v_2} = \frac{1}{\left(1+\chi/c_{v_2}\right)^3} \] \[ f_{v_3} = \frac{\left(1+\chi \,f_{v_1}\right)\left(1-f_{v_2}\right)}{\chi} \] \[ c_{v_3} = 5 \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em O\+M\+E\+GA} & is $ \Omega $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em TD} & is the distance from the nearest wall \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+VI} & is the turbulent working variable $ \tilde{\nu} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em VI} & is laminar kinematic viscosity \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+11 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/05 15\+:05\+:33 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{tsc_8f_a0666f643b3c1e80617ba21ccea27e5f1}\label{tsc_8f_a0666f643b3c1e80617ba21ccea27e5f1}} 
+\index{tsc.f@{tsc.f}!TSCSA@{TSCSA}}
+\index{TSCSA@{TSCSA}!tsc.f@{tsc.f}}
+\doxysubsubsection{\texorpdfstring{TSCSA()}{TSCSA()}}
+{\footnotesize\ttfamily double precision function T\+S\+C\+SA (\begin{DoxyParamCaption}\item[{double precision}]{O\+M\+E\+GA,  }\item[{double precision}]{TD,  }\item[{double precision}]{T\+VI,  }\item[{double precision}]{VI }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{T\+S\+C\+SA}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+vorticity module computation (Spalart \& Allmaras model\+: version\+: SA)
+
+The equations are those of the \char`\"{}standard\char`\"{} version (SA)\+:
+
+\[ \tilde{S} = \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2} \] \[ f_{v_1} = \frac{\chi^3}{\left(\chi^3+c_{v_1}^3\right)} \] \[ f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)} \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em O\+M\+E\+GA} & is $ \Omega $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em TD} & is the distance from the nearest wall \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+VI} & is the turbulent working variable $ \tilde{\nu} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em VI} & is laminar kinematic viscosity \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+11 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/05 15\+:05\+:33 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{tsc_8f_ad64fea54bac70fa1c97dbd56a9d62d6a}\label{tsc_8f_ad64fea54bac70fa1c97dbd56a9d62d6a}} 
+\index{tsc.f@{tsc.f}!TSCSAc@{TSCSAc}}
+\index{TSCSAc@{TSCSAc}!tsc.f@{tsc.f}}
+\doxysubsubsection{\texorpdfstring{TSCSAc()}{TSCSAc()}}
+{\footnotesize\ttfamily double precision function T\+S\+C\+S\+Ac (\begin{DoxyParamCaption}\item[{double precision}]{O\+M\+E\+GA,  }\item[{double precision}]{TD,  }\item[{double precision}]{T\+VI,  }\item[{double precision}]{VI }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{T\+S\+C\+S\+Ac}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+vorticity module computation with limiting (c) (Spalart \& Allmaras model\+: version\+: SA)
+
+The equations are those of the \char`\"{}standard\char`\"{} version (SA)\+:
+
+\[ \tilde{S} = \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2} \] \[ f_{v_1} = \frac{\chi^3}{\left(\chi^3+c_{v_1}^3\right)} \] \[ f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)} \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em O\+M\+E\+GA} & is $ \Omega $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em TD} & is the distance from the nearest wall \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+VI} & is the turbulent working variable $ \tilde{\nu} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em VI} & is laminar kinematic viscosity \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+11 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/05 15\+:05\+:33 
+\end{DoxyParagraph}

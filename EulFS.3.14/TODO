@@ -1,0 +1,26 @@
+> check isothermal b.c.
+> simmetria delle matrici "viscose" nell' implicito ?!?!?!
+> controlla NL/PSI schemes 
+> GRAD_PARM & GRAD_PRIM oramai superflui, anche GRAD_CHAR e Matrix
+> do we need any gradient? ----> cell face normals? TURBULENCE
+
+dzdu etc sono in transf.com;
+dzdu viene riutilizzato nelle routine viscose (vsflx4, etc.) 
+dopo essere stato calcolato in Euler...
+questo il motivo per averlo messo in common........
+
+possiamo rimuovere GRAD_PARM & GRAD_PRIM e portare
+PARM2PRIM nelle varie routines ???
+
+
+tstep e nodres vengono inizializzati sia in
+setupRHS che nelle routines Euler.........
+rimuovi queste ultime inizializzazioni
+...fatto nodres viene probabilmente messo a zero
+anche dagli schemi
+REM: 
+
+transf.f metti ZROE(1) in una costante
+
+crea dt una volta per tutte
+REM: myTScom

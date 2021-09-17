@@ -1,0 +1,13 @@
+C
+C     output:
+C     ------
+C     RHS(1:NOFVAR,1:NOFVERT) is the nodal residual
+C                             updated with the addition of the viscous
+C                             fluxes
+C     DT(1:NPOIN) is the nodal timestep divided by the median
+C                 dual cell updated with the addition of the viscous
+C                 contribution
+C
+C     ELTMAT(1:NOFVAR,1:NOFVAR,1:NOFVERT,1:NOFVERT) is the approximate
+C            jacobian updated with the addition of the viscous terms
+C

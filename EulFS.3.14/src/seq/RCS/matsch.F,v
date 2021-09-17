@@ -1,0 +1,939 @@
+head	1.23;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.23
+	release3_13_0:1.23
+	release3_12_0:1.23
+	release3_11_0:1.23
+	release3_10_0:1.23
+	release3_8_0:1.23
+	release3_7_1:1.22
+	release3_7_0:1.22
+	release3_4_5:1.21
+	release3_4_4:1.21
+	release3_4_3:1.21
+	release3_4_2:1.21
+	release3_4_1:1.21
+	release3_4_0:1.21
+	release3_3_5:1.21
+	release3_3_4:1.21
+	release3_3_3:1.21
+	release3_3_2:1.20
+	release3_3_1:1.20
+	release3_3_0:1.20;
+locks; strict;
+comment	@c @;
+
+
+1.23
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2013.03.05.09.05.07;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2009.10.13.08.13.31;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2009.06.11.09.00.29;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2004.12.20.14.33.11;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2001.10.17.15.32.39;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.10.20.08.32.57;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.08.18.14.03.45;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.08.17.09.14.36;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.08.17.08.45.26;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.06.23.16.39.37;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.05.05.12.22.25;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.12.27.09.19.45;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.01.18.18.53.08;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.11.12.15.20.00;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.04.07.12.51.31;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.01.22.03.39;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Selects matrix schemes by passing the appropriate procedure
+@
+
+
+1.23
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE MATSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                  NELEM,NFACE,NBFAC,
+     2                  X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2                  EulerModel,NSModel,ScalarScheme)
+C
+C     $Id: matsch.F,v 1.22 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C     Purpose:
+C     This routine selects the MATRIX scheme to be used,
+C     depending on the flag JSCHEME.
+C     The idea is to pass the schemes as subroutines
+C     at the uppermost level (i.e. at the non-linear iteration
+C     loop) to avoid multiple IFs inside the innermost loop 
+C     over the elements.
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec 
+      use petscmat 
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'flags.com'
+C
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,NFACE,
+     &NBFAC
+      INTEGER IFAIL,IOPT
+C
+      Vec  PetscVecDT,PetscVecRHS
+      Mat  PetscMatA
+      DOUBLE PRECISION X(*)
+C
+C     On entry:
+C     --------
+C
+C     NDIM    dimension of the space (2 or 3)
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C     NOFVAR  number of variables (degrees of freedom)
+C             in each meshpoint
+C     NTURB   number of variables (degrees of freedom)
+C             in each meshpoint for the turbulence model
+C     NPOIN   no. of interior (processor owned) meshpoints; 
+C             global number of meshpoints in the uni-processor case
+C     NGHOST  no. of ghost meshpoints on the current processor; 
+C             0 the uni-processor case
+C     NELEM   no. of processor owned elements (triangles/tetrahedra);
+C             global number of elements in the uni-processor case
+C     NFACE   number of edges/faces in the mesh for the current 
+C             processor (multi-processor case) or global number 
+C             of edges/faces in the mesh (uni-processor case).
+C     NBFAC   no. of processor owned boundary faces/edges;
+C             global number of boundary faces/edges
+C             in the uni-processor case.
+C
+      EXTERNAL EulerModel,NSModel,ScalarScheme
+C
+C     On entry:
+C     --------
+C     EulerModel    
+C              subroutine of the model equation being solved, e.g.
+C              EulerII,EulerVII,SCALAR,etc.
+C     NSModel    
+C              subroutine of the model equation being solved, e.g.
+C              VSFLX2,VSFLX4
+C     ScalarScheme 
+C              subroutine of the scalar scheme being used, e.g.
+C              N_scheme, NL_scheme, etc. 
+C
+      CHARACTER*38 ERRMSG
+C
+      EXTERNAL NSys_scheme,LDASys_scheme,LDA2Sys_scheme,LWSys_scheme,
+     +LDAS_fast,CDSSys_scheme,LW2Sys_scheme,VKIB_scheme,
+     +LSSys_scheme,FVSys_scheme,LWTSys_scheme,UCVSys_scheme
+C
+      DATA ERRMSG(1:32)/'SUBR. MATSCH, NO SUCH JSCHEME = '/
+C
+C     Executable Statements ..
+C
+C     Select the PETSc kernel used to invert small matrices
+C
+      CALL setsolven( IFAIL )
+C
+      GOTO (1,2,3,4,5,6,7,8,9,10,11,12) JSCHEME
+
+      GOTO 9999
+C
+    1 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,NSys_scheme)
+      RETURN
+
+    2 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,LDAS_fast)
+
+      RETURN
+
+    3 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,LDASys_scheme)
+      RETURN
+
+    4 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,LW2Sys_scheme)
+
+      RETURN
+
+    5 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,FVSys_scheme)
+      RETURN
+
+    6 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,LDA2Sys_scheme)
+      RETURN
+
+    7 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,CDSSys_scheme)
+
+      RETURN
+
+    8 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,LWSys_scheme)
+      RETURN
+    9 STOP 'JSCHEME = 9 Not available any more'
+      RETURN
+   10 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,VKIB_scheme)
+      RETURN
+   11 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,LWTSys_scheme)
+      RETURN
+   12 CALL TURBSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+     +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     2            EulerModel,NSModel,ScalarScheme,UCVSys_scheme)
+      RETURN
+C
+ 9999 WRITE(ERRMSG(33:38),FMT="(I6.6)")JSCHEME
+      IFAIL = 2
+      IOPT = 1
+      CALL SETERR(ERRMSG,38,IFAIL,IOPT)
+C
+      END
+@
+
+
+1.22
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d6 1
+a6 3
+      IMPLICIT NONE
+C
+C     $Id: matsch.F,v 1.21 2013/03/05 09:05:07 abonfi Exp abonfi $
+a16 1
+#include "petsc/finclude/petscsys.h"
+d19 4
+@
+
+
+1.21
+log
+@added support for the UCV scheme
+@
+text
+@d8 1
+a8 1
+C     $Id: matsch.F,v 1.20 2011/09/16 07:19:48 abonfi Exp abonfi $
+d19 3
+a21 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.20
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d8 1
+a8 1
+C     $Id: matsch.F,v 1.19 2009/10/13 08:13:31 abonfi Exp abonfi $
+d74 1
+a74 1
+     +LSSys_scheme,FVSys_scheme,LWTSys_scheme
+d84 1
+a84 1
+      GOTO (1,2,3,4,5,6,7,8,9,10,11) JSCHEME
+d139 4
+@
+
+
+1.19
+log
+@Added support for choosing the scalar advection scheme in the Spalart-Allmaras model
+@
+text
+@d8 1
+a8 1
+C     $Id: matsch.F,v 1.18 2009/06/11 13:10:58 abonfi Exp abonfi $
+d19 1
+a19 1
+#include "finclude/petsc.h"
+@
+
+
+1.18
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d8 1
+a8 1
+C     $Id: matsch.F,v 1.17 2009/06/11 09:00:29 abonfi Exp abonfi $
+d88 1
+a88 1
+    1 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d93 1
+a93 1
+    2 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d99 1
+a99 1
+    3 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d104 1
+a104 1
+    4 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d110 1
+a110 1
+    5 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d115 1
+a115 1
+    6 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d120 1
+a120 1
+    7 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d126 1
+a126 1
+    8 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+a130 3
+!   9 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+!    +            NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+!    2            EulerModel,NSModel,ScalarScheme,LimNSys_scheme)
+d132 1
+a132 1
+   10 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+d136 1
+a136 1
+   11 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,
+@
+
+
+1.17
+log
+@now passing NPNOD among the arguments of the call
+@
+text
+@d8 1
+a8 1
+C     $Id: matsch.F,v 1.16 2004/12/20 14:33:11 aldo Exp abonfi $
+d19 3
+a21 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.16
+log
+@add a couple of new schemes
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE MATSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,
+     +                  NFACE,NBFAC,X,DT,RHS,A,
+d8 1
+a8 1
+C     $Id: matsch.F,v 1.15 2001/10/17 15:32:39 abonfi Exp abonfi $
+d25 7
+a31 6
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+      INTEGER NERR,IOPT
+C
+      Vec  DT,RHS
+      Mat  A
+      DOUBLE PRECISION X(NPOIN*NOFVAR)
+d73 2
+a74 2
+     +LDAS_fast,CDSSys_scheme,LW2Sys_scheme,LimNSys_scheme,VKIB_scheme,
+     +LSSys_scheme,FVSys_scheme
+d82 1
+a82 1
+      CALL setsolven( NERR )
+d84 1
+a84 1
+      GOTO (1,2,3,4,5,6,7,8,9,10) JSCHEME
+d88 2
+a89 2
+    1 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d93 2
+a94 2
+    2 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d99 2
+a100 2
+    3 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d104 2
+a105 2
+    4 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d110 2
+a111 2
+    5 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d115 2
+a116 2
+    6 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d120 2
+a121 2
+    7 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d126 2
+a127 2
+    8 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d130 4
+a133 3
+    9 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+     2            EulerModel,NSModel,ScalarScheme,LimNSys_scheme)
+d135 2
+a136 2
+   10 CALL TMODEL(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,
+d139 4
+d145 1
+a145 1
+      NERR = 2
+d147 1
+a147 1
+      CALL SETERR(ERRMSG,38,NERR,IOPT)
+@
+
+
+1.15
+log
+@add VKI's Blended scheme
+@
+text
+@d7 1
+a7 1
+C     $Id: matsch.F,v 1.14 2000/10/20 08:32:57 aldo Exp abonfi $
+d71 2
+a72 1
+     +LDAS_fast,CDSSys_scheme,LW2Sys_scheme,LimNSys_scheme,VKIB_scheme
+d78 4
+d108 3
+a110 2
+    5 GOTO 9999
+
+@
+
+
+1.14
+log
+@now calls the routine that chooses the turbulence model
+@
+text
+@d7 1
+a7 1
+C     $Id: matsch.F,v 1.13 2000/08/18 14:03:45 aldo Exp aldo $
+d71 1
+a71 1
+     +LDAS_fast,CDSSys_scheme,LW2Sys_scheme,LimNSys_scheme
+d77 1
+a77 1
+      GOTO (1,2,3,4,5,6,7,8,9) JSCHEME
+d125 5
+@
+
+
+1.13
+log
+@just moved some stmts. to ensure all variables
+are defined
+@
+text
+@d2 2
+a3 1
+     +                  NFACE,NBFAC,X,DT,RHS,A,Model,ScalarScheme)
+d7 1
+a7 1
+C     $Id: matsch.F,v 1.12 2000/08/17 09:14:36 aldo Exp aldo $
+d19 2
+a20 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+d54 1
+a54 1
+      EXTERNAL Model,ScalarScheme
+d58 2
+a59 1
+C     MODEL    subroutine of the model equation being solved, e.g.
+d61 3
+d81 3
+a83 2
+    1 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,NSys_scheme)
+d86 3
+a88 2
+    2 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,LDAS_fast)
+d92 3
+a94 2
+    3 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,LDASys_scheme)
+d97 3
+a99 2
+    4 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,LW2Sys_scheme)
+d107 3
+a109 2
+    6 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,LDA2Sys_scheme)
+d112 3
+a114 2
+    7 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,CDSSys_scheme)
+d118 3
+a120 2
+    8 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,LWSys_scheme)
+d122 3
+a124 2
+    9 CALL NODRES(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,
+     +            NBFAC,X,DT,RHS,A,Model,ScalarScheme,LimNSys_scheme)
+@
+
+
+1.12
+log
+@add among the arguments of the call the array
+where the residual has to be evaluated; this
+is done to be able to use the PETSc TS component
+in a future release
+@
+text
+@d6 1
+a6 1
+C     $Id: matsch.F,v 1.11 2000/08/17 08:45:26 aldo Exp aldo $
+d23 3
+a28 3
+C
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+      INTEGER NERR,IOPT
+@
+
+
+1.11
+log
+@replaced a STOP by a call to SETERR
+@
+text
+@d2 1
+a2 1
+     +                  NFACE,NBFAC,DT,RHS,A,Model,ScalarScheme)
+d6 1
+a6 1
+C     $Id: matsch.F,v 1.10 2000/06/23 16:39:37 aldo Exp aldo $
+d25 1
+d77 1
+a77 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,NSys_scheme)
+d81 1
+a81 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,LDAS_fast)
+d86 1
+a86 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,LDASys_scheme)
+d90 1
+a90 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,LW2Sys_scheme)
+d99 1
+a99 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,LDA2Sys_scheme)
+d103 1
+a103 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,CDSSys_scheme)
+d108 1
+a108 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,LWSys_scheme)
+d111 1
+a111 1
+     +            NBFAC,DT,RHS,A,Model,ScalarScheme,LimNSys_scheme)
+@
+
+
+1.10
+log
+@add NTURB in the calling sequence for NODRES
+and LimNSys_scheme
+@
+text
+@d6 1
+a6 1
+C     $Id: matsch.F,v 1.9 2000/05/05 12:22:25 aldo Exp aldo $
+d27 1
+d113 3
+a115 2
+      CALL SETERR(ERRMSG,38,1,2)
+      STOP
+@
+
+
+1.9
+log
+@add LW matrix scheme, Edwin's version
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE MATSCH(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+     +                  NBFAC,DT,RHS,A,Model,ScalarScheme)
+d6 1
+a6 1
+C     $Id: matsch.F,v 1.8 1999/12/27 09:19:45 aldo Exp aldo $
+d26 1
+a26 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+d36 2
+d64 1
+a64 1
+     +LDAS_fast,CDSSys_scheme,LW2Sys_scheme
+d70 1
+a70 1
+      GOTO (1,2,3,4,5,6,7,8) JSCHEME
+d74 1
+a74 1
+    1 CALL NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+d78 1
+a78 1
+    2 CALL NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+d83 1
+a83 1
+    3 CALL NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+d87 1
+a87 1
+    4 CALL NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+d96 1
+a96 1
+    6 CALL NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+d100 1
+a100 1
+    7 CALL NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+d105 1
+a105 1
+    8 CALL NODRES(NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,
+d108 2
+@
+
+
+1.8
+log
+@some cleanup
+@
+text
+@d6 1
+a6 1
+C     $Id: matsch.F,v 1.7 1999/01/18 18:53:08 aldo Exp $
+d62 1
+a62 1
+     +LDAS_fast,CDSSys_scheme
+d85 2
+a86 1
+    4 GOTO 9999
+@
+
+
+1.7
+log
+@add a central type scheme (CDS);
+@
+text
+@d1 2
+a2 3
+C
+      SUBROUTINE MATSCH(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,DT,
+     +                  RHS,A,Model,ScalarScheme)
+d6 1
+a6 1
+C     This routine selects the MATRIX scheme to be used ..
+d8 7
+a15 1
+C     $Id: matsch.F,v 1.6 1998/11/12 15:20:00 aldo Exp aldo $
+d26 22
+a47 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC
+d51 10
+d63 2
+a64 2
+C    1NLSys_scheme,FVSys_scheme,
+C    1FVL1Sys_scheme,FVL2Sys_scheme,LWSys_scheme,PSISys_scheme
+d70 1
+a70 2
+  999 CALL P01ABY(JSCHEME,'JSCHEME',-1,0,'SYSSCH')
+      STOP
+d72 2
+a73 2
+    1 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,DT,RHS,A,
+     +            Model,ScalarScheme,NSys_scheme)
+d76 2
+a77 2
+    2 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,DT,RHS,A,
+     +            Model,ScalarScheme,LDAS_fast)
+d81 2
+a82 2
+    3 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,DT,RHS,A,
+     +            Model,ScalarScheme,LDASys_scheme)
+d85 1
+a85 1
+    4 STOP 'Invalid JSCHEME'
+d89 1
+a89 1
+    5 STOP 'Invalid JSCHEME'
+d93 2
+a94 2
+    6 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,DT,RHS,A,
+     +            Model,ScalarScheme,LDA2Sys_scheme)
+d97 2
+a98 2
+    7 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,DT,RHS,A,
+     +            Model,ScalarScheme,CDSSys_scheme)
+d102 2
+a103 2
+    8 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,DT,RHS,A,
+     +            Model,ScalarScheme,LWSys_scheme)
+d105 4
+@
+
+
+1.6
+log
+@tiny bug
+@
+text
+@d10 1
+a10 1
+C     $Id$
+d26 1
+a26 1
+     +LDAS_fast
+d62 2
+a63 1
+    7 STOP 'Invalid JSCHEME'
+@
+
+
+1.5
+log
+@Add automatic identification flag
+@
+text
+@a5 1
+      Mat  A
+d19 1
+@
+
+
+1.4
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d6 6
+a19 3
+      Mat  A
+C
+C     This routine selects the MATRIX scheme to be used ..
+@
+
+
+1.3
+log
+@add a caall to a modified version of the LDA scheme
+@
+text
+@d7 3
+a9 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@d22 2
+a23 1
+      EXTERNAL NSys_scheme,LDASys_scheme,LDA2Sys_scheme,LWSys_scheme
+d38 2
+a39 1
+    2 STOP 'Invalid JSCHEME'
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 2
+a3 1
+C ------------------------------ + ------------------------------
+d5 1
+a5 2
+      SUBROUTINE MATSCH(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,
+     &Model , ScalarScheme )
+d7 3
+a9 1
+      IMPLICIT NONE
+d13 2
+a14 1
+C     .. This routine selects the MATRIX scheme to be used ..
+d16 1
+a16 1
+C     .. Scalar Arguments ..
+a19 2
+C     .. External Subroutines ..
+C
+a21 2
+C     .. External Functions ..
+C
+d26 1
+a26 1
+C     .. Executable Statements ..
+d28 2
+a29 1
+      GOTO(1,2,3,4,5,6,7,8)JSCHEME
+d33 2
+a34 2
+    1 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,
+     &Model,ScalarScheme,NSys_scheme)
+d36 1
+d38 1
+d40 3
+a42 2
+    3 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,
+     &Model,ScalarScheme,LDASys_scheme)
+d44 1
+d46 1
+d48 1
+d50 1
+d52 3
+a54 2
+    6 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,
+     &Model,ScalarScheme,LDA2Sys_scheme)
+d56 1
+d58 1
+d60 3
+a62 2
+    8 CALL NodRes(NDIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,NBFAC,
+     &Model,ScalarScheme,LWSys_scheme)
+@

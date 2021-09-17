@@ -1,0 +1,180 @@
+head	1.2;
+access
+	abonfi;
+symbols;
+locks
+	abonfi:1.2; strict;
+comment	@c @;
+
+
+1.2
+date	2017.07.20.16.31.36;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.15.37.28;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine that reads in data
+@
+
+
+1.2
+log
+@minor changes
+@
+text
+@      SUBROUTINE READAT(VCORG,ICELNOD,IBNDFAC,VZROE)
+C
+C     .. This routine reads the meshpoints, mesh connectivity
+C        boundary structure AND solution ..
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE'es.h'
+      INCLUDE'IO'
+      INCLUDE'dim_flags'
+      INCLUDE'int_flags'
+      INCLUDE'mesh_i4'
+C
+C     .. Commons ..
+C
+C
+C     .. Scalar Arguments ..
+C
+      integer ixdrclose,ixdrimat,ixdrdmat
+      external ixdrclose,ixdrimat,ixdrdmat
+C
+C     .. Array Arguments ..
+C
+      DOUBLE PRECISION VCORG(DIM,1),VZROE(NOFVAR,1)
+      INTEGER ICELNOD(NOFVERT,1),IBNDFAC(3,1)
+C
+C     .. Local Scalars ..
+C
+      INTEGER NBFAC,IFAIL
+      EQUIVALENCE(NBFAC,nBoundaryFaces)
+C
+      LOGICAL VERBOSE
+C
+      DATA IFAIL,VERBOSE /0,.FALSE./
+C
+C     .. Executable Statements ..
+C
+C     .. Reading nodal coordinates ..
+C
+      WRITE(NOUT,2000) NPOIN,NPNOD,NOFVAR,DIM,0
+2000  FORMAT(//' INPUT OF NODES '/' ',15('=')/
+     1  15X,'MAX. NUMBER OF NODES             (NPOIN)=',I7/
+     1  15X,'MAX. NUMBER OF PERIODIC NODES    (NPNOD)=',I7/
+     2  15X,'MAX. NUMBER OF D.O.F. PER NODE  (NOFVAR)=',I2/
+     3  15X,'DIMENSIONS OF THE PROBLEM         (NDIM)=',I5/
+     4  15X,'WORKSPACE IN REAL WORDS            (NVA)=',I12/)
+C
+      IFAIL = IXDRDMAT( ixdrs(1) , DIM*NPOIN , VCORG )
+      IF(VERBOSE)
+     &CALL X04CAF('General',' ',DIM,NPOIN,VCORG,DIM,
+     +            'Nodal coordinates',IFAIL)
+C
+C     .. Reading mesh connectivity ..
+C
+      WRITE(NOUT,3000)NELEM,NOFVERT
+3000  FORMAT(//' INPUT OF ELEMENTS '/' ',17('=')/
+     1  15X,'MAX. NUMBER OF ELEMENTS            (NELEM)=',I8/
+     2  15X,'MAX. NUMBER OF NODES PER ELEMENT (NOFVERT)=',6X,I1/)
+C
+      IFAIL = IXDRIMAT( ixdrs(1) , NOFVERT*NELEM , ICELNOD )
+      IF(VERBOSE)
+     &CALL X04EAF('General',' ',NOFVERT,NELEM,ICELNOD,NOFVERT,
+     +            'Mesh connectivity',IFAIL)
+C
+C     .. Reading boundary data ..
+C
+      WRITE(NOUT,4000)NBFAC,NHOLE
+4000  FORMAT(//' INPUT OF BOUNDARIES '/' ',19('=')/
+     1  15X,'MAX. NUMBER OF BOUNDARY FACES   (NBFAC)=',I7/
+     2  15X,'     NUMBER OF HOLES            (NHOLE)=',I2/)
+C
+      IFAIL = IXDRIMAT( ixdrs(1) , 3*NBFAC , IBNDFAC )
+      IF(VERBOSE)
+     &CALL X04EAF('General',' ',3,NBFAC,IBNDFAC,3,
+     +            'Boundary info',IFAIL)
+      IFAIL = IXDRCLOSE( ixdrs(1) )
+C
+C     .. Reading solution ..
+C
+      IFAIL = IXDRDMAT( ixdrs(2) , NOFVAR*NPOIN , VZROE )
+      IFAIL = IXDRCLOSE( ixdrs(2) )
+C
+      RETURN
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a10 1
+C     INCLUDE'alloc'
+d21 2
+d34 1
+a34 1
+C     .. Local Arrays ..
+d36 1
+a36 10
+C     .. External Subroutines ..
+C
+C
+C     .. External Functions ..
+C
+*     INTEGER INITXDR
+C
+C     .. Intrinsic Functions ..
+C
+      DATA IFAIL /0/
+d42 1
+a42 1
+      WRITE(NOUT,2000) NPOIN,NOFVAR,DIM,0
+d44 3
+a46 2
+     1  15X,'MAX. NUMBER OF NODES             (NPOIN)=',I5/
+     2  15X,'MAX. NUMBER OF D.O.F. PER NODE  (NOFVAR)=',I5/
+d48 1
+a48 1
+     4  15X,'WORKSPACE IN REAL WORDS            (NVA)=',I10/)
+d50 4
+a53 3
+      CALL XDRDMAT( ixdrs(1) , DIM*NPOIN , VCORG )
+*     CALL X04CAF('General',' ',DIM,NPOIN,VCORG,DIM,
+*    +            'Nodal coordinates',IFAIL)
+d59 1
+a59 1
+     1  15X,'MAX. NUMBER OF ELEMENTS            (NELEM)=',I7/
+d62 4
+a65 3
+      CALL XDRIMAT( ixdrs(1) , NOFVERT*NELEM , ICELNOD )
+*     CALL X04EAF('General',' ',NOFVERT,NELEM,ICELNOD,NOFVERT,
+*    +            'Mesh connectivity',IFAIL)
+d71 2
+a72 2
+     1  15X,'MAX. NUMBER OF BOUNDARY FACES   (NBFAC)=',I5/
+     2  15X,'     NUMBER OF HOLES            (NHOLE)=',I5/)
+d74 5
+a78 4
+      CALL XDRIMAT( ixdrs(1) , 3*NBFAC , IBNDFAC )
+*     CALL X04EAF('General',' ',3,NBFAC,IBNDFAC,3,
+*    +            'Boundary info',IFAIL)
+      CALL XDRCLOSE( ixdrs(1) )
+d82 2
+a83 2
+      CALL XDRDMAT( ixdrs(2) , NOFVAR*NPOIN , VZROE )
+      CALL XDRCLOSE( ixdrs(2) )
+@

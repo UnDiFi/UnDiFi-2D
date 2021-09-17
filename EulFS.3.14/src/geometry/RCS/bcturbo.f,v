@@ -1,0 +1,110 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2000.11.14.17.57.12;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@boundary conditions for turbulence (out-dated)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE TURBOBC( IBNDFAC, NBFAC, ICELNOD, NOFVERT,
+     &NODCODE, VISCT, NTURB, NPOIN )
+C
+      IMPLICIT NONE
+C
+C     This routine sets NODCODE = 1000
+C        for those nodes which belong to a viscous wall
+C
+C        NOTE that this routine must be called AFTER
+C        the flow variables have been initialized,
+C        so that the velocity components can be set to 0.0 
+C        on viscous walls
+C
+C     Parameters ..
+C
+      INCLUDE 'constants'
+      INCLUDE 'bnd.h'
+C
+C     Commons ..
+C
+      INCLUDE 'bnd'
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'IO'
+C
+C     Scalar Arguments ..
+C
+      INTEGER NBFAC,NOFVERT,NTURB,NPOIN
+C
+C     Array Arguments ..
+C
+      INTEGER IBNDFAC(3,*),ICELNOD(NOFVERT,*),NODCODE(*)
+      DOUBLE PRECISION VISCT(NTURB,*)
+C
+C     Local Scalars ..
+C
+      INTEGER ICLR,IELEM,IVERT,INODE,IFACE,I,J,IVAR,U
+C
+C     External Functions ..
+C
+      INTEGER  ICYCL
+      EXTERNAL ICYCL
+C
+C     Intrinsic Functions ..
+C
+      INTRINSIC IABS
+C
+C     Executable Statements ..
+C
+      DO 1 IFACE = 1 , NBFAC 
+C
+         ICLR = ICOLOR_T(IBNDFAC(3,IFACE))
+C
+C        ICLR .EQ. 1 means
+C
+         IF( ICLR .NE. 1 )GOTO 1
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+C
+         DO 2 I = 1 , NOFVERT - 1
+C
+            INODE = ICELNOD( ICYCL( IVERT+I , NOFVERT ) , IELEM )
+C
+            NODCODE(INODE) = -IABS(NODCODE(INODE))
+C
+    2    CONTINUE
+    1 CONTINUE
+C
+C     counts the no of cnst pressure nodes 
+C
+      I = 0
+      DO 3 INODE = 1, NPOIN
+            IF( NODCODE(INODE) .LT. 0 )THEN
+C
+            I = I+1 
+C
+         ENDIF
+    3 CONTINUE
+C
+      WRITE(NOUT,100)I
+C
+C
+      RETURN
+  100 FORMAT(/5X,'THERE ARE ',I5,' FREESTREAM TURBULENCE NODES')
+      END
+@

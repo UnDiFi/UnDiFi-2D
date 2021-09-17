@@ -1,0 +1,98 @@
+FFLAGS	      = -I../../include -c -O3,msgs,inlinefrom=../util
+
+DEST	      = $(FSPL_DIR)/lib
+
+EXTHDRS	      = ../../include/flags.com \
+		../../include/paramt.h
+
+HDRS	      =
+
+INSTALL	      = cp
+
+LIBRARY	      = libspl.a
+
+MAKEFILE      = Makefile
+
+OBJS	      = 1DSys_scheme.o \
+		CDS.o \
+		FCT_scheme.o \
+		LDA2Sys_scheme.o \
+		LDAS_fast.o \
+		LDASys_scheme.o \
+		LDA_scheme.o \
+		LWSys_scheme.o \
+		LWbSys_scheme.o \
+		NL_scheme.o \
+		NSys_scheme.o \
+		N_scheme.o \
+		PSI_scheme.o \
+		SUPG_scheme.o
+
+PRINT	      = pr
+
+SHELL	      = /bin/sh
+
+SRCS	      = 1DSys_scheme.f \
+		CDS.f \
+		FCT_scheme.f \
+		LDA2Sys_scheme.f \
+		LDAS_fast.F \
+		LDASys_scheme.f \
+		LDA_scheme.f \
+		LWSys_scheme.f \
+		LWbSys_scheme.f \
+		NL_scheme.f \
+		NSys_scheme.f \
+		N_scheme.f \
+		PSI_scheme.f \
+		SUPG_scheme.f
+
+SYSHDRS	      =
+#
+# I had to explicitely define the rules for CRAY
+#
+#
+.f.o:
+		$(FC) $(FFLAGS) $<
+.F.o:
+		$(FC) $(FFLAGS) $<
+
+
+all:		$(LIBRARY)
+
+$(LIBRARY):	$(OBJS)
+		@echo "Loading $(LIBRARY) ..."
+		@ar cru $(LIBRARY) $(OBJS)
+		@echo "done"
+
+clean:;		@rm -f $(OBJS) core
+
+clobber:;	@rm -f $(OBJS) $(LIBRARY) core tags
+
+depend:;	@mkmf -f $(MAKEFILE)
+
+echo:;		@echo $(HDRS) $(SRCS)
+
+extract:;	@ar x $(DEST)/$(LIBRARY)
+
+index:;		@ctags -wx $(HDRS) $(SRCS)
+
+install:	$(LIBRARY)
+		@echo Installing $(LIBRARY) in $(DEST)
+		@if [ $(DEST) != . ]; then \
+		(rm -f $(DEST)/$(LIBRARY); $(INSTALL) $(LIBRARY) $(DEST)); fi
+
+print:;		@$(PRINT) $(HDRS) $(SRCS)
+
+tags:           $(HDRS) $(SRCS); @ctags $(HDRS) $(SRCS)
+###
+1DSys_scheme.o: ../../include/paramt.h ../../include/flags.com
+CDS.o: ../../include/paramt.h ../../include/flags.com
+LDA2Sys_scheme.o: ../../include/paramt.h ../../include/flags.com
+LDAS_fast.o: ../../include/paramt.h ../../include/flags.com
+LDASys_scheme.o: ../../include/paramt.h ../../include/flags.com
+LDA_scheme.o: ../../include/paramt.h
+LWSys_scheme.o: ../../include/paramt.h ../../include/flags.com
+LWbSys_scheme.o: ../../include/paramt.h ../../include/flags.com
+NSys_scheme.o: ../../include/paramt.h ../../include/flags.com
+N_scheme.o: ../../include/paramt.h

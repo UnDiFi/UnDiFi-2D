@@ -1,0 +1,12 @@
+export PATH=/usr/local/gcc-4.1.1/bin:$PATH
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.1-p8
+export PETSC_ARCH=linux_gnu-4.1.1-opt
+
+echo `which gcc`
+echo `which gfortran`
+echo $PETSC_DIR
+echo $PETSC_ARCH
+
+sleep 2
+
+make install

@@ -1,0 +1,48 @@
+\hypertarget{parm2symm_8f}{}\doxysection{src/euler/parm2symm.f File Reference}
+\label{parm2symm_8f}\index{src/euler/parm2symm.f@{src/euler/parm2symm.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{parm2symm_8f_af99eb024598b33143b9fdca072383ef9}{P\+A\+R\+M2\+S\+Y\+MM}} (Z\+R\+OE, D\+V\+DZ, N\+O\+F\+V\+AR, N\+D\+IM)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{parm2symm_8f_af99eb024598b33143b9fdca072383ef9}\label{parm2symm_8f_af99eb024598b33143b9fdca072383ef9}} 
+\index{parm2symm.f@{parm2symm.f}!PARM2SYMM@{PARM2SYMM}}
+\index{PARM2SYMM@{PARM2SYMM}!parm2symm.f@{parm2symm.f}}
+\doxysubsubsection{\texorpdfstring{PARM2SYMM()}{PARM2SYMM()}}
+{\footnotesize\ttfamily subroutine P\+A\+R\+M2\+S\+Y\+MM (\begin{DoxyParamCaption}\item[{double precision, dimension(nofvar)}]{Z\+R\+OE,  }\item[{double precision, dimension(nofvar,nofvar)}]{D\+V\+DZ,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+D\+IM }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the transformation matrix {\ttfamily D\+V\+DZ} = $ \frac{\partial \tilde{U}}{\partial Z} $ from parameter vector to the set of the Euler symmetrizing variables \[ \frac{\partial \tilde{U}}{\partial Z} = \sqrt{\rho} \left[ \begin{array}{ccccc} 2 - \frac{\gamma-1 }{\gamma} \frac{H}{a^2} & -\frac{\gamma-1}{\gamma} \frac{1}{a^2} & \frac{\gamma-1}{\gamma} \frac{u}{a^2} & \frac{\gamma-1}{\gamma} \frac{v}{a^2} & \frac{\gamma-1}{\gamma} \frac{w}{a^2} \\\ \frac{\gamma-1}{\gamma} \frac{H}{\rho a} & \frac{\gamma-1}{\gamma} \frac{1}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{u}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{v}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{w}{\rho a} \\\ -\frac{u}{\rho} & 0 & \frac{1}{\rho} & 0 & 0 \\\ -\frac{v}{\rho} & 0 & 0 & \frac{1}{\rho} & 0 \\\ -\frac{w}{\rho} & 0 & 0 & 0 & \frac{1}{\rho} \end{array} \right] = \left[ \begin{array}{ccccc} 2 z_1 - \frac{\gamma-1 }{\gamma} \frac{z_2}{a^2} & -\frac{\gamma-1}{\gamma} \frac{z_1}{ a^2} & \frac{\gamma-1}{\gamma} \frac{z_3}{a^2} & \frac{\gamma-1}{\gamma} \frac{z_4}{a^2} & \frac{\gamma-1}{\gamma} \frac{z_5}{a^2} \\\ \frac{\gamma-1}{\gamma} \frac{z_2}{\rho a} & \frac{\gamma-1}{\gamma} \frac{z_1}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_3}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_4}{\rho a} & -\frac{\gamma-1}{\gamma} \frac{z_5}{\rho a} \\\ -\frac{z_3}{z_1^2} & 0 & \frac{1}{z_1} & 0 & 0 \\\ -\frac{z_4}{z_1^2} & 0 & 0 & \frac{1}{z_1} & 0 \\\ -\frac{z_5}{z_1^2} & 0 & 0 & 0 & \frac{1}{z_1} \end{array} \right] \]
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Roe\textquotesingle{}s parameter vector \\
+\hline
+\mbox{\texttt{ out}}  & {\em D\+V\+DZ} & is the matrix $ \frac{\partial \tilde{U}}{\partial Z} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & leading dimension of D\+U\+DZ \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/22 11\+:57\+:10 
+\end{DoxyParagraph}

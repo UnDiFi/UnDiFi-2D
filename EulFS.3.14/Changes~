@@ -1,0 +1,227 @@
+REM: leggi in coda a questo file circa altre versioni del codice
+
+*** Steady code
+
+----------------------
+0.11.X working version
+----------------------
+
+----------------
+Versione 0.11.10
+----------------
+1) versione che supporta c.c. periodiche
+   su schiera anulare:
+   a) introdotte le rotazioni necessarie;
+      vedi geometry/rotate.f e modificati
+      setupRHS.F ghost*.F weakbc.F
+   b) conserva 2 copie di ICELNOD; modificato
+      geometry/celptr.f
+   c) i nodi sui piani di inlet includono 
+      nodi nel range NPOIN+NGHOST<=i<=NPOIN+NGHOST+NPNOD
+----------------
+Versione 0.11.9
+----------------
+1) utilizza petsc-2.3.0
+   si osservano differenze nella storia di convergenza
+   lineare dovute a modifiche introdotte in una precedente
+   release di PETSc
+2) risolto un bug in LWSys_scheme
+----------------
+Versione 0.11.8
+----------------
+1) modificato euler/vstate.f per permettere di
+   specificare profili di pressione/temperatura
+   anche con c.c. di tipo "weak"
+----------------
+Versione 0.11.7
+----------------
+sviluppata a partire dalla 11.5 (non ci sono le
+modifiche "time accurate" introdotte nella 11.6)
+1) modificati alcuni schemi matriciali, in modo
+   da consentire l'uso dei kernels PETSc
+----------------
+Versione 0.11.6
+----------------
+ modificate le chiamate alle routines degli schemi
+ e le chiamate in Euler*
+ modificati alcuni degli schemi matriciali
+ LDA2,LW,LW2 con l'aggiunta della matrice di massa
+ aggiunto TIME_ACCURATE flag
+----------------
+Versione 0.11.5
+----------------
+EulFS.0.11.5 versione sviluppata ad AnnArbor   <-----------------
+             should be reliable........
+----------------
+Versione 0.11.4
+----------------
+1) Versione PZ fine Settembre 2003
+   K's per variabili conservative e versione "funzionante"
+   di Newton per Spalart-Allmaras
+2) Aggiunte condizioni al contorno per parete isoterma
+----------------
+Versione 0.11.3
+----------------
+1) Versione sul Presario 2700, Ottobre 2003, prime modifiche
+   per gli schemi higher order
+
+Versione 0.10.14
+----------------
+1) rispetto alla 0.10.13 utilizza PETSc-2.1.1
+
+Versione 0.10.13
+----------------
+1) cambiano i precondizionatori di tipo shell
+
+Versione 0.10.12
+----------------
+1) variable inlet total pressure profile (when ibc=8)
+   read from:
+   sequential:   file005.dat
+   parallel  :   ptot$nnn$.dat
+   new file $FSPL_DIR/src/geometry/setpto.f
+2) now ibc=8 also works for INcompressible flows
+3) implements the SSOR preconditioner written by P.Leggiero
+   and the multiplicative Swartz preconditioner written by
+   P.Amodio
+   new files:
+   $FSPL_DIR/src/seq/ShellPC.F
+
+Versione 0.10.11
+----------------
+1) scalar problems are again supported, both sequential and parallel
+2) add a new version of the NL scheme (-scalar_scheme NL2)
+3) periodic boundary conditions are now also handled in parallel
+   new files file004.dat and pbcs$np$.dat have been added
+
+Versione 0.10.10
+----------------
+1)turbulence modeling now works in parallel as well 
+2)towards the coupled approach:
+  a)the "viscous" routines are not any more called from the "inviscid" ones.
+  b)introduced: EulerModel,NSModel,TurbulenceModel
+3)use PETSc-2.0.29
+
+Versione 0.10.7
+--------------
+1)turbulence modeling works again (introduced new routines: nodres_t.F,
+  setupRHS_t.F) 
+2)hybrid schemes (Pietro & Pino); new routines are:
+  (under $FSPL_DIR/src/euler) EulerHyb.f EulerHyb3D.f chpsi.f
+2)major rewriting of the routines used to set-up index sets
+  for boundary conditions; dropped a few routines: 
+  subabb.f, subabc.f and major changes in iset.F
+4)implementate nuove condizioni al contorno:
+  +)pressione costante per flussi compressibili (modificando
+  la matrice jacobiana)
+  +)isothermal wall for compressible flows.
+
+Versione 0.10.5
+--------------
+   files modificati:
+../seq/bndvflx.F
+../seq/turbcomp.F
+../seq/weakbc.F
+../seq/setupRHS.F
+../seq/ghost.F
+../turbo/foo.f
+../geometry/celptr.f
+
+Versione 0.10.3
+--------------
+Modified to use PETSc 2.0.28
+1) in blockdata IVERBOSE e` ora inizializzata
+2) in setupRHS.F non chiama D1MACH (problemi su CRAY)
+   files modificati:
+   $FSPL_DIR/src/seq/makefile (versione Pasqua)
+   $FSPL_DIR/src/mpi/makefile (versione Pasqua)
+   blockdata.f
+   setupRHS.F
+   MatAllocaMPI.F
+   rdat.F
+
+Versione 0.10.2
+--------------
+1) Calcola nuovamente le forze di pressione e di attrito a parete
+2) Aggiunto lo schema scalare tipo Lax-Wendroff
+3) Risolto un bug causato da accesso fuori "bounds"
+   nelle routines matsplII e matsplIX
+4) Risolto un bug in rdat.F a causa del quale
+   veniva comunque utilizzato lo schema scalare N
+   per flussi incomprimibili con hyperbolic-elliptic splitting.
+   (-fluid incompressible; -equation Euler; -preconditioning Yes)
+   files modificati:
+   rdat.F
+   sclsch.F
+   setupRHS.F
+   weakbc.F
+   LW_scheme.f
+   matsplII.F
+   matsplIX.F
+
+Versione 0.6.3
+--------------
+1) aggiunto il calcolo della distanza del primo punto da parete
+e del aspect ratio
+2) reimplementato NSPCG sebbene ci siano ancora dei problemi
+   su ITMAX
+3) il vettore IBNDFAC viene riordinato per colori crescenti:
+   in tal modo tutte le facce dello stesso colore vengono
+   a trovarsi in posizioni adiacenti
+4) calcolo dello skin friction
+5) introdotto un nuovo vettore global SKINF in cui e' memorizzato
+   il coeff. di skin friction
+
+Versione 0.6.4
+--------------
+1) implementato schema SUPG scalare con calcolo del termine sorgente.
+2) corretto il segno del coefficiente di portanza
+3) semplificato il calcolo delle matrici K^{\pm} per le eqn.
+   incomprimibili (routine matsplVIII) vedi anche la users's guide
+4) implementata la versione di Edwin dello schema LDA, (routine
+   LDA2Sys_scheme); non sembra pero' funzionare bene:  l'implicito
+   stalla sull' iterazione lineare.
+5) implementata la versione di Edwin dello schema Lax-Wendroff
+   con la matrice \sum |K| che PRE moltiplica K_j
+6) corretto il bug sul segno dello skin friction
+
+Versione 0.9.4
+--------------
+1) La costruzione della matrice nel l.h.s. per il caso comprimibile
+   e' stata modificata, sicche' adesso: LHS * U = RHS,
+   cosi' come per il caso INcomprimibile. Adesso anche il comprimibile
+   gira con CFL = infinito.
+
+Versione 0.8.6
+--------------
+1) introdotto boundary type = 7 prescribed velocity profile
+
+
+
+ALTRI CODICI
+
+
+
+----------------------
+0.12.X versions with HO reconstruction, basically the umich version
+----------------------
+EulFS.0.12.1 first development version (poi abbandonata)
+EulFS.0.12.2 development version
+     this version of the code implements a gradient
+     correction aimed at increasing accuracy
+     mid-edge values are computed using 
+     GG (Green-Gauss), LIN (LINear) or QUAdratic reconstruction
+
+     only the gradient is corrected, NOT the average
+     NO explicit HO flux evaluation
+     this is NOT what Doru does
+----------------------
+0.13.0 version using PETSc TS (derived from 0.11.0) NOT a working version
+************ ************
+UNSteady code unfs
+************ ************
+0.2.0 utilizza EulFS.0.11.6; implementa la matrice di massa consistente
+----------------------
+0.1.0 utilizza EulFS.0.11.5; implementa la sola matrice di massa diagonale
+----------------------
+0.0.0 first version (Y2K); only scalar schemes implemented

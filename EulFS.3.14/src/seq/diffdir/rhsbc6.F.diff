@@ -1,0 +1,14 @@
+0a1,2
+> C
+> C
+6c8,10
+< CCCCC#include "include/finclude/petsc.h"
+---
+>       IMPLICIT NONE
+> C
+> #include "include/finclude/petsc.h"
+9,12d12
+<       use petscvec
+<       use petscis
+< C
+<       IMPLICIT NONE

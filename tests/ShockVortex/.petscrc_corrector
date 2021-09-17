@@ -1,0 +1,78 @@
+#
+-equation Euler
+-fluid compressible
+-preconditioning t
+-nondimensionalisation external
+
+#-scalar_scheme NL
+#-matrix_scheme B
+#-scalar_scheme LDA
+#-matrix_scheme LDA
+-scalar_scheme LW2
+-matrix_scheme LWT
+
+-time_accurate
+-nof_time_steps 1
+-time_step_size .0016
+-timestepping explicit
+-timestep global
+-ale
+-ale_grid move
+-ale_read_grid_velocities
+#-ale_grid_motion_type 5
+-dump_integral
+-ksp_view
+-ksp_monitor
+-dual_ts No
+-itmax 1
+-ibak 1
+#-linearization picard
+#-restart_file file003.dat
+#
+# max. number of non-linear iterations
+#
+#-timestepping explicit
+#-cfl 1.
+#
+#-inlet_total_temperature 2.5
+#-inlet_total_pressure 3.65
+-outlet_static_pressure  0.752022207714286 #0.734947 #0.803571429 #0.796588388
+-flow_angles 1.0,0.0,0.
+-reference_length  1.
+#-inlet_mach_number  1.8
+-freestream_Mach_number 2.0 #1.21
+
+#  SNES options
+#
+#-snes_type ls
+#-snes_max_it 1
+#-snes_monitor
+#
+#  timestepping (TS) options
+#
+#-ts_pseudo_increment_dt_from_initial_dt
+#-ts_pseudo_increment 10.
+#-ts_monitor
+#
+#
+#
+#-colors -1,4,1,4,4,-1,-1,-1,-1,-1,-1,-1,-1
+##-colors -1,4,4,4,4,-1,-1,-1,-1,-1,0,-1,-1
+-colors -1,4,2,4,1,-1,-1,-1,-1,-1,0,-1,-1
+#-colors -1,-1,1,-1,2,-1,-1,-1,-1,-1,0,0,-1,-1
+
+
+#
+# read mesh from directory
+# un proc.
+-data_dir ./
+-restart_file file003.dat
+#
+# opzioni per la libreria PETSc
+#
+#-ksp_max_it 200
+#-pc_factor_mat_ordering_type rcm
+#-pc_factor_fill 2
+#-pc_factor_levels 2
+#
+-bc_type weak

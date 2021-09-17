@@ -1,0 +1,30 @@
+# costruisce l'eseguibile di test con la libreria dinamica
+# affinche' poi funzioni bisogna che la directory ./ sia elencata
+# insieme alle altre nella LD_LIBRARY_PATH
+testqwd: testqw.c qw.h libqw.so
+	cc testqw.c -L./ -lqw -o testqwd
+
+# costruisce l'eseguibile di test con la libreria sstatica
+testqws: testqw.c qw.h libqw.a
+	cc testqw.c -B static -L. -lqw -o testqws
+
+# costruisce la shared library
+libqw.so: libqw.a qwmapfile
+	cc -shared libqw.a -o libqw.so
+#	cc -G libqw.a -M qwmapfile -o libqw.so
+#	ld -G libqw.a -M qwmapfile -h libqw.so -o libqw.so
+
+# costruisce la libreria statica
+libqw.a: qq.o ww.o
+	ar -r libqw.a qq.o ww.o
+
+# costruisce qq
+qq.o: qq.c qw.h
+	cc -c qq.c
+
+# costruisce ww
+ww.o: ww.c qw.h
+	cc -c ww.c
+
+clean:
+	rm -f qq.o ww.o libqw.a libqw.so testqw.o testqws testqwd

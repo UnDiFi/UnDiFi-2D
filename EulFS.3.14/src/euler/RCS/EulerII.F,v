@@ -1,0 +1,1851 @@
+head	1.26;
+access
+	simula
+	caspur
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.26
+	release3_13_0:1.26
+	release3_12_0:1.26
+	release3_11_0:1.26
+	release3_10_0:1.26
+	release3_8_0:1.26
+	release3_7_1:1.26
+	release3_7_0:1.25
+	release3_4_5:1.25
+	release3_4_4:1.25
+	release3_4_3:1.25
+	release3_4_2:1.25
+	release3_4_1:1.25
+	release3_4_0:1.25
+	release3_3_5:1.25
+	release3_3_4:1.23
+	release3_3_3:1.23
+	release3_3_2:1.23
+	release3_3_1:1.23
+	release3_3_0:1.23;
+locks; strict;
+comment	@c @;
+
+
+1.26
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2013.05.15.09.44.43;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2013.04.27.09.36.52;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2012.12.20.10.25.25;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2009.08.11.14.44.23;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2009.01.09.10.23.40;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2003.12.23.23.08.23;	author aldo;	state Exp;
+branches
+	1.20.1.1;
+next	1.19;
+
+1.19
+date	2002.09.14.09.10.40;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2002.09.10.09.57.28;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2002.08.12.08.43.37;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2000.10.20.08.15.02;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2000.10.12.09.39.30;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.08.03.16.45.57;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.06.24.09.29.54;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	99.11.29.09.57.10;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	99.08.19.16.36.21;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	99.08.18.09.15.17;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.08.17.15.28.49;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.08.11.18.06.44;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.03.19.09.56.05;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.08.26.07.24.13;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.08.24.17.01.20;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.08.24.06.49.46;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.22.18.43.52;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.22.17.04.47;	author aldo;	state Exp;
+branches;
+next	;
+
+1.20.1.1
+date	2011.12.30.11.26.48;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Hyperbolic Elliptic splitting for 2D supersonic flows
+@
+
+
+1.26
+log
+@renamed subroutine call
+@
+text
+@!> \copydetails EulerIX()
+      SUBROUTINE EulerII(IELEM,VCN,VCB,VCZ,NDIM,NOFVERT,NOFVAR,
+     &NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,ScalarScheme,MatrixScheme)
+C
+C     .. Hyperbolic Elliptic splitting using the vanLeer, Lee, Roe
+C     preconditioning matrix ..
+C     EulerII is ONLY valid for supersonic 2D flows, where
+C     the preconditioned equations can be reduced to 4 scalar
+C     equations describing the advection of entropy, total enthalpy
+C     and two acoustic waves
+C
+C     $Id: EulerII.F,v 1.25 2013/05/15 09:44:43 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'constants.h'
+C
+C	.. NEQMAX is the max. no. of equations
+C	.. NORDER is actual no. of equations = DIM
+C
+      INTEGER NEQMAX,IWRK,NORDER,FRSTEQ
+      PARAMETER(NEQMAX=4,IWRK=10,NORDER=4,FRSTEQ=1)
+      INTEGER MOVE(IWRK)
+      DOUBLE PRECISION TOLER
+      PARAMETER(TOLER=1.d-14) 
+C
+      INCLUDE 'blkEulerII.com'
+      INCLUDE 'three.com'
+      INCLUDE 'time.com'
+      INCLUDE 'transf.com'
+      INCLUDE 'flags.com'
+C
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,i1mach
+C
+      EXTERNAL scalarScheme,MatrixScheme
+C
+      INTEGER KWAVE,JCOL,IDIM,ifail,I,J,N,M,IDX,N4
+      INTEGER IOFF,IADD,JADD,IVERT,JVERT,NTURB,IVAR
+      DOUBLE PRECISION FLUCT,SCALRES,HELP
+      LOGICAL PICARD
+C
+      DOUBLE PRECISION JacobianMatrix(NEQMAX,NEQMAX*3),
+     2PHI(NEQMAX),CHARV(12),DCHARV(12),
+     3WKSP(MAXNOFVAR),SOURCE(MAXNOFVAR),WORK(MAX_NOFVERT_SQR),
+     4TAUX(MAXNOFVAR*MAXNOFVERT)
+      DOUBLE PRECISION NODRES(*)
+      DOUBLE PRECISION TSTEP(*)
+      DOUBLE PRECISION VCZ(*),VCN(*),VCB(*),
+     +VOLUME,STIFC(144),TEMPA(400),TEMPB(100),STIFEL(*)
+C
+      DOUBLE PRECISION DDOT
+      EXTERNAL         DDOT
+C
+      DATA SOURCE/MAXNOFVAR*ZERO/
+C
+      IDX(I,J,N,M) = (((J-1)*M+I-1)*N*N)+1
+C
+      IF( NDIM .NE. 2 )THEN
+          STOP 'Only works in 2 space dimensions'
+      ENDIF 
+      IF( MACHSQR .LT. ONE )THEN
+          WRITE(6,*)' Subsonic Mach number ',MACH,' in cell ',IELEM
+          STOP
+      ENDIF
+      IF( NOFVAR .NE. (NDIM+2) )THEN
+          WRITE(6,*)' Model NOT suited for turbulent calculations'
+          STOP
+      ENDIF
+C
+      N4 = NOFVAR*NOFVAR*NOFVERT*NOFVERT
+C
+C     The element stiffness matrix is initialized to 0.d0
+C
+      IF (PICARD) THEN
+          CALL DINIT(N4,ZERO,STIFEL,1)
+          CALL DINIT(N4,ZERO,STIFC,1)
+      ENDIF
+C
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,DCHARV,1)
+C
+      CALL DINIT(NORDER*NOFVERT,ZERO,TAUX,1)
+C
+C
+C	Sets a stream aligned frame ..
+C
+      CALL StreamAlignedFrame(NDIM)
+C
+C       The Jacobian Matrix of the subsystem is assembled and
+C          the eigenvectors computed ..
+C
+      CALL Eigen_II(JacobianMatrix,NEQMAX,DVDZ,DUDV,NDIM,NOFVAR)
+C
+C	---------- System scheme ----------
+C
+      IF(ICHECK.EQ.0)GOTO 7
+C
+C	Some initializations ....
+C
+      CALL DINIT(NORDER,ZERO,PHI,1)
+      CALL DINIT(NORDER,ZERO,WKSP,1)
+      CALL CHECK(IELEM,NDIM,NOFVAR)
+c
+c     COMPUTES THE RESIDUAL/VOLUME : dF/dU * dU/dX + dG/dU * dU/dy + ...
+c
+      DO 12 idim = 1 , NDIM
+         jcol = (idim-1) * NEQMAX + 1
+         CALL DGEMV( 'N' , NORDER , NORDER , ONE , JacobianMatrix
+     +   (1,jcol) , NEQMAX , GRAD_CHAR(FrstEq,idim) ,  1, ONE , PHI ,
+     +    1)
+   12 CONTINUE
+C
+    7 CONTINUE
+C
+C	---------- Upwind scheme ----------
+C
+      CALL DGEMM('Transpose','Transpose',NOFVERT,NOFVAR,NOFVAR,
+     +           ONE,VCZ,NOFVAR,dVdZ,NOFVAR,ZERO,CHARV,NOFVERT)
+C
+      DO 18 KWAVE = 1, NOFVAR
+          IOFF = (KWAVE-1)*NOFVERT+1
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+C
+C     Each advection eqn. is solved using an upwind scheme
+C
+          CALL ScalarScheme( IELEM, VCN, R_SPEED(1,KWAVE), SCALRES,
+     +       ZERO, CHARV(IOFF), TAUX(IOFF), DCHARV(IOFF), WORK, STIFC,
+     +       NDIM, NOFVERT, PICARD )
+C
+C
+          IF (PICARD) THEN
+C
+C     STIFC(i,j) is copied into STIFEL(KWAVE,KWAVE,i,j)
+C
+              IADD = KWAVE + (KWAVE-1)*NOFVAR
+              CALL DCOPY(NOFVERT*NOFVERT,STIFC,1,STIFEL(IADD),
+     +               NOFVAR*NOFVAR)
+          ENDIF
+C
+C
+         IF( ICHECK .NE. 0 )THEN
+C
+C	 Checks for the scalar residual ..
+C
+            FLUCT = DDOT(NDIM,R_SPEED(1,KWAVE),1,GRAD_CHAR(KWAVE,1),LDW)
+C
+            SCALRES = SCALRES/VOLUME
+            CALL DAXPY(NOFVAR,SCALRES,dUdV((KWAVE-1)*NOFVAR+1),1,WKSP,1)
+C
+            IF( DABS( FLUCT - SCALRES ) .GT. TOLER)THEN
+               WRITE(I1MACH(2),89999)IELEM,KWAVE
+               WRITE(I1MACH(2),*)FLUCT,SCALRES
+               PAUSE
+            ENDIF
+C
+         ENDIF
+C
+   18 CONTINUE ! end loop over waves
+C
+C Transform into conserved variables
+C
+      CALL DGEMM('No Transpose','Transpose',NOFVAR,NOFVERT,NOFVAR,
+     +           ONE,dUdV,NOFVAR,DCHARV(1),NOFVERT,ZERO,NODRES,NOFVAR) 
+C
+!     CALL R8Mat_Print('G',' ',NOFVERT,NORDER,TAUX,
+!    +            NOFVERT,'Nodal timestep ',IFAIL)
+C
+C     compute the timestep: TAUX is transposed, see the table above for DSYMM
+C
+      DO IVERT = 1, NOFVERT ! loop over the vertices
+         JADD = IVERT
+         HELP = ZERO 
+C
+C     sum or maximum over the dofs
+C
+         DO IVAR = 1,NOFVAR ! loop over the NDIM+2 dofs
+            IF( CHAR_TIMESTEPPING )THEN
+               HELP = MAX(HELP,TAUX(JADD))
+            ELSE
+               HELP = HELP + TAUX(JADD)
+            ENDIF
+            JADD = JADD + NOFVERT
+         ENDDO ! end loop over the dofs
+         IADD = (IVERT-1)*NOFVAR
+         DO IVAR = 1,NOFVAR
+            JADD = IADD + IVAR
+            TSTEP(JADD) = TSTEP(JADD) + HELP
+         ENDDO
+      ENDDO
+C
+      IF( ICHECK .NE. 0 )
+     +CALL TEST( DivFlux , WKSP , 1.D-15, IELEM , NOFVAR )
+C
+C     --------------- If explicit, return now  ---------------
+C
+      IF (.NOT.PICARD) RETURN
+C
+C
+C     compute the transformation matrices from
+C     conserved to parameter variables in the vertices
+C
+          DO 33 IVERT = 1,NOFVERT
+              JADD = (IVERT-1)*NOFVAR*NOFVAR+1
+              CALL MatdZdU(VCZ((IVERT-1)*NOFVAR+1),dZdU(JADD),
+     +                     NDIM,NOFVAR)
+   33     CONTINUE
+C
+C     transform the element stiffness matrix into conserved variables
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +               NOFVAR*NOFVERT*NOFVERT,NOFVAR,MONE,dUdV,
+     +               NOFVAR,STIFEL,NOFVAR,ZERO,TEMPA,NOFVAR)
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +               NOFVAR*NOFVERT,NOFVAR,TWO,dVdZ,NOFVAR,dZdU,
+     +               NOFVAR,ZERO,TEMPB,NOFVAR)
+C
+corig             CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+corig+                       NOFVAR,NOFVAR,ONE,STIFEL(IADD),NOFVAR,
+corig+                       dVdZ,NOFVAR,ZERO,TEMPB,NOFVAR)
+C     sign changed
+corig             CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+corig+                       NOFVAR,NOFVAR,MONE,dUdV,NOFVAR,TEMPB,NOFVAR,
+corig+                       ZERO,TEMPA,NOFVAR)
+C
+
+              DO 35 JVERT = 1,NOFVERT
+                  JADD = (JVERT-1)*NOFVAR*NOFVAR+1
+                  DO 35 IVERT = 1,NOFVERT
+                  IADD = IDX(IVERT,JVERT,NOFVAR,NOFVERT)
+                  CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                       NOFVAR,NOFVAR,ONE,TEMPA(IADD),NOFVAR,
+     +                       TEMPB(JADD),NOFVAR,ZERO,STIFEL(IADD),
+     +                       NOFVAR)
+C
+   35     CONTINUE
+C
+C
+      RETURN
+89999 FORMAT(5X,'Scalar residual in Element ',I6,' Wave # ',I1)
+      END
+@
+
+
+1.25
+log
+@characteristic time stepping
+@
+text
+@d12 1
+a12 1
+C     $Id: EulerII.F,v 1.24 2013/04/27 09:36:52 abonfi Exp abonfi $
+d167 1
+a167 1
+!     CALL X04CAF('G',' ',NOFVERT,NORDER,TAUX,
+@
+
+
+1.24
+log
+@the contribution to the time step is now added
+separately for each variable
+@
+text
+@d12 1
+a12 1
+C     $Id: EulerII.F,v 1.23 2012/12/20 10:25:25 abonfi Exp abonfi $
+d32 1
+d41 2
+a42 2
+      INTEGER IOFF,IADDR,JADDR,IVERT,JVERT,NTURB
+      DOUBLE PRECISION FLUCT,SCALRES
+d47 2
+a48 1
+     3WKSP(MAXNOFVAR),SOURCE(MAXNOFVAR),WORK(MAX_NOFVERT_SQR)
+d84 1
+a84 5
+C     the timestep is transposed so that we can
+C     feed the first NOFVERT entries to each scalar scheme
+C
+      CALL TRANS(TSTEP,NOFVERT,NOFVAR,NOFVAR*NOFVERT,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d129 1
+a129 1
+     +       ZERO, CHARV(IOFF), TSTEP(IOFF), DCHARV(IOFF), WORK, STIFC,
+d137 2
+a138 2
+              IADDR = KWAVE + (KWAVE-1)*NOFVAR
+              CALL DCOPY(NOFVERT*NOFVERT,STIFC,1,STIFEL(IADDR),
+d167 4
+a170 1
+C     the timestep is transposed back
+d172 20
+a191 2
+      CALL TRANS(TSTEP,NOFVERT,NOFVAR,NOFVAR*NOFVERT,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d205 2
+a206 2
+              JADDR = (IVERT-1)*NOFVAR*NOFVAR+1
+              CALL MatdZdU(VCZ((IVERT-1)*NOFVAR+1),dZdU(JADDR),
+d213 1
+a213 1
+     +               NOFVAR*NOFVERT*NOFVERT,NOFVAR,-ONE,dUdV,
+d220 1
+a220 1
+corig+                       NOFVAR,NOFVAR,ONE,STIFEL(IADDR),NOFVAR,
+d224 1
+a224 1
+corig+                       NOFVAR,NOFVAR,-ONE,dUdV,NOFVAR,TEMPB,NOFVAR,
+d229 1
+a229 1
+                  JADDR = (JVERT-1)*NOFVAR*NOFVAR+1
+d231 1
+a231 1
+                  IADDR = IDX(IVERT,JVERT,NOFVAR,NOFVERT)
+d233 2
+a234 2
+     +                       NOFVAR,NOFVAR,ONE,TEMPA(IADDR),NOFVAR,
+     +                       TEMPB(JADDR),NOFVAR,ZERO,STIFEL(IADDR),
+@
+
+
+1.23
+log
+@now passing the grid velocity among the arguments of the call
+@
+text
+@d12 1
+a12 1
+C     $Id: EulerII.F,v 1.22 2009/08/11 14:44:23 abonfi Exp abonfi $
+d131 2
+a132 2
+     +       ZERO, CHARV(IOFF), TSTEP, DCHARV(IOFF), WORK, STIFC, NDIM,
+     +       NOFVERT, PICARD )
+@
+
+
+1.22
+log
+@Removed all un-steady stuff introduced in revision 1.21
+now works again, but not for unsteady flows
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE EulerII(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,ScalarScheme,MatrixScheme)
+d12 1
+a12 1
+C     $Id: EulerII.F,v 1.20 2003/12/23 23:08:23 aldo Exp abonfi $
+d49 1
+a49 1
+      DOUBLE PRECISION VCZ(*),VCN(*),
+@
+
+
+1.21
+log
+@early un-steady version (very complicated) in which
+updates due to previous time levels are kept under different locations
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.20 2003/12/23 23:08:23 aldo Exp aldo $
+a14 1
+CCCC#define DEBUG
+a18 1
+      INCLUDE 'time.h'
+d29 1
+a29 1
+      INCLUDE 'blkEulerII'
+a30 1
+      INCLUDE 'time.com'
+d38 2
+a39 3
+      INTEGER KWAVE,JCOL,IDIM,ifail,I,J,N,M,IDX,N4,ILEV,ILM1,
+     &        IOFF,IVERT,JVERT,NTURB,KM1
+      INTEGER IADD(5)
+d43 3
+a45 5
+      DOUBLE PRECISION JacobianMatrix(NEQMAX,NEQMAX*3)
+      DOUBLE PRECISION CHARV(MAXNOFVAR*MAXNOFVERT*MAXTIMLEVS),
+     &DCHARV(MAXNOFVAR*MAXNOFVERT*MAXTIMLEVS),PHI(NEQMAX),
+     3HELP(MAXNOFVAR*MAXNOFVERT*MAXTIMLEVS)
+      DOUBLE PRECISION WKSP(MAXNOFVAR),SOURCE(MAXNOFVAR)
+d66 2
+a67 1
+          STOP ' Model NOT suited for turbulent calculations'
+a69 2
+      IF(LTIME)DTVOL = DELT/VOLUME
+C
+d79 1
+a79 1
+      CALL DINIT(NOFVERT*NOFVAR*NTIMLEVS,ZERO,DCHARV,1)
+d120 2
+a121 64
+      DO ILEV = 1,NTIMLEVS
+         ILM1 = ILEV-1
+         IADD(1) = ILM1 * (NOFVAR*NOFVERT) + 1
+         IADD(2) = ILM1 * (NOFVAR*NOFVAR)  + 1
+         IADD(3) = ILM1 * (NOFVAR)         + 1
+         CALL LINAVG(VCZ(IADD(1)),ZAVG(IADD(3)),NDIM,NOFVERT,NOFVAR)
+         CALL PARM2CHARHE(ZAVG(IADD(3)),dVdZ(IADD(2)),dUdV(IADD(2)),
+     &                    NOFVAR,NDIM) 
+!        IADD(2) = 1
+         CALL DGEMM('Transpose','Transpose',NOFVERT,NOFVAR,NOFVAR,
+     +           ONE,VCZ(IADD(1)),NOFVAR,dVdZ(IADD(2)),NOFVAR,ZERO,
+     +           CHARV(IADD(1)),NOFVERT)
+      ENDDO ! ILEV
+#ifdef DEBUG
+      write(6,*)'ielem = ',ielem
+      CALL X04CAF('G',' ',NOFVAR,Nofvert*NTIMLEVS,VCZ,NOFVAR,
+     +      'Nodal values of the parameter vector ',IFAIL)
+      do ilev = 1,ntimlevs
+         ILM1 = ILEV-1
+         IADD(3) = ILM1 * (NOFVAR)         + 1
+         write(6,*)'<z(',ilev,')> = ',(zavg(iadd(3)+n),n=0,NOFVAR-1)
+      enddo
+!     CALL X04CAF('G',' ',NOFVERT,NOFVAR*NTIMLEVS,CHARV,NOFVERT,
+!    +      'Nodal values of the CHAR variables ',IFAIL)
+!     CALL X04CAF('G',' ',NOFVAR,NofVAR*NTIMLEVS,dVdZ,NOFVAR,
+!    +      'Average value of dVdZ matrix ',IFAIL)
+!     CALL X04CAF('G',' ',NOFVAR,NofVAR*NTIMLEVS,dUdV,NOFVAR,
+!    +      'Average value of dVdZ matrix ',IFAIL)
+#endif
+C
+C  time level: n+1,k |  time level: n     |  time level: n-1
+C
+C  S_1 H_1 R+_1 R-_1 |  S_1 H_1 R+_1 R-_1 |  S_1 H_1 R+_1 R-_1
+C  S_2 H_2 R+_2 R-_2 |  S_2 H_2 R+_2 R-_2 |  S_3 H_3 R+_3 R-_3
+C  S_3 H_3 R+_3 R-_3 |  S_3 H_3 R+_3 R-_3 |  S_3 H_3 R+_3 R-_3
+C
+#ifdef DEBUG
+      CALL X04CAF('G',' ',NOFVERT,NOFVAR*NTIMLEVS,CHARV,NOFVERT,
+     +      'Nodal values of the CHAR variables ',IFAIL)
+#endif
+C
+      DO KWAVE = 1,NOFVAR
+         KM1 = KWAVE-1
+         DO ILEV = 1,NTIMLEVS
+            ILM1 = ILEV-1
+            IADD(1) = (KM1*NTIMLEVS + ILM1)* NOFVERT + 1 ! destination
+            IADD(2) = (ILM1*NOFVAR + KM1)  * NOFVERT + 1 ! source
+            CALL DCOPY(NOFVERT,CHARV(IADD(2)),1,HELP(IADD(1)),1)
+         ENDDO
+      ENDDO
+C
+C  now HELP looks like this and should be ready to be fed to the scalar scheme
+C
+C  n+1 n   n-1 | n+1 n   n-1 | n+1   n     n-1   |  n+1   n     n-1 |
+C
+C  S_1 S_1 S_1 | H_1 H_1 H_1 | R+_1  R+_1  R+_1  |  R-_1  R-_1  R-_1  | 
+C  S_2 S_2 S_2 | H_2 H_2 H_2 | R+_2  R+_2  R+_2  |  R-_2  R-_2  R-_2  | 
+C  S_3 S_3 S_3 | H_3 H_3 H_3 | R+_3  R+_3  R+_3  |  R-_3  R-_3  R-_3  | 
+C
+#ifdef DEBUG
+      CALL X04CAF('G',' ',NOFVERT,NOFVAR*NTIMLEVS,HELP,NOFVERT,
+     +      'Nodal values of the CHAR variables after copy',IFAIL)
+#endif
+C
+d124 1
+a124 2
+          IOFF = (KWAVE-1)*NOFVERT*NTIMLEVS+1
+C
+d129 3
+a131 4
+          CALL ScalarScheme( IELEM, VCN, R_SPEED(1,KWAVE), SCALRES, 
+     +          ZERO, HELP(IOFF), TSTEP, DCHARV(IOFF), STIFC, NDIM, 
+     +          NOFVERT, PICARD )
+C
+a132 4
+CC#ifdef DEBUG
+!     CALL X04CAF('G',' ',NOFVERT,NOFVAR*NTIMLEVS,DCHARV,NOFVERT,
+!    +'Nodal values of the Update in CHAR variables within loop ',IFAIL)
+CC#endif
+d138 3
+a140 3
+              IADD(1) = KWAVE + (KWAVE-1)*NOFVAR
+              CALL DCOPY(NOFVERT*NOFVERT,STIFC,1,STIFEL(IADD(1)),
+     +                   NOFVAR*NOFVAR)
+d161 1
+a161 32
+   18 CONTINUE ! end loop over the (4) waves
+C
+#ifdef DEBUG
+      CALL X04CAF('G',' ',NOFVERT,NOFVAR*NTIMLEVS,DCHARV,NOFVERT,
+     +      'Nodal values of the Update in CHAR variables ',IFAIL)
+#endif
+C
+C  now DCHARV looks like this; characteristic variables should be
+C  packed together
+C
+C  ____________________________________________________________________
+C  n+1 n   n-1 | n+1 n   n-1 | n+1   n     n-1   |  n+1   n     n-1   |
+C  ____________________________________________________________________
+C
+C  S_1 S_1 S_1 | H_1 H_1 H_1 | R+_1  R+_1  R+_1  |  R-_1  R-_1  R-_1  | 
+C  S_2 S_2 S_2 | H_2 H_2 H_2 | R+_2  R+_2  R+_2  |  R-_2  R-_2  R-_2  | 
+C  S_3 S_3 S_3 | H_3 H_3 H_3 | R+_3  R+_3  R+_3  |  R-_3  R-_3  R-_3  | 
+C  ____________________________________________________________________
+C
+      DO KWAVE = 1,NOFVAR
+         KM1 = KWAVE-1
+         DO ILEV = 1,NTIMLEVS
+            ILM1 = ILEV-1
+            IADD(1) = (KM1*NTIMLEVS + ILM1)* NOFVERT + 1 ! source
+            IADD(2) = (ILM1*NOFVAR + KM1)  * NOFVERT + 1 ! destination
+            CALL DCOPY(NOFVERT,DCHARV(IADD(1)),1,HELP(IADD(2)),1)
+         ENDDO
+      ENDDO
+#ifdef DEBUG
+      CALL X04CAF('G',' ',NOFVERT,NOFVAR*NTIMLEVS,HELP,NOFVERT,
+     +'Nodal values of the Update in CHAR variables after copy',IFAIL)
+#endif
+d165 2
+a166 15
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1) 
+      DO ILEV = 1,NTIMLEVS
+         ILM1 = ILEV-1
+         IADD(1) = ILM1 * (NOFVAR*NOFVERT) + 1
+         IADD(2) = ILM1 * (NOFVAR*NOFVAR)  + 1
+!        IADD(2) = 1
+         CALL DGEMM('No Transpose','Transpose',NOFVAR,NOFVERT,NOFVAR,
+     +           ONE,dUdV(IADD(2)),NOFVAR,HELP(IADD(1)),NOFVERT,ONE,
+     +           NODRES,NOFVAR)
+      ENDDO
+#ifdef DEBUG
+      CALL X04CAF('G',' ',NOFVAR,NOFVERT,NODRES,NOFVAR,
+     +      'Nodal values of the Update in CONS variables after ',IFAIL)
+!     pause
+#endif
+d185 2
+a186 2
+              IADD(2) = (IVERT-1)*NOFVAR*NOFVAR+1
+              CALL MatdZdU(VCZ((IVERT-1)*NOFVAR+1),dZdU(IADD(2)),
+d200 1
+a200 1
+corig+                       NOFVAR,NOFVAR,ONE,STIFEL(IADD(1)),NOFVAR,
+d209 1
+a209 1
+                  IADD(2) = (JVERT-1)*NOFVAR*NOFVAR+1
+d211 1
+a211 1
+                  IADD(1) = IDX(IVERT,JVERT,NOFVAR,NOFVERT)
+d213 2
+a214 2
+     +                       NOFVAR,NOFVAR,ONE,TEMPA(IADD(1)),NOFVAR,
+     +                       TEMPB(IADD(2)),NOFVAR,ZERO,STIFEL(IADD(1)),
+@
+
+
+1.20
+log
+@Add source term, just for compatibility
+with similar routines
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.19 2002/09/14 09:10:40 abonfi Exp abonfi $
+d15 1
+d19 2
+a20 1
+      INCLUDE 'constants'
+d25 1
+a25 1
+      INTEGER	NEQMAX,IWRK,NORDER,FRSTEQ
+d32 2
+a33 1
+      INCLUDE 'three'
+d37 1
+a37 1
+      INTEGER	IELEM,NDIM,NOFVERT,NOFVAR,i1mach
+d41 3
+a43 2
+      INTEGER KWAVE,JCOL,IDIM,ifail,I,J,N,M,IDX,N4
+      INTEGER IOFF,IADDR,JADDR,IVERT,JVERT,NTURB
+d48 3
+a50 1
+      DOUBLE PRECISION PHI(NEQMAX),CHARV(12),DCHARV(12)
+d72 1
+a72 2
+          WRITE(6,*)' Model NOT suited for turbulent calculations'
+          STOP
+d75 2
+d86 1
+a86 1
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,DCHARV,1)
+d127 64
+a190 2
+      CALL DGEMM('Transpose','Transpose',NOFVERT,NOFVAR,NOFVAR,
+     +           ONE,VCZ,NOFVAR,dVdZ,NOFVAR,ZERO,CHARV,NOFVERT)
+d193 2
+a194 1
+          IOFF = (KWAVE-1)*NOFVERT+1
+d199 3
+a201 3
+      CALL ScalarScheme( IELEM, VCN, R_SPEED(1,KWAVE), SCALRES, ZERO,
+     +   CHARV(IOFF), TSTEP, DCHARV(IOFF), STIFC, NDIM, 
+     +   NOFVERT, PICARD )
+d204 6
+a209 1
+      IF (PICARD) THEN
+d213 4
+a216 4
+          IADDR = KWAVE + (KWAVE-1)*NOFVAR
+          CALL DCOPY(NOFVERT*NOFVERT,STIFC,1,STIFEL(IADDR),
+     +               NOFVAR*NOFVAR)
+      ENDIF
+d236 32
+a267 1
+   18 CONTINUE
+d271 15
+a285 2
+      CALL DGEMM('No Transpose','Transpose',NOFVAR,NOFVERT,NOFVAR,
+     +           ONE,dUdV,NOFVAR,DCHARV(1),NOFVERT,ZERO,NODRES,NOFVAR) 
+d304 2
+a305 2
+              JADDR = (IVERT-1)*NOFVAR*NOFVAR+1
+              CALL MatdZdU(VCZ((IVERT-1)*NOFVAR+1),dZdU(JADDR),
+d319 1
+a319 1
+corig+                       NOFVAR,NOFVAR,ONE,STIFEL(IADDR),NOFVAR,
+d328 1
+a328 1
+                  JADDR = (JVERT-1)*NOFVAR*NOFVAR+1
+d330 1
+a330 1
+                  IADDR = IDX(IVERT,JVERT,NOFVAR,NOFVERT)
+d332 2
+a333 2
+     +                       NOFVAR,NOFVAR,ONE,TEMPA(IADDR),NOFVAR,
+     +                       TEMPB(JADDR),NOFVAR,ZERO,STIFEL(IADDR),
+@
+
+
+1.20.1.1
+log
+@fixed a bug when DUALTS = .FALSE.
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.F,v 1.20 2003/12/23 23:08:23 aldo Exp abonfi $
+d23 1
+a23 1
+      INTEGER NEQMAX,IWRK,NORDER,FRSTEQ
+d29 2
+a30 2
+      INCLUDE 'blkEulerII.com'
+      INCLUDE 'three.com'
+a32 1
+      INCLUDE 'time.com'
+d34 1
+a34 1
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,i1mach
+a68 5
+      IF( LTIME )THEN
+          WRITE(6,*)' Time-accurate mode for this preconditioner is NOT
+     &yet available'
+          STOP
+      ENDIF 
+@
+
+
+1.19
+log
+@the timestep vector is now dimensioned NOFVAR x NPOIN
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.18 2002/09/10 09:57:28 abonfi Exp abonfi $
+d45 1
+a45 1
+      DOUBLE PRECISION WKSP(NMAX)
+d54 2
+@
+
+
+1.18
+log
+@removed initialization of the nodal residual and time-step vectors
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.17 2002/08/12 08:43:37 abonfi Exp abonfi $
+d23 5
+a27 2
+      INTEGER	NEQMAX
+      PARAMETER(NEQMAX=4)
+d38 2
+a39 2
+      INTEGER KWAVE,FrstEq,JCOL,IDIM,ifail,I,J,N,M,IDX,N4
+      INTEGER NORDER,IOFF,IADDR,JADDR,IVERT,JVERT,NTURB
+a53 2
+      DATA FrstEq,NORDER/ 1,NEQMAX/
+C
+d59 8
+a76 1
+caldo CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1)
+d78 3
+a80 1
+caldo CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+d82 2
+a84 4
+      IF( MACHSQR .LT. ONE )THEN
+          WRITE(6,*)' Subsonic Mach number ',MACH,' in cell ',IELEM
+          STOP
+      ENDIF
+d151 1
+a151 1
+            IF( DABS( FLUCT - SCALRES ) .GT. 1.D- 12)THEN
+a152 1
+89999 FORMAT(5X,'Scalar residual in Element ',I6,' Wave # ',I1)
+d166 4
+d219 1
+@
+
+
+1.17
+log
+@switched arguments when calling Eigen routine
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.16 2000/10/20 08:15:02 aldo Exp abonfi $
+d68 1
+a68 1
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1)
+d70 1
+a70 1
+      CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+@
+
+
+1.16
+log
+@the call to the viscous routines has been removed;
+other minor changes
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.15 2000/10/12 09:39:30 aldo Exp aldo $
+d85 1
+a85 1
+      CALL Eigen_II(JacobianMatrix,NEQMAX,DVDZ,DUDV,NOFVAR,NDIM)
+@
+
+
+1.15
+log
+@removed the call to the "viscous" routines
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE EulerII(IELEM,VCN,VCZ,ZTURB,NDIM,NOFVERT,NOFVAR,
+d11 1
+a11 1
+C     $Id: EulerII.f,v 1.14 2000/08/03 16:45:57 aldo Exp aldo $
+d44 1
+a44 1
+      DOUBLE PRECISION TSTEP(*),ZTURB(*)
+a71 6
+C     COMPUTES THE GRADIENT OF THE VARIABLES
+C
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +               VOLUME)
+C
+      CALL Parm2Prim(NDIM,IELEM)
+@
+
+
+1.14
+log
+@add turbulent stuff
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.13 2000/06/24 09:29:54 aldo Exp aldo $
+d28 1
+a29 1
+      INCLUDE 'stream.com'
+d37 1
+a37 1
+      DOUBLE PRECISION FLUCT,SCALRES,VISCL,VISCT
+d45 2
+a46 2
+      DOUBLE PRECISION VCZ(*),VCN(*),STIFD(144),
+     +VOLUME,STIFC(144),TEMPA(400),TEMPB(100),STIFEL(*),dZdU(100)
+d48 2
+a49 2
+      DOUBLE PRECISION DDOT,SUTHERLAW,EDDY
+      EXTERNAL         DDOT,SUTHERLAW,EDDY
+d51 1
+a51 2
+      DATA FrstEq,NORDER,VISCT / 1,NEQMAX,ZERO /
+      DATA dZdU/100*ZERO/
+d91 1
+a91 1
+      CALL Eigen_II(JacobianMatrix,NEQMAX,NDIM)
+d117 1
+a117 1
+     +           ONE,VCZ,NOFVAR,dVdU,5,ZERO,CHARV,NOFVERT)
+d147 1
+a147 1
+            CALL DAXPY(NOFVAR,SCALRES,dUdV(1,KWAVE),1,WKSP,1)
+d163 1
+a163 1
+     +           ONE,dUdV,NMAX,DCHARV(1),NOFVERT,ZERO,NODRES,NOFVAR) 
+d169 4
+a172 1
+      IF (PICARD) THEN
+d180 1
+a180 1
+     +NDIM,NOFVAR)
+a181 27
+      ENDIF
+C
+C  ********** compute VISCOUS contribution **********
+C
+      IF (KAN.EQ.4) THEN
+C
+C     Compute cell averaged laminar viscosity
+C
+          VISCL = SUTHERLAW(M_INFTY,ABAR,ASQR)
+          IF(TURBULENT)THEN
+             VISCT = EDDY(ZTURB,1,UAVG(1),VISCL,NOFVERT)
+          ENDIF
+C
+C     compute viscous fluxes
+C
+          CALL VSFLX4(IELEM,VCZ,NODRES,TSTEP,NOFVAR,VCN,dZdU,NDIM,
+     +                NOFVERT,VOLUME,STIFD,VISCL,VISCT,PICARD)
+      ENDIF
+C
+C
+C
+C     --------------- If explicit, return now  ---------------
+C
+      IF (.NOT.PICARD) RETURN
+C
+C     Add the element stiffness matrix to the global stiffness matrix
+C
+d187 1
+a187 1
+     +               NMAX,STIFEL,NOFVAR,ZERO,TEMPA,NOFVAR)
+d189 1
+a189 1
+     +               NOFVAR*NOFVERT,NOFVAR,TWO,dVdU,5,dZdU,
+d194 1
+a194 1
+corig+                       dVdU,5,ZERO,TEMPB,NOFVAR)
+d197 1
+a197 1
+corig+                       NOFVAR,NOFVAR,-ONE,dUdV,NMAX,TEMPB,NOFVAR,
+a210 9
+C
+C     now STIFEL contains the convection stiffness matrix in
+C     conserved variables
+C
+C     add the diffusion stiffness matrices to the element
+C     stiffness (convective) matrix
+C
+          IF (KAN.EQ.4) CALL DAXPY(N4,ONE,
+     +                             STIFD(1),1,STIFEL(1),1)
+@
+
+
+1.13
+log
+@re-introduced turbulence modeling
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.f,v 1.12 1999/11/29 09:57:10 aldo Exp aldo $
+d17 1
+d29 1
+d37 1
+a37 1
+      DOUBLE PRECISION FLUCT,SCALRES
+d45 1
+a45 1
+      DOUBLE PRECISION VCZ(*),VCN(*),
+d48 2
+a49 2
+      DOUBLE PRECISION DDOT
+      EXTERNAL         DDOT
+d51 1
+a51 1
+      DATA FrstEq,NORDER / 1,NEQMAX /
+a59 4
+      IF( KAN .NE. -4 )THEN
+          STOP 'Only works with KAN = -4'
+      ENDIF 
+C
+d182 18
+d243 2
+a244 2
+caldo     IF (KAN.EQ.4) CALL DAXPY(N4,ONE,
+caldo+                             STIFD(1),1,STIFEL(1),1)
+@
+
+
+1.12
+log
+@major changes in the arguments;
+some operations have been moved to the calling routine
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE EulerII(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +NODRES,TSTEP,STIFEL,VOLUME,PICARD,ScalarScheme,MatrixScheme)
+d11 1
+a11 1
+C     $Id: EulerII.F,v 1.11 1999/08/19 16:36:21 aldo Exp $
+d34 1
+a34 1
+      INTEGER NORDER,IOFF,IADDR,JADDR,IVERT,JVERT
+d42 1
+a42 1
+      DOUBLE PRECISION TSTEP(*)
+@
+
+
+1.11
+log
+@changed calling sequence for CELPTR
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE EulerII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     &DT,RHS,A,ScalarScheme,MatrixScheme)
+d11 1
+a11 1
+C     $Id: EulerII.F,v 1.10 1999/08/18 09:15:17 aldo Exp aldo $
+a14 7
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/viewer.h"
+C
+      Vec DT,RHS
+      Mat A
+a24 9
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+      INTEGER KA
+      COMMON /GHOSTCOM/KA
+C
+      INCLUDE 'implicit.h'
+      INCLUDE 'nloc'
+a27 2
+      INCLUDE 'projct.com'
+      INCLUDE 'IO'
+d29 1
+a29 1
+      INTEGER	IELEM,NDIM,NOFVERT,NOFVAR,NELEM
+d36 1
+a36 1
+      LOGICAL INTERIOR
+d41 4
+a44 6
+      DOUBLE PRECISION NODRES(NMAX*VMAX)
+      DOUBLE PRECISION TSTEP(VMAX)
+      INTEGER IDX_P(3*VMAX),IDX_V(NMAX*VMAX),IDX_F(3*VMAX)
+      INTEGER ICN(VMAX),ICF(VMAX)
+      DOUBLE PRECISION VCP(3*VMAX),VCZ(NMAX*VMAX),VCN(3*VMAX),
+     +VOLUME,STIFC(144),TEMPA(400),TEMPB(100),STIFEL(400),dZdU(100)
+a61 1
+      INTERIOR = IELEM .LE. NELEM
+d66 1
+a66 1
+      IF (TIMEIMPL) THEN
+a74 4
+      CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   DSTAK(LZROE), DSTAK(LFACNOR), NDIM, NOFVERT, NOFVAR, ICN,
+     +   VCZ, VCN, VOLUME)
+C
+d130 1
+a130 1
+     +   NOFVERT, TIMEIMPL )
+d133 1
+a133 1
+      IF (TIMEIMPL) THEN
+d153 1
+a153 1
+               WRITE(NOUT,89999)IELEM,KWAVE
+d155 1
+a155 1
+               WRITE(NOUT,*)FLUCT,SCALRES
+a168 14
+C     Scatter and add nodal update and timestep to global arrays
+C
+      IF (INTERIOR) THEN
+          CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+          CALL VecSetValuesBlocked(RHS,NOFVERT,ICN,NODRES,
+     +                      ADD_VALUES,IFAIL)
+      ELSE
+          IADDR = (KA-1)*NOFVAR + 1
+          CALL VecSetValue(DT,ICN(KA),TSTEP(KA),ADD_VALUES,IFAIL)
+          CALL VecSetValuesBlocked(RHS,1,ICN(KA),NODRES(IADDR),
+     +                      ADD_VALUES,IFAIL)
+      ENDIF 
+
+C
+d172 1
+a172 1
+      IF (TIMEIMPL .AND. INTERIOR) THEN
+d187 1
+a187 1
+      IF (.NOT.TIMEIMPL) RETURN
+a190 1
+      IF (INTERIOR) THEN
+a229 60
+          DO 37 IVERT = 1,NOFVERT
+              DO 37 JVERT = 1,NOFVERT
+                  IADDR = IDX(IVERT,JVERT,NOFVAR,NOFVERT)
+#ifdef MPI
+                  CALL MatSetValuesBlockedLocal(A,1,ICN(IVERT),1,
+     +                                     ICN(JVERT),STIFEL(IADDR),
+     +                                     ADD_VALUES,IFAIL)
+#else
+                  CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN(JVERT),
+     +                                     STIFEL(IADDR),ADD_VALUES,
+     +                                     IFAIL)
+#endif
+   37     CONTINUE
+C
+      ELSE
+C
+C     Ghost cell
+C
+          IADDR = IDX(KA,KA,NOFVAR,NOFVERT)
+          JADDR = (KA-1)*NOFVAR*NOFVAR+1
+C
+          CALL MatdZdU(VCZ((KA-1)*NOFVAR+1),dZdU(JADDR),NDIM,NOFVAR)
+C
+C     transform from symmetrizing to conserved variables
+C
+C     WORK := \tilde{C}_{ij} * M^{-1}
+C     C_{ij} := dUdV * WORK = dUdV * \tilde{C}_{ij} * M^{-1}
+C
+C     TEMPA := 2 * PPOSZ * dZdU(KA)
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +         TWO,PPOSZ,NOFVAR,dZdU(JADDR),NOFVAR,ZERO,TEMPA,NOFVAR)
+C
+C     TEMPB := dVdZ * TEMPA = dVdZ * 2 * PPOSZ * dZdU(KA)
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +               ONE,dVdU,5,TEMPA,NOFVAR,ZERO,TEMPB,NOFVAR)
+C
+C     TEMPA := STIFC * TEMPB = STIFC * dVdZ * 2 * PPOSZ * dZdU(KA)
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +               ONE,STIFEL(IADDR),NOFVAR,TEMPB,NOFVAR,ZERO,TEMPA,
+     +               NOFVAR)
+C
+C    Postmultiply the element stiffness matrix by the
+C       PPOSU matrix which depends on the b.c.
+C       PPOSU MUST be in conserved variables on entry
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +         -ONE,dUdV,NMAX,TEMPA,NOFVAR,ZERO,STIFEL(IADDR),NOFVAR)
+C
+#ifdef MPI
+          CALL MatSetValuesBlockedLocal(A,1,ICN(KA),1,ICN(KA),
+     +                             STIFEL(IADDR),ADD_VALUES,IFAIL)
+#else
+          CALL MatSetValuesBlocked(A,1,ICN(KA),1,ICN(KA),STIFEL(IADDR),
+     +                             ADD_VALUES,IFAIL)
+#endif
+C
+      ENDIF
+@
+
+
+1.10
+log
+@Changed VecSetValues into VecSetValuesBlocked
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.F,v 1.9 1999/08/17 15:28:49 aldo Exp aldo $
+d97 2
+a98 2
+     +   NDIM, NOFVERT, NOFVAR, 1, 1, ICN, ICF, VCP,
+     +   VCZ, VCN, VOLUME, IDX_P, IDX_V, IDX_F)
+@
+
+
+1.9
+log
+@projectors (PPOSZ) are now dimensioned differently; the
+call to DGEMM has been changed accordingly
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.F,v 1.8 1999/08/11 18:06:44 aldo Exp aldo $
+d198 1
+a198 1
+          CALL VecSetValues(RHS,NOFVAR*NOFVERT,IDX_V,NODRES,
+d203 1
+a203 1
+          CALL VecSetValues(RHS,NOFVAR,IDX_V(IADDR),NODRES(IADDR),
+@
+
+
+1.8
+log
+@bug fixed
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.F,v 1.7 1999/03/19 09:56:05 aldo Exp aldo $
+d301 1
+a301 1
+     +               TWO,PPOSZ,5,dZdU(JADDR),NOFVAR,ZERO,TEMPA,NOFVAR)
+@
+
+
+1.7
+log
+@Add implicit timestepping
+@
+text
+@d11 1
+a11 1
+C     $Id: EulerII.F,v 1.6 1998/11/07 09:01:00 aldo Exp aldo $
+d51 1
+a51 1
+      INTEGER KWAVE,FrstEq,JCOL,IDIM,ifail,I,J,N,M,IDX
+d70 1
+d83 8
+d93 1
+d148 2
+a149 1
+            IOFF = (KWAVE-1)*NOFVERT+1
+d210 12
+@
+
+
+1.6
+log
+@Add automatic identification flag
+@
+text
+@d11 1
+a11 1
+C     $Id$
+d39 1
+d44 1
+d51 2
+a52 2
+      INTEGER KWAVE,FrstEq,JCOL,IDIM,ifail
+      INTEGER NORDER,IADD,IOFF
+d64 1
+a64 1
+     +VOLUME,STIFC(1)
+d71 2
+d77 4
+d97 5
+d140 1
+a140 1
+C Each advection eqn. is solved using an upwind scheme
+d144 12
+a155 1
+     +   NOFVERT, .FALSE. )
+d190 1
+a190 1
+          IADD = (KA-1)*NOFVAR + 1
+d192 1
+a192 1
+          CALL VecSetValues(RHS,NOFVAR,IDX_V(IADD),NODRES(IADD),
+d199 108
+@
+
+
+1.5
+log
+@bug fixed when CHECKing
+@
+text
+@d11 2
+@
+
+
+1.4
+log
+@passing NDIM to the subr. StreamAlignedFrame
+@
+text
+@d47 1
+a47 1
+      INTEGER KWAVE,IVAR,FrstEq,JCOL,IDIM,ifail
+d83 2
+a84 2
+     +VOLUME)
+c
+a86 9
+      IF( ICHECK .NE. 0 )THEN
+C
+C	Some initializations ....
+C
+         CALL DSCAL(NORDER,ZERO,PHI,1)
+         CALL DSCAL(NORDER,ZERO,WKSP,1)
+         CALL CHECK(IELEM,NDIM,NOFVAR)
+      ENDIF
+C
+d99 6
+a130 7
+   18 CONTINUE
+C
+C Transform into conserved variables
+C
+      CALL DGEMM('No Transpose','Transpose',NOFVAR,NOFVERT,NOFVAR,
+     +           ONE,dUdV,NMAX,DCHARV(1),NOFVERT,ZERO,NODRES,NOFVAR) 
+C
+d135 1
+a135 1
+            FLUCT = DDOT(NDIM,R_SPEED(1,KWAVE),1,GRAD_CHAR(IVAR,1),LDW)
+d138 1
+a138 1
+            CALL DAXPY(NOFVAR,SCALRES,dUdV(1,IVAR),1,WKSP,1)
+d146 1
+d149 7
+a155 1
+    5 CONTINUE
+@
+
+
+1.3
+log
+@computation of the characteristic variables has changed
+@
+text
+@d98 1
+a98 1
+      CALL StreamAlignedFrame
+@
+
+
+1.2
+log
+@Petsc version
+@
+text
+@d47 2
+a48 2
+      INTEGER KWAVE,IVAR,IVERT,FrstEq,JCOL,IDIM,ifail
+      INTEGER NORDER,IADD
+d50 1
+a50 1
+      LOGICAL LFLAG,INTERIOR
+d53 2
+a54 2
+      DOUBLE PRECISION PHI(NEQMAX)
+      DOUBLE PRECISION DQ(VMAX),WKSP(NMAX),RESIDUAL(NEQMAX)
+d56 1
+a56 1
+      DOUBLE PRECISION TSTEP(VMAX),Q(VMAX)
+d122 2
+a123 1
+      DO 5 KWAVE = 1 , 4
+d125 2
+a126 1
+         IVAR = KWAVE
+d128 1
+a128 1
+C	Constructs the "Characteristic" variable
+d130 3
+a132 6
+         DO 20 IVERT =  1, NOFVERT
+         Q(IVERT) = DDOT(NDIM, GRAD_CHAR(IVAR,1), LDW,
+     +   VCP((IVERT-1)*NDIM+1), 1)
+   20 CONTINUE
+C
+C The advection eqn. is solved using an upwind scheme
+d134 1
+a134 2
+      CALL ScalarScheme( IELEM, VCN, R_SPEED(1,KWAVE), SCALRES, ZERO,
+     +   Q, TSTEP, DQ, STIFC, NDIM, NOFVERT, .FALSE. )
+d138 2
+a139 1
+      CALL DGER(NOFVAR,NOFVERT,ONE,dUdV(1,IVAR),1,DQ,1,NODRES,NOFVAR)
+a159 4
+C     CALL X04CAF('General',' ',NOFVAR,NOFVERT,NODRES,NOFVAR,
+C    +         'Nodal update ',IFAIL)
+C     pause
+C
+a160 3
+C
+caldo CALL DAXPYI( NOFVERT, 1.D0, DT, ICN, DSTAK(LDTLIN) )
+caldo CALL DAXPYI( NOFVAR*NOFVERT, 1.D0, NODRES, IDX_V, DSTAK(LRESID) )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 5
+CC
+CC------------------------------+------------------------------
+CC
+      SUBROUTINE EulerII(IELEM,NDIM,NOFVERT,NOFVAR,
+     &ScalarScheme,MatrixScheme)
+d13 7
+a19 1
+C     .. Parameters ..
+a29 2
+C     .. Commons ..
+C
+d34 2
+d43 1
+a43 5
+C     .. Scalar Arguments ..
+C
+      INTEGER	IELEM,NDIM,NOFVERT,NOFVAR
+C
+C     .. External Arguments ..
+d47 2
+a48 4
+C     .. Local Scalars ..
+C
+      INTEGER KWAVE,IVAR,JVAR,IVERT,FrstEq,JCOL,IDIM,ifail
+      INTEGER NORDER,NVARLAM
+d50 1
+a50 3
+      LOGICAL LFLAG
+C
+C     .. Local Arrays ..
+d56 1
+a56 1
+      DOUBLE PRECISION DT(VMAX),Q(VMAX)
+d60 1
+a60 3
+     +VOLUME
+C
+C     .. External Functions ..
+d65 1
+a65 1
+C     .. External Subroutines ..
+d67 3
+d71 1
+a71 5
+C     .. Data Statements ..
+C
+      DATA FrstEq,NORDER / 1,NEQMAX /
+C
+C     .. Executable Statements ..
+d74 1
+a74 1
+      CALL DINIT(NOFVERT,ZERO,DT,1)
+d96 1
+a96 1
+C	.. Sets a stream aligned frame ..
+d100 1
+a100 1
+C       .. The Jacobian Matrix of the subsystem is assembled and
+d136 1
+a136 5
+     +   Q, DT, DQ, NDIM, NOFVERT )
+C     CALL X04CAF('General',' ',1,NOFVERT,DT,1,
+C    +         'Timestep ',IFAIL)
+C     CALL X04CAF('General',' ',1,NOFVERT,DQ,1,
+C    +         'Nodal update ',IFAIL)
+d140 1
+a140 1
+      CALL DGER(NOFVAR,NOFVERT,ONE,R(1,IVAR),1,DQ,1,NODRES,NOFVAR)
+d144 1
+a144 1
+C	.. Checks for the scalar residual ..
+d149 1
+a149 1
+            CALL DAXPY(NOFVAR,SCALRES,R(1,IVAR),1,WKSP,1)
+d159 1
+a159 1
+    5 CONTINUE ! End loop over waves
+d167 14
+a180 5
+      CALL DAXPYI( NOFVERT, 1.D0, DT, ICN, DSTAK(LDTLIN) )
+      CALL DAXPYI( NOFVAR*NOFVERT, 1.D0, NODRES, IDX_V, DSTAK(LRESID) )
+C     write(6,*)(icn(jcol),jcol=1,nofvert)
+C     write(6,*)(idx_v(jcol),jcol=1,nofvar*nofvert)
+C     pause
+a186 266
+CC
+CC------------------------------+------------------------------
+CC
+      SUBROUTINE Eigen_II(Matrix,LDA,NDIM)
+C
+C	.. van Leer, Lee, Roe preconditioner in conservative form ..
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'three'
+      INCLUDE 'blkEulerII'
+      INCLUDE 'fix'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER LDA,NDIM
+C
+C     .. Array Arguments ..
+C
+      DOUBLE PRECISION Matrix(LDA,LDA,*)
+C
+C
+      DOUBLE PRECISION MSQRM1,CNST,QBAR
+      DOUBLE PRECISION DensAbar,TEMP1,TEMP2,TEMP3,TEMP4
+      INTEGER IDIM,JDIM
+C
+C
+      DOUBLE PRECISION U_dot_DU(3),S_dot_DU(3)
+C
+C
+      DOUBLE PRECISION DDOT,fun_BETA_aldo
+      EXTERNAL         DDOT,fun_BETA_aldo
+C
+C
+C		.. Mach related variables ..
+C
+      MSQRM1	= MACHSQR - ONE
+*     BETA 	= SQRT( MAX( EPSQR_SONIC , ABS( MSQRM1 ) ) )
+      BETA	= fun_BETA_aldo( MSQRM1 )
+      BETASQR	= BETA*BETA
+      X		= BETA / MAX( MACH , ONE )
+      nu_p	= HALF * ( MSQRM1/BETASQR + ONE )
+      nu_m	= HALF * ( MSQRM1/BETASQR - ONE )
+C
+      QBAR = ONE / QINV
+      DensAbar = UAVG(1)*ABAR
+      TEMP1 = BETA/DensAbar
+C
+         U_dot_dU(1) = DDOT(NDIM,GRAD_PRIM(3,1),1,
+     1                         RotationMatrix(1,1),1)
+         U_dot_dU(2) = DDOT(NDIM,GRAD_PRIM(3,2),1,
+     1                         RotationMatrix(1,1),1)
+         S_dot_dU(1) = DDOT(NDIM,GRAD_PRIM(3,1),1,
+     1                         RotationMatrix(1,2),1)
+         S_dot_dU(2) = DDOT(NDIM,GRAD_PRIM(3,2),1,
+     1                         RotationMatrix(1,2),1)
+C
+C	.. Advection speeds ..
+C
+         R_SPEED(1,1) = RotationMatrix(1,1)
+         R_SPEED(1,2) = RotationMatrix(1,1)
+         R_SPEED(1,3) = X*(nu_p*RotationMatrix(1,1)+
+     1                             RotationMatrix(1,2)/BETA)
+         R_SPEED(1,4) = X*(nu_p*RotationMatrix(1,1)-
+     1                             RotationMatrix(1,2)/BETA)
+C
+         R_SPEED(2,1) = RotationMatrix(2,1)
+         R_SPEED(2,2) = RotationMatrix(2,1)
+         R_SPEED(2,3) = X*(nu_p*RotationMatrix(2,1)+
+     1                             RotationMatrix(2,2)/BETA)
+         R_SPEED(2,4) = X*(nu_p*RotationMatrix(2,1)-
+     1                             RotationMatrix(2,2)/BETA)
+C	.. The Characteristic variables ..
+C
+C	.. Entropy ..
+C
+         GRAD_CHAR(1,1)=-GRAD_PRIM(2,1)/ASQR + GRAD_PRIM(1,1)
+         GRAD_CHAR(1,2)=-GRAD_PRIM(2,2)/ASQR + GRAD_PRIM(1,2)
+C
+C	.. Total Enthalpy ..
+C
+         GRAD_CHAR(2,1)= GRAD_PRIM(2,1)/DensAbar + Mach*U_dot_DU(1)
+         GRAD_CHAR(2,2)= GRAD_PRIM(2,2)/DensAbar + Mach*U_dot_DU(2)
+C
+C	.. Acoustic variables ..
+C
+         GRAD_CHAR(3,1)= TEMP1*GRAD_PRIM(2,1)+Mach*S_dot_DU(1)
+         GRAD_CHAR(3,2)= TEMP1*GRAD_PRIM(2,2)+Mach*S_dot_DU(2)
+         GRAD_CHAR(4,1)= TEMP1*GRAD_PRIM(2,1)-Mach*S_dot_DU(1)
+         GRAD_CHAR(4,2)= TEMP1*GRAD_PRIM(2,2)-Mach*S_dot_DU(2)
+C
+C	.. Jacobian matrix of the acoustic+shear subsystem ..
+C
+         Matrix(1,1,1) = X*(nu_p*RotationMatrix(1,1)+
+     &                              RotationMatrix(1,2)/BETA)
+         Matrix(1,2,1) = X*nu_m* RotationMatrix(1,1)
+*
+         Matrix(2,1,1) = Matrix(1,2,1)
+         Matrix(2,2,1) = X*(nu_p*RotationMatrix(1,1)-
+     &                              RotationMatrix(1,2)/BETA)
+*
+         Matrix(1,1,1) = X*(nu_p*RotationMatrix(1,1)+
+     &                              RotationMatrix(1,2)/BETA)
+         Matrix(1,2,1) = X*nu_m* RotationMatrix(1,1)
+*
+         Matrix(2,1,1) = Matrix(1,2,1)
+         Matrix(2,2,1) = X*(nu_p*RotationMatrix(1,1)-
+     &                              RotationMatrix(1,2)/BETA)
+C
+C
+C
+         Matrix(1,1,2) = X*(nu_p*RotationMatrix(2,1)+
+     &                              RotationMatrix(2,2)/BETA)
+         Matrix(1,2,2) = X*nu_m* RotationMatrix(2,1)
+*
+         Matrix(2,1,2) = Matrix(1,2,2)
+         Matrix(2,2,2) = X*(nu_p*RotationMatrix(2,1)-
+     &                              RotationMatrix(2,2)/BETA)
+*
+         Matrix(1,1,2) = X*(nu_p*RotationMatrix(2,1)+
+     &                              RotationMatrix(2,2)/BETA)
+         Matrix(1,2,2) = X*nu_m* RotationMatrix(2,1)
+*
+         Matrix(2,1,2) = Matrix(1,2,2)
+         Matrix(2,2,2) = X*(nu_p*RotationMatrix(2,1)-
+     &                              RotationMatrix(2,2)/BETA)
+*
+C
+C     .. Right eigenvector matrix in conserved variables ..
+C
+      CNST = QBAR
+C
+      TEMP1 = HALF + ONE / (GM1*MACHSQR) ! H / q^2
+      TEMP2 = CNST * HALF * DensAbar / KINETIC
+      TEMP3 = HALF * TEMP2 * BETA / X
+      TEMP4 = CNST * DensAbar / X * QINV
+C
+      R(1,1) = CNST
+      R(2,1) = CNST * KINETIC
+C
+      R(1,2) = TEMP2
+      R(2,2) = CNST * DensAbar * ( TEMP1 + ONE )
+C
+      R(1,3) = TEMP3
+      R(2,3) = TEMP3 * UAVG(2)
+C
+      R(1,4) = R(1,3)
+      R(2,4) = R(2,3)
+C
+      R(1,5) = ZERO
+      R(2,5) = ZERO
+C
+      DO 31 IDIM = 1 , NDIM
+         JDIM = IDIM + 2
+C
+         R(JDIM,1) = CNST         * UAVG(JDIM)
+         R(JDIM,2) = TWO  * TEMP2 * UAVG(JDIM) 
+         R(JDIM,3) = HALF * TEMP4 * (BETA*RotationMatrix(IDIM,1)
+     &                                   +RotationMatrix(IDIM,2))
+         R(JDIM,4) = HALF * TEMP4 * (BETA*RotationMatrix(IDIM,1)
+     &                                   -RotationMatrix(IDIM,2))
+         R(JDIM,5) =        TEMP4 *       RotationMatrix(IDIM,3)
+C
+   31 CONTINUE
+C
+  200 CONTINUE
+C
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE StreamAlignedFrame
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      INCLUDE 'three'
+      INCLUDE 'blkEulerII'
+C
+C     .. Scalar Arguments ..
+C
+C
+C     .. Array Arguments ..
+C
+c     DOUBLE PRECISION	RotationMatrix(3,*) ! Moved to common blkEulerII
+C
+C     .. Local Scalars ..
+C
+C     INTEGER I
+C
+C     DOUBLE PRECISION SING,COSG,TEMP2
+C
+C     .. Local Arrays ..
+C
+C     .. External Subroutines ..
+C
+      EXTERNAL	CROSS_PROD,DCOPY
+C
+C     .. External Functions ..
+C
+      INTEGER  ISDMIN,JCYCL
+      EXTERNAL ISDMIN,JCYCL
+      DOUBLE PRECISION DNRM2
+      EXTERNAL         DNRM2
+C
+C     .. Executable Statements ..
+C
+C
+C	.. Builds the rotation matrix ..
+C
+   20 CONTINUE ! ++++++++++ 2D ++++++++++
+C
+      RotationMatrix(1,1) = UAVG(3)*QINV
+      RotationMatrix(2,1) = UAVG(4)*QINV
+      RotationMatrix(3,1) = ZERO
+C
+      RotationMatrix(1,2) =-UAVG(4)*QINV
+      RotationMatrix(2,2) = UAVG(3)*QINV
+      RotationMatrix(3,2) = ZERO
+C
+      CALL CROSS_PROD( RotationMatrix(1,1) , RotationMatrix(1,2) ,
+     &	               RotationMatrix(1,3) )
+C
+      RETURN
+      END
+CC
+CC------------------------------+------------------------------
+CC
+      DOUBLE PRECISION FUNCTION fun_BETA_aldo( X )
+C
+C	.. The argument (X) MUST be Mach^2 - 1.00
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants'
+      INCLUDE 'protect'
+      DOUBLE PRECISION	X
+      DOUBLE PRECISION	A,C
+      INTRINSIC	DSQRT,DABS
+C
+      A=0.25D0*(EPS_SONIC**(-1.5D0))
+      C=0.75D0*(EPS_SONIC**0.5D0)
+C
+      IF( ABS(X) .LT. EPS_SONIC )THEN
+	fun_BETA_aldo = A*X*X + C
+      ELSE
+	fun_BETA_aldo = DSQRT( DABS( X ) )
+      ENDIF
+C
+      RETURN
+      END
+C
+@

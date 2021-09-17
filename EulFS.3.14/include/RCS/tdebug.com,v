@@ -1,0 +1,56 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2013.01.25.08.08.10;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@variables used to de-bug the turbulence model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER MAXNVT
+      PARAMETER(MAXNVT=8000)
+      DOUBLE PRECISION tmpconv(MAXNVT)
+      DOUBLE PRECISION tmpdif1(MAXNVT)
+      DOUBLE PRECISION tmpdif2(MAXNVT)
+      DOUBLE PRECISION tmpsou1(MAXNVT)
+      DOUBLE PRECISION tmpsou2(MAXNVT)
+      DOUBLE PRECISION tmpsou3(MAXNVT)
+      DOUBLE PRECISION tmpdiff(MAXNVT)
+      DOUBLE PRECISION tmpsum(MAXNVT)
+      DOUBLE PRECISION tmpdum(MAXNVT)
+      INTEGER KCN(4)
+      COMMON/TDEBUG/tmpconv,tmpdif1,tmpdif2,tmpsou1,tmpsou2,
+     +tmpsou3,tmpdiff,tmpsum,tmpdum,kcn
+@

@@ -1,0 +1,2 @@
+C     FACNOR(1:NDIM,1:NFACE)  cartesian components 
+C                             of the NFACE faces/edges

@@ -1,0 +1,28 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the NSPCG library
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER IPARM(25)
+      DOUBLE PRECISION RPARM(16)
+      COMMON /COMNSPCG_I/ IPARM
+      COMMON /COMNSPCG_R/ RPARM
+@

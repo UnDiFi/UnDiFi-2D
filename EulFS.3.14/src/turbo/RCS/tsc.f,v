@@ -1,0 +1,538 @@
+head	1.11;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.11
+	release3_13_0:1.11
+	release3_12_0:1.11
+	release3_11_0:1.11
+	release3_10_0:1.11
+	release3_8_0:1.11
+	release3_7_1:1.11
+	release3_7_0:1.11
+	release3_4_5:1.9
+	release3_4_4:1.8
+	release3_4_3:1.8
+	release3_4_2:1.8
+	release3_4_1:1.8
+	release3_4_0:1.8
+	release3_3_5:1.8
+	release3_3_4:1.8
+	release3_3_3:1.8
+	release3_3_2:1.8
+	release3_3_1:1.8
+	release3_3_0:1.8;
+locks; strict;
+comment	@c @;
+
+
+1.11
+date	2020.02.05.15.05.33;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2015.05.11.08.48.35;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2015.05.11.07.20.27;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2001.07.06.09.30.10;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2000.09.22.12.19.39;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2000.06.02.09.07.19;	author aldo;	state Exp;
+branches
+	1.6.1.1;
+next	1.5;
+
+1.5
+date	2000.06.01.14.52.33;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.06.03.08.00.55;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.02.02.10.30.59;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.12.02.18.22.59;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.10.39;	author aldo;	state Exp;
+branches;
+next	;
+
+1.6.1.1
+date	2011.05.06.15.06.16;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Vorticity computation for  the Spalart-Allmaras model
+@
+
+
+1.11
+log
+@unused stuff has been removed
+@
+text
+@!> \brief \b TSC
+!> \par Purpose
+!>
+!> (Spalart & Allmaras model: version: SA-fv3)
+!> vorticity module computation
+!>
+!> The equations are the same as for the "standard" version (SA), with the following exceptions: 
+!>
+!> \f[
+!> \tilde{S} = f_{v_3} \, \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2}
+!> \f]
+!> \f[
+!> f_{v_2} = \frac{1}{\left(1+\chi/c_{v_2}\right)^3}
+!> \f]
+!> \f[
+!> f_{v_3} = \frac{\left(1+\chi \,f_{v_1}\right)\left(1-f_{v_2}\right)}{\chi}
+!> \f]
+!> \f[
+!> c_{v_3} = 5
+!> \f]
+!>
+!>
+!> @@param[in] OMEGA is \f$ \Omega \f$
+!> @@param[in] TD is the distance from the nearest wall
+!> @@param[in] TVI is the turbulent working variable \f$ \tilde{\nu} \f$
+!> @@param[in] VI is laminar kinematic viscosity
+!> \author $Author: abonfi $
+!> \version $Revision: 1.10 $
+!> \date $Date: 2015/05/11 08:48:35 $
+      DOUBLE PRECISION FUNCTION TSC(OMEGA,TD,TVI,VI)
+c2345678
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'turb.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'visco.com'
+C
+
+C
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION OMEGA,TD,TVI,VI
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TCHI,FV2,FV3
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TFV2,TFV3
+      EXTERNAL TFV2,TFV3
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+C
+      TCHI = TVI/VI
+      FV2 = TFV2(TCHI)
+      FV3 = TFV3(TCHI,FV2)
+      IF (DABS(TD).LT.1.D-10) TD=1.D-10
+      TSC = OMEGA*FV3 + TVI/ (TK*TD)**2.*FV2*REINV
+
+      RETURN
+
+      END
+!> \brief \b TSCSA
+!> \par Purpose
+!>
+!> vorticity module computation
+!> (Spalart & Allmaras model: version: SA)
+!>
+!> The equations are those of the "standard" version (SA):
+!>
+!> \f[
+!> \tilde{S} = \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2}
+!> \f]
+!> \f[
+!> f_{v_1} = \frac{\chi^3}{\left(\chi^3+c_{v_1}^3\right)}
+!> \f]
+!> \f[
+!> f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)}
+!> \f]
+!>
+!>
+!> @@param[in] OMEGA is \f$ \Omega \f$
+!> @@param[in] TD is the distance from the nearest wall
+!> @@param[in] TVI is the turbulent working variable \f$ \tilde{\nu} \f$
+!> @@param[in] VI is laminar kinematic viscosity
+!> \author $Author: abonfi $
+!> \version $Revision: 1.10 $
+!> \date $Date: 2015/05/11 08:48:35 $
+      DOUBLE PRECISION FUNCTION TSCSA(OMEGA,TD,TVI,VI)
+c2345678
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'turb.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'visco.com'
+C
+C
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION OMEGA,TD,TVI,VI
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TCHI,FV2
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TFV2SA
+      EXTERNAL TFV2SA
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DABS
+C     ..
+C
+      TCHI = TVI/VI
+      FV2 = TFV2SA(TCHI)
+      IF (DABS(TD).LT.1.D-10) TD=1.D-10
+      TSCSA = OMEGA + TVI/ (TK*TD)**2*FV2*REINV
+      RETURN
+      END
+!> \brief \b TSCSAc
+!> \par Purpose
+!>
+!> vorticity module computation with limiting (c)
+!> (Spalart & Allmaras model: version: SA)
+!>
+!> The equations are those of the "standard" version (SA):
+!>
+!> \f[
+!> \tilde{S} = \Omega + \frac{1}{Re} \frac{\tilde{\nu}}{\kappa^2d^2} f_{v_2}
+!> \f]
+!> \f[
+!> f_{v_1} = \frac{\chi^3}{\left(\chi^3+c_{v_1}^3\right)}
+!> \f]
+!> \f[
+!> f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)}
+!> \f]
+!>
+!>
+!> @@param[in] OMEGA is \f$ \Omega \f$
+!> @@param[in] TD is the distance from the nearest wall
+!> @@param[in] TVI is the turbulent working variable \f$ \tilde{\nu} \f$
+!> @@param[in] VI is laminar kinematic viscosity
+!> \author $Author: abonfi $
+!> \version $Revision: 1.10 $
+!> \date $Date: 2015/05/11 08:48:35 $
+      DOUBLE PRECISION FUNCTION TSCSAc(OMEGA,TD,TVI,VI)
+c2345678
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'turb.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'visco.com'
+C
+C     ..
+C     .. Parameters ..
+      DOUBLE PRECISION C2,C3
+      PARAMETER(C2=0.7d0,C3=0.9d0)
+C
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION OMEGA,TD,TVI,VI
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TCHI,FV2,HATS
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION TFV2SA
+      EXTERNAL TFV2SA
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DABS
+C     ..
+C
+      TCHI = TVI/VI
+      FV2 = TFV2SA(TCHI)
+      IF (DABS(TD).LT.1.D-10) TD=1.D-10
+      HATS = TVI/ (TK*TD)**2*FV2*REINV
+      IF(HATS/OMEGA.LT.-C2)THEN
+         TSCSAc = OMEGA *
+     &  (ONE + ((C2*C2*OMEGA+C3*HATS)/((C3-TWO*C2)*OMEGA-HATS)))
+      ELSE 
+         TSCSAc = OMEGA + HATS
+      ENDIF 
+      RETURN
+      END
+@
+
+
+1.10
+log
+@fixed a bug with a missing include file
+@
+text
+@d28 2
+a29 2
+!> \version $Revision: 1.9 $
+!> \date $Date: 2015/05/11 07:20:27 $
+a44 1
+      LOGICAL COMPRESSIBLE
+a47 1
+!     INTEGER U,V,W
+d90 2
+a91 2
+!> \version $Revision: 1.9 $
+!> \date $Date: 2015/05/11 07:20:27 $
+d148 2
+a149 2
+!> \version $Revision: 1.9 $
+!> \date $Date: 2015/05/11 07:20:27 $
+@
+
+
+1.9
+log
+@added various way to compute the strain,
+depending on the selected model variant
+@
+text
+@d28 2
+a29 2
+!> \version $Revision: 1.14 $
+!> \date $Date: 2013/08/22 15:10:57 $
+d92 2
+a93 2
+!> \version $Revision: 1.14 $
+!> \date $Date: 2013/08/22 15:10:57 $
+d150 2
+a151 2
+!> \version $Revision: 1.14 $
+!> \date $Date: 2013/08/22 15:10:57 $
+d158 1
+@
+
+
+1.8
+log
+@un fix suggerito da Alberto Grimaldi
+@
+text
+@d1 29
+a29 12
+
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       $Id: tsc.f,v 1.7 2000/09/22 12:19:39 aldo Exp abonfi $
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+a30 24
+*  ==============================================================
+*
+*
+*      FILENAME: tsc.f
+*
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      vorticity module computation
+*      (Spalart & Allmaras model: version)
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : October 97
+*
+*
+*      Note the nondimensionalization of \tilde{S}
+*
+*  ==============================================================
+
+d49 1
+a49 1
+      INTEGER U,V,W
+d67 126
+@
+
+
+1.7
+log
+@same as version 1.5.
+@
+text
+@d6 1
+a6 1
+C       $Id: tsc.f,v 1.5 2000/06/01 14:52:33 aldo Exp $
+d69 1
+@
+
+
+1.6
+log
+@Original version of the S variable in the Spalart-Allmaras model
+@
+text
+@d6 1
+a6 1
+C       $Id: tsc.f,v 1.5 2000/06/01 14:52:33 aldo Exp aldo $
+d52 1
+d56 1
+d68 2
+a69 1
+      TSC = OMEGA + TVI/ (TK*TD)**2.*FV2*REINV
+@
+
+
+1.6.1.1
+log
+@bounds wall distance away from 0.d0
+@
+text
+@d6 1
+a6 1
+C       $Id: tsc.f,v 1.6 2000/06/02 09:07:19 aldo Exp abonfi $
+a65 1
+      IF (DABS(TD).LT.1.D-10) TD=1.D-10
+@
+
+
+1.5
+log
+@changed parameters in the argument
+@
+text
+@d6 1
+a6 1
+C       $Id$
+a51 1
+      LOGICAL COMPRESSIBLE
+a54 1
+      INTEGER U,V,W
+d66 1
+a66 2
+      FV3 = TFV3(TCHI,FV2)
+      TSC = OMEGA*FV3 + TVI/ (TK*TD)**2.*FV2*REINV
+@
+
+
+1.4
+log
+@Model upgrade according to the suggestions in Ashford's PhD thesis
+@
+text
+@d6 1
+a6 2
+C       @@(#)tsc.f      1.0.0.1 4/1/95  95/08/21        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tsc.f
+d13 1
+a13 1
+      DOUBLE PRECISION FUNCTION TSC(COMPRESSIBLE,OMEGA,TD,TVI,VI)
+a46 1
+      INCLUDE 'three'
+d55 1
+a55 1
+      DOUBLE PRECISION OMEGAX,OMEGAY,OMEGAZ,TCHI,FV2,FV3
+a64 18
+      IF (COMPRESSIBLE) THEN
+          U = 3
+          V = 4
+          W = 5
+
+      ELSE
+          U = 2
+          V = 3
+          W = 4
+      ENDIF
+C
+C Cell averaged vorticity
+C
+      OMEGAX = GRAD_PRIM(W,2) - GRAD_PRIM(V,3)
+      OMEGAY = GRAD_PRIM(U,3) - GRAD_PRIM(W,1)
+      OMEGAZ = GRAD_PRIM(V,1) - GRAD_PRIM(U,2)
+C
+      OMEGA = SQRT(OMEGAX*OMEGAX+OMEGAY*OMEGAY+OMEGAZ*OMEGAZ)
+@
+
+
+1.3
+log
+@Vorticity (OMEGA) is noe returned in the argument's list
+@
+text
+@d57 1
+a57 1
+      DOUBLE PRECISION OMEGAX,OMEGAY,OMEGAZ,TCHI
+d61 2
+a62 2
+      DOUBLE PRECISION TFV2
+      EXTERNAL TFV2
+a85 1
+      TSC = OMEGA
+d87 3
+a89 3
+      TSC = TSC + TVI/ (TK*TD)**2.*TFV2(TCHI)*REINV
+      TSC = Q_INFTY*TSC
+
+@
+
+
+1.2
+log
+@Add include for bnd.h
+@
+text
+@d14 1
+a14 1
+      DOUBLE PRECISION FUNCTION TSC(COMPRESSIBLE,TD,TVI,VI)
+d53 1
+a53 1
+      DOUBLE PRECISION TD,TVI,VI
+d57 1
+a57 1
+      DOUBLE PRECISION OMEGA,OMEGAX,OMEGAY,OMEGAZ,TCHI
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d44 1
+@

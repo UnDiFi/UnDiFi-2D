@@ -1,0 +1,27 @@
+head	1.1;
+access;
+symbols;
+locks
+	aldo:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for euler
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER DECOMP,NOFWAVES
+      COMMON /COMEUL/ DECOMP,NOFWAVES
+@

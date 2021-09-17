@@ -1,0 +1,328 @@
+head	1.3;
+access
+	abonfi;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2013.04.30.07.42.54;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2013.01.26.12.25.32;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2012.05.24.11.04.33;	author tesistim;	state Exp;
+branches;
+next	;
+
+
+desc
+@trasformazione dal parametro vettore alle variabili
+conservative per l'ARgon
+@
+
+
+1.3
+log
+@the integer addresses of the energy and momentum dofs
+are now in a common
+@
+text
+@      SUBROUTINE PARM2CONS4Ar(ZROE,DUDZ,NOFVAR,NDIM)
+C
+C     $Id: parm2cons4Ar.f,v 1.2 2013/01/26 12:25:32 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C     transformation matrix from
+C     parameter vector to conserved variables
+C
+C
+C
+C
+C     Assembles the dUdZ matrix ...
+C
+C     .. Parameters ..
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'plasma.h'
+      INCLUDE 'dofs.com'
+      INCLUDE 'three.com'
+      INCLUDE 'four.com'
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+      INTEGER I,J
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DUDZ(NOFVAR,NOFVAR),ZROE(NOFVAR)
+      DOUBLE PRECISION DPDZS(NSP),DPDZH,DPDZU(3),SUMDPZS ,HELP
+C
+C
+      SUMDPZS = ZERO
+      DO I = 1 , NSP
+        SUMDPZS = SUMDPZS + DR(I) * ZAVG(I)
+      ENDDO
+C
+C     .. Local Scalars ..
+C     ..
+C
+C     PRESSURE JACOBIAN  DP/DZ 
+C
+C     singles species
+C
+      DO I = 1 , NSP
+         DPDZS(I) = ONE/(ONE+DE) * (SUMDPZS + DR(I)*SQRTR + DE*ZAVG(IE)
+     &   + DM(1)*ZAVG(IX) + DM(2)*ZAVG(IY))
+         IF (NDIM.EQ.3) THEN
+           DPDZS(I) = DPDZS(I) +  DM(3)*ZAVG(IZ)/(ONE+DE)   
+         ENDIF  
+      ENDDO
+      HELP = SQRTR/(ONE+DE)
+C
+C     energy	
+C
+      DPDZH = DE*HELP
+C
+C     x-momentum
+C
+      DPDZU(1) = DM(1)*HELP
+C
+C     y-momentum
+C      
+      DPDZU(2) = DM(2)*HELP
+C
+C     z-momentum
+C
+      IF (NDIM.EQ.3) THEN
+         DPDZU(3) = DM(3)*HELP
+      ENDIF 
+C
+C
+C     JACOBIAN DU/DZ
+C
+C     single species 	
+C
+      DO I = 1 , NSP
+        DO J = 1 , NSP  
+          DUDZ(I,J) = ZROE(I)
+          IF (I.EQ.J) THEN
+            DUDZ(I,J) = DUDZ(I,J) + SQRTR
+          ENDIF
+        ENDDO
+      ENDDO
+
+      DO I = 1 , NSP
+        DUDZ(I,IE) = ZERO
+        DUDZ(I,IX) = ZERO
+        DUDZ(I,IY) = ZERO
+      ENDDO
+C
+C     energy
+C
+      DO I = 1 , NSP
+        DUDZ(IE,I) = ZAVG(IE) - DPDZS(I)
+      ENDDO
+      DUDZ(IE,IE) = SQRTR - DPDZH
+      DUDZ(IE,IX) = - DPDZU(1)
+      DUDZ(IE,IY) = - DPDZU(2)
+C
+C     x-momentum
+C
+      DO I = 1 , NSP
+        DUDZ(IX,I) = ZAVG(IX)               
+      ENDDO    
+      DUDZ(IX,IE) = ZERO
+      DUDZ(IX,IX) = SQRTR
+      DUDZ(IX,IY) = ZERO
+C
+C     y-momentum
+C
+      DO I = 1 , NSP
+        DUDZ(IY,I) = ZAVG(IY)
+      ENDDO
+      DUDZ(IY,IE) = ZERO
+      DUDZ(IY,IX) = ZERO
+      DUDZ(IY,IY) = SQRTR
+C
+      IF (NDIM.EQ.2) RETURN
+C     
+C     
+      DO I = 1 , NSP
+        DUDZ(I,IZ) = ZERO
+      ENDDO
+      DUDZ(IE,IZ) = -DPDZU(3)
+      DUDZ(IX,IZ) = ZERO
+      DUDZ(IY,IZ) = ZERO
+C
+C     z-momentum
+C
+      DO I = 1 , NSP
+        DUDZ(IZ,I) = ZAVG(IZ)
+      ENDDO
+      DUDZ(IZ,IE) = ZERO
+      DUDZ(IZ,IX) = ZERO
+      DUDZ(IZ,IY) = ZERO
+      DUDZ(IZ,IZ) = SQRTR
+C
+C
+      RETURN
+C
+      END
+@
+
+
+1.2
+log
+@latest changes made by Raffaele
+@
+text
+@d3 1
+a3 1
+C     $Id: parm2cons.f,v 1.2 2008/12/03 11:16:18 abonfi Exp $
+d19 1
+a25 1
+!rpepe      INTEGER IE,IX,IY,IZ
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a3 1
+C     $Header: /msa20/home/abonfi/CFD_codes/EulFS.0.14.1/src/euler/RCS/parm2cons.f,v 1.2 2008/12/03 11:16:18 abonfi Exp $
+d16 1
+d18 3
+d24 2
+d29 8
+a36 1
+C     ..
+d40 16
+a55 1
+C     total density 
+d57 33
+a89 41
+      DUDZ(1,1) = TWO*ZROE(1)
+      DUDZ(1,2) = ZERO
+      DUDZ(1,3) = ZERO
+      DUDZ(1,4) = ZERO
+      DUDZ(1,5) = ZERO
+      DUDZ(1,6) = ZERO
+      DUDZ(1,7) = ZERO
+!     DUDZ(1,8) = ZERO
+C
+C     Ar+
+C
+      DUDZ(2,1) = ZERO
+      DUDZ(2,2) = TWO*ZROE(2)
+      DUDZ(2,3) = ZERO
+      DUDZ(2,4) = ZERO
+      DUDZ(2,5) = ZERO
+      DUDZ(2,6) = ZERO
+      DUDZ(2,7) = ZERO
+!     DUDZ(2,8) = ZERO
+C
+C     Ar++
+C
+      DUDZ(3,1) = ZERO
+      DUDZ(3,2) = ZERO
+      DUDZ(3,3) = TWO*ZROE(3)
+      DUDZ(3,4) = ZERO
+      DUDZ(3,5) = ZERO
+      DUDZ(3,6) = ZERO
+      DUDZ(3,7) = ZERO
+!     DUDZ(3,8) = ZERO
+C
+C     e
+C
+      DUDZ(4,1) = ZERO
+      DUDZ(4,2) = ZERO
+      DUDZ(4,3) = ZERO
+      DUDZ(4,4) = TWO*ZROE(4)
+      DUDZ(4,5) = ZERO
+      DUDZ(4,6) = ZERO
+      DUDZ(4,7) = ZERO
+!     DUDZ(4,8) = ZERO
+d93 6
+a98 8
+      DUDZ(5,1) = GINV*ZROE(5)
+      DUDZ(5,2) = ZERO
+      DUDZ(5,3) = ZERO
+      DUDZ(5,4) = ZERO
+      DUDZ(5,5) = GINV*ZROE(1)
+      DUDZ(5,6) = GM1OG*ZROE(6)
+      DUDZ(5,7) = GM1OG*ZROE(7)
+!     DUDZ(5,8) = GM1OG*ZROE(8)
+d102 6
+a107 8
+      DUDZ(6,1) = ZROE(6)
+      DUDZ(6,2) = ZERO
+      DUDZ(6,3) = ZERO
+      DUDZ(6,4) = ZERO
+      DUDZ(6,5) = ZERO
+      DUDZ(6,6) = ZROE(1)
+      DUDZ(6,7) = ZERO
+!     DUDZ(6,8) = ZERO
+d111 6
+a116 8
+      DUDZ(7,1) = ZROE(7)
+      DUDZ(7,2) = ZERO
+      DUDZ(7,3) = ZERO
+      DUDZ(7,4) = ZERO
+      DUDZ(7,5) = ZERO
+      DUDZ(7,6) = ZERO
+      DUDZ(7,7) = ZROE(1)
+!     DUDZ(7,8) = ZERO
+d119 8
+a126 13
+C
+!     DUDZ(1,5) = ZERO
+!     DUDZ(2,5) = GM1OG*ZROE(5)
+!     DUDZ(3,5) = ZERO
+!     DUDZ(4,5) = ZERO
+C
+      DUDZ(1,8) = ZERO
+      DUDZ(2,8) = ZERO
+      DUDZ(3,8) = ZERO
+      DUDZ(4,8) = ZERO
+      DUDZ(5,8) = GM1OG*ZROE(8)
+      DUDZ(6,8) = ZERO
+      DUDZ(7,8) = ZERO
+d130 7
+a136 8
+      DUDZ(8,1) = ZROE(8)
+      DUDZ(8,2) = ZERO
+      DUDZ(8,3) = ZERO
+      DUDZ(8,4) = ZERO
+      DUDZ(8,5) = ZROE(1)
+      DUDZ(8,6) = ZERO
+      DUDZ(8,7) = ZERO
+      DUDZ(8,8) = ZERO
+@

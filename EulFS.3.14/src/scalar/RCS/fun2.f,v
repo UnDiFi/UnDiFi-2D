@@ -1,0 +1,88 @@
+head	1.2;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks
+	abonfi:1.2; strict;
+comment	@c @;
+
+
+1.2
+date	2013.01.24.08.08.43;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.02.07.10.24.20;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@tetstcase #6, two-dimensional
+@
+
+
+1.2
+log
+@Added RCS Id marker
+@
+text
+@      DOUBLE PRECISION FUNCTION FUNSOU2(X,Y,DELTA)
+C
+C     $Id$
+C
+      IMPLICIT NONE
+C
+C     Source term for Laplace's equation
+C     A*U_X+B*U_Y = SOURCE
+C
+C     The convection speed is (A,B)=(COS(DELTA),SIN(DELTA))
+C
+C     SOURCE=FUNSOU2
+C
+C     the exact solution is
+C
+C     UEX = SIN(2.D0*PI* (Y*COS(DELTA)-X*SIN(DELTA))) + XPRIME*YPRIME -
+C    +      X*Y
+C
+C     XPRIME = X - COS(DELTA)* (X*COS(DELTA)+Y*SIN(DELTA))
+C     YPRIME = Y - SIN(DELTA)* (X*COS(DELTA)+Y*SIN(DELTA))
+C
+C
+C
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION DELTA,X,Y
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC COS,SIN
+C     ..
+      FUNSOU2 = - (Y*COS(DELTA)+X*SIN(DELTA))
+
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 3
+a23 2
+
+
+@

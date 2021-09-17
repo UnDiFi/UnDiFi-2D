@@ -1,0 +1,52 @@
+\hypertarget{tfw_8f}{}\doxysection{src/turbo/tfw.f File Reference}
+\label{tfw_8f}\index{src/turbo/tfw.f@{src/turbo/tfw.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+double precision function \mbox{\hyperlink{tfw_8f_a5a011508b3c4b83cf01d2731a381a66b}{T\+FW}} (R)
+\begin{DoxyCompactList}\small\item\em {\bfseries{T\+FW}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{tfw_8f_a5a011508b3c4b83cf01d2731a381a66b}\label{tfw_8f_a5a011508b3c4b83cf01d2731a381a66b}} 
+\index{tfw.f@{tfw.f}!TFW@{TFW}}
+\index{TFW@{TFW}!tfw.f@{tfw.f}}
+\doxysubsubsection{\texorpdfstring{TFW()}{TFW()}}
+{\footnotesize\ttfamily double precision function T\+FW (\begin{DoxyParamCaption}\item[{double precision}]{R }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{T\+FW}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+(Spalart \& Allmaras model\+: version\+: all)
+
+Computes the function\+:
+
+\[ f_{w} = g \, \left(\frac{1+c_{w_3}^6}{g^6+c_{w_3}^6}\right)^{1/6} \] where\+: \[ g = r + c_{w_2} \left(r^6-r\right) \] and \[ r = \frac{\tilde{\nu}}{\tilde{S}\,\kappa^2\,d^2} \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em R} & is $ \frac{\tilde{\nu}}{\tilde{S}\,\kappa^2\,d^2} $ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+2 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2015/05/11 07\+:21\+:49 
+\end{DoxyParagraph}

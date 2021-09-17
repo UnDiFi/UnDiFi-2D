@@ -1,0 +1,588 @@
+head	1.12;
+access
+	simula
+	caspur
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.12
+	release3_13_0:1.12
+	release3_12_0:1.12
+	release3_11_0:1.12
+	release3_10_0:1.12
+	release3_8_0:1.12
+	release3_7_1:1.12
+	release3_7_0:1.12
+	release3_4_5:1.12
+	release3_4_4:1.12
+	release3_4_3:1.12
+	release3_4_2:1.12
+	release3_4_1:1.12
+	release3_4_0:1.12
+	release3_3_5:1.12
+	release3_3_4:1.12
+	release3_3_3:1.11
+	release3_3_2:1.11
+	release3_3_1:1.11
+	release3_3_0:1.11;
+locks; strict;
+comment	@c @;
+
+
+1.12
+date	2013.03.16.10.39.14;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2005.10.22.11.09.05;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.12.06.13.37.53;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.08.31.09.42.05;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.11.25.17.01.03;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.11.03.17.39.01;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.04.07.12.52.21;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.03.16.17.12.35;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@read info about periodic nodes
+@
+
+
+1.12
+log
+@Added checks on MAP
+@
+text
+@      SUBROUTINE PERIODIC(NPOIN,NGHOST,NPNOD,NELEM,NOFVAR,
+     +                    NOFVERT,ICELNOD,MAP)
+C
+      IMPLICIT NONE
+C
+C     $Id: periodic.F,v 1.11 2005/10/22 11:09:05 abonfi Exp abonfi $
+C
+C
+      INCLUDE 'io.com' 
+C
+C     define GRAPHICS to see on screen the correspondance between 
+C     periodic nodes
+C     #define GRAPHICS
+C
+#ifdef GRAPHICS
+      INCLUDE 'nloc' 
+#endif
+C
+C
+C     NPNOD is half the # of periodic nodes
+C     Nodes must be ordered as follows in the datafile
+C     the lists of periodic nodes that have been deleted must appear last
+C     and there must be a correspondance between these
+C     two lists; the correspondance is established by the array MAP
+C
+C
+C     +-------------------------+-------+-------+
+C     ^                        ^       ^       ^ 
+C     |                        |       |       |
+C     |                        |       |     NPOIN
+C     1                        |       |
+C                              |   NPOIN-NPNOD
+C                              | 
+C                        NPOIN-2*NPNOD
+C
+C     corresponding indexes of the two lists must be
+C     the corresponding nodes
+C
+      INTEGER NPOIN,NGHOST,NPNOD,NELEM,NOFVAR,NOFVERT
+      INTEGER ICELNOD(NOFVERT,NELEM),MAP(NPNOD)
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IELEM,IVERT,IPOIN,IFAIL
+#ifdef GRAPHICS
+      integer INDGR,ipntr(2)
+      external grper
+#endif
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+C     ..
+C     .. External Functions ..
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL ISTKRL
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (ISTAK(1),DSTAK(1))
+C     ..
+C
+C     make a check on MAP
+C     1 <= MAP(I) <= NPOIN+NGHOST
+C
+      IFAIL = 0
+      do ivert = 1,npnod
+         ipoin = MAP(IVERT)
+         IF(.NOT.((1.LE.IPOIN).AND.(IPOIN.LE.(NPOIN+NGHOST))))THEN
+             WRITE(6,*)'Smtgh. wrong with MAP(',ivert,') = ',
+     &       ipoin 
+             IFAIL = IFAIL + 1
+         ENDIF
+      enddo
+      IF(IFAIL.NE.0)CALL EXIT(IFAIL)
+C
+C
+C     loop over elements
+C
+      DO 200 IELEM = 1,NELEM
+          DO 200 IVERT = 1, NOFVERT
+             IPOIN = ICELNOD(IVERT,IELEM)
+             IF( IPOIN.GT.(NPOIN+NGHOST) )THEN
+                  ICELNOD(IVERT,IELEM) = MAP(IPOIN-(NPOIN+NGHOST))
+             ENDIF
+  200 CONTINUE
+C
+#ifdef GRAPHICS
+      CALL GRINIT(5,6,'MESH')
+      INDGR = 23
+      CALL GRCTRL(GRPER,INDGR,'~x~y~TRPLOT',ISTAK(LCELNOD),
+     +            NELEM,NPOIN,DSTAK(LCORG),1.d0,1.d0,1.d0,1.d0,
+     +            istak(ipntr(1)),istak(ipntr(2)))
+#endif
+C
+
+      RETURN
+      END
+@
+
+
+1.11
+log
+@removed unused variables
+@
+text
+@d6 1
+a6 1
+C     $Id: periodic.F,v 1.10 2000/12/06 13:37:53 aldo Exp $
+d45 1
+a45 1
+      INTEGER IELEM,IVERT,IPOIN
+d66 15
+a89 2
+C
+C
+@
+
+
+1.10
+log
+@changes to make periodic b.c. work in parallel
+@
+text
+@d6 1
+a6 1
+C     $Id: periodic.F,v 1.9 2000/11/15 09:15:09 aldo Exp aldo $
+a8 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscis.h"
+C
+d45 1
+a45 1
+      INTEGER IERR,IELEM,LINDX(2),I,IVERT,IPOIN,LOC
+@
+
+
+1.9
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE PERIODIC(NPOIN,NELEM,NOFVAR,NOFVERT,ICELNOD)
+d6 1
+a6 1
+C     $Id: periodic.F,v 1.8 2000/10/19 16:10:34 aldo Exp aldo $
+a11 2
+C#include "include/finclude/petscviewer.h"
+C
+a12 1
+      INCLUDE 'periodic.com' 
+d25 1
+a25 1
+C     the two lists of periodic nodes must appear last
+d27 1
+a27 1
+C     two lists
+d42 2
+a43 2
+      INTEGER NPOIN,NELEM,NOFVAR,NOFVERT
+      INTEGER ICELNOD(NOFVERT,NELEM)
+d74 2
+a75 2
+             IF( IPOIN.GT.NPOIN-NPNOD )THEN
+                  ICELNOD(IVERT,IELEM) = IPOIN-NPNOD
+a78 3
+      NPOIN = NPOIN-NPNOD
+C
+      WRITE(NOUT,100)NPNOD,NPOIN
+a90 4
+  100 FORMAT(/5X,'THERE ARE ',I5,' PERIODIC NODES'/,
+     +5X,'GLOBAL NUMBER OF NODES HAS BEEN RESET TO ',I5)
+
+
+@
+
+
+1.8
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d5 1
+a5 1
+C     $Id: periodic.F,v 1.7 1999/08/31 09:42:05 aldo Exp aldo $
+d13 1
+a13 2
+caldo INCLUDE 'iset.com' 
+      INCLUDE 'IO' 
+@
+
+
+1.7
+log
+@declaration of unused subroutines removed
+@
+text
+@d5 1
+a5 1
+C     $Id: periodic.F,v 1.6 1998/11/25 17:01:03 aldo Exp aldo $
+d9 1
+a9 1
+#include "include/finclude/is.h"
+d11 1
+a11 1
+C#include "include/finclude/viewer.h"
+@
+
+
+1.6
+log
+@naming of I/O devices has changed
+@
+text
+@d5 1
+a5 1
+C     $Id$
+a60 2
+      INTEGER INITXDR,ISTKGT
+      EXTERNAL INITXDR,ISTKGT
+d63 1
+a63 1
+      EXTERNAL ISTKRL,XDRCLOSE,XDRIMAT,XDRINT
+@
+
+
+1.5
+log
+@Add automatic identification flag
+@
+text
+@d14 1
+a14 1
+caldo INCLUDE 'linux.com' 
+d86 1
+a86 1
+      WRITE(6,100)NPNOD,NPOIN
+@
+
+
+1.4
+log
+@new implementation of periodic b.c.s
+@
+text
+@d5 3
+@
+
+
+1.3
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE PERIODIC(NPOIN,NELEM,NOFVAR)
+d10 3
+a12 2
+      INCLUDE 'iset.com' 
+      INCLUDE 'linux.com' 
+a21 2
+C     read correspondance between periodic nodes from
+C     file004.dat
+d23 16
+a38 2
+C     PPOIN is the # of periodic nodes
+C     two lists of PPOIN indexes (using 1-based indexing) follow
+d42 2
+a43 1
+      INTEGER NPOIN,NELEM,NOFVAR
+d48 1
+a48 1
+      INTEGER IERR,IXDRS,LINDX(2),I,IWORK(2),ILOOP,IWKSP(2),LOC
+a68 6
+      EQUIVALENCE (LINDX(1),ISetA)
+      EQUIVALENCE (LINDX(2),ISetB)
+      EQUIVALENCE (IWORK(1),PeriodicSetA)
+      EQUIVALENCE (IWORK(2),PeriodicSetB)
+      EQUIVALENCE (IWKSP(1),PeriodicNodesA)
+      EQUIVALENCE (IWKSP(2),PeriodicNodesB)
+a69 3
+      IXDRS = INITXDR('file004.dat','r')
+
+      CALL XDRINT(IXDRS,PPOIN)
+d71 1
+a71 1
+C     loop over the two lists of periodic nodes
+d73 7
+a79 1
+      DO 200 ILOOP = 1,2
+d81 1
+a81 1
+C     allocate space for the indexing array
+d83 1
+a83 2
+         LINDX(ILOOP) = ISTKGT(NOFVAR*PPOIN,2)
+         LOC = LINDX(ILOOP)
+a84 45
+C     read periodic indexes
+C
+         CALL XDRIMAT(IXDRS,PPOIN,ISTAK(LOC))
+#ifdef GRAPHICS
+         ipntr(iloop) = istkgt(ppoin,2)
+         call icopy(ppoin,ISTAK(LOC),1,istak(ipntr(iloop)),1)
+#endif
+C
+C     check correctness of the indexes and reset to 0-based indexing
+C
+         CALL INDXING(NPOIN,ISTAK(LOC),PPOIN)
+C
+C     create the Index Sets of periodic nodes
+C
+         CALL ISCreateGeneral(MPI_COMM_SELF,PPOIN,
+     +                        ISTAK(LOC),IWKSP(ILOOP),IERR)
+C
+C
+         CALL MakeBlock(ISTAK(LOC),NOFVAR,PPOIN)
+C
+C     create the Index Sets of periodic variables
+C
+         CALL ISCreateGeneral(MPI_COMM_SELF,NOFVAR*PPOIN,
+     +                        ISTAK(LOC),IWORK(ILOOP),IERR)
+C
+C
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"is.output",
+C    +VIEWER_STDOUT_SELF,IERR) 
+C     write(6,*)'ViewerFileOpenASCII has returned ',ifail
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IERR)
+C     write(6,*)'ViewerSetFormat has returned ',ifail
+C
+#ifdef PARCH_linux
+C
+C     need to keep a copy of the two lists in the STACK
+C
+#else
+      CALL ISTKRL(1)
+#endif
+  200 CONTINUE
+      CALL XDRCLOSE(IXDRS)
+
+      WRITE(6,100)PPOIN
+
+d96 2
+a97 61
+  100 FORMAT(/5X,'THERE ARE ',I5,' PERIODIC NODES'/)
+
+
+      END
+
+      subroutine makeblock(array,nofvar,ppoin)
+
+      implicit none
+
+c
+c     create block-indexing
+c 
+c     on entry the first ppoin entries of array
+c     contain the node numbers of periodic nodes (0 based indexing)
+c     the array is overwritten with adresses of variables 
+c     for these nodes (0 based indexing)      
+
+
+      integer nofvar,ppoin
+      integer array(nofvar*ppoin) 
+      integer idx_from,idx_to
+      integer idx,i,j,n,ipoin
+      
+      IDX(I,J,N) = (I-1)*N+J
+
+      do 1 i = ppoin,1,-1
+         ipoin = array(i)+1
+         do 1 j = nofvar,1,-1
+         idx_from = idx(ipoin,j,nofvar)
+         idx_to = idx(i,j,nofvar)
+         array(idx_to) = idx_from-1
+    1 continue
+      return
+      end
+      SUBROUTINE INDXING(NPOIN,ILIST,NLEN)
+
+      IMPLICIT NONE
+
+C     .. Scalar Arguments ..
+      INTEGER NLEN,NPOIN
+C     ..
+C     .. Array Arguments ..
+      INTEGER ILIST(NLEN)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I,N
+C     ..
+      DO 10 I = 1,NLEN
+          N = ILIST(I)
+          IF (N.LT.1 .OR. N.GT.NPOIN) GOTO 777
+C
+C     reset to 0 based indexing
+C
+          ILIST(I) = N - 1
+   10 CONTINUE
+
+      RETURN
+
+  777 CONTINUE
+      WRITE (6,FMT=100) N,I
+      STOP
+a98 3
+  100 FORMAT (10X,'INVALID NODE INDEX ',I6,/,10X,'IN THE ',I4,
+     +       '-TH ENTRY OF THE LIST OF PERIODIC NODES',/,10X,
+     +       'CHECK THE INPUT FILE --file004.dat--')
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d5 2
+a6 2
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/is.h"
+d8 1
+a8 1
+C#include "include/FINCLUDE/viewer.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE PERIODIC(NOFVAR)
+d8 2
+d13 8
+d29 1
+a29 1
+      INTEGER NOFVAR
+d35 4
+d69 1
+d72 2
+a73 2
+C     the following can be changed to ISTKGT(PPOIN....
+C     once ISCreateBlock will be working properly
+a74 1
+         LINDX(ILOOP) = ISTKGT(NOFVAR*PPOIN,2)
+a75 1
+         CALL XDRIMAT(IXDRS,PPOIN,ISTAK(LINDX(ILOOP)))
+d77 5
+a81 1
+C     reset to 0-based indexing
+d83 5
+a87 4
+         LOC = LINDX(ILOOP)
+         DO 10 I = 0,PPOIN-1
+            ISTAK(LOC+I)= ISTAK(LOC+I)-1
+   10    CONTINUE
+d90 9
+a98 1
+     +                        ISTAK(LINDX(ILOOP)),IWKSP(ILOOP),IERR)
+a99 4
+C     make block indexes (at least until ISCreateBlock will not be
+C     working correctly ....
+
+         CALL MakeBlock(ISTAK(LINDX(ILOOP)),NOFVAR,PPOIN)
+d101 6
+a106 2
+C     CALL ISCreateBlock(MPI_COMM_SELF,NOFVAR,PPOIN,ISTAK(LINDX),
+C    +                   PeriodicSetA,IERR)
+a107 2
+      CALL ISCreateGeneral(MPI_COMM_SELF,NOFVAR*PPOIN,
+     +                     ISTAK(LINDX(ILOOP)),IWORK(ILOOP),IERR)
+d120 10
+d133 1
+d165 33
+@

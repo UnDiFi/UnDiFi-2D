@@ -1,0 +1,13 @@
+10c10
+< C  $Id: ApplicationFunction_t.F,v 1.10 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C  $Id: ApplicationFunction_t.F,v 1.10 2016/11/10 11:25:13 abonfi Exp $
+21a22
+>       IMPLICIT NONE
+22a24
+> #include "petsc/finclude/petscsys.h"
+25,26d26
+<       use petscvec 
+<       use petscmat 
+28d27
+<       IMPLICIT NONE

@@ -1,0 +1,123 @@
+\hypertarget{chkflx_8f}{}\doxysection{src/geometry/chkflx.f File Reference}
+\label{chkflx_8f}\index{src/geometry/chkflx.f@{src/geometry/chkflx.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{chkflx_8f_a9d690e634a9826f4c56255676dde3fdf}{C\+H\+K\+F\+LX}} (I\+B\+N\+D\+F\+AC, N\+B\+F\+AC, I\+C\+E\+L\+F\+AC, I\+C\+E\+L\+N\+OD, N\+O\+F\+V\+E\+RT, N\+E\+L\+EM, F\+A\+C\+E\+N\+O\+RM, Z\+R\+OE, X\+Y\+Z\+D\+OT, N\+O\+F\+V\+AR, N\+D\+IM, N\+F\+A\+CE, C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE, L\+W\+R\+I\+TE, I\+T\+ER)
+\begin{DoxyCompactList}\small\item\em {\bfseries{C\+H\+K\+F\+LX}} \end{DoxyCompactList}\item 
+subroutine \mbox{\hyperlink{chkflx_8f_a9effe776a9b882c5f7f4a5e4b99d8b16}{F\+L\+U\+X4}} (N\+D\+IM, F\+A\+CN, Z\+R\+OE, X\+Y\+Z\+D\+OT, F\+L\+XN)
+\begin{DoxyCompactList}\small\item\em {\bfseries{F\+L\+U\+X4}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{chkflx_8f_a9d690e634a9826f4c56255676dde3fdf}\label{chkflx_8f_a9d690e634a9826f4c56255676dde3fdf}} 
+\index{chkflx.f@{chkflx.f}!CHKFLX@{CHKFLX}}
+\index{CHKFLX@{CHKFLX}!chkflx.f@{chkflx.f}}
+\doxysubsubsection{\texorpdfstring{CHKFLX()}{CHKFLX()}}
+{\footnotesize\ttfamily subroutine C\+H\+K\+F\+LX (\begin{DoxyParamCaption}\item[{integer, dimension(3,$\ast$)}]{I\+B\+N\+D\+F\+AC,  }\item[{integer}]{N\+B\+F\+AC,  }\item[{integer, dimension(nofvert,$\ast$)}]{I\+C\+E\+L\+F\+AC,  }\item[{integer, dimension(nofvert,$\ast$)}]{I\+C\+E\+L\+N\+OD,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{double precision, dimension(ndim,$\ast$)}]{F\+A\+C\+E\+N\+O\+RM,  }\item[{double precision, dimension(nofvar,$\ast$)}]{Z\+R\+OE,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+D\+OT,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+F\+A\+CE,  }\item[{logical}]{C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE,  }\item[{logical}]{L\+W\+R\+I\+TE,  }\item[{integer}]{I\+T\+ER }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{C\+H\+K\+F\+LX}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+\begin{DoxyVerb} This routine checks the mass flux through the boundaries of the computational domain\end{DoxyVerb}
+
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+B\+N\+D\+F\+AC} & Boundary informations\+: {\ttfamily I\+B\+N\+D\+F\+A\+C(1,j)} gives the element the j-\/th face belongs to; {\ttfamily I\+B\+N\+D\+F\+A\+C(2,j)} gives the local vertex number of element {\ttfamily I\+B\+N\+D\+F\+A\+C(1,j)} opposite the boundary face; {\ttfamily I\+B\+N\+D\+F\+A\+C(3,j)} gives the color of the boundary face \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+B\+F\+AC} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+F\+AC} & Cell to face pointer\+: {\ttfamily iface} = {\ttfamily I\+C\+E\+L\+F\+A\+C(i,j)} gives the global face number of the face opposite the i-\/th vertex of the j-\/th element; if {\ttfamily iface} $>$0 then the normal points inside the cell; otherwise it is the outward normal \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+N\+OD} & Cell to node pointer\+: {\ttfamily I\+C\+E\+L\+N\+O\+D(i,j)} gives the global node number of the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+A\+C\+E\+N\+O\+RM} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Nodal values of the dependent variable; compressible equations\+: $ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) $; incompressible equations\+: $ Z = \left( p, \mathbf{u} \right) $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z\+D\+OT} & the cartesian components of the grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs in Z\+R\+OE \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+F\+A\+CE} & nof faces in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE} & is .T\+R\+UE. when solving compressible flows \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+W\+R\+I\+TE} & is .T\+R\+UE. when the boundary fluxes are to be written to a file \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+T\+ER} & is current iteration number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+14 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/18 16\+:13\+:07 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{chkflx_8f_a9effe776a9b882c5f7f4a5e4b99d8b16}\label{chkflx_8f_a9effe776a9b882c5f7f4a5e4b99d8b16}} 
+\index{chkflx.f@{chkflx.f}!FLUX4@{FLUX4}}
+\index{FLUX4@{FLUX4}!chkflx.f@{chkflx.f}}
+\doxysubsubsection{\texorpdfstring{FLUX4()}{FLUX4()}}
+{\footnotesize\ttfamily subroutine F\+L\+U\+X4 (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{double precision, dimension(ndim)}]{F\+A\+CN,  }\item[{double precision, dimension($\ast$)}]{Z\+R\+OE,  }\item[{double precision, dimension($\ast$)}]{X\+Y\+Z\+D\+OT,  }\item[{double precision, dimension($\ast$)}]{F\+L\+XN }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{F\+L\+U\+X4}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+compute the Eulerian fluxes through the face of normal F\+A\+CN from parameter vector \[ F = \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} , \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) H, \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} + p \mathbf{n} \right) \] 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+A\+CN} & the cartesian components of the scaled inward normal to the face \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Roe\textquotesingle{}s parameter vector \\
+\hline
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z\+D\+OT} & the cartesian components of the grid velocity \\
+\hline
+\mbox{\texttt{ out}}  & {\em F\+L\+XN} & the eulerian (inviscid) flux through the face \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+14 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/18 16\+:13\+:07 
+\end{DoxyParagraph}

@@ -1,0 +1,127 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.08.25.15.41.38;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute projectors for far field boundary conditions
+using the eigenvector decomposition
+incompressible Euler eqns.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE PROJF8(ZROE,VECN,PPOSZ,PNEGZ,PPOSU,PNEGU,NDIM,NOFVAR)
+C
+      IMPLICIT NONE
+C
+C     Compute projectors for farfield boundary conditions
+C     UNpreconditioned incompressible Euler (VIII)
+C
+C     This normally requires the inversion of the K matrix
+C     however this might sometimes be singular
+C
+C     VNOR stores the face normal multiplied by its measure
+C     ZROE stores the parameter vector of the averaged state
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ONE,ZERO
+      PARAMETER (ONE=1.D0,ZERO=0.d0)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION PNEGU(NOFVAR,NOFVAR),PNEGZ(NOFVAR,NOFVAR),
+     +                 PPOSU(NOFVAR,NOFVAR),PPOSZ(NOFVAR,NOFVAR),
+     +                 VECN(NDIM),ZROE(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I,IELEM,INFO,J
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DUMMY(25),KMAT(25),VLEFT(5,5),VRIGHT(5,5),
+     +                 WNEG(5),WPOS(5),WR(5)
+      INTEGER IPIV(5)
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DGETRF,DGETRS,MATSPLITVIII
+C     ..
+      IELEM = -1
+C
+C     Split the matrix into its positive and negative parts
+C
+      CALL MATSPLITVIII(IELEM,NDIM,NOFVAR,VECN,DUMMY,NOFVAR,KMAT,PPOSZ,
+     +                  PNEGZ,VLEFT,VRIGHT,NOFVAR,WR,WPOS,WNEG,.TRUE.)
+C
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KMAT,
+C    +            nofvar,'Matrix (A.n)',Info)
+C
+      CALL DGETRF(NOFVAR,NOFVAR,KMAT,NOFVAR,IPIV,INFO)
+      IF(INFO.GT.0)THEN
+         GOTO 100
+CCCC     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KMAT,
+CCCC +               nofvar,'KMAT returned by DGETRF ',Info)
+      ELSEIF(INFO .LT. 0 )THEN
+         write(6,200)'DGETRF',info
+         STOP
+      ENDIF
+C
+C     solve K P^{\pm} = K^{\pm}
+C
+      CALL DGETRS('No',NOFVAR,NOFVAR,KMAT,NOFVAR,IPIV,PPOSZ,NOFVAR,INFO)
+      IF(INFO.NE.0)THEN
+         write(6,200)'DGETRS',info
+         STOP
+      ELSE
+         GOTO 150
+      ENDIF
+C
+C
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,PPOSZ,
+C    +                 nofvar,'Positive projector in V var. ',Info)
+C
+C     Whenever KMAT is singular, compute the SIGN matrix
+C
+  100 CALL SIGN8(IELEM,NDIM,NOFVAR,VECN,DUMMY,NOFVAR,KMAT,PPOSZ,
+     +           PNEGZ,VLEFT,VRIGHT,NOFVAR,WR,WPOS,WNEG,.TRUE.)
+C
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,PPOSZ,
+C    +            nofvar,'Positive projector in V var. ',Info)
+C
+  150 CONTINUE
+C
+C     compute P(-) = I - P(+)
+C
+C     all entries
+C
+      DO 8 J = 1,NOFVAR
+          DO 8 I = 1,NOFVAR
+              PNEGZ(I,J) = - PPOSZ(I,J)
+    8 CONTINUE
+C
+C     only diagonal entries
+C
+      DO 9 I = 1,NOFVAR
+          PNEGZ(I,I) = ONE + PNEGZ(I,I)
+    9 CONTINUE
+C
+C
+      RETURN
+  200 FORMAT(5X,'SUBROUTINE ',A6,' HAS RETURNED IFAIL = ',I4,/,
+     +       5X,'IN SUBROUTINE PRJF8')
+
+      END
+@

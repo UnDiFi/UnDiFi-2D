@@ -1,0 +1,52 @@
+1c1
+<       SUBROUTINE SETBC4LAPLACE(A,X,RHS,U,NodalBcs)
+---
+>       SUBROUTINE SETBC4LAPLACE(A,X,RHS,U)
+5c5,7
+< C     $Id: setbc4laplace.F,v 1.4 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: setbc4laplace.F,v 1.4 2016/11/10 11:25:13 abonfi Exp $
+7a10
+> #include "petsc/finclude/petscsys.h"
+11,16d13
+<       use petscvec
+<       use petscmat
+<       use petscis
+< C
+<       IMPLICIT NONE
+< C
+23c20
+<       include 'iset.h'
+---
+> #include "iset.com"
+52d48
+<       IS, dimension(0:*) :: NodalBcs
+99c95
+<              call ISGetSize(NodalBcs(ICLR),NI,IFAIL)
+---
+>              call ISGetSize(bndrynodes(ICLR),NI,IFAIL)
+102c98
+<              call ISGetIndices(NodalBcs(ICLR),is_array,i_is,IFAIL)
+---
+>              call ISGetIndices(bndrynodes(ICLR),is_array,i_is,IFAIL)
+114c110
+<              call ISRestoreIndices(NodalBcs(ICLR),is_array,i_is,IFAIL)
+---
+>              call ISRestoreIndices(bndrynodes(ICLR),is_array,i_is,IFAIL)
+127c123
+<       CALL MatZeroRowsIS(A,NodalBcs(Dirichlet4Poisson),ONE,X,RHS,IFAIL)
+---
+>       CALL MatZeroRowsIS(A,Dirichlet4Poisson,ONE,X,RHS,IFAIL)
+135,136c131,132
+<       call ISGetSize(NodalBcs(Dirichlet4Poisson),NI,IFAIL)
+<       call ISGetIndices(NodalBcs(Dirichlet4Poisson),is_array,i_is,IFAIL)
+---
+>       call ISGetSize(Dirichlet4Poisson,NI,IFAIL)
+>       call ISGetIndices(Dirichlet4Poisson,is_array,i_is,IFAIL)
+146,147c142
+<       call ISRestoreIndices(NodalBcs(Dirichlet4Poisson),is_array,i_is,
+<      &                      IFAIL)
+---
+>       call ISRestoreIndices(Dirichlet4Poisson,is_array,i_is,IFAIL)

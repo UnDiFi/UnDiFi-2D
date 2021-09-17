@@ -1,0 +1,2257 @@
+Making tests in BLASSM directory
+`mvec.ex' is up to date.
+`tester.ex' is up to date.
+Making tests in FORMATS directory
+`un.ex' is up to date.
+`fmt.ex' is up to date.
+`rvbr.ex' is up to date.
+Making tests in INFO directory
+`info1.ex' is up to date.
+Making tests in INOUT directory
+`chk.ex' is up to date.
+`hb2ps.ex' is up to date.
+`hb2pic.ex' is up to date.
+Making tests in ITSOL directory
+`riters.ex' is up to date.
+f77   -c  rilut.f
+rilut.f:
+ MAIN rilut:
+f77  -o rilut.ex rilut.o itaux.o ../libskit.a ../UNSUPP/BLAS1/blas1.o
+`riter2.ex' is up to date.
+Making tests in MATGEN/FDIF directory
+`gen5.ex' is up to date.
+`genbl.ex' is up to date.
+Making tests in MATGEN/FEM directory
+`fem.ex' is up to date.
+Making tests in MATGEN/MISC directory
+`sobel.ex' is up to date.
+`zlatev.ex' is up to date.
+`markov.ex' is up to date.
+Making tests in UNSUPP/MATEXP directory
+`exp.ex' is up to date.
+`phi.ex' is up to date.
+Testing BLASSM/mvec.ex ---------------------------------------
+ ---------------- ii   1--------------------
+      ----------- jj   1 -------------
+  2-norm of difference in amuxe  =  0.
+  2-norm of difference in amuxd  =  0.
+  2-norm of difference in atmux  =  0.
+  2-norm of difference in amuxj  =  0.
+  2-norm of difference in jadcsr =  0.
+  2-norm of difference in ldsol  =  0.
+  2-norm of difference in ldsoll =  0.
+  2-norm of difference in udsolc =  0.
+  2-norm of difference in lsol   =    8.8817841970013D-16
+  2-norm of difference in udsol  =  0.
+  2-norm of difference in ldsolc =  0.
+  2-norm of difference in usol   =  0.
+      ----------- jj   2 -------------
+  2-norm of difference in amuxe  =  0.
+  2-norm of difference in amuxd  =  0.
+  2-norm of difference in atmux  =  0.
+  2-norm of difference in amuxj  =  0.
+  2-norm of difference in jadcsr =  0.
+  2-norm of difference in ldsol  =  0.
+  2-norm of difference in ldsoll =  0.
+  2-norm of difference in udsolc =  0.
+  2-norm of difference in lsol   =    7.7271522513911D-14
+  2-norm of difference in udsol  =  0.
+  2-norm of difference in ldsolc =  0.
+  2-norm of difference in usol   =    6.0448763567093D-14
+ ---------------- ii   2--------------------
+      ----------- jj   1 -------------
+  2-norm of difference in amuxe  =  0.
+  2-norm of difference in amuxd  =  0.
+  2-norm of difference in atmux  =  0.
+  2-norm of difference in amuxj  =  0.
+  2-norm of difference in jadcsr =  0.
+  2-norm of difference in ldsol  =  0.
+  2-norm of difference in ldsoll =  0.
+  2-norm of difference in udsolc =  0.
+  2-norm of difference in lsol   =    2.7633627272834D-14
+  2-norm of difference in udsol  =  0.
+  2-norm of difference in ldsolc =  0.
+  2-norm of difference in usol   =    1.5308200176938D-14
+      ----------- jj   2 -------------
+  2-norm of difference in amuxe  =  0.
+  2-norm of difference in amuxd  =  0.
+  2-norm of difference in atmux  =  0.
+  2-norm of difference in amuxj  =  0.
+  2-norm of difference in jadcsr =  0.
+  2-norm of difference in ldsol  =  0.
+  2-norm of difference in ldsoll =  0.
+  2-norm of difference in udsolc =  0.
+  2-norm of difference in lsol   =    1.4601112955362D-12
+  2-norm of difference in udsol  =  0.
+  2-norm of difference in ldsolc =  0.
+  2-norm of difference in usol   =    1.1674763260079D-12
+ ---------------- ii   3--------------------
+      ----------- jj   1 -------------
+  2-norm of difference in amuxe  =  0.
+  2-norm of difference in amuxd  =  0.
+  2-norm of difference in atmux  =  0.
+  2-norm of difference in amuxj  =  0.
+  2-norm of difference in jadcsr =  0.
+  2-norm of difference in ldsol  =  0.
+  2-norm of difference in ldsoll =  0.
+  2-norm of difference in udsolc =  0.
+  2-norm of difference in lsol   =    1.6919274372342D-13
+  2-norm of difference in udsol  =  0.
+  2-norm of difference in ldsolc =  0.
+  2-norm of difference in usol   =    1.3419450826391D-13
+      ----------- jj   2 -------------
+  2-norm of difference in amuxe  =  0.
+  2-norm of difference in amuxd  =  0.
+  2-norm of difference in atmux  =  0.
+  2-norm of difference in amuxj  =  0.
+  2-norm of difference in jadcsr =  0.
+  2-norm of difference in ldsol  =  0.
+  2-norm of difference in ldsoll =  0.
+  2-norm of difference in udsolc =  0.
+  2-norm of difference in lsol   =    4.0197820997304D-12
+  2-norm of difference in udsol  =  0.
+  2-norm of difference in ldsolc =  0.
+  2-norm of difference in usol   =    3.1076960569809D-12
+Testing BLASSM/tester.ex ---------------------------------------
+  ------------ checking APLSB --------------
+ 2-norm of error (exact answer-tested answer)=    1.5290824876443D-14
+   
+  ------------ checking APMBT---------------
+  ------------ with JOB =   -1 -------------
+ 2-norm of error (exact answer-tested answer)=    2.4853641806852D-15
+   
+  ------------ checking APMBT---------------
+  ------------ with JOB =   1 -------------
+ 2-norm of error (exact answer-tested answer)=    1.9506068794433D-15
+   
+  ------------ checking APLSBT---------------
+ 2-norm of error (exact answer-tested answer)=    4.2839729863996D-15
+   
+  ------------ checking AMUB  ---------------
+ 2-norm of error (exact answer-tested answer)=    4.1712919012146D-14
+Testing FORMATS/un.ex ---------------------------------------
+ -----------------------------------------
+   +++  initial matrix in CSR format +++ 
+ -----------------------------------------
+ ---------------------------------- row     1 ----------------------------------
+ col:    1     :    2     :    5     :
+ val: 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     2 ----------------------------------
+ col:    1     :    2     :    3     :    6     :
+ val:-0.20D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     3 ----------------------------------
+ col:    2     :    3     :    4     :    7     :
+ val:-0.20D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     4 ----------------------------------
+ col:    3     :    4     :    8     :
+ val:-0.20D+01 : 0.40D+01 :-0.10D+01 :
+ ---------------------------------- row     5 ----------------------------------
+ col:    1     :    5     :    6     :    9     :
+ val:-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     6 ----------------------------------
+ col:    5     :    2     :    6     :    7     :   10     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     7 ----------------------------------
+ col:    6     :    3     :    7     :    8     :   11     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     8 ----------------------------------
+ col:    7     :    4     :    8     :   12     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 :-0.10D+01 :
+ ---------------------------------- row     9 ----------------------------------
+ col:    5     :    9     :   10     :   13     :
+ val:-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row    10 ----------------------------------
+ col:    9     :    6     :   10     :   11     :   14     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row    11 ----------------------------------
+ col:   10     :    7     :   11     :   12     :   15     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row    12 ----------------------------------
+ col:   11     :    8     :   12     :   16     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 :-0.10D+01 :
+ ---------------------------------- row    13 ----------------------------------
+ col:    9     :   13     :   14     :
+ val:-0.10D+01 : 0.40D+01 : 0.00D+00 :
+ ---------------------------------- row    14 ----------------------------------
+ col:   13     :   10     :   14     :   15     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :
+ ---------------------------------- row    15 ----------------------------------
+ col:   14     :   11     :   15     :   16     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :
+ ---------------------------------- row    16 ----------------------------------
+ col:   15     :   12     :   16     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 :
+ -----------------------------------------
+   +++ initial matrix in DENSE format+++ 
+ -----------------------------------------
+       1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16
+     |----------------------------------------------------------------|          
+   1 | 4.0            -1.0                                            |          
+   2 |-2.0 4.0            -1.0                                        |          
+   3 |    -2.0 4.0            -1.0                                    |          
+   4 |        -2.0 4.0            -1.0                                |          
+   5 |-1.0             4.0            -1.0                            |          
+   6 |    -1.0        -2.0 4.0            -1.0                        |          
+   7 |        -1.0        -2.0 4.0            -1.0                    |          
+   8 |            -1.0        -2.0 4.0            -1.0                |          
+   9 |                -1.0             4.0            -1.0            |          
+  10 |                    -1.0        -2.0 4.0            -1.0        |          
+  11 |                        -1.0        -2.0 4.0            -1.0    |          
+  12 |                            -1.0        -2.0 4.0            -1.0|          
+  13 |                                -1.0             4.0            |          
+  14 |                                    -1.0        -2.0 4.0        |          
+  15 |                                        -1.0        -2.0 4.0    |          
+  16 |                                            -1.0        -2.0 4.0|          
+     |----------------------------------------------------------------|          
+ -----------------------------------------
+   +++ red-black matrix in CSR format +++ 
+ -----------------------------------------
+ ---------------------------------- row     1 ----------------------------------
+ col:    1     :    9     :   11     :
+ val: 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     2 ----------------------------------
+ col:    9     :    2     :   10     :   12     :
+ val:-0.20D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     3 ----------------------------------
+ col:   11     :    9     :    3     :   12     :   13     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     4 ----------------------------------
+ col:   12     :   10     :    4     :   14     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 :-0.10D+01 :
+ ---------------------------------- row     5 ----------------------------------
+ col:   11     :    5     :   13     :   15     :
+ val:-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     6 ----------------------------------
+ col:   13     :   12     :    6     :   14     :   16     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     7 ----------------------------------
+ col:   15     :   13     :    7     :   16     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :
+ ---------------------------------- row     8 ----------------------------------
+ col:   16     :   14     :    8     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 :
+ ---------------------------------- row     9 ----------------------------------
+ col:    1     :    9     :    2     :    3     :
+ val:-0.20D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row    10 ----------------------------------
+ col:    2     :   10     :    4     :
+ val:-0.20D+01 : 0.40D+01 :-0.10D+01 :
+ ---------------------------------- row    11 ----------------------------------
+ col:    1     :   11     :    3     :    5     :
+ val:-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row    12 ----------------------------------
+ col:    3     :    2     :   12     :    4     :    6     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row    13 ----------------------------------
+ col:    5     :    3     :   13     :    6     :    7     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row    14 ----------------------------------
+ col:    6     :    4     :   14     :    8     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 :-0.10D+01 :
+ ---------------------------------- row    15 ----------------------------------
+ col:    5     :   15     :    7     :
+ val:-0.10D+01 : 0.40D+01 : 0.00D+00 :
+ ---------------------------------- row    16 ----------------------------------
+ col:    7     :    6     :   16     :    8     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 : 0.00D+00 :
+ -----------------------------------------
+   +++     matrix after sorting    +++ 
+ -----------------------------------------
+ ---------------------------------- row     1 ----------------------------------
+ col:    1     :    9     :   11     :
+ val: 0.40D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     2 ----------------------------------
+ col:    2     :    9     :   10     :   12     :
+ val: 0.40D+01 :-0.20D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     3 ----------------------------------
+ col:    3     :    9     :   11     :   12     :   13     :
+ val: 0.40D+01 :-0.10D+01 :-0.20D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     4 ----------------------------------
+ col:    4     :   10     :   12     :   14     :
+ val: 0.40D+01 :-0.10D+01 :-0.20D+01 :-0.10D+01 :
+ ---------------------------------- row     5 ----------------------------------
+ col:    5     :   11     :   13     :   15     :
+ val: 0.40D+01 :-0.10D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     6 ----------------------------------
+ col:    6     :   12     :   13     :   14     :   16     :
+ val: 0.40D+01 :-0.10D+01 :-0.20D+01 : 0.00D+00 :-0.10D+01 :
+ ---------------------------------- row     7 ----------------------------------
+ col:    7     :   13     :   15     :   16     :
+ val: 0.40D+01 :-0.10D+01 :-0.20D+01 : 0.00D+00 :
+ ---------------------------------- row     8 ----------------------------------
+ col:    8     :   14     :   16     :
+ val: 0.40D+01 :-0.10D+01 :-0.20D+01 :
+ ---------------------------------- row     9 ----------------------------------
+ col:    1     :    2     :    3     :    9     :
+ val:-0.20D+01 : 0.00D+00 :-0.10D+01 : 0.40D+01 :
+ ---------------------------------- row    10 ----------------------------------
+ col:    2     :    4     :   10     :
+ val:-0.20D+01 :-0.10D+01 : 0.40D+01 :
+ ---------------------------------- row    11 ----------------------------------
+ col:    1     :    3     :    5     :   11     :
+ val:-0.10D+01 : 0.00D+00 :-0.10D+01 : 0.40D+01 :
+ ---------------------------------- row    12 ----------------------------------
+ col:    2     :    3     :    4     :    6     :   12     :
+ val:-0.10D+01 :-0.20D+01 : 0.00D+00 :-0.10D+01 : 0.40D+01 :
+ ---------------------------------- row    13 ----------------------------------
+ col:    3     :    5     :    6     :    7     :   13     :
+ val:-0.10D+01 :-0.20D+01 : 0.00D+00 :-0.10D+01 : 0.40D+01 :
+ ---------------------------------- row    14 ----------------------------------
+ col:    4     :    6     :    8     :   14     :
+ val:-0.10D+01 :-0.20D+01 :-0.10D+01 : 0.40D+01 :
+ ---------------------------------- row    15 ----------------------------------
+ col:    5     :    7     :   15     :
+ val:-0.10D+01 : 0.00D+00 : 0.40D+01 :
+ ---------------------------------- row    16 ----------------------------------
+ col:    6     :    7     :    8     :   16     :
+ val:-0.10D+01 :-0.20D+01 : 0.00D+00 : 0.40D+01 :
+ -----------------------------------------
+   +++ red-black matrix in DENSE format+++ 
+ -----------------------------------------
+       1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16
+     |----------------------------------------------------------------|          
+   1 | 4.0                                    -1.0                    |          
+   2 |     4.0                        -2.0        -1.0                |          
+   3 |         4.0                    -1.0    -2.0    -1.0            |          
+   4 |             4.0                    -1.0    -2.0    -1.0        |          
+   5 |                 4.0                    -1.0            -1.0    |          
+   6 |                     4.0                    -1.0-2.0        -1.0|          
+   7 |                         4.0                    -1.0    -2.0    |          
+   8 |                             4.0                    -1.0    -2.0|          
+   9 |-2.0    -1.0                     4.0                            |          
+  10 |    -2.0    -1.0                     4.0                        |          
+  11 |-1.0            -1.0                     4.0                    |          
+  12 |    -1.0-2.0        -1.0                     4.0                |          
+  13 |        -1.0    -2.0    -1.0                     4.0            |          
+  14 |            -1.0    -2.0    -1.0                     4.0        |          
+  15 |                -1.0                                     4.0    |          
+  16 |                    -1.0-2.0                                 4.0|          
+     |----------------------------------------------------------------|          
+Testing FORMATS/fmt.ex ---------------------------------------
+  14 bnd.mat
+  10 coo.mat
+  92 csr.mat
+   4 dia.mat
+   4 dns.mat
+   2 itp.mat
+   2 jad.mat
+   6 msr.mat
+  26 unary.mat
+Testing FORMATS/rvbr.ex ---------------------------------------
+ Testing job =   0
+ Checking conversions....
+       *-----------------------------------------------------------------*
+       *  Number of rows                                   =         16  *
+       *  Number of nonzero elements                       =        224  *
+       *  Average number of nonzero elements/Row           =    14.0000  *
+       *  Number of block rows                             =          7  *
+       *  Number of nonzero blocks                         =         49  *
+       *  Average number of nonzero blocks/Block row       =     7.0000  *
+       *  Non row-column conformal partitioning supplied.                *
+       *  Using conformal partitioning.  Number of bl rows =         11  *
+       *  Number of different blocksizes                   =          2  *
+       *  The  2 largest dimension nodes have dimension    :             *
+       *     2     1                                                     *
+       *  The frequency of nodes these dimensions are      :             *
+       *     5     6                                                     *
+       *-----------------------------------------------------------------*
+ Testing job =   1
+ Checking conversions....
+       *-----------------------------------------------------------------*
+       *  Number of rows                                   =         16  *
+       *  Number of nonzero elements                       =        112  *
+       *  Average number of nonzero elements/Row           =     7.0000  *
+       *  Number of block rows                             =          8  *
+       *  Number of nonzero blocks                         =         28  *
+       *  Average number of nonzero blocks/Block row       =     3.5000  *
+       *  Number of different blocksizes                   =          1  *
+       *  The  1 largest dimension nodes have dimension    :             *
+       *     2                                                           *
+       *  The frequency of nodes these dimensions are      :             *
+       *     8                                                           *
+       *-----------------------------------------------------------------*
+ Testing job =   2
+ Checking conversions....
+       *-----------------------------------------------------------------*
+       *  Number of rows                                   =         16  *
+       *  Number of nonzero elements                       =        112  *
+       *  Average number of nonzero elements/Row           =     7.0000  *
+       *  Number of block rows                             =          8  *
+       *  Number of nonzero blocks                         =         28  *
+       *  Average number of nonzero blocks/Block row       =     3.5000  *
+       *  Number of different blocksizes                   =          1  *
+       *  The  1 largest dimension nodes have dimension    :             *
+       *     2                                                           *
+       *  The frequency of nodes these dimensions are      :             *
+       *     8                                                           *
+       *-----------------------------------------------------------------*
+Testing INFO/info1.ex ---------------------------------------
+   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+   * unsymmetric matrix of paul saylor - 14 by 17 2d grid   may, 1983        *
+   *                    Key = saylr1   , Type = rua                          *
+   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+       *  Dimension N                                      =        238  *
+       *  Number of nonzero elements                       =       1128  *
+       *  Average number of nonzero elements/Column        =     4.7395  *
+       *  Standard deviation for above average             =     0.4757  *
+       *  Nonzero elements in strict lower part            =        445  *
+       *  Nonzero elements in strict upper part            =        445  *
+       *  Nonzero elements in main diagonal                =        238  *
+       *  Weight of longest column                         =          5  *
+       *  Weight of shortest column                        =          3  *
+       *  Weight of longest row                            =          5  *
+       *  Weight of shortest row                           =          3  *
+       *  Matching elements in symmetry                    =       1128  *
+       *  Relative Symmetry Match (symmetry=1)             =     1.0000  *
+       *  Average distance of a(i,j)  from diag.           =  0.595E+01  *
+       *  Standard deviation for above average             =  0.654E+01  *
+       *-----------------------------------------------------------------*
+       *  Frobenius norm of A                              =  0.886E+09  *
+       *  Frobenius norm of symmetric part                 =  0.886E+09  *
+       *  Frobenius norm of nonsymmetric part              =  0.155E+05  *
+       *  Maximum element in A                             =  0.306E+09  *
+       *  Percentage of weakly diagonally dominant rows    =  0.761E+00  *
+       *  Percentage of weakly diagonally dominant columns =  0.744E+00  *
+       *-----------------------------------------------------------------*
+       *  Lower bandwidth  (max: i-j, a(i,j) .ne. 0)       =         14  *
+       *  Upper bandwidth  (max: j-i, a(i,j) .ne. 0)       =         14  *
+       *  Maximum Bandwidth                                =         29  *
+       *  Average Bandwidth                                =  0.275E+02  *
+       *  Number of nonzeros in skyline storage            =       6536  *
+       *  90% of matrix is in the band of width            =         27  *
+       *  80% of matrix is in the band of width            =         27  *
+       *  The total number of nonvoid diagonals is         =          5  *
+       *  The  5 most important diagonals are (offsets)    :             *
+       *     0    14   -14     1    -1                                   *
+       *  The accumulated percentages they represent are   :             *
+       *  21.1  41.0  60.8  80.4 100.0                                   *
+       *-----------------------------------------------------------------*
+       *  The matrix does not have a block structure                     *
+       *-----------------------------------------------------------------*
+Testing INOUT/chk.ex ---------------------------------------
+  ierr =   0 nrhs   1
+Testing INOUT/hb2ps.ex ---------------------------------------
+Testing INOUT/hb2pic.ex ---------------------------------------
+Testing ITSOL/riters.ex ---------------------------------------
+ RITERS: generated a finite difference matrix
+         grid size =   50 X   50 X   1
+         matrix size =   2304
+  
+ 	*** CG ***
+   0  0.
+   1    13.8701
+   2   0.410563
+   3   0.166754
+   4   0.663532
+   5    2.82694
+   6    8.08103
+   7    18.2886
+   8    35.6804
+   9    62.8310
+   10   102.6425
+   11    158.333
+   12    233.427
+   13    331.746
+   14    457.400
+   15    614.783
+   16    808.565
+   17    1043.69
+   18    1325.36
+   19    1659.06
+   20    2050.50
+   21    2505.68
+   22    3030.82
+   23    3632.41
+   24    4317.17
+   25    5092.07
+   26    5964.31
+   27    6941.32
+   28    8030.79
+   29    9240.62
+   30    10578.9
+   31    12054.1
+   32    13674.7
+   33    15449.5
+   34    17387.6
+   35    19498.2
+   36    21790.8
+   37    24275.1
+   38    26960.8
+   39    29858.2
+   40    32977.6
+   41    36329.5
+   42    39924.6
+   43    43773.8
+   44    47888.4
+   45    52279.6
+   46    56959.0
+   47    61938.4
+   48    67229.7
+   49    72845.0
+   50    78796.8
+   51    85097.5
+   52    91759.9
+   53    98797.0
+   54    106222.
+   55    114048.
+   56    122288.
+   57    130957.
+   58    140069.
+   59    149636.
+ Iterative sovler is facing a break-down.
+   60    149636.
+ # retrun code =  -3	convergence rate =   -6.8355179484768D-02
+ # the actual residual norm is    159674.29002494
+ # the error norm is    12967261.653081
+  
+ 	*** BCG ***
+   0  0.
+   1    13.8701
+   2   0.410563
+   3   0.410563
+   4    4.26097
+   5    4.26097
+   6   0.316950
+   7   0.316950
+   8    5.89391E-02
+   9    5.89391E-02
+   10    1.37001E-02
+   11    1.37001E-02
+   12    1.15747E-02
+   13    1.15747E-02
+   14    3.66392E-04
+   15    3.66392E-04
+ Iterative sovler has satisfied convergence test.
+   16    9.30211E-05
+ # retrun code =  0	convergence rate =   0.34489996542601
+ # the actual residual norm is    9.3021088146756D-05
+ # the error norm is    1.9600908333725D-03
+  
+ 	*** DBCG ***
+   0  0.
+   1    13.8701
+   2    13.8701
+   3   0.410563
+   4   0.410563
+   5    4.26097
+   6    4.26097
+   7   0.316950
+   8   0.316950
+   9    5.89391E-02
+   10    5.89391E-02
+   11    1.37001E-02
+   12    1.37001E-02
+   13    1.15747E-02
+   14    1.15747E-02
+   15    3.66392E-04
+   16    3.66392E-04
+ Iterative sovler has satisfied convergence test.
+   17    9.30211E-05
+ # retrun code =  0	convergence rate =   0.32334371758611
+ # the actual residual norm is    9.3021088148137D-05
+ # the error norm is    1.9600908335453D-03
+  
+ 	*** CGNR ***
+   0  0.
+   1    13.8701
+   2    13.8701
+   3    1.52752
+   4    1.52752
+   5   0.175640
+   6   0.175640
+   7    6.71906E-02
+   8    6.71906E-02
+   9    3.87696E-02
+   10    3.87696E-02
+   11    2.89415E-02
+   12    2.89415E-02
+   13    2.68075E-02
+   14    2.68075E-02
+   15    2.44846E-02
+   16    2.44846E-02
+   17    2.32892E-02
+   18    2.32892E-02
+   19    2.19113E-02
+   20    2.19113E-02
+   21    1.28017E-02
+   22    1.28017E-02
+   23    2.48586E-03
+   24    2.48586E-03
+   25    3.17133E-04
+   26    3.17133E-04
+ Iterative sovler has satisfied convergence test.
+   27    3.29529E-05
+ # retrun code =  0	convergence rate =   0.21631490659891
+ # the actual residual norm is    3.2952876091416D-05
+ # the error norm is    3.8706896962817D-04
+  
+ 	*** BCGSTAB ***
+   0  0.
+   1    13.8701
+   2    13.8701
+   3   0.153791
+   4   0.153791
+   5   0.490870
+   6   0.490870
+   7    5.33006E-03
+   8    5.33006E-03
+ Iterative sovler has satisfied convergence test.
+   9    5.71694E-05
+ # retrun code =  0	convergence rate =   0.67311463855815
+ # the actual residual norm is    5.7169420295509D-05
+ # the error norm is    2.8930452544547D-03
+  
+ 	*** TFQMR ***
+   0  0.
+   1    13.8701
+   2    13.8701
+   3   0.153802
+   4   0.153802
+   5   0.152734
+   6   0.152734
+   7    3.94125E-02
+   8    3.94125E-02
+   9    5.32914E-04
+   10    5.32914E-04
+ Iterative sovler has satisfied convergence test.
+   11    1.35371E-05
+ # retrun code =  0	convergence rate =   0.60105562395677
+ # the actual residual norm is    1.4780324920117D-05
+ # the error norm is    5.0238586161674D-04
+  
+ 	*** FOM ***
+   0  0.
+   1    13.8701
+   2   0.410563
+   3   0.165622
+   4   0.207296
+   5    5.21642E-02
+   6    9.50355E-03
+   7    9.70017E-04
+ Iterative sovler has satisfied convergence test.
+   8    1.13046E-04
+ # retrun code =  0	convergence rate =   0.72697489618977
+ # the actual residual norm is    1.1304637056888D-04
+ # the error norm is    9.7801277773395D-03
+  
+ 	*** GMRES ***
+   0  0.
+   1    13.8701
+   2   0.410383
+   3   0.153586
+   4   0.123406
+   5    4.80479E-02
+   6    9.32294E-03
+   7    9.64809E-04
+ Iterative sovler has satisfied convergence test.
+   8    1.12278E-04
+ # retrun code =  0	convergence rate =   0.72739787885571
+ # the actual residual norm is    1.1227827842284D-04
+ # the error norm is    1.0685990760068D-02
+  
+ 	*** FGMRES ***
+   0  0.
+   1    13.8701
+   2   0.410383
+   3   0.153586
+   4   0.123406
+   5    4.80479E-02
+   6    9.32294E-03
+   7    9.64809E-04
+ Iterative sovler has satisfied convergence test.
+   8    1.12278E-04
+ # retrun code =  0	convergence rate =   0.72739787885571
+ # the actual residual norm is    1.1227827842205D-04
+ # the error norm is    1.0685990760065D-02
+  
+ 	*** DQGMRES ***
+   0  0.
+   1    13.8701
+   2   0.410383
+   3   0.153586
+   4   0.123406
+   5    4.80479E-02
+   6    9.32294E-03
+   7    9.64809E-04
+ Iterative sovler has satisfied convergence test.
+   8    1.12278E-04
+ # retrun code =  0	convergence rate =   0.72739787885571
+ # the actual residual norm is    1.1227827842185D-04
+ # the error norm is    1.0685990760071D-02
+Testing ITSOL/rilut.ex ---------------------------------------
+ RILUT:  generated a finite difference matrix
+         grid size =   30 X   30 X   1
+         matrix size =   812
+  +++++ ILU(0) Preconditioner ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2    2.45188
+   3    1.63014
+   4    1.46799
+   5    1.43109
+   6    1.40686
+   7    1.35278
+   8    1.21362
+   9   0.944807
+   10   0.597513
+   11   0.348881
+   12   0.348881
+   13   0.269621
+   14   0.257892
+   15   0.257576
+   16   0.257402
+   17   0.257332
+   18   0.257290
+   19   0.257194
+   20   0.256369
+   21   0.246943
+   22   0.203350
+   23   0.203350
+   24   0.175398
+   25   0.174437
+   26   0.173048
+   27   0.172484
+   28   0.172376
+   29   0.170478
+   30   0.161628
+   31   0.158085
+   32   0.157734
+   33   0.148417
+   34   0.148417
+   35   0.139368
+   36   0.139366
+   37   0.139359
+   38   0.138765
+   39   0.137669
+   40   0.135756
+   41   0.134308
+   42   0.116039
+   43    8.25110E-02
+   44    4.14949E-02
+   45    4.14949E-02
+   46    2.94532E-02
+   47    2.58783E-02
+   48    2.43653E-02
+   49    2.40201E-02
+   50    2.39350E-02
+   51    2.39221E-02
+   52    2.37978E-02
+   53    2.36845E-02
+   54    2.33772E-02
+   55    2.10918E-02
+   56    2.10918E-02
+   57    2.00453E-02
+   58    2.00403E-02
+   59    2.00024E-02
+   60    2.00016E-02
+   61    1.99982E-02
+   62    1.99971E-02
+   63    1.98567E-02
+   64    1.92044E-02
+   65    1.51314E-02
+   66    7.23751E-03
+   67    7.23751E-03
+   68    4.60776E-03
+   69    3.76227E-03
+   70    3.48399E-03
+   71    3.32976E-03
+   72    3.28726E-03
+   73    3.20356E-03
+   74    2.63376E-03
+   75    1.54746E-03
+   76    1.05580E-03
+   77    4.38810E-04
+   78    4.38810E-04
+   79    2.70855E-04
+   80    2.16915E-04
+   81    1.85588E-04
+   82    1.33977E-04
+   83    8.75211E-05
+   84    4.77658E-05
+   85    2.34191E-05
+   86    1.92438E-05
+   87    1.79457E-05
+   88    1.77728E-05
+   89    1.77728E-05
+   90    1.77706E-05
+   91    1.77443E-05
+   92    1.76217E-05
+   93    1.73326E-05
+   94    1.54466E-05
+   95    9.17195E-06
+   96    4.64056E-06
+   97    2.10068E-06
+   98    1.38467E-06
+   99    1.08138E-06
+   100    1.08138E-06
+ Iterative sovler has satisfied convergence test.
+   101    9.18187E-07
+ # retrun code =  0	convergence rate =    7.7284034297995D-02
+ # the actual residual norm is    9.1818728026499D-07
+ # the error norm is    1.3505891849369D-05
+ GMRES return status =   0
+      
+  +++++ MILU(0) Preconditioner ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+ Iterative sovler has satisfied convergence test.
+   2    6.86261E-14
+ # retrun code =  0	convergence rate =    14.159288903741
+ # the actual residual norm is    9.1400084007250D-14
+ # the error norm is    7.8264795523008D-13
+ GMRES return status =   0
+      
+  +++++ ILUT Preconditioner ++++ 
+  +++++ tol = 0.0001, lfil=5 ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2    1.37580
+   3    1.18042
+   4   0.763962
+   5   0.272886
+   6   0.216128
+   7   0.146673
+   8    6.58634E-02
+   9    1.98203E-02
+   10    5.54323E-03
+   11    2.42444E-03
+   12    2.42444E-03
+   13    1.53484E-03
+   14    1.21816E-03
+   15    5.32090E-04
+   16    2.47800E-04
+   17    1.59387E-04
+   18    3.57870E-05
+   19    8.55586E-06
+   20    3.30651E-06
+   21    1.18378E-06
+ Iterative sovler has satisfied convergence test.
+   22    4.23466E-07
+ # retrun code =  0	convergence rate =   0.36844799897421
+ # the actual residual norm is    4.2346586999160D-07
+ # the error norm is    1.6655377811890D-05
+ GMRES return status =   0
+      
+  +++++ ILUT Preconditioner ++++ 
+  +++++ tol = 0.0001, lfil=10 ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2   0.696833
+   3   0.242045
+   4   0.165814
+   5    5.15332E-02
+   6    5.73533E-03
+   7    6.85063E-04
+   8    6.93030E-05
+   9    8.35282E-06
+   10    1.49878E-06
+ Iterative sovler has satisfied convergence test.
+   11    1.58878E-07
+ # retrun code =  0	convergence rate =   0.77947133400121
+ # the actual residual norm is    1.5887847176655D-07
+ # the error norm is    1.5392773890234D-06
+ GMRES return status =   0
+      
+  +++++ ILUT Preconditioner ++++ 
+  +++++ tol = .0001, lfil=15 ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2   0.318457
+   3   0.199517
+   4    1.89069E-02
+   5    2.12382E-03
+   6    1.36401E-04
+   7    7.20498E-06
+ Iterative sovler has satisfied convergence test.
+   8    6.16151E-07
+ # retrun code =  0	convergence rate =    1.0294416414798
+ # the actual residual norm is    6.1615063916820D-07
+ # the error norm is    8.4148349220451D-06
+ GMRES return status =   0
+      
+  +++++ ILUTP Preconditioner ++++ 
+  +++++ tol = 0.0001, lfil=5 ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2    1.37665
+   3    1.18056
+   4   0.764266
+   5   0.272960
+   6   0.216229
+   7   0.146446
+   8    6.55410E-02
+   9    1.99076E-02
+   10    5.51252E-03
+   11    2.44596E-03
+   12    2.44596E-03
+   13    1.54902E-03
+   14    1.23063E-03
+   15    5.25557E-04
+   16    2.34506E-04
+   17    1.49360E-04
+   18    3.55228E-05
+   19    8.60997E-06
+   20    3.32507E-06
+   21    1.21598E-06
+ Iterative sovler has satisfied convergence test.
+   22    4.42101E-07
+ # retrun code =  0	convergence rate =   0.36751285959268
+ # the actual residual norm is    4.4210069941410D-07
+ # the error norm is    1.7157751376050D-05
+ GMRES return status =   0
+      
+  +++++ ILUTP Preconditioner ++++ 
+  +++++ tol = 0.0001, lfil=10 ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2   0.700402
+   3   0.243231
+   4   0.166390
+   5    5.13639E-02
+   6    5.76451E-03
+   7    6.85549E-04
+   8    6.91703E-05
+   9    8.38630E-06
+   10    1.48650E-06
+ Iterative sovler has satisfied convergence test.
+   11    1.55466E-07
+ # retrun code =  0	convergence rate =   0.78041432114375
+ # the actual residual norm is    1.5546591349931D-07
+ # the error norm is    1.5596203473518D-06
+ GMRES return status =   0
+      
+  +++++ ILUTP Preconditioner ++++ 
+  +++++ tol = .0001, lfil=15 ++++ 
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2   0.320578
+   3   0.199857
+   4    1.82810E-02
+   5    2.06077E-03
+   6    1.30802E-04
+   7    7.18877E-06
+ Iterative sovler has satisfied convergence test.
+   8    6.05775E-07
+ # retrun code =  0	convergence rate =    1.0304952737735
+ # the actual residual norm is    6.0577518300195D-07
+ # the error norm is    8.2721180205357D-06
+ GMRES return status =   0
+      
+  +++++ ILUK Preconditioner ++++ 
+  +++++       lfil=0        ++++ 
+  nnz for a =  3946
+  nnz for ilu =  3946
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2    2.45188
+   3    1.63014
+   4    1.46799
+   5    1.43109
+   6    1.40686
+   7    1.35278
+   8    1.21362
+   9   0.944807
+   10   0.597513
+   11   0.348881
+   12   0.348881
+   13   0.269621
+   14   0.257892
+   15   0.257576
+   16   0.257402
+   17   0.257332
+   18   0.257290
+   19   0.257194
+   20   0.256369
+   21   0.246943
+   22   0.203350
+   23   0.203350
+   24   0.175398
+   25   0.174437
+   26   0.173048
+   27   0.172484
+   28   0.172376
+   29   0.170478
+   30   0.161628
+   31   0.158085
+   32   0.157734
+   33   0.148417
+   34   0.148417
+   35   0.139368
+   36   0.139366
+   37   0.139359
+   38   0.138765
+   39   0.137669
+   40   0.135756
+   41   0.134308
+   42   0.116039
+   43    8.25110E-02
+   44    4.14949E-02
+   45    4.14949E-02
+   46    2.94532E-02
+   47    2.58783E-02
+   48    2.43653E-02
+   49    2.40201E-02
+   50    2.39350E-02
+   51    2.39221E-02
+   52    2.37978E-02
+   53    2.36845E-02
+   54    2.33772E-02
+   55    2.10918E-02
+   56    2.10918E-02
+   57    2.00453E-02
+   58    2.00403E-02
+   59    2.00024E-02
+   60    2.00016E-02
+   61    1.99982E-02
+   62    1.99971E-02
+   63    1.98567E-02
+   64    1.92044E-02
+   65    1.51314E-02
+   66    7.23751E-03
+   67    7.23751E-03
+   68    4.60776E-03
+   69    3.76227E-03
+   70    3.48399E-03
+   71    3.32976E-03
+   72    3.28726E-03
+   73    3.20356E-03
+   74    2.63376E-03
+   75    1.54746E-03
+   76    1.05580E-03
+   77    4.38810E-04
+   78    4.38810E-04
+   79    2.70855E-04
+   80    2.16915E-04
+   81    1.85588E-04
+   82    1.33977E-04
+   83    8.75211E-05
+   84    4.77658E-05
+   85    2.34191E-05
+   86    1.92438E-05
+   87    1.79457E-05
+   88    1.77728E-05
+   89    1.77728E-05
+   90    1.77706E-05
+   91    1.77443E-05
+   92    1.76217E-05
+   93    1.73326E-05
+   94    1.54466E-05
+   95    9.17195E-06
+   96    4.64056E-06
+   97    2.10068E-06
+   98    1.38467E-06
+   99    1.08138E-06
+   100    1.08138E-06
+ Iterative sovler has satisfied convergence test.
+   101    9.18187E-07
+ # retrun code =  0	convergence rate =    7.7284034302897D-02
+ # the actual residual norm is    9.1818727917984D-07
+ # the error norm is    1.3505891841800D-05
+ GMRES return status =   0
+      
+  +++++ ILUK Preconditioner ++++ 
+  +++++       lfil=1        ++++ 
+  nnz for a =  3946
+  nnz for ilu =  5458
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2    1.68088
+   3    1.40131
+   4    1.36122
+   5    1.14822
+   6   0.641519
+   7   0.293330
+   8   0.230670
+   9   0.210830
+   10   0.142340
+   11    8.87743E-02
+   12    8.87743E-02
+   13    5.46819E-02
+   14    5.41096E-02
+   15    5.40744E-02
+   16    5.36357E-02
+   17    4.85440E-02
+   18    3.98680E-02
+   19    1.30454E-02
+   20    2.18985E-03
+   21    1.10460E-03
+   22    8.55901E-04
+   23    8.55901E-04
+   24    7.52396E-04
+   25    7.06416E-04
+   26    6.77263E-04
+   27    6.76669E-04
+   28    6.26981E-04
+   29    4.54061E-04
+   30    1.00438E-04
+   31    3.41018E-05
+   32    1.32724E-05
+   33    5.45388E-06
+   34    5.45388E-06
+   35    3.47190E-06
+   36    2.63566E-06
+   37    2.50403E-06
+   38    2.50020E-06
+   39    2.19456E-06
+ Iterative sovler has satisfied convergence test.
+   40    9.60886E-07
+ # retrun code =  0	convergence rate =   0.19480850959607
+ # the actual residual norm is    9.6088640315199D-07
+ # the error norm is    8.2660126742969D-05
+ GMRES return status =   0
+      
+  +++++ ILUK Preconditioner ++++ 
+  +++++       lfil=3        ++++ 
+  nnz for a =  3946
+  nnz for ilu =  9778
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2    1.42840
+   3    1.26344
+   4   0.553030
+   5   0.235634
+   6   0.203490
+   7    6.28955E-02
+   8    2.18883E-02
+   9    3.75628E-03
+   10    8.54934E-04
+   11    2.27123E-04
+   12    2.27123E-04
+   13    1.14361E-04
+   14    9.60658E-05
+   15    2.27713E-05
+   16    1.34716E-05
+   17    3.81857E-06
+ Iterative sovler has satisfied convergence test.
+   18    6.01671E-07
+ # retrun code =  0	convergence rate =   0.45102622027819
+ # the actual residual norm is    6.0167070890759D-07
+ # the error norm is    4.1002221750242D-05
+ GMRES return status =   0
+      
+  +++++ ILUK Preconditioner ++++ 
+  +++++       lfil=6        ++++ 
+  nnz for a =  3946
+  nnz for ilu =  17716
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2   0.925015
+   3   0.317033
+   4   0.180019
+   5    1.30030E-02
+   6    1.92658E-03
+   7    1.05909E-04
+   8    3.21595E-06
+ Iterative sovler has satisfied convergence test.
+   9    1.11706E-07
+ # retrun code =  0	convergence rate =   0.99346265554573
+ # the actual residual norm is    1.1170616755496D-07
+ # the error norm is    2.7100088553503D-06
+ GMRES return status =   0
+      
+  +++++ ILUD Preconditioner ++++ 
+  +++++ tol=0.075, alpha=0.0 ++++ 
+  nnz for a =  3946
+  nnz for ilu =  5387
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+   2    1.96460
+   3    1.47901
+   4    1.44540
+   5    1.29421
+   6   0.761951
+   7   0.356332
+   8   0.251085
+   9   0.223956
+   10   0.205150
+   11   0.114015
+   12   0.114015
+   13    7.55611E-02
+   14    7.52078E-02
+   15    7.51780E-02
+   16    7.50523E-02
+   17    7.26436E-02
+   18    5.68084E-02
+   19    2.81448E-02
+   20    1.49024E-02
+   21    4.39878E-03
+   22    1.68260E-03
+   23    1.68260E-03
+   24    1.08936E-03
+   25    9.51458E-04
+   26    8.70154E-04
+   27    8.61096E-04
+   28    8.57441E-04
+   29    8.54072E-04
+   30    5.78165E-04
+   31    1.61872E-04
+   32    7.64402E-05
+   33    2.42152E-05
+   34    2.42152E-05
+   35    1.28398E-05
+   36    1.19453E-05
+   37    1.18923E-05
+   38    1.17120E-05
+   39    1.06020E-05
+   40    9.11971E-06
+   41    4.10449E-06
+ Iterative sovler has satisfied convergence test.
+   42    9.11289E-07
+ # retrun code =  0	convergence rate =   0.18516110884996
+ # the actual residual norm is    9.1128927086237D-07
+ # the error norm is    4.4121753855287D-05
+ GMRES return status =   0
+      
+  +++++ ILUD Preconditioner ++++ 
+  +++++ tol=0.075, alpha=1.0 ++++ 
+  nnz for a =  3946
+  nnz for ilu =  7902
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+ Iterative sovler has satisfied convergence test.
+   2    1.86111E-09
+ # retrun code =  0	convergence rate =    9.7260052132520
+ # the actual residual norm is    1.9058118966880D-09
+ # the error norm is    1.4621935291792D-08
+ GMRES return status =   0
+      
+  +++++ ILUD Preconditioner ++++ 
+  +++++ tol=0.01, alpha=1.0 ++++ 
+  nnz for a =  3946
+  nnz for ilu =  15818
+  Precon set-up returned with ierr   0
+   0  0.
+   1    9.90326
+ Iterative sovler has satisfied convergence test.
+   2    7.88695E-14
+ # retrun code =  0	convergence rate =    14.098869325825
+ # the actual residual norm is    6.7093855544581D-14
+ # the error norm is    1.2742687383572D-12
+ GMRES return status =   0
+      
+  **** SOLUTION ****  
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01    0.10000D+01
+    0.10000D+01    0.10000D+01
+Testing ITSOL/riter2.ex ---------------------------------------
+ READ the matrix saylr1  rua
+ 1unsymmetric matrix of paul saylor - 14 by 17 2d grid   may, 1983       
+ 
+  
+ 	*** CG ***
+   0  0.
+   1    36110.0
+   2    6.78929
+ Iterative sovler has satisfied convergence test.
+   3   0.132427
+ # retrun code =  0	convergence rate =    2.7178249481519
+ # the actual residual norm is   0.13242730450496
+ # the error norm is    5.8878922302038D-03
+  
+ 	*** BCG ***
+   0  0.
+   1    36110.0
+   2    6.78929
+   3    6.78929
+ Iterative sovler has satisfied convergence test.
+   4   0.161744
+ # retrun code =  0	convergence rate =    1.7829328493717
+ # the actual residual norm is   0.16174427036884
+ # the error norm is    3.1626267315488D-04
+  
+ 	*** DBCG ***
+   0  0.
+   1    36110.0
+   2    36110.0
+   3    6.78929
+   4    6.78929
+ Iterative sovler has satisfied convergence test.
+   5   0.161744
+ # retrun code =  0	convergence rate =    1.3371996371417
+ # the actual residual norm is   0.16174426732867
+ # the error norm is    3.1626268686432D-04
+  
+ 	*** CGNR ***
+   0  0.
+   1    36110.0
+   2    36110.0
+   3    98.1708
+   4    98.1708
+   5    9.06394
+   6    9.06394
+   7   0.974575
+   8   0.974575
+ Iterative sovler has satisfied convergence test.
+   9    6.57150E-02
+ # retrun code =  0	convergence rate =   0.71749537017656
+ # the actual residual norm is    6.5714971905883D-02
+ # the error norm is    1.7230979181398D-02
+  
+ 	*** BCGSTAB ***
+   0  0.
+   1    36110.0
+   2    36110.0
+ Iterative sovler has satisfied convergence test.
+   3   0.132359
+ # retrun code =  0	convergence rate =    2.7179373098922
+ # the actual residual norm is   0.13235879867892
+ # the error norm is    5.7340027718073D-03
+  
+ 	*** TFQMR ***
+   0  0.
+   1    36110.0
+   2    36110.0
+ Iterative sovler has satisfied convergence test.
+   3   0.170270
+ # retrun code =  0	convergence rate =    2.6632443747941
+ # the actual residual norm is   0.17299923057571
+ # the error norm is    9.3892031659199D-04
+  
+ 	*** FOM ***
+   0  0.
+   1    36110.0
+   2    6.78929
+ Iterative sovler has satisfied convergence test.
+   3   0.132330
+ # retrun code =  0	convergence rate =    2.7179844335154
+ # the actual residual norm is   0.13233006818374
+ # the error norm is    5.8862405815566D-03
+  
+ 	*** GMRES ***
+   0  0.
+   1    36110.0
+   2    6.78929
+ Iterative sovler has satisfied convergence test.
+   3   0.132305
+ # retrun code =  0	convergence rate =    2.7180256726702
+ # the actual residual norm is   0.13230495568318
+ # the error norm is    5.7328573945480D-03
+  
+ 	*** FGMRES ***
+   0  0.
+   1    36110.0
+   2    6.78929
+ Iterative sovler has satisfied convergence test.
+   3   0.132305
+ # retrun code =  0	convergence rate =    2.7180256726702
+ # the actual residual norm is   0.13230494286862
+ # the error norm is    5.7328573945448D-03
+  
+ 	*** DQGMRES ***
+   0  0.
+   1    36110.0
+   2    6.78929
+ Iterative sovler has satisfied convergence test.
+   3   0.132305
+ # retrun code =  0	convergence rate =    2.7180256726702
+ # the actual residual norm is   0.13230494627904
+ # the error norm is    5.7328573945454D-03
+Testing MATGEN/FDIF/gen5.ex ---------------------------------------
+   
+Enter  nx, ny, nz   : Filename for matrix :   output matrix in data file : 
+ testpt.mat                                        
+Testing MATGEN/FDIF/genbl.ex ---------------------------------------
+   
+Enter  nx, ny, nz   : nfree (Block size)  : Filename for matrix :   output in data file : testbl.mat                                        
+  n=  100 nfree   4 na =  16
+  output in data file : testbl.mat                                        
+Testing MATGEN/FEM/fem.ex ---------------------------------------
+  enter chosen mesh 
+  Enter the number of refinements desired 
+  xmin  0. xmax    1.0000000000000
+  ymin  0. ymax    3.0000000000000 dimen     3.00000
+1Sample matrix from SPARSKIT                                            SPARSKIT
+            53             2             7            44             0
+rua                       45            45           261             0
+(26I3)          (40I2)          (6D12.6)            (6D12.6)            
+  1  4  9 13 17 22 25 30 37 42 47 54 61 66 71 76 83 90 97104111118125132139146
+153160165170177182187194201206213218223230235242247252257262
+ 12829 232333438 3303135 4404142 536373943 64445 716182831 8171619213033 9181729
+32102019353711212022243436122322252739411324233840142625434515272642441617183031
+ 7 81617183233 8 91617182829 7 91920213530 810192021363710111920213334 811222324
+39361112222324404112132223243438111325262743391214252627444514152526274142121528
+1829 1 7281829 1 93016313519 3 8301631 3 7321733 2 93217332134 2 83321342438 211
+351930 3103620373922 511362037 510342438 2133922364325 512402341 4134023412742 4
+12412742 415432539 514442645 615442645 614
+0.671404D+000.520833D-02-.676613D+000.626446D+01-.117092D+01-.288353D+01
+-.216146D+00-.199386D+010.106923D+02-.695247D+010.195312D+00-.393516D+01
+0.161874D+02-.331016D+01-.807545D+01-.480175D+010.247351D+020.325521D+00
+-.739338D+01-.172376D+02-.429687D+000.865670D+01-.866191D+010.520833D-02
+0.586587D+01-.341478D+01-.258911D+010.911458D-010.468750D-010.183502D+02
+0.158854D+00-.359275D+01-.174479D+00-.564746D+01-.482454D+01-.426984D+01
+0.380881D+01-.175987D+01-.111979D+00-.737517D+00-.119944D+010.219734D+02
+-.113422D+020.221354D+00-.440404D+01-.644855D+010.302240D+02-.598373D+01
+-.805795D+01-.919336D+01-.697331D+010.263021D+00-.278646D+000.484929D+02
+0.367187D+00-.100609D+02-.146765D+02-.466146D+00-.132376D+02-.104189D+02
+0.103131D+02-.480371D+01-.320312D+00-.195306D+01-.323606D+010.346083D+02
+-.173055D+02-.168159D+020.468750D-01-.533854D+000.266861D+020.513021D+00
+-.143327D+02-.512426D+01-.774217D+010.143015D+02-.333145D+010.106771D+00
+-.122395D+00-.373859D+01-.281061D+01-.440525D+01-.289395D+010.111484D+02
+-.214119D+01-.259953D+01-.349811D+01-.143229D+000.127604D+00-.911458D-01
+-.270369D+010.869276D+01-.170779D+010.755209D-01-.225578D+01-.200987D+01
+0.302240D+02-.911003D+01-.696289D+01-.806837D+01-.606706D+010.190103D+00
+-.205728D+00-.783920D+010.387950D+020.242188D+00-.116234D+02-.257813D+00
+-.104255D+02-.889128D+01-.623372D+01-.226563D+000.235488D+020.210937D+00
+-.545996D+01-.462662D+01-.721289D+010.387950D+02-.890170D+010.315104D+00
+-.330728D+00-.104151D+02-.775586D+01-.117068D+02-.804753D+010.302240D+02
+-.590039D+01-.698372D+01-.927670D+01-.351561D+000.335936D+00-.299479D+00
+-.729622D+010.235488D+02-.454329D+010.283854D+00-.622331D+01-.547037D+01
+0.632711D+02-.518229D+00-.134265D+02-.181284D+020.502603D+00-.129890D+02
+-.187117D+020.533853D+000.632711D+02-.128640D+02-.549478D+00-.188367D+02
+-.182221D+02-.133327D+02-.142390D+02-.148015D+020.492860D+02-.990663D+01
+-.103233D+020.481771D+00-.497396D+000.353598D+01-.206196D+01-.153913D+01
+0.390624D-010.260417D-01-.139330D+01-.598958D-010.297149D+01-.606300D+00
+-.911995D+000.235488D+020.138021D+00-.470996D+01-.153646D+00-.712956D+01
+-.624414D+01-.544954D+01-.556412D+01-.425942D+010.961260D+010.677083D-01
+0.143229D+000.488395D+01-.224536D+01-.164062D+00-.155373D+01-.920794D+00
+0.179687D+00-.272728D+010.143015D+02-.195312D+00-.448858D+01-.334187D+01
+-.372817D+01-.350942D+01-.481412D+010.183502D+02-.573079D+01-.428025D+01
+0.231770D+00-.247395D+000.171550D+02-.888087D+010.169271D+00-.340131D+01
+-.504206D+010.498005D+02-.101443D+02-.134669D+02-.148211D+02-.113526D+02
+-.309895D+000.294270D+00-.144878D+020.273438D+000.281604D+02-.823973D+01
+-.570636D+01-.371775D+01-.268229D+000.803707D+01-.150688D+01-.254420D+01
+0.622528D+020.346354D+00-.131336D+02-.185867D+02-.486978D+00-.169824D+02
+-.134095D+020.132357D+02-.621289D+01-.372396D+00-.410964D+01-.254075D+01
+0.388021D+00-.767253D+010.377767D+02-.116358D+02-.445311D+00-.808066D+01
+-.103304D+020.460937D+00-.112191D+020.207884D+02-.393456D+01-.609561D+01
+0.347541D+02-.173992D+02-.169409D+020.677082D-01-.481771D+000.342590D+02
+0.565104D+00-.183159D+02-.984159D+01-.666665D+01-.172117D+02-.166909D+02
+0.344625D+02-.585937D+000.260416D-01
+Testing MATGEN/MISC/sobel.ex ---------------------------------------
+ Input n:  ierr =  0
+ Nrow =  20	Ncol =  20
+ ---------------------------------- row     1 ----------------------------------
+ col:    1     :    2     :
+ val: 0.30D+01 :-0.10D+01 :
+ ---------------------------------- row     2 ----------------------------------
+ col:    1     :    2     :    3     :    4     :
+ val:-0.10D+01 : 0.50D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row     3 ----------------------------------
+ col:    2     :    3     :    4     :    5     :
+ val:-0.10D+01 : 0.30D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row     4 ----------------------------------
+ col:    2     :    3     :    4     :    5     :    6     :
+ val:-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row     5 ----------------------------------
+ col:    3     :    4     :    5     :    6     :    7     :    8     :
+ val:-0.10D+01 :-0.10D+01 : 0.50D+01 :-0.10D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row     6 ----------------------------------
+ col:    4     :    5     :    6     :    8     :    9     :
+ val:-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row     7 ----------------------------------
+ col:    5     :    7     :    8     :   10     :
+ val:-0.10D+01 : 0.30D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row     8 ----------------------------------
+ col:    5     :    6     :    7     :    8     :    9     :   10     :   11     :
+ val:-0.10D+01 :-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row     9 ----------------------------------
+ col:    6     :    8     :    9     :   11     :   12     :
+ val:-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    10 ----------------------------------
+ col:    7     :    8     :   10     :   11     :   13     :   14     :
+ val:-0.10D+01 :-0.10D+01 : 0.50D+01 :-0.10D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    11 ----------------------------------
+ col:    8     :    9     :   10     :   11     :   12     :   14     :   15     :
+ val:-0.10D+01 :-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    12 ----------------------------------
+ col:    9     :   11     :   12     :   15     :   16     :
+ val:-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    13 ----------------------------------
+ col:   10     :   13     :   14     :   17     :
+ val:-0.10D+01 : 0.30D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    14 ----------------------------------
+ col:   10     :   11     :   13     :   14     :   15     :   17     :   18     :
+ val:-0.10D+01 :-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    15 ----------------------------------
+ col:   11     :   12     :   14     :   15     :   16     :   18     :   19     :
+ val:-0.10D+01 :-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    16 ----------------------------------
+ col:   12     :   15     :   16     :   19     :   20     :
+ val:-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :-0.10D+01 :
+ ---------------------------------- row    17 ----------------------------------
+ col:   13     :   14     :   17     :   18     :
+ val:-0.10D+01 :-0.10D+01 : 0.50D+01 :-0.10D+01 :
+ ---------------------------------- row    18 ----------------------------------
+ col:   14     :   15     :   17     :   18     :   19     :
+ val:-0.10D+01 :-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :
+ ---------------------------------- row    19 ----------------------------------
+ col:   15     :   16     :   18     :   19     :   20     :
+ val:-0.10D+01 :-0.10D+01 :-0.10D+01 : 0.60D+01 :-0.10D+01 :
+ ---------------------------------- row    20 ----------------------------------
+ col:   16     :   19     :   20     :
+ val:-0.10D+01 :-0.10D+01 : 0.60D+01 :
+Testing MATGEN/MISC/zlatev.ex ---------------------------------------
+ 1st matrix from zlatev examples                                        RUA     
+           188             6            43           139             0
+ ZL                      100           100          1110             0
+(20I4)          (26I3)          (8D9.3)             (8D9.3)             
+   1  21  40  58  75  91 106 120 133 145 156 166 176 186 196 206 216 226 236 246
+ 256 266 276 286 296 306 316 326 336 346 356 366 376 386 396 406 416 426 436 446
+ 456 466 476 486 496 506 516 526 536 546 556 566 576 586 596 606 616 626 636 646
+ 656 666 676 686 696 706 716 726 736 746 756 766 776 786 796 806 816 826 836 846
+ 856 866 876 886 896 906 916 926 936 946 956 967 979 992100610211037105410721091
+1111
+  1 46 99 91 47 48 92 93 49 97 50100 94 95 98 51 44 43 96 45  2 96 46 99 47 49
+ 48 92 93 97 50 51100 94 95 98 52 44 45  3 47 46 48 96 99 49 93 51 50 97 94100
+ 95 52 98 53 45  4 48 46 47 49 96 99 52 51 50 97 94 95100 53 98 54 47  5 49 48
+ 50 96 99 52 51 97100 53 98 95 54 55 56  6 48 49 96 50 99 51 53 52 97 54100 98
+ 55 56  7 57 50 99 49 52 53 51 97100 54 55 98 98 57 56  8 58 99 53 54 52 51 50
+ 55100 56 58 57  9 59 99 54 55 52 53 51100 56 58 57 59 10 60 53 52 54 55100 56
+ 58 57 11 59 60 61 54 53 55 56 57 59 58 60 12 62 61 54 55 56 57 58 61 60 62 59
+ 13 63 55 56 57 58 59 62 61 60 14 63 64 57 58 59 60 62 63 61 15 64 65 66 58 60
+ 59 61 63 62 16 64 65 66 67 59 60 62 61 63 64 17 65 67 66 68 60 63 61 64 62 18
+ 65 66 67 68 69 61 64 63 62 19 65 66 67 68 69 70 62 63 64 65 20 21 67 66 68 71
+ 70 69 63 64 65 22 66 67 69 72 70 71 68 64 65 23 66 67 68 73 70 72 71 69 65 67
+ 24 68 73 69 71 72 70 66 74 67 25 68 69 70 72 71 73 74 75 76 68 69 26 70 71 73
+ 72 74 75 76 77 69 27 70 71 74 72 73 75 76 77 78 70 28 71 72 73 74 75 76 78 77
+ 29 71 79 72 74 73 75 77 76 72 79 30 80 78 75 74 73 76 78 77 31 73 80 81 79 74
+ 75 76 77 78 81 79 82 80 32 74 75 76 77 82 79 83 80 81 78 33 75 77 78 83 82 81
+ 80 79 34 76 84 78 79 84 83 82 81 80 35 77 85 86 79 80 83 82 81 84 36 85 78 79
+ 86 87 80 81 84 83 82 85 37 86 80 87 88 81 82 83 85 84 38 86 81 88 89 87 82 84
+ 83 85 39 40 87 86 82 90 89 88 83 84 85 41 87 86 88 83 90 91 89 84 85 42 86 87
+ 88 84 89 91 92 90 85 86 43 87 85 92 88 91 90 89 93 87 44 88 86 93 92 91 90 89
+ 94 45 88 89 92 90 91 93 87 95 94 96 89 46 90 93 91 92 88 94 95 96 97 47 90 94
+ 91 92 93 89 95 97 96 98 48 91 92 93 95 94 90 98 96 99 49 97 92 93 94 95 91 92
+ 97 96 99100 98 50 93 94 95 93 97 96100 99 98 51 94  1 95 94 96 97  1100 98 99
+ 52 95  2 96 95 97  1  2 98 99100 53  3 97 96 98  2  1 99100  3 54  4 98 97 99
+  2  1100  3 55  4  5  6 98100 99  1  2  3  4 56  5  6  7 99  1100  2  3  4 57
+  5 58  6  7  8  1100  2  3  4  5  6 59  7  8  9  2  1  3  4  5  6 60  8  7  9
+ 10  3  2  4  5  6 61  9  7 11  8 10  3  4  5 62  8 10  6  7 11  9 12  5  4  6
+ 63 11  9  8 10  7 13 12  5 64  6 12 10 11  9  7  8 14 13  7 65 13 11  8 10  9
+ 12 15 14 66 12  8  9 14 10 11 13 16 15 16 67  9 10 11 12 13 14 17 15 16 17 68
+ 11 10 12 14 13 18 15 16 17 18 12 11 69 13 14 19 15 20 16 17 18 19 13 12 70 14
+ 15 18 16 17 21 19 20 14 13 71 15 16 22 17 20 18 19 21 72 14 15 16 23 21 17 18
+ 19 20 22 73 15 16 17 24 22 21 20 19 18 23 74 75 17 25 23 21 22 20 19 18 24 76
+ 23 22 21 18 26 20 19 24 25 26 77 19 24 27 20 22 23 21 25 27 26 78 21 28 20 22
+ 24 25 23 27 26 79 28 21 22 29 23 25 24 27 26 28 80 29 23 30 22 24 25 26 28 27
+ 29 81 30 24 23 31 25 26 27 29 28 30 82 31 24 32 25 26 33 27 28 29 31 30 83 32
+ 25 27 26 34 29 32 31 30 28 84 33 35 27 28 30 31 33 32 29 85 34 36 28 31 32 33
+ 30 29 34 86 35 36 37 32 31 30 29 33 34 87 35 36 37 38 31 34 30 32 33 88 35 36
+ 37 38 39 32 31 33 34 89 35 37 36 38 39 40 32 33 34 90 35 91 36 37 38 39  1 40
+ 41 34 33 35 36 37 92 39  2 40 38  1 41 42 34 35 36 38 37 93 41 40 39  2 42  1
+ 43 35  3 36 37  3 38 39 94 40 41  4  2 42 43 44  1 45 37  3 38 95 40 41  4 39
+  2 42 43 44  5  1  1 46 39  3  6 38 96 41 42  2  4 40 43 44 45  5 46  5  1 47
+  3 97  6 42  4 43  7  2 40 41 39 45 44  5 47 46  1  3  6 48 98 43  4  7 41  8
+  2 40 42 44 45 46  5 47  1  3 49 48 99  6  7  4 42  8 41  9 43 44  2 45 46  9
+ 10 47  5  1  3 48 50 49100  6  7 42  4  8 43 45  2 44
+0.100D+010.276D+030.180D+010.200D+00-.235D+030.192D+030.400D+000.600D+00
+-.147D+030.140D+010.100D+030.200D+010.800D+000.100D+010.160D+01-.510D+02
+0.352D+03-.387D+030.120D+01-.315D+030.100D+010.100D+01-.322D+030.160D+01
+0.282D+030.196D+03-.240D+030.200D+000.400D+000.120D+01-.150D+030.102D+03
+0.180D+010.600D+000.800D+000.140D+01-.520D+02-.396D+030.360D+030.100D+01
+-.329D+030.368D+030.288D+030.800D+000.140D+01-.245D+030.200D+00-.153D+03
+0.200D+030.100D+010.400D+000.160D+010.600D+000.104D+030.120D+01-.530D+02
+-.405D+030.100D+01-.336D+03-.414D+030.376D+030.294D+030.600D+000.120D+01
+-.156D+030.204D+03-.250D+030.800D+000.200D+000.400D+000.140D+010.106D+03
+0.100D+01-.540D+02-.423D+030.100D+01-.343D+030.384D+030.300D+030.400D+00
+0.100D+010.208D+03-.255D+030.600D+000.120D+01-.159D+030.800D+000.200D+00
+0.108D+03-.550D+02-.560D+020.100D+01-.432D+030.392D+030.200D+00-.350D+03
+0.800D+000.306D+030.212D+03-.260D+030.400D+00-.162D+030.100D+010.600D+00
+0.110D+030.112D+030.100D+01-.570D+020.400D+030.600D+00-.441D+030.312D+03
+-.265D+03-.357D+030.200D+000.800D+000.216D+03-.165D+030.400D+000.200D+00
+0.114D+03-.168D+030.100D+01-.580D+020.400D+000.318D+03-.270D+03-.364D+03
+0.408D+03-.450D+030.220D+030.600D+000.224D+030.116D+03-.171D+030.100D+01
+-.590D+020.200D+000.324D+03-.275D+030.416D+03-.371D+03-.459D+030.400D+00
+-.280D+03-.174D+030.228D+030.118D+030.100D+01-.600D+020.424D+03-.468D+03
+-.378D+030.330D+030.200D+000.336D+030.232D+03-.285D+030.100D+01-.177D+03
+0.120D+03-.610D+020.432D+03-.477D+03-.385D+03-.392D+030.342D+030.236D+03
+-.290D+03-.180D+030.100D+01-.620D+020.122D+03-.486D+030.440D+030.448D+03
+-.399D+030.348D+03-.183D+030.240D+030.124D+03-.295D+030.100D+01-.630D+02
+-.495D+03-.504D+030.456D+03-.406D+030.354D+03-.186D+030.244D+03-.300D+03
+0.100D+010.126D+03-.640D+02-.513D+030.464D+03-.413D+030.360D+030.248D+03
+-.189D+03-.305D+030.100D+010.128D+03-.650D+02-.660D+02-.522D+03-.420D+03
+0.472D+030.366D+030.252D+03-.310D+030.100D+01-.192D+030.130D+030.132D+03
+-.670D+02-.531D+030.480D+030.372D+03-.427D+03-.315D+030.256D+030.100D+01
+-.195D+030.134D+03-.198D+03-.680D+02-.540D+030.378D+030.488D+03-.320D+03
+-.434D+030.100D+010.260D+030.264D+03-.201D+030.136D+03-.690D+02-.549D+03
+0.384D+03-.441D+030.496D+030.100D+01-.325D+03-.330D+030.268D+03-.204D+03
+0.138D+03-.700D+02-.558D+030.504D+03-.448D+030.390D+030.100D+010.100D+01
+-.335D+030.396D+030.272D+03-.710D+020.140D+03-.207D+03-.567D+030.512D+03
+-.455D+030.100D+01-.462D+030.402D+030.276D+03-.720D+02-.210D+030.142D+03
+-.340D+03-.576D+030.520D+030.100D+010.528D+03-.469D+030.408D+03-.730D+02
+0.280D+030.144D+03-.213D+03-.345D+03-.585D+030.536D+030.100D+01-.476D+03
+0.146D+030.414D+030.284D+03-.216D+03-.350D+03-.594D+03-.740D+02-.603D+03
+0.100D+010.544D+03-.483D+030.420D+030.288D+03-.355D+03-.219D+030.148D+03
+-.750D+02-.760D+02-.612D+030.552D+030.100D+01-.490D+030.426D+030.292D+03
+-.360D+03-.222D+030.150D+030.152D+03-.770D+02-.621D+030.100D+010.560D+03
+-.497D+030.296D+030.432D+03-.365D+03-.225D+03-.228D+030.154D+03-.780D+02
+-.630D+030.100D+010.568D+03-.504D+030.438D+03-.370D+030.300D+030.304D+03
+0.156D+03-.231D+030.100D+01-.639D+03-.790D+020.576D+030.444D+03-.511D+03
+-.375D+030.308D+03-.380D+03-.648D+030.158D+030.100D+01-.800D+02-.234D+03
+0.450D+03-.518D+030.584D+030.456D+030.312D+03-.385D+030.100D+01-.657D+03
+0.160D+03-.810D+02-.237D+030.592D+03-.525D+03-.532D+030.462D+03-.390D+03
+0.162D+030.316D+03-.820D+02-.240D+030.100D+01-.666D+030.600D+030.608D+03
+-.539D+030.164D+03-.395D+03-.830D+020.320D+03-.243D+030.468D+030.100D+01
+-.675D+030.616D+03-.546D+030.166D+03-.246D+030.324D+03-.400D+030.474D+03
+0.100D+01-.684D+03-.840D+020.624D+03-.553D+030.168D+03-.249D+030.328D+03
+-.405D+030.480D+030.100D+01-.693D+03-.850D+02-.860D+020.632D+03-.560D+03
+0.332D+03-.410D+030.486D+03-.252D+030.100D+010.170D+03-.702D+03-.711D+03
+0.172D+03-.870D+020.640D+03-.567D+030.336D+03-.415D+030.492D+03-.255D+03
+0.100D+01-.258D+03-.720D+030.174D+03-.880D+020.648D+03-.574D+030.498D+03
+0.340D+03-.420D+030.100D+010.344D+03-.729D+030.176D+03-.890D+02-.261D+03
+0.656D+030.504D+03-.581D+03-.425D+030.100D+010.100D+010.348D+03-.430D+03
+-.738D+03-.900D+020.178D+03-.264D+030.664D+03-.588D+030.510D+030.100D+01
+-.435D+030.516D+030.352D+03-.747D+030.180D+03-.910D+02-.267D+030.672D+03
+-.595D+030.100D+01-.602D+030.522D+03-.440D+03-.756D+030.356D+030.182D+03
+-.920D+02-.270D+030.680D+030.688D+030.100D+01-.609D+03-.765D+030.184D+03
+0.528D+03-.273D+030.360D+03-.445D+03-.930D+020.696D+030.100D+01-.616D+03
+-.774D+030.186D+03-.276D+030.364D+03-.450D+030.534D+03-.940D+020.100D+01
+0.704D+03-.623D+030.368D+030.540D+03-.455D+03-.279D+03-.783D+03-.950D+02
+0.188D+03-.960D+020.712D+030.100D+01-.630D+030.372D+030.546D+03-.460D+03
+-.792D+03-.282D+030.190D+030.192D+03-.970D+020.100D+010.720D+030.376D+03
+-.637D+030.552D+03-.465D+03-.801D+03-.285D+030.194D+03-.288D+03-.980D+02
+0.100D+010.728D+03-.644D+030.558D+030.380D+03-.470D+03-.810D+030.196D+03
+0.384D+03-.990D+020.100D+01-.291D+030.736D+03-.651D+030.564D+03-.475D+03
+-.819D+03-.828D+030.388D+03-.480D+030.198D+03-.100D+03-.294D+030.100D+01
+0.744D+03-.658D+030.570D+03-.837D+03-.485D+030.576D+030.200D+03-.297D+03
+0.392D+030.100D+010.752D+03-.100D+01-.665D+03-.846D+03-.672D+030.582D+03
+0.200D+01-.300D+03-.490D+030.396D+030.100D+010.760D+03-.200D+010.768D+03
+-.855D+03-.679D+03-.300D+010.400D+010.588D+03-.495D+030.400D+030.100D+01
+-.300D+010.776D+03-.864D+03-.686D+03-.600D+010.400D+010.594D+03-.500D+03
+0.600D+010.100D+01-.400D+010.784D+03-.873D+03-.693D+030.800D+01-.500D+01
+0.600D+03-.900D+010.100D+010.800D+01-.500D+01-.600D+01-.882D+03-.700D+03
+0.792D+030.600D+01-.100D+020.120D+02-.120D+020.100D+010.100D+020.120D+02
+-.700D+01-.891D+03-.700D+010.800D+030.120D+02-.150D+020.160D+020.100D+01
+-.150D+020.100D+01-.180D+020.140D+02-.800D+010.800D+01-.900D+03-.140D+02
+0.180D+02-.200D+020.200D+020.240D+020.100D+01-.210D+020.160D+02-.900D+01
+0.160D+02-.900D+01-.210D+020.240D+02-.250D+02-.300D+020.100D+01-.240D+02
+0.280D+020.180D+02-.100D+020.240D+02-.180D+02-.280D+020.300D+020.360D+02
+0.100D+01-.270D+02-.350D+02-.110D+020.320D+020.200D+02-.270D+020.320D+02
+-.350D+020.100D+01-.400D+02-.300D+02-.420D+020.420D+020.220D+020.360D+02
+-.120D+020.400D+02-.360D+020.480D+020.100D+01-.330D+02-.450D+020.480D+02
+0.400D+02-.490D+02-.130D+020.240D+02-.450D+020.100D+01-.540D+02-.360D+02
+-.500D+020.440D+020.540D+020.560D+02-.560D+02-.140D+020.260D+02-.630D+02
+0.100D+01-.390D+02-.550D+020.640D+020.600D+02-.630D+020.480D+02-.150D+02
+0.280D+020.100D+01-.600D+02-.720D+020.720D+02-.420D+02-.700D+020.660D+02
+0.520D+02-.160D+020.300D+020.320D+020.100D+01-.810D+020.800D+02-.770D+02
+0.720D+02-.650D+020.560D+02-.170D+02-.450D+02-.480D+020.340D+020.100D+01
+0.880D+02-.900D+02-.840D+02-.700D+020.780D+02-.180D+020.600D+020.640D+02
+-.510D+020.360D+020.960D+02-.990D+020.100D+01-.910D+020.840D+02-.190D+02
+-.750D+02-.200D+02-.800D+020.680D+02-.540D+020.380D+020.104D+03-.108D+03
+0.100D+01-.980D+020.900D+020.720D+020.960D+02-.850D+02-.210D+02-.570D+02
+0.400D+020.112D+03-.117D+030.100D+01-.105D+03-.112D+03-.220D+020.102D+03
+-.600D+02-.900D+020.760D+020.420D+020.100D+01-.126D+030.120D+030.128D+03
+-.230D+02-.630D+02-.119D+030.108D+03-.950D+020.800D+020.440D+020.100D+01
+-.135D+03-.144D+030.136D+03-.240D+02-.660D+020.840D+02-.100D+030.114D+03
+-.126D+030.460D+020.100D+010.100D+01-.153D+03-.250D+02-.690D+02-.105D+03
+0.880D+020.120D+03-.133D+030.144D+030.480D+020.100D+010.920D+02-.110D+03
+0.126D+03-.162D+03-.260D+02-.140D+030.152D+03-.720D+020.500D+020.520D+02
+0.100D+01-.171D+030.960D+02-.270D+020.160D+030.132D+03-.115D+03-.147D+03
+-.750D+020.540D+02-.780D+020.100D+010.168D+03-.280D+02-.180D+03-.154D+03
+-.120D+030.100D+030.138D+03-.810D+020.104D+030.100D+010.560D+02-.189D+03
+0.176D+03-.290D+02-.161D+03-.125D+030.144D+030.108D+03-.130D+03-.840D+02
+0.100D+010.580D+020.184D+03-.300D+02-.198D+03-.168D+030.150D+030.156D+03
+0.112D+03-.135D+03-.870D+020.100D+010.600D+020.192D+03-.207D+03-.310D+02
+-.175D+03-.182D+030.162D+030.116D+03-.140D+03-.900D+020.100D+010.620D+02
+-.216D+03-.320D+020.200D+030.208D+03-.330D+02-.189D+030.168D+03-.145D+03
+-.930D+020.120D+030.100D+010.640D+02-.225D+030.216D+03-.234D+03-.340D+02
+0.174D+03-.960D+020.124D+03-.150D+03-.196D+030.100D+010.660D+02-.350D+02
+-.243D+030.224D+030.180D+03-.155D+03-.990D+020.128D+03-.203D+030.100D+01
+0.680D+02-.360D+02-.252D+030.186D+03-.160D+030.132D+03-.210D+030.232D+03
+-.102D+030.100D+010.700D+020.720D+02-.370D+020.192D+03-.217D+030.240D+03
+-.261D+03-.165D+030.136D+030.100D+01-.105D+03-.108D+030.740D+02-.380D+02
+0.248D+03-.170D+03-.270D+03-.224D+030.198D+030.100D+010.140D+030.144D+03
+-.111D+030.760D+02-.390D+020.256D+03-.279D+03-.231D+030.204D+030.100D+01
+-.175D+030.148D+03-.180D+03-.114D+030.780D+02-.400D+02-.288D+030.264D+03
+-.238D+030.100D+010.210D+030.100D+010.216D+03-.185D+030.152D+03-.117D+03
+0.500D+010.800D+02-.410D+020.272D+03-.297D+03-.245D+03-.252D+030.222D+03
+0.100D+010.156D+030.500D+01-.120D+03-.190D+030.100D+020.820D+02-.420D+02
+-.306D+030.280D+030.288D+030.228D+03-.259D+030.100D+01-.123D+030.160D+03
+-.195D+030.100D+020.840D+020.150D+02-.430D+02-.315D+030.500D+01-.324D+03
+0.296D+030.100D+02-.266D+030.234D+030.100D+01-.200D+030.164D+030.500D+01
+0.150D+02-.126D+030.860D+02-.440D+020.200D+02-.450D+02-.333D+030.150D+02
+0.304D+030.100D+010.240D+03-.205D+030.100D+02-.273D+030.200D+020.168D+03
+-.129D+030.880D+020.500D+010.250D+020.300D+02-.460D+020.312D+030.200D+02
+0.500D+01-.342D+030.100D+010.246D+03-.210D+030.250D+020.150D+02-.280D+03
+0.172D+03-.132D+030.900D+020.100D+020.920D+020.150D+020.350D+02-.470D+02
+0.250D+020.100D+010.100D+020.252D+030.200D+02-.215D+030.500D+010.300D+02
+0.320D+03-.287D+03-.351D+03-.135D+030.176D+030.200D+020.940D+02-.138D+03
+0.400D+020.300D+020.150D+02-.480D+020.100D+010.258D+030.250D+020.100D+02
+0.328D+030.500D+010.350D+02-.360D+03-.294D+03-.220D+030.180D+030.184D+03
+0.250D+02-.141D+030.450D+020.350D+02-.490D+020.960D+020.100D+010.200D+02
+0.150D+020.300D+020.336D+030.100D+02-.369D+030.500D+01-.301D+030.264D+03
+0.400D+02-.225D+03-.230D+030.100D+020.500D+010.188D+030.300D+020.500D+02
+0.400D+02-.144D+03-.500D+020.980D+020.100D+010.250D+020.200D+02-.378D+03
+0.350D+020.150D+020.344D+030.270D+030.450D+02-.308D+03
+ 2nd matrix from zlatev examples                                        RUA     
+           148             8            33           107             0
+ ZL                      200           200           855             0
+(26I3)          (26I3)          (8D9.3)             (8D9.3)             
+  1 15 28 40 51 61 70 78 85 91 96100104108112116120124128132136140144148152156
+160164168172176180184188192196200204208212216220224228232236240244248252256260
+264268272276280284288292296300304308312316320324328332336340344348352356360364
+368372376380384388392396400404408412416420424428432436440444448452456460464468
+472476480484488492496500504508512516520524528532536540544548552556560564568572
+576580584588592596600604608612616620624628632636640644648652656660664668672676
+680684688692696700704708712716720724728732736740744748752756760764768772776780
+784788792796800804808812816820824828832836840844848852856
+  1200192195193196 21 22191194 23199198197  2199193198196194 22195 23 24197192
+200193  3200198194196197199 24195 23 25194  4 24196199195197 25200198 26 27  5
+199197195200196 25198 26200  6 28197198199196 26 27197  7 29198199200 27 28198
+200 29 28  8 30199200 31199  9 30 29200 10 32 30 31 11 33 31 32 33 32 34 12 33
+ 34 35 13 34 35 36 14 15 36 37 35 36 16 37 38 37 17 38 39 38 18 39 40 19 39 40
+ 41 40 41 20 42 43 42 41 21 44 42 22 43 23 45 43 44 45 44 24 46 47 46 45 25 48
+ 47 46 26 49 47 27 48 28 49 48 50 51 50 29 49 30 52 50 51 31 51 53 52 52 53 32
+ 54 53 55 54 33 54 34 55 56 55 35 56 57 56 57 36 58 59 57 58 37 60 58 38 59 61
+ 59 39 60 61 40 60 62 41 62 63 61 42 64 63 62 43 65 64 63 65 64 44 66 66 67 65
+ 45 67 68 46 66 68 69 47 67 69 68 70 48 71 70 69 49 72 70 71 50 51 72 71 73 52
+ 72 73 74 75 53 73 74 76 54 74 75 77 55 76 75 76 77 56 78 79 78 57 77 80 79 58
+ 78 81 59 80 79 80 81 82 60 61 81 82 83 62 84 83 82 63 84 85 83 84 85 64 86 85
+ 65 86 87 86 66 88 87 87 67 89 88 88 89 68 90 91 89 90 69 70 92 90 91 71 93 91
+ 92 93 92 72 94 94 95 93 73 96 95 74 94 97 75 95 96 97 96 98 76 98 97 99 77 78
+ 98 99100 79100101 99101100 80102101 81102103 82102103104 83104103105104105 84
+106107 85105106108 86106107109 87107108109108 88110111110 89109112111 90110113
+ 91111112113112 92114114115113 93115114116 94116117115 95117116 96118119117118
+ 97118119120 98119120121 99100120121122123101121122124122102123123125103124125
+104124126127126105125128127126106129107128127128129108130131129130109131132130
+110132131133111112132133134135134133113135134114136135136137115116136137138139
+117137138140118138139141119140139141120140142143142121141144122143142145123144
+143144124145146147125145146148126147146148149127147148128149150149151129150130
+150152151152153151131152132153154155153133154156134154155157135155156136157156
+158159137158157160138159158161139160159161160140162161162163141164162142163164
+165163143165164144166166165145167166167146168167168169147148169168170171149169
+170172170150171173171172151173152172174175174153173176154175174177155176175176
+177156178179177178157180179178158181180159179180181160182181183182161182183184
+162185184183163164184185186187165185186166188186187189167187188189168188190169
+191190189192170191190193171192191192193172194195193194173196194195174197196175
+195196197176198199197198177200198199178199  1179200180200  1  2181  3  1  2  2
+182  4  3  4  5183  3184  4  5  6  7185  5  6186  8  6  7  8187  9  7188  8  9
+ 10 10  9 11189 10 12190 11 12 13191 11 12192 13 14 13 15193 14 14 16 15194 16
+ 15 17195196 16 17 18 19197 17 18 20 18198 19 20 19 21199200 20 21 22
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+010.100D+01
+0.200D+010.300D+010.400D+010.500D+010.600D+010.700D+010.800D+010.900D+01
+0.100D+020.110D+020.120D+020.130D+020.140D+020.150D+020.160D+020.170D+02
+0.180D+020.190D+020.200D+020.210D+020.220D+020.230D+020.240D+020.250D+02
+0.260D+020.270D+020.280D+020.290D+020.300D+020.310D+020.320D+020.330D+02
+0.340D+020.350D+020.360D+020.370D+020.380D+020.390D+020.400D+020.410D+02
+0.420D+020.430D+020.440D+020.450D+020.460D+020.470D+020.480D+020.490D+02
+0.500D+020.510D+020.520D+020.530D+020.540D+020.550D+020.560D+020.570D+02
+0.580D+020.590D+020.600D+020.610D+020.620D+020.630D+020.640D+020.650D+02
+0.660D+020.670D+020.680D+020.690D+020.700D+020.710D+020.720D+020.730D+02
+0.740D+020.750D+020.760D+020.770D+020.780D+020.790D+020.800D+020.810D+02
+0.820D+020.830D+020.840D+020.850D+020.860D+020.870D+020.880D+020.890D+02
+0.900D+020.910D+020.920D+020.930D+020.940D+020.950D+020.960D+020.970D+02
+0.980D+020.990D+020.100D+030.101D+030.102D+030.103D+030.104D+030.105D+03
+0.106D+030.107D+030.108D+030.109D+030.110D+030.111D+030.112D+030.113D+03
+0.114D+030.115D+030.116D+030.117D+030.118D+030.119D+030.120D+030.121D+03
+0.122D+030.123D+030.124D+030.125D+030.126D+030.127D+030.128D+030.129D+03
+0.130D+030.131D+030.132D+030.133D+030.134D+030.135D+030.136D+030.137D+03
+0.138D+030.139D+030.140D+030.141D+030.142D+030.143D+030.144D+030.145D+03
+0.146D+030.147D+030.148D+030.149D+030.150D+030.151D+030.152D+030.153D+03
+0.154D+030.155D+030.156D+030.157D+030.158D+030.159D+030.160D+030.161D+03
+0.162D+030.163D+030.164D+030.165D+030.166D+030.167D+030.168D+030.169D+03
+0.170D+030.171D+030.172D+030.173D+030.174D+030.175D+030.176D+030.177D+03
+0.178D+030.179D+030.180D+030.181D+03-.100D+01-.200D+01-.300D+01-.400D+01
+-.500D+01-.600D+01-.700D+01-.800D+01-.900D+01-.100D+02-.110D+02-.120D+02
+-.130D+02-.140D+02-.150D+02-.160D+02-.170D+02-.180D+02-.190D+02-.200D+02
+-.210D+02-.220D+02-.230D+02-.240D+02-.250D+02-.260D+02-.270D+02-.280D+02
+-.290D+02-.300D+02-.310D+02-.320D+02-.330D+02-.340D+02-.350D+02-.360D+02
+-.370D+02-.380D+02-.390D+02-.400D+02-.410D+02-.420D+02-.430D+02-.440D+02
+-.450D+02-.460D+02-.470D+02-.480D+02-.490D+02-.500D+02-.510D+02-.520D+02
+-.530D+02-.540D+02-.550D+02-.560D+02-.570D+02-.580D+02-.590D+02-.600D+02
+-.610D+02-.620D+02-.630D+02-.640D+02-.650D+02-.660D+02-.670D+02-.680D+02
+-.690D+02-.700D+02-.710D+02-.720D+02-.730D+02-.740D+02-.750D+02-.760D+02
+-.770D+02-.780D+02-.790D+02-.800D+02-.810D+02-.820D+02-.830D+02-.840D+02
+-.850D+02-.860D+02-.870D+02-.880D+02-.890D+02-.900D+02-.910D+02-.920D+02
+-.930D+02-.940D+02-.950D+02-.960D+02-.970D+02-.980D+02-.990D+02-.100D+03
+-.101D+03-.102D+03-.103D+03-.104D+03-.105D+03-.106D+03-.107D+03-.108D+03
+-.109D+03-.110D+03-.111D+03-.112D+03-.113D+03-.114D+03-.115D+03-.116D+03
+-.117D+03-.118D+03-.119D+03-.120D+03-.121D+03-.122D+03-.123D+03-.124D+03
+-.125D+03-.126D+03-.127D+03-.128D+03-.129D+03-.130D+03-.131D+03-.132D+03
+-.133D+03-.134D+03-.135D+03-.136D+03-.137D+03-.138D+03-.139D+03-.140D+03
+-.141D+03-.142D+03-.143D+03-.144D+03-.145D+03-.146D+03-.147D+03-.148D+03
+-.149D+03-.150D+03-.151D+03-.152D+03-.153D+03-.154D+03-.155D+03-.156D+03
+-.157D+03-.158D+03-.159D+03-.160D+03-.161D+03-.162D+03-.163D+03-.164D+03
+-.165D+03-.166D+03-.167D+03-.168D+03-.169D+03-.170D+03-.171D+03-.172D+03
+-.173D+03-.174D+03-.175D+03-.176D+03-.177D+03-.178D+03-.179D+030.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.100D+030.100D+030.100D+030.100D+030.100D+030.100D+030.100D+03
+0.100D+030.100D+030.100D+030.200D+030.200D+030.200D+030.200D+030.200D+03
+0.200D+030.200D+030.200D+030.200D+030.300D+030.300D+030.300D+030.300D+03
+0.300D+030.300D+030.300D+030.300D+030.400D+030.400D+030.400D+030.400D+03
+0.400D+030.400D+030.400D+030.500D+030.500D+030.500D+030.500D+030.500D+03
+0.500D+030.600D+030.600D+030.600D+030.600D+030.600D+030.700D+030.700D+03
+0.700D+030.700D+030.800D+030.800D+030.800D+030.900D+030.900D+030.100D+04
+0.182D+030.183D+030.184D+030.185D+030.186D+030.187D+030.188D+030.189D+03
+0.190D+030.191D+030.192D+030.193D+030.194D+030.195D+030.196D+030.197D+03
+0.198D+030.199D+030.200D+030.201D+03-.180D+03-.181D+03-.182D+03-.183D+03
+-.184D+03-.185D+03-.186D+03-.187D+03-.188D+03-.189D+03-.190D+03-.191D+03
+-.192D+03-.193D+03-.194D+03-.195D+03-.196D+03-.197D+03-.198D+03-.199D+03
+-.200D+030.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+0.160D+020.160D+020.160D+020.160D+020.160D+020.160D+020.160D+02
+ 3nd matrix from zlatev examples                                        RUA     
+           165             8            37           120             0
+ ZL                      200           200           958             0
+(26I3)          (26I3)          (8D9.3)             (8D9.3)             
+  1  4  8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 85 90 95100105
+110115120125130135140145150155160165170175180185190195200205210215220225230235
+240245250255260265270275280285290295300305310315320325330335340345350355360365
+370375380385390395400405410415420425430435440445450455460465470475480485490495
+500505510515520525530535540545550555560565570575580585590595600605610615620625
+630635640645650655660665670675680685690695700705710715720725730735740745750755
+760765770775780785790795800805810815820825830835840845850855860865870875880884
+888892896900904908912916920924928932936940944948952956959
+  1  2 21  2 22  3  1 23  3  4  2  4 24  5  3  5 25  4  6  7  5  6 26  8 27  6
+  7  8 28  9  7  9 29 10  8 30 10 11  9 10 12 31 11 12 13 11 32 13 14 12 33 15
+ 34 13 14 16 35 14 15 16 15 17 36 18 16 37 17 19 38 17 18 20 18 39 19 20 21 40
+ 19 20 21 22 41  1 42  2 23 22 21 24 43 22  3 23 24 25  4 44 23 25 26  5 45 24
+ 26 25 27 46  6  7 47 28 26 27  8 48 28 29 27 29 49  9 30 28 50 30 10 31 29 30
+ 32 31 11 51 12 33 32 52 31 13 33 53 32 34 14 54 34 35 33 55 15 36 35 34 35 37
+ 36 56 16 17 36 38 57 37 18 37 39 58 38 40 38 59 19 39 40 60 41 39 20 41 40 42
+ 61 21 22 41 43 62 42 23 42 63 43 44 44 43 64 24 45 45 65 44 46 25 45 46 47 66
+ 26 27 67 47 46 48 28 48 47 68 49 49 29 69 50 48 50 70 30 51 49 52 50 51 31 71
+ 32 72 52 53 51 33 73 53 54 52 34 74 54 55 53 35 75 55 56 54 57 55 56 36 76 77
+ 37 56 58 57 38 57 78 59 58 39 79 60 59 58 60 40 80 59 61 60 62 61 41 81 61 63
+ 62 42 82 62 64 43 63 83 64 63 65 44 84 65 64 85 66 45 67 65 66 86 46 47 66 68
+ 87 67 48 68 67 69 88 49 69 68 89 70 70 69 71 90 50 70 72 71 91 51 52 92 72 73
+ 71 53 72 73 93 74 54 74 94 73 75 55 95 76 74 75 76 75 77 96 56 57 97 76 77 78
+ 58 98 79 77 78 59 99 79 80 78 80 60100 81 79 80 82 81 61101102 62 81 82 83 82
+ 63103 84 83 64 83104 85 84 85 65105 84 86 87 85 86 66106107 86 88 67 87108 87
+ 68 89 88 88 69 90 89109 70 90 89110 91 90 92 71 91111 91112 93 72 92 92 73 94
+ 93113 74 93114 95 94 95 75 94 96115 95 97 96 76116 77117 96 98 97 97 78118 99
+ 98 79 98 99100119100 80 99101120100102 81101121122 82101103102123 83102103104
+124 84103104105105 85104125106126107105106 86108 87127106107 88109128107108110
+ 89129108109110130 90111109112111131110 91113 92132111112114 93112133113134115
+ 94113114115116 95135114116115117 96136117118116 97137138119117 98118139120118
+ 99119120119100121140121122120101141142102122123121143124122103123144104123125
+124125145105124126146127126125106128147107127126148108129128127109149130128129
+130150110131129132131151130111133152112132131134113153133132154135114134133135
+155115136134137135136156116136138137117157138158139137118139140159138119140160
+141139120142141140161121162142143141122163143144142123164144145124143145165146
+125144166147146145126148127167147146149128148168147169150129148149170150151149
+130152151171150131132153172152151133154173153152134174155153154155175135156154
+155157156176136137156158157177178157159138158159160139179158160180161140159160
+161162181141161182162163142164183162163143165163184164144165164145166185165186
+166167146166167168187147169148168167188170149168189169170171190169150170172171
+191151152173172171192173153174193172154175194173174175155195176174175177176196
+156157176178177197158198179178177159199179180178180160200181179180181182161162
+181183182163182184183164183185184165185184186185187186166167186188187187168189
+188188169190189189190170191192190191171191193172192192194173193195193174194195
+196175194195197196176177196197198197199178198198179199200200180199
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+0.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+010.400D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01-.100D+01
+Testing MATGEN/MISC/markov.ex ---------------------------------------
+Enter grid-size:  Test matrix from SPARSKIT - markov chain model                         randwk01
+            44             3             5            36             0
+rua                       55            55           180             0
+(26I3)          (40I2)          (5D16.10)           (5D16.10)           
+  1  3  6  9 12 15 18 21 24 27 28 31 35 39 43 47 51 55 59 61 64 68 72 76 80 84
+ 88 90 93 97101105109113115118122126130134136139143147151153156160164166169173
+175178180181
+ 211 312 1 413 2 514 3 615 4 716 5 817 6 918 71019 8 91220 1132111 2142212 31523
+13 4162414 5172515 6182616 7192717 818 92128112229201223302113243122142532231526
+33241627342517261829352030362821313729223238302333393124344032253326364128374235
+29384336303944373140453832393342463543474136444842374549433844394750414851464249
+5247434844515346525450475148545550535153
+0.1111111111D+000.1111111111D+000.2222222222D+000.1111111111D+000.5000000000D+00
+0.3333333333D+000.1666666667D+000.4444444444D+000.4444444444D+000.2222222222D+00
+0.3888888889D+000.5555555556D+000.2777777778D+000.3333333333D+000.6666666667D+00
+0.3333333333D+000.2777777778D+000.7777777778D+000.3888888889D+000.2222222222D+00
+0.8888888889D+000.4444444444D+000.1666666667D+000.1000000000D+010.5000000000D+00
+0.1111111111D+000.5555555556D-010.1111111111D+000.2222222222D+000.5000000000D+00
+0.1666666667D+000.1666666667D+000.4444444444D+000.4444444444D+000.2222222222D+00
+0.2222222222D+000.3888888889D+000.3888888889D+000.2777777778D+000.2777777778D+00
+0.3333333333D+000.3333333333D+000.3333333333D+000.3333333333D+000.2777777778D+00
+0.2777777778D+000.3888888889D+000.3888888889D+000.2222222222D+000.2222222222D+00
+0.4444444444D+000.4444444444D+000.1666666667D+000.1666666667D+000.5000000000D+00
+0.5000000000D+000.1111111111D+000.1111111111D+000.5555555556D-010.5555555556D-01
+0.1666666667D+000.3333333333D+000.4444444444D+000.2222222222D+000.2222222222D+00
+0.3888888889D+000.3888888889D+000.2777777778D+000.2777777778D+000.3333333333D+00
+0.3333333333D+000.3333333333D+000.3333333333D+000.2777777778D+000.2777777778D+00
+0.3888888889D+000.3888888889D+000.2222222222D+000.2222222222D+000.4444444444D+00
+0.4444444444D+000.1666666667D+000.1666666667D+000.5000000000D+000.5000000000D+00
+0.1111111111D+000.1111111111D+000.5555555556D-010.5555555556D-010.2222222222D+00
+0.4444444444D+000.3888888889D+000.2777777778D+000.2777777778D+000.3333333333D+00
+0.3333333333D+000.3333333333D+000.3333333333D+000.2777777778D+000.2777777778D+00
+0.3888888889D+000.3888888889D+000.2222222222D+000.2222222222D+000.4444444444D+00
+0.4444444444D+000.1666666667D+000.1666666667D+000.5000000000D+000.5000000000D+00
+0.1111111111D+000.1111111111D+000.5555555556D-010.5555555556D-010.2777777778D+00
+0.5555555556D+000.3333333333D+000.3333333333D+000.3333333333D+000.2777777778D+00
+0.2777777778D+000.3888888889D+000.3888888889D+000.2222222222D+000.2222222222D+00
+0.4444444444D+000.4444444444D+000.1666666667D+000.1666666667D+000.5000000000D+00
+0.5000000000D+000.1111111111D+000.1111111111D+000.5555555556D-010.5555555556D-01
+0.3333333333D+000.6666666667D+000.2777777778D+000.3888888889D+000.3888888889D+00
+0.2222222222D+000.2222222222D+000.4444444444D+000.4444444444D+000.1666666667D+00
+0.1666666667D+000.5000000000D+000.5000000000D+000.1111111111D+000.1111111111D+00
+0.5555555556D-010.5555555556D-010.3888888889D+000.7777777778D+000.2222222222D+00
+0.4444444444D+000.4444444444D+000.1666666667D+000.1666666667D+000.5000000000D+00
+0.5000000000D+000.1111111111D+000.1111111111D+000.5555555556D-010.5555555556D-01
+0.4444444444D+000.8888888889D+000.1666666667D+000.5000000000D+000.5000000000D+00
+0.1111111111D+000.1111111111D+000.5555555556D-010.5555555556D-010.5000000000D+00
+0.1000000000D+010.1111111111D+000.5555555556D-010.5555555556D-010.5555555556D-01
+Testing UNSUPP/MATEXP/exp.ex ---------------------------------------
+Enter tn: Epsilon (desired relative accuracy): m (= dimension of Krylov subspace): In EXPPRO, current time =   0.---------
+  In EXPHES, beta    10.5317210666237
+  t, dt =     4.6278088506324    1.0000000000000D-01
+  error estimate =    2.8675300124006D-22
+  tcur now =     1.0000000000000D-01 dtl =     1.0000000000000D-01
+  final answer 
+    0.99999999999687   0.99999999999688   0.99999999999688   0.99999999999689
+    0.99999999999689   0.99999999999689   0.99999999999690   0.99999999999690
+    0.99999999999690   0.99999999999691   0.99999999999691   0.99999999999691
+    0.99999999999692   0.99999999999692   0.99999999999692   0.99999999999693
+    0.99999999999693   0.99999999999693   0.99999999999694   0.99999999999694
+  exact solution 
+    1.00000000000000   1.00000000000000    1.0000000000000    1.0000000000000
+     1.0000000000000    1.0000000000000    1.0000000000000    1.0000000000000
+     1.0000000000000    1.0000000000000    1.0000000000000    1.0000000000000
+     1.0000000000000    1.0000000000000   1.00000000000000    1.0000000000000
+     1.0000000000000   1.00000000000000   1.00000000000000   1.00000000000000
+  final error    2.9996575627521D-12
+Testing UNSUPP/MATEXP/phi.ex ---------------------------------------
+Enter tn: Epsilon (desired relative accuracy): m (= dimension of Krylov subspace): In PHIPRO, current time =   0.---------
+  In PHIHES, beta     5.7345039655872
+  t, dt =     6.7985946523146    1.0000000000000D-01
+  error estimate =    7.2010848948672D-24
+  tcur now =     1.0000000000000D-01 dtl =     1.0000000000000D-01
+  final answer 
+     1.0071935332256    1.0137995860027    1.0192306483669    1.0237387577746
+     1.0275087768400    1.0306792040310    1.0333560613237    1.0356217377027
+     1.0375414199278    1.0391670091857    1.0405407791327    1.0416971294567
+     1.0426646230871    1.0434668956306    1.0441239701672    1.0446526851635
+     1.0450674712097    1.0453805382517    1.0456025292342    1.0457427028707
+  exact answer 
+     1.0071935332259    1.0137995860030    1.0192306483672    1.0237387577749
+     1.0275087768403    1.0306792040313    1.0333560613240    1.0356217377030
+     1.0375414199281    1.0391670091860    1.0405407791330    1.0416971294570
+     1.0426646230874    1.0434668956309    1.0441239701674    1.0446526851638
+     1.0450674712100    1.0453805382520    1.0456025292345    1.0457427028710
+  final error    1.8609359384023D-13

@@ -1,0 +1,261 @@
+#
+# Does batch testing of the code using the testcases
+# specified below in TCASES
+# if you wish to run a single testcase then use 
+# prompt> make "TCASES = what_you_like"
+#
+# there are several options:
+# type 'make' or 'make help' to view them all
+#
+#
+ITMAX=15
+SNES=newton
+SNES=picard
+SCALAR_SCHEME=LDA
+MATRIX_SCHEME=LDA2
+MATRIX_SCHEME=LW2
+MATRIX_SCHEME=LDA
+MATRIX_SCHEME=N
+CFLMIN=5
+CFLMAX=100e78
+ADDRESSEE=aldo.bonfiglioli@unibas.it
+#
+# build the FSPL options
+#
+#FSPL_OPTS="-itmax\ ${ITMAX}" \
+          "-scalar_scheme\ LDA" \ "-matrix_scheme\ LDA" "-linearization\ ${SNES}" "-cfl\ 10." "-cflmax\ 1.e45"
+#FSPL_OPTS="-itmax\ ${ITMAX}" "-ksp_divtol\ 1.e10"\
+          "-scalar_scheme\ LDA" \ "-matrix_scheme\ LDA" "-linearization\ ${SNES}" "-cfl\ 10.e45"
+#FSPL_OPTS="-itmax\ ${ITMAX}" "-ksp_divtol\ 1.e10"\
+          "-scalar_scheme\ ${SCALAR_SCHEME}" \ "-matrix_scheme\ ${MATRIX_SCHEME}" "-linearization\ ${SNES}" "-cfl\ ${CFLMIN}" "-cflmax\ ${CFLMAX}"
+#FSPL_OPTS="-itmax\ ${ITMAX}" "-ksp_divtol\ 1.e10" "-scalar_scheme\ ${SCALAR_SCHEME}" "-matrix_scheme\ ${MATRIX_SCHEME}" "-linearization\ ${SNES}" "-cfl\ 10."
+#FSPL_OPTS="-itmax\ ${ITMAX}" "-ksp_divtol\ 1.e10" "-scalar_scheme\ ${SCALAR_SCHEME}" "-matrix_scheme\ ${MATRIX_SCHEME}" "-linearization\ ${SNES}" "-cfl\ 5."
+#"-pc_type\ lu" "-ksp_type\ preonly"
+#"-pc_ilu_levels\ 3" "-pc_ilu_fill\ 2.5"
+#
+SEQ_CODE=eulfs11.8
+###MPI_CODE=${HOME}/bin/${PETSC_ARCH}/peulfs
+TESTHOME=${HOME}
+GRIDHOME=${HOME}
+TAR=tar
+ARCH1 = alpha
+ARCH2 = linux
+# CODE1 = eulfs11.9-intel
+# CODE1 = eulfs11.9
+# CODE1 = eulfs11.7b
+# CODE2 = eulfs11.13
+# CODE1 = eulfs11.13-linux_g95
+# CODE2 = eulfs11.13-linux_intel-opt
+# CODE1 = eulfs14.3.1-linux_intel
+# CODE2 = eulfs11.13-linux_intel
+# CODE2 = eulfs3.2.1-linux_gnu64-4.5.1
+# CODE1 = eulfs3.2.1-linux_intel
+# CODE2 = eulfs3.2.12-linux_intel
+# CODE2 = eulfs3.2.0-linux_gnu64-4.5.1
+# CODE1 = eulfs3.3.0-linux_intel-opt
+# CODE2 = eulfs3.3.0-linux_intel
+# CODE1 = eulfs3.3.0-linux_intel
+# CODE1 = eulfs3.3.1-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.2.11-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.2.10-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.3.3-linux_gnu64ompi-4.5.1
+# CODE2 = eulfs3.2.11-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.2.11-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.3.4-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.3.5-linux_gnu64ompi-4.5.1
+# CODE2 = eulfs3.4.0-linux_intel
+# CODE1 = eulfs3.2.0-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.4.0-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.4.0-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.3.0-linux_gnu64ompi-4.5.1
+# CODE2 = eulfs3.4.1-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs15.0.3-linux_gnu64ompi-4.5.1
+# CODE2 = eulfs3.4.1-linux_intel
+# CODE1 = eulfs3.4.2-linux_gnu64ompi-4.5.1-opt
+# CODE1 = eulfs3.3.1-linux_gnu64ompi-4.5.1
+# CODE1 = eulfs3.4.2-linux_gnu64ompi-4.5.1-opt
+# CODE2 = eulfs3.4.3-linux_gnu64ompi-4.5.1-opt
+# CODE1 = eulfs3.4.3-linux_gnu64ompi-4.5.1-opt
+# CODE2 = eulfs3.4.4-linux_gnu64ompi-4.5.1-opt
+# CODE1 = eulfs3.1.0-linux_gnu
+# CODE2 = eulfs3.7.0-linux_gnu
+# CODE2 = eulfs3.1.0-linux_gnu-opt
+CODE2 = eulfs3.7.1-linux_pgi
+CODE2 = eulfs3.7.1-linux_gnu
+CODE2 = eulfs3.8.0-linux_gnu
+CODE1 = eulfs3.13.0-linux_gnu
+CODE1 = eulfs3.12.0-linux_gnu
+CODE1 = eulfs3.10.0-linux_gnu
+CODE1 = eulfs3.7.0-linux_gnu
+CODE1 = eulfs3.8.0-linux_gnu
+CODE2 = eulfs3.12.0-linux_gnu
+CODE1 = eulfs3.7.0-linux_gnu
+CODE1 = eulfs3.7.1-linux_gnu
+CODE1 = eulfs3.4.5-linux_gnu
+CODE1 = eulfs3.4.5-linux_gnu-opt
+CODE1 = eulfs0.15.2-linux_gnu
+CODE1 = eulfs11.9-linux_gnu
+CODE2 = eulfs3.13.5-linux_gnu
+CODE1 = eulfs3.4.5-linux_gnu
+CODE2 = eulfs3.14.0-linux_gnu
+#LOGFILE = ${FSPL_DIR}/testexamples/${ARCH1}_vs_${ARCH2}.log
+LOGFILE2 = ${FSPL_DIR}/testexamples/versions.log
+## on t3e.cineca.it
+##TESTHOME=/tmp/k47pzzz1
+##GRIDHOME=/tmp/k47pzzz1
+#
+# ho eliminato
+# 3D/incompressible.euler/stanitz/Mach0.26/nopre
+# xe' manca file003.dat
+#
+# add testcases below, if you wish
+#
+# ho rimosso i restart per consentire il debugging
+# con la versione 11.3
+#
+TCASES = 2D/compressible.euler/1aA \
+	 2D/compressible.euler/1aB \
+	2D/compressible.euler/1bB/LDA \
+	2D/incompressible.euler/1bE \
+	2D/incompressible.euler/1bF \
+	2D/compressible.ns/2aC/jcc/ \
+	2D/incompressible.ns/2aG/ \
+	2D/compressible.ns/fplate/lbl5e5/coarse \
+	2D/incompressible.euler/naca \
+	2D/incompressible.euler/nacaper \
+	2D/compressible.euler/naca \
+	2D/compressible.euler/stanitz/Mach0.69 \
+	2D/incompressible.euler/stanitz/Mach0.26 \
+	3D/compressible.euler/sinus/6/A \
+	3D/compressible.euler/sinus/6/B \
+	3D/compressible.euler/stanitz/Mach0.69 \
+	3D/compressible.euler/fan
+TCASES = 2D/compressible.euler/1aA \
+	 2D/compressible.euler/1aB \
+	2D/compressible.euler/1bB/LDA \
+	2D/incompressible.euler/1bE \
+	2D/incompressible.euler/1bF \
+	2D/compressible.ns/2aC/jcc/ \
+	2D/compressible.rans/rae2822/case1/test/rcm \
+	2D/incompressible.rans/rae2822/coupled \
+	2D/incompressible.ns/2aG/ \
+	2D/compressible.ns/fplate/lbl5e5/coarse \
+	2D/incompressible.euler/naca \
+	2D/incompressible.euler/nacaper \
+	2D/compressible.euler/naca \
+	2D/compressible.euler/stanitz/Mach0.69 \
+	2D/incompressible.euler/stanitz/Mach0.26 \
+	3D/compressible.euler/sinus/6/A \
+	3D/compressible.euler/sinus/6/B
+# turbulent testcases to be run using Newton's linearization
+#TCASES = 2D/compressible.rans/rae2822/case1/test/rcm 2D/incompressible.rans/rae2822/coupled 2D/compressible.ns/VKILS59/M081/ \
+3D/incompressible.rans/Stanitz/stanitzExtInflow
+#TCASES = 2D/scalar/linadv/vortex
+#TCASES = 2D/plasmaAr.euler/nozzle 2D/plasmaAr.euler/nozzleCD
+#TCASES = 2D/scalar/linadv/vortex
+#TCASES = 2D/compressible.euler/stanitz/Mach0.69
+#TCASES = 2D/incompressible.rans/Timeaccstudy/unsteady
+#TCASES = 2D/compressible.euler/1aA
+#3D/incompressible.euler/sinus/6/F \
+#3D/incompressible.euler/stanitz/Mach0.26/E \
+#3D/incompressible.euler/stanitz/Mach0.26/F \
+#2D/compressible.ns/VKILS59/M081
+#
+GRIDS = 2D/aerofoils/naca0012/euler/NP2355/ \
+	2D/aerofoils/naca0012/navier/jcc/ \
+	2D/aerofoils/rae2822/navier/jcc/ \
+	2D/fplate/laminar/Re_5E+5/coarse/ \
+	2D/channels/stanitz/ \
+	2D/channels/naca/ \
+	2D/blades/naca/ \
+	2D/blades/VKILS59/ \
+	3D/blades/fan/ \
+	3D/wings/sinus/6/
+#3D/channels/StanitzElbow/stanitz.euler/
+#
+TOOLS = plot partitioner/metis partitioner/permetis wdist
+#
+all:	help
+help:
+	@echo "1) make testdata"
+	@echo "will put all required datafiles (.petscrc and Makefile) into: "
+	@echo ${TESTHOME}"/testcases.tar"
+	@echo "2) make testmachines" 
+	@echo "runs the code on the given machine;"
+	@echo "once it has been run on two different machines"
+	@echo "it should be followed by make diffmachines which will"
+	@echo "compare the output between ARCH1 and ARCH2; ARCH1 and ARCH2"
+	@echo "are specified below and must be of among compiled PETSC_ARCH"
+	@echo "3) make testversions"
+	@echo "will test two subsequent versions of the"
+	@echo "code on the same machine followed by checking for differences;"
+	@echo "to specify which versions to run one must edit the Makefile"
+	@echo
+	@echo "Testcase currently implemented are:"
+	@echo ${TCASES}
+
+clean:
+	-@for tcase in ${TCASES}; do \
+	echo "cleaning " $$tcase; cd ${HOME}/testcases/$$tcase; make clean; done
+	
+zip:
+	-@for grid in ${GRIDS}; do \
+	echo "zipping " $$grid; gzip -rf ${HOME}/grids/$$grid; done
+
+unzip:
+	-@for tcase in ${TCASES}; do \
+	echo "unzipping " $$tcase; gunzip -r ${HOME}/testcases/$$tcase/test; done
+	-@for grid in ${GRIDS}; do \
+	echo "unzipping " $$grid; gunzip -rf ${HOME}/grids/$$grid; done
+	
+testmachines:
+	-@echo ;
+	-@echo "Runtime arguments are:" ${FSPL_OPTS};
+	-@echo ;
+	-@for tcase in ${TCASES}; do \
+	cd ${TESTHOME}/testcases/$$tcase/test; \
+	echo "running testcase " $$tcase " on " ${PETSC_ARCH}; \
+	make runseq "FSPL_OPTS = ${FSPL_OPTS}"; done
+
+testversions:
+	-@echo "Runtime arguments are:" ${FSPL_OPTS};
+	-@echo "Removing :" ${LOGFILE2}; rm ${LOGFILE2};
+	-@echo "Running on :" `uname -mnrs` > ${LOGFILE2};
+	-@echo "Runtime arguments are:" ${FSPL_OPTS} > ${LOGFILE2};
+	-@for tcase in ${TCASES}; do \
+	cd ${TESTHOME}/testcases/$$tcase/test; \
+	echo " "; \
+	echo "running testcase " $$tcase " with PETSC_ARCH= " ${PETSC_ARCH}; \
+	make vdiff "FSPL_OPTS = ${FSPL_OPTS}" "LOGFILE  = ${LOGFILE2}" "TCASE = $$tcase" \
+	"CODE1 = ${CODE1}" "CODE2 = ${CODE2}" ; done
+	cat ${LOGFILE2} >> ${HOME}/eulfs.log
+#	mailx -s"EulFS testing on :`date`" ${ADDRESSEE} < ${LOGFILE2}
+
+diffmachines:
+	@echo "checking diffs between " ${ARCH1} " and " ${ARCH2}
+	@echo "using logfile : " ${LOGFILE}
+	@echo "checking diffs between " ${ARCH1} " and " ${ARCH2} >> ${LOGFILE}
+	@date >> ${LOGFILE}
+	-@for tcase in ${TCASES}; do \
+	cd ${TESTHOME}/testcases/$$tcase/test; \
+	echo "checking testcase " $$tcase; \
+	echo "checking testcase " $$tcase >> ${LOGFILE}; \
+	make diff "ARCH1 = ${ARCH1}" "ARCH2 = ${ARCH2}" "LOGFILE = ${LOGFILE}"; done
+	@echo "the output is in : " ${LOGFILE}
+#
+logs:
+	-@for tcase in ${TCASES}; do \
+	${TAR} -C ${TESTHOME} -rvf log.tar testcases/$$tcase/test/convhst.seq.${PETSC_ARCH}; \
+	done
+grids:
+	-@for grid in ${GRIDS}; do \
+	${TAR} -C ${GRIDHOME} -rvf grids.tar grids/$$grid; done
+#
+testdata:
+	-@for tcase in ${TCASES}; do \
+	${TAR} -C ${TESTHOME} -rvf testcases.tar testcases/$$tcase/test/.petscrc \
+	testcases/$$tcase/test/makefile; done
+tools:
+	${TAR} -C ${HOME}/tools -cvf tools.tar ${TOOLS}
+#@echo "running with the following runtime options: " >> ${LOGFILE};
+#@echo ${FSPL_OPTS} >> ${LOGFILE};

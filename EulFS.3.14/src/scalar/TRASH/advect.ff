@@ -1,0 +1,150 @@
+      SUBROUTINE ADVECT(IELEM,X,XYZ,U,NDIM,NOFVERT,FSOU)
+c
+C     IMPLICIT NONE
+c
+c This subroutine returns in the array X
+c the advection speed for scalar testcases
+c
+C     INCLUDE 'constants'
+C     INCLUDE 'scalar.com'
+C     INCLUDE 'visco.com'
+C
+      INTEGER IELEM,NDIM,NOFVERT
+      DOUBLE PRECISION FSOU
+C
+      DOUBLE PRECISION 	X(NDIM),U(NOFVERT),XYZ(NDIM,NOFVERT)
+C
+      DOUBLE PRECISION 	SUM,DUM
+      DOUBLE PRECISION 	FUNSOU1
+      INTEGER IVERT
+C
+      FSOU = 0.D0
+C
+      GOTO(200,300)NDIM-1
+c
+c	2D scalar testcases
+c
+  200 CONTINUE
+c
+c Linear advection
+c
+      IF    (ICASE .EQ. 1)THEN
+          X(1) = TWO
+          X(2) = ONE
+      ELSEIF(ICASE .EQ. 2)THEN
+         SUM = 0.00
+      DO 3 IVERT = 1 , NOFVERT
+    3    SUM = SUM + U( IVERT )
+         X(1) = SUM / NOFVERT
+         X(2) = ONE
+      ELSEIF(ICASE .EQ. 3)THEN
+          X(1) = ONE
+          X(2) = ONE
+      ELSEIF(ICASE .EQ. 4)THEN
+          X(1) = TWO
+          X(2) = ONE
+C
+C     source term 4*x - 2*y
+C
+      SUM=0.d0 
+      DUM=0.d0 
+      DO 5 IVERT = 1 , NOFVERT
+         SUM = SUM + XYZ( 1 , IVERT )
+         DUM = DUM + XYZ( 2 , IVERT )
+    5 continue
+      SUM = 4.d0 * SUM / nofvert
+      DUM =-2.d0 * DUM / nofvert
+      FSOU = SUM+DUM
+      ELSEIF(ICASE .EQ. 5)THEN
+          X(1) = TWO
+          X(2) = ONE
+C
+C     source term for U(X,Y) = X*Y*EXP(X+Y)
+C
+C     first option: evaluate the source term in the
+C     centroid of the triangle
+C
+          SUM=0.d0 
+          DUM=0.d0 
+          DO 7 IVERT = 1 , NOFVERT
+             SUM = SUM + XYZ( 1 , IVERT )
+             DUM = DUM + XYZ( 2 , IVERT )
+    7 continue
+          SUM = SUM / nofvert
+          DUM = DUM / nofvert
+          FSOU = FUNSOU1(SUM,DUM,X(1),X(2),REINV)
+C
+C     second option: take the arithmetic mean of the
+C     values in the nodes
+C
+C         SUM=0.d0 
+C         DO 8 IVERT = 1 , NOFVERT
+C            SUM = SUM + 
+C    +       FUNSOU1(XYZ(1,IVERT),XYZ(2,IVERT),X(1),X(2),REINV)
+C   8     CONTINUE
+C         FSOU = SUM/NOFVERT
+      ELSEIF(ICASE .EQ. 6)THEN
+          X(1) = COSD(22.5d0)
+          X(2) = SIND(22.5d0)
+C
+C     source term for U(X,Y) =
+C
+C     first option: evaluate the source term in the
+C     centroid of the triangle
+C
+          SUM=0.d0 
+          DUM=0.d0 
+          DO 7 IVERT = 1 , NOFVERT
+             SUM = SUM + XYZ( 1 , IVERT )
+             DUM = DUM + XYZ( 2 , IVERT )
+    7 continue
+          SUM = SUM / nofvert
+          DUM = DUM / nofvert
+          FSOU = FUNSOU2(SUM,DUM)
+C
+C     second option: take the arithmetic mean of the
+C     values in the nodes
+C
+C         SUM=0.d0 
+C         DO 8 IVERT = 1 , NOFVERT
+C            SUM = SUM + 
+C    +       FUNSOU2(XYZ(1,IVERT),XYZ(2,IVERT))
+C   8     CONTINUE
+C         FSOU = SUM/NOFVERT
+      ELSE
+          GOTO 666
+      ENDIF
+      RETURN
+c
+c	3D scalar testcases
+c
+  300 CONTINUE
+c
+c Linear advection
+c
+      IF(ICASE .EQ. 1)THEN
+          X(1) = 0.75
+          X(2) = 0.875
+          X(3) = 1.00
+c
+c Spiral testcase
+c
+      ELSEIF(ICASE .EQ. 2)THEN
+         SUM = ZERO
+         DUM = ZERO
+      DO 1 IVERT = 1 , NOFVERT
+         SUM = SUM + XYZ( 3 , IVERT )
+    1    DUM = DUM - XYZ( 1 , IVERT )
+          X(1) = SUM / NOFVERT
+          X(2) = 0.2
+          X(3) = DUM / NOFVERT
+c
+      ELSE
+          GOTO 666 
+      ENDIF
+
+C
+      RETURN
+  666 CALL SETERR(22HADVECT - INVALID ICASE,22,666,1)
+C
+      END

@@ -1,0 +1,140 @@
+head	1.3;
+access
+	aldo
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_3:1.3
+	release3_3_2:1.3
+	release3_3_1:1.3
+	release3_3_0:1.3;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2005.09.22.08.17.02;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.08.08.11.08.24;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.07.19.09.38.25;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@locates a meshpoint among those in the list of inflow nodes
+@
+
+
+1.3
+log
+@the list of nodes is not anymore 0-based indexed
+@
+text
+@      subroutine subyy(icn,nofvert,klist,vlist,lda,nlist,pcn)
+      implicit none
+c
+c     $Id: subyy.f,v 1.2 2005/08/08 11:08:24 abonfi Exp abonfi $     
+c
+c     locates a meshpoint among those in the list of
+c     inflow nodes
+c     in the current release this also includes
+c     periodic nodes
+c
+      integer nofvert,nlist,lda
+      integer icn(nofvert),klist(nlist)
+      double precision vlist(lda,nlist),pcn(lda,nofvert)
+      integer ipos,last,ivert,nerr,iopt,k
+      character*55 ERRMSG
+c
+      do 1 ivert= 1, nofvert-1
+c
+         call binsrc(icn(ivert),klist,nlist,ipos,last)
+         if(ipos.EQ.0)THEN
+            WRITE(ERRMSG(1:55),FMT=300)icn(ivert)
+            WRITE(6,FMT=*)(icn(k),k=1,nofvert)
+            NERR = 4
+            IOPT = 1
+            CALL SETERR(ERRMSG,56,NERR,IOPT)
+         ENDIF
+         do 1 k = 1,lda
+            pcn(k,ivert) = vlist(k,ipos)
+    1 continue
+      return
+  300 FORMAT('SUBYY CANNOT LOCATE NODE ',I6.6,
+     +       ' AMONG THOSE IN THE LIST')
+      end
+@
+
+
+1.2
+log
+@the number of entries defining inflow bcs has
+changed with code version 0.11.9
+@
+text
+@d4 1
+a4 1
+c     $Id: subyy.f,v 1.1 2001/07/19 09:38:25 abonfi Exp $     
+d8 2
+d19 1
+a19 3
+c     add 1 since icn is 0-based indexed
+c
+         call binsrc(icn(ivert)+1,klist,nlist,ipos,last)
+d21 2
+a22 1
+            WRITE(ERRMSG(1:55),FMT=300)icn(ivert)+1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      subroutine subyy(icn,nofvert,klist,vlist,nlist,pcn)
+d4 1
+a4 1
+c     $Id:$     
+d9 1
+a9 1
+      integer nofvert,nlist
+d11 2
+a12 2
+      double precision vlist(3,nlist),pcn(3,nofvert)
+      integer ipos,last,ivert,nerr,iopt
+d20 1
+a20 1
+	 if(ipos.EQ.0)THEN
+d26 2
+a27 3
+         pcn(1,ivert) = vlist(1,ipos)
+         pcn(2,ivert) = vlist(2,ipos)
+         pcn(3,ivert) = vlist(3,ipos)
+@

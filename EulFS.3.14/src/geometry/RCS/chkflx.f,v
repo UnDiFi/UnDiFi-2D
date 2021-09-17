@@ -1,0 +1,1072 @@
+head	1.16;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.16
+	release3_13_0:1.15
+	release3_12_0:1.14
+	release3_11_0:1.14
+	release3_10_0:1.14
+	release3_8_0:1.14
+	release3_7_1:1.14
+	release3_7_0:1.14
+	release3_4_5:1.12
+	release3_4_4:1.12
+	release3_4_3:1.11
+	release3_4_2:1.11
+	release3_4_1:1.8
+	release3_4_0:1.8
+	release3_3_5:1.8
+	release3_3_4:1.8
+	release3_3_3:1.8
+	release3_3_2:1.8
+	release3_3_1:1.8
+	release3_3_0:1.8;
+locks; strict;
+comment	@c @;
+
+
+1.16
+date	2021.03.28.16.27.21;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2021.01.24.11.50.35;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2020.02.18.16.13.07;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2020.02.05.14.53.02;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2014.04.02.16.25.48;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2013.09.06.08.33.53;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2013.08.21.09.12.21;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.08.21.07.06.25;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2012.12.20.10.58.43;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2011.09.16.07.31.29;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.03.30.09.17.25;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.02.11.13.49.08;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.12.27.10.17.03;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.12.23.09.42.45;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.09.09.08.41.51;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2002.10.27.03.41.48;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Checks fluxes through all boundaries
+@
+
+
+1.16
+log
+@Now computes the inviscid fluxes also in the incompressible case
+@
+text
+@!> \brief \b CHKFLX
+!
+!> \par Purpose
+!>
+!> \verbatim
+!>
+!> This routine checks the mass flux through the boundaries of the computational domain
+!> \endverbatim
+!>
+!> @@param[in] IBNDFAC Boundary informations: \c IBNDFAC(1,j) gives the element the j-th face belongs to; \c IBNDFAC(2,j) gives the local vertex number of element \c IBNDFAC(1,j) opposite the boundary face; \c IBNDFAC(3,j) gives the color of the boundary face
+!> @@param[in] NBFAC nof boundary faces
+!> @@param[in] ICELFAC Cell to face pointer: \c iface = \c ICELFAC(i,j) gives the global face number of the face opposite the i-th vertex of the j-th element; if \c iface >0 then the normal points inside the cell; otherwise it is the outward normal
+!> @@param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+!> @@param[in] NOFVERT nof boundary faces
+!> @@param[in] NELEM nof boundary faces
+!> @@param[in] FACENORM Cartesian components of the normals to a face, multiplied by the face area
+!> @@param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+!> @@param[in] XYZDOT the cartesian components of the grid velocity
+!> @@param[in] NOFVAR nof dofs in ZROE
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] NFACE nof faces in the mesh
+!> @@param[in] COMPRESSIBLE is .TRUE. when solving compressible flows
+!> @@param[in] LWRITE is .TRUE. when the boundary fluxes are to be written to a file
+!> @@param[in] ITER is current iteration number
+C
+C
+!> \author $Author: abonfi $
+!> \version $Revision: 1.15 $
+!> \date $Date: 2021/01/24 11:50:35 $
+C
+      SUBROUTINE CHKFLX(IBNDFAC,NBFAC,ICELFAC,ICELNOD,NOFVERT,NELEM,
+     &FACENORM,ZROE,XYZDOT,NOFVAR,NDIM,NFACE,COMPRESSIBLE,LWRITE,ITER)
+C
+C     $Id: chkflx.f,v 1.15 2021/01/24 11:50:35 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'time.com'
+      INCLUDE 'io.com'
+C
+      INTEGER NBFAC,NOFVERT,NELEM,NDIM,NFACE,NOFVAR,ITER
+      INTEGER NN,IOPT,IDOF
+      PARAMETER(NN=NBTYPE+1)
+      CHARACTER ERRMSG*72
+      LOGICAL COMPRESSIBLE,VERBOSE,LWRITE
+C
+      INTEGER IBNDFAC(3,*),ICELFAC(NOFVERT,*),ICELNOD(NOFVERT,*)
+      DOUBLE PRECISION FACENORM(NDIM,*),ZROE(NOFVAR,*),XYZDOT(NDIM,*)
+C
+      INTEGER I,IC,J,IBC,JVERT,NITEMS
+      INTEGER IELEM,IBFAC,IFREQ,IVERT,IFACE,IPOIN
+      DOUBLE PRECISION TEMP
+C
+      CHARACTER*12 FNAME
+C
+      DOUBLE PRECISION WKSP(MAXNOFVAR,0:NCOLOR),
+     &FLXN(MAXNOFVAR*MAXNOFVERT),WORK(MAXNOFVAR),
+     &VCZ(MAXNOFVAR*MAXNOFVERT),VCB(3*MAXNOFVERT)
+      INTEGER IWKSP(0:NCOLOR),IV(VMAX)
+C
+      PARAMETER(VERBOSE=.FALSE.)
+!     PARAMETER(VERBOSE=.TRUE.)
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+      DOUBLE PRECISION DDOT
+      INTEGER ICYCL
+      EXTERNAL         DDOT,ICYCL,FLUX2,FLUX4
+C
+      INTRINSIC MAX0
+C
+      DATA ERRMSG(1:7)/'BNDCHK '/
+C
+      IF(VERBOSE)
+     &OPEN(100,FILE="bflux.log",FORM="FORMATTED",STATUS="unknown")
+C
+      IOPT = 1
+      TEMP = RREF*UREF*LREF*LREF
+C
+      IF( PERIODIC_MESH .AND. ANNULAR )TEMP=TEMP*REAL(NBLADES)
+C
+      WRITE(NOUT,2000)MY_PE
+2000  FORMAT(//' CHECKING BOUNDARY FLUXES ON PE #',I4,/' ',19('=')/)
+C
+      CALL DINIT(NOFVAR,ZERO,WORK,1)
+      CALL DINIT(NOFVAR*NOFVERT,ZERO,FLXN,1)
+      CALL DINIT(NOFVAR*NOFVERT,ZERO,VCZ,1)
+      DO 14 J = 0 , NCOLOR
+          IWKSP(J) = 0
+          DO IDOF = 1,NOFVAR
+             WKSP(IDOF,J) = ZERO
+          ENDDO
+   14 CONTINUE
+C
+C     each boundary face has a color, which is stored in IBNDFAC(3,*);
+C     the option "-color" assigns a boundary type (see bnd.h) to each color
+C
+      IF(LWRITE)THEN
+         FNAME = 'bflux000.dat'
+         WRITE(FNAME(6:8),FMT="(I3.3)")MY_PE
+         OPEN(UNIT=120,FILE=FNAME)
+         NITEMS = 0
+         DO I = 1, NBFLX(1) ! there are NBFLX(1) patches where the flux has to be computed
+            IC = IBFLX(I)
+            NITEMS = NITEMS + MCOLOR(IC)
+         ENDDO
+         WRITE(120,*)NITEMS
+      ENDIF
+C
+      IFREQ = MAX0( 1 , NBFAC / 20 )
+      IF(.NOT.LALE)THEN
+          CALL DINIT(NOFVERT*NDIM,ZERO,VCB,1)
+      ENDIF
+      DO 16 IBFAC = 1 , NBFAC ! main loop over all boundary faces
+         IBC = IBNDFAC(3,IBFAC)
+         IWKSP(IBC) = IWKSP(IBC) + 1
+C
+         IELEM = IBNDFAC(1,IBFAC)
+         IVERT = IBNDFAC(2,IBFAC)
+C
+         IFACE = ICELFAC(IVERT,IELEM)
+         IF(IFACE.LT.0)STOP 'negative face in chkflx; should NOT occur'
+         DO 12 JVERT = 1,(NOFVERT-1)
+            IPOIN = ICELNOD(ICYCL(IVERT+JVERT,NOFVERT),IELEM+NELEM)
+            IV(JVERT) = IPOIN
+            CALL DCOPY(NOFVAR,ZROE(1,IPOIN),1,VCZ((JVERT-1)*NOFVAR+1),1)
+            IF(LALE)THEN
+               CALL DCOPY(NDIM,XYZDOT(1,IPOIN),1,
+     &                   VCB((JVERT-1)*NDIM+1),1)
+            ENDIF
+   12    CONTINUE ! end loop over the vertices of cell IELEM
+         IF(COMPRESSIBLE)THEN
+            IF(NDIM.EQ.2)THEN
+               CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,VCB,
+     &                   FACENORM(1,IFACE),FLXN,FLUX4)
+            ELSEIF(NDIM.EQ.3)THEN
+               CALL QUADRATURE(NDIM,NOFVERT,NOFVAR,VCZ,VCB,
+     &                   FACENORM(1,IFACE),FLXN,FLUX4)
+            ELSE
+                    STOP 'Error with NDIM in CHKFLX'
+            ENDIF
+         ELSE ! incompressible
+            IF(NDIM.EQ.2)THEN
+               CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,VCB,
+     &                   FACENORM(1,IFACE),FLXN,FLUX2)
+            ELSEIF(NDIM.EQ.3)THEN
+               CALL QUADRATURE(NDIM,NOFVERT,NOFVAR,VCZ,VCB,
+     &                   FACENORM(1,IFACE),FLXN,FLUX2)
+            ELSE
+                    STOP 'Error with NDIM in CHKFLX'
+            ENDIF
+         ENDIF
+         IF(LWRITE)THEN
+caldo               write(6,*)'nbflx(1) = ', nbflx(1) 
+caldo               write(6,*)'ibflx = ', ibflx
+            DO I = 1, NBFLX(1) ! there are NBFLX(1) patches where the flux has to be computed
+               IC = IBFLX(I)
+               IF(IC.EQ.IBC)THEN 
+                  WRITE(120,*)(IV(JVERT),JVERT=1,(NOFVERT-1)),IBC
+                  WRITE(120,*)(FLXN(J),J=1,NOFVAR)
+               ENDIF
+            ENDDO
+         ENDIF
+         CALL DAXPY(NOFVAR,ONE,FLXN((NOFVERT-1)*NOFVAR+1),1,
+     &                                        WKSP(1,IBC),1)
+C
+         IF(VERBOSE)THEN
+            WRITE(100,FMT=340)IBFAC,IBC,(ICELNOD(ICYCL(IVERT+JVERT,NOFVE
+     &RT),IELEM+NELEM),JVERT=1,(NOFVERT-1))
+            WRITE(100,FMT=345)(FLXN((NOFVERT-1)*NOFVAR+IDOF),IDOF=1,NOFV
+     &AR)
+         ENDIF
+C
+   16 CONTINUE ! main loop over all boundary faces
+C
+      DO 18 J = 0 , NCOLOR
+         IF(IWKSP(J).NE.0)THEN ! does smthg iff there is at least a bndry face for color J
+            CALL DAXPY(NOFVAR,ONE,WKSP(1,J),1,WORK,1)
+            WRITE(NOUT,FMT=330)J,(WKSP(IDOF,J),IDOF=1,NOFVAR)!*TEMP
+            WRITE(IFUNIT(J),FMT=*)ITER,(WKSP(IDOF,J),IDOF=1,NOFVAR)!*TEMP
+         ENDIF
+   18 CONTINUE
+C
+      WRITE(NOUT,FMT=335)(WORK(IDOF),IDOF=1,NOFVAR)
+C
+      IF(VERBOSE)CLOSE(100)
+      IF(LWRITE)CLOSE(120)
+C
+      RETURN
+C
+C     I/O FORMATS
+C
+  330 FORMAT(10X,'INVISCID FLUX THROUGH BOUNDARY ',I2,6(1X,E12.6))
+  335 FORMAT(10X,'INVISCID FLUX THROUGH',/,28X,'ALL BOUNDARIES ',
+     &6(1X,E12.6))
+  340 FORMAT(/,10X,'FLUXES THROUGH BOUNDARY ',I6,' IBC = ',I3,
+     &' NODES ARE: ',3(1X,I6))
+  345 FORMAT(10X,6(1X,E12.6))
+C
+      END
+!> \brief \b FLUX4
+!
+!> \par Purpose
+!>
+!>    compute the Eulerian fluxes through the face of normal FACN from parameter vector
+!> \f[ 
+!> F = \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} ,
+!> \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) H,
+!> \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} + p \mathbf{n}
+!> \right)
+!> \f] 
+!
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] FACN the cartesian components of the scaled inward normal to the face
+!> @@param[in] ZROE Roe's parameter vector
+!> @@param[in] XYZDOT the cartesian components of the grid velocity
+!> @@param[out] FLXN the eulerian (inviscid) flux through the face
+!>
+C
+!>    \author $Author: abonfi $
+!>    \version $Revision: 1.15 $
+!>    \date $Date: 2021/01/24 11:50:35 $
+C
+      SUBROUTINE FLUX4(NDIM,FACN,ZROE,XYZDOT,FLXN)
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+      INTEGER NDIM
+C
+      DOUBLE PRECISION FACN(NDIM),ZROE(*),XYZDOT(*),FLXN(*)
+C
+      DOUBLE PRECISION DOTM,PRES
+      DOUBLE PRECISION PRESSC
+C
+C
+      DOTM = FACN(1)*(ZROE(3)-ZROE(1)*XYZDOT(1))+
+     &       FACN(2)*(ZROE(4)-ZROE(1)*XYZDOT(2))
+      IF(NDIM.EQ.3)DOTM = DOTM + FACN(3)*(ZROE(5)-ZROE(1)*XYZDOT(3))
+C
+      PRES = PRESSC( NDIM , ZROE )
+C
+      FLXN(1) = ZROE(1)*DOTM
+      FLXN(2) = ZROE(2)*DOTM
+      FLXN(3) = ZROE(3)*DOTM+PRES*FACN(1)
+      FLXN(4) = ZROE(4)*DOTM+PRES*FACN(2)
+      IF(NDIM.EQ.3)FLXN(5) = ZROE(5)*DOTM+PRES*FACN(3)
+C
+      RETURN
+      END 
+!> \brief \b FLUX2
+!
+!> \par Purpose
+!>
+!>    compute the incompressible Eulerian fluxes through the face of normal FACN from primitive variables
+!> \f[ 
+!> F = \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} ,
+!> \left( \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} + p \mathbf{n}
+!> \right)
+!> \f] 
+!
+!> @@param[in] NDIM dimension of the space
+!> @@param[in] FACN the cartesian components of the scaled inward normal to the face
+!> @@param[in] ZROE p,u,v,w
+!> @@param[in] XYZDOT the cartesian components of the grid velocity
+!> @@param[out] FLXN the eulerian (inviscid) flux through the face
+!>
+C
+!>    \author $Author: abonfi $
+!>    \version $Revision: 1.15 $
+!>    \date $Date: 2021/01/24 11:50:35 $
+C
+      SUBROUTINE FLUX2(NDIM,FACN,ZROE,XYZDOT,FLXN)
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+      INTEGER NDIM
+C
+      DOUBLE PRECISION FACN(NDIM),ZROE(*),XYZDOT(*),FLXN(*)
+C
+      DOUBLE PRECISION DOTM,PRES
+C
+      DOTM = FACN(1)*(ZROE(2)-XYZDOT(1))+
+     &       FACN(2)*(ZROE(3)-XYZDOT(2))
+      IF(NDIM.EQ.3)DOTM = DOTM + FACN(3)*(ZROE(4)-XYZDOT(3))
+C
+      PRES = ZROE(1)
+C
+      FLXN(1) = DOTM
+      FLXN(2) = ZROE(2)*DOTM+PRES*FACN(1)
+      FLXN(3) = ZROE(3)*DOTM+PRES*FACN(2)
+      IF(NDIM.EQ.3)FLXN(4) = ZROE(4)*DOTM+PRES*FACN(3)
+C
+      RETURN
+      END 
+@
+
+
+1.15
+log
+@writes the nof items in the boundary patch file
+@
+text
+@d28 2
+a29 2
+!> \version $Revision: 1.14 $
+!> \date $Date: 2020/02/18 16:13:07 $
+d34 1
+a34 1
+C     $Id: chkflx.f,v 1.14 2020/02/18 16:13:07 abonfi Exp abonfi $
+d58 1
+a58 1
+      DOUBLE PRECISION DOTM,RAVG,TEMP
+d62 1
+a62 1
+      DOUBLE PRECISION WKSP(MAXNOFVAR,0:NCOLOR),UAVG(3),
+d75 1
+a75 1
+      EXTERNAL         DDOT,ICYCL,FLUX4
+a126 5
+         DOTM = ZERO
+         RAVG = ZERO
+         DO J = 1, NDIM
+            UAVG(J) = ZERO
+         ENDDO
+d138 1
+a138 1
+   12    CONTINUE ! end loop over the vertices
+d149 12
+a160 1
+            IF(LWRITE)THEN
+d163 6
+a168 13
+               DO I = 1, NBFLX(1) ! there are NBFLX(1) patches where the flux has to be computed
+                  IC = IBFLX(I)
+                  IF(IC.EQ.IBC)THEN 
+                     WRITE(120,*)(IV(JVERT),JVERT=1,(NOFVERT-1)),IBC
+                     WRITE(120,*)(FLXN(J),J=1,NOFVAR)
+                  ENDIF
+               ENDDO
+            ENDIF
+            CALL DAXPY(NOFVAR,ONE,FLXN((NOFVERT-1)*NOFVAR+1),1,
+     &                                        WKSP(1,IBC),1)
+         ELSE ! incompressible
+            DO J = 1, NDIM
+               UAVG(J) = UAVG(J) / REAL(NOFVERT-1)
+a169 2
+            DOTM= DOTM+DDOT(NDIM,FACENORM(1,IFACE),1,UAVG,1)
+            WKSP(1,IBC) = WKSP(1,IBC) + DOTM
+d171 2
+d181 1
+a181 1
+   16 CONTINUE
+d228 2
+a229 2
+!>    \version $Revision: 1.14 $
+!>    \date $Date: 2020/02/18 16:13:07 $
+d256 47
+@
+
+
+1.14
+log
+@now uses a different quadrature rule in 3D
+@
+text
+@d28 2
+a29 2
+!> \version $Revision: 1.13 $
+!> \date $Date: 2020/02/05 14:53:02 $
+d34 1
+a34 1
+C     $Id: chkflx.f,v 1.13 2020/02/05 14:53:02 abonfi Exp abonfi $
+d56 1
+a56 1
+      INTEGER I,IC,J,IBC,JVERT
+d108 7
+a114 1
+         OPEN(120,FILE=FNAME)
+d155 3
+a157 1
+               DO I = 1, NBFLX(1)
+d229 2
+a230 2
+!>    \version $Revision: 1.13 $
+!>    \date $Date: 2020/02/05 14:53:02 $
+@
+
+
+1.13
+log
+@minor changes in the printout
+@
+text
+@d28 2
+a29 2
+!> \version $Revision: 1.12 $
+!> \date $Date: 2014/04/02 16:25:48 $
+d34 1
+a34 1
+C     $Id: chkflx.f,v 1.12 2014/04/02 16:25:48 abonfi Exp abonfi $
+d139 9
+a147 2
+            CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,VCB,FACENORM(1,IFACE),
+     &                   FLXN,FLUX4)
+d221 2
+a222 2
+!>    \version $Revision: 1.12 $
+!>    \date $Date: 2014/04/02 16:25:48 $
+@
+
+
+1.12
+log
+@bug fixed in the ALE case
+@
+text
+@d28 2
+a29 2
+!> \version $Revision: 1.11 $
+!> \date $Date: 2013/09/06 08:33:53 $
+d34 1
+a34 1
+C     $Id: chkflx.f,v 1.11 2013/09/06 08:33:53 abonfi Exp abonfi $
+d48 1
+a48 1
+      INTEGER NN,NERR,IOPT,IDOF
+d56 1
+a56 1
+      INTEGER I,IC,J,IBC,IFAIL,JVERT
+d186 3
+a188 2
+  330 FORMAT(10X,'MASS FLUX THROUGH BOUNDARY ',I2,6(1X,E12.6))
+  335 FORMAT(10X,'MASS FLUX THROUGH ALL BOUNDARIES ',6(1X,E12.6))
+d214 2
+a215 2
+!>    \version $Revision: 1.11 $
+!>    \date $Date: 2013/09/06 08:33:53 $
+d227 1
+a227 1
+      DOUBLE PRECISION DOTM,PRES,TEMP
+@
+
+
+1.11
+log
+@Updated Doxygen documentation
+@
+text
+@d28 2
+a29 2
+!> \version $Revision: 1.10 $
+!> \date $Date: 2013/08/21 09:12:21 $
+d34 1
+a34 1
+C     $Id: chkflx.f,v 1.10 2013/08/21 09:12:21 abonfi Exp abonfi $
+d213 2
+a214 2
+!>    \version $Revision: 1.10 $
+!>    \date $Date: 2013/08/21 09:12:21 $
+d230 3
+a232 3
+      DOTM = FACN(1)*(ZROE(3)-XYZDOT(1))+
+     &       FACN(2)*(ZROE(4)-XYZDOT(2))
+      IF(NDIM.EQ.3)DOTM = DOTM + FACN(3)*(ZROE(5)-XYZDOT(3))
+@
+
+
+1.10
+log
+@finally a working Doxygen documentation
+@
+text
+@d7 1
+a7 2
+!>    This routine checks the mass flux through the boundaries
+!>    of the computational domain
+d10 1
+a10 1
+!> @@param[in] IBNDFAC 
+d12 2
+a13 2
+!> @@param[in] ICELFAC 
+!> @@param[in] ICELNOD 
+d16 2
+a17 2
+!> @@param[in] FACENORM dimension of the space
+!> @@param[in] ZROE Roe's parameter vector
+d27 3
+a29 3
+!>    \author $Author: abonfi $
+!>    \version $Revision: 1.9 $
+!>    \date $Date: 2013/08/21 07:06:25 $
+d34 1
+a34 1
+C     $Id: chkflx.f,v 1.9 2013/08/21 07:06:25 abonfi Exp abonfi $
+d213 2
+a214 2
+!>    \version $Revision: 1.9 $
+!>    \date $Date: 2013/08/21 07:06:25 $
+@
+
+
+1.9
+log
+@now handles the case when the grid velocity is nonzero
+@
+text
+@d1 4
+a4 5
+      SUBROUTINE CHKFLX(IBNDFAC,NBFAC,ICELFAC,ICELNOD,NOFVERT,NELEM,
+     &FACENORM,ZROE,XYZDOT,NOFVAR,NDIM,NFACE,COMPRESSIBLE,LWRITE,ITER)
+C
+C     $Id: chkflx.f,v 1.8 2012/12/20 10:58:43 abonfi Exp abonfi $
+C
+d6 1
+a8 1
+C
+d10 1
+d29 7
+a35 2
+!>    \version $Revision: 1.8 $
+!>    \date $Date: 2013/08/20 14:48:46 $
+d194 1
+a194 1
+      SUBROUTINE FLUX4(NDIM,FACN,ZROE,XYZDOT,FLXN)
+d196 9
+a204 1
+!     compute the Eulerian fluxes through the face of normal FACN from parameter vector
+d211 1
+d214 2
+a215 2
+!>    \version $Revision: 1.8 $
+!>    \date $Date: 2013/08/20 14:48:46 $
+d217 1
+@
+
+
+1.8
+log
+@added support for moving grids
+@
+text
+@d2 1
+a2 1
+     &FACENORM,ZROE,NOFVAR,NDIM,NFACE,COMPRESSIBLE,LWRITE,ITER)
+d4 1
+a4 4
+C     $Id: chkflx.f,v 1.7 2011/09/16 07:31:29 abonfi Exp abonfi $
+C
+C     This routine checks the mass flux through the boundaries
+C     of the computational domain
+d6 25
+d40 1
+d50 1
+a50 1
+      DOUBLE PRECISION FACENORM(NDIM,*),ZROE(NOFVAR,*)
+d60 1
+a60 1
+     &VCZ(MAXNOFVAR*MAXNOFVERT)
+d64 1
+d108 4
+a111 1
+      DO 16 IBFAC = 1 , NBFAC
+d129 4
+d135 2
+a136 2
+            CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,FACENORM(1,IFACE),FLXN,
+     &                   FLUX4)
+d166 1
+a166 1
+         IF(IWKSP(J).NE.0)THEN
+d189 13
+a201 3
+      SUBROUTINE FLUX4(NDIM,FACN,ZROE,FLXN)
+C
+C     compute the Eulerian fluxes through the face of normal FACN from parameter vector
+d210 1
+a210 1
+      DOUBLE PRECISION FACN(NDIM),ZROE(*),FLXN(*)
+d216 3
+a218 2
+      DOTM = FACN(1)*ZROE(3)+FACN(2)*ZROE(4)
+      IF(NDIM.EQ.3)DOTM = DOTM + FACN(3)*ZROE(5)
+@
+
+
+1.7
+log
+@allows dumping the boundary fluxes to a file
+@
+text
+@d4 1
+a4 1
+C     $Id: chkflx.f,v 1.6 2011/03/30 09:17:25 abonfi Exp abonfi $
+d125 6
+a130 3
+      WRITE(100,FMT=340)IBFAC,IBC,(ICELNOD(ICYCL(IVERT+JVERT,NOFVERT),
+     &IELEM+NELEM),JVERT=1,(NOFVERT-1))
+      WRITE(100,FMT=345)(FLXN((NOFVERT-1)*NOFVAR+IDOF),IDOF=1,NOFVAR)
+@
+
+
+1.6
+log
+@now computes fluxes consistently (only 2D)
+@
+text
+@d2 1
+a2 1
+     &FACENORM,ZROE,NOFVAR,NDIM,NFACE,COMPRESSIBLE,ITER)
+d4 1
+a4 1
+C     $Id: chkflx.f,v 1.5 2011/02/11 13:49:08 abonfi Exp abonfi $
+d24 1
+a24 1
+      LOGICAL COMPRESSIBLE,VERBOSE
+d29 1
+a29 1
+      INTEGER J,IBC,IFAIL,JVERT
+d33 2
+d38 1
+a38 1
+      INTEGER IWKSP(0:NCOLOR)
+d40 1
+a40 1
+      PARAMETER(VERBOSE=.TRUE.)
+d47 1
+a47 1
+      EXTERNAL         DDOT,ICYCL
+d77 6
+d100 1
+d104 11
+a114 2
+caldo       WRITE(6,*)IBFAC,IBC,NOFVAR
+            CALL SIMPSON(NDIM,NOFVERT,NOFVAR,VCZ,FACENORM(1,IFACE),FLXN)
+d142 1
+d155 1
+a155 1
+      SUBROUTINE FLUX4(NDIM,ZROE,FACN,FLXN)
+a181 53
+C
+      RETURN
+      END 
+      SUBROUTINE SIMPSON(NDIM,NOFVERT,NDOF,ZROE,FACN,FLXN)
+C
+C     compute the flux through a face of normal FACN from parameter vector
+C     Input:
+C     NDIM      dimension of the space
+C     NOFVERT   nof vertices for a cell = NDIM+1
+C     NDOF      nof dofs for a vertex
+C     ZROE      nodal values: the first three must store the face values,
+C               the last one is used to store the midpoint value
+C     FACN      NDIM components of the face normal
+C     Output:
+C     FLXN      nodal fluxes: the first three return the fluxes in the vertices of the face,
+C               the last one is used to store the face value computed according to Simpson's rule
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+C
+      INTEGER NDIM,NOFVERT,NDOF
+C
+      DOUBLE PRECISION FACN(NDIM),ZROE(NDOF,NOFVERT),FLXN(NDOF,NOFVERT)
+C
+      DOUBLE PRECISION DOTM,PRES,TEMP
+      DOUBLE PRECISION PRESSC
+C
+      INTEGER I,J,K ,IFAIL
+C
+C
+      CALL DINIT(NDOF,ZERO,ZROE(1,NOFVERT),1)
+      CALL DINIT(NDOF,ZERO,FLXN(1,NOFVERT),1)
+      DO I = 1,(NOFVERT-1)
+            CALL DAXPY(NDOF,ONE,ZROE(1,I),1,ZROE(1,NOFVERT),1)
+            CALL FLUX4(NDIM,ZROE(1,I),FACN,FLXN(1,I)) ! compute flux in the vertices of the face
+            CALL DAXPY(NDOF,ONE/6.d0,FLXN(1,I),1,FLXN(1,NOFVERT),1)
+      ENDDO
+      CALL DSCAL(NDOF,ONE/(NOFVERT-1),ZROE(1,NOFVERT),1)
+      CALL FLUX4(NDIM,ZROE(1,NOFVERT),FACN,FLXN(1,NOFVERT)) ! compute flux in the center of gravity of the face
+caldo CALL X04CAF('General',' ',NDOF,NOFVERT,FLXN,
+caldo+            NDOF,'Nodal fluxes (before) ',IFAIL)
+      CALL DSCAL(NDOF,(4.d0/6.d0),FLXN(1,NOFVERT),1)
+C
+caldo CALL X04CAF('General',' ',NDOF,NOFVERT,ZROE,
+caldo+            NDOF,'Nodal values ',IFAIL)
+C
+      DO I = 1,(NOFVERT-1)
+         CALL DAXPY(NDOF,ONE/6.d0,FLXN(1,I),1,FLXN(1,NOFVERT),1)
+      ENDDO
+caldo CALL X04CAF('General',' ',NDOF,NOFVERT,FLXN,
+caldo+            NDOF,'Nodal fluxes ',IFAIL)
+@
+
+
+1.5
+log
+@added flux calculation
+@
+text
+@d4 1
+a4 1
+C     $Id: chkflx.f,v 1.4 2005/12/27 10:17:03 abonfi Exp abonfi $
+d24 1
+a24 1
+      LOGICAL COMPRESSIBLE
+d29 2
+a30 2
+      INTEGER J,JCOLOR,IFAIL,JVERT
+      INTEGER IELEM,IBDFACE,IFREQ,IVERT,IFACE,IPOIN
+d33 3
+a35 2
+      DOUBLE PRECISION WKSP(MAXNOFVAR,0:NCOLOR),UAVG(3),ZG(MAXNOFVAR),
+     &HELP(MAXNOFVAR),FLXN(MAXNOFVAR,MAXNOFVERT),WORK(MAXNOFVAR)
+d38 1
+d51 3
+d63 2
+d76 3
+a78 3
+      DO 16 IBDFACE = 1 , NBFAC
+         JCOLOR = IBNDFAC(3,IBDFACE)
+         IWKSP(JCOLOR) = IWKSP(JCOLOR) + 1
+d80 2
+a81 2
+         IELEM = IBNDFAC(1,IBDFACE)
+         IVERT = IBNDFAC(2,IBDFACE)
+a86 4
+         DO J = 1, NOFVAR
+            ZG(J) = ZERO
+            HELP(J) = ZERO
+         ENDDO
+d92 1
+a92 14
+            IF(COMPRESSIBLE)THEN
+                CALL FLUX4(NDIM,ZROE(1,IPOIN),FACENORM(1,IFACE),
+     &                     FLXN(1,JVERT)) ! compute flux in gridpoint IPOIN
+                DO J = 1, NOFVAR
+                   ZG(J) = ZG(J)+ZROE(J,IPOIN)
+                ENDDO
+                DO J = 1, NOFVAR ! sum up for Simpson's rule
+                   HELP(J) = HELP(J) + FLXN(J,JVERT)
+                ENDDO
+            ELSE ! incompressible
+                DO J = 1, NDIM
+                   UAVG(J) = UAVG(J) + ZROE(J+1,IPOIN)
+                ENDDO
+            ENDIF 
+d95 4
+a98 13
+            DO J = 1, NOFVAR
+               ZG(J) = ZG(J)/REAL(NDIM)
+            ENDDO
+            CALL FLUX4(NDIM,ZG,FACENORM(1,IFACE),
+     &                      FLXN(1,NOFVERT)) ! compute flux in the center of gravity of the face
+C                                         ! and store in flxn(NOFVERT) 
+C
+C     Apply Simpson 1/3 which should be o.k. in 2D
+C
+            DO J = 1, NOFVAR
+               WKSP(J,JCOLOR) = WKSP(J,JCOLOR)+
+     &                          (HELP(J)+4.d0*FLXN(J,NOFVERT))/6.d0 ! the 1/3 factor might change in 3D
+            ENDDO
+d104 1
+a104 1
+            WKSP(1,JCOLOR) = WKSP(1,JCOLOR) + DOTM
+d107 4
+d123 2
+d131 3
+d163 53
+@
+
+
+1.4
+log
+@an included common has been renamed
+@
+text
+@d4 1
+a4 1
+C     $Id: chkflx.f,v 1.3 2005/12/23 09:42:45 abonfi Exp abonfi $
+d13 1
+a13 1
+      INCLUDE 'constants'
+d21 1
+a21 1
+      INTEGER NN,NERR,IOPT
+d33 2
+a34 1
+      DOUBLE PRECISION WKSP(0:NCOLOR),UAVG(3)
+d57 1
+a58 1
+           WKSP(J) = ZERO
+d60 3
+d80 4
+d87 1
+a87 1
+         DO 12 JVERT = 1,NOFVERT-1
+d90 7
+a96 3
+                RAVG = RAVG + ZROE(1,IPOIN)
+                DO J = 1, NDIM
+                   UAVG(J) = UAVG(J) + ZROE(J+2,IPOIN)
+d98 1
+a98 1
+            ELSE
+d103 1
+a103 1
+   12    CONTINUE
+d105 12
+a116 2
+            DO J = 1, NDIM
+               UAVG(J) = UAVG(J) / RAVG
+d118 1
+a118 1
+         ELSE
+d122 2
+a124 3
+         DOTM= DOTM+DDOT(NDIM,FACENORM(1,IFACE),1,UAVG,1)
+
+         WKSP(JCOLOR) = WKSP(JCOLOR) + DOTM
+d130 3
+a132 2
+            WRITE(NOUT,FMT=330)J,WKSP(J)*TEMP
+            WRITE(IFUNIT(J),FMT=*)ITER,WKSP(J)*TEMP
+d136 1
+d142 2
+a143 1
+  330 FORMAT(10X,'MASS FLUX THROUGH BOUNDARY ',I2,2X,E12.6)
+d146 30
+@
+
+
+1.3
+log
+@add printout to file and also fixed a bug
+related to the addressing of periodic vertices
+in annular cascades
+@
+text
+@d4 1
+a4 1
+C     $Id: chkflx.f,v 1.2 2005/09/09 08:41:51 abonfi Exp abonfi $
+d12 2
+d15 3
+a17 3
+C
+      INCLUDE 'constants'
+      INCLUDE 'bnd'
+d31 1
+a31 1
+      DOUBLE PRECISION DOTM,RAVG
+d49 3
+d57 2
+a58 2
+          WKSP(J) = ZERO
+          IWKSP(J) = ZERO
+d109 2
+a110 2
+            WRITE(NOUT,FMT=330)J,WKSP(J)
+            WRITE(IFUNIT(J),FMT=*)ITER,WKSP(J)
+@
+
+
+1.2
+log
+@fixing an old bug, but maybe it is
+not yet bug free....
+@
+text
+@d2 1
+a2 1
+     &FACENORM,ZROE,NOFVAR,NDIM,NFACE,COMPRESSIBLE)
+d4 1
+a4 1
+C     $Id: chkflx.f,v 1.1 2002/10/27 03:41:48 abonfi Exp abonfi $
+a16 1
+C     INCLUDE 'visco.com'
+d18 1
+a18 1
+      INTEGER NBFAC,NOFVERT,NELEM,NDIM,NFACE,NOFVAR
+d73 1
+a73 1
+         IF(IFACE.LT.0)STOP 'negative face'
+d75 1
+a75 1
+            IPOIN = ICELNOD(ICYCL(IVERT+JVERT,NOFVERT),IELEM)
+d103 4
+a106 1
+      IF(IWKSP(J).NE.0)WRITE(NOUT,330)J,WKSP(J)
+a113 5
+  100 FORMAT(I3.3)
+  110 FORMAT(I2.2)
+  111 FORMAT('.',$)
+  114 FORMAT(10X,'CHECKING BOUNDARY FLUXES ',$)
+  115 FORMAT(I6,/)
+a114 2
+  355 FORMAT(10X,'THERE ARE ',I5,' BOUNDARY FACES COLOURED ',I2)
+  454 FORMAT(57X,9("-"),/57X,D9.4)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+C     $Id:$
+d17 1
+a17 1
+      INCLUDE 'visco.com'
+d28 1
+a28 1
+      INTEGER IBC,J,JCOLOR,IFAIL,i,JVERT
+d30 1
+a30 1
+      DOUBLE PRECISION DOTM,SUM
+d32 1
+a32 1
+      DOUBLE PRECISION WKSP(0:NCOLOR)
+d68 4
+d76 12
+a87 1
+             IPOIN = ICELNOD(ICYCL(IVERT+JVERT,NOFVERT),IELEM)
+d89 3
+a91 2
+             SUM= DDOT(NDIM,FACENORM(1,IFACE),1,ZROE(3,IPOIN),1)
+             DOTM = DOTM + ZROE(1,IPOIN)*SUM 
+d93 7
+a99 4
+             DOTM= DOTM+DDOT(NDIM,FACENORM(1,IFACE),1,ZROE(2,IPOIN),1)
+         ENDIF 
+   12 CONTINUE
+         WKSP(JCOLOR) = WKSP(JCOLOR) + DOTM/REAL(NOFVERT)
+a104 1
+C     IF(IWKSP(J).NE.0)WRITE(NOUT,*)J,WKSP(J)
+a106 1
+C     write(6,*)'Actual Reynolds number is ',RE*WKSP(2)
+@

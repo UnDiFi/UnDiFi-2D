@@ -1,0 +1,2 @@
+C     NGHOST   no. of ghost meshpoints on the current processor; 
+C              0 the uni-processor case

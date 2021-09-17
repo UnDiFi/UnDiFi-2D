@@ -1,0 +1,72 @@
+\hypertarget{tet__mesh__order4__adj__count_8f90}{}\doxysection{src/util/tet\+\_\+mesh\+\_\+order4\+\_\+adj\+\_\+count.f90 File Reference}
+\label{tet__mesh__order4__adj__count_8f90}\index{src/util/tet\_mesh\_order4\_adj\_count.f90@{src/util/tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_a916745d608a882727b9d7cdb9bdb59b4}{tet\+\_\+mesh\+\_\+order4\+\_\+adj\+\_\+count}} (node\+\_\+num, tetra\+\_\+num, tetra\+\_\+node, adj\+\_\+num, adj\+\_\+row)
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_a0129f6e6a06464d5c0479b825f87d3d1}{i4col\+\_\+sort\+\_\+a}} (m, n, a)
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_ac58c4d3cd5316c059cae10accbcdd9a6}{i4col\+\_\+sort2\+\_\+a}} (m, n, a)
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_a83ea219346f01c1bee1ff2c36b625983}{i4col\+\_\+sorted\+\_\+unique\+\_\+count}} (m, n, a, unique\+\_\+num)
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_a5aba0a8de14477e63c07d38f8c893514}{i4\+\_\+swap}} (i, j)
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_a6b4aed2c9cec72bb0bb2546a66d06317}{i4col\+\_\+compare}} (m, n, a, i, j, isgn)
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_a0b6a4c87876415e63bcb4480ff4dab74}{sort\+\_\+heap\+\_\+external}} (n, indx, i, j, isgn)
+\item 
+subroutine \mbox{\hyperlink{tet__mesh__order4__adj__count_8f90_a73b3414d42cbba97b1fc79a446e47b01}{i4col\+\_\+swap}} (m, n, a, j1, j2)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_a5aba0a8de14477e63c07d38f8c893514}\label{tet__mesh__order4__adj__count_8f90_a5aba0a8de14477e63c07d38f8c893514}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!i4\_swap@{i4\_swap}}
+\index{i4\_swap@{i4\_swap}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{i4\_swap()}{i4\_swap()}}
+{\footnotesize\ttfamily subroutine i4\+\_\+swap (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{i,  }\item[{integer ( kind = 4 )}]{j }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_a6b4aed2c9cec72bb0bb2546a66d06317}\label{tet__mesh__order4__adj__count_8f90_a6b4aed2c9cec72bb0bb2546a66d06317}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!i4col\_compare@{i4col\_compare}}
+\index{i4col\_compare@{i4col\_compare}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{i4col\_compare()}{i4col\_compare()}}
+{\footnotesize\ttfamily subroutine i4col\+\_\+compare (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(m,n)}]{a,  }\item[{integer ( kind = 4 )}]{i,  }\item[{integer ( kind = 4 )}]{j,  }\item[{integer ( kind = 4 )}]{isgn }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_ac58c4d3cd5316c059cae10accbcdd9a6}\label{tet__mesh__order4__adj__count_8f90_ac58c4d3cd5316c059cae10accbcdd9a6}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!i4col\_sort2\_a@{i4col\_sort2\_a}}
+\index{i4col\_sort2\_a@{i4col\_sort2\_a}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{i4col\_sort2\_a()}{i4col\_sort2\_a()}}
+{\footnotesize\ttfamily subroutine i4col\+\_\+sort2\+\_\+a (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(m,n)}]{a }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_a0129f6e6a06464d5c0479b825f87d3d1}\label{tet__mesh__order4__adj__count_8f90_a0129f6e6a06464d5c0479b825f87d3d1}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!i4col\_sort\_a@{i4col\_sort\_a}}
+\index{i4col\_sort\_a@{i4col\_sort\_a}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{i4col\_sort\_a()}{i4col\_sort\_a()}}
+{\footnotesize\ttfamily subroutine i4col\+\_\+sort\+\_\+a (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(m,n)}]{a }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_a83ea219346f01c1bee1ff2c36b625983}\label{tet__mesh__order4__adj__count_8f90_a83ea219346f01c1bee1ff2c36b625983}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!i4col\_sorted\_unique\_count@{i4col\_sorted\_unique\_count}}
+\index{i4col\_sorted\_unique\_count@{i4col\_sorted\_unique\_count}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{i4col\_sorted\_unique\_count()}{i4col\_sorted\_unique\_count()}}
+{\footnotesize\ttfamily subroutine i4col\+\_\+sorted\+\_\+unique\+\_\+count (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(m,n)}]{a,  }\item[{integer ( kind = 4 )}]{unique\+\_\+num }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_a73b3414d42cbba97b1fc79a446e47b01}\label{tet__mesh__order4__adj__count_8f90_a73b3414d42cbba97b1fc79a446e47b01}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!i4col\_swap@{i4col\_swap}}
+\index{i4col\_swap@{i4col\_swap}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{i4col\_swap()}{i4col\_swap()}}
+{\footnotesize\ttfamily subroutine i4col\+\_\+swap (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{m,  }\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 ), dimension(m,n)}]{a,  }\item[{integer ( kind = 4 )}]{j1,  }\item[{integer ( kind = 4 )}]{j2 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_a0b6a4c87876415e63bcb4480ff4dab74}\label{tet__mesh__order4__adj__count_8f90_a0b6a4c87876415e63bcb4480ff4dab74}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!sort\_heap\_external@{sort\_heap\_external}}
+\index{sort\_heap\_external@{sort\_heap\_external}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{sort\_heap\_external()}{sort\_heap\_external()}}
+{\footnotesize\ttfamily subroutine sort\+\_\+heap\+\_\+external (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{n,  }\item[{integer ( kind = 4 )}]{indx,  }\item[{integer ( kind = 4 )}]{i,  }\item[{integer ( kind = 4 )}]{j,  }\item[{integer ( kind = 4 )}]{isgn }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{tet__mesh__order4__adj__count_8f90_a916745d608a882727b9d7cdb9bdb59b4}\label{tet__mesh__order4__adj__count_8f90_a916745d608a882727b9d7cdb9bdb59b4}} 
+\index{tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}!tet\_mesh\_order4\_adj\_count@{tet\_mesh\_order4\_adj\_count}}
+\index{tet\_mesh\_order4\_adj\_count@{tet\_mesh\_order4\_adj\_count}!tet\_mesh\_order4\_adj\_count.f90@{tet\_mesh\_order4\_adj\_count.f90}}
+\doxysubsubsection{\texorpdfstring{tet\_mesh\_order4\_adj\_count()}{tet\_mesh\_order4\_adj\_count()}}
+{\footnotesize\ttfamily subroutine tet\+\_\+mesh\+\_\+order4\+\_\+adj\+\_\+count (\begin{DoxyParamCaption}\item[{integer ( kind = 4 )}]{node\+\_\+num,  }\item[{integer ( kind = 4 )}]{tetra\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(4,tetra\+\_\+num)}]{tetra\+\_\+node,  }\item[{integer ( kind = 4 )}]{adj\+\_\+num,  }\item[{integer ( kind = 4 ), dimension(node\+\_\+num+1)}]{adj\+\_\+row }\end{DoxyParamCaption})}
+

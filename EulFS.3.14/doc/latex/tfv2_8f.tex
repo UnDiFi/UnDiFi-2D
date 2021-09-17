@@ -1,0 +1,88 @@
+\hypertarget{tfv2_8f}{}\doxysection{src/turbo/tfv2.f File Reference}
+\label{tfv2_8f}\index{src/turbo/tfv2.f@{src/turbo/tfv2.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+double precision function \mbox{\hyperlink{tfv2_8f_a26800649b88f9ec3fddad07ebeb17997}{T\+F\+V2}} (T\+C\+HI)
+\begin{DoxyCompactList}\small\item\em {\bfseries{T\+F\+V2}} \end{DoxyCompactList}\item 
+double precision function \mbox{\hyperlink{tfv2_8f_a5b94cb1f666141bae515ca8f53cb00ba}{T\+F\+V2\+SA}} (T\+C\+HI)
+\begin{DoxyCompactList}\small\item\em {\bfseries{T\+F\+V2\+SA}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{tfv2_8f_a26800649b88f9ec3fddad07ebeb17997}\label{tfv2_8f_a26800649b88f9ec3fddad07ebeb17997}} 
+\index{tfv2.f@{tfv2.f}!TFV2@{TFV2}}
+\index{TFV2@{TFV2}!tfv2.f@{tfv2.f}}
+\doxysubsubsection{\texorpdfstring{TFV2()}{TFV2()}}
+{\footnotesize\ttfamily double precision function T\+F\+V2 (\begin{DoxyParamCaption}\item[{double precision}]{T\+C\+HI }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{T\+F\+V2}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+compute the function $ f_{v_2} = \frac{1}{\left(1+\chi/c_{v_2}\right)^3} $ (Spalart \& Allmaras model\+: version\+: S\+A-\/fv3)
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em T\+C\+HI} & is $ \tilde{\nu}/\nu $ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/05 15\+:03\+:28 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{tfv2_8f_a5b94cb1f666141bae515ca8f53cb00ba}\label{tfv2_8f_a5b94cb1f666141bae515ca8f53cb00ba}} 
+\index{tfv2.f@{tfv2.f}!TFV2SA@{TFV2SA}}
+\index{TFV2SA@{TFV2SA}!tfv2.f@{tfv2.f}}
+\doxysubsubsection{\texorpdfstring{TFV2SA()}{TFV2SA()}}
+{\footnotesize\ttfamily double precision function T\+F\+V2\+SA (\begin{DoxyParamCaption}\item[{double precision}]{T\+C\+HI }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{T\+F\+V2\+SA}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+compute the function $ f_{v_2} = 1-\frac{\chi}{\left(1+\chi\,f_{v_1}\right)} $ (Spalart \& Allmaras model\+: version\+: SA)
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em T\+C\+HI} & is $ \tilde{\nu}/\nu $ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/05 15\+:03\+:28 
+\end{DoxyParagraph}

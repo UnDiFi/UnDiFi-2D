@@ -1,0 +1,36 @@
+\hypertarget{lhsbc6_8_f}{}\doxysection{src/seq/lhsbc6.F File Reference}
+\label{lhsbc6_8_f}\index{src/seq/lhsbc6.F@{src/seq/lhsbc6.F}}
+{\ttfamily \#include \char`\"{}petsc/finclude/petscvec.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}petsc/finclude/petscmat.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}petsc/finclude/petscis.\+h\char`\"{}}\newline
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{lhsbc6_8_f_a4655913b87f6d6c8e9046e6b6bee03c2}{isothwall}} (A, X, Nodal\+Bcs, I\+B\+GN, N\+D\+IM, N\+O\+F\+V\+AR, C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{lhsbc6_8_f_a4655913b87f6d6c8e9046e6b6bee03c2}\label{lhsbc6_8_f_a4655913b87f6d6c8e9046e6b6bee03c2}} 
+\index{lhsbc6.F@{lhsbc6.F}!isothwall@{isothwall}}
+\index{isothwall@{isothwall}!lhsbc6.F@{lhsbc6.F}}
+\doxysubsubsection{\texorpdfstring{isothwall()}{isothwall()}}
+{\footnotesize\ttfamily subroutine isothwall (\begin{DoxyParamCaption}\item[{}]{A,  }\item[{double precision, dimension($\ast$)}]{X,  }\item[{dimension(0\+:$\ast$)}]{Nodal\+Bcs,  }\item[{integer}]{I\+B\+GN,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{logical}]{C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em A} & is the P\+E\+T\+Sc jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em X} & is the F\+O\+R\+T\+R\+AN vector of C\+O\+N\+S\+E\+R\+V\+ED variables \\
+\hline
+\mbox{\texttt{ in}}  & {\em Nodal\+Bcs} & is the P\+E\+T\+Sc IS where nodal bndry conditions are stored \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+B\+GN} & the order of the system to be solved \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof degrees of freedom within each gridpoint \\
+\hline
+\mbox{\texttt{ in}}  & {\em C\+O\+M\+P\+R\+E\+S\+S\+I\+B\+LE} & is currently unused \\
+\hline
+\end{DoxyParams}

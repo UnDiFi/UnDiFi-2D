@@ -1,0 +1,130 @@
+\hypertarget{flxw4_8f}{}\doxysection{src/euler/flxw4.f File Reference}
+\label{flxw4_8f}\index{src/euler/flxw4.f@{src/euler/flxw4.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{flxw4_8f_a39ebe6a7d721cc3e071d45ae09ae909b}{F\+L\+X\+W4}} (N\+D\+IM, N\+O\+F\+V\+AR, N\+O\+F\+V\+E\+RT, S\+T\+I\+FC, W\+O\+RK, W\+O\+R\+K2, V\+CZ, V\+CB, V\+CN, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, P\+I\+C\+A\+RD)
+\begin{DoxyCompactList}\small\item\em {\bfseries{F\+L\+X\+W4}} \end{DoxyCompactList}\item 
+subroutine \mbox{\hyperlink{flxw4_8f_ac316544904af91c0e2546e3efe7f383f}{F\+L\+X\+W44\+Ar}} (N\+D\+IM, N\+O\+F\+V\+AR, N\+O\+F\+V\+E\+RT, S\+T\+I\+FC, W\+O\+RK, W\+O\+R\+K2, V\+CZ, V\+CN, \mbox{\hyperlink{nodres_8_f_a91bf670d169b8cb86bcc7bbefde0f978}{N\+O\+D\+R\+ES}}, P\+I\+C\+A\+RD)
+\begin{DoxyCompactList}\small\item\em {\bfseries{F\+L\+X\+W44\+Ar}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{flxw4_8f_a39ebe6a7d721cc3e071d45ae09ae909b}\label{flxw4_8f_a39ebe6a7d721cc3e071d45ae09ae909b}} 
+\index{flxw4.f@{flxw4.f}!FLXW4@{FLXW4}}
+\index{FLXW4@{FLXW4}!flxw4.f@{flxw4.f}}
+\doxysubsubsection{\texorpdfstring{FLXW4()}{FLXW4()}}
+{\footnotesize\ttfamily subroutine F\+L\+X\+W4 (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{double precision, dimension(nofvar,nofvar,nofvert,nofvert)}]{S\+T\+I\+FC,  }\item[{double precision, dimension(ndim+2,ndim+2,ndim)}]{W\+O\+RK,  }\item[{double precision, dimension(ndim+2,ndim+2,ndim,ndim)}]{W\+O\+R\+K2,  }\item[{double precision, dimension(nofvar,nofvert)}]{V\+CZ,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CB,  }\item[{double precision, dimension(ndim)}]{V\+CN,  }\item[{double precision, dimension(nofvar,nofvert)}]{N\+O\+D\+R\+ES,  }\item[{logical}]{P\+I\+C\+A\+RD }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{F\+L\+X\+W4}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+compute inviscid wall b.\+c.\textquotesingle{}s for compressible flows\+: weak approach
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices of a cell (=N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em S\+T\+I\+FC} & the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em W\+O\+RK} & work array \\
+\hline
+\mbox{\texttt{ in}}  & {\em W\+O\+R\+K2} & work array \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & nodal values in the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CB} & grid velocity at all N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & N\+D\+IM components of the normal to the boundary \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+D\+R\+ES} & nodal residual \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+I\+C\+A\+RD} & .T\+R\+UE. if the jacobian matrix has to be assembled In two-\/dimensional flows we use\+:\\
+\hline
+\end{DoxyParams}
+\begin{eqnarray*} R_1 &:=& R_1 + \frac{\alpha}{2} F_1 + \frac{1-\alpha}{2} F_2 \\ R_2 &:=& R_2 + \frac{\alpha}{2} F_2 + \frac{1-\alpha}{2} F_1 \end{eqnarray*} In three-\/dimensional flows we use\+:
+
+\begin{eqnarray*} R_1 &:=& R_1 + \frac{\alpha}{3} F_1 + \frac{1-\alpha}{6} F_2 + \frac{1-\alpha}{6} F_3 \\ R_2 &:=& R_2 + \frac{\alpha}{3} F_2 + \frac{1-\alpha}{6} F_3 + \frac{1-\alpha}{6} F_1 \\ R_3 &:=& R_3 + \frac{\alpha}{3} F_3 + \frac{1-\alpha}{6} F_1 + \frac{1-\alpha}{6} F_2 \end{eqnarray*}
+
+$\alpha$ is hardwired to 3/4 \begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+10 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{flxw4_8f_ac316544904af91c0e2546e3efe7f383f}\label{flxw4_8f_ac316544904af91c0e2546e3efe7f383f}} 
+\index{flxw4.f@{flxw4.f}!FLXW44Ar@{FLXW44Ar}}
+\index{FLXW44Ar@{FLXW44Ar}!flxw4.f@{flxw4.f}}
+\doxysubsubsection{\texorpdfstring{FLXW44Ar()}{FLXW44Ar()}}
+{\footnotesize\ttfamily subroutine F\+L\+X\+W44\+Ar (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{double precision, dimension(nofvar,nofvar,nofvert,nofvert)}]{S\+T\+I\+FC,  }\item[{double precision, dimension(nofvar,nofvar,ndim)}]{W\+O\+RK,  }\item[{double precision, dimension(nofvar,nofvar,ndim,ndim)}]{W\+O\+R\+K2,  }\item[{double precision, dimension(nofvar,nofvert)}]{V\+CZ,  }\item[{double precision, dimension(ndim)}]{V\+CN,  }\item[{double precision, dimension(nofvar,nofvert)}]{N\+O\+D\+R\+ES,  }\item[{logical}]{P\+I\+C\+A\+RD }\end{DoxyParamCaption})}
+
+
+
+{\bfseries{F\+L\+X\+W44\+Ar}} 
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+compute inviscid wall b.\+c.\textquotesingle{}s for an Argon plasma\+: weak approach
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices of a cell (=N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em S\+T\+I\+FC} & the jacobian matrix \\
+\hline
+\mbox{\texttt{ in}}  & {\em W\+O\+RK} & work array \\
+\hline
+\mbox{\texttt{ in}}  & {\em W\+O\+R\+K2} & work array \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CZ} & nodal values in the N\+O\+F\+V\+E\+RT vertices \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & N\+D\+IM components of the normal to the boundary \\
+\hline
+\mbox{\texttt{ out}}  & {\em N\+O\+D\+R\+ES} & nodal residual \\
+\hline
+\mbox{\texttt{ in}}  & {\em P\+I\+C\+A\+RD} & .T\+R\+UE. if the jacobian matrix has to be assembled \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+10 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:51\+:15 
+\end{DoxyParagraph}

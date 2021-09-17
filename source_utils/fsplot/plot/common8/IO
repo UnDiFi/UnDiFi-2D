@@ -1,0 +1,6 @@
+      INTEGER*4 NIN,NOUT
+      PARAMETER (NIN=5,NOUT=6)
+C
+C	NIN	is the OUTPUT device number
+C	NOUT	is the INPUT device number
+C

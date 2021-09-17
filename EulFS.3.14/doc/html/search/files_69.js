@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['ibc2_2ecom',['ibc2.com',['../ibc2_8com.html',1,'']]],
+  ['ibc8_2ecom',['ibc8.com',['../ibc8_8com.html',1,'']]],
+  ['icopy_2ef',['icopy.f',['../icopy_8f.html',1,'']]],
+  ['icycl_2ef',['icycl.f',['../icycl_8f.html',1,'']]],
+  ['igthr_2ef',['igthr.f',['../igthr_8f.html',1,'']]],
+  ['iinit_2ef',['iinit.f',['../iinit_8f.html',1,'']]],
+  ['implicit_2eh',['implicit.h',['../implicit_8h.html',1,'']]],
+  ['init_2ef',['init.F',['../init_8_f.html',1,'']]],
+  ['io_2ecom',['io.com',['../io_8com.html',1,'']]],
+  ['iondegree4ar_2ef',['iondegree4Ar.f',['../iondegree4_ar_8f.html',1,'']]],
+  ['ioplasma_2ecom',['ioplasma.com',['../ioplasma_8com.html',1,'']]],
+  ['isctr_2ef',['isctr.f',['../isctr_8f.html',1,'']]],
+  ['isdmin_2ef',['isdmin.f',['../isdmin_8f.html',1,'']]],
+  ['iset_2ecom',['iset.com',['../iset_8com.html',1,'']]],
+  ['iset_2ef',['iset.F',['../iset_8_f.html',1,'']]],
+  ['iset_5ft_2ef',['iset_t.F',['../iset__t_8_f.html',1,'']]],
+  ['isortrx_2ef',['isortrx.f',['../isortrx_8f.html',1,'']]]
+];

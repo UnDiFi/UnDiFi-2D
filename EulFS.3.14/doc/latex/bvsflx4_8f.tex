@@ -1,0 +1,85 @@
+\hypertarget{bvsflx4_8f}{}\doxysection{src/navier-\/stokes/bvsflx4.f File Reference}
+\label{bvsflx4_8f}\index{src/navier-\/stokes/bvsflx4.f@{src/navier-\/stokes/bvsflx4.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{bvsflx4_8f_a9b99a57e67b47e2327f3dc581c48cc2a}{B\+V\+S\+F\+L\+X4}} (I\+C\+LR, I\+E\+L\+EM, K\+V\+E\+RT, Z\+R\+OE, Nod\+Res, T\+S\+T\+EP, N\+O\+F\+V\+AR, N\+O\+F\+V\+E\+RT, V\+CN, N\+D\+IM, V\+O\+L\+U\+ME, E\+L\+T\+M\+AT, V\+I\+S\+CL, V\+I\+S\+CT, T\+A\+UW, H\+F\+L\+UX, W\+A\+LL, M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{bvsflx4_8f_a9b99a57e67b47e2327f3dc581c48cc2a}\label{bvsflx4_8f_a9b99a57e67b47e2327f3dc581c48cc2a}} 
+\index{bvsflx4.f@{bvsflx4.f}!BVSFLX4@{BVSFLX4}}
+\index{BVSFLX4@{BVSFLX4}!bvsflx4.f@{bvsflx4.f}}
+\doxysubsubsection{\texorpdfstring{BVSFLX4()}{BVSFLX4()}}
+{\footnotesize\ttfamily subroutine B\+V\+S\+F\+L\+X4 (\begin{DoxyParamCaption}\item[{integer}]{I\+C\+LR,  }\item[{integer}]{I\+E\+L\+EM,  }\item[{integer}]{K\+V\+E\+RT,  }\item[{double precision, dimension(nofvar,nofvert)}]{Z\+R\+OE,  }\item[{double precision, dimension(nofvar,nofvert)}]{Nod\+Res,  }\item[{double precision, dimension(nofvar,nofvert)}]{T\+S\+T\+EP,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{integer}]{N\+D\+IM,  }\item[{double precision}]{V\+O\+L\+U\+ME,  }\item[{double precision, dimension(nofvar,nofvar,nofvert,             nofvert)}]{E\+L\+T\+M\+AT,  }\item[{double precision}]{V\+I\+S\+CL,  }\item[{double precision}]{V\+I\+S\+CT,  }\item[{double precision}]{T\+A\+UW,  }\item[{double precision}]{H\+F\+L\+UX,  }\item[{logical}]{W\+A\+LL,  }\item[{logical}]{M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute viscous fluxes on boundary cells (compressible case)
+
+Whenever the node lies on the boundary, additional terms due to the boundary fluxes have to be accounted for; triangle {\ttfamily I\+E\+L\+EM} contributes with a term\+: \[ - \frac{1}{d} \mathbf{n}_{k}^{ie} \cdot \mathbf{G} \] where {\ttfamily k} is the vertex facing the boundary face and {\ttfamily ie} = {\ttfamily I\+E\+L\+EM} 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+LR} & colour of the current boundary patch \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & counter of the current triangle/tetrahedron \\
+\hline
+\mbox{\texttt{ in}}  & {\em K\+V\+E\+RT} & index of the vertex facing the boundary face \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & is parameter vector in the N\+O\+F\+V\+E\+RT vertices of cell {\ttfamily I\+E\+L\+EM} \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em N\+O\+D\+R\+ES} & nodal residual \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em T\+S\+T\+EP} & nodal timestep \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & is the nof dofs \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof vertices (= N\+D\+I\+M+1) \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+CN} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+O\+L\+U\+ME} & area/volume of the current element (triangle,tetrahedron) \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em E\+L\+T\+M\+AT} & implicit matrix, built only when {\ttfamily M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} .E\+QV. .T\+R\+UE. \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+I\+S\+CL} & laminar viscosity \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+I\+S\+CT} & turbulent viscosity \\
+\hline
+\mbox{\texttt{ out}}  & {\em T\+A\+UW} & dimensionless shear stress \\
+\hline
+\mbox{\texttt{ out}}  & {\em H\+F\+L\+UX} & nof ghost nodes in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em W\+A\+LL} & {\ttfamily }.E\+QV. {\ttfamily }.T\+R\+UE. if the current face is a boundary face \\
+\hline
+\mbox{\texttt{ in}}  & {\em M\+A\+T\+R\+I\+X\+\_\+\+A\+S\+S\+E\+M\+B\+LY} & {\ttfamily }.E\+QV. {\ttfamily }.T\+R\+UE. if the implicit matrix has to be built, i.\+e. Picard linearization\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+22 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/02/27 10\+:46\+:41 
+\end{DoxyParagraph}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000004}{Bug}}]3D wall shear stress is neither computed nor stored \end{DoxyRefDesc}
+\begin{DoxyWarning}{Warning}
+
+\end{DoxyWarning}

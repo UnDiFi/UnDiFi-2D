@@ -1,0 +1,210 @@
+\hypertarget{wall_8f}{}\doxysection{src/euler/wall.f File Reference}
+\label{wall_8f}\index{src/euler/wall.f@{src/euler/wall.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{wall_8f_ac6b684a7721ac7602d312951c9dafbc7}{G\+E\+T\+D\+F2\+C\+O\+R\+R\+DU}} (U\+VW, VB, VN, N\+D\+IM, N\+O\+F\+V\+AR, D\+F\+C\+O\+R\+R\+DU)
+\item 
+subroutine \mbox{\hyperlink{wall_8f_acfe01de8e59014394c576869ac859e8b}{G\+E\+T\+D\+F4\+C\+O\+R\+R\+DU}} (Z\+R\+OE, B, VN, N\+D\+IM, N\+O\+F\+V\+AR, D\+F\+C\+O\+R\+R\+DU)
+\item 
+subroutine \mbox{\hyperlink{wall_8f_afe034d1c9e426ad3601d3377922371f1}{I\+N\+V\+W\+L\+LI}} (N\+D\+IM, V\+N\+OR, B, Z, F)
+\item 
+subroutine \mbox{\hyperlink{wall_8f_ae2c728c9fbcdc100586621a540683fd5}{I\+N\+V\+W\+LL}} (N\+D\+IM, V\+N\+OR, B, Z, F)
+\item 
+subroutine \mbox{\hyperlink{wall_8f_afd518bb22997cd57c18b202ad18a41ae}{G\+E\+T\+D\+F4\+C\+O\+R\+R\+D\+U4\+Ar}} (Z\+R\+OE, VN, N\+D\+IM, N\+O\+F\+V\+AR, D\+F\+C\+O\+R\+R\+DU)
+\item 
+subroutine \mbox{\hyperlink{wall_8f_a92b6c7257e73048ac903eb0c5e4f0fcd}{I\+N\+V\+W\+L\+L4\+Ar}} (N\+D\+IM, V\+N\+OR, Z, F)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{wall_8f_ac6b684a7721ac7602d312951c9dafbc7}\label{wall_8f_ac6b684a7721ac7602d312951c9dafbc7}} 
+\index{wall.f@{wall.f}!GETDF2CORRDU@{GETDF2CORRDU}}
+\index{GETDF2CORRDU@{GETDF2CORRDU}!wall.f@{wall.f}}
+\doxysubsubsection{\texorpdfstring{GETDF2CORRDU()}{GETDF2CORRDU()}}
+{\footnotesize\ttfamily subroutine G\+E\+T\+D\+F2\+C\+O\+R\+R\+DU (\begin{DoxyParamCaption}\item[{double precision, dimension(ndim)}]{U\+VW,  }\item[{double precision, dimension(ndim)}]{VB,  }\item[{double precision, dimension(ndim)}]{VN,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{double precision, dimension(nofvar,nofvar)}]{D\+F\+C\+O\+R\+R\+DU }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+subroutine G\+E\+T\+D\+F2\+C\+O\+R\+R\+DU computes matrix\+: \[ \frac{ \partial F}{\partial U} = \left( \begin{array}{cccc} 0 & n_x & n_y & n_z \\ 0 & u_n + u n_x & u n_y & u n_z \\ 0 & v n_x & u_n + v n_y & v n_z \\ 0 & w n_x & w n_y & u_n + w n_z \end{array} \right) \] where $ F $ is given in subroutine I\+N\+W\+L\+LI
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em U\+VW} & the x,y,z components of the velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em VB} & the N\+D\+IM cartesian component of nodal grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em VN} & the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs \\
+\hline
+\mbox{\texttt{ out}}  & {\em D\+F\+C\+O\+R\+R\+DU} & the jacobian matrix \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/21 10\+:49\+:44 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+N\+O\+F\+V\+AR should be set equal to N\+D\+I\+M+1 in the calling routine 
+
+This routine has never been tested with a non-\/zero grid velocity 
+\end{DoxyWarning}
+\mbox{\Hypertarget{wall_8f_acfe01de8e59014394c576869ac859e8b}\label{wall_8f_acfe01de8e59014394c576869ac859e8b}} 
+\index{wall.f@{wall.f}!GETDF4CORRDU@{GETDF4CORRDU}}
+\index{GETDF4CORRDU@{GETDF4CORRDU}!wall.f@{wall.f}}
+\doxysubsubsection{\texorpdfstring{GETDF4CORRDU()}{GETDF4CORRDU()}}
+{\footnotesize\ttfamily subroutine G\+E\+T\+D\+F4\+C\+O\+R\+R\+DU (\begin{DoxyParamCaption}\item[{double precision, dimension(nofvar)}]{Z\+R\+OE,  }\item[{double precision, dimension(ndim)}]{B,  }\item[{double precision, dimension(ndim)}]{VN,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{double precision, dimension(nofvar,nofvar)}]{D\+F\+C\+O\+R\+R\+DU }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+subroutine G\+E\+T\+D\+F4\+C\+O\+R\+R\+DU computes matrix \[ \frac{\partial F_{n}}{\partial Z} = \left( \begin{array}{ccccc} \sqrt{\rho} u_n - 2z_1b_n & 0 & z_1 n_x & z_1 n_y & z_1 n_z \\ -b_n\,z_2 & \sqrt{\rho}\left(u_n-b_n\right) & z_2 n_x & z_2 n_y & z_2 n_z \\ -b_n\,z_3 & 0 & \sqrt{\rho}\left(u_n-b_n\right)+ z_3 n_x & z_3 n_y & z_3 n_z \\ -b_n\,z_4 & 0 & z_4 n_x & \sqrt{\rho}\left(u_n-b_n\right) + z_4 n_y & z_4 n_z \\ -b_n\,z_5 & 0 & z_5 n_x & z_5 n_y & \sqrt{\rho}\left(u_n-b_n\right) + z_5 n_z \end{array} \right) \] where\+: \[ \sqrt{\rho}\left(u_n-b_n\right) = \sqrt{\rho}\left(\mathbf{u}-\mathbf{b}\right)\cdot\mathbf{n} = z_3\,n_x+z_4\,n_y+z_5\,n_z-z_1\,\left(\mathbf{b}\cdot\mathbf{n}\right) \] and $ F $ is given in subroutine I\+N\+W\+LL
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Roe\textquotesingle{}s parameter vector in the gridpoint \\
+\hline
+\mbox{\texttt{ in}}  & {\em B} & the N\+D\+IM cartesian component of nodal grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em VN} & the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs \\
+\hline
+\mbox{\texttt{ out}}  & {\em D\+F\+C\+O\+R\+R\+DU} & the jacobian matrix\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/21 10\+:49\+:44 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+N\+O\+F\+V\+AR should be set equal to N\+D\+I\+M+2 in the calling routine 
+\end{DoxyWarning}
+\mbox{\Hypertarget{wall_8f_afd518bb22997cd57c18b202ad18a41ae}\label{wall_8f_afd518bb22997cd57c18b202ad18a41ae}} 
+\index{wall.f@{wall.f}!GETDF4CORRDU4Ar@{GETDF4CORRDU4Ar}}
+\index{GETDF4CORRDU4Ar@{GETDF4CORRDU4Ar}!wall.f@{wall.f}}
+\doxysubsubsection{\texorpdfstring{GETDF4CORRDU4Ar()}{GETDF4CORRDU4Ar()}}
+{\footnotesize\ttfamily subroutine G\+E\+T\+D\+F4\+C\+O\+R\+R\+D\+U4\+Ar (\begin{DoxyParamCaption}\item[{double precision, dimension(nofvar)}]{Z\+R\+OE,  }\item[{double precision, dimension(ndim)}]{VN,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{double precision, dimension(nofvar,nofvar)}]{D\+F\+C\+O\+R\+R\+DU }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{wall_8f_ae2c728c9fbcdc100586621a540683fd5}\label{wall_8f_ae2c728c9fbcdc100586621a540683fd5}} 
+\index{wall.f@{wall.f}!INVWLL@{INVWLL}}
+\index{INVWLL@{INVWLL}!wall.f@{wall.f}}
+\doxysubsubsection{\texorpdfstring{INVWLL()}{INVWLL()}}
+{\footnotesize\ttfamily subroutine I\+N\+V\+W\+LL (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{double precision, dimension(ndim)}]{V\+N\+OR,  }\item[{double precision, dimension(ndim)}]{B,  }\item[{double precision, dimension($\ast$)}]{Z,  }\item[{double precision, dimension($\ast$)}]{F }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+I\+N\+V\+I\+S\+C\+ID W\+A\+LL boundary condition (Compressible)
+
+We add a correction in the form of a boundary flux\+: \[ F = -\left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} , \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) H, \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} \right) \] so that only the pressure flux is (or should be) left afterwords
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+N\+OR} & stores the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em B} & stores the N\+D\+IM cartesian component of nodal grid velocity $ \mathbf{b} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z} & is Roe\textquotesingle{}s parameter vector \\
+\hline
+\mbox{\texttt{ out}}  & {\em F} & the inviscid flux for an inviscid wall (eventually moving)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/21 10\+:49\+:44 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{wall_8f_a92b6c7257e73048ac903eb0c5e4f0fcd}\label{wall_8f_a92b6c7257e73048ac903eb0c5e4f0fcd}} 
+\index{wall.f@{wall.f}!INVWLL4Ar@{INVWLL4Ar}}
+\index{INVWLL4Ar@{INVWLL4Ar}!wall.f@{wall.f}}
+\doxysubsubsection{\texorpdfstring{INVWLL4Ar()}{INVWLL4Ar()}}
+{\footnotesize\ttfamily subroutine I\+N\+V\+W\+L\+L4\+Ar (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{double precision, dimension($\ast$)}]{V\+N\+OR,  }\item[{double precision, dimension($\ast$)}]{Z,  }\item[{double precision, dimension($\ast$)}]{F }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{wall_8f_afe034d1c9e426ad3601d3377922371f1}\label{wall_8f_afe034d1c9e426ad3601d3377922371f1}} 
+\index{wall.f@{wall.f}!INVWLLI@{INVWLLI}}
+\index{INVWLLI@{INVWLLI}!wall.f@{wall.f}}
+\doxysubsubsection{\texorpdfstring{INVWLLI()}{INVWLLI()}}
+{\footnotesize\ttfamily subroutine I\+N\+V\+W\+L\+LI (\begin{DoxyParamCaption}\item[{integer}]{N\+D\+IM,  }\item[{double precision, dimension(ndim)}]{V\+N\+OR,  }\item[{double precision, dimension(ndim)}]{B,  }\item[{double precision, dimension($\ast$)}]{Z,  }\item[{double precision, dimension($\ast$)}]{F }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+I\+N\+V\+I\+S\+C\+ID W\+A\+LL boundary condition (I\+N\+Compressible flows)
+
+add a correction flux having the form\+: \[ F = -\left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} , \left( \rho \left( \mathbf{u}-\mathbf{b} \right) \cdot \mathbf{n} \right) \mathbf{u} \right) \]
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & the dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+N\+OR} & stores the N\+D\+IM cartesian component of the inward face normal, scaled by its measure \\
+\hline
+\mbox{\texttt{ in}}  & {\em B} & stores the N\+D\+IM cartesian component of nodal grid velocity \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z} & is the vector of primitive variables (p,u,v,w) \\
+\hline
+\mbox{\texttt{ out}}  & {\em F} & the inviscid flux for an inviscid wall (eventually moving) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+6 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/21 10\+:49\+:44 
+\end{DoxyParagraph}

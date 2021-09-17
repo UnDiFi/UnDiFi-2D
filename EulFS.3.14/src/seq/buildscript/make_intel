@@ -1,0 +1,18 @@
+#export FSPL_DIR=$HOME/CFD_codes/EulFS.3.3
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.4.4
+export PETSC_ARCH=linux_intel
+
+#source /opt/intel/composer_xe_2011_sp1.9.293/bin/compilervars.sh intel64
+#source /opt/intel/composer_xe_2011_sp1.10.319/bin/compilervars.sh intel64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+echo `which gcc`
+echo `which gfortran`
+echo $LD_LIBRARY_PATH
+
+echo $PETSC_DIR
+echo $PETSC_ARCH
+
+sleep 2
+
+make install

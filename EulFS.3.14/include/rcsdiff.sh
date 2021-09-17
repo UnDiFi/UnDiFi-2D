@@ -1,0 +1,1 @@
+rcsdiff *.com *.h *.inc

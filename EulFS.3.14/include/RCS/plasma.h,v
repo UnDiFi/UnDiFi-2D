@@ -1,0 +1,64 @@
+head	1.2;
+access;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks; strict;
+comment	@ * @;
+
+
+1.2
+date	2013.04.30.07.01.41;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2013.01.26.12.38.05;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@constants used to address the various dofs in
+an Argon plasma
+@
+
+
+1.2
+log
+@removed IE,IX,IY,IZ
+@
+text
+@      INTEGER NSP
+      PARAMETER (NSP=4)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a1 1
+      INTEGER IE,IX,IY,IZ
+a2 2
+!      PARAMETER (NSP=4)
+      PARAMETER (IE=NSP+1,IX=NSP+2,IY=NSP+3,IZ=NSP+4)
+@

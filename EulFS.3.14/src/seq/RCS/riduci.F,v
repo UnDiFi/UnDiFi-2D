@@ -1,0 +1,145 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2001.07.14.09.59.59;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Creates a reduced matrix from a full parallel matrix
+algoritmo di Pierluigi Amodio
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      subroutine riduci(A,B,iv,ib,jb)
+c
+c     $Id:$
+c
+c     costruisce e alloca la matrice B 
+c
+      implicit none
+c
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscmat.h"
+c
+      Mat         A,Ad,Ao,B,Bd,Bo
+      integer     ierr,rank,o_nz,nnz
+      integer     i,j,l,ia(1),ja(1),n,icol(1)
+      integer     ibgn,iend,shift,punt,iout
+      integer     iv(*),ib(*),jb(*)
+c
+c     ib(1:n+1),jb(1:nnz) are the integer pointers in the CSR storage of B 
+c     iv(1:n) is used as a workarray
+c
+      PetscTruth  done
+      PetscOffset iia,jja,iicol
+
+caldo CALL MPI_Comm_rank(PETSC_COMM_WORLD,rank,ierr)
+caldo iout = 15 + rank 
+C
+C     estrae la parte diagonale ed extradiagonale di A
+C
+      call MatMPIAIJGetSeqAIJ(A,Ad,Ao,icol,iicol,ierr)
+c
+c   Access off-diagonal portion of matrix
+c
+      shift = 1
+      call MatGetRowIJ(Ao,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+      do 30, i=1,n
+        o_nz = ia(iia+i+1)-ia(iia+i)
+c
+c       se o_nz = 0 il nodo e` interno, i.e. non ha punti
+c       di contatti con nodi sul contorno
+c
+        if( o_nz .EQ. 0 )then
+            iv(i) = 1
+        else
+            iv(i) = 0
+        endif
+   30 continue
+      call MatRestoreRowIJ(Ao,1,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+c
+c     parte diagonale di A
+c
+      call MatGetRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,ierr)
+      ib(1) = 1
+      l = 1
+      do 40 i=1,n
+         if( iv(i) .EQ. 0 )THEN
+            jb(l) = i
+            l = l + 1
+         else
+            ibgn = ia(iia+i)
+            iend = ia(iia+i+1)-1
+            do 50, j = ibgn,iend
+                punt = ja(jja+j)
+                if( iv(punt) .EQ. 1 )THEN
+                    jb(l) = punt
+                    l = l + 1
+                endif
+   50       continue
+         endif
+         ib(i+1) = l
+   40 continue
+C
+C     reset jb to 0-based indexing for later use in
+C           MatSeqAIJSetColumnIndices
+C
+      nnz = ib(n+1)-ib(1)
+      do 35 j = 1,nnz
+         jb(j) = jb(j)-1
+   35 continue
+c
+c     overwrite ib(i) with the number of non-zero entries in the
+C     i-th row of B
+c
+      do 60 i = 1,n
+         ib(i) = ib(i+1)-ib(i)
+   60 continue
+c
+      call MatRestoreRowIJ(Ad,shift,PETSC_FALSE,n,ia,iia,ja,jja,done,
+     +     ierr)
+c
+c     it appears that if we use d_nnz in MatCreateMPIAIJ,
+c     we cannot use o_nz=0, but we also need to specify 
+c     o_nnz = [0,0,.....,0]
+c
+      do 65 i = 1,n
+         iv(i) = 0
+   65 continue
+C
+C     create matrix B
+C
+      call MatCreateMPIAIJ(PETSC_COMM_WORLD,n,n,PETSC_DETERMINE,
+     +               PETSC_DETERMINE,PETSC_DEFAULT_INTEGER,ib,
+     +               PETSC_DEFAULT_INTEGER,iv,B,ierr)
+C
+C     now we wish to set the column indices for B that
+C     are already available in jb
+C
+C     extract diagonal and off-diagonal parts of B
+C
+      call MatMPIAIJGetSeqAIJ(B,Bd,Bo,icol,iicol,ierr)
+C
+C     set column indices in the diagonal part of B
+C
+      CALL MatSeqAIJSetColumnIndices(Bd,jb,ierr)
+C
+C     at this stage the CSR storage of B is available
+C
+C     if possible, we would like to de-allocate the arrays iv,ib,jb
+C
+      return
+      end
+@

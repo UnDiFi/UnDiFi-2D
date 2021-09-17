@@ -1,0 +1,24 @@
+1c1
+<       subroutine RHSFunction_t(ts,t,global_in,global_out,dummy,NodalBcs)
+---
+>       subroutine RHSFunction_t(ts,t,global_in,global_out,dummy)
+9a10,12
+>       implicit none
+> C
+> #include "petsc/finclude/petscsys.h"
+13,17d15
+<       use petscts
+<       use petscvec
+<       use petscmat
+< C
+<       implicit none
+32d29
+<       IS, dimension(0:*) :: NodalBcs
+175c172
+<       CALL RHSBC5(global_out,NodalBcs)
+---
+>       CALL RHSBC5(global_out)
+191a189,191
+> C
+>   100 FORMAT(4(F12.5,1X))
+>   235 FORMAT (E10.4,1X,1(I4,1X),6(E10.4,1X))

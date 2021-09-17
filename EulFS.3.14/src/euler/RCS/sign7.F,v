@@ -1,0 +1,223 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.11.25.10.36.51;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute sign matrix for the Unpreconditioned compressible eqns.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE SIGN7(IELEM,NDIM,NORDER,VECN,
+     +                 DUMMY,LDJ,DUMMY2,KPOS,KNEG,VLEFT,VRIGHT,LDA,
+     +                 WR,LPOS,LNEG,EIGENDECO)
+C
+C     this subroutine computes the positive projector
+C     P^+ = R 1/2 ( I + sign(\Lambda) ) L 
+C     for the compressible UNpreconditioned Euler eqns.
+C
+C     $Id$
+C     $Header$
+C
+C
+#define DEBUG
+C
+C************************************************************
+C
+C     NORDER: is the order of the system to be solved (INPUT)
+C     VECN:   is the face normal (INPUT)
+C     DUMMY2:   the jacobian matrix times the face normal (OUTPUT)
+C     KPOS:   is the "positive" part of the jacobian matrix (OUTPUT)
+C     KNEG:   is the "negative" part of the jacobian matrix (OUTPUT)
+C     VLEFT:  is left eigenvector matrix of the jacobian matrix (OUTPUT)
+C     VRIGHT: is right eigenvector matrix of the jacobian matrix (OUTPUT)
+C     LD:     is the leading dimension of the previous matrices
+C     WR:     eigenvalues of the jacobian matrix (OUTPUT)
+C     LPOS:   positive eigenvalues of the jacobian matrix (OUTPUT)
+C     LNEG:   negative eigenvalues of the jacobian matrix (OUTPUT)
+C
+C************************************************************
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+C
+      INCLUDE 'three'
+      INCLUDE 'flags.com'
+C
+      INCLUDE 'constants'
+C
+      INTEGER IELEM,NDIM,NORDER,LDA,LDJ
+      LOGICAL EIGENDECO
+C
+      DOUBLE PRECISION VECN(NDIM)
+      DOUBLE PRECISION DUMMY(LDJ,*)
+      DOUBLE PRECISION DUMMY2(LDA,*),KPOS(LDA,*),KNEG(LDA,*),
+     +VLEFT(LDA,*),VRIGHT(LDA,*),WR(*),LPOS(*),LNEG(*)
+C
+      INTEGER I,J,K,IDIM,JDIM,IFAIL
+      DOUBLE PRECISION l,m,n,U_dot_M,AREAINV,AREA
+C
+C
+      DOUBLE PRECISION VECM(3),VECS(3),VECT(3)
+      INTEGER TABLE(3,3),INDX
+      DOUBLE PRECISION SURF,SUM1,SUM2,TEMP1,Nxyz,Sxyz,Txyz
+#ifdef DEBUG
+      DOUBLE PRECISION WORK1(16)
+#endif
+C
+      DOUBLE PRECISION DDOT,DNRM2
+      INTEGER  ISDMIN
+      LOGICAL  NULLMAT,UNITMAT
+      EXTERNAL ISDMIN,DDOT,DNRM2,NULLMAT,UNITMAT
+C
+      INTRINSIC DSQRT
+C
+      DATA l,m,n / 3*ZERO /
+      DATA (table(1,j),j=1,3) / 1,0,0 /
+      DATA (table(2,j),j=1,3) / 0,1,0 /
+      DATA (table(3,j),j=1,3) / 0,0,1 /
+C
+C     Executable Statements ..
+C
+C     U_dot_M is the dot product between the velocity vector
+C          and the face normal ..
+C
+      l = VECN(1)/NDIM
+      m = VECN(2)/NDIM
+      U_dot_M = UAVG(3) * l + UAVG(4) * m
+      IF( NDIM .EQ. 3 )THEN
+           n = VECN(3)/NDIM
+           U_dot_M = U_dot_M + UAVG(5) * n
+      ENDIF
+C
+C
+C     Some useful constants ..
+C
+      AREA = VECN(1)*VECN(1)+VECN(2)*VECN(2)
+      IF( NDIM .EQ. 3 ) AREA=AREA + VECN(3)*VECN(3)
+      AREA = SQRT(AREA)
+      AREAINV = ONE/AREA
+      AREA = AREA/NDIM
+C
+C     Eigenvalues ..
+C
+      U_dot_M = U_dot_M / AREA
+C
+      WR(1) = AREA * U_dot_M
+      WR(2) = AREA * ( U_dot_M + ABAR )
+      WR(3) = AREA * ( U_dot_M - ABAR )
+      WR(4) = AREA * U_dot_M
+C
+C     eigenvalues ..
+C
+      DO 12 IDIM = 1 , NORDER
+         LPOS(IDIM) = HALF * (ONE + SIGN(ONE,WR(IDIM)) )
+   12 CONTINUE
+C
+      IF( NDIM .EQ. 2 )THEN
+         VECM(1) = VECN(1)*AREAINV
+         VECM(2) = VECN(2)*AREAINV
+         VECM(3) = ZERO
+         VECS(1) = - VECM(2)
+         VECS(2) = VECM(1)
+         VECS(3) = ZERO
+         VECT(1) = ZERO
+         VECT(2) = ZERO
+         VECT(3) =  ONE
+      ELSE
+         VECM(1) = VECN(1)*AREAINV
+         VECM(2) = VECN(2)*AREAINV
+         VECM(3) = VECN(3)*AREAINV
+         INDX = ISDMIN(NDIM,VECM,1)
+         VECS(1) = table(2,INDX) * VECM(3) - table(3,INDX) * VECM(2)
+         VECS(2) = table(3,INDX) * VECM(1) - table(1,INDX) * VECM(3)
+         VECS(3) = table(1,INDX) * VECM(2) - table(2,INDX) * VECM(1)
+         SURF = ONE/DNRM2(NDIM,VECS,1)
+         VECS(1) = VECS(1)*SURF
+         VECS(2) = VECS(2)*SURF
+         VECS(3) = VECS(3)*SURF
+         CALL CROSS_PROD( VECM , VECS , VECT )
+      ENDIF
+C
+C     Left Eigenvectors ..
+C
+      VLEFT(1,1) = ZERO
+      VLEFT(2,1) = HALF
+      VLEFT(3,1) = HALF
+      VLEFT(4,1) = ZERO
+C
+C     Right Eigenvectors ..
+C
+      VRIGHT(1,1) = ZERO
+      VRIGHT(1,2) = ONE
+      VRIGHT(1,3) = ONE
+      VRIGHT(1,4) = ZERO
+C
+      DO 10 JDIM = 1 , NDIM
+C
+         IDIM = JDIM + 1
+         Nxyz = VECM(JDIM)
+         Sxyz = VECS(JDIM)
+         Txyz = VECT(JDIM)
+C
+C     Left Eigenvectors ..
+C
+         VLEFT(1,IDIM) = Sxyz
+         VLEFT(2,IDIM) = HALF * Nxyz
+         VLEFT(3,IDIM) =-HALF * Nxyz
+         VLEFT(4,IDIM) = Txyz
+C
+C     Right Eigenvectors ..
+C
+         VRIGHT(IDIM,1) = Sxyz
+         VRIGHT(IDIM,2) = Nxyz
+         VRIGHT(IDIM,3) =-Nxyz
+         VRIGHT(IDIM,4) = Txyz
+C
+   10 CONTINUE
+C
+#ifdef DEBUG
+C
+C    Test if the product of the two eigenvectors equals the
+C    identity matrix: VRIGHT*VLEFT = Identity
+C
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,VRIGHT,LDA,
+     +                 VLEFT,LDA,0.D0,WORK1,NORDER)
+            IF( UNITMAT(WORK1,NORDER,NORDER,NORDER,1.D-15).EQV..FALSE.)
+     +      THEN
+                CALL X04CAF('G',' ',NORDER,NORDER,WORK1,NORDER,
+     +                      'L*R = Identity matrix ????',IFAIL)
+            PAUSE
+            ENDIF
+#endif
+C
+C     compute VRIGHT * LAMBDA(+/-) * VLEFT
+C
+      DO 15 J = 1 , NORDER
+         DO 15 I = 1 , NORDER
+            SUM1 = ZERO
+            SUM2 = ZERO
+            DO 13 K = 1 , NORDER
+               TEMP1= VRIGHT(I,K) * VLEFT(K,J)
+               SUM1 = SUM1 + TEMP1* LPOS(K)
+   13       CONTINUE
+            KPOS(I,J) = SUM1
+   15 CONTINUE
+C
+      RETURN
+      END
+@

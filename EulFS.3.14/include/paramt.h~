@@ -1,0 +1,12 @@
+C
+      INTEGER NMAX,VMAX,MAXNOFEQN,MAXNOFVAR,MAXNOFVERT
+      PARAMETER(NMAX=6,VMAX=4,MAXNOFVAR=NMAX,MAXNOFEQN=5,
+     &MAXNOFVERT=VMAX)
+C
+C     NMAX is the maximum number of variables currently allowed
+C     VMAX is the maximum number of vertices  currently allowed
+C     MAXNOFEQN is the maximum number of mean flow equations
+C     MAXNOFVAR same as NMAX
+C
+C     REM MAXNOFVAR = MAXNOFEQN + no of turbulence eqn
+C

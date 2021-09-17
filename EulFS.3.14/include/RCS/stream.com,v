@@ -1,0 +1,203 @@
+head	1.7;
+access
+	abonfi;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.7
+	release3_11_0:1.7
+	release3_10_0:1.7
+	release3_8_0:1.7
+	release3_7_1:1.7
+	release3_7_0:1.7
+	release3_4_5:1.7
+	release3_4_4:1.7
+	release3_4_3:1.7
+	release3_4_2:1.7
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.7
+	release3_3_1:1.7
+	release3_3_0:1.7;
+locks; strict;
+comment	@# @;
+
+
+1.7
+date	2013.01.25.07.57.39;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.11.13.11.03.53;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.12.27.08.45.37;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.08.12.10.20.57;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	97.12.03.17.14.19;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.12.01.15.21.28;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the  stream free conditions
+@
+
+
+1.7
+log
+@added non dimensional gas constant RSTAR
+@
+text
+@C
+C     This common block contains data relevant to
+C     the non-dimensionalisation used; the latter is mainly 
+C     reflected in the non-dimensional form of
+C     Sutherland's law 
+C
+C
+      DOUBLE PRECISION M_infty,U_infty(MAXNOFVAR),POUTLET,TREF,
+     &UREF,PREF,RREF,LREF,FLOWDIR(3),RSTAR
+      COMMON/STREAM/   M_infty,U_infty,POUTLET,TREF,
+     &UREF,PREF,RREF,LREF,FLOWDIR,RSTAR
+C
+C     M_infty is the freestream Mach number
+C     U_infty stores the NOFVAR freestream values (parameter vector)
+C     VISCF   is the viscous force acting on the body
+C     PRESF   is the pressure force acting on the body
+C
+C     TREF,UREF,PREF,RREF,LREF are the REFERENCE
+C
+C     temperature, velocity, pressure, density, lenght scale
+C
+C     see setibc.F to understand how these are computed
+C
+@
+
+
+1.6
+log
+@forces have been removed
+@
+text
+@d9 1
+a9 1
+     &UREF,PREF,RREF,LREF,FLOWDIR(3)
+d11 1
+a11 1
+     &UREF,PREF,RREF,LREF,FLOWDIR
+@
+
+
+1.5
+log
+@add POUTLET,TREF,FLOWDIR
+@
+text
+@d8 4
+a11 4
+      DOUBLE PRECISION Q_infty,P_infty,M_infty,U_infty(NMAX),
+     +VISCF(3,0:MBODIES),PRESF(3,0:MBODIES),POUTLET,TREF,FLOWDIR(3)
+      COMMON/STREAM/   Q_infty,P_infty,M_infty,U_infty,
+     +VISCF,PRESF,POUTLET,TREF,FLOWDIR
+a12 2
+C     Q_infty is the freestream kinetic energy
+C     p_infty is the freestream pressure
+d17 6
+@
+
+
+1.4
+log
+@unused variables removed
+@
+text
+@d1 7
+d9 1
+a9 1
+     +VISCF(3,0:MBODIES),PRESF(3,0:MBODIES)
+d11 1
+a11 1
+     +VISCF,PRESF
+d16 1
+a16 1
+C     P_infty stores the NOFVAR freestream values (parameter vector)
+@
+
+
+1.3
+log
+@Bug fixed swithing indexes in PRESF VISCF
+@
+text
+@d2 3
+a4 4
+     +VISCF(3,0:MBODIES),PRESF(3,0:MBODIES),PLIFT,VLIFT,PDRAG,VDRAG,
+     +FLOWDIR(3),ANFACT
+      COMMON/STREAM/   Q_infty,P_infty,M_infty,U_infty,VISCF,PRESF,
+     +PLIFT,VLIFT,PDRAG,VDRAG,FLOWDIR,ANFACT
+a11 5
+C     PLIFT   is the pressure lift
+C     VLIFT   is the viscous lift
+C     PDRAG   is the pressure drag
+C     VDRAG   is the viscous drag
+C     ANFACT  is the normalization factor for the force coefficients
+@
+
+
+1.2
+log
+@Accounts for multiple bodies in arrays VISCF and PRESF
+@
+text
+@d2 1
+a2 1
+     +VISCF(0:MBODIES,3),PRESF(0:MBODIES,3),PLIFT,VLIFT,PDRAG,VDRAG,
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 4
+a4 3
+      DOUBLE PRECISION q_infty,p_infty,M_infty,U_infty(NMAX),VISCF(3),
+     +       PRESF(3),PLIFT,VLIFT,PDRAG,VDRAG,FLOWDIR(3),ANFACT
+      COMMON/STREAM/   q_infty,p_infty,M_infty,U_infty,VISCF,PRESF,
+d7 11
+a17 11
+C       Q_infty is the freestream kinetic energy
+C       p_infty is the freestream pressure
+C       M_infty is the freestream Mach number
+C	U_infty stores the NOFVAR freestream values (parameter vector)
+C       VISCF   is the viscous force acting on the body
+C       PRESF   is the pressure force acting on the body
+C       PLIFT   is the pressure lift
+C       VLIFT   is the viscous lift
+C       PDRAG   is the pressure drag
+C       VDRAG   is the viscous drag
+C       ANFACT  is the normalization factor for the force coefficients
+@

@@ -1,0 +1,18 @@
+3a4
+>       IMPLICIT NONE
+8c9
+< C     $Id: printmatmm.F,v 1.8 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: printmatmm.F,v 1.8 2016/11/10 11:25:13 abonfi Exp $
+9a11,13
+> #include "petsc/finclude/petscsys.h"
+> #include "petsc/finclude/petscvec.h"
+> #include "petsc/finclude/petscmat.h"
+11a16
+> #include "petsc/finclude/petscis.h"
+13,17d17
+<       use petscpc
+<       use petscksp
+< C
+<       IMPLICIT NONE
+< C

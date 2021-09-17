@@ -1,0 +1,1136 @@
+head	1.29;
+access;
+symbols
+	release3_14_0:1.29
+	release3_13_0:1.27
+	release3_12_0:1.25
+	release3_11_0:1.24
+	release3_10_0:1.23
+	release3_8_0:1.23
+	release3_7_1:1.22
+	release3_7_0:1.20
+	release3_4_5:1.19
+	release3_4_4:1.19
+	release3_4_3:1.18
+	release3_4_2:1.17
+	release3_4_1:1.15
+	release3_4_0:1.13
+	release3_3_5:1.12
+	release3_3_4:1.11
+	release3_3_3:1.10
+	release3_3_2:1.9
+	release3_3_1:1.7
+	release3_3_0:1.5;
+locks; strict;
+comment	@# @;
+
+
+1.29
+date	2021.01.29.08.52.02;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2021.01.29.08.34.37;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2020.10.29.11.09.36;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2020.04.25.10.05.45;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2020.04.24.15.41.30;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2020.04.24.06.11.31;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2020.04.23.09.53.23;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2020.03.25.15.26.48;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2020.03.25.11.11.37;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2016.11.10.10.36.52;	author abonfi;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2014.01.30.17.24.17;	author abonfi;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2013.09.16.06.39.40;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2013.06.28.09.19.48;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2013.06.25.14.50.11;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2013.06.06.10.53.06;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2013.06.04.16.07.08;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.05.15.10.41.53;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.04.27.09.43.00;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2013.03.13.10.39.38;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2013.02.05.09.01.43;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2013.02.05.09.00.33;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2013.02.05.08.59.02;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.02.05.08.57.12;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.02.05.08.52.11;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.02.05.08.50.57;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.12.05.07.06.00;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.11.27.17.32.48;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.10.17.13.36.32;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.03.31.09.15.46;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@makefile for the parallel version
+@
+
+
+1.29
+log
+@added newgeo.F
+@
+text
+@VERSION		= 3.14.0
+PROGRAM		= peulfs$(VERSION)-$(PETSC_ARCH)
+all: 		$(PROGRAM)
+FFLAGS	        = -I../../include/ -DMPI
+CFLAGS	        = -I../../include/
+#VPATH		= ../seq
+
+include $(PETSC_DIR)//lib/petsc/conf/variables
+include $(PETSC_DIR)//lib/petsc/conf/rules
+
+
+DEST		= $(HOME)/bin/$(PETSC_ARCH)
+INSTALL		= cp
+SOURCEC	        =
+SOURCEF	        = \
+		getidx.f \
+		ApplicationFunction.F \
+		ApplicationFunction_t.F \
+		JacobianBoundaryConditions.F \
+		bndry_iset.F \
+		RHSFunction.F \
+		RHSFunction_t.F \
+		RHSJacobian.F \
+		RHSJacobian_t.F \
+		blockdata.f \
+		bndvflx.F \
+		clearmem.F \
+		lhsbc5.F \
+		lhsbc6.F \
+		exgeo.F \
+		newgeo.F \
+		getnrm.f \
+		ghost.F \
+		ghost2.F \
+		init.F \
+		iset.F \
+		iset_t.F \
+		main.F \
+		matsch.F \
+		MotionSolver.F \
+		myTS.F \
+		nodres.F \
+		nodres_t.F \
+		noname.f \
+		printmat.F \
+		printmat2.f \
+		printmatmm.F \
+		qb.F \
+		rdat.F \
+		readat.F \
+		rgrdpts.F \
+		rhsbc1.F \
+		rhsbc4.F \
+		rhsbc5.F \
+		rhsbc5c.F \
+		sclsch.F \
+		setibc.F \
+		setbc4laplace.F \
+		seterr.F \
+		setupRHS.F \
+		setupRHS_t.F \
+		setupLHS_b.F \
+		solzne.F \
+		MatAllocaMPI.F \
+		test.F \
+		tmodel.F \
+		turbini.F \
+		turbsch.F \
+		update2.F \
+		update3.F \
+		update4.F \
+		weakbc.F
+SOURCEH	        =
+OBJSC	        =
+OBJSF	        = \
+		getidx.o \
+		ApplicationFunction.o \
+		ApplicationFunction_t.o \
+		bndry_iset.o \
+		JacobianBoundaryConditions.o \
+		RHSFunction.o \
+		RHSFunction_t.o \
+		RHSJacobian.o \
+		RHSJacobian_t.o \
+		blockdata.o \
+		bndvflx.o \
+		clearmem.o \
+		lhsbc5.o \
+		lhsbc6.o \
+		exgeo.o \
+		newgeo.o \
+		getnrm.o \
+		ghost.o \
+		ghost2.o \
+		init.o \
+		iset.o \
+		iset_t.o \
+		main.o \
+		matsch.o \
+		MotionSolver.o \
+		myTS.o \
+		nodres.o \
+		nodres_t.o \
+		noname.o \
+		printmat.o \
+		printmat2.o \
+		printmatmm.o \
+		qb.o \
+		rdat.o \
+		readat.o \
+		rgrdpts.o \
+		rhsbc1.o \
+		rhsbc4.o \
+		rhsbc5.o \
+		rhsbc5c.o \
+		sclsch.o \
+		setibc.o \
+		setbc4laplace.o \
+		seterr.o \
+		setupRHS.o \
+		setupRHS_t.o \
+		setupLHS_b.o \
+		solzne.o \
+		MatAllocaMPI.o \
+		test.o \
+		tmodel.o \
+		turbini.o \
+		turbsch.o \
+		update2.o \
+		update3.o \
+		update4.o \
+		weakbc.o
+LIBBASE	        =
+LIBFLAGS      = -L$(HOME)/lib/$(PETSC_ARCH) -L/usr/local/lib \
+                -lfxdr -lport -lsparse-blas -lskit -ltirpc
+# sparse-blas is available in Intel mkl
+#               -lfxdr -lport -lsparse-blas -lmynag
+#               -lfxdr -lport -lsparse-blas -L/usr/local++/lib -lnagsmp 
+LIBS          = $(FSPL_DIR)/lib/$(PETSC_ARCH)/libscalar.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libeuler.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libspl.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libns.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libturbo.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libgeo.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libchem.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libutil.a
+
+#
+# CLDFILES to be defined only for CRAY
+#
+#CLDFILES	= dp_lapack.cld dp_blas.cld pat.cld
+#CLDFILES	= dp_lapack.cld dp_blas.cld
+
+#U_FC         = f77 $(U_FOPTFLAGS)
+#U_FOPTFLAGS  = -O
+
+#L_FC         = f77 $(L_FOPTFLAGS)
+#L_FOPTFLAGS  = -O
+
+# restore PETSc stuff
+#U_FC         = $(FC) $(FOPTFLAGS)
+#L_FC         = $(FC) $(FOPTFLAGS)
+
+#FOPTFLAGS    = -O5
+
+$(PROGRAM): $(OBJSF) $(OBJSC) $(LIBS)
+	-$(FLINKER) $(CLDFILES) -o $(PROGRAM) $(OBJSF) $(OBJSC) $(LIBS) \
+         $(PETSC_FORTRAN_LIB) $(PETSC_LIB) $(LIBFLAGS)
+
+
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libgeo.a:
+		cd $(FSPL_DIR)/src/geometry; $(MAKE) install
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libeuler.a:
+		cd $(FSPL_DIR)/src/euler; $(MAKE) install
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libspl.a:
+		cd $(FSPL_DIR)/src/schemes; $(MAKE) install
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libns.a:
+		cd $(FSPL_DIR)/src/navier-stokes; $(MAKE) install
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libscalar.a:
+		cd $(FSPL_DIR)/src/scalar; $(MAKE) install
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libturbo.a:
+		cd $(FSPL_DIR)/src/turbo; $(MAKE) install
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libchem.a:
+		cd $(FSPL_DIR)/src/chemistry; $(MAKE) install
+$(FSPL_DIR)/lib/$(PETSC_ARCH)/libutil.a:
+		cd $(FSPL_DIR)/src/util; $(MAKE) install
+
+
+#.SUFFIXES:
+#.F.o:
+#	$(U_FC) -c $(FFLAGS) $(FCPPFLAGS) $<
+#.f.o:
+#	$(U_FC) -c $(FFLAGS) $<
+#########
+
+
+install:        $(PROGRAM)
+		@@echo Installing $(PROGRAM) in $(DEST)
+		@@if [ $(DEST) != . ]; then \
+		(rm -f $(DEST)/$(PROGRAM); $(INSTALL) $(PROGRAM) $(DEST)); fi
+###
+blockdata.o: ../../include/paramt.h ../../include/bnd.h \
+	../../include/constants.h ../../include/bnd.com \
+	../../include/conv.com ../../include/implicit.h \
+	../../include/nboun.com ../../include/three.com
+bndvflx.o: ../../include/paramt.h ../../include/constants.h \
+	../../include/implicit.h ../../include/bnd.h ../../include/bnd.com \
+	../../include/three.com ../../include/nloc.com ../../include/flags.com \
+	../../include/stream.com ../../include/io.com
+exgeo.o: ../../include/io.com ../../include/constants.h ../../include/nloc.com
+iset.o: ../../include/iset.com
+lhsbc5.o: ../../include/iset.com
+main.o:	../../include/stack.com
+matsch.o: ../../include/flags.com
+mshcnt.o: ../../include/verbose.com ../../include/io.com
+nodres.o: ../../include/paramt.h ../../include/bnd.h ../../include/constants.h \
+	../../include/bnd.com ../../include/nloc.com ../../include/flags.com \
+	../../include/stream.com ../../include/conv.com \
+	../../include/nboun.com ../../include/implicit.h ../../include/io.com
+psub.o: ../../include/constants.h ../../include/paramt.h ../../include/nloc.com \
+	../../include/flags.com
+rdat.o: ../../include/paramt.h ../../include/bnd.h ../../include/implicit.h \
+	../../include/visco.com ../../include/constants.h \
+	../../include/conv.com ../../include/stream.com \
+	../../include/chorin.com ../../include/scalar.com \
+	../../include/flags.com ../../include/turb.com \
+	../../include/bnd.com ../../include/io.com \
+	../../include/verbose.com
+readat.o: ../../include/constants.h ../../include/bnd.h ../../include/paramt.h \
+	../../include/io.com ../../include/nloc.com ../../include/flags.com \
+	../../include/stream.com
+rhsbc1.o: ../../include/paramt.h ../../include/constants.h \
+	../../include/iset.com
+rhsbc4.o: ../../include/paramt.h ../../include/constants.h \
+	../../include/iset.com
+rhsbc5.o: ../../include/paramt.h ../../include/iset.com \
+	../../include/constants.h
+sclsch.o: ../../include/flags.com
+solzne.o: ../../include/io.com
+turbcomp.o: ../../include/paramt.h ../../include/constants.h ../../include/nloc.com \
+	../../include/three.com ../../include/flags.com ../../include/turb.com \
+	../../include/trip.com ../../include/visco.com \
+	../../include/nboun.com ../../include/implicit.h ../../include/io.com
+update2.o: ../../include/constants.h ../../include/paramt.h \
+	../../include/conv.com ../../include/nloc.com ../../include/verbose.com \
+	../../include/implicit.h ../../include/iset.com \
+	../../include/flags.com ../../include/io.com
+update3.o: ../../include/constants.h ../../include/paramt.h \
+	../../include/implicit.h ../../include/conv.com ../../include/nloc.com \
+	../../include/verbose.com ../../include/iset.com \
+	../../include/flags.com ../../include/io.com
+update4.o: ../../include/constants.h ../../include/paramt.h \
+	../../include/conv.com ../../include/nboun.com ../../include/nloc.com \
+	../../include/verbose.com ../../include/implicit.h ../../include/io.com
+weakbcI.o: ../../include/paramt.h ../../include/constants.h ../../include/bnd.h \
+	../../include/bnd.com ../../include/three.com ../../include/nloc.com \
+	../../include/implicit.h
+weakbcII.o: ../../include/paramt.h ../../include/io.com ../../include/bnd.h \
+	../../include/bnd.com ../../include/constants.h ../../include/flags.com \
+	../../include/three.com
+@
+
+
+1.28
+log
+@for petsc-3.14
+@
+text
+@d31 1
+d91 1
+@
+
+
+1.27
+log
+@for petsc-3.13.5
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.13.5
+d133 1
+a133 1
+                -lfxdr -lport -lsparse-blas -lskit
+@
+
+
+1.26
+log
+@release 3.13.0
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.13.0
+@
+
+
+1.25
+log
+@petsc-3.12
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.12.0
+@
+
+
+1.24
+log
+@release 3.11
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.11.0
+a145 1
+LOCDIR          = $(HOME)/EulFS.0.9.5/src
+d164 1
+a164 1
+$(PROGRAM): $(OBJSF) $(OBJSC) $(LIBS) chkopts
+@
+
+
+1.23
+log
+@release 3.8.0
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.8.0
+@
+
+
+1.22
+log
+@NAG library removed
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.7.1
+@
+
+
+1.21
+log
+@removed NAG routines
+@
+text
+@d133 1
+a133 1
+                -lfxdr -lport -lmynag -lsparse-blas -lskit
+@
+
+
+1.20
+log
+@Changed makefile to comply with petsc 3.6
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.7.0
+@
+
+
+1.19
+log
+@upgraded to 3.4.4
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.4.4
+d8 2
+a9 2
+include $(PETSC_DIR)/conf/variables
+include $(PETSC_DIR)/conf/rules
+@
+
+
+1.18
+log
+@release 3.4.3
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.4.3
+@
+
+
+1.17
+log
+@version for release 3.4.2
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.4.2
+@
+
+
+1.16
+log
+@version 3.4.2
+@
+text
+@a24 1
+		addtstep.F \
+d39 1
+a55 1
+		set_bc_laplace.F \
+d57 1
+d61 1
+a83 1
+		addtstep.o \
+d98 1
+a114 1
+		set_bc_laplace.o \
+d116 1
+d120 1
+@
+
+
+1.15
+log
+@added set_bc_laplace.F and removed lhsbc0.F lhsbc2.F
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.4.1
+@
+
+
+1.14
+log
+@version 3.4.1 with support for solving Laplace's equation
+@
+text
+@d20 1
+a28 2
+		lhsbc0.F \
+		lhsbc2.F \
+d56 1
+d77 1
+a86 2
+		lhsbc0.o \
+		lhsbc2.o \
+d114 1
+@
+
+
+1.13
+log
+@this is for the release 3.4.0 which uses petsc-3.4.0
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.4.0
+@
+
+
+1.12
+log
+@release 3.3.5
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.3.5
+@
+
+
+1.11
+log
+@version for release 3.3.4 (chemistry has changed)
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.3.4
+@
+
+
+1.10
+log
+@revision is now 3.3.3
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.3.3
+@
+
+
+1.9
+log
+@new revision is 3.3.2
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.3.2
+@
+
+
+1.8
+log
+@The names of some inlcuded files have changed
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.3.1
+@
+
+
+1.7
+log
+@fixed a missing library (chemistry)
+@
+text
+@d200 1
+a200 1
+	../../include/constants ../../include/bnd.com \
+d202 2
+a203 2
+	../../include/nboun.com ../../include/three
+bndvflx.o: ../../include/paramt.h ../../include/constants \
+d205 1
+a205 1
+	../../include/three ../../include/nloc ../../include/flags.com \
+d207 1
+a207 1
+exgeo.o: ../../include/io.com ../../include/constants ../../include/nloc
+d213 2
+a214 2
+nodres.o: ../../include/paramt.h ../../include/bnd.h ../../include/constants \
+	../../include/bnd.com ../../include/nloc ../../include/flags.com \
+d217 1
+a217 1
+psub.o: ../../include/constants ../../include/paramt.h ../../include/nloc \
+d220 1
+a220 1
+	../../include/visco.com ../../include/constants \
+d226 2
+a227 2
+readat.o: ../../include/constants ../../include/bnd.h ../../include/paramt.h \
+	../../include/io.com ../../include/nloc ../../include/flags.com \
+d229 1
+a229 1
+rhsbc1.o: ../../include/paramt.h ../../include/constants \
+d231 1
+a231 1
+rhsbc4.o: ../../include/paramt.h ../../include/constants \
+d234 1
+a234 1
+	../../include/constants
+d237 2
+a238 2
+turbcomp.o: ../../include/paramt.h ../../include/constants ../../include/nloc \
+	../../include/three ../../include/flags.com ../../include/turb.com \
+d241 2
+a242 2
+update2.o: ../../include/constants ../../include/paramt.h \
+	../../include/conv.com ../../include/nloc ../../include/verbose.com \
+d245 2
+a246 2
+update3.o: ../../include/constants ../../include/paramt.h \
+	../../include/implicit.h ../../include/conv.com ../../include/nloc \
+d249 2
+a250 2
+update4.o: ../../include/constants ../../include/paramt.h \
+	../../include/conv.com ../../include/nboun.com ../../include/nloc \
+d252 2
+a253 2
+weakbcI.o: ../../include/paramt.h ../../include/constants ../../include/bnd.h \
+	../../include/bnd.com ../../include/three ../../include/nloc \
+d256 2
+a257 2
+	../../include/bnd.com ../../include/constants ../../include/flags.com \
+	../../include/three
+@
+
+
+1.6
+log
+@version 3.3.1
+@
+text
+@d141 1
+d180 2
+@
+
+
+1.5
+log
+@This is the makefile for version 3.3.0
+@
+text
+@d1 1
+a1 1
+VERSION		= 3.3.0
+@
+
+
+1.4
+log
+@just before making it compatible with the SP3
+@
+text
+@d1 2
+a2 1
+PROGRAM		= peulfs
+d4 1
+a4 1
+FFLAGS	        = -I../../include/
+d6 1
+a6 1
+VPATH		= ../seq
+d8 2
+a9 1
+include $(PETSC_DIR)/bmake/common/base
+a10 5
+#
+# ad hoc fix for SP3
+#
+FCPPFLAGS       = ${PETSC_INCLUDE} ${PCONF} ${PETSCFLAGS} ${PETSC_PARCH} \
+		${FPPFLAGS} -I$(FSPL_DIR)/include/ -DMPI
+a23 1
+		SetMyOwnPC.F \
+a41 1
+		mshcnt.F \
+d45 4
+a48 2
+		perbcs.f \
+		periodic.F \
+d51 1
+a62 1
+		MatGetSizeSeq.f \
+d66 1
+a69 3
+		PCAldo.F \
+		PCPasqua.F \
+		PCPierluigi.F \
+a81 1
+		SetMyOwnPC.o \
+a99 1
+		mshcnt.o \
+d103 4
+a106 2
+		perbcs.o \
+		periodic.o \
+d109 1
+a120 1
+		MatGetSizeSeq.o \
+d124 1
+a127 3
+		PCAldo.o \
+		PCPasqua.o \
+		PCPierluigi.o \
+d131 3
+a133 1
+                -lfxdr -lport -lsparse-blas -lmynag
+d197 1
+a197 1
+	../../include/constants ../../include/bnd \
+d201 1
+a201 1
+	../../include/implicit.h ../../include/bnd.h ../../include/bnd \
+d211 1
+a211 1
+	../../include/bnd ../../include/nloc ../../include/flags.com \
+a213 1
+periodic.o: ../../include/io.com ../../include/nloc
+d221 1
+a221 1
+	../../include/bnd ../../include/io.com \
+d250 1
+a250 1
+	../../include/bnd ../../include/three ../../include/nloc \
+d253 1
+a253 1
+	../../include/bnd ../../include/constants ../../include/flags.com \
+@
+
+
+1.3
+log
+@this version before my port to SP3
+@
+text
+@d3 3
+d7 7
+a13 1
+include $(PETSC_DIR)/bmake/$(PETSC_ARCH)/base
+a14 1
+# the FCONF is needed on the CFLAGS line to pick up the Fortran format info
+a16 1
+FFLAGS	        = -I../../include/ -DMPI
+d57 1
+d117 1
+d138 1
+a138 1
+                -lfxdr -lport -lsparse-blas -lmynag -lskit
+d155 2
+a156 2
+U_FC         = f77 $(U_FOPTFLAGS)
+U_FOPTFLAGS  = -O
+d158 2
+a159 2
+L_FC         = f77 $(L_FOPTFLAGS)
+L_FOPTFLAGS  = -O
+d162 2
+a163 2
+U_FC         = $(FC) $(FOPTFLAGS)
+L_FC         = $(FC) $(FOPTFLAGS)
+d173 1
+a173 1
+		cd $(FSPL_DIR)/src/geometry; $(MAKE) install "FC=$(L_FC)"
+d175 1
+a175 1
+		cd $(FSPL_DIR)/src/euler; $(MAKE) install "FC=$(L_FC)"
+d177 1
+a177 1
+		cd $(FSPL_DIR)/src/schemes; $(MAKE) install "FC=$(L_FC)"
+d179 1
+a179 1
+		cd $(FSPL_DIR)/src/navier-stokes; $(MAKE) install "FC=$(L_FC)"
+d181 1
+a181 1
+		cd $(FSPL_DIR)/src/scalar; $(MAKE) install "FC=$(L_FC)"
+d183 1
+a183 1
+		cd $(FSPL_DIR)/src/turbo; $(MAKE) install "FC=$(L_FC)"
+d185 1
+a185 1
+		cd $(FSPL_DIR)/src/util; $(MAKE) install "FC=$(L_FC)"
+d189 6
+a194 4
+.F.o:
+	$(U_FC) -c $(FFLAGS) $(FCPPFLAGS) $<
+.f.o:
+	$(U_FC) -c $(FFLAGS) $<
+@
+
+
+1.2
+log
+@version prior to 0.10.13
+@
+text
+@d12 1
+d20 1
+d24 1
+d27 1
+a30 1
+		getidx.f \
+a35 1
+		lhsbc5.F \
+d43 1
+a44 3
+		perbcs.f \
+		PCPasqua.f \
+		PCPierluigi.f \
+d64 3
+d71 1
+d79 1
+d83 1
+d86 1
+a89 1
+		getidx.o \
+a94 1
+		lhsbc5.o \
+a102 2
+		PCPasqua.o \
+		PCPierluigi.o \
+d123 3
+d127 1
+a127 1
+LIBBASE	        = libpetscvec
+d129 1
+a129 1
+                -lfxdr -lport -lsparse-blas -lmynag
+d131 1
+a131 3
+LIBS          = \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libturbo.a \
+		$(FSPL_DIR)/lib/$(PETSC_ARCH)/libscalar.a \
+d135 1
+a154 2
+#U_FC         = f77 -n32 -Wl,-woff,84,-woff,85,-woff,113 $(FOPTFLAGS)
+#L_FC         = f77 -n32 -Wl,-woff,84,-woff,85,-woff,113 $(FOPTFLAGS)
+a184 3
+
+#include $(PETSC_DIR)/bmake/$(PETSC_ARCH)/base
+
+a188 3
+
+
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 2
+a5 1
+#
+d7 2
+a8 1
+DEST		= $(HOME)/bin
+d12 7
+d22 3
+d29 2
+d32 1
+d36 1
+d39 2
+d42 3
+d51 2
+d54 1
+a55 1
+		MatAllocaSeq.F \
+d59 2
+a60 2
+		tracking.f \
+		turbcomp.F \
+d68 7
+d78 3
+d85 2
+d88 1
+d92 1
+d95 5
+d107 2
+d110 1
+a111 1
+		MatAllocaSeq.o \
+d115 2
+a116 2
+		tracking.o \
+		turbcomp.o \
+d122 11
+a132 10
+LIBFLAGS      = -L$(HOME)/lib -L/usr/local/lib -lfxdr -L$(HOME)/lib \
+                -lmynag -lport -lsparse-blas
+#               $(HOME)/lib/lapack_alpha.a $(HOME)/lib/libblas.a -lmynag
+LIBS          = $(FSPL_DIR)/lib/libscalar.a \
+		$(FSPL_DIR)/lib/libeuler.a \
+		$(FSPL_DIR)/lib/libspl.a \
+		$(FSPL_DIR)/lib/libns.a \
+		$(FSPL_DIR)/lib/libturbo.a \
+		$(FSPL_DIR)/lib/libgeo.a \
+		$(FSPL_DIR)/lib/libutil.a
+d141 11
+a151 2
+$(PROGRAM): $(OBJSF) $(OBJSC) $(LIBS) chkopts
+	-$(FLINKER) $(CLDFILES) -o $(PROGRAM) $(OBJSF) $(OBJSC) $(LIBS) $(PETSC_FORTRAN_LIB) $(PETSC_LIB) $(LIBFLAGS)
+d153 1
+d155 3
+a157 36
+$(FSPL_DIR)/lib/libgeo.a:
+		cd $(FSPL_DIR)/src/geometry; $(MAKE) install "FC=$(FC) $(FOPTFLAGS)"
+$(FSPL_DIR)/lib/libeuler.a:
+		cd $(FSPL_DIR)/src/euler; $(OMAKE) install "FC=$(FC) $(FOPTFLAGS)"
+$(FSPL_DIR)/lib/libspl.a:
+		cd $(FSPL_DIR)/src/schemes; $(MAKE) install "FC=$(FC) $(FOPTFLAGS)"
+$(FSPL_DIR)/lib/libns.a:
+		cd $(FSPL_DIR)/src/navier-stokes; $(MAKE) install "FC=$(FC) $(FOPTFLAGS)"
+$(FSPL_DIR)/lib/libscalar.a:
+		cd $(FSPL_DIR)/src/scalar; $(MAKE) install "FC=$(FC) $(FOPTFLAGS)"
+$(FSPL_DIR)/lib/libturbo.a:
+		cd $(FSPL_DIR)/src/turbo; $(MAKE) install "FC=$(FC) $(FOPTFLAGS)"
+$(FSPL_DIR)/lib/libutil.a:
+		cd $(FSPL_DIR)/src/util; $(MAKE) install "FC=$(FC) $(FOPTFLAGS)"
+.SUFFIXES:	.prj
+
+.html.f:
+		floppy -cn -H -A $*.f
+.html.F:
+		floppy -cn -H -A $*.F
+# tell make how to create a .prj file from a .f and .F file
+.f.prj:
+		ftnchek -project -noextern - library $<
+.F.prj:
+		ftnchek -project -noextern - library $<
+# set up macro PRJS containing project filenames
+PRJS=	$(OBJSF:.o=.prj)
+# make check will check everything that has been changed.
+check:	$(PRJS)
+	ftncheck $(PRJS)
+#
+install:	$(PROGRAM)
+		@@echo Installing $(PROGRAM) in $(DEST)
+		@@-strip $(PROGRAM)
+		@@if [ $(DEST) != . ]; then \
+		(rm -f $(DEST)/$(PROGRAM); $(INSTALL) $(PROGRAM) $(DEST)); fi
+d160 21
+d183 1
+d185 4
+a188 1
+include $(PETSC_DIR)/bmake/$(PETSC_ARCH)/base
+d194 1
+a194 1
+	../../include/constants ../../include/bnd ../../include/fix \
+d200 2
+a201 3
+	../../include/stream.com ../../include/IO
+exgeo.o: ../../include/IO ../../include/constants ../../include/nloc \
+	../../include/rsize.com
+d206 1
+a206 1
+mshcnt.o: ../../include/verbose.com ../../include/IO
+d210 2
+a211 2
+	../../include/nboun.com ../../include/implicit.h ../../include/IO
+periodic.o: ../../include/IO ../../include/periodic.com ../../include/nloc
+d218 3
+a220 3
+	../../include/flags.com ../../include/turb.com ../../include/rk.com \
+	../../include/bnd ../../include/IO \
+	../../include/verbose.com ../../include/periodic.com
+d222 2
+a223 2
+	../../include/IO ../../include/nloc ../../include/flags.com \
+	../../include/stream.com ../../include/rsize.com
+d231 1
+a231 1
+solzne.o: ../../include/IO
+d235 1
+a235 1
+	../../include/nboun.com ../../include/implicit.h ../../include/IO
+d239 1
+a239 1
+	../../include/flags.com ../../include/IO
+d243 1
+a243 1
+	../../include/flags.com ../../include/IO
+d246 1
+a246 1
+	../../include/verbose.com ../../include/implicit.h ../../include/IO
+d250 1
+a250 1
+weakbcII.o: ../../include/paramt.h ../../include/IO ../../include/bnd.h \
+@

@@ -1,0 +1,22 @@
+Face	type
+1	-1
+2	 1
+3	-1
+4	 4
+5	-1
+6	-1
+7	-1
+8	-1
+9	-1
+10	-1
+
+#
+# boundary #2 is the supersonic inlet
+# boundary #4 is the subsonic outlet
+#
+#
+# THIS FILE IS read by Triangle2grd
+#
+# bndry code 1 is supersonic
+# bndry code 4 is subsonic outflow (p_out must be set)
+#

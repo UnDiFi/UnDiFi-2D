@@ -1,0 +1,997 @@
+head	1.3;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2001.06.25.12.08.42;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.06.25.06.33.59;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.06.23.08.15.24;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@A bunch of routines for shell preconditioners
+@
+
+
+1.3
+log
+@somewhat improved versions of the SSOR preconditioner
+originally implemented by Pasqua Leggiero
+@
+text
+@C
+C   $Id: ShellPC.F,v 1.2 2001/06/25 06:33:59 abonfi Exp abonfi $
+C
+
+!/***********************************************************************/
+!/*          Routines for a user-defined shell preconditioner           */
+!/***********************************************************************/
+
+!
+!   SampleShellPCSetUp - This routine sets up a user-defined
+!   preconditioner context.  
+!
+!   Input Parameters:
+!   pmat  - preconditioner matrix
+!   x     - vector
+!
+!   Output Parameter:
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   In this example, we define the shell preconditioner to be Jacobi
+!   method.  Thus, here we create a work vector for storing the reciprocal
+!   of the diagonal of the preconditioner matrix; this vector is then
+!   used within the routine SampleShellPCApply().
+!
+      subroutine SampleShellPCSetUp(pmat,pmat1,x,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+
+      Vec     x
+      Mat     pmat,pmat1
+      integer ierr
+      double  precision info(MAT_INFO_SIZE)
+      PetscTruth flg
+
+!  Common block to store data for user-provided preconditioner 
+
+      PC  asm,bjacobi
+      Vec work1,work2
+      common /mypcs/ asm,bjacobi,work1,work2
+      integer MY_PE
+      common /MPICOM/ MY_PE
+C
+C     copia gli elementi della matrice A nella matrice
+C     ridotta B
+C
+C
+      write(6,*)'Calling SampleShellPCSetup on PE # ',my_pe 
+      call copia(pmat,pmat1,ierr)
+C
+caldo CALL MPI_Barrier(PETSC_COMM_WORLD,ierr) 
+caldo CALL MPI_Abort(PETSC_COMM_WORLD,-12,ierr) 
+C
+      call PCCreate(PETSC_COMM_WORLD,asm,ierr)
+      call PCSetType(asm,PCASM,ierr)
+      call PCSetVector(asm,x,ierr)
+      call PCSetOperators(asm,pmat,pmat,DIFFERENT_NONZERO_PATTERN,
+     &                     ierr)
+      call PCSetUp(asm,ierr)
+
+      call PCCreate(PETSC_COMM_WORLD,bjacobi,ierr)
+      call PCSetType(bjacobi,PCBJACOBI,ierr)
+      call PCSetVector(bjacobi,x,ierr)
+      call PCSetOperators(bjacobi,pmat,pmat1,DIFFERENT_NONZERO_PATTERN,
+     &                     ierr)
+      call PCSetUp(bjacobi,ierr)
+
+      call VecDuplicate(x,work1,ierr)
+      call VecDuplicate(x,work2,ierr)
+
+      end
+
+! ------------------------------------------------------------------- 
+!
+!   SampleShellPCApply - This routine demonstrates the use of a
+!   user-provided preconditioner.
+!
+!   Input Parameters:
+!   dummy - optional user-defined context, not used here
+!   x - input vector
+!
+!   Output Parameters:
+!   y - preconditioned vector
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   This code implements the .... preconditioner
+!
+      subroutine SampleShellPCApply(dummy,x,y,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+
+      Vec     x,y
+      integer dummy,ierr
+      Mat A,Pmat 
+      MatStructure flag 
+      double precision one,mone
+      parameter (one=1.d0,mone=-1.d0)
+      
+!  Common block to store data for user-provided preconditioner 
+      common /mypcs/ asm,bjacobi,work1,work2
+      PC  asm,bjacobi
+      Vec work1,work2
+
+      call PCApply(asm,x,y,ierr)
+      call PCGetOperators(asm,A,pmat,flag,ierr)
+caldo write(6,*)'asm =? ',A,pmat
+      call MatMult(pmat,y,work1,ierr)
+      call VecWAXPY(mone,work1,x,work2,ierr)
+      call PCGetOperators(bjacobi,A,pmat,flag,ierr)
+caldo write(6,*)'bjacobi =? ',A,pmat
+      call PCApply(bjacobi,work2,work1,ierr)
+      call VecAXPY(one,work1,y,ierr)
+
+      end
+!/***********************************************************************/
+!/*          Routines for a user-defined shell preconditioner           */
+!/***********************************************************************/
+!
+!   SampleShellPCSetUp - This routine sets up a user-defined
+!   preconditioner context.  
+!
+!   Input Parameters:
+!   pmat  - preconditioner matrix
+!   x     - vector
+!
+!   Output Parameter:
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   In this example, we define the shell preconditioner to be the
+!   SOR method.
+!   Thus, here we create a work vector for storing the reciprocal
+!   of the diagonal of the preconditioner matrix; this vector is then
+!   used within the routine SampleShellPCApply().
+!
+      subroutine SORBAIJPCSetUp(nblks,nb,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+
+      integer ierr,nb,nblks,shift,nrows
+      double  precision omega
+      PetscTruth flg
+      integer ia_array(1),ja_array(1)
+      Scalar a_array(1),b_array(1),c_array(1)
+      PetscOffset i_a,i_b,i_c,i_ia,i_ja
+      PetscTruth done
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+
+!  Common block to store data for user-provided preconditioner 
+
+      integer diagp
+      Vec     invD
+      Mat     A
+      common /MyPREC/ A,invD,diagp
+      integer MY_PE
+      common /MPICOM/ MY_PE
+C
+C
+      call OptionsGetDouble(PETSC_NULL_CHARACTER,'-pc_sor_omega',
+     &                      omega,flg,ierr)
+      IF(flg.EQ.PETSC_FALSE) omega = 1.0
+C
+caldo
+      shift = 1
+      call MatGetRowIJ(A,shift,PETSC_FALSE,nrows,ia_array,
+     +    i_ia,ja_array,i_ja,done,ierr) 
+      call MatGetArray(A,a_array,i_a,ierr) 
+caldo
+      call VecGetArray(invD,c_array,i_c,ierr)
+caldo
+      call MySampleShellPCSetUp(ia_array(i_ia+1),
+     +            ja_array(i_ja+1),a_array(i_a+1),NBlks,Nb,
+     +            c_array(i_c+1),ISTAK(diagp))
+caldo
+      call MatRestoreArray(A,a_array,i_a,ierr) 
+      call MatRestoreRowIJ(A,shift,PETSC_FALSE,nrows,ia_array,
+     +    i_ia,ja_array,i_ja,done,ierr) 
+caldo
+      call VecRestoreArray(invD,c_array,i_c,ierr)
+caldo
+Cpasqua
+
+      RETURN
+      END
+
+C******************************************************************************
+C*           My Routines for a user-defined shell preconditioner              *
+C******************************************************************************
+
+C   MySampleShellPCSetUp - This routine sets up a user-defined
+C   preconditioner context.  
+C
+C   Input Parameters:
+C      ia,ja,aa = CSR format storage for the matrix A
+C      Nblks    = no. of blocks on each row of A (=NPOIN) 
+C      nb       = order of each little block (=NOFVAR) 
+C      NNZ      = no. of nonzero elements of the matrix A 
+C      NZB      = no. of nonzero blocks of the matrix A 
+C
+C   Output Parameter:
+C      ierr  - error code (nonzero if error has been detected)
+C
+C   Notes:
+C   In this example, I try to define the shell preconditioner to be a
+C   (small)blockSSOR method. So I need a matrix 
+C                      prec = (inv(D)-wE)*(inv(D)-wF).
+C
+
+      subroutine MySampleShellPCSetUp(ia,ja,aa,Nblks,nb,invD,
+     +                                diagp)
+
+#define LAPACK
+      implicit none
+
+      integer          ia(1:*),ja(1:*)
+      real*8           aa(1:*),D(25)
+      integer          Nblks,nb,lwork
+      parameter        (lwork=25)
+      double precision work(lwork)
+      integer          ibgn,iend,j,col,row,k,kk,dbgn,dend
+      integer          truecol,truerow,nzi,ierr,ipiv(lwork)
+C      double precision omega
+      real*8           omega
+
+      real*8           invD(1:*)
+      integer          diagp(1:*)
+      
+
+C Looking for the each diagonal block of A: (questo e' OK!)
+      iend = ia(1)
+      do row = 1,Nblks
+         ibgn = iend
+         iend = ia(row+1)
+         nzi = iend - ibgn
+         do j = ibgn,iend-1
+            col = ja(j)
+            if (col.eq.row) diagp(row) = j
+         end do
+      end do
+
+caldo call dump(1,nblks,.false.,bd,ja,ia,12)
+caldo stop
+
+c      open(77,FILE="BlockD",FORM="formatted")
+c      open(78,FILE="InvBlockD",FORM="formatted")
+
+C Invert the diagonal blocks of A.
+      do row = 1,Nblks
+         dbgn = (diagp(row)-1)*nb*nb+1
+         dend = diagp(row)*nb*nb
+caldo    do k = dbgn,dend
+caldo       index = index + 1
+caldo       BD(index) = aa(k)
+caldo    end do
+         do k = 0,nb*nb-1
+            D(k+1) = aa(dbgn + k)
+         end do
+         ibgn = (row-1)*nb*nb + 1
+caldo
+#ifdef LAPACK
+         call DGETRF(nb,nb,D(1),nb,ipiv,ierr)
+caldo    should avoid the copy
+         call dcopy(nb*nb,D(1),1,invD(ibgn),1)
+         call DGETRI(nb,invD(ibgn),nb,ipiv,work,lwork,ierr)
+#else
+         call myLUDECO(D(1),nb)
+         call myMLUSOL(D(1),invD(ibgn),nb)
+#endif
+C
+      end do
+C
+      return
+
+      end
+
+
+C ------------------------------------------------------------------- 
+C
+C   MySampleShellPCApply - This routine implements a user-provided 
+C   preconditioner: a (small)block-SSOR.
+C
+C   Input Parameters:
+C   dummy - optional user-defined context, not used here
+C   x - input vector
+C
+C   Output Parameters:
+C   y - preconditioned vector
+C   ierr  - error code (nonzero if error has been detected)
+C
+C
+C N.B.: non posso modificare la chiamata di questa subroutine!!!
+
+      subroutine MySampleShellPCApply(dummy,x,y,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscsles.h"
+#include "include/finclude/petscksp.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscis.h"
+
+      Vec              x,y
+      integer          dummy,ierr
+      integer          shift,nrows,ncols,N,i
+      integer          ia(1),ja(1)
+      Scalar           aa(1),xa(1),ya(1),w_array(1),z_array(1)
+      Scalar           b_array(1),c_array(1)
+      PetscOffset      i_ia,i_ja,i_a,i_x,i_y,i_w,i_z,i_b,i_c
+      PetscTruth       done
+      PetscTruth flg
+      double precision omega
+
+C  Common block to store data for user-provided preconditioner 
+      Mat              A
+      Vec              invD,w,z
+      integer          diagp
+      common /MyPREC/ A,invD,diagp
+
+      common /dimA/ Nblks,nb 
+      integer  Nblks,nb   
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+      N = Nblks*nb
+caldo
+      call OptionsGetDouble(PETSC_NULL_CHARACTER,'-pc_sor_omega',
+     &                      omega,flg,ierr)
+      IF(flg.EQ.PETSC_FALSE) omega = 1.0
+c
+c     create work arrays
+c
+      call VecCreateSeq(PETSC_COMM_SELF,N,w,ierr)
+      call VecDuplicate(w,z,ierr)
+      call VecSet(0.d0,w,ierr)
+      call VecSet(0.d0,z,ierr)
+      call VecGetArray(w,w_array,i_w,ierr)
+      call VecGetArray(z,z_array,i_z,ierr)
+caldo
+      call VecGetArray(x,xa,i_x,ierr)
+      call VecGetArray(y,ya,i_y,ierr)
+caldo
+      call VecGetArray(invD,c_array,i_c,ierr)
+caldo
+      shift = 1
+      call MatGetRowIJ(A,shift,PETSC_FALSE,nrows,ia,
+     +    i_ia,ja,i_ja,done,ierr) 
+      call MatGetArray(A,aa,i_a,ierr)
+c
+      call MySSORsolve(aa(i_a+1),ia(i_ia+1),ja(i_ja+1),
+     +     c_array(i_c+1),ISTAK(diagp),
+     +     xa(i_x+1),ya(i_y+1),
+     +     w_array(i_w+1),z_array(i_z+1),omega)
+c
+      call MatRestoreArray(A,aa,i_a,ierr) 
+      call MatRestoreRowIJ(A,shift,PETSC_FALSE,nrows,ia,
+     +    i_ia,ja,i_ja,done,ierr) 
+      call VecRestoreArray(y,ya,i_y,ierr)
+      call VecRestoreArray(x,xa,i_x,ierr)
+caldo
+      call VecRestoreArray(invD,c_array,i_c,ierr)
+C
+C     Restore and destroy work arrays (w,z)
+C
+      call VecRestoreArray(w,w_array,i_w,ierr)
+      call VecRestoreArray(z,z_array,i_z,ierr)
+      call VecDestroy(w,ierr)
+      call VecDestroy(z,ierr)
+caldo
+      return
+
+      end
+
+
+
+C ************** Routines ausiliarie ****************
+
+
+C ***************************************************
+      subroutine MySSORsolve(aa,ia,ja,invD,diagp,x,y,w,z,omega)
+
+      implicit none
+
+      integer          ia(1:*),ja(1:*)
+      integer          row,col,ibgn,j,k
+      real*8           x(1:*),y(1:*),aa(1:*)
+      real*8           tmp(5),z(*),w(*),rhs(5),omega
+
+      real*8           invD(*)
+      integer          diagp(*),iadd
+
+      common /dimA/ Nblks,nb 
+      integer  Nblks,nb   
+
+      integer  ierr
+C Questa subroutine risolve il sistema da cui si deduce il vettore 
+C precondizionato secondo il metodo SSOR, ovvero:
+C         (D - omega*E)*(D^-1)*(D - omega*F) * y = x
+C
+caldo  CALL X04CAF('General',' ',Nb,Nb,invd(1),
+caldo+ Nb,'matrix ',Ierr)
+
+C Step 1: risolvo (D-omega*E)*z = x.
+      call littleMatVec(invD(1),x(1),z(1),nb)
+      do row = 2,Nblks
+         do k = 1,nb
+            rhs(k) = 0
+         end do
+C I blocchi sotto la diagonale sono numerati da ia(row) a diagp(row)-1. 
+         ibgn = (row-1)*nb
+         do j = ia(row),diagp(row)-1
+            col = ja(j)
+C calcolo X(row) = X(row) - sum(A(row,col)*Z(col)) dove la somma e' estesa
+C agli indici col per cui A(row,col) e' non nullo.
+            call littleMatVec(aa((j-1)*nb*nb+1),z((col-1)*nb+1),
+     +                        tmp(1),nb)
+            do k = 1,nb
+Cno!               x(ibgn+k) = x(ibgn+k) - tmp(k)
+               rhs(k) = rhs(k) + omega * tmp(k)
+            end do
+         end do
+         do k = 1,nb
+            rhs(k) = x(ibgn+k) - rhs(k)
+         end do
+         call littleMatVec(invD(ibgn*nb+1),rhs(1),z(ibgn+1),nb)
+C         call littleMatVec(invD((row-1)*nb*nb+1),x((row-1)*nb+1),
+C    +                     z((row-1)*nb+1),nb)
+      end do
+
+
+C Step 2: calcolo w = D*z.
+      do row = 1,Nblks
+         ibgn = (row-1)*nb
+         iadd = (diagp(row)-1)*nb*nb+1
+         call littleMatVec(aa(iadd),z(ibgn+1),w(ibgn+1),nb)
+caldo    call littleMatVec(BD(ibgn*nb+1),z(ibgn+1),w(ibgn+1),nb)
+C         call littleMatVec(BD(ibgn*nb+1),x(ibgn+1),y(ibgn+1),nb)
+      end do
+
+
+C Step 3: risolvo (D-omega*F)*y = w.
+      ibgn = (Nblks-1)*nb
+      call littleMatVec(invD(ibgn*nb+1),w(ibgn+1),y(ibgn+1),nb)
+      do row = Nblks-1,1,-1
+         do k = 1,nb
+            rhs(k) = 0
+         end do
+C I blocchi sopra la diagonale sono numerati da diagp(row)+1 a ia(row+1)-1. 
+         ibgn = (row-1)*nb
+         do j = diagp(row)+1,ia(row+1)-1
+            col = ja(j)
+C calcolo W(row) = W(row) - sum(A(row,col)*Y(col)) dove la somma e' estesa
+C agli indici col per cui A(row,col) e' non nullo.
+            call littleMatVec(aa((j-1)*nb*nb+1),y((col-1)*nb+1),
+     +                        tmp(1),nb)
+            do k = 1,nb
+Cno!               w(ibgn+k) = w(ibgn+k) - tmp(k)
+               rhs(k) = rhs(k) + omega * tmp(k)
+            end do
+         end do
+         do k = 1,nb
+            rhs(k) = w(ibgn+k) - rhs(k)
+         end do
+         call littleMatVec(invD(ibgn*nb+1),rhs(1),y(ibgn+1),nb)
+C         call littleMatVec(invD((row-1)*nb*nb+1),w((row-1)*nb+1),
+C    +                     y((row-1)*nb+1),nb)
+      end do
+
+
+      return
+
+      end
+
+
+C ####
+C &&&&
+C ****
+
+      subroutine littleMatVec(B,x,y,n)
+
+C Questa routine calcola il prodotto matrice-vettore y = B*x con B matrice
+C quadrata di ordine n.
+
+      implicit none
+      integer          n,i,j
+C      double precision B(n,n),x(n),y(n)
+      real*8           B(n,n),x(n),y(n)
+
+      do i = 1,n
+         y(i) = 0.
+         do j = 1,n
+            y(i) = y(i) + B(i,j)*x(j)
+         end do
+      end do
+
+      end
+
+
+C ------------------------------------------------------------------- 
+C ------------------------------------------------------------------- 
+C ------------------------------------------------------------------- 
+C
+C Queste routine calcolano l'inversa di una matrice utilizzando la 
+C fattorizzazione LU.
+C (rivedute da $FSPL_DIR/src/util/matvec.f e mlusol.f)
+C
+C NOTA BENE: @@ LUDECO fattorizza A e riscrive la fattorizzazione in A;
+C ---------  @@ U e' triangolare superiore speciale!!!!
+c...
+c...
+c...
+      SUBROUTINE myLUDECO(A,ORDER)
+c...
+c...
+C     .. Scalar Arguments ..
+      INTEGER ORDER
+C     ..
+C     .. Array Arguments ..
+      REAL*8 A(ORDER,1)
+C     ..
+C     .. Local Scalars ..
+      REAL*8 SUM
+      INTEGER JC,JM,JR,JRJC,JRJCM1,JRJCP1
+C     ..
+      DO 8 JC = 2,ORDER
+    8 A(1,JC) = A(1,JC)/A(1,1)
+      JRJC = 1
+   10 CONTINUE
+      JRJC = JRJC + 1
+      JRJCM1 = JRJC - 1
+      JRJCP1 = JRJC + 1
+      DO 14 JR = JRJC,ORDER
+          SUM = A(JR,JRJC)
+          DO 12 JM = 1,JRJCM1
+   12     SUM = SUM - A(JR,JM)*A(JM,JRJC)
+   14 A(JR,JRJC) = SUM
+      IF (JRJC.EQ.ORDER) RETURN
+      DO 18 JC = JRJCP1,ORDER
+          SUM = A(JRJC,JC)
+          DO 16 JM = 1,JRJCM1
+   16     SUM = SUM - A(JRJC,JM)*A(JM,JC)
+   18 A(JRJC,JC) = SUM/A(JRJC,JRJC)
+      GOTO 10
+
+      END
+C
+
+
+
+c...
+c...
+c...
+Corig      SUBROUTINE MLUSOL(A,B,C,ORDER)
+
+C Riadatto ponendo B=I(ORDER)
+      SUBROUTINE myMLUSOL(A,C,ORDER)
+
+Cp Riadatto ponendo B=I(ORDER) (e poi riscrivo C=inv(A) in A)
+Cp      SUBROUTINE myMLUSOL(A,ORDER)
+c...
+c...
+c...FIRST L(INV)*B
+c...
+C     .. Scalar Arguments ..
+      INTEGER ORDER
+C     ..
+C     .. Array Arguments ..
+      REAL*8 A(ORDER,ORDER),B(ORDER,ORDER),C(ORDER,ORDER)
+      REAL*8 SUM(5)
+C     ..
+C     .. Local Scalars ..
+      INTEGER JM,JMJM,JR,JRJR,JRM1,JRP1
+C     ..
+
+      do JM = 1,ORDER
+         B(JM,JM) = 1.d0
+         do JR = 1,JM-1
+            B(JM,JR) = 0.d0
+         end do
+         do JR = JM+1,ORDER
+            B(JM,JR) = 0.d0
+         end do
+      end do
+
+      TEMP=1.d0/A(1,1)
+      DO 10 JR=1,ORDER
+         C(1,JR) = B(1,JR)*TEMP
+   10 CONTINUE
+      DO 14 JR = 2,ORDER
+          JRM1 = JR - 1
+          DO 13 IR=1,ORDER
+          SUM(IR) = B(JR,IR)
+   13     CONTINUE
+          DO 14 IR = 1,ORDER
+          DO 12 JM = 1,JRM1
+   12     SUM(IR) = SUM(IR) - A(JR,JM)*C(JM,IR)
+C         DO 14 IR = 1,ORDER
+   14 C(JR,IR) = SUM(IR)/A(JR,JR)
+c...
+c...NEXT U(INV) OF L(INV)*B
+c...
+      DO 18 JRJR = 2,ORDER
+          JR = ORDER - JRJR + 1
+          JRP1 = JR + 1
+           DO 19 IR=1,ORDER
+              SUM(IR) = C(JR,IR)
+   19   CONTINUE
+          DO 16 JMJM = JRP1,ORDER
+              JM = ORDER - JMJM + JRP1
+              DO 16 IR = 1,ORDER
+   16     SUM(IR) = SUM(IR) - A(JR,JM)*C(JM,IR)
+              DO 18 IR = 1,ORDER
+   18 C(JR,IR) = SUM(IR)
+c...
+
+Cp      do IR = 1,ORDER
+Cp         do JR = 1,ORDER
+Cp            A(IR,JR) = C(IR,JR)
+Cp         end do
+Cp      end do
+
+      RETURN
+
+      END
+@
+
+
+1.2
+log
+@introduced a number of changes so as to dinamically allocate
+all work arrays
+@
+text
+@d2 1
+a2 1
+C   $Id: ShellPC.F,v 1.1 2001/06/23 08:15:24 abonfi Exp abonfi $
+a3 100
+!/***********************************************************************/
+!/*          Routines for a user-defined shell preconditioner           */
+!/***********************************************************************/
+
+!
+!   SampleShellPCSetUp - This routine sets up a user-defined
+!   preconditioner context.  
+!
+!   Input Parameters:
+!   pmat  - preconditioner matrix
+!   x     - vector
+!
+!   Output Parameter:
+!   ierr  - error code (nonzero if error has been detected)
+!
+!   Notes:
+!   In this example, we define the shell preconditioner to be the
+!   SOR method.
+!   Thus, here we create a work vector for storing the reciprocal
+!   of the diagonal of the preconditioner matrix; this vector is then
+!   used within the routine SampleShellPCApply().
+!
+      subroutine SORBAIJPCSetUp(A,x,nblks,nb,ierr)
+
+      implicit none
+
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscpc.h"
+
+      Vec     x,BD,invD
+      Mat     A,myCopia
+      integer ierr,nb,nblks,shift,nrows
+      double  precision info(MAT_INFO_SIZE),omega
+      PetscTruth flg
+      integer ia_array(1),ja_array(1)
+      Scalar a_array(1),b_array(1),c_array(1)
+      PetscOffset i_a,i_b,i_c,i_ia,i_ja
+      PetscTruth done
+C
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+
+!  Common block to store data for user-provided preconditioner 
+
+      integer diagp
+      common /MyPREC/ myCopia,BD,invD,diagp
+      integer MY_PE
+      common /MPICOM/ MY_PE
+C
+C     better get infos from the matrix, rather than
+C     from the mesh parameters
+C
+      call MatGetInfo(A,MAT_LOCAL,info,ierr)
+caldo Nb = info(MAT_INFO_BLOCK_SIZE)
+caldo Nblks = info(MAT_INFO_ROWS_LOCAL)/Nb
+caldo NNZ = info(MAT_INFO_NZ_ALLOCATED)
+caldo NZB = NNZ/(Nb*Nb)
+caldo write(6,*)nb,nblks
+C
+Cpasqua
+C
+      call OptionsGetDouble(PETSC_NULL_CHARACTER,'-pc_sor_omega',
+     &                      omega,flg,ierr)
+      IF(flg.EQ.PETSC_FALSE) omega = 1.0
+      call MatDuplicate(A,MAT_COPY_VALUES,myCopia,ierr)
+      call MatScale(omega,myCopia,ierr)
+C
+caldo
+caldo
+caldo
+      shift = 1
+      call MatGetRowIJ(A,shift,PETSC_FALSE,nrows,ia_array,
+     +    i_ia,ja_array,i_ja,done,ierr) 
+      call MatGetArray(A,a_array,i_a,ierr) 
+caldo
+      call VecGetArray(BD,b_array,i_b,ierr)
+      call VecGetArray(invD,c_array,i_c,ierr)
+caldo
+      call MySampleShellPCSetUp(ia_array(i_ia+1),
+     +            ja_array(i_ja+1),a_array(i_a+1),NBlks,Nb,
+     +            b_array(i_b+1),c_array(i_c+1),ISTAK(diagp))
+caldo
+      call MatRestoreArray(A,a_array,i_a,ierr) 
+      call MatRestoreRowIJ(A,shift,PETSC_FALSE,nrows,ia_array,
+     +    i_ia,ja_array,i_ja,done,ierr) 
+caldo
+      call VecRestoreArray(BD,b_array,i_b,ierr)
+      call VecRestoreArray(invD,c_array,i_c,ierr)
+caldo
+Cpasqua
+
+      RETURN
+      END
+d43 1
+a43 1
+      PC	asm,bjacobi
+d124 82
+d230 1
+a230 1
+      subroutine MySampleShellPCSetUp(ia,ja,aa,Nblks,nb,BD,invD,
+d242 1
+a242 1
+      integer          truecol,truerow,nzi,index,ierr,ipiv(lwork)
+d246 1
+a246 1
+      real*8           invD(1:*),BD(1:*)
+a248 1
+      write(*,*) 'Sono in MySampleShellPCSetUp',nb,nblks
+a251 1
+caldo write(*,*) 'ia(1) is ',ia(1)
+a268 1
+      index = 0
+d272 4
+a275 4
+         do k = dbgn,dend
+            index = index + 1
+            BD(index) = aa(k)
+         end do
+a292 3
+caldo  CALL X04CAF('General',' ',Nb,Nb,invd(1),
+caldo+ Nb,'matrix when in MySampleShellPCSetUp ',Ierr)
+
+d334 2
+a335 2
+C      double precision omega
+      real*8           omega
+d338 2
+a339 2
+      Mat              myCopia
+      Vec              BD,invD,w,z
+d341 1
+a341 1
+      common /MyPREC/ myCopia,BD,invD,diagp
+d354 4
+a357 1
+caldo write(6,*)'MySampleShellPCApply',n,bd,invd,diagp
+a370 1
+      call VecGetArray(BD,b_array,i_b,ierr)
+d374 1
+a374 1
+      call MatGetRowIJ(myCopia,shift,PETSC_FALSE,nrows,ia,
+d376 1
+a376 1
+      call MatGetArray(myCopia,aa,i_a,ierr)
+d379 1
+a379 1
+     +     b_array(i_b+1),c_array(i_c+1),ISTAK(diagp),
+d381 1
+a381 1
+     +     w_array(i_w+1),z_array(i_z+1))
+d383 2
+a384 2
+      call MatRestoreArray(myCopia,aa,i_a,ierr) 
+      call MatRestoreRowIJ(myCopia,shift,PETSC_FALSE,nrows,ia,
+a388 1
+      call VecRestoreArray(BD,b_array,i_b,ierr)
+d408 1
+a408 1
+      subroutine MySSORsolve(aa,ia,ja,BD,invD,diagp,x,y,w,z)
+a411 8
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscsles.h"
+#include "include/finclude/petscksp.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscis.h"
+
+d415 1
+a415 1
+      real*8           tmp(5),z(*),w(*),rhs(5)
+d417 2
+a418 2
+      real*8           invD(*),BD(*)
+      integer          diagp(*)
+d447 1
+a447 1
+               rhs(k) = rhs(k) + tmp(k)
+d462 3
+a464 1
+         call littleMatVec(BD(ibgn*nb+1),z(ibgn+1),w(ibgn+1),nb)
+d486 1
+a486 1
+               rhs(k) = rhs(k) + tmp(k)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+C   $Id:$
+d4 100
+d248 2
+a249 1
+      subroutine MySampleShellPCSetUp(ia,ja,aa,Nblks,nb,NNZ,NZB)
+d251 1
+a251 1
+CC#define LAPACK
+a253 8
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscsles.h"
+#include "include/finclude/petscksp.h"
+#include "include/finclude/petscpc.h"
+#include "include/finclude/petscis.h"
+
+d256 1
+a256 1
+      integer          Nblks,NNZ,NZB,nb,lwork
+d264 2
+a265 5
+C  Common block to store data for user-provided preconditioner 
+      common /MyPREC/ myCopia,BD,invD,diagp
+      Mat              myCopia
+      real*8           invD(150000),BD(150000)
+      integer          diagp(150000)
+d267 1
+a267 1
+      write(*,*) 'Sono in MySampleShellPCSetUp'
+d271 1
+a271 1
+      write(*,*) 'ia(a) is ',ia(1)
+a295 1
+c            write(77,'(e25.17)') BD(index)
+d301 1
+a301 7
+#if 0
+         CALL X04CAF('General',' ',Nb,Nb,BD(ibgn),
+     +   NB,'Blocco diagonale ',ierr)
+          write(*,*) 'Chiamo LUDECO per il blocco ',row
+          write(*,*) 'ibgn & BD(ibgn)',ibgn,BD(ibgn)
+#endif
+Cwarn!         call myLUDECO(BD(ibgn),nb)
+d304 1
+a304 6
+#else
+         call myLUDECO(D(1),nb)
+#endif
+C         write(*,*) 'Chiamo LUSOL per il blocco ',row
+Cwarn!         call myMLUSOL(BD(ibgn),invD(ibgn),nb)
+#ifdef LAPACK
+d308 1
+d311 1
+a311 4
+C         write(*,*) 'ibgn & invD(ibgn)',ibgn,invD(ibgn)
+c         do k = 0,nb*nb-1
+c            write(78,'(e25.17)') invD(ibgn+k)
+c         end do
+d313 3
+d354 3
+a356 2
+      real*8           aa(1),xa(1),ya(1)
+      PetscOffset      i_ia,i_ja,i_a,i_x,i_y
+a359 2
+      real*8           invD(150000),BD(150000)
+      integer          diagp(150000)
+d362 3
+a365 1
+      Mat              myCopia
+d369 8
+a376 1
+
+d378 11
+a388 1
+
+d391 4
+d399 6
+a404 2
+      call MySSORsolve(aa(i_a+1),ia(i_ia+1),ja(i_ja+1),xa(i_x+1),
+     +                 ya(i_y+1))
+d410 11
+d431 1
+a431 1
+      subroutine MySSORsolve(aa,ia,ja,x,y)
+d446 1
+a446 1
+      real*8           tmp(5),z(150000),w(150000),rhs(5)
+d448 2
+a449 4
+      common /MyPREC/ myCopia,BD,invD,diagp
+      Mat              myCopia
+      real*8           invD(150000),BD(150000)
+      integer          diagp(150000)
+d454 1
+d459 2
+@

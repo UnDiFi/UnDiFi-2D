@@ -1,0 +1,5 @@
+      REAL*8 ALPHA(6)
+      COMMON/FLAGS_R4/ALPHA
+C
+C	Coefficients for R-K time stepping
+C

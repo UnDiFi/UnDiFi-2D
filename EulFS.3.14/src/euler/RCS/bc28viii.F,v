@@ -1,0 +1,667 @@
+head	1.14;
+access
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.14
+	release3_13_0:1.14
+	release3_12_0:1.14
+	release3_11_0:1.14
+	release3_10_0:1.14
+	release3_8_0:1.14
+	release3_7_1:1.14
+	release3_7_0:1.13
+	release3_4_5:1.13
+	release3_4_4:1.13
+	release3_4_3:1.13
+	release3_4_2:1.13
+	release3_4_1:1.13
+	release3_4_0:1.13
+	release3_3_5:1.13
+	release3_3_4:1.12
+	release3_3_3:1.12
+	release3_3_2:1.12
+	release3_3_1:1.12
+	release3_3_0:1.11;
+locks; strict;
+comment	@c @;
+
+
+1.14
+date	2020.03.28.09.51.14;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.05.03.09.55.22;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.01.26.12.29.47;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2012.12.20.10.31.03;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2009.06.11.09.44.11;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2005.09.22.09.03.46;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.08.09.19.37.19;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.08.08.11.13.34;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2003.08.08.03.55.36;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2002.09.10.09.25.53;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.08.24.10.05.26;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.07.21.10.04.29;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.07.19.10.03.33;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.07.04.06.53.47;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@ghost cell boundary condition for incompressible
+subsonic inflow/outflow
+@
+
+
+1.14
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE BC28VIII(IELEM,VCN,VCZ,VCB,PCN,KPOS,NODRES,TSTEP,NDIM,
+     +                   NOFVERT,NOFVAR,IBC)
+C
+C     $Id: bc28viii.F,v 1.13 2013/05/03 09:55:22 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute inflow/outflow boundary conditions for INcompressible
+C     flows (ghost cell approach)
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'bnd.h'
+      include 'ibc8.com'
+      include 'stream.com'
+      include 'time.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVAR,NOFVERT,IBC
+C
+C     IELEM  current boundary element
+C     NDIM   dimension of the space (2 or 3)
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C
+CCC#define PRINT
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION KPOS(NOFVAR,NOFVAR,NOFVERT-1),
+     +       NODRES(NOFVAR,NOFVERT-1),TSTEP(NOFVAR,NOFVERT-1),
+     +       VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT),VCB(NDIM,NOFVERT),
+     &       PCN(nVarsInlet,NOFVERT)
+C
+C     On entry:
+C     --------
+C     VCN(1:NDIM,1:NOFVERT) cartesian components of the normals 
+C                           to the element sides/faces
+C                           the normal to the boundary face need
+C                           to be stored in VCN(1:NDIM,NOFVERT)
+C     VCZ(1:NOFVAR,1:NOFVERT) dependent variables in the vertices
+C                           of the current (IELEM) element
+C                           the freestream values need
+C                           to be stored in VCZ(1:NOFVAR,NOFVERT)
+C     Upon return:
+C     -----------
+C     KPOS(1:NOFVAR,1:NOFVAR,1:NOFVERT-1) positive inflow parameters
+C                   in the NOFVERT-1 vertices of the boundary face
+C     NODRES(1:NOFVAR,1:NOFVERT-1) nodal residual due to the incoming
+C                   characteristics in the NOFVERT-1 vertices 
+C                   of the boundary face
+C     TSTEP(NOFVAR,1:NOFVERT) contribution to the time-step in the
+C                   vertices of the current element
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION WKSP,VOLUME,HELP
+      INTEGER IFAIL,IVAR,IVERT,NOFEQN,j
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DUMMY(MAXNOFVAR*MAXNOFVERT),KMAT(MAX_NOFVAR_SQR),
+     &KNEG(MAX_NOFVAR_SQR),VLEFT(MAX_NOFVAR_SQR),VRIGHT(MAX_NOFVAR_SQR),
+     &WNEG(MAXNOFVAR),WPOS(MAXNOFVAR),WR(MAXNOFVAR),WORK(9)
+C     ..
+      DOUBLE PRECISION DNRM2
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DCOPY,DGEMV,LINEARIZE,MATSPLITVIII
+C     ..
+      DATA WORK/9*ONE/
+C
+      VOLUME = ONE
+      call DINIT(MAXNOFVAR*MAXNOFVERT,MONE,DUMMY,1)
+C
+#ifdef PRINT
+      write(6,*)' ibc is ',ibc
+      CALL R8Mat_Print('General',' ',nVarsInlet,NOFVERT,PCN,
+     +nVarsInlet,'PCN matrix ',IFAIL)
+#endif
+C     unit face normal
+      WORK(7) = VCN(1,NOFVERT)
+      WORK(8) = VCN(2,NOFVERT)
+      WORK(9) = VCN(3,NOFVERT)
+      WKSP = ONE/DNRM2(NDIM,WORK(7),1)
+      WORK(7) = WORK(7)*WKSP
+      WORK(8) = WORK(8)*WKSP
+      WORK(9) = WORK(9)*WKSP
+C
+C     loop over the vertices of the boundary face
+C
+      DO 1000 IVERT = 1, NOFVERT-1
+C
+         WORK(1) = PCN(3,IVERT) ! POUTLET !
+         WORK(2) = PCN(1,IVERT)
+         WORK(3) = PCN(2,IVERT)
+         WORK(4) = PCN(4,IVERT)
+         WORK(5) = PCN(5,IVERT)
+         WORK(6) = PCN(6,IVERT)
+c
+c     compute the starred state and store in Z(1:NOFVAR,NOFVERT) 
+c
+         IF(IBC.EQ.BC_TYPE_SUBS_OUTLET)THEN
+             CALL GHOST2VIII(VCZ(1,IVERT),VCZ(1,NOFVERT),WORK,NDIM)
+         ELSEIF(IBC.EQ.BC_TYPE_SUBS_INLET)THEN
+             CALL GHOST8VIII(VCZ(1,IVERT),VCZ(1,NOFVERT),WORK,NDIM)
+         ENDIF
+#ifdef PRINT
+      write(6,*)'IELEM = ',ielem,' IVERT = ',ivert,' IBC = ',ibc
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVERT,VCZ,
+     +NOFVAR,'VCZ matrix ',IFAIL)
+#endif
+c
+c     compute the cell averaged state based upon
+c     the face values and the starred (ghost) state
+c
+         CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,NOFVAR,
+     &VOLUME)
+C
+C     compute K_i(+)
+C
+         NOFEQN = NDIM +1
+         CALL MATSPLITVIII(IELEM,NDIM,NOFEQN,VCN(1,NOFVERT),DUMMY,
+     +                  NOFVAR,KMAT,KPOS(1,1,IVERT),KNEG,VLEFT,VRIGHT,
+     +                  NOFVAR,WR,WPOS,WNEG,.TRUE.)
+C
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+     +NOFVAR,'KPOSITIVE matrix ',IFAIL)
+#endif
+C
+         HELP = ZERO
+         DO IVAR = 1,NOFEQN
+            IF( CHAR_TIMESTEPPING )THEN
+                HELP = MAX(HELP,WPOS(IVAR))
+            ELSE
+                HELP = HELP + WPOS(IVAR)
+            ENDIF
+         ENDDO
+         DO 3 IVAR = 1,NOFEQN
+            TSTEP(IVAR,IVERT) = HELP
+    3    CONTINUE
+C
+C     Compute U(i) := [U(i) - U(*)] and store in DUMMY
+C
+         CALL DCOPY(NOFVAR,VCZ(1,IVERT),1,DUMMY,1)
+         CALL DAXPY(NOFVAR,MONE,VCZ(1,NOFVERT),1,DUMMY,1)
+C
+C     Compute NODRES(i) = -K(+)*[U(i) - U(*)]
+C
+         CALL DGEMV('No',NOFEQN,NOFEQN,MONE,KPOS(1,1,IVERT),
+     +           NOFVAR,DUMMY,1,ZERO,NODRES(1,IVERT),1)
+C
+C
+#ifdef PRINT
+         CALL R8Mat_Print('General',' ',NOFVAR,NOFVert,DUMMY,
+     +NOFVAR,'DUMMY matrix ',IFAIL)
+         CALL R8Mat_Print('General',' ',NOFVAR,NOFVert,nodres,
+     +NOFVAR,'nodres matrix ',IFAIL)
+#endif
+ 1000 CONTINUE ! End loop over the d vertices of the bndry face
+#ifdef PRINT
+         CALL R8Mat_Print('General',' ',NOFVAR,NOFVert,nodres,
+     +NOFVAR,'nodres matrix ',IFAIL)
+#endif
+C
+      RETURN
+
+      END
+@
+
+
+1.13
+log
+@charcteristic time stepping: each V/dt is chosen and stored
+independently
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.F,v 1.12 2013/01/26 12:29:47 abonfi Exp abonfi $
+d80 1
+a80 1
+      CALL X04CAF('General',' ',nVarsInlet,NOFVERT,PCN,
+d112 1
+a112 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ,
+d130 1
+a130 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+d158 1
+a158 1
+         CALL X04CAF('General',' ',NOFVAR,NOFVert,DUMMY,
+d160 1
+a160 1
+         CALL X04CAF('General',' ',NOFVAR,NOFVert,nodres,
+d165 1
+a165 1
+         CALL X04CAF('General',' ',NOFVAR,NOFVert,nodres,
+@
+
+
+1.12
+log
+@changed the name of an included header file
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.F,v 1.11 2012/12/20 10:31:03 abonfi Exp abonfi $
+d60 1
+a60 1
+      DOUBLE PRECISION WKSP,VOLUME,s
+d76 1
+a76 1
+      call dinit(MAXNOFVAR*MAXNOFVERT,-ONE,DUMMY,1)
+d95 1
+d119 1
+a119 1
+      CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,NOFVAR,
+d124 4
+a127 4
+      NOFEQN = NDIM +1
+      CALL MATSPLITVIII(IELEM,NDIM,NOFEQN,VCN(1,NOFVERT),DUMMY,NOFVAR,
+     +                  KMAT,KPOS(1,1,IVERT),KNEG,VLEFT,VRIGHT,NOFVAR,
+     +                  WR,WPOS,WNEG,.TRUE.)
+d134 11
+a144 4
+      WKSP = ZERO
+      DO 3 IVAR = 1,NOFVAR
+          WKSP = WKSP + WPOS(IVAR)
+    3 CONTINUE
+d148 2
+a149 3
+          CALL DCOPY(NOFVAR,VCZ(1,IVERT),1,DUMMY,1)
+          CALL DAXPY(NOFVAR,-ONE,VCZ(1,NOFVERT),1,DUMMY,1)
+          TSTEP(1,IVERT) = WKSP
+d153 1
+a153 1
+      CALL DGEMV('No',NOFEQN,NOFEQN,-ONE,KPOS(1,1,IVERT),
+d158 1
+a158 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,DUMMY,
+d160 1
+a160 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,nodres,
+d163 1
+a163 1
+ 1000 CONTINUE
+d165 1
+a165 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,nodres,
+@
+
+
+1.11
+log
+@now passing the grid velocity among the arguments of the call
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.F,v 1.10 2009/06/11 09:44:11 abonfi Exp abonfi $
+d14 1
+a14 1
+      include 'constants'
+@
+
+
+1.10
+log
+@changed the dimension of a workarray
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE BC28VIII(IELEM,VCN,VCZ,PCN,KPOS,NODRES,TSTEP,NDIM,
+d4 1
+a4 1
+C     $Id: bc28viii.F,v 1.9 2005/09/22 09:03:46 abonfi Exp abonfi $
+d18 1
+d35 1
+a35 1
+     +       VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT),
+d118 2
+a119 1
+      CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+@
+
+
+1.9
+log
+@removed ICN from the arguments of the call
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.F,v 1.8 2005/08/09 19:37:19 aldo Exp abonfi $
+d59 2
+a60 2
+      DOUBLE PRECISION SUM,VOLUME
+      INTEGER IFAIL,IVAR,IVERT,NOFEQN
+d65 3
+a67 1
+     &WNEG(MAXNOFVAR),WPOS(MAXNOFVAR),WR(MAXNOFVAR),WORK(6)
+d72 1
+a72 1
+      DATA WORK/6*ONE/
+d75 1
+d82 8
+d94 1
+a94 1
+         WORK(1) = POUTLET
+d109 1
+d127 1
+a127 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS,
+d131 1
+a131 1
+      SUM = ZERO
+d133 1
+a133 1
+          SUM = SUM + WPOS(IVAR)
+d140 1
+a140 1
+          TSTEP(1,IVERT) = SUM
+d147 7
+@
+
+
+1.8
+log
+@repaired an #ifdef directive
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE BC28VIII(IELEM,VCN,VCZ,PCN,ICN,KPOS,NODRES,TSTEP,NDIM,
+d4 1
+a4 1
+C     $Id: bc28viii.F,v 1.7 2005/08/08 11:13:34 abonfi Exp aldo $
+a35 1
+      INTEGER ICN(NOFVERT) 
+d93 1
+a93 2
+         CALL GHOST2VIII(VCZ(1,IVERT),ICN(IVERT)+1,VCZ(1,NOFVERT),
+     +              FLOWDIR,WORK,NDIM)
+d95 2
+a96 3
+         CALL GHOST8VIII(VCZ(1,IVERT),ICN(IVERT)+1,VCZ(1,NOFVERT),
+     +              FLOWDIR,WORK,NDIM)
+        ENDIF
+@
+
+
+1.7
+log
+@the number of entries defining inflow bcs has changed
+with code version 0.11.9
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.f,v 1.6 2003/08/08 03:55:36 abonfi Exp $
+d29 1
+d78 1
+a78 1
+     +NOFVAR,'PCN matrix ',IFAIL)
+d139 1
+a139 1
+#ifdef
+@
+
+
+1.6
+log
+@boundary types for faces(edges) have been made more descriptive
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.f,v 1.5 2002/09/10 09:25:53 abonfi Exp abonfi $
+d16 1
+d32 3
+a34 2
+     +                 NODRES(NOFVAR,NOFVERT-1),TSTEP(NOFVAR,NOFVERT-1),
+     +                 VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT)
+d63 3
+a65 3
+      DOUBLE PRECISION DUMMY(NMAX*VMAX),KMAT(NMAX*NMAX),
+     &KNEG(NMAX*NMAX),VLEFT(NMAX*NMAX),VRIGHT(NMAX*NMAX),
+     &WNEG(NMAX),WPOS(NMAX),WR(NMAX),WORK(5),PCN(3,NOFVERT)
+d70 1
+a70 1
+      DATA WORK/5*ONE/
+d73 6
+a78 3
+!     write(6,*)' ibc is ',ibc
+!     CALL X04CAF('General',' ',3,NOFVERT,PCN,
+!    +NOFVAR,'PCN matrix ',IFAIL)
+d83 6
+a88 4
+      WORK(1) = POUTLET
+      WORK(2) = PCN(1,IVERT)
+      WORK(3) = PCN(2,IVERT)
+      WORK(4) = PCN(3,IVERT)
+d92 2
+a93 2
+        IF(IBC.EQ.BC_TYPE_SUBS_OUTLET)THEN
+        CALL GHOST2VIII(VCZ(1,IVERT),ICN(IVERT)+1,VCZ(1,NOFVERT),
+d95 2
+a96 2
+        ELSEIF(IBC.EQ.BC_TYPE_SUBS_INLET)THEN
+        CALL GHOST8VIII(VCZ(1,IVERT),ICN(IVERT)+1,VCZ(1,NOFVERT),
+d98 5
+a102 5
+      ENDIF
+
+!     CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ,
+!    +NOFVAR,'VCZ matrix ',IFAIL)
+caldo pause
+d116 4
+a119 4
+Cifdef PRINT
+C     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS,
+C    +NOFVAR,'KPOSITIVE matrix ',IFAIL)
+Cendif
+d138 4
+a141 4
+caldo
+c     CALL X04CAF('General',' ',NOFVAR,NOFVert,nodres,
+c    +NOFVAR,'nodres matrix ',IFAIL)
+c     pause
+@
+
+
+1.5
+log
+@the timestep array is now dimensioned NOFVAR x NOFVERT
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.f,v 1.4 2002/08/24 10:05:26 abonfi Exp abonfi $
+d85 1
+a85 1
+        IF(IBC.EQ.2)THEN
+d88 1
+a88 1
+        ELSEIF(IBC.EQ.8)THEN
+@
+
+
+1.4
+log
+@towards the implementation of a coupled approach
+for RANS: the number of variables NOFVAR can now
+be different from the number of mean flow equations
+(hereafter called NOFEQN)
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.f,v 1.3 2001/07/21 10:04:29 abonfi Exp abonfi $
+d31 1
+a31 1
+     +                 NODRES(NOFVAR,NOFVERT-1),TSTEP(NOFVERT-1),
+d52 1
+a52 1
+C     TSTEP(1:NOFVERT) contribution to the time-step in the
+d123 1
+a123 1
+          TSTEP(IVERT) = SUM
+@
+
+
+1.3
+log
+@passing nodenumber to the routines that create the mirror state
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28viii.f,v 1.2 2001/07/19 10:03:33 abonfi Exp abonfi $
+d58 1
+a58 1
+      INTEGER IFAIL,IVAR,IVERT
+d61 3
+a63 2
+      DOUBLE PRECISION DUMMY(16),KMAT(16),KNEG(16),VLEFT(16),VRIGHT(16),
+     +                 WNEG(4),WPOS(4),WR(4),WORK(5),PCN(3,NOFVERT)
+d87 1
+a87 1
+     +              FLOWDIR,WORK,NDIM,NOFVAR)
+d90 1
+a90 1
+     +              FLOWDIR,WORK,NDIM,NOFVAR)
+d104 2
+a105 1
+      CALL MATSPLITVIII(IELEM,NDIM,NOFVAR,VCN(1,NOFVERT),DUMMY,NOFVAR,
+d127 1
+a127 1
+      CALL DGEMV('No',NOFVAR,NOFVAR,-ONE,KPOS(1,1,IVERT),
+@
+
+
+1.2
+log
+@modifications required to introduce non-uniform
+profiles at the inlet
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE BC28VIII(IELEM,VCN,VCZ,KPOS,NODRES,TSTEP,NDIM,NOFVERT,
+     +                   NOFVAR,PCN,IBC)
+d4 1
+a4 1
+C     $Id:$
+d33 1
+d85 2
+a86 2
+        CALL GHOST2VIII(VCZ(1,IVERT),VCZ(1,NOFVERT),FLOWDIR,
+     +              WORK,NDIM,NOFVAR)
+d88 2
+a89 2
+        CALL GHOST8VIII(VCZ(1,IVERT),VCZ(1,NOFVERT),FLOWDIR,
+     +              WORK,NDIM,NOFVAR)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+     +                   NOFVAR,IBC)
+d4 2
+d61 1
+a61 1
+     +                 WNEG(4),WPOS(4),WR(4),WORK(5)
+d66 2
+d69 3
+a71 1
+      WORK(1) = POUTLET
+d76 4
+d91 2
+a92 3
+caldo write(6,*)' ibc is ',ibc
+caldo CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ,
+caldo+NOFVAR,'VCZ matrix ',IFAIL)
+@

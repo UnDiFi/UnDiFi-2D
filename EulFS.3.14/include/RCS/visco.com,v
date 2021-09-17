@@ -1,0 +1,79 @@
+head	1.2;
+access
+	abonfi;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2013.01.25.07.55.07;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the viscous terms
+@
+
+
+1.2
+log
+@added support for choosing which eqn should be replaced
+when implementing isothermal boundary conditions
+@
+text
+@      DOUBLE PRECISION RE,REINV,PRANDTL,TWALL
+      INTEGER IADIA,IADIA_REPLACE_EQN
+      COMMON /VISCO_R/ RE,REINV,PRANDTL,TWALL
+      COMMON /VISCO_I/ IADIA,IADIA_REPLACE_EQN
+C
+C     Applicability KAN = +1,+2,+4
+C
+C     RE      is the Reynolds number
+C     REINV   is the inverse of the Reynolds number
+C     PRANDTL is the Prandtl number
+C     TWALL   is the non-dimensional wall temperature 
+C             (meaningful for IADIA <> 0) 
+C     IADIA   set to 0 means adiabatic wall else isothermal
+C     IADIA_REPLACE_EQN  set to IADIA_REPLACE_CONT or IADIA_REPLACE_ENER
+C                         these are defined in visco.h
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+      INTEGER IADIA
+d4 1
+a4 1
+      COMMON /VISCO_I/ IADIA
+d14 2
+@

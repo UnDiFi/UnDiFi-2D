@@ -1,0 +1,498 @@
+head	1.13;
+access
+	caspur
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.13
+	release3_13_0:1.13
+	release3_12_0:1.13
+	release3_11_0:1.13
+	release3_10_0:1.13
+	release3_8_0:1.13
+	release3_7_1:1.13
+	release3_7_0:1.13
+	release3_4_5:1.13
+	release3_4_4:1.13
+	release3_4_3:1.13
+	release3_4_2:1.13
+	release3_4_1:1.13
+	release3_4_0:1.13
+	release3_3_5:1.13
+	release3_3_4:1.13
+	release3_3_3:1.13
+	release3_3_2:1.13
+	release3_3_1:1.13
+	release3_3_0:1.13;
+locks; strict;
+comment	@c @;
+
+
+1.13
+date	2009.06.11.09.55.05;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2005.09.09.08.39.49;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.12.08.12.52.12;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.11.14.17.56.33;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.12.20.11.05.44;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.09.02.08.42.09;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.08.19.14.49.40;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.11.19.10.10.17;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.11.17.17.05.07;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.11.03.16.31.50;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.04.21.21.07.38;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.02.15.31.56;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.00.52.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Subroutine for backing up data to disk
+@
+
+
+1.13
+log
+@backs-up solutions at previous time levels
+@
+text
+@      SUBROUTINE BACKUP(NPOIN,NPNOD,NGHOST,NOFVAR,NTURB, MAP,INDX,
+     +BAKFILE,VISCTFILE,OLDFILE)
+C
+C Subroutine for backing up DATA
+C in the periodic case the solution in those periodic nodes
+C that have been removed, i.e. those stored in
+C NPOIN+NGHOST ......... NPOIN+NGHOST+NPNOD is reconstructed
+C using the mapping MAP
+C
+C     $Id: backup.f,v 1.12 2005/09/09 08:39:49 abonfi Exp abonfi $
+C
+C VISCTFILE is used to store viscosity in the un-coupled approach 
+C BAKFILE   is used to stores flow variables at the current time level
+C OLDFILE   is used to stores flow variables at the previous time level
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'time.h'
+      INCLUDE 'nloc.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'time.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER NOFVAR,NPOIN,NTURB
+      CHARACTER BAKFILE* (*),VISCTFILE* (*), OLDFILE* (*)
+C     .. Array Arguments ..
+      INTEGER MAP(NPNOD),INDX(*)
+C
+C     INDX must be dimensioned MAX(NOFVAR,NTURB)*NPNOD
+C
+C     ..
+C     .. Arrays in Common ..
+      DOUBLE PRECISION DSTAK(1)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IPOIN,IVAR,LOC,I,NITEMS
+C     ..
+C     .. Local Arrays ..
+      INTEGER ISTAK(1)
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL SOLZNE
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C     ..
+C
+      IF(NPNOD.GT.0)THEN
+          LOC = 0
+          DO 1 I = 1, NPNOD
+              IPOIN = MAP(I)
+              DO 1 IVAR = 1,NOFVAR
+                  LOC = LOC + 1
+                  INDX(LOC) = (IPOIN-1)*NOFVAR+IVAR
+    1     CONTINUE
+          IADD = LZROE+NOFVAR*(NPOIN+NGHOST)
+          CALL DGTHR( NOFVAR*NPNOD, DSTAK(LZROE), DSTAK(IADD), INDX )
+C
+C    rotate velocities
+C
+          IF( PERIODIC_MESH .AND. ANNULAR )
+     &    CALL ROTATE( DSTAK(IADD), NOFVAR, NPNOD )
+          IF(NTURB.NE.0)THEN
+              LOC = 0
+              DO 3 I = 1, NPNOD
+                  IPOIN = MAP(I)
+                  DO 3 IVAR = 1,NTURB
+                      LOC = LOC + 1
+                      INDX(LOC) = (IPOIN-1)*NTURB+IVAR
+    3         CONTINUE
+              IADD = LTURB+NTURB*(NPOIN+NGHOST)
+              CALL DGTHR( NTURB*NPNOD, DSTAK(LTURB), DSTAK(IADD), INDX )
+          ENDIF
+      ENDIF
+c
+c     Saves the solution ...
+c
+      NITEMS = NPOIN+NGHOST+NPNOD
+      CALL SOLZNE(BAKFILE,DSTAK(LZROE),NOFVAR,NITEMS,'write')
+      IF(LTIME)THEN ! save time level n
+         LOC = LZROE + NOFVAR*NITEMS
+         CALL SOLZNE(OLDFILE,DSTAK(LOC),NOFVAR,NITEMS,'write')
+      ENDIF 
+C
+C     there is NO unsteady uncoupled approach, so we do NOT save
+C     the previous time level
+C
+      IF (NTURB.NE.0)
+     +CALL SOLZNE(VISCTFILE,DSTAK(LTURB),NTURB,NITEMS,'write')
+C
+      RETURN
+ 
+      END
+@
+
+
+1.12
+log
+@changes required to handle ANNULAR cascades
+@
+text
+@d2 1
+a2 1
+     +BAKFILE,VISCTFILE)
+d10 5
+a14 1
+C     $Id: backup.f,v 1.11 2000/12/08 12:52:12 aldo Exp $
+a15 1
+      INCLUDE 'nloc'
+d17 2
+d20 1
+d24 1
+a24 1
+      CHARACTER BAKFILE* (*),VISCTFILE* (*)
+d35 1
+a35 1
+      INTEGER IPOIN,IVAR,LOC,I
+d78 1
+a78 1
+c     Saves the intermediate solution ...
+d80 10
+a89 1
+      CALL SOLZNE(BAKFILE,DSTAK(LZROE),NOFVAR,NPOIN+NGHOST+NPNOD,'w')
+d91 1
+a91 1
+     +CALL SOLZNE(VISCTFILE,DSTAK(LTURB),NTURB,NPOIN+NGHOST+NPNOD,'w')
+@
+
+
+1.11
+log
+@now handles periodic nodes in parallel
+@
+text
+@d10 1
+a10 1
+C     $Id: backup.f,v 1.10 2000/11/14 17:56:33 aldo Exp aldo $
+d13 2
+d29 1
+a29 1
+      INTEGER IFAIL,IPOIN,IVAR,LOC,I
+d54 5
+@
+
+
+1.10
+log
+@un-used include removed
+@
+text
+@d1 2
+a3 5
+C
+      SUBROUTINE BACKUP(NPOIN,NELEM,NDIM,NOFVERT,NOFVAR,NTURB,BAKFILE,
+     +                  VISCTFILE)
+C
+C
+d5 4
+a8 3
+C
+C     $Id: backup.f,v 1.9 1999/12/20 11:05:44 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/geometry/RCS/backup.f,v 1.9 1999/12/20 11:05:44 aldo Exp aldo $
+d10 1
+a11 3
+      INCLUDE 'constants'
+C
+C
+a12 2
+      INCLUDE 'implicit.h'
+      INCLUDE 'periodic.com'
+d15 1
+a15 1
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN,NTURB
+d17 5
+d27 1
+a27 1
+      INTEGER IFAIL,loca,locb
+a31 4
+C     .. External Functions ..
+      INTEGER ISTKGT
+      EXTERNAL ISTKGT
+C     ..
+d33 1
+a33 1
+      EXTERNAL ISTKRL,M01ZAF,SOLZNE
+d42 22
+a63 11
+      if(npnod.ne.0)then
+        loca = lzroe+(npoin-npnod)*nofvar
+        locb = loca + npnod*nofvar
+        call dcopy(npnod*nofvar,dstak(loca),1,dstak(locb),1)
+	IF(nturb.ne.0)THEN
+            loca = lturb+npoin-npnod
+            locb = loca + npnod
+            call dcopy(npnod,dstak(loca),1,dstak(locb),1)
+	ENDIF 
+        npoin=npoin+npnod
+      endif
+d67 3
+a69 15
+      CALL SOLZNE(BAKFILE,DSTAK(LZROE),NOFVAR,NPOIN,'w')
+      IF (NTURB.NE.0) 
+     +CALL SOLZNE(VISCTFILE,DSTAK(LTURB),NTURB,NPOIN,'w')
+c
+      if(npnod.ne.0)then
+        npoin=npoin-npnod
+      endif
+c
+c     Saves residual and nodal timestep, if required ...
+c
+C     IF(IPAR(11).NE.0)THEN
+C        CALL SOLZNE('file013.dat',DSTAK(LDTLIN),1,NPOIN,'w')
+C        CALL SOLZNE('file014.dat',DSTAK(LRESID),NOFVAR,NPOIN,'w')
+C     ENDIF
+C
+d72 1
+a72 1
+
+@
+
+
+1.9
+log
+@minor changes
+@
+text
+@d9 2
+a10 2
+C     $Id$
+C     $Header: backup.f,v 1.6 98/11/19 10:10:17 aldo Exp $
+a13 1
+      INCLUDE 'IO'
+@
+
+
+1.8
+log
+@minor cleaning
+@
+text
+@d9 2
+a10 2
+C     $Id: backup.f,v 1.7 1999/08/19 14:49:40 aldo Exp aldo $
+C     $Header: /c9/tracs/aldo/EulFS.0.9.7/src/seq/RCS/backup.f,v 1.7 1999/08/19 14:49:40 aldo Exp aldo $
+d35 12
+d70 7
+@
+
+
+1.7
+log
+@removed unused declaration
+@
+text
+@d9 2
+a10 2
+C     $Id: backup.f,v 1.6 1998/11/19 10:10:17 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.9.7/src/seq/RCS/backup.f,v 1.6 1998/11/19 10:10:17 aldo Exp aldo $
+a34 12
+      INTEGER ISTKGT
+      EXTERNAL ISTKGT
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL ISTKRL,SOLZNE
+C     ..
+C     .. Common blocks ..
+      COMMON /CSTAK/DSTAK
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C     ..
+a57 7
+c     Saves residual and nodal timestep, if required ...
+c
+C     IF(IPAR(11).NE.0)THEN
+C        CALL SOLZNE('file013.dat',DSTAK(LDTLIN),1,NPOIN,'w')
+C        CALL SOLZNE('file014.dat',DSTAK(LRESID),NOFVAR,NPOIN,'w')
+C     ENDIF
+C
+@
+
+
+1.6
+log
+@handles turbulent viscosity for the periodic case
+@
+text
+@d9 2
+a10 2
+C     $Id$
+C     $Header$
+d39 1
+a39 1
+      EXTERNAL ISTKRL,M01ZAF,SOLZNE
+@
+
+
+1.5
+log
+@add a filename to store turbulent viscosity.
+@
+text
+@d9 2
+d52 5
+@
+
+
+1.4
+log
+@handles periodic cases
+@
+text
+@d3 2
+a4 1
+      SUBROUTINE BACKUP(NPOIN,NELEM,NDIM,NOFVERT,NOFVAR,NTURB,BAKFILE)
+d21 1
+a21 1
+      CHARACTER BAKFILE* (*)
+d57 1
+a57 1
+     +CALL SOLZNE('file015.dat',DSTAK(LTURB),NTURB,NPOIN,'w')
+@
+
+
+1.3
+log
+@removed declaration of SORTNOD among the EXTERNALs
+@
+text
+@d16 1
+d26 1
+a26 1
+      INTEGER IFAIL
+d45 6
+d57 4
+@
+
+
+1.2
+log
+@Reordering removed
+@
+text
+@d35 1
+a35 1
+      EXTERNAL ISTKRL,M01ZAF,SOLZNE,SORTNOD
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a43 16
+C     If the mesh has been reordered, then the original ordering
+C     is re-created ...
+C
+      IF (REORDERING) THEN
+          LDWKSP = ISTKGT(NPOIN,4)
+          CALL SORTNOD(ISTAK(LCELNOD),NOFVERT,NELEM,.FALSE.,
+     +                 ISTAK(LNODCOD),NPOIN,.FALSE.,ISTAK(LPERM),
+     +                 DSTAK(LCORG),NDIM,.FALSE.,DSTAK(LZROE),NOFVAR,
+     +                 .TRUE.,DSTAK(LDWKSP))
+          IF (NTURB.NE.0) CALL SORTNOD(ISTAK(LCELNOD),NOFVERT,NELEM,
+     +                                 .FALSE.,ISTAK(LNODCOD),NPOIN,
+     +                                 .FALSE.,ISTAK(LPERM),
+     +                                 DSTAK(LCORG),NDIM,.FALSE.,
+     +                                 DSTAK(LTURB),NTURB,.TRUE.,
+     +                                 DSTAK(LDWKSP))
+      ENDIF
+a57 17
+C     Then the new ordering is re-created ...
+C
+      IF (REORDERING) THEN
+          CALL M01ZAF(ISTAK(LPERM),1,NPOIN,IFAIL)
+          CALL SORTNOD(ISTAK(LCELNOD),NOFVERT,NELEM,.FALSE.,
+     +                 ISTAK(LNODCOD),NPOIN,.FALSE.,ISTAK(LPERM),
+     +                 DSTAK(LCORG),NDIM,.FALSE.,DSTAK(LZROE),NOFVAR,
+     +                 .TRUE.,DSTAK(LDWKSP))
+          IF (NTURB.NE.0) CALL SORTNOD(ISTAK(LCELNOD),NOFVERT,NELEM,
+     +                                 .FALSE.,ISTAK(LNODCOD),NPOIN,
+     +                                 .FALSE.,ISTAK(LPERM),
+     +                                 DSTAK(LCORG),NDIM,.FALSE.,
+     +                                 DSTAK(LTURB),NTURB,.TRUE.,
+     +                                 DSTAK(LDWKSP))
+          CALL M01ZAF(ISTAK(LPERM),1,NPOIN,IFAIL)
+          CALL ISTKRL(1)
+      ENDIF
+@

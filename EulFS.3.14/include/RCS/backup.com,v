@@ -1,0 +1,106 @@
+head	1.4;
+access
+	abonfi;
+symbols
+	release3_14_0:1.4
+	release3_13_0:1.4
+	release3_12_0:1.4
+	release3_11_0:1.4
+	release3_10_0:1.4
+	release3_8_0:1.4
+	release3_7_1:1.4
+	release3_7_0:1.4
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_1:1.4
+	release3_3_0:1.4;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2013.01.25.08.06.05;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.02.21.13.29.19;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.02.21.12.15.05;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.10.27.16.35.27;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@a silly common used to pass some stuff from the main to myTS
+@
+
+
+1.4
+log
+@added filename of the solution at time level "n-1"
+@
+text
+@      CHARACTER BAKFILE*512,VISCTFILE*255,FOLDFILE*255
+      INTEGER NWFAC,NBODY6
+C
+C     A nasty way to pass these variables to the subroutine
+C     myTS()
+C     rem that on a Compaq I had to split character and integer
+C     data on two different common blocks
+C
+C
+      COMMON/COMZZC/BAKFILE,VISCTFILE,FOLDFILE
+      COMMON/COMZZI/NWFAC,NBODY6
+@
+
+
+1.3
+log
+@split common block into one for integers and one for characters
+@
+text
+@d1 1
+a1 1
+      CHARACTER BAKFILE*255,VISCTFILE*255
+d10 1
+a10 1
+      COMMON/COMZZC/BAKFILE,VISCTFILE
+@
+
+
+1.2
+log
+@increased size of the character vars
+@
+text
+@d3 9
+a11 2
+
+      COMMON/COMZZZ/BAKFILE,VISCTFILE,NWFAC,NBODY6
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      CHARACTER BAKFILE*80,VISCTFILE*80
+@

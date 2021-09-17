@@ -1,0 +1,842 @@
+head	1.15;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.15
+	release3_13_0:1.15
+	release3_12_0:1.15
+	release3_11_0:1.15
+	release3_10_0:1.15
+	release3_8_0:1.15
+	release3_7_1:1.14
+	release3_7_0:1.14
+	release3_4_5:1.13
+	release3_4_4:1.13
+	release3_4_3:1.13
+	release3_4_2:1.13
+	release3_4_1:1.13
+	release3_4_0:1.13
+	release3_3_5:1.13
+	release3_3_4:1.13
+	release3_3_3:1.13
+	release3_3_2:1.13
+	release3_3_1:1.13
+	release3_3_0:1.12;
+locks; strict;
+comment	@c @;
+
+
+1.15
+date	2020.04.23.09.37.34;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.01.26.11.48.03;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2009.10.13.08.13.31;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2009.06.11.13.09.15;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2009.06.11.08.26.11;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2004.12.20.14.31.01;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2004.08.25.15.19.20;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2000.11.22.14.33.59;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.10.20.08.52.51;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.08.18.13.54.32;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.08.17.09.14.36;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.08.14.15.16.17;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.08.12.08.45.04;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@function to be called from RHSFunction
+original version to be used with the TS component of PETSc
+@
+
+
+1.15
+log
+@changes required by petsc release 3.8
+@
+text
+@      SUBROUTINE ApplicationFunction(PetscMatA,X,PetscVecRHS,
+     &PetscVecDT,ctx,IERR)
+C
+C  $Id: ApplicationFunction.F,v 1.14 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C ---------------------------------------------------------------------
+C
+C  ApplicationFunction - Computes nonlinear function
+C  This function is called by
+C  the higher level routines RHSFunction() and RHSJacobian()
+C  Input Parameter:
+C  x - local vector data
+C  A - the jacobian matrix
+C
+C  Output Parameters:
+C  PetscVecRHS - local vector data, PetscVecRHS(x)
+C  A - the jacobian matrix
+C  ierr - error code
+C
+C  Notes:
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+      use petscvec
+      use petscmat
+      IMPLICIT NONE
+C
+      Vec PetscVecRHS,PetscVecDT
+      Mat PetscMatA
+C
+      INCLUDE 'flags.com'
+      INCLUDE 'implicit.h'
+C
+      double precision x(*)
+      integer ierr
+      integer ctx(*)
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,NELEM,NFACE,
+     &NBFAC
+C
+      EXTERNAL SCALAR,EULERII,EULERIIBIS,EULERVII,EULERVIII,EULERIX,
+     +EULERX,EULERXI,EULERXII,VSFLX2,VSFLX4,VISCO
+C
+      NDIM   =ctx(1)
+      NOFVERT=ctx(2)
+      NOFVAR =ctx(3)
+      NTURB  =ctx(4)
+      NPOIN  =ctx(5)
+      NGHOST =ctx(6)
+      NELEM  =ctx(7)
+      NFACE  =ctx(8)
+      NBFAC  =ctx(9)
+      NPNOD  =ctx(10)
+C
+C
+C
+C **************************************************************
+C         Scalar case (ABS(KAN)=1;NOFVAR=1)
+C **************************************************************
+C
+      IF (IABS(KAN).EQ.1) THEN
+C
+          CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                NELEM,NFACE,NBFAC,
+     2                X,PetscVecDT,PetscVecRHS,PetscMatA,
+     3                SCALAR,VISCO)
+C
+C **************************************************************
+C         Euler and Navier-Stokes
+C **************************************************************
+C
+      ELSEIF (IABS(KAN).EQ. 4.OR. IABS(KAN).EQ.2) THEN
+C
+C         Compute NODAL residuals ..
+C
+C         HE splitting for supersonic 2D flows
+C
+          IF (DECOMP.EQ.2) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERII, VSFLX4)
+ 
+C
+C         HE splitting
+C
+ 
+          ELSEIF (DECOMP.EQ.3) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERIIBIS, VSFLX4)
+ 
+C
+C         Hybrid
+C
+          ELSEIF (DECOMP.EQ.4) THEN
+cold         CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+cold +                   NELEM,NFACE,NBFAC,
+cold 2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+cold +                   EULERHYB, VSFLX4)
+             STOP ' DECOMP == 4 is not implemented anymore'
+C
+C         Unsteady compressible in conserved variables
+C
+ 
+          ELSEIF (DECOMP.EQ.5) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERXI, VSFLX4)
+C
+C         Preconditioned Unsteady compressible using the Merkle preconditioner
+C
+ 
+          ELSEIF (DECOMP.EQ.6) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERX, VSFLX4)
+C
+C         Unsteady compressible
+C
+          ELSEIF (DECOMP.EQ.7) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERVII, VSFLX4)
+ 
+C
+C         Unsteady incompressible
+C
+          ELSEIF (DECOMP.EQ.8) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERVIII, VSFLX2)
+ 
+C
+C         Pseudo-Unsteady incompressible
+C
+          ELSEIF (DECOMP.EQ.9) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERIX, VSFLX2)
+C
+          ELSE
+             STOP 'INVALID DECOMP in ApplicationFunction'
+C
+          ENDIF
+C
+      ELSEIF ( KAN .EQ. -3 )THEN
+C
+C         Plasma: Ar, Ar+, Ar++, e
+C
+          IF (DECOMP.EQ.10) THEN
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NPNOD,
+     +                   NELEM,NFACE,NBFAC,
+     2                   X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERXII, VSFLX4)
+          ELSE
+             STOP 'INVALID DECOMP in ApplicationFunction'
+C
+          ENDIF
+ 
+ 
+      ELSE
+          STOP 'INVALID KAN in ApplicationFunction'
+C
+      ENDIF
+C
+C
+      RETURN
+      END
+@
+
+
+1.14
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d4 1
+a4 1
+C  $Id: ApplicationFunction.F,v 1.13 2013/01/26 11:48:03 abonfi Exp abonfi $
+a21 1
+      IMPLICIT NONE
+a22 1
+#include "petsc/finclude/petscsys.h"
+d25 3
+@
+
+
+1.13
+log
+@added support for an Argon plasma
+@
+text
+@d4 1
+a4 1
+C  $Id: ApplicationFunction.F,v 1.12 2011/09/16 07:19:48 abonfi Exp abonfi $
+d24 3
+a26 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+@
+
+
+1.12
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d4 1
+a4 1
+C  $Id: ApplicationFunction.F,v 1.11 2009/10/13 08:13:31 abonfi Exp abonfi $
+a34 1
+      LOGICAL COMPRESSIBLE
+d41 1
+a41 3
+     +EULERX,EULERXI,VSFLX2,VSFLX4,VISCO
+C
+      COMPRESSIBLE = ABS(KAN) .EQ. 4
+a145 1
+ 
+d148 1
+a148 1
+             STOP 'INVALID DECOMP'
+d152 15
+d168 1
+a168 1
+          STOP 'INVALID KAN'
+@
+
+
+1.11
+log
+@Added support for Merkle's preconditioner
+@
+text
+@d4 1
+a4 1
+C  $Id: ApplicationFunction.F,v 1.10 2009/06/11 13:09:15 abonfi Exp abonfi $
+d24 1
+a24 1
+#include "finclude/petsc.h"
+@
+
+
+1.10
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d4 1
+a4 1
+C  $Id: ApplicationFunction.F,v 1.9 2009/06/11 08:26:11 abonfi Exp abonfi $
+d42 1
+a42 1
+     +EULERXI,VSFLX2,VSFLX4,VISCO
+d106 1
+a106 1
+C         Hybrid 3D
+a109 2
+CREM          CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+CREM +                    NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,A,EULERHYB3D, VSFLX4)
+d114 3
+d118 5
+@
+
+
+1.9
+log
+@now passing NPNOD among the arguments of the call
+@
+text
+@d4 1
+a4 1
+C  $Id: ApplicationFunction.F,v 1.8 2004/12/20 14:31:01 aldo Exp abonfi $
+d24 3
+a26 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+@
+
+
+1.8
+log
+@minor cosmetic change
+@
+text
+@d4 1
+a4 1
+C  $Id: ApplicationFunction.F,v 1.7 2004/08/25 15:19:20 aldo Exp aldo $
+d10 1
+a10 1
+C  the higher level routines PetscVecRHSFunction() and PetscVecRHSJacobian()
+d38 2
+a39 1
+      INTEGER NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+d41 2
+a42 2
+      EXTERNAL SCALAR,EULERII,EULERIIBIS,EULERVII,EULERVIII, EULERIX,
+     +EULERXI,EULERHYB,EULERHYB3D,VSFLX2,VSFLX4,VISCO
+d55 1
+d65 4
+a68 2
+          CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +    NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,SCALAR,VISCO)
+d81 3
+a83 2
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                   NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+d91 3
+a93 2
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                   NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+d100 5
+a104 4
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                   NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+     +                   EULERHYB, VSFLX4)
+ 
+d112 3
+a114 2
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                   NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+d121 3
+a123 2
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                   NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+d130 3
+a132 2
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                   NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+d139 3
+a141 2
+             CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                   NFACE,NBFAC,X,PetscVecDT,PetscVecRHS,PetscMatA,
+@
+
+
+1.7
+log
+@Add routine EulerXI
+@
+text
+@d1 5
+a5 1
+      SUBROUTINE ApplicationFunction(A,X,RHS,DT,ctx,IERR)
+d10 1
+a10 4
+C  the higher level routines RHSFunction() and RHSJacobian()
+C
+C  $Id: ApplicationFunction.F,v 1.6 2000/11/22 14:33:59 aldo Exp abonfi $
+C
+d16 1
+a16 1
+C  RHS - local vector data, RHS(x)
+d28 2
+a29 2
+      Vec RHS,DT
+      Mat A
+d64 1
+a64 1
+     +    NFACE,NBFAC,X,DT,RHS,A,SCALAR,VISCO)
+d77 3
+a79 2
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERII, VSFLX4)
+d86 3
+a88 2
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERIIBIS, VSFLX4)
+d94 3
+a96 2
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERHYB, VSFLX4)
+d104 4
+a107 3
+CREM +                    NFACE,NBFAC,X,DT,RHS,A,EULERHYB3D, VSFLX4)
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERXI, VSFLX4)
+d113 3
+a115 2
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERVII, VSFLX4)
+d121 3
+a123 2
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERVIII, VSFLX2)
+d129 3
+a131 2
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST, NELEM,
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERIX, VSFLX2)
+d135 1
+a135 1
+              STOP 'INVALID DECOMP'
+@
+
+
+1.6
+log
+@scalar problems now work again
+@
+text
+@d8 1
+a8 1
+C  $Id: ApplicationFunction.F,v 1.5 2000/10/20 08:52:51 aldo Exp aldo $
+d40 1
+a40 1
+     +EULERHYB,EULERHYB3D,VSFLX2,VSFLX4,VISCO
+d99 2
+d102 1
+a102 1
+     +                    NFACE,NBFAC,X,DT,RHS,A,EULERHYB3D, VSFLX4)
+@
+
+
+1.5
+log
+@changes in the call to SCLSCH
+@
+text
+@d8 1
+a8 1
+C  $Id: ApplicationFunction.F,v 1.4 2000/08/18 13:54:32 aldo Exp aldo $
+d40 1
+a40 1
+     +EULERHYB,EULERHYB3D,VSFLX2,VSFLX4
+d63 1
+a63 1
+     +    NFACE,NBFAC,X,DT,RHS,A,SCALAR)
+@
+
+
+1.4
+log
+@removed unused variables
+@
+text
+@d8 1
+a8 1
+C  $Id: ApplicationFunction.F,v 1.3 2000/08/17 09:14:36 aldo Exp aldo $
+d17 1
+a17 1
+C  ierr - error code 
+d24 2
+a25 2
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+d39 2
+a40 2
+      EXTERNAL SCALAR,EULERII,EULERIIBIS,EULERVII,EULERVIII,
+     +         EULERIX,EULERHYB,EULERHYB3D
+d60 1
+a60 1
+          IF (IABS(KAN).EQ.1) THEN
+d62 2
+a63 2
+               CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                        NELEM,NFACE,NBFAC,X,DT,RHS,A,SCALAR)
+d69 1
+a69 1
+          ELSEIF (IABS(KAN).EQ.4 .OR. IABS(KAN).EQ.2) THEN
+d75 4
+a78 3
+                  IF (DECOMP.EQ.2) THEN
+                   CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                         NELEM,NFACE,NBFAC,X,DT,RHS,A,EULERII)
+d82 5
+a86 4
+    
+                  ELSEIF (DECOMP.EQ.3) THEN
+                   CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                         NELEM,NFACE,NBFAC,X,DT,RHS,A,EULERIIBIS)
+d90 4
+a93 4
+
+                  ELSEIF (DECOMP.EQ.4) THEN
+                   CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                         NELEM,NFACE,NBFAC,X,DT,RHS,A,EULERHYB)
+d97 12
+a108 10
+
+                  ELSEIF (DECOMP.EQ.5) THEN
+                   CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                         NELEM,NFACE,NBFAC,X,DT,RHS,A,EULERHYB3D)
+C
+C         Unsteady compressible 
+C
+                  ELSEIF (DECOMP.EQ.7) THEN
+                   CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                         NELEM,NFACE,NBFAC,X,DT,RHS,A,EULERVII)
+d112 4
+a115 3
+                  ELSEIF (DECOMP.EQ.8) THEN
+                   CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                         NELEM,NFACE,NBFAC,X,DT,RHS,A,EULERVIII)
+d119 4
+a122 3
+                  ELSEIF (DECOMP.EQ.9) THEN
+                   CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                         NELEM,NFACE,NBFAC,X,DT,RHS,A,EULERIX)
+d124 2
+a125 2
+                  ELSE
+                      STOP 'INVALID DECOMP'
+d127 1
+a127 1
+                  ENDIF
+d129 2
+a130 2
+            ELSE
+                STOP 'INVALID KAN'
+d132 1
+a132 1
+            ENDIF
+@
+
+
+1.3
+log
+@add among the arguments of the call the array
+where the residual has to be evaluated; this
+is done to be able to use the PETSc TS component
+in a future release
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ApplicationFunction(A,X,RHS,DT,dummy,IERR)
+d8 1
+a8 1
+C  $Id: ApplicationFunction.F,v 1.2 2000/08/14 15:16:17 aldo Exp aldo $
+a28 1
+      PetscTruth FLAG
+a32 1
+      double precision s
+d35 2
+a36 2
+      integer ierr,ifail
+      integer dummy(*)
+d44 9
+a52 9
+      NDIM   =dummy(1)
+      NOFVERT=dummy(2)
+      NOFVAR =dummy(3)
+      NTURB  =dummy(4)
+      NPOIN  =dummy(5)
+      NGHOST =dummy(6)
+      NELEM  =dummy(7)
+      NFACE  =dummy(8)
+      NBFAC  =dummy(9)
+@
+
+
+1.2
+log
+@first working version for code 0.10.9
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ApplicationFunction(A,X,RHS,dummy,IERR)
+d8 1
+a8 1
+C  $Id$
+d34 1
+a34 1
+      double precision s,dtmin
+a54 1
+      DT     =dummy(10)
+a55 3
+C     CALL MatValid(A,FLAG,IERR)
+C     CALL VecValid(RHS,FLAG,IERR)
+C     CALL VecValid(DT,FLAG,IERR)
+a57 6
+C     WRITE(6,*)'NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC'
+C     WRITE(6,*)NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+C
+caldo     IF (COMPRESSIBLE)
+caldo&            CALL CONS_TO_PARM(X,NDIM,NOFVAR,NPOIN+NGHOST)
+C
+d65 1
+a65 1
+     +                        NELEM,NFACE,NBFAC,DT,RHS,A,SCALAR)
+d79 1
+a79 1
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERII)
+d86 1
+a86 1
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERIIBIS)
+d93 1
+a93 1
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERHYB)
+d100 1
+a100 1
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERHYB3D)
+d106 1
+a106 1
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERVII)
+d112 1
+a112 1
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERVIII)
+d118 1
+a118 1
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERIX)
+a119 3
+caldo           CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+caldo+                      NELEM,NFACE,NBFAC,DT,X,RHS,A,EULERIX)
+C
+a124 2
+caldo             IF (IABS(KAN).EQ.4) CALL PARM_TO_CONS(X,
+caldo+                                     NDIM,NOFVAR,NPOIN+NGHOST)
+d126 1
+a126 1
+                STOP 'INVALID DECOMP'
+a128 13
+C
+C         need to transform back to conserved
+C
+caldo     IF(COMPRESSIBLE)CALL PARM_TO_CONS(X,NDIM,NOFVAR,NPOIN+NGHOST) 
+C
+C
+#if 0
+      IF(BUILD_RHS)THEN
+         CALL VecNorm(DT,NORM_INFINITY,dtmin,IFAIL)
+         dtmin=1./dtmin
+         CALL VecDestroy(DT,IFAIL)
+      ENDIF 
+#endif
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE ApplicationFunction(A,x,RHS,dtmin,IERR)
+d4 1
+a4 4
+C  ApplicationFunction - Computes nonlinear function or
+C  jacobian, depending on the logical flags:
+C  BUILD_RHS, BUILD_JAC which are stored in the common
+C  included as implicit.h
+d8 1
+a9 1
+C
+a32 2
+      INCLUDE 'geo.com'
+      INCLUDE 'var.com'
+d38 2
+d42 1
+a42 1
+     +         EULERIX
+d46 11
+d58 3
+a60 1
+C     write(6,*)'MatValid has returned ',FLAG,PETSC_TRUE
+d62 2
+a63 2
+      IF(BUILD_RHS)
+     +CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN+NGHOST,DT,IERR)
+d65 6
+a70 3
+c     WRITE(6,*)'NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC'
+c     WRITE(6,*)NDIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,NFACE,NBFAC
+c     pause 'in ApplicationFunction'
+d72 1
+a72 1
+      IF (IABS(KAN).EQ.1) THEN
+d74 2
+a75 3
+              
+              CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                    NELEM,NFACE,NBFAC,DT,X,RHS,A,SCALAR)
+d81 1
+a81 1
+      ELSEIF (IABS(KAN).EQ.4 .OR. IABS(KAN).EQ.2) THEN
+a82 4
+C         need to transform to parameter vector
+C
+          IF(COMPRESSIBLE)CALL CONS_TO_PARM(X,NDIM,NOFVAR,NPOIN+NGHOST)
+C
+d87 3
+a89 3
+          IF (DECOMP.EQ.2) THEN
+                CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                      NELEM,NFACE,NBFAC,DT,X,RHS,A,EULERII)
+d94 17
+a110 3
+            ELSEIF (DECOMP.EQ.3) THEN
+                CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                      NELEM,NFACE,NBFAC,DT,X,RHS,A,EULERIIBIS)
+d114 3
+a116 3
+            ELSEIF (DECOMP.EQ.7) THEN
+                CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                      NELEM,NFACE,NBFAC,DT,X,RHS,A,EULERVII)
+d120 3
+a122 3
+            ELSEIF (DECOMP.EQ.8) THEN
+                CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                      NELEM,NFACE,NBFAC,DT,X,RHS,A,EULERVIII)
+d126 11
+a136 3
+            ELSEIF (DECOMP.EQ.9) THEN
+                CALL SCLSCH(NDIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                      NELEM,NFACE,NBFAC,DT,X,RHS,A,EULERIX)
+d138 2
+d147 1
+a147 1
+          IF(COMPRESSIBLE)CALL PARM_TO_CONS(X,NDIM,NOFVAR,NPOIN+NGHOST) 
+a148 1
+      ENDIF
+d150 1
+d156 1
+@

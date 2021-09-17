@@ -1,0 +1,31 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for Runge Kutta time stepping
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER NSTAGES,ITSTEP
+      DOUBLE PRECISION ALPHA(6)
+      COMMON/RK_I/NSTAGES,ITSTEP
+      COMMON/RK_R/ALPHA
+C
+C	Coefficients for R-K time stepping
+C
+@

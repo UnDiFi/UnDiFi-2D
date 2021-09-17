@@ -1,0 +1,23 @@
+C
+C     Euler/NS problems ******************
+C
+              DO 37 IVERT = 1,NOFVERT
+                  DO 37 JVERT = 1,NOFVERT
+#ifdef MPI
+                      CALL MatSetValuesBlockedLocal(PetscMatA,1,
+     +                ICN(IVERT),1,ICN(JVERT),STIFEL(1,1,IVERT,JVERT),
+     +                ADD_VALUES, IFAIL)
+#else
+                      CALL MatSetValuesBlocked(PetscMatA,1,ICN(IVERT),1,
+     +                ICN(JVERT), STIFEL(1,1,IVERT,JVERT),ADD_VALUES,
+     +                IFAIL)
+#endif
+#ifdef PRINT_MATRICES
+                      write(6,*)ivert,jvert
+                      CALL R8Mat_Print('General',' ',Nofvar,Nofvar,stifel(1,
+     +                1,ivert,jvert), Nofvar,
+     &                'Jacobian Matrix in setupRHS (1) ',IFAIL)
+#endif
+   37         CONTINUE
+          ENDIF
+C

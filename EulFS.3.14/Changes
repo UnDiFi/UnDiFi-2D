@@ -1,0 +1,439 @@
+REM: leggi in coda a questo file circa altre versioni del codice
+----------------------
+3.13. 
+----------------------
+Uses petsc 3.13
+Using automated testing I verified that there are no differences w.r.t. version 3.4.5
+----------------------
+3.12.0 
+----------------------
+Uses petsc 3.12.5
+----------------------
+3.11.0 
+----------------------
+Uses petsc 3.11.4
+----------------------
+3.10.0 
+----------------------
+Uses petsc 3.10.5; this required:
+passing Petsc Matrices and DT Vec in the arguments of a few calls,
+rather than storing in common
+----------------------
+3.8.0 
+----------------------
+Uses petsc 3.8.4; this required:
+1. changing the way data is supplied to MatSetValuesBlocked VecSetValuesBlocked
+2. passing the ISets addressing nodal bcs through the arguments of the calls
+----------------------
+3.7.1 
+----------------------
+Whenever possible (setupRHS, setupRHS_t) MatSetValues is called only once within a cell
+Rimosse le chiamate alla NAG
+----------------------
+3.7.0 
+----------------------
+Usa PETSc 3.7
+
+*** UNSteady code
+----------------------
+3.4.3 
+----------------------
+2) the ALE formulation has been extended to the un-steady case
+1) In the ALE case, the array that stores the cell volumes has been enlarged to keep track of Vol(t=n-1)
+----------------------
+3.4.2 
+----------------------
+3) Motion solver based upon the solution of Laplace's eqn for the grid velocity
+2) No time step in the laplacean for the electric field
+1) compute current flowing through the boundaries
+----------------------
+3.4.1 
+----------------------
+3) Adds Laplace's eqn for plasma
+2) array ICOLOR has changed inot ICOLOR(0:N,1:3) and ICOLOR_T has been removed
+1) Removed support for "strong" boundary conditions
+----------------------
+3.4.0 
+----------------------
+upgraded to petsc version 3.4.0
+----------------------
+3.3.5 
+----------------------
+now implements
+characteristic time-stepping:
+----------------------
+3.3.3 
+----------------------
+this release has been obtained by merging rev 3.2.11 with 3.3.2 
+----------------------
+----------------------
+3.3.2 
+----------------------
+Same as 3.3.1, but the idiabatic index and specific gas constants are now
+variables stored in common, rather than parameters
+use -adiabatic_index
+use -specific_gas_constant
+in .petscrc
+if not given, values for air (1.4,287.) are used
+----------------------
+----------------------
+3.3.1 
+----------------------
+chemistry has been added and merged with 3.3.0;
+this release has been obtained by merging rev 3.2.10 with 3.3.0  
+boltzeq4Ar.f  iondegree4Ar.f  plasflow_inf.f have been moved into the chemistry dir
+----------------------
+----------------------
+3.3.0 
+----------------------
+working with petsc-3.3
+----------------------
+----------------------
+3.2.12 
+----------------------
+The last version working with petsc-3.2 (its development stopped on Dec, 21, 2012)
+----------------------
+----------------------
+3.2.10 
+----------------------
+This is the version that Raffaele kept developing when abonfi released 3.3.1
+----------------------
+----------------------
+3.2.10 
+----------------------
+This is the version were Raffaele implemented the plasma equations (its development stopped on Jan, 2012
+when it was merged with 3.3.0 to become 3.3.1)
+----------------------
+----------------------
+3.2.3 
+----------------------
+1) ALE formulation (-ale)
+   use "-ale_mesh read" to read a new mesh (same connectivity, only gridpoint location changes) at each time level (subr. newgeo)
+   use "-ale_mesh move" to move the gridpoints of the current mesh (subr. newgeo)
+----------------------
+----------------------
+3.2.1 
+----------------------
+1) ALE formulation
+----------------------
+----------------------
+3.2.0 
+----------------------
+1) uses petsc-3.2
+----------------------
+----------------------
+3.1.0 
+----------------------
+1) naming scheme has changed; now begins with that of the PETSc version in use
+   this version is derived from 0.15.2
+----------------------
+----------------------
+0.15.4
+----------------------
+1) implements non-zero wall velocity; its development
+   was however stopped due to a bug in the parallel
+   version
+----------------------
+----------------------
+0.15.2 current version (its development stopped on March 30, 2011)
+----------------------
+
+1) this version has been used for a long time.....
+
+----------------------
+0.15.0
+----------------------
+----------------------
+1) Merkle's preconditioner has been implemented here
+
+----------------------
+0.14.1 current version
+----------------------
+1) gli update relativi ai time levels n,n-1 vengono memorizzati
+   in locazioni separate e poi sommati; questo per consentire
+   di applicare trasfomazioni di variabili valutate ai corrispondenti
+   livelli temporali
+----------------------
+----------------------
+0.14.0 prima versione del nuovo codice un-steady
+----------------------
+
+----------------
+*** Steady code
+
+----------------------
+Versione 0.11.13 working with petsc-2.3.3 (last modified: Dec 2008)
+----------------------
+1) implementato FD Jacobian nel caso di cascata anulare
+   modificati setupRHS.F; ghost*.F weakbc.F
+----------------------
+----------------
+Versione 0.11.12 (last modified: Nov 2005)
+----------------
+Prime modifiche per utilizzare FD Jacobian
+anche nel caso di cascata anulare; versione
+poi abbandonata mentre continuava lo sviluppo di 0.11.11
+----------------------
+----------------
+Versione 0.11.11
+----------------
+1) implementate c-lines e isre
+----------------------
+----------------
+Versione 0.11.10
+----------------
+1) versione che supporta c.c. periodiche
+   su schiera anulare:
+   a) introdotte le rotazioni necessarie;
+      vedi geometry/rotate.f e modificati
+      setupRHS.F ghost*.F weakbc.F
+   b) conserva 2 copie di ICELNOD; modificato
+      geometry/celptr.f
+   c) i nodi sui piani di inlet includono 
+      nodi nel range NPOIN+NGHOST<=i<=NPOIN+NGHOST+NPNOD
+----------------------
+----------------
+Versione 0.11.9
+----------------
+1) utilizza petsc-2.3.0
+   si osservano differenze nella storia di convergenza
+   lineare dovute a modifiche introdotte in una precedente
+   release di PETSc
+2) risolto un bug in LWSys_scheme
+----------------------
+----------------
+Versione 0.11.8
+----------------
+1) modificato euler/vstate.f per permettere di
+   specificare profili di pressione/temperatura
+   anche con c.c. di tipo "weak"
+2) see 0.11.7b
+----------------------
+----------------
+Versione 0.11.7b
+----------------
+laptop version of 0.11.7, basically the same as 0.11.8
+1) mainly fixed a bug when calling PARM2PRIM from bc5vii & bc28vii
+----------------------
+----------------
+Versione 0.11.7
+----------------
+sviluppata a partire dalla 11.5 (non ci sono le
+modifiche "time accurate" introdotte nella 11.6)
+1) modificati alcuni schemi matriciali, in modo
+   da consentire l'uso dei kernels PETSc
+----------------------
+----------------
+Versione 0.11.6
+----------------
+ modificate le chiamate alle routines degli schemi
+ e le chiamate in Euler*
+ modificati alcuni degli schemi matriciali
+ LDA2,LW,LW2 con l'aggiunta della matrice di massa
+ aggiunto TIME_ACCURATE flag
+----------------------
+----------------
+Versione 0.11.5
+----------------
+EulFS.0.11.5 versione sviluppata ad AnnArbor   <-----------------
+             should be reliable........
+----------------------
+----------------
+Versione 0.11.4
+----------------
+1) Versione PZ fine Settembre 2003
+   K's per variabili conservative e versione "funzionante"
+   di Newton per Spalart-Allmaras
+2) Aggiunte condizioni al contorno per parete isoterma
+----------------------
+----------------
+Versione 0.11.3
+----------------
+1) Versione sul Presario 2700, Ottobre 2003, prime modifiche
+   per gli schemi higher order
+----------------------
+----------------------
+
+Versione 0.10.14
+----------------
+1) rispetto alla 0.10.13 utilizza PETSc-2.1.1
+----------------------
+----------------------
+
+Versione 0.10.13
+----------------
+1) cambiano i precondizionatori di tipo shell
+----------------------
+----------------------
+
+Versione 0.10.12
+----------------
+1) variable inlet total pressure profile (when ibc=8)
+   read from:
+   sequential:   file005.dat
+   parallel  :   ptot$nnn$.dat
+   new file $FSPL_DIR/src/geometry/setpto.f
+2) now ibc=8 also works for INcompressible flows
+3) implements the SSOR preconditioner written by P.Leggiero
+   and the multiplicative Swartz preconditioner written by
+   P.Amodio
+   new files:
+   $FSPL_DIR/src/seq/ShellPC.F
+----------------------
+----------------------
+
+Versione 0.10.11
+----------------
+1) scalar problems are again supported, both sequential and parallel
+2) add a new version of the NL scheme (-scalar_scheme NL2)
+3) periodic boundary conditions are now also handled in parallel
+   new files file004.dat and pbcs$np$.dat have been added
+----------------------
+----------------------
+
+Versione 0.10.10
+----------------
+1)turbulence modeling now works in parallel as well 
+2)towards the coupled approach:
+  a)the "viscous" routines are not any more called from the "inviscid" ones.
+  b)introduced: EulerModel,NSModel,TurbulenceModel
+3)use PETSc-2.0.29
+----------------------
+----------------------
+
+Versione 0.10.7
+--------------
+1)turbulence modeling works again (introduced new routines: nodres_t.F,
+  setupRHS_t.F) 
+2)hybrid schemes (Pietro & Pino); new routines are:
+  (under $FSPL_DIR/src/euler) EulerHyb.f EulerHyb3D.f chpsi.f
+2)major rewriting of the routines used to set-up index sets
+  for boundary conditions; dropped a few routines: 
+  subabb.f, subabc.f and major changes in iset.F
+4)implementate nuove condizioni al contorno:
+  +)pressione costante per flussi compressibili (modificando
+  la matrice jacobiana)
+  +)isothermal wall for compressible flows.
+----------------------
+----------------------
+
+Versione 0.10.5
+--------------
+   files modificati:
+../seq/bndvflx.F
+../seq/turbcomp.F
+../seq/weakbc.F
+../seq/setupRHS.F
+../seq/ghost.F
+../turbo/foo.f
+../geometry/celptr.f
+----------------------
+----------------------
+
+Versione 0.10.3
+--------------
+Modified to use PETSc 2.0.28
+1) in blockdata IVERBOSE e` ora inizializzata
+2) in setupRHS.F non chiama D1MACH (problemi su CRAY)
+   files modificati:
+   $FSPL_DIR/src/seq/makefile (versione Pasqua)
+   $FSPL_DIR/src/mpi/makefile (versione Pasqua)
+   blockdata.f
+   setupRHS.F
+   MatAllocaMPI.F
+   rdat.F
+----------------------
+----------------------
+
+Versione 0.10.2
+--------------
+1) Calcola nuovamente le forze di pressione e di attrito a parete
+2) Aggiunto lo schema scalare tipo Lax-Wendroff
+3) Risolto un bug causato da accesso fuori "bounds"
+   nelle routines matsplII e matsplIX
+4) Risolto un bug in rdat.F a causa del quale
+   veniva comunque utilizzato lo schema scalare N
+   per flussi incomprimibili con hyperbolic-elliptic splitting.
+   (-fluid incompressible; -equation Euler; -preconditioning Yes)
+   files modificati:
+   rdat.F
+   sclsch.F
+   setupRHS.F
+   weakbc.F
+   LW_scheme.f
+   matsplII.F
+   matsplIX.F
+----------------------
+----------------------
+
+
+Versione 0.9.4
+--------------
+1) La costruzione della matrice nel l.h.s. per il caso comprimibile
+   e' stata modificata, sicche' adesso: LHS * U = RHS,
+   cosi' come per il caso INcomprimibile. Adesso anche il comprimibile
+   gira con CFL = infinito.
+
+Versione 0.8.6
+--------------
+1) introdotto boundary type = 7 prescribed velocity profile
+  
+
+Versione 0.6.4
+--------------
+1) implementato schema SUPG scalare con calcolo del termine sorgente.
+2) corretto il segno del coefficiente di portanza
+3) semplificato il calcolo delle matrici K^{\pm} per le eqn.
+   incomprimibili (routine matsplVIII) vedi anche la users's guide
+4) implementata la versione di Edwin dello schema LDA, (routine
+   LDA2Sys_scheme); non sembra pero' funzionare bene:  l'implicito
+   stalla sull' iterazione lineare.
+5) implementata la versione di Edwin dello schema Lax-Wendroff
+   con la matrice \sum |K| che PRE moltiplica K_j
+6) corretto il bug sul segno dello skin friction
+----------------------
+----------------------
+Versione 0.6.3
+--------------
+1) aggiunto il calcolo della distanza del primo punto da parete
+e del aspect ratio
+2) reimplementato NSPCG sebbene ci siano ancora dei problemi
+   su ITMAX
+3) il vettore IBNDFAC viene riordinato per colori crescenti:
+   in tal modo tutte le facce dello stesso colore vengono
+   a trovarsi in posizioni adiacenti
+4) calcolo dello skin friction
+5) introdotto un nuovo vettore global SKINF in cui e' memorizzato
+   il coeff. di skin friction
+----------------------
+----------------------
+
+
+
+ALTRI CODICI
+
+
+
+----------------------
+0.12.X versions with HO reconstruction, basically the umich version (last modified: Jan 2004)
+----------------------
+EulFS.0.12.1 first development version (poi abbandonata)
+EulFS.0.12.2 development version
+     this version of the code implements a gradient
+     correction aimed at increasing accuracy
+     mid-edge values are computed using 
+     GG (Green-Gauss), LIN (LINear) or QUAdratic reconstruction
+
+     only the gradient is corrected, NOT the average
+     NO explicit HO flux evaluation
+     this is NOT what Doru does
+----------------------
+0.13.0 version using PETSc TS (derived from 0.11.0) NOT a working version
+************ ************
+UNSteady code unfs
+************ ************
+0.2.0 utilizza EulFS.0.11.6; implementa la matrice di massa consistente
+----------------------
+0.1.0 utilizza EulFS.0.11.5; implementa la sola matrice di massa diagonale
+----------------------
+0.0.0 first version (Y2K); only scalar schemes implemented

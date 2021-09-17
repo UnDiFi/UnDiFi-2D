@@ -1,0 +1,44 @@
+-equation Euler
+-fluid compressible
+-preconditioning No
+-nondimensionalisation external
+#
+-scalar_scheme NL
+-matrix_scheme B
+#
+#
+#-scalar_scheme N
+#-matrix_scheme N
+#
+
+-itmax 1
+-ibak 200
+-cfl 1.0
+-timestepping explicit
+-timestep local
+-cflmax 1.
+-linearization picard
+#
+#-sles_view
+#
+# PC options for preconditioner
+#
+#-ksp_monitor ksp.log
+#-ksp_view
+-pc_factor_mat_ordering_type rcm
+-pc_factor_mat_reuse_ordering
+-options_table
+-options_left
+-tolerance -12
+#
+#
+# flow conditions
+#
+#
+-freestream_Mach_number 2.3
+-flow_angles  1.0,0.0,0.0
+-bc_type weak
+-colors -1,4,5,5,5,5,3,-1,-1,-1,0,-1,-1,-1
+-data_dir ./
+-restart_file file003.dat
+#

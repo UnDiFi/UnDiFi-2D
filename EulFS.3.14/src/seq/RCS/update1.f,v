@@ -1,0 +1,171 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	98.01.01.22.10.22;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Explicit timestepping
+@
+
+
+1.2
+log
+@PETSc version
+@
+text
+@      SUBROUTINE UPDATE1(KSTAGE,VCORG,RESID,TSTEP,ZROE,ZROE0,NDIM,
+     +                   NOFVAR,NPOIN)
+C
+C     This routine performs the nodal update of the solution
+C     using either forward Euler or Runge-Kutta time stepping 
+C
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants'
+      INCLUDE 'rk.com'
+      INCLUDE 'conv.com'
+C
+C     .. Parameters ..
+      INTEGER NDNM
+      PARAMETER (NDNM=3*NMAX)
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER KSTAGE,NDIM,NOFVAR,NPOIN
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION RESID(NOFVAR,NPOIN),TSTEP(NPOIN),
+     +                 VCORG(NDIM,NPOIN),ZROE(NOFVAR,NPOIN),
+     +                 ZROE0(NOFVAR,NPOIN)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION ELATIME,DT,DTT,RES,TEMP
+      INTEGER IDIM,IFAIL,IPOIN,IVAR
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION WKSP1(3,NMAX)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION D1MACH
+      INTEGER IDAMAX
+      EXTERNAL D1MACH,IDAMAX
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DINIT,GETNRM
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC LOG10
+C     ..
+C     .. Data statements ..
+C
+      DATA WKSP1/NDNM*ZERO/
+C     ..
+C
+C
+      CALL GETNRM(VCORG,WKSP1,RESID,NDIM,NOFVAR,NPOIN,INMAX,RESMAX,
+     +            RESL2)
+C
+C     .. Keep track of the residual at the first iteration ..
+C
+      IF (ITER.EQ.1) THEN
+          WRITE (6,FMT=205) IVCNVG
+          RESMAX0 = RESMAX(IVCNVG)
+          RESL20 = RESL2(IVCNVG)
+      ENDIF
+
+C
+C     .. Print the residual to screen ..
+C
+      IF ((ITER/ISTMP)*ISTMP.EQ.ITER) THEN
+          WRITE (6,"(I8)") ITER
+          DO 1 IVAR = 1,NOFVAR
+              WRITE (6,FMT=110) IVAR,LOG10(RESL2(IVAR)),INMAX(IVAR),
+     +          (WKSP1(IDIM,IVAR),IDIM=1,3),LOG10(RESMAX(IVAR)),1.00
+    1     CONTINUE
+      ENDIF
+C     STOP
+C
+C     ... Writing convergence history to file ...
+C
+CXXX  ELATIME = TIMER()
+      WRITE (7,FMT=235) NITER, (RESL2(IVAR),IVAR=1,NOFVAR),ELATIME
+      WRITE (8,FMT=235) NITER, (RESMAX(IVAR),IVAR=1,NOFVAR),ELATIME
+C
+C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C ... Find the max V/Dt
+C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C
+      IPOIN = IDAMAX(NPOIN,TSTEP,1)
+      DT = TSTEP(IPOIN)
+C
+C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C     GLOBAL TIMESTEPPING (IF ITSTEP<>0)
+C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C
+      IF (ITSTEP.NE.0) THEN
+          CALL DINIT(NPOIN,DT,TSTEP,1)
+
+      ELSE
+          TEMP = 500*D1MACH(1)
+          DO 80 IPOIN = 1,NPOIN
+              DTT = TSTEP(IPOIN)
+              IF (DTT.LT.TEMP) TSTEP(IPOIN) = DT
+   80     CONTINUE
+      ENDIF
+C
+C
+C     Loop over ALL the nodes
+C
+      DO 100 IPOIN = 1,NPOIN
+c
+          DO 90 IVAR = 1,NOFVAR
+c
+              RES = RESID(IVAR,IPOIN)/TSTEP(IPOIN)
+c
+              ZROE(IVAR,IPOIN) = ZROE0(IVAR,IPOIN) +
+     +                           CFL*ALPHA(KSTAGE)*RES
+c
+   90     CONTINUE
+  100 CONTINUE
+      RETURN
+
+  205 FORMAT (5X,73 ('-'),/,5X,'VAR #',4X,'L2(',I1,')',2X,'node #',3X,
+     +       '(',4X,'x',7X,'y',7X,'z',4X,')',3X,'L_infty',4X,'CPU',/,5X,
+     +       73 ('-'),/)
+  110 FORMAT (5X,I5,1X,F8.4,2X,I6,3X,'(',2 (F8.5,','),F8.5,')',
+     +       2 (2X,F8.4))
+  235 FORMAT (I8,6 (1X,E10.4))
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d35 1
+a35 1
+      DOUBLE PRECISION D1MACH,TIMER
+d37 1
+a37 1
+      EXTERNAL D1MACH,IDAMAX,TIMER
+d76 1
+a76 1
+      ELATIME = TIMER()
+@

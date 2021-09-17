@@ -1,0 +1,269 @@
+head	1.7;
+access
+	tesistim
+	abonfi;
+symbols
+	release3_14_0:1.7
+	release3_13_0:1.7
+	release3_12_0:1.7
+	release3_11_0:1.7
+	release3_10_0:1.7
+	release3_8_0:1.7
+	release3_7_1:1.7
+	release3_7_0:1.7
+	release3_4_5:1.6
+	release3_4_4:1.6
+	release3_4_3:1.6
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.6
+	release3_3_3:1.6
+	release3_3_2:1.6
+	release3_3_1:1.6
+	release3_3_0:1.6;
+locks; strict;
+comment	@c @;
+
+
+1.7
+date	2020.02.05.14.46.49;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.12.27.11.16.46;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2000.08.11.14.39.45;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.09.03.10.41.55;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.09.01.11.18.14;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.02.06.18.26.19;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.22.49;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@writes skin friction to file
+@
+
+
+1.7
+log
+@Added a printout
+@
+text
+@      SUBROUTINE WSKIN(TAUW,HEAT,IWORK,NWFAC,IBNDFAC,NBODY6,FILENAME)
+C
+C     Write skin friction data to a file
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd.com'
+      INCLUDE 'io.com'
+      INCLUDE 'stream.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER NBODY6,NWFAC
+      CHARACTER FILENAME* (*)
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION TAUW(NWFAC),HEAT(NWFAC)
+      INTEGER IWORK(2,NWFAC),IBNDFAC(3,*)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I,IC,IELEM,IFACE,IFRST,ILAST,IVERT,IXDRS,IFAIL
+C     ..
+C     .. External Functions ..
+      INTEGER INITXDR
+      EXTERNAL INITXDR
+      INTEGER IXDRCLOSE,IXDRIMAT,IXDRINT
+      EXTERNAL IXDRCLOSE,IXDRIMAT,IXDRINT
+#ifdef PARCH_t3d
+      INTEGER IXDRRMAT64
+      EXTERNAL IXDRRMAT64
+#else
+      INTEGER IXDRDMAT
+      EXTERNAL IXDRDMAT
+#endif
+C     ..
+C
+C     do not scale, left to the post-processor;
+C     now TAUW is in fact the wall shear stress 
+C
+      IXDRS = INITXDR(FILENAME,'w',.FALSE.)
+C
+      IFAIL = IXDRINT(IXDRS,NBODY6)
+      IFAIL = IXDRINT(IXDRS,NWFAC)
+C
+      IC = 0
+      DO 10 I = 1,NBODY6
+C
+          IFRST = IBGN(I)
+          ILAST = IEND(I)
+C
+C     write number of faces for the current body
+C
+          IFAIL = IXDRINT(IXDRS,ILAST-IFRST+1)
+C
+          DO 10 IFACE = IFRST,ILAST
+              IELEM = IBNDFAC(1,IFACE)
+              IVERT = IBNDFAC(2,IFACE)
+              IC = IC + 1
+              IWORK(1,IC) = IELEM
+              IWORK(2,IC) = IVERT
+   10 CONTINUE
+
+      IF (IC.NE.NWFAC) THEN
+          WRITE (6,FMT=*) 'Ic NFAC',IC,NWFAC,NBODY6
+          STOP
+
+      ENDIF
+      IFAIL = IXDRIMAT(IXDRS,2*IC,IWORK)
+#ifdef PARCH_t3d
+      IFAIL = IXDRRMAT64(IXDRS,IC,TAUW)
+      IFAIL = IXDRRMAT64(IXDRS,IC,HEAT)
+#else
+      IFAIL = IXDRDMAT(IXDRS,IC,TAUW)
+      IFAIL = IXDRDMAT(IXDRS,IC,HEAT)
+#endif
+C
+      IFAIL = IXDRCLOSE(IXDRS)
+      WRITE(NOUT,9996)FILENAME
+C
+      RETURN
+ 9996 FORMAT (/,5X,'Skin friction file has been written to ',A)
+
+      END
+@
+
+
+1.6
+log
+@an included common has been renamed
+@
+text
+@d10 1
+d79 1
+d82 1
+@
+
+
+1.5
+log
+@CRAY version
+@
+text
+@d9 1
+a9 1
+      INCLUDE 'bnd'
+d64 1
+a64 1
+          WRITE (6,FMT=*) 'Ic NFAC',IC,NWFAC
+@
+
+
+1.4
+log
+@for version 2.1 of the fxdr library
+@
+text
+@d26 9
+a34 2
+      INTEGER IXDRCLOSE,IXDRDMAT,IXDRIMAT,IXDRINT
+      EXTERNAL IXDRCLOSE,IXDRDMAT,IXDRIMAT,IXDRINT
+a67 1
+
+d69 4
+d75 1
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@d21 1
+a21 1
+      INTEGER I,IC,IELEM,IFACE,IFRST,ILAST,IVERT,IXDRS
+d33 1
+a33 1
+      IXDRS = INITXDR(FILENAME,'w')
+@
+
+
+1.2
+log
+@Add the array HEAT to athe arguments list and
+writtten to file
+@
+text
+@d26 2
+a27 3
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL XDRCLOSE,XDRDMAT,XDRIMAT,XDRINT
+d35 2
+a36 2
+      CALL XDRINT(IXDRS,NBODY6)
+      CALL XDRINT(IXDRS,NWFAC)
+d46 1
+a46 1
+          CALL XDRINT(IXDRS,ILAST-IFRST+1)
+d62 3
+a64 3
+      CALL XDRIMAT(IXDRS,2*IC,IWORK)
+      CALL XDRDMAT(IXDRS,IC,TAUW)
+      CALL XDRDMAT(IXDRS,IC,HEAT)
+d66 1
+a66 1
+      CALL XDRCLOSE(IXDRS)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE WSKIN(SKINF,IWORK,NWFAC,IBNDFAC,NBODY6,FILENAME)
+d17 1
+a17 1
+      DOUBLE PRECISION SKINF(NWFAC)
+a30 2
+C     normalize the Skinf Friction by ANFACT = 1./(1/2 * rho * V**2)
+C
+d32 1
+a32 3
+C     now SKINF is in fact the wall shear stress 
+C
+C     CALL DSCAL(NWFAC,ANFACT,SKINF,1)
+d64 2
+a65 1
+      CALL XDRDMAT(IXDRS,IC,SKINF)
+@

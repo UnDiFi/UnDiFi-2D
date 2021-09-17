@@ -1,0 +1,364 @@
+0a1,28
+> !> @param[in] NSModel is the SUBROUTINE used to discretize the viscous terms of the  mean-flow equations
+> !> @param[in] ICELNOD Cell to node pointer: \c ICELNOD(i,j) gives the global node number of the i-th vertex of the j-th element
+> !> @param[in] ICELFAC Cell to face pointer: \c ICELFAC(i,j} gives the global face number of the face opposite the i-th vertex of the j-th element
+> !> @param[in] VFACNOR Cartesian components of the normals to a face, multiplied by the face area
+> !> @param[in] XYZDOT the cartesian components of the grid velocity
+> !> @param[in] VOL area/volume of the simplicial elements (triangles,tetrahedra)
+> !> @param[in] ZROE Nodal values of the dependent variable;  compressible equations: \f$ Z = \sqrt{\rho} \left( 1, H, \mathbf{u} \right) \f$; incompressible equations: \f$ Z = \left( p, \mathbf{u} \right) \f$
+> !> @param[in] ZTURB Nodal values of the turbulent variable(s); for both the compressible and incompressible equations: \f$ \tilde{\nu} \f$
+> !> @param[in,out] STIFEL elemental stiffness matrix
+> !> @param[in,out] NODRES 
+> !> @param[in,out] NEWRES 
+> !> @param[out] VCZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCDZ returns the \c NOFVAR dofs of the NOFVERT vertices of cell \c IELEM; VCZ(1:NOFVAR,*,1) stores the values at time level \c n+1,k ; \c VCZ(1:NOFVAR,*,2) those at tme level n and \c VCZ(1:NOFVAR,*,3) those at time level \c n-1
+> !> @param[out] VCB returns the \c NDIM Cartesian components of the nodal grid velocities at time \c n+1/2 of the NOFVERT vertices of cell \c IELEM; only if \c LALE is \c .TRUE.
+> !> @param[in] NELEM is the no. of processor owned elements (triangles/tetrahedra); global number of elements in the uni-processor case
+> !> @param[in] NPOIN nof interior nodes in the mesh
+> !> @param[in] NGHOST nof ghost nodes in the mesh
+> !> @param[in] NPNOD nof periodic nodes in the mesh
+> !> @param[in] NDIM dimension of the space
+> !> @param[in] NOFVERT number of vertices per element (=NDIM+1, since only triangles or tetrahedra are allowed)
+> !> @param[in] NOFVAR number of variables (degrees of freedom) in each meshpoint
+> !> @param[in] NTURB nof turbulent dofs =1 for SA
+> !> @param[in] IBNDFAC
+> !> @param[in] NBFAC
+> !> @param[in] TurbulenceModel is the SUBROUTINE used to discretize the turbulence model
+> !> @param[in,out] PetscVecDT Petsc Vec where time-step is stored
+> !> @param[in,out] PetscVecRHS Petsc Vec where the nodal residual is stored
+> !> @param[in,out] PetscMatA Petsc Mat where the implicit matrix is stored
+4c32,33
+<      3                   NTURB,IBNDFAC,NBFAC,TurbulenceModel,DT,RHS,A)
+---
+>      3                   NTURB,IBNDFAC,NBFAC,TurbulenceModel,PetscVecDT,
+>      4                   PetscVecRHS,PetscMatA)
+7a37
+>       IMPLICIT NONE
+9c39
+< C     $Id: bndvflx.F,v 1.37 2020/03/28 09:41:43 abonfi Exp abonfi $
+---
+> C     $Id: bndvflx.F,v 1.38 2020/04/21 16:47:19 abonfi Exp $
+11a42
+> #include "petsc/finclude/petscsys.h"
+14,15d44
+<       use petscvec
+<       use petscmat
+17,19c46,47
+<       IMPLICIT NONE
+<       Mat A
+<       Vec RHS,DT 
+---
+>       Mat PetscMatA
+>       Vec PetscVecRHS,PetscVecDT 
+49,50c77,78
+<       INTEGER IBC,IELEM,IVERT,IFACE,LOC,i,ICLR,KA,KB,II,JJ,IFAIL,
+<      +LOCB,IVAR,JVAR,JVERT,IV,JV,NP
+---
+>       INTEGER IBC,IELEM,IVERT,IFACE,LOC,ICLR,JV,
+>      +LOCB,IVAR,JVAR,JVERT,NP,N,IADDR,I,K,L,II,JJ,IFAIL
+58c86
+<       INTEGER ICN(MAXNOFVERT)
+---
+>       INTEGER ICN(MAXNOFVERT),KCN(MAXNOFVERT)
+84,85c112,113
+<       DOUBLE PRECISION PRESSI,PRESSC,SUTHERLAW
+<       EXTERNAL PRESSI,PRESSC,SUTHERLAW
+---
+>       DOUBLE PRECISION PRESSI,PRESSC
+>       EXTERNAL PRESSI,PRESSC
+106,107c134,135
+<           ICLR = IBNDFAC(3,IFACE)
+<           IBC = ICOLOR(ICLR,1) ! colours for the mean flow equations
+---
+>          ICLR = IBNDFAC(3,IFACE)
+>          IBC = ICOLOR(ICLR,1) ! colours for the mean flow equations
+111,112c139,140
+<           IF (IBC.EQ.BC_TYPE_SLIP_FREE.OR.
+<      &        IBC.EQ.BC_TYPE_PERIODIC) GOTO 100
+---
+>          IF (IBC.EQ.BC_TYPE_SLIP_FREE.OR.
+>      &       IBC.EQ.BC_TYPE_PERIODIC) GOTO 100
+114,115c142,143
+<           IELEM = IBNDFAC(1,IFACE)
+<           IVERT = IBNDFAC(2,IFACE)
+---
+>          IELEM = IBNDFAC(1,IFACE)
+>          IVERT = IBNDFAC(2,IFACE)
+117c145
+<           CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+---
+>          CALL CELPTR(IELEM, NELEM, ICELNOD, ICELFAC, VOL, ZROE,
+124,128c152,156
+<           IF(TURBULENT.AND.SEGREGATED)THEN
+<              DO 30 II = 1, NOFVERT
+<                 VCT(II) = ZTURB(ICN(II)+1)
+<    30        CONTINUE
+<           ENDIF
+---
+>          IF(TURBULENT.AND.SEGREGATED)THEN
+>             DO 30 II = 1, NOFVERT
+>                VCT(II) = ZTURB(ICN(II)+1)
+>    30       CONTINUE
+>          ENDIF
+133c161
+<           IF ( .NOT. COMPRESSIBLE ) THEN
+---
+>          IF ( .NOT. COMPRESSIBLE ) THEN
+137c165
+<               IF (IBC.EQ.BC_TYPE_NO_SLIP) CALL PFORCE(ICLR,IVERT,VCN,
+---
+>             IF (IBC.EQ.BC_TYPE_NO_SLIP) CALL PFORCE(ICLR,IVERT,VCN,
+140c168
+<           ELSEIF ( COMPRESSIBLE ) THEN
+---
+>          ELSEIF ( COMPRESSIBLE ) THEN
+144,146c172,174
+<               IF (IBC.EQ.BC_TYPE_NO_SLIP) THEN
+<                   IF(NDIM.EQ.2)THEN
+<                      CALL PFORCESimpson(ICLR,IVERT,VCN,
+---
+>             IF (IBC.EQ.BC_TYPE_NO_SLIP) THEN
+>                IF(NDIM.EQ.2)THEN
+>                   CALL PFORCESimpson(ICLR,IVERT,VCN,
+148,149c176,177
+<                   ELSE
+<                      CALL PFORCE(ICLR,IVERT,VCN,
+---
+>                ELSE
+>                   CALL PFORCE(ICLR,IVERT,VCN,
+151,152c179,180
+<                   ENDIF
+<               ENDIF
+---
+>                ENDIF
+>             ENDIF
+154c182
+<           ELSE
+---
+>          ELSE ! COMPRESSIBLE
+158c186
+<           ENDIF
+---
+>          ENDIF ! COMPRESSIBLE
+160,163c188,191
+<           IF (IBC.EQ.BC_TYPE_NO_SLIP) THEN
+<                LOC = LOC + 1
+<                LOCB = LOCB + 1
+<           ENDIF
+---
+>          IF (IBC.EQ.BC_TYPE_NO_SLIP) THEN
+>             LOC = LOC + 1
+>             LOCB = LOCB + 1
+>          ENDIF
+167,168c195,196
+<           CALL DINIT(NOFVAR*NOFVERT,ZERO,NODRES,1)
+<           CALL DINIT(NOFVAR*NOFVERT,ZERO,TSTEP,1)
+---
+>          CALL DINIT(NOFVAR*NOFVERT,ZERO,NODRES,1)
+>          CALL DINIT(NOFVAR*NOFVERT,ZERO,TSTEP,1)
+170c198
+<           CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,
+---
+>          CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,
+172c200
+<           IF(COMPRESSIBLE)CALL PARM2PRIM(NDIM,-IELEM)
+---
+>          IF(COMPRESSIBLE)CALL PARM2PRIM(NDIM,-IELEM)
+178c206
+<       call LAminar(IELEM,VCN,VCT,NDIM,NOFVERT,NOFVAR,NTURB,
+---
+>          CALL LAminar(IELEM,VCN,VCT,NDIM,NOFVERT,NOFVAR,NTURB,
+184c212
+<           CALL NSModel(ICLR,IELEM,IVERT,VCZ,NODRES,TSTEP,NOFVAR,NOFVERT,
+---
+>          CALL NSModel(ICLR,IELEM,IVERT,VCZ,NODRES,TSTEP,NOFVAR,NOFVERT,
+192c220
+<           CALL VecSetValuesBlocked(DT,NOFVERT,ICN,TSTEP,
+---
+>          CALL VecSetValuesBlocked(PetscVecDT,NOFVERT,ICN,TSTEP,
+194c222
+<           CALL VecSetValuesBlocked(RHS,NOFVERT,ICN,NODRES,
+---
+>          CALL VecSetValuesBlocked(PetscVecRHS,NOFVERT,ICN,NODRES,
+197,202c225,230
+<       if(ibc.eq.BC_TYPE_NO_SLIP)then
+<          do i = 1,nofvert-1 
+<          II = ICYCL(IVERT+I,NOFVERT)
+<          do jj = 1,nofvert
+<          write(6,*)'ielem,ivert,ii,jj ',ielem,ivert,ii,jj
+<          cALL R8Mat_Print('General',' ',NOFVAR,NOFVert,
+---
+>          if(ibc.eq.BC_TYPE_NO_SLIP)then
+>             do i = 1,nofvert-1 
+>             II = ICYCL(IVERT+I,NOFVERT)
+>             do jj = 1,nofvert
+>                write(6,*)'ielem,ivert,ii,jj ',ielem,ivert,ii,jj
+>                CALL R8Mat_Print('General',' ',NOFVAR,NOFVert,
+204,206c232,234
+<          enddo
+<          enddo
+<       endif
+---
+>                enddo
+>             enddo
+>          endif
+209,210c237,238
+<       IF(.NOT.TIMEIMPL)GOTO 100
+<       IF(PICARD)GOTO 45
+---
+>          IF(.NOT.TIMEIMPL)GOTO 100
+>          IF(PICARD)GOTO 45
+215,239c243,264
+<       DO 190 I = 1,NOFVERT
+<           DO 190 IVAR = 1, NOFVAR
+<              CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+<              IF(COMPRESSIBLE)THEN
+<                 CALL PARM_TO_CONS(VCZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+<                 CALL PARM_TO_CONS(VCDZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+<              ENDIF
+<              EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,I)),1.d0)*
+<      +             SIGN(1.d0,VCZ(IVAR,I))
+<              VCDZ(IVAR,I) = VCZ(IVAR,I) + EPS
+<              IF(COMPRESSIBLE)THEN
+<                 CALL CONS_TO_PARM(VCZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+<                 IF(IFAIL.NE.0)THEN
+<                     WRITE(ERRMSG(1:64),FMT=105)'BNDVFLX___',MY_PE,"(1)"
+<                     CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+<                 ENDIF   ! ifail
+<                 CALL CONS_TO_PARM(VCDZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+<                 IF(IFAIL.NE.0)THEN
+<                     WRITE(ERRMSG(1:64),FMT=105)'BNDVFLX___',MY_PE,"(2)"
+<                     CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+<                 ENDIF   ! ifail
+<              ENDIF
+< C
+< C     Set NEWRES to 0.d0 since the "viscous" routines
+< C     ADD the viscous residual
+---
+>          DO I = 1,NOFVERT 
+>             DO IVAR = 1, NOFVAR
+>                CALL DCOPY(NOFVAR*NOFVERT,VCZ,1,VCDZ,1)
+>                IF(COMPRESSIBLE)THEN
+>                   CALL PARM_TO_CONS(VCZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+>                   CALL PARM_TO_CONS(VCDZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+>                ENDIF
+>                EPS = ROOT_MACHINE_EPS*MAX(ABS(VCZ(IVAR,I)),ONE)*
+>      +               SIGN(ONE,VCZ(IVAR,I))
+>                VCDZ(IVAR,I) = VCZ(IVAR,I) + EPS
+>                IF(COMPRESSIBLE)THEN
+>                   CALL CONS_TO_PARM(VCZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+>                   IF(IFAIL.NE.0)THEN
+>                      WRITE(ERRMSG(1:64),FMT=105)'BNDVFLX___',MY_PE,"(1)"
+>                      CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+>                   ENDIF   ! ifail
+>                   CALL CONS_TO_PARM(VCDZ(1,I),NDIM,NOFVAR,1,LFLG,IFAIL)
+>                   IF(IFAIL.NE.0)THEN
+>                      WRITE(ERRMSG(1:64),FMT=105)'BNDVFLX___',MY_PE,"(2)"
+>                      CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+>                   ENDIF   ! ifail
+>                ENDIF
+242c267
+<          CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,
+---
+>             CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,
+244c269
+<          IF(COMPRESSIBLE)CALL PARM2PRIM(NDIM,-IELEM)
+---
+>             IF(COMPRESSIBLE)CALL PARM2PRIM(NDIM,-IELEM)
+249c274
+<       call Laminar(IELEM,VCN,VCT,NDIM,NOFVERT,NOFVAR,NTURB,
+---
+>             CALL Laminar(IELEM,VCN,VCT,NDIM,NOFVERT,NOFVAR,NTURB,
+256,257c281,286
+<              CALL DINIT(NOFVAR*NOFVERT,ZERO,NEWRES,1)
+<              CALL NSModel(ICLR,IELEM,IVERT,VCDZ,NEWRES,TSTEP,NOFVAR,
+---
+> C     Set NEWRES to 0.d0 since the "viscous" routines
+> C     ADD the viscous residual
+> C
+>             CALL DINIT(NOFVAR*NOFVERT,ZERO,NEWRES,1)
+> C
+>             CALL NSModel(ICLR,IELEM,IVERT,VCDZ,NEWRES,TSTEP,NOFVAR,
+267,268c296,297
+<              DO 190 JVAR = 1, NOFVAR
+<                  DO 190 JVERT = 1, NOFVERT-1
+---
+>             DO JVAR = 1, NOFVAR
+>                 DO JVERT = 1, NOFVERT-1
+273c302,305
+<   190 CONTINUE
+---
+>                 ENDDO ! JVERT
+>             ENDDO ! JVAR
+>             ENDDO ! IVAR
+>          ENDDO ! I
+276c308
+<    45 CONTINUE
+---
+>    45 CONTINUE ! PICARD
+278c310
+<       IF( PERIODIC_MESH .AND. ANNULAR )
+---
+>          IF( PERIODIC_MESH .AND. ANNULAR )
+280a313,334
+>          N = (NOFVERT-1)*NOFVAR
+>          DO I = 1, NOFVERT-1 
+>             II = ICYCL(IVERT+I,NOFVERT)
+>             KCN(I) = ICN(II)
+>             DO JJ = 1, NOFVERT
+>                DO JVAR = 1, NOFVAR
+>                   DO IVAR = 1, NOFVAR
+>                      K = ( I-1)*NOFVAR+IVAR
+>                      L = (JJ-1)*NOFVAR+JVAR
+>                      IADDR = (L-1)*N+K
+>                      DUMMY(IADDR) = STIFEL(IVAR,JVAR,II,JJ)
+>                   ENDDO ! IVAR
+>                ENDDO ! JVAR
+> #if 0
+>                IF(IBC.EQ.IBC)THEN
+>                   WRITE(6,*)II,JJ
+>                   CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,
+>      +            STIFEL(1,1,II,JJ),NOFVAR,'STIFEL ',ifail)
+>                ENDIF
+> #endif
+>             ENDDO ! JJ
+>          ENDDO ! I
+284,289c338
+<       DO 290 I = 1,NOFVERT - 1
+< C
+<                   II = ICYCL(IVERT+I,NOFVERT)
+<                   KA = ICN(II)
+< 
+<                   DO 290 JJ = 1,NOFVERT
+---
+> C     call MatSetValuesBlocked only once per boundary face
+291d339
+<                       KB = ICN(JJ)
+293,294c341,342
+<                       CALL MatSetValuesBlockedLocal(A,1,KA,1,KB,
+<      +                     STIFEL(1,1,II,JJ),ADD_VALUES,IFAIL)
+---
+>          CALL MatSetValuesBlockedLocal(PetscMatA,NOFVERT-1,KCN,NOFVERT,
+>      +                     ICN,DUMMY,ADD_VALUES,IFAIL)
+296,305c344,345
+<                       CALL MatSetValuesBlocked(A,1,KA,1,KB,
+<      +                     STIFEL(1,1,II,JJ),ADD_VALUES,IFAIL)
+< #endif
+< C
+< #if 0
+<       if(ibc.eq.ibc)then
+<       write(6,*)ii,jj
+<       CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,
+<      +STIFEL(1,1,II,JJ),nofvar,'nodres ',ifail)
+<       endif
+---
+>          CALL MatSetValuesBlocked(PetscMatA,NOFVERT-1,KCN,NOFVERT,ICN,
+>      +                     DUMMY,ADD_VALUES,IFAIL)
+308,310c348
+<   290 CONTINUE
+< 
+<   100 CONTINUE
+---
+>   100 CONTINUE ! IFACE
+315d352
+< 

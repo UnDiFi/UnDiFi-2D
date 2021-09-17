@@ -1,0 +1,378 @@
+head	1.8;
+access
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.8
+	release3_13_0:1.8
+	release3_12_0:1.8
+	release3_11_0:1.8
+	release3_10_0:1.8
+	release3_8_0:1.8
+	release3_7_1:1.8
+	release3_7_0:1.8
+	release3_4_5:1.8
+	release3_4_4:1.8
+	release3_4_3:1.8
+	release3_4_2:1.8
+	release3_4_1:1.8
+	release3_4_0:1.8
+	release3_3_5:1.8
+	release3_3_4:1.8
+	release3_3_3:1.8
+	release3_3_2:1.8
+	release3_3_1:1.8
+	release3_3_0:1.8;
+locks; strict;
+comment	@c @;
+
+
+1.8
+date	2012.12.20.10.47.44;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2012.04.03.12.17.48;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2009.01.09.10.31.01;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2002.08.24.10.07.20;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.12.28.08.06.33;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.08.21.12.00.29;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.04.21.21.10.30;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.00.52.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Conservative linearizatin
+@
+
+
+1.8
+log
+@just re-formatting and removing unused stuff
+@
+text
+@      SUBROUTINE LINEARIZE(IELEM,ALE,VCN,VCB,NDIM,NOFVERT,
+     +VCZ,NOFVAR,VOLUME)
+C
+      IMPLICIT NONE 
+C
+C THIS SUBROUTINE COMPUTES:
+C a) The averaged state ZAVG(1:NOFVAR) over the cell (in cart. coord.)
+C b) The gradient of the parameter vector GRAD_PARM(1:NOFVAR,1:NOFVERT) 
+C    (in cart. coord.)
+C c) The gradient of the primitive variables GRAD_PRIM(1:NOFVAR,1:NOFVERT) 
+C    (in cart. coord.)
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'three.com'
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER IELEM,NDIM,NOFVAR,NOFVERT
+      LOGICAL ALE
+      DOUBLE PRECISION VCN(NDIM,NOFVERT),VCB(NDIM,NOFVERT),
+     2VCZ(NOFVAR,NOFVERT),VOLUME
+C
+C     .. Local Scalars ..
+C
+      INTEGER I,IVAR,JVERT
+      DOUBLE PRECISION HELP,TEMP
+C
+C     .. Local Arrays ..
+C
+C
+C     .. External Functions ..
+C
+C
+C
+C     .. Executable Statements ..
+C
+C *********************************************************************
+C AVERAGED STATE OVER THE CELL (in cartesian coordinates)
+C *********************************************************************
+C
+      DO 10 IVAR = 1 , NOFVAR
+         HELP = ZERO
+            DO 12 JVERT = 1 , NOFVERT
+               HELP = HELP + VCZ( IVAR , JVERT )
+   12       CONTINUE
+      ZAVG(IVAR) = HELP / NOFVERT
+   10 CONTINUE
+C
+C *********************************************************************
+C AVERAGED grid velocity OVER THE CELL (in cartesian coordinates)
+C *********************************************************************
+C
+      IF(ALE)THEN
+         DO 30 IVAR = 1 , NDIM
+            HELP = ZERO
+               DO 32 JVERT = 1 , NOFVERT
+                  HELP = HELP + VCB( IVAR , JVERT )
+   32          CONTINUE
+         BAVG(IVAR) = HELP / NOFVERT
+   30 CONTINUE
+      ENDIF
+C
+C *********************************************************************
+C COMPUTES THE GRADIENT OF THE PARAMETER VECTOR (in cartesian coordinates)
+C *********************************************************************
+C
+      DO 20 IVAR = 1 , NOFVAR
+         DO 22 I = 1 , NDIM
+          HELP = ZERO
+            DO 24 JVERT = 1 , NOFVERT
+
+               TEMP = VCN( I , JVERT )
+               HELP = HELP + VCZ( IVAR , JVERT ) * TEMP 
+
+   24       CONTINUE
+         GRAD_PARM( IVAR , I ) = HELP / NDIM / VOLUME
+   22    CONTINUE
+   20 CONTINUE
+C
+      RETURN
+      END
+@
+
+
+1.7
+log
+@changes required to account for moving meshes
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE LINEARIZE(IELEM,COMPRESSIBLE,ALE,VCN,VCB,NDIM,NOFVERT,
+d20 1
+a20 1
+      LOGICAL COMPRESSIBLE,ALE
+d27 1
+a27 1
+      DOUBLE PRECISION HELP,DUM,DUMSQR,TEMP
+a30 1
+      DOUBLE PRECISION AMAT(5,5)
+a33 2
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+a34 5
+      DATA (AMAT(1,I),I=1,5) / ONE,ZERO,ZERO,ZERO,ZERO /
+      DATA (AMAT(2,I),I=1,5) / ZERO,ONE,ZERO,ZERO,ZERO /
+      DATA (AMAT(3,I),I=1,5) / ZERO,ZERO,ONE,ZERO,ZERO /
+      DATA (AMAT(4,I),I=1,5) / ZERO,ZERO,ZERO,ONE,ZERO /
+      DATA (AMAT(5,I),I=1,5) / ZERO,ZERO,ZERO,ZERO,ONE /
+@
+
+
+1.6
+log
+@the construction of the gradient of the primitive variables
+has been moved into another routine
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,
+d14 2
+a15 2
+      INCLUDE 'constants'
+      INCLUDE 'three'
+d20 3
+a22 2
+      LOGICAL COMPRESSIBLE
+      DOUBLE PRECISION 	VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT),VOLUME
+d27 1
+a27 1
+      DOUBLE PRECISION SUM,DUM,DUMSQR,TEMP
+d31 1
+a31 1
+      DOUBLE PRECISION 	AMAT(5,5)
+d35 2
+a36 2
+      DOUBLE PRECISION	DDOT
+      EXTERNAL	DDOT
+d51 1
+a51 1
+       SUM = ZERO
+d53 1
+a53 1
+               SUM = SUM + VCZ( IVAR , JVERT )
+d55 1
+a55 1
+      ZAVG(IVAR) = SUM / NOFVERT
+d59 14
+d78 1
+a78 1
+          SUM = ZERO
+d82 1
+a82 1
+               SUM = SUM + VCZ( IVAR , JVERT ) * TEMP 
+d85 1
+a85 1
+         GRAD_PARM( IVAR , I ) = SUM / NDIM / VOLUME
+@
+
+
+1.5
+log
+@GRADient of PRIMitive variables is NOT computed
+anymore
+@
+text
+@a74 67
+      ENTRY GRADPRIM(IELEM,NDIM,NOFVAR)
+C
+C     be careful because GRADPRIM must be
+C     called with NOFVAR being equal to the
+C     number of flow variables
+C
+C
+C
+C *********************************************************************
+C ASSEMBLING THE LOWER TRIANGULAR MATRIX WHICH RELATES
+C THE GRADIENT OF THE PARAMETER VECTOR TO THE GRADIENT
+C OF THE PRIMITIVE VARIABLES( density,static pressure,velocities ).
+C *********************************************************************
+C
+      DUM = ONE / ZAVG(1)
+      DUMSQR = DUM * DUM
+c
+c	.. First row ..
+c
+      AMAT(1,1) = TWO * ZAVG(1)
+      AMAT(1,2) = ZERO
+      AMAT(1,3) = ZERO
+      AMAT(1,4) = ZERO
+      AMAT(1,5) = ZERO
+c
+c	.. Second row ..
+c
+      AMAT(2,1) = GM1OG * ZAVG(2)
+      AMAT(2,2) = GM1OG * ZAVG(1)
+      AMAT(2,3) =-GM1OG * ZAVG(3)
+      AMAT(2,4) =-GM1OG * ZAVG(4)
+      AMAT(2,5) =-GM1OG * ZAVG(5)
+c
+c	.. Third row ..
+c
+      AMAT(3,1) = - ZAVG(3) * DUMSQR
+      AMAT(3,2) = ZERO
+      AMAT(3,3) = DUM
+      AMAT(3,4) = ZERO
+      AMAT(3,5) = ZERO
+c
+c	.. Fourth row ..
+c
+      AMAT(4,1) = - ZAVG(4) * DUMSQR
+      AMAT(4,2) = ZERO
+      AMAT(4,3) = ZERO
+      AMAT(4,4) = DUM
+      AMAT(4,5) = ZERO
+c
+c	.. Fifth row ..
+c
+      AMAT(5,1) = - ZAVG(5) * DUMSQR
+      AMAT(5,2) = ZERO
+      AMAT(5,3) = ZERO
+      AMAT(5,4) = ZERO
+      AMAT(5,5) = DUM
+C
+C *********************************************************************
+C PRODUCT OF THE MATRIX TIMES THE GRADIENT OF THE PARAMETER VECTOR
+C *********************************************************************
+C
+   25 CONTINUE
+C
+      CALL DGEMM( 'N', 'N', NOFVAR, NDIM, NOFVAR, ONE, AMAT, 5,
+     &	GRAD_PARM, NMAX, ZERO, GRAD_PRIM, 5 )
+C
+      RETURN
+@
+
+
+1.4
+log
+@minor cleanup
+@
+text
+@d74 1
+a74 1
+      IF( .NOT. COMPRESSIBLE )GOTO 25
+d77 6
+@
+
+
+1.3
+log
+@avoided some useless computations
+@
+text
+@d17 1
+d23 1
+d28 1
+d32 1
+d43 1
+d74 1
+a74 1
+      IF( .NOT. COMPRESSIBLE .OR. NOFVAR .EQ. 1 )RETURN
+@
+
+
+1.2
+log
+@ADD the ENTRY GRADPRIM
+@
+text
+@a14 1
+C     INCLUDE 'cell'
+a16 1
+C     .. Scalar Arguments ..
+a21 1
+C     .. Local Scalars ..
+a25 1
+C     .. Local Arrays ..
+a28 1
+C     .. External Functions ..
+a38 1
+C     .. Executable Statements ..
+d69 1
+a69 1
+      IF( .NOT. COMPRESSIBLE )GOTO 25
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d76 1
+@

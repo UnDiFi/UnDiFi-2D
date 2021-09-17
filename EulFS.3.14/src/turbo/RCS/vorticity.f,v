@@ -1,0 +1,105 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.02.09.17.34.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute vorticity in the nodes
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE VORTICITY(ICELNOD,ICELFAC,VOL,CV,OMEGA,NDIM,NOFVERT,
+     +                  NOFVAR,NELEM,NPOIN,COMPRESSIBLE)
+
+      IMPLICIT NONE
+
+      INCLUDE 'paramt.h'
+      INCLUDE 'three'
+
+
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NELEM,NOFVAR,NOFVERT,NPOIN
+      LOGICAL COMPRESSIBLE
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION CV(NPOIN),OMEGA(NPOIN),VOL(NELEM)
+      INTEGER ICELFAC(NOFVERT,NELEM),ICELNOD(NOFVERT,NELEM)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION OMEGAX,OMEGAY,OMEGAZ,VOLUME,VORT,WGHT,s
+      INTEGER IELEM,IPOIN,IVERT
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION VCN(3*VMAX),VCP(3*VMAX),VCZ(NMAX*VMAX)
+      INTEGER ICF(VMAX),ICN(VMAX),IDX_F(3*VMAX),IDX_P(3*VMAX),
+     +        IDX_V(NMAX*VMAX)
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL CELPTR,LINEARIZE
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+C
+      CALL DINIT(NPOIN,0.D0,OMEGA,1)
+C
+      DO 1 IELEM = 1,NELEM
+C
+          CALL CELPTR(IELEM,ICELNOD,ICELFAC,VOL,NDIM,NOFVERT,NOFVAR,
+     +                NELEM,NPOIN,ICN,ICF,VCP,VCZ,VCN,VOLUME,IDX_P,
+     +                IDX_V,IDX_F)
+C
+          WGHT = VOLUME/NOFVERT
+C
+          CALL LINEARIZE(IELEM,COMPRESSIBLE,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +                   VOLUME)
+C
+C     compute a cell averaged vorticity
+C
+          IF (COMPRESSIBLE) THEN
+C
+              OMEGAX = GRAD_PRIM(5,2) - GRAD_PRIM(4,3)
+              OMEGAY = GRAD_PRIM(3,3) - GRAD_PRIM(5,1)
+              OMEGAZ = GRAD_PRIM(4,1) - GRAD_PRIM(3,2)
+C
+          ELSE
+C
+              OMEGAX = GRAD_PRIM(4,2) - GRAD_PRIM(3,3)
+              OMEGAY = GRAD_PRIM(2,3) - GRAD_PRIM(4,1)
+              OMEGAZ = GRAD_PRIM(3,1) - GRAD_PRIM(2,2)
+C
+          ENDIF
+
+          VORT = SQRT(OMEGAX*OMEGAX+OMEGAY*OMEGAY+OMEGAZ*OMEGAZ)
+C
+
+          DO 3 IVERT = 1,NOFVERT
+C
+C         array OMEGA is 1-based indexed
+C
+              IPOIN = ICN(IVERT)+1
+              OMEGA(IPOIN) = OMEGA(IPOIN) + VORT*WGHT
+    3     CONTINUE
+    1 CONTINUE
+C
+      DO 2 IPOIN = 1,NPOIN
+          OMEGA(IPOIN) = OMEGA(IPOIN)/CV(IPOIN)
+    2 CONTINUE
+
+      RETURN
+
+      END
+@

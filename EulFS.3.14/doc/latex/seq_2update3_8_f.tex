@@ -1,0 +1,126 @@
+\hypertarget{seq_2update3_8_f}{\section{src/seq/update3.F File Reference}
+\label{seq_2update3_8_f}\index{src/seq/update3.\-F@{src/seq/update3.\-F}}
+}
+{\ttfamily \#include \char`\"{}finclude/petscsys.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscvec.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscmat.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscksp.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscis.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscviewer.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscpc.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}iset.\-com\char`\"{}}\\*
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{seq_2update3_8_f_a1fa95004e6fe4f929e617b058b45c302}{update3} (N\-D\-I\-M, N\-O\-F\-V\-A\-R, \hyperlink{mesh_8com_ae28c1572321efcd8715b974d87d20c58}{N\-P\-O\-I\-N}, Flow\-Solver, \hyperlink{ibc2_8com_ad2108d58343608772fff791c23da58f5}{A}, R\-H\-S, \hyperlink{myts_8com_a41549d5ede5e2b840495daf35608da41}{D\-T}, U, V\-M\-D\-C\-O, V\-M\-D\-C\-N)
+\item 
+subroutine \hyperlink{seq_2update3_8_f_a77d03590b7a1098381b9debf2d2c705b}{findvecstrideabsminmax} (X, A\-N\-L2, A\-N\-M\-A\-X, \hyperlink{conv_8com_a281aba02624028804313692bfd933597}{I\-N\-M\-A\-X}, W\-K\-S\-P, N\-D\-I\-M)
+\item 
+subroutine \hyperlink{seq_2update3_8_f_a440340b0ed62b09e6285c68d04e8af50}{findvecstrideminmax} (X, A\-N\-M\-I\-N, A\-N\-M\-A\-X, \hyperlink{conv_8com_a281aba02624028804313692bfd933597}{I\-N\-M\-A\-X}, W\-K\-S\-P, N\-D\-I\-M)
+\item 
+subroutine \hyperlink{seq_2update3_8_f_aa02299ce918cf0f3224e8a1c680bb75e}{fscale} (X, N, B\-S)
+\item 
+subroutine \hyperlink{seq_2update3_8_f_a0de155f40ac3253e57fe27541644d7a3}{rhs4ale} (N\-O\-F\-V\-A\-R, \hyperlink{mesh_8com_ae28c1572321efcd8715b974d87d20c58}{N\-P\-O\-I\-N}, R\-H\-S, U, V\-M\-D\-C\-O, V\-M\-D\-C\-N)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{seq_2update3_8_f_a77d03590b7a1098381b9debf2d2c705b}{\index{seq/update3.\-F@{seq/update3.\-F}!findvecstrideabsminmax@{findvecstrideabsminmax}}
+\index{findvecstrideabsminmax@{findvecstrideabsminmax}!seq/update3.F@{seq/update3.\-F}}
+\subsubsection[{findvecstrideabsminmax}]{\setlength{\rightskip}{0pt plus 5cm}subroutine findvecstrideabsminmax (
+\begin{DoxyParamCaption}
+\item[{}]{X, }
+\item[{double precision, dimension($\ast$)}]{A\-N\-L2, }
+\item[{double precision, dimension($\ast$)}]{A\-N\-M\-A\-X, }
+\item[{integer, dimension($\ast$)}]{I\-N\-M\-A\-X, }
+\item[{double precision, dimension(3,$\ast$)}]{W\-K\-S\-P, }
+\item[{integer}]{N\-D\-I\-M}
+\end{DoxyParamCaption}
+)}}\label{seq_2update3_8_f_a77d03590b7a1098381b9debf2d2c705b}
+\hypertarget{seq_2update3_8_f_a440340b0ed62b09e6285c68d04e8af50}{\index{seq/update3.\-F@{seq/update3.\-F}!findvecstrideminmax@{findvecstrideminmax}}
+\index{findvecstrideminmax@{findvecstrideminmax}!seq/update3.F@{seq/update3.\-F}}
+\subsubsection[{findvecstrideminmax}]{\setlength{\rightskip}{0pt plus 5cm}subroutine findvecstrideminmax (
+\begin{DoxyParamCaption}
+\item[{}]{X, }
+\item[{double precision, dimension($\ast$)}]{A\-N\-M\-I\-N, }
+\item[{double precision, dimension($\ast$)}]{A\-N\-M\-A\-X, }
+\item[{integer, dimension($\ast$)}]{I\-N\-M\-A\-X, }
+\item[{double precision, dimension(3,$\ast$)}]{W\-K\-S\-P, }
+\item[{integer}]{N\-D\-I\-M}
+\end{DoxyParamCaption}
+)}}\label{seq_2update3_8_f_a440340b0ed62b09e6285c68d04e8af50}
+\hypertarget{seq_2update3_8_f_aa02299ce918cf0f3224e8a1c680bb75e}{\index{seq/update3.\-F@{seq/update3.\-F}!fscale@{fscale}}
+\index{fscale@{fscale}!seq/update3.F@{seq/update3.\-F}}
+\subsubsection[{fscale}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fscale (
+\begin{DoxyParamCaption}
+\item[{double precision, dimension({\bf n})}]{X, }
+\item[{integer}]{N, }
+\item[{integer}]{B\-S}
+\end{DoxyParamCaption}
+)}}\label{seq_2update3_8_f_aa02299ce918cf0f3224e8a1c680bb75e}
+\hypertarget{seq_2update3_8_f_a0de155f40ac3253e57fe27541644d7a3}{\index{seq/update3.\-F@{seq/update3.\-F}!rhs4ale@{rhs4ale}}
+\index{rhs4ale@{rhs4ale}!seq/update3.F@{seq/update3.\-F}}
+\subsubsection[{rhs4ale}]{\setlength{\rightskip}{0pt plus 5cm}subroutine rhs4ale (
+\begin{DoxyParamCaption}
+\item[{integer}]{N\-O\-F\-V\-A\-R, }
+\item[{integer}]{N\-P\-O\-I\-N, }
+\item[{double precision, dimension($\ast$)}]{R\-H\-S, }
+\item[{double precision, dimension($\ast$)}]{U, }
+\item[{double precision, dimension($\ast$)}]{V\-M\-D\-C\-O, }
+\item[{double precision, dimension($\ast$)}]{V\-M\-D\-C\-N}
+\end{DoxyParamCaption}
+)}}\label{seq_2update3_8_f_a0de155f40ac3253e57fe27541644d7a3}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em N\-O\-F\-V\-A\-R} & number of dofs and leading dimension of U \\
+\hline
+\mbox{\tt in}  & {\em N\-P\-O\-I\-N} & number of gridpoints and second dimension of U \\
+\hline
+\mbox{\tt in,out}  & {\em R\-H\-S} & nodal residual already scaled \\
+\hline
+\mbox{\tt in}  & {\em U} & the vector of conserved variables \\
+\hline
+\mbox{\tt in}  & {\em V\-M\-D\-C\-O} & the median dual cell area/volume at time level n \\
+\hline
+\mbox{\tt in}  & {\em V\-M\-D\-C\-N} & the median dual cell area/volume at time level n+1\\
+\hline
+ & {\em npoin} & \}\\
+\hline
+\end{DoxyParams}
+in the moving grid case R\-H\-S should be\-:
+
+R\-H\-S = \{\mbox{[}(K$^\wedge$\{n+1\})$^\wedge$\{-\/1\}$\ast$\-K$^\wedge$n-\/\-I\mbox{]}\}$\ast$z$^\wedge$n + (K$^\wedge$\{n+1\})$^\wedge$\{-\/1\}$\ast$\-Res(z$^\wedge$n)
+
+when the grid is fixed, then $ (K^{n+1})^{-1}*K^n = I $ and R\-H\-S reduces to\-:
+
+R\-H\-S = (K$^\wedge$\{n\})$^\wedge$\{-\/1\}$\ast$\-Res(z$^\wedge$n)
+
+since on entry D\-T = K$^\wedge$n {\itshape and} R\-H\-S = (K$^\wedge$n)$^\wedge$\{-\/1\} Res(z$^\wedge$n)
+\begin{DoxyParams}{Parameters}
+{\em nofvar} & \}\\
+\hline
+\end{DoxyParams}
+in the moving grid case R\-H\-S should be\-:
+
+R\-H\-S = \{\mbox{[}(K$^\wedge$\{n+1\})$^\wedge$\{-\/1\}$\ast$\-K$^\wedge$n-\/\-I\mbox{]}\}$\ast$z$^\wedge$n + (K$^\wedge$\{n+1\})$^\wedge$\{-\/1\}$\ast$\-Res(z$^\wedge$n)
+
+when the grid is fixed, then $ (K^{n+1})^{-1}*K^n = I $ and R\-H\-S reduces to\-:
+
+R\-H\-S = (K$^\wedge$\{n\})$^\wedge$\{-\/1\}$\ast$\-Res(z$^\wedge$n)
+
+since on entry D\-T = K$^\wedge$n {\itshape and} R\-H\-S = (K$^\wedge$n)$^\wedge$\{-\/1\} Res(z$^\wedge$n) \hypertarget{seq_2update3_8_f_a1fa95004e6fe4f929e617b058b45c302}{\index{seq/update3.\-F@{seq/update3.\-F}!update3@{update3}}
+\index{update3@{update3}!seq/update3.F@{seq/update3.\-F}}
+\subsubsection[{update3}]{\setlength{\rightskip}{0pt plus 5cm}subroutine update3 (
+\begin{DoxyParamCaption}
+\item[{integer}]{N\-D\-I\-M, }
+\item[{integer}]{N\-O\-F\-V\-A\-R, }
+\item[{integer}]{N\-P\-O\-I\-N, }
+\item[{}]{Flow\-Solver, }
+\item[{}]{A, }
+\item[{}]{R\-H\-S, }
+\item[{}]{D\-T, }
+\item[{}]{U, }
+\item[{double precision, dimension($\ast$)}]{V\-M\-D\-C\-O, }
+\item[{double precision, dimension($\ast$)}]{V\-M\-D\-C\-N}
+\end{DoxyParamCaption}
+)}}\label{seq_2update3_8_f_a1fa95004e6fe4f929e617b058b45c302}

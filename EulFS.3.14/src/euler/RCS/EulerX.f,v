@@ -1,0 +1,921 @@
+head	1.9;
+access
+	tesistim;
+symbols
+	release3_14_0:1.9
+	release3_13_0:1.9
+	release3_12_0:1.9
+	release3_11_0:1.9
+	release3_10_0:1.9
+	release3_8_0:1.9
+	release3_7_1:1.9
+	release3_7_0:1.8
+	release3_4_5:1.8
+	release3_4_4:1.8
+	release3_4_3:1.7
+	release3_4_2:1.7
+	release3_4_1:1.7
+	release3_4_0:1.7
+	release3_3_5:1.7
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.9
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.01.30.17.16.33;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2013.05.02.14.24.48;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2013.04.27.09.36.52;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2012.12.20.10.27.17;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.11.06.09.17.51;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.01.04.08.05.06;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.09.16.10.25.18;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.08.11.14.45.51;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Merkle's preconditioner in primitive variables
+@
+
+
+1.9
+log
+@renamed subroutine call
+@
+text
+@!> \copydetails EulerIX()
+      SUBROUTINE EulerX(IELEM,VCN,VCB,VCZ,NDIM,NOFVERT,NOFVAR,
+     &                    NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     &                    ScalarScheme,MatrixScheme)
+C
+      IMPLICIT NONE 
+C
+C     Merkle's Preconditioned equations in primitive variables ..
+C
+C     $Id: EulerX.f,v 1.8 2014/01/30 17:16:33 abonfi Exp abonfi $
+C
+C
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'time.h'
+C
+C     NEQMAX is the max. no. of equations (5 in 3D)
+C            for the matrix scheme (solves for dp,du,dv,dw,dT)
+C     MAXNOFEQN is the max. no. of mean flow equations (5 in 3D)
+C
+      INTEGER NEQMAX,LNNVV
+      DOUBLE PRECISION TOLER
+      PARAMETER (NEQMAX=5,TOLER=1.D-15)
+      PARAMETER (LNNVV=MAX_NOFVAR_SQR*MAX_NOFVERT_SQR)
+      INTEGER IWRK
+      PARAMETER(IWRK=10)
+      INTEGER MOVE(IWRK)
+C
+C
+      INCLUDE 'dofs.com'
+      INCLUDE 'bodyf.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'merkle.com'
+      INCLUDE 'three.com'
+      INCLUDE 'time.com'
+      INCLUDE 'transf.com'
+      INCLUDE 'visco.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,NTURB
+      DOUBLE PRECISION VOLUME(*)
+      LOGICAL PICARD
+C
+C     .. Array Arguments ..
+      DOUBLE PRECISION VCZ(*),VCN(*),STIFEL(*),NODRES(*),TSTEP(*),VCB(*)
+C
+C
+C     .. External Arguments ..
+      EXTERNAL ScalarScheme,MatrixScheme
+C
+C
+C
+C     .. Local Scalar ..
+      INTEGER IVAR,IVERT,JVERT,IDIM,IADD,JADD,KADD,I,J
+      INTEGER NORDER,ifail,M,N,MN,N4,JCOL
+      DOUBLE PRECISION FLUCT,SCALRES,PEH,HELP,SUMK,AM2PGR,AM2VIS,DP,BASE
+     &,HEIGHT,CUTOFF,ULOCAL
+      LOGICAL LFLAG
+      LOGICAL unitmat
+C
+C
+C
+C     NODRES(1:NOFVAR,1:NOFVERT) is used to accumulate the
+C         nodal residual in conserved variables and scatter
+C         it to the RHS PETSc vector
+C
+C     TSTEP(1:NOFVERT) is used to accumulate the timestep
+C         and then scatter it to the DT PETSc vector 
+C
+C     PRIMV(1:NOFEQN,1:NOFVERT) is used to store the vector
+C         of symmetrizing variables
+C
+C     DPRIMV(1:NOFEQN,1:NOFVERT) is used to store the change
+C         in the vector of symmetrizing variables
+C
+      DOUBLE PRECISION PRIMV(MAXNOFEQN*MAXNOFVERT),PHI(NEQMAX)
+      DOUBLE PRECISION DPRIMV(MAXNOFEQN*MAXNOFVERT),WKSP(MAXNOFEQN),
+     1                 TAUX(MAXNOFEQN*MAXNOFVERT),SOURCE(MAXNOFVAR),
+     2                 Jacobian(NEQMAX,NEQMAX*3),RESIDUAL(2*NEQMAX),
+     3                 TEMPA(MAX_NOFVERT_SQR*MAXNOFEQN**2),
+     4                 TEMPB(MAX_NOFVERT_SQR*MAXNOFEQN**2)
+      DOUBLE PRECISION DVDU(NEQMAX*NEQMAX),
+     6                 BETA(MAXNOFEQN*MAXNOFEQN*MAXNOFVERT),
+     8                 STIFC(MAX_NOFVERT_SQR*NEQMAX*NEQMAX)
+C
+C     NOFEQN (= DIM+2) is actual no. of mean flow equations
+C     NORDER (= DIM+2) is actual no. of equations being solved
+C                      with the system scheme
+C
+      INTEGER NOFEQN
+C
+C     RESIDUAL[1:NORDER] stores the residual computed by
+C                        the Matrix scheme as \sum K_j U_j
+C     RESIDUAL[NORDER+1:2*NORDER]
+C                        stores the residual computed by
+C                        the Matrix scheme as \sum C_{ij} U_j
+C     it is used just for debugging purposes, to be compared with
+C     the residual computed as:
+C     dF/dU * dU/dX + dG/dU * dU/dy + [ dH/dU * dU/dz ]
+C
+C
+      DOUBLE PRECISION DDOT,DNRM2
+      EXTERNAL DDOT,DNRM2
+C
+      EXTERNAL MatSplitNum,MatSplitX
+C
+      DATA SOURCE/MAXNOFVAR*ZERO/
+C
+C
+C     Statement function
+C
+      INTEGER JADDR
+      JADDR(IVERT,JVERT,N) = (((JVERT-1)*NOFVERT+IVERT-1)*N*N) + 1
+C
+      NOFEQN = NDIM + 2
+      NORDER = NOFEQN
+      N4 = NOFVAR*NOFVAR*NOFVERT*NOFVERT
+C
+C     Here we set the preconditioner Mach number M_p
+C
+C     the length scale h is set equal to the distance btw the inflow
+C     and outflow points based on the velocity vector
+C
+C     h = (Vol * |u|)/(sum k_j^+)
+C
+      SUMK = ZERO
+      DO IVERT = 1, NOFVERT
+         HELP = DDOT(NDIM,VCN((IVERT-1)*NDIM+1),1,UAVG(IX),1)
+         SUMK = SUMK + MAX(ZERO,HELP)
+      ENDDO
+      HELP = REAL(NDIM)
+      SUMK = SUMK/HELP ! SUMK = (u \cdot n_j )/d
+      ULOCAL = DNRM2(NDIM,UAVG(IX),1)
+      HEIGHT = VOLUME(1) * ULOCAL / SUMK
+      BASE = HELP*VOLUME(1)/HEIGHT 
+      IF(NDIM.EQ.3)BASE = SQRT(4.d0*BASE/3.141593)
+C
+C     here we assume that the local (non-dimensional) kinematic viscosity is 1
+C     or, equivalently, that \nu = 1/Re
+C     hence:
+C     Pe_h = (u * h)/\nu =  
+C
+      PEH = MIN(BASE,HEIGHT) * RE * UAVG(1) * ULOCAL / ONE ! 1.d0 should be replaced by viscosity
+C
+C     Compute the pressure gradient
+C
+!     DP = ZERO
+!     DO I = 1,NDIM
+!        WKSP(I) = ZAVG(2)*GRAD_PRIM(1,I)+ZAVG(1)*GRAD_PRIM(2,I)
+!        J = I+2
+!        WKSP(I) = WKSP(I)-ZAVG(J)*GRAD_PARM(J,I)
+!        WKSP(I) = WKSP(I) * GM1OG
+!        DP = DP + UAVG(J) * WKSP(I)
+!     ENDDO
+C
+C     Compute the pressure difference along the velocity
+C
+!     DP = ABS(DP) * VOLUME(1) / SUMK
+!     AM2PGR = DP/(UAVG(1)*ASQR)
+      AM2PGR = ZERO
+      AM2VIS = MACHSQR/(PEH*PEH)
+!     AM2VIS = ZERO
+      CUTOFF = MERKLE_CUTOFF**2
+      AMPSQR = MIN(MAX(MACHSQR,AM2PGR,AM2VIS,CUTOFF),ONE)
+!     IF(MAX(MACHSQR,AM2PGR,AM2VIS).LT.CUTOFF)THEN
+!     write(6,*)IELEM,MAX(MACHSQR,AM2PGR,AM2VIS),CUTOFF
+!     ENDIF
+!     write(22,*)IELEM,DSQRT(MACHSQR),DSQRT(AM2PGR),DSQRT(AM2VIS),
+!    &DSQRT(AMPSQR),PEH,height,base
+C
+C     The element stiffness matrix is initialized to 0.d0
+C
+      IF (PICARD) THEN
+          CALL DINIT(N4,ZERO,STIFEL,1)
+          CALL DINIT((NORDER*NOFVERT)**2,ZERO,STIFC,1)
+      ENDIF
+      IF (LTIME) THEN
+         DTVOL = DELT/VOLUME(1)
+         IF(DUALTS)THEN 
+            CALL DINIT(NOFEQN*NOFEQN*NOFVERT,ZERO,BETA,1)
+         ENDIF
+      ENDIF
+C
+C     set local residual and timestep to zero (should maybe bring it
+C     in the calling routine)
+C
+      CALL DINIT(NOFVERT*NOFEQN,ZERO,DPRIMV,1)
+      CALL DINIT(NOFVERT*NORDER,ZERO,TAUX,1)
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+C
+C    Some initializations ....
+C
+          CALL CHECK(IELEM,NDIM,NOFEQN)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C
+C     The Jacobian Matrix of the subsystem is assembled and
+C         the eigenvectors computed ..
+C
+      CALL Eigen_X(Jacobian,NEQMAX,dVdZ,dUdV,dVdU,NDIM,NOFEQN)
+C
+      IF (ICHECK.EQ.0) GOTO 7
+C
+C --------------- Debugging code starts here ---------------
+C
+C     Here we compute first
+C
+C     dPdx dPdy dPdz
+C     dTdx dTdy dTdz
+C     dudx dudy dudz
+C     dvdx dvdy dvdz
+C     dwdx dwdy dwdz
+C
+C
+      CALL DGEMM('No Transpose','No Transpose',NOFEQN,NDIM,NOFEQN,
+     +           ONE,dVdZ,NOFEQN,GRAD_PARM,MAXNOFVAR,ZERO,TEMPA,NOFEQN)
+C
+!     CALL R8Mat_Print('G',' ',Nofeqn,Ndim,TEMPA,Nofeqn,
+!    +      'd(P,u,v,T) array ',IFAIL)
+C
+C     COMPUTES THE RESIDUAL/VOLUME as:
+C     dF/dU * dU/dX + dG/dU * dU/dy + [ dH/dU * dU/dz ]
+C     for debugging purposes
+C
+      CALL DINIT(NORDER,ZERO,PHI,1)
+      DO 12 idim = 1,NDIM
+          JCOL = (idim-1)*NEQMAX + 1
+          CALL DGEMV('N',NORDER,NORDER,ONE,Jacobian(1,JCOL),NEQMAX,
+     +               TEMPA((idim-1)*NOFEQN+1),1,ONE,PHI,1)
+
+   12 CONTINUE
+C
+C --------------- Debugging code ends here ---------------
+C
+    7 CONTINUE
+C
+C     The quasi linear form we discretize is in
+C     primitive variables PRIMV = (dp,du,dv,dw,dT)
+C
+C
+C     primitive variables are computed through the relation
+C     \tilde{V_p}_i = M Z_j
+C     where M = \frac{\partial V_p}{\partial Z}
+C
+C     dp(1) dp(1) dp(1) dp(1)
+C     dT(1) dT(2) dT(3) dT(4)
+C     du(1)   ....    ..    ..    ..
+C     dv(1)   ....    ..    ..    ..
+C     dw(1)   ....    ..    ..    ..
+C
+      CALL DGEMM('No Transpose','No Transpose',NOFEQN,NOFVERT,NOFEQN,
+     +           ONE,dVdZ,NOFEQN,VCZ,NOFVAR,ZERO,PRIMV,NOFEQN)
+C
+!     CALL R8Mat_Print('G',' ',Nofeqn,NOFeqn,dVdZ,Nofeqn,
+!    +      'dVdZ array ',IFAIL)
+!     CALL R8Mat_Print('G',' ',Nofvar,NOFvert,vcz,Nofvar,
+!    +      'Z variables ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFEQN,Nofvert,PRIMV,NofEQN,
+!    +      '(p,u,v,T) variables ',IFAIL)
+!     pause
+C
+C     ---------- Matrix scheme ----------
+C
+      SOURCE(2) = -GRAV(1)*VOLUME(1)
+      SOURCE(3) = -GRAV(2)*VOLUME(1)
+      IF(NDIM.EQ.3)SOURCE(4) = -GRAV(3)*VOLUME(1)
+C
+C REM: calling with TAUX(1) will add new contributions
+C      to those already computed when solving entropy
+C
+      CALL MatrixScheme(MatSplitX,PRIMV(1),DPRIMV(1),TAUX(1),
+     +                  BETA,STIFEL,NORDER,NORDER,NOFVERT,VCN,NDIM,
+     +                  Jacobian,NEQMAX,RESIDUAL,SOURCE,IELEM,PICARD)
+!     write(6,*)ielem
+!     CALL R8Mat_Print('G',' ',Nofeqn,Nofvert,dPRIMV,Nofeqn,
+!    +      'residual in prim. vars. ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOrder,NOrder*nofvert,BETA,
+!    +      NOrder,'Beta in symm only last d+1 eqns',IFAIL)
+C
+C
+C     dp(1) dp(2) dp(3) dp(4)
+C     dT(1) dT(2) dT(3) dT(4)
+C     du(1)   ....    ..    ..    ..
+C     dv(1)   ....    ..    ..    ..
+C     dw(1)   ....    ..    ..    ..
+C
+C
+C     copy the timestep from TAUX into TSTEP (update)
+C
+C
+C     compute the timestep
+C
+      DO IVERT = 1, NOFVERT ! loop over the vertices
+         IADD = (IVERT-1)*NORDER
+         HELP = ZERO 
+C
+C     sum over the dofs
+C
+         DO IVAR = 1,NORDER
+            JADD = IADD + IVAR
+            IF( CHAR_TIMESTEPPING )THEN
+               HELP = MAX(HELP,TAUX(JADD))
+            ELSE
+               HELP = HELP + TAUX(JADD)
+            ENDIF
+         ENDDO
+         IADD = (IVERT-1)*NOFVAR
+         DO IVAR = 1,NORDER
+            JADD = IADD + IVAR
+            TSTEP(JADD) = TSTEP(JADD) + HELP
+         ENDDO
+      ENDDO
+C
+C Transform the nodal residual into conserved variables
+C
+      CALL DGEMM('No Transpose','No Transpose',NOFEQN,NOFVERT,NOFEQN,
+     +           ONE,dUdV,NOFEQN,DPRIMV,NOFEQN,ZERO,NODRES,
+     +           NOFVAR)
+C
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,dUdV,nofeqn,
+!    +      'dUdV variables ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFvar,NOFvert,NODRES,nofvar,
+!    +      'residual (before) ',IFAIL)
+C     pause
+C
+C
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Beta after insertion',IFAIL)
+!     pause
+C
+C --------------- Debugging code starts here ---------------
+C
+C    Checks the decomposition ..
+C
+      IF (ICHECK.NE.0) THEN
+          CALL DSCAL(2*NORDER,ONE/VOLUME(1),RESIDUAL,1)
+          LFLAG = .TRUE.
+          DO 18 IVAR = 1,NORDER
+              IF (DABS(PHI(IVAR)-RESIDUAL(IVAR)).GT.
+     +            TOLER) LFLAG = .FALSE.
+   18     CONTINUE
+          IF (LFLAG .EQV. .FALSE.) THEN
+              WRITE (6,99999) IELEM
+              DO 22 IVAR = 1,NORDER
+                  WRITE (6,*) PHI(IVAR),RESIDUAL(IVAR),
+     +              DABS(PHI(IVAR)-RESIDUAL(IVAR))
+   22         CONTINUE
+C           PAUSE
+C
+          ENDIF
+C
+C     transforms the residual into conserved variables
+C
+          CALL DGEMV('N',NOFEQN,NORDER,ONE,dUdV,
+     +               NOFEQN,RESIDUAL,1,ZERO,WKSP,1)
+C
+C     test the residual as computed by the "explicit" scheme
+C     WKSP := dUdV * \Phi
+C
+          CALL TEST(DivFlux,WKSP,TOLER,IELEM,NOFEQN)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+      IF (PICARD) THEN
+C
+C     compute the transformation matrices from
+C     conserved to parameter variables in the vertices
+C
+          DO 33 IVERT = 1,NOFVERT
+              IADD = (IVERT-1)*NOFVAR+1
+              JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+c
+c a bit of care here: Z and dZdU are dimensioned NOFVAR in
+c subr MatdZdU(), but this should not be a problem if called
+c with NOFEQN
+c
+          CALL MatdZdU(VCZ(IADD),dZdU(JADD),NDIM,NOFEQN)
+   33     CONTINUE
+      ENDIF
+C
+      IF (LTIME) THEN
+          DO IVERT = 1,NOFVERT
+              IADD = (IVERT-1)*NOFVAR+1
+              JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+              CALL PARM2CONS(VCZ(IADD),TEMPB(JADD),NOFEQN,NDIM)
+          ENDDO
+      ENDIF
+C
+!     CALL R8Mat_Print('G',' ',NOFVAR,nofvert,NODRES,
+!    +      NOFVAR,'Nodal update in U before td',IFAIL)
+!
+      IF(LTIME)THEN 
+C
+         CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN*NOFVERT,NOFEQN,ONE,dUdV,NOFEQN,
+     2               BETA,NOFEQN,ZERO,TEMPA,NOFEQN) 
+         DO IVERT = 1,NOFVERT
+            JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+            CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,ONE,TEMPA(JADD),NOFEQN,DVDU,NOFEQN,
+     2               ZERO,BETA(JADD),NOFEQN) 
+         ENDDO
+C
+         CALL UNSTEADY4(TEMPB,BETA,VCZ,NOFVAR,NODRES,STIFEL,VOLUME,
+     &                  NOFEQN,NDIM,NOFVERT,PICARD)
+      ENDIF
+C
+!     write(6,*)'ielem = ',ielem
+!     CALL R8Mat_Print('G',' ',Nofeqn,nofeqn*nofvert,beta,Nofeqn,
+!    +      'beta(U) ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFEQN,nofvert,NODRES,
+!    +      NOFEQN,'Nodal update in U',IFAIL)
+C
+C
+C     --------------- If explicit, return now  ---------------
+C
+      IF (.NOT.PICARD) RETURN
+C
+C     transform the element stiffness matrix into conserved variables
+C
+      IF( NOFVAR .EQ. NOFEQN )THEN
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +               NOFVAR*NOFVERT*NOFVERT,NOFVAR,MONE,dUdV,
+     +               NOFVAR,STIFEL,NOFVAR,ZERO,TEMPA,NOFVAR)
+      ELSE
+          DO 13 JVERT = 1, NOFVERT
+             DO 13 IVERT = 1, NOFVERT
+                JADD = JADDR(IVERT,JVERT,NOFEQN)
+                IADD = JADDR(IVERT,JVERT,NOFVAR)
+                CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,MONE,dUdV,
+     +               NOFEQN,STIFEL(IADD),NOFVAR,ZERO,TEMPA(JADD),NOFEQN)
+!     write(6,*)ivert,jvert
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,tempa(jadd),NOFEQN,
+!    +      'TEMPA ',IFAIL)
+!     pause
+   13     CONTINUE
+      ENDIF
+C
+C
+      CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN*NOFVERT,NOFEQN,TWO,dVdZ,NOFEQN,dZdU,
+     +               NOFEQN,ZERO,TEMPB,NOFEQN)
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN*nofvert,tempb,NOFEQN,
+!    +      'TEMPB ',IFAIL)
+!     pause
+C
+          DO 35 JVERT = 1,NOFVERT
+                  JADD = (JVERT-1)*NOFEQN*NOFEQN + 1
+          DO 35 IVERT = 1,NOFVERT
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+                  KADD = JADDR(IVERT,JVERT,NOFEQN)
+C
+               CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +              NOFEQN,NOFEQN,ONE,TEMPA(KADD),NOFEQN,
+     +              TEMPB(JADD),NOFEQN,ZERO,STIFEL(IADD),NOFVAR)
+C
+C     now STIFEL contains the convection stiffness matrix in
+C     conserved variables
+C
+!     write(6,*)ivert,jvert
+!     CALL R8Mat_Print('G',' ',Nofvar,Nofvar,stifel(iadd),Nofvar,
+!    +      'C(i,j) ',IFAIL)
+!
+   35     CONTINUE
+!     pause
+C
+C
+      IF (ICHECK.EQ.0) RETURN
+C
+C --------------- Debugging code starts here ---------------
+C
+C     test the residual as computed by the "implicit" scheme
+C     WKSP := dUdV(1,1) * \Phi
+C
+      CALL DGEMV('N',NOFEQN,NORDER,ONE,dUdV(1),
+     +           NOFEQN,RESIDUAL(NORDER+1),1,ZERO,WKSP,1)
+      CALL TEST(DivFlux,WKSP,TOLER,-IELEM,NOFEQN)
+C
+C --------------- Debugging code ends here ---------------
+C
+      RETURN
+
+99999 FORMAT (5X,'Vector residual in Element ',I6,' EulerX')
+
+      END
+@
+
+
+1.8
+log
+@VOLUME is now a F77 array
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerX.f,v 1.7 2013/05/02 14:24:48 abonfi Exp abonfi $
+d225 1
+a225 1
+!     CALL X04CAF('G',' ',Nofeqn,Ndim,TEMPA,Nofeqn,
+d261 1
+a261 1
+!     CALL X04CAF('G',' ',Nofeqn,NOFeqn,dVdZ,Nofeqn,
+d263 1
+a263 1
+!     CALL X04CAF('G',' ',Nofvar,NOFvert,vcz,Nofvar,
+d265 1
+a265 1
+!     CALL X04CAF('G',' ',NOFEQN,Nofvert,PRIMV,NofEQN,
+d282 1
+a282 1
+!     CALL X04CAF('G',' ',Nofeqn,Nofvert,dPRIMV,Nofeqn,
+d284 1
+a284 1
+!     CALL X04CAF('G',' ',NOrder,NOrder*nofvert,BETA,
+d327 1
+a327 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dUdV,nofeqn,
+d329 1
+a329 1
+!     CALL X04CAF('G',' ',NOFvar,NOFvert,NODRES,nofvar,
+d334 1
+a334 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+d397 1
+a397 1
+!     CALL X04CAF('G',' ',NOFVAR,nofvert,NODRES,
+d417 1
+a417 1
+!     CALL X04CAF('G',' ',Nofeqn,nofeqn*nofvert,beta,Nofeqn,
+d419 1
+a419 1
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,NODRES,
+d442 1
+a442 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,tempa(jadd),NOFEQN,
+d452 1
+a452 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,tempb,NOFEQN,
+d470 1
+a470 1
+!     CALL X04CAF('G',' ',Nofvar,Nofvar,stifel(iadd),Nofvar,
+@
+
+
+1.7
+log
+@characteristic time stepping
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerX.f,v 1.6 2013/04/27 09:36:52 abonfi Exp abonfi $
+d43 1
+a43 1
+      DOUBLE PRECISION VOLUME
+d136 2
+a137 2
+      HEIGHT = VOLUME * ULOCAL / SUMK
+      BASE = HELP*VOLUME/HEIGHT 
+d160 1
+a160 1
+!     DP = ABS(DP) * VOLUME / SUMK
+d180 1
+a180 1
+         DTVOL = DELT/VOLUME
+d271 3
+a273 3
+      SOURCE(2) = -GRAV(1)*VOLUME
+      SOURCE(3) = -GRAV(2)*VOLUME
+      IF(NDIM.EQ.3)SOURCE(4) = -GRAV(3)*VOLUME
+d343 1
+a343 1
+          CALL DSCAL(2*NORDER,ONE/VOLUME,RESIDUAL,1)
+d412 2
+a413 2
+         CALL UNSTEADY4(TEMPB,BETA,VCZ,NOFVAR,NODRES,STIFEL,NOFEQN,NDIM,
+     &                  NOFVERT,PICARD)
+@
+
+
+1.6
+log
+@the contribution to the time step is now added
+separately for each variable
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerX.f,v 1.5 2012/12/20 10:27:17 abonfi Exp abonfi $
+d32 1
+d130 1
+a130 1
+         HELP = DDOT(NDIM,VCN((IVERT-1)*NDIM+1),1,UAVG(3),1)
+d135 1
+a135 1
+      ULOCAL = DNRM2(NDIM,UAVG(3),1)
+d297 23
+a319 8
+      DO 14 IVERT = 1, NOFVERT
+         M = (IVERT-1)*NOFVAR
+         N = (IVERT-1)*NORDER
+         DO 14 IVAR = 1, NORDER
+            IADD = M+IVAR
+            JADD = N+IVAR
+            TSTEP(IADD) = TSTEP(IADD) + TAUX(JADD)
+   14 CONTINUE
+@
+
+
+1.5
+log
+@now passing the grid velocity among the arguments of the call
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerX.f,v 1.4 2010/11/06 09:17:51 abonfi Exp abonfi $
+d297 6
+a302 3
+         IADD = (IVERT-1)*NOFVAR+1
+         JADD = (IVERT-1)*NORDER+1
+         TSTEP(IADD) = TSTEP(IADD) + TAUX(JADD)
+a475 1
+89999 FORMAT (5X,'Scalar residual in Element ',I6,' Wave # ',I1)
+@
+
+
+1.4
+log
+@experimenting with the choice of the local mesh size
+@
+text
+@d1 4
+a4 3
+      SUBROUTINE EulerX(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +                    NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     +                    ScalarScheme,MatrixScheme)
+d10 1
+a10 1
+C     $Id: EulerX.f,v 1.3 2010/01/04 08:05:06 abonfi Exp abonfi $
+d46 1
+a46 1
+      DOUBLE PRECISION VCZ(*),VCN(*),STIFEL(*),NODRES(*),TSTEP(*)
+@
+
+
+1.3
+log
+@a first implementation of the viscous preconditioning parameter
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerX.f,v 1.2 2009/09/16 10:25:18 abonfi Exp abonfi $
+d56 2
+a57 1
+      DOUBLE PRECISION FLUCT,SCALRES,PEH,HELP,SUMK,AM2PGR,AM2VIS,DP
+d102 2
+a103 2
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+d131 6
+a136 1
+      SUMK = REAL(NDIM)/SUMK ! now 1./Peh = (u \cdot n_j )/d
+d143 1
+a143 2
+!     PEH = PEH * VOLUME * DDOT(NDIM,UAVG(3),1,UAVG(3),1) * RE / ABAR
+      PEH = SUMK * VOLUME * MACHSQR * ABAR * RE
+d145 1
+a145 1
+C     Computre the pressure gradient
+d147 14
+a160 10
+      DP = ZERO
+      DO I = 1,NDIM
+         WKSP(I) = ZAVG(2)*GRAD_PRIM(1,I)+ZAVG(1)*GRAD_PRIM(2,I)
+         J = I+2
+         WKSP(I) = WKSP(I)-ZAVG(J)*GRAD_PARM(J,I)
+         WKSP(I) = WKSP(I) * GM1OG
+         DP = DP + UAVG(J) * WKSP(I)
+      ENDDO
+      DP = ABS(DP) * VOLUME * SUMK
+      AM2PGR = DP/(UAVG(1)*ASQR)
+a161 1
+!     AM2PGR = ZERO
+d163 7
+a169 4
+      AMPSQR = MIN(MAX(MACHSQR,AM2PGR,AM2VIS,1.D-10),ONE)
+      AMPSQR = MIN(MAX(MACHSQR,1.D-10),ONE)
+!     write(12,*)IELEM,DSQRT(MACHSQR),DSQRT(AM2PGR),DSQRT(AM2VIS),PEH,
+!    &DSQRT(AMPSQR)
+@
+
+
+1.2
+log
+@before implementing the pressure gradient based velocity
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerX.f,v 1.1 2009/08/11 14:45:51 abonfi Exp abonfi $
+d45 1
+a45 2
+      DOUBLE PRECISION VCZ(*),VCN(*),
+     +                 STIFEL(*),NODRES(*),TSTEP(*)
+d54 1
+a54 1
+      INTEGER IVAR,IVERT,JVERT,IDIM,IADD,JADD,KADD
+d56 1
+a56 1
+      DOUBLE PRECISION FLUCT,SCALRES,PEH,HELP
+d125 1
+a125 1
+      PEH = ZERO
+d128 1
+a128 1
+         PEH = PEH + MAX(ZERO,HELP)
+d130 1
+a130 1
+      PEH = REAL(NDIM)/PEH ! now 1./Peh = (u \cdot n_j )/d
+d138 21
+a158 16
+      PEH = PEH * VOLUME * MACHSQR * ABAR * RE
+      IF( PEH .LT. ONE )THEN
+          AMPSQR = MACHSQR/(PEH*PEH) ! this is the viscous Mach number squared
+!         WRITE(6,*)'Cell ',IELEM,' PEH = ',PEH
+!         write(22,*)IELEM,PEH,AMPSQR,MACHSQR 
+!         AMPSQR = MACHSQR ! this is the inviscid Mach number squared
+      ELSE
+          AMPSQR = MACHSQR ! this is the inviscid Mach number squared
+      ENDIF
+!         AMPSQR = MACHSQR ! this is the inviscid Mach number squared
+      IF( AMPSQR .GT. ONE )THEN
+          AMPSQR = ONE
+      ELSEIF( AMPSQR .LT. 1.D-5 )THEN
+          AMPSQR = 1.D-5
+      ENDIF
+C         AMPSQR = ONE to check that one retrieves the un-prec eqns
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.36 2009/06/11 09:45:52 abonfi Exp $
+d31 4
+a35 1
+      INCLUDE 'three.com'
+d37 1
+a37 2
+      INCLUDE 'flags.com'
+      INCLUDE 'bodyf.com'
+d57 1
+a57 1
+      DOUBLE PRECISION FLUCT,SCALRES
+d119 37
+a180 1
+caldo     CALL DINIT(NOFEQN,ZERO,WKSP,1)
+d199 1
+d202 1
+a202 1
+C     dTdx dTdy dTdz
+d217 2
+a218 2
+          jcol = (idim-1)*NEQMAX + 1
+          CALL DGEMV('N',NORDER,NORDER,ONE,Jacobian(1,jcol),NEQMAX,
+d236 1
+d239 1
+a239 1
+C     dT(1) dT(2) dT(3) dT(4)
+d262 1
+a262 1
+     +                  BETA,STIFC,NORDER,NORDER,NOFVERT,VCN,NDIM,
+d271 2
+a272 1
+C     dp(1) dp(1) dp(1) dp(1)
+d275 1
+a275 1
+C     dT(1) dT(2) dT(3) dT(4)
+a365 28
+c
+c     compute transformation matrix from 
+c
+!        CALL CONS2SYMM(ZAVG,BETA1,NOFEQN,NDIM)
+!
+!           CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+!    +               NOFEQN,NOFEQN,ONE,BETA1,NOFEQN,dUdV,NOFEQN,
+!    2               ZERO,TEMPB(1),NOFEQN) 
+!           IF(.NOT.UNITMAT(TEMPB,NOFEQN,NOFEQN,NOFEQN,1.D-12))THEN
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,BETA1,
+!    +      NOFEQN,'dVdS ',IFAIL)
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dUdV,
+!    +      NOFEQN,'dUdV ',IFAIL)
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,TEMPB,
+!    +      NOFEQN,'TEMPB ',IFAIL)
+!           ENDIF 
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Beta in symm',IFAIL)
+C
+cold     DO IVERT = 1,NOFVERT ! si puo forse ridurre il nof di DGEMM !?!?!?!?!
+cold        JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+cold        CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+cold +               NOFEQN,NOFEQN,ONE,dUdV,NOFEQN,BETA(JADD),NOFEQN,
+cold 2               ZERO,TEMPA(JADD),NOFEQN) 
+cold        CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+cold +               NOFEQN,NOFEQN,ONE,TEMPA(JADD),NOFEQN,BETA1,NOFEQN,
+cold 2               ZERO,BETA(JADD),NOFEQN) 
+cold     ENDDO
+a391 3
+C     Add the element stiffness matrix to the global stiffness matrix
+C
+C
+a412 6
+!         DO 37 JVERT = 1,NOFVERT
+!         DO 37 IVERT = 1,NOFVERT
+!                 IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFEQN*NOFEQN) + 1
+C
+C
+!  37     CONTINUE
+d437 1
+a437 1
+C
+@

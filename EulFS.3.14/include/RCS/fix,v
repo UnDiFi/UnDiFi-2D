@@ -1,0 +1,33 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.10.20.10.14.53;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@fix for the H-E model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION STAGFIX
+      COMMON / fix / STAGFIX
+C
+C     ..STAGFIX is used to solve the problems encountered with
+C       stagnation regions, its value is tipically = MACHSQR
+C
+C     ..The right eigenvector matrix R(*,*) is multiplyed with
+C       STAGFIX while the advection speeds or eigenvalues are
+C       divided by STAGFIX
+@

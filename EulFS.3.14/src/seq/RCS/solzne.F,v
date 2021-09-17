@@ -1,0 +1,451 @@
+head	1.13;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.13
+	release3_13_0:1.13
+	release3_12_0:1.13
+	release3_11_0:1.13
+	release3_10_0:1.13
+	release3_8_0:1.13
+	release3_7_1:1.13
+	release3_7_0:1.12
+	release3_4_5:1.12
+	release3_4_4:1.12
+	release3_4_3:1.12
+	release3_4_2:1.11
+	release3_4_1:1.11
+	release3_4_0:1.11
+	release3_3_5:1.11
+	release3_3_4:1.11
+	release3_3_3:1.11
+	release3_3_2:1.11
+	release3_3_1:1.11
+	release3_3_0:1.11;
+locks; strict;
+comment	@c @;
+
+
+1.13
+date	2020.03.28.09.42.53;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2013.10.23.10.50.58;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2013.01.24.07.36.36;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2008.02.25.09.36.15;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.12.27.09.21.17;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.09.14.09.45.41;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.09.03.10.47.53;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	99.08.31.15.17.29;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.08.31.09.43.04;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.11.25.17.03.49;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.11.29.11.08.05;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Writes solution in XDR format
+@
+
+
+1.13
+log
+@renamed a call
+@
+text
+@!>
+!> \par Purpose
+!>
+!> Read/write a solution-type array from/to a XDR file using call to library FXDR
+!>
+!> @@param[in] FILENAME name of the XDR file where data are read from or written to
+!> @@param[in] VARRAY the array to be read or written
+!> @@param[in] NOFVAR number of dofs
+!> @@param[in] NPOIN number of gridpoints
+!> @@param[in] MODE starts with 'R' or 'r' for reading and with 'w' or 'W' for writing
+      SUBROUTINE SOLZNE(FILENAME,VARRAY,NOFVAR,NPOIN,MODE)
+!> \author $Author: abonfi $
+!> \version $Revision: 1.12 $
+!> \date $Date: 2013/10/23 10:50:58 $
+C
+C Subroutine for reading(mode='r') and writing(mode='w') nodal values
+C
+      IMPLICIT NONE
+      INCLUDE 'io.com'
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+C     .. Scalar Arguments ..
+      INTEGER NOFVAR,NPOIN
+      CHARACTER FILENAME* (*),MODE* (*)
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION VARRAY(NOFVAR,NPOIN)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IFAIL,IXDRS,NPOLD,NVOLD,LENFN
+      LOGICAL RETOERR
+!     PARAMETER(RETOERR=.TRUE.) 
+      PARAMETER(RETOERR=.FALSE.) 
+c     RETOERR returnonerror: logical: if .TRUE., then
+c                        routines return even if there is
+c                        an I/O error.  If .FALSE., then
+c                        routines halt on I/O error,
+c                        printing out a useful message
+c                        (this is like what fortran does, so set to .FALSE. for most fortran-
+c                        like behavior)
+      CHARACTER*72 ERRMSG
+C     ..
+C     .. External Functions ..
+      INTEGER INITXDR,IXDRCLOSE,IXDRINT,I1MACH
+      EXTERNAL INITXDR,IXDRCLOSE,IXDRINT,I1MACH
+#ifdef PARCH_t3d
+      INTEGER IXDRRMAT64
+      EXTERNAL IXDRRMAT64
+#else
+      INTEGER IXDRDMAT
+      EXTERNAL IXDRDMAT
+#endif
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL SETERR
+C     ..
+C     .. Data statements ..
+      DATA IFAIL/0/
+C     ..
+C
+C
+C     .. Reading or Backing up ..
+C
+      LENFN = INDEX( FILENAME, CHAR(0) ) -1
+      IF(LENFN.LE.1)LENFN = 128
+      IF (MODE(1:1).EQ.'r'.OR.MODE(1:1).EQ.'R') THEN
+          WRITE (NOUT,FMT=110) FILENAME(1:LENFN)
+
+      ELSEIF (MODE(1:1).EQ.'w'.OR.MODE(1:1).EQ.'W') THEN
+          WRITE (NOUT,FMT=112) FILENAME(1:LENFN)
+      ELSE
+          STOP 'Unknown mode in SUBROUTINE solzne' 
+      ENDIF
+C
+      IXDRS = INITXDR(FILENAME,MODE,RETOERR)
+      IF( IXDRS.LT.0 )THEN
+          WRITE(ERRMSG,FMT=2035)FILENAME(1:MIN(LENFN,42))
+          CALL SETERR(ERRMSG,72,IXDRS,2)
+!         WRITE(I1MACH(4),2020)'INITXDR',IXDRS,'SOLZNE',MY_PE
+!         WRITE(I1MACH(4),2030)FILENAME
+!         CALL EXIT(IXDRS)
+      ENDIF
+C
+C
+      NPOLD = NPOIN
+      NVOLD = NOFVAR
+      IFAIL = IXDRINT(IXDRS,NPOIN)
+      IFAIL = IXDRINT(IXDRS,NOFVAR)
+      IF (MODE(1:1).EQ.'r'.OR.MODE(1:1).EQ.'R') THEN
+          IF (NPOIN.NE.NPOLD) THEN
+             WRITE(ERRMSG,FMT=2040)FILENAME(1:MIN(LENFN,50))
+             CALL SETERR (ERRMSG,72,1,2)
+          ENDIF
+          IF (NOFVAR.NE.NVOLD) THEN
+          WRITE(6,*)'Expecting ',NVOLD,' found : ',NOFVAR
+          CALL SETERR (31HINCONSISTENT NOFVAR IN DATAFILE,31,1,2)
+          ENDIF
+      ENDIF
+
+#ifdef PARCH_t3d
+      IFAIL = IXDRRMAT64(IXDRS,NOFVAR*NPOIN,VARRAY)
+#else
+      IFAIL = IXDRDMAT(IXDRS,NOFVAR*NPOIN,VARRAY)
+#endif
+C     CALL R8Mat_Print('General',' ',NOFVAR,NPOIN,VARRAY,NOFVAR,
+C    +            'Nodal values',IFAIL)
+      IFAIL = IXDRCLOSE(IXDRS)
+C
+      RETURN
+C
+  110 FORMAT (/,5X,'Reading solution from:'/,A,/)
+  112 FORMAT (/,5X,'Writing solution to:'/,A,/)
+  115 FORMAT (' done',/)
+C
+ 2020 FORMAT (5X,'FUNCTION ',A31,/,
+     +5X,'HAS RETURNED A NONZERO ERROR FLAG =',I6,/,
+     +5X,'IN SUBROUTINE ',A10,' ON PE =',I4)
+ 2030 FORMAT (5X,'WHILE TRYING TO OPEN FILE:',/,A75)
+!1234567890123456789012345678901234567890123456789012345678901234567890123456789012
+ 2035 FORMAT('INITXDR failed while reading ',A42)
+ 2040 FORMAT('INCONSISTENT NPOIN IN ',A50)
+C
+      END
+@
+
+
+1.12
+log
+@improved check on the character argument MODE
+@
+text
+@d13 2
+a14 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d107 1
+a107 1
+C     CALL X04CAF('General',' ',NOFVAR,NPOIN,VARRAY,NOFVAR,
+@
+
+
+1.11
+log
+@fixes a problem that occurs when the length of the string is negative
+@
+text
+@d1 10
+d12 3
+d68 1
+a68 1
+      IF (MODE.EQ.'r') THEN
+d71 2
+d74 1
+a74 1
+          WRITE (NOUT,FMT=112) FILENAME(1:LENFN)
+d91 1
+a91 1
+      IF (MODE.EQ.'r') THEN
+@
+
+
+1.10
+log
+@add some error checking
+@
+text
+@d54 1
+@
+
+
+1.9
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d19 12
+a30 1
+      INTEGER IFAIL,IXDRS,NPOLD,NVOLD
+d53 1
+d55 1
+a55 1
+          WRITE (NOUT,FMT=110) FILENAME
+d58 1
+a58 1
+          WRITE (NOUT,FMT=112) FILENAME
+d61 1
+a61 1
+      IXDRS = INITXDR(FILENAME,MODE,.FALSE.)
+d63 5
+a67 3
+          WRITE(I1MACH(4),2020)'INITXDR',IXDRS,'SOLZNE',MY_PE
+          WRITE(I1MACH(4),2030)FILENAME
+          STOP
+d76 8
+a83 6
+          IF (NPOIN.NE.NPOLD) CALL SETERR
+     +                             (30HINCONSISTENT NPOIN IN DATAFILE,
+     +                             30,1,2)
+          IF (NOFVAR.NE.NVOLD) CALL SETERR
+     +                              (31HINCONSISTENT NOFVAR IN DATAFILE,
+     +                              31,1,2)
+d105 3
+@
+
+
+1.8
+log
+@now handles error messages reurned from FXDR
+@
+text
+@d6 1
+a6 1
+      INCLUDE 'IO'
+@
+
+
+1.7
+log
+@changed PARCH_t3e into PARCH_t3d to reflect the fact
+that petscconf.h defines PARCH_t3d for the T3E
+@
+text
+@d8 2
+d22 2
+a23 2
+      INTEGER INITXDR,IXDRCLOSE,IXDRINT
+      EXTERNAL INITXDR,IXDRCLOSE,IXDRINT
+d49 7
+a55 1
+      IXDRS = INITXDR(FILENAME,MODE,.true.)
+d84 6
+a89 1
+
+@
+
+
+1.6
+log
+@bug fixed when calling INITXDR
+@
+text
+@d22 1
+a22 1
+#ifdef PARCH_t3e
+d62 1
+a62 1
+#ifdef PARCH_t3e
+@
+
+
+1.5
+log
+@version for CRAY t3e
+@
+text
+@d47 1
+a47 1
+      IXDRS = INITXDR(FILENAME,MODE)
+@
+
+
+1.4
+log
+@changed call to XDR routines to comply to rev. 2.0
+of that library
+@
+text
+@d20 9
+a28 2
+      INTEGER INITXDR,IXDRCLOSE,IXDRDMAT,IXDRINT
+      EXTERNAL INITXDR,IXDRCLOSE,IXDRDMAT,IXDRINT
+d62 3
+d66 1
+@
+
+
+1.3
+log
+@redifined I/O unit names
+@
+text
+@d20 2
+a21 2
+      INTEGER INITXDR
+      EXTERNAL INITXDR
+d24 1
+a24 1
+      EXTERNAL SETERR,XDRCLOSE,XDRDMAT,XDRINT
+d44 2
+a45 2
+      CALL XDRINT(IXDRS,NPOIN)
+      CALL XDRINT(IXDRS,NOFVAR)
+d55 1
+a55 1
+      CALL XDRDMAT(IXDRS,NOFVAR*NPOIN,VARRAY)
+d58 1
+a58 1
+      CALL XDRCLOSE(IXDRS)
+@
+
+
+1.2
+log
+@Declarations using Toolpack
+@
+text
+@a2 1
+C
+a8 4
+C
+C
+C
+C
+d62 2
+a63 2
+  110 FORMAT (/,5X,'Reading solution from ',A40,/)
+  112 FORMAT (/,5X,'Writing solution to ',A40,/)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a8 1
+C     .. Scalar Arguments ..
+d11 4
+a18 2
+C
+C
+a21 2
+C
+C
+a23 4
+C     .. Local Arrays ..
+C
+C
+C     ..
+a24 3
+C
+C
+C
+@

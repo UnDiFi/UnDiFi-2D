@@ -1,0 +1,34 @@
+#!MC 1400
+# Created by Tecplot 360 build 14.0.2.35002
+$!ALTERDATA 
+  EQUATION = '{rho} = V3*V3'
+$!ALTERDATA 
+  EQUATION = '{k} = 0.5 * ( V6*V6 + V5*V5 ) / {rho}'
+$!ALTERDATA 
+  EQUATION = '{H} = V4/V3'
+$!ALTERDATA 
+  EQUATION = '{M} = SQRT( 2.00 * {k} / (0.40 * ( {H} - {k} )) )'
+$!ALTERDATA 
+  EQUATION = '{p} = 0.40/1.40 * {rho} * ( {H} - {k} )'
+$!ALTERDATA 
+  EQUATION = '{S} = {p} / ({rho}**1.4)'
+$!ALTERDATA 
+  EQUATION = '{Pt} = {p} + {k}'
+$!ALTERDATA 
+  EQUATION = '{T} = {p} / {rho}'
+$!ALTERDATA 
+  EQUATION = '{u} = V5/V3'
+$!ALTERDATA 
+  EQUATION = '{v} = V6/V3'
+$!ALTERDATA 
+  EQUATION = '{T0} = {T} * (1.+0.2*{M}*{M})'
+$!ALTERDATA 
+  EQUATION = '{p0} = {p} * ((1.+0.2*{M}*{M})**3.5)'
+$!ALTERDATA 
+  EQUATION = '{a1} = SQRT(1.4*{p}/{rho})'
+$!ALTERDATA 
+  EQUATION = '{a2} = {u}/{M}'
+$!ALTERDATA 
+  EQUATION = '{R1+} = {a1} + 0.2*{u}'
+$!ALTERDATA 
+  EQUATION = '{R2+} = {a2} + 0.2*{u}'

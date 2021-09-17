@@ -1,0 +1,141 @@
+head	1.2;
+access
+	tesistim;
+symbols
+	release3_14_0:1.2
+	release3_13_0:1.2
+	release3_12_0:1.2
+	release3_11_0:1.2
+	release3_10_0:1.2
+	release3_8_0:1.2
+	release3_7_1:1.2
+	release3_7_0:1.2
+	release3_4_5:1.2
+	release3_4_4:1.2
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2013.01.26.12.33.05;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2008.12.03.11.16.53;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute change of variables from parameter vector to conserved
+variables; the Spalart-Allmaras viscosity is also included
+@
+
+
+1.2
+log
+@uses only the Id RCS tag (Header has been removed)
+@
+text
+@      SUBROUTINE PARM2CONS(ZROE,DUDZ,NOFVAR,NDIM)
+C
+C     $Id: parm2consSA.f,v 1.1 2008/12/03 11:16:53 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+C
+C     transformation matrix from conserved variables to
+C     parameter vector; version for the SA model 
+C
+C
+C
+C
+C     Assembles the dUdZ matrix ...
+C
+C     .. Parameters ..
+      INCLUDE 'constants.h'
+C     ..
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION DUDZ(NOFVAR,NOFVAR),ZROE(NOFVAR)
+C     ..
+C     .. Local Scalars ..
+C     ..
+      DUDZ(1,1) = TWO*ZROE(1)
+      DUDZ(1,2) = ZERO
+      DUDZ(1,3) = ZERO
+      DUDZ(1,4) = ZERO
+C
+      DUDZ(2,1) = GINV*ZROE(2)
+      DUDZ(2,2) = GINV*ZROE(1)
+      DUDZ(2,3) = GM1OG*ZROE(3)
+      DUDZ(2,4) = GM1OG*ZROE(4)
+C
+      DUDZ(3,1) = ZROE(3)
+      DUDZ(3,2) = ZERO
+      DUDZ(3,3) = ZROE(1)
+      DUDZ(3,4) = ZERO
+C
+      DUDZ(4,1) = ZROE(4)
+      DUDZ(4,2) = ZERO
+      DUDZ(4,3) = ZERO
+      DUDZ(4,4) = ZROE(1)
+C
+C     turbulent variable
+C
+      DUDZ(1,NOFVAR) = ZERO
+      DUDZ(2,NOFVAR) = ZERO
+      DUDZ(3,NOFVAR) = ZERO
+      DUDZ(4,NOFVAR) = ZROE(1)
+C
+      DUDZ(NOFVAR,1) = ZAVG(NOFVAR)
+      DUDZ(NOFVAR,2) = ZERO
+      DUDZ(NOFVAR,3) = ZERO
+      DUDZ(NOFVAR,4) = ZERO
+      DUDZ(NOFVAR,NOFVAR) = ZAVG(1)
+C
+      IF (NDIM.EQ.2) RETURN
+C
+      DUDZ(1,5) = ZERO
+      DUDZ(2,5) = GM1OG*ZROE(5)
+      DUDZ(3,5) = ZERO
+      DUDZ(4,5) = ZERO
+C
+      DUDZ(5,1) = ZROE(5)
+      DUDZ(5,2) = ZERO
+      DUDZ(5,3) = ZERO
+      DUDZ(5,4) = ZERO
+      DUDZ(5,5) = ZROE(1)
+C
+C     turbulent var
+C
+      DUDZ(5,NOFVAR) = ZERO
+      DUDZ(NOFVAR,5) = ZERO
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 2
+C     $Id: parm2cons.f,v 1.1 1999/12/27 09:31:04 aldo Exp $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.8/src/euler/RCS/parm2cons.f,v 1.1 1999/12/27 09:31:04 aldo Exp $
+@

@@ -1,0 +1,864 @@
+head	1.14;
+access
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.14
+	release3_13_0:1.14
+	release3_12_0:1.14
+	release3_11_0:1.14
+	release3_10_0:1.14
+	release3_8_0:1.14
+	release3_7_1:1.14
+	release3_7_0:1.13
+	release3_4_5:1.13
+	release3_4_4:1.13
+	release3_4_3:1.13
+	release3_4_2:1.13
+	release3_4_1:1.13
+	release3_4_0:1.13
+	release3_3_5:1.13
+	release3_3_4:1.12
+	release3_3_3:1.12
+	release3_3_2:1.12
+	release3_3_1:1.12
+	release3_3_0:1.12;
+locks; strict;
+comment	@c @;
+
+
+1.14
+date	2020.03.28.09.51.14;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2013.05.02.14.23.51;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2012.12.20.10.31.03;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2009.01.09.10.25.52;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2008.10.20.13.50.40;	author abonfi;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2005.09.22.09.03.46;	author abonfi;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.08.08.11.13.00;	author abonfi;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.08.08.07.59.48;	author abonfi;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2003.08.08.03.55.36;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2002.09.10.09.25.53;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.08.24.10.05.26;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2001.07.21.10.04.29;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.07.19.10.03.33;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.07.04.06.53.24;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@ghost cell boundary condition for compressible
+subsonic inflow/outflow
+@
+
+
+1.14
+log
+@renamed subroutine call
+@
+text
+@      SUBROUTINE BC28VII(IELEM,VCN,VCZ,VCB,PCN,KPOS,NODRES,TSTEP,NDIM,
+     +                  NOFVERT,NOFVAR,IBC)
+C
+C     $Id: bc28vii.F,v 1.13 2013/05/02 14:23:51 abonfi Exp abonfi $ 
+C
+C#define PRINT
+C
+      IMPLICIT NONE
+C
+C     Purpose:
+C     -------
+C     compute in-outflow boundary conditions for compressible
+C     flows (ghost cell approach)
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'implicit.h'
+      include 'bnd.h'
+      include 'ibc8.com'
+      include 'stream.com'
+      include 'time.com'
+      include 'three.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVAR,NOFVERT,IBC
+C
+C     On entry:
+C     --------
+C     IELEM  current boundary element
+C     NDIM   dimension of the space (2 or 3)
+C     NOFVAR number of variables (degrees of freedom)
+C            in each meshpoint
+C     NOFVERT number of vertices per element (=NDIM+1, since
+C             only triangles or tetrahedra are allowed)
+C
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION KPOS(NOFVAR,NOFVAR,*),
+     +       NODRES(NOFVAR,*),TSTEP(NOFVAR,*),PCN(nVarsInlet,NOFVERT),
+     +       VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT),VCB(NDIM,NOFVERT)
+C
+C     On entry:
+C     --------
+C     VCN(1:NDIM,1:NOFVERT) cartesian components of the normals 
+C                           to the element sides/faces
+C                           the normal to the boundary face need
+C                           to be stored in VCN(1:NDIM,NOFVERT)
+C     VCZ(1:NOFVAR,1:NOFVERT) dependent variables in the vertices
+C                           of the current (IELEM) element
+C                           the freestream values need
+C                           to be stored in VCZ(1:NOFVAR,NOFVERT)
+C     Upon return:
+C     -----------
+C     KPOS(1:NOFVAR,1:NOFVAR,1:NOFVERT-1) positive inflow parameters
+C                   in the NOFVERT-1 vertices of the boundary face
+C     NODRES(1:NOFVAR,1:NOFVERT-1) nodal residual due to the incoming
+C                   characteristics in the NOFVERT-1 vertices 
+C                   of the boundary face
+C     TSTEP(NOFVAR,1:NOFVERT) contribution to the time-step in the
+C                   vertices of the current element
+C
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION HELP,VOLUME
+      DOUBLE PRECISION ddot
+      INTEGER IVAR,IVERT,ILOCA,NORDER,NOFEQN
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DUMMY(25),KMAT(16),KNEG(16),VLEFT(16),VRIGHT(16),
+     +                 WNEG(4),WPOS(4),WR(4),DVDZ(25),DUDS(25),
+     +                 DZDU(75),TEMPA(25),
+     +                 TEMPB(NMAX*NMAX),WORK(6),wksp(NMAX*NMAX)
+C
+      DATA DVDZ,DUDS,DZDU,WORK/125*ZERO,6*ONE/
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL DAXPY,DCOPY,DGEMM,LINEARIZE,MATSPLITVII,DDOT
+C     ..
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',nVarsInlet,NOFVERT,PCN,
+     +nVarsInlet,'PCN matrix ',IFAIL)
+#endif
+C
+      VOLUME = ONE
+      CALL DINIT((NOFVAR*NOFVERT)**2,ZERO,KPOS,1)
+C
+      DO 55 IVERT = 1,NOFVERT - 1 ! outer loop over the vertices of the bndry face
+C
+C     static pressure (outlet bcs)
+C
+         WORK(1) = POUTLET
+C
+C     resp. total pressure, total temperature, n_x, n_y, n_z
+C
+         WORK(2) = PCN(1,IVERT)
+         WORK(3) = PCN(2,IVERT)
+         WORK(4) = PCN(4,IVERT)
+         WORK(5) = PCN(5,IVERT)
+         WORK(6) = PCN(6,IVERT)
+C
+         IF(    IBC.EQ.BC_TYPE_SUBS_OUTLET)THEN
+            CALL GHOST2VII(VCZ(1,IVERT),VCZ(1,NOFVERT),WORK,NDIM)
+         ELSEIF(IBC.EQ.BC_TYPE_SUBS_INLET)THEN
+            CALL GHOST8VII(VCZ(1,IVERT),VCZ(1,NOFVERT),WORK,NDIM)
+         ENDIF
+C
+#ifdef PRINT
+      write(6,*)' ibc is ',ibc,ivert,ielem
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVERT,VCZ,
+     +NOFVAR,'VCZ matrix ',IFAIL)
+      do i = 1,nofvar
+      write(6,FMT="(4(F20.12,1X))")(VCZ(i,j),j=1,nofvert)
+      enddo
+#endif
+C
+         CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,NOFVAR,
+     2                  VOLUME)
+C
+         CALL PARM2PRIM(NDIM,IELEM)
+C
+         NORDER=NDIM+1
+         NOFEQN=NDIM+2
+         CALL MATSPLITVII(IELEM,NDIM,NORDER,VCN(1,NOFVERT),DUMMY,NORDER,
+     +                 KMAT,TEMPA,KNEG,VLEFT,VRIGHT,NORDER,WR,WPOS,WNEG,
+     +                 .TRUE.)
+C
+         HELP = DDOT(NDIM,UAVG(3),1,VCN(1,NOFVERT),1)/REAL(NDIM)
+         HELP = HALF*(HELP+ABS(HELP))
+         KPOS(1,1,IVERT) = HELP
+C
+C     timestep
+C
+      IF( CHAR_TIMESTEPPING )THEN
+         HELP = MAX(ZERO,HELP) ! be careful: help must be KPOS(1,1,1)
+         DO IVAR = 1,NORDER 
+            HELP = MAX(HELP,WPOS(IVAR))
+         ENDDO 
+      ELSE ! "standard" implementation
+         HELP = ZERO
+         DO IVAR = 1, NORDER
+            HELP = HELP + WPOS(IVAR) 
+         ENDDO
+      ENDIF ! test characteristic timestepping
+      DO IVAR = 1,NOFEQN  ! =NORDER+1
+         TSTEP(IVAR,IVERT) = HELP
+      ENDDO 
+C
+C     Copy the matrix in symmetrizing variables into TEMPA
+C
+         CALL MATINS(KPOS(1,1,IVERT),NOFVAR,TEMPA,NORDER,1,1,1)
+C
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NORDER,NORDER,TEMPA,
+     +NORDER,'Reduced K matrix ',IFAIL)
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+     +NOFVAR,'KPOS(+) matrix ',IFAIL)
+#endif
+C
+C     Compute transformation matrices
+C
+         CALL SYMM2CONS(ZAVG,DUDS,NOFEQN,NDIM)
+C
+         CALL PARM2SYMM(ZAVG,DVDZ,NOFEQN,NDIM)
+C
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NOFEQN,NOFEQN,DUDS,
+     +NOFEQN,'DUDS matrix ',IFAIL)
+      CALL R8Mat_Print('General',' ',NOFEQN,NOFEQN,DVDZ,
+     +NOFEQN,'DVDZ matrix ',IFAIL)
+#endif
+C
+C     K(+) := dU/dV * K(+)
+C
+         CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,DUDS,NOFEQN,
+     +           KPOS(1,1,IVERT),NOFVAR,ZERO,TEMPB,NOFEQN)
+C
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NOFEQN,NOFEQN,TEMPB,
+     +NOFEQN,'TEMPB matrix ',IFAIL)
+#endif
+C
+C     K(+) := dU/dV * K(+) * dV/dZ
+C
+         CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,TEMPB,NOFEQN,
+     +           DVDZ,NOFEQN,ZERO,TEMPA,NOFEQN)
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NOFEQN,NOFEQN,TEMPA,
+     +NOFEQN,'TEMPA matrix ',IFAIL)
+#endif
+C
+C     Looping over the vertices of the boundary face;
+C     notice that the vertex facing the boundary face is NOFVERT
+C     and is skipped in the following loop
+C     Compute U(i) := [U(i) - U(*)] and store in TEMPB
+C
+         DO 245 IVAR = 1, NOFEQN
+            wksp((IVERT-1)*NOFVAR+IVAR) = 
+     +      VCZ(IVAR,IVERT) - VCZ(IVAR,NOFVERT) 
+  245    CONTINUE
+C
+C
+C     Compute -K(+)*[U(i) - U(*)]
+C
+      CALL DGEMV('No',NOFEQN,NOFEQN,MONE,TEMPA,NOFEQN,
+     +     wksp((IVERT-1)*NOFVAR+1),1,ZERO,NODRES(1,IVERT),1)
+C
+C     K(+) := K(+) * 2. * (dZ/dU)(ivert)
+C
+          ILOCA = (IVERT-1)*NOFEQN*NOFEQN+1
+          IF(TIMEIMPL) 
+     +    CALL MatdZdU(VCZ(1,IVERT),DZDU(ILOCA),NDIM,NOFEQN)
+          CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,TWO,TEMPA,NOFEQN,
+     +               DZDU(ILOCA),NOFEQN,ZERO,KPOS(1,1,IVERT),
+     +               NOFVAR)
+#ifdef PRINT
+      write(6,*)' ibc is ',ibc
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+     +NOFVAR,'K(+) matrix ',IFAIL)
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVert,VCZ,
+     +NOFVAR,'VCZ matrix ',IFAIL)
+!     pause
+#endif
+   55 CONTINUE ! End loop over the vertices
+#ifdef PRINT
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVERT-1,wksp,
+     +NOFVAR,'delta matrix ',IFAIL)
+      CALL R8Mat_Print('General',' ',NOFVAR,NOFVERT,NODRES,
+     +NOFVAR,'Residual matrix ',IFAIL)
+#endif
+C
+      RETURN
+
+      END
+@
+
+
+1.13
+log
+@characteristic time stepping
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.F,v 1.12 2012/12/20 10:31:03 abonfi Exp abonfi $ 
+d80 1
+a80 1
+      CALL X04CAF('General',' ',nVarsInlet,NOFVERT,PCN,
+d109 1
+a109 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ,
+d153 1
+a153 1
+      CALL X04CAF('General',' ',NORDER,NORDER,TEMPA,
+d155 1
+a155 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+d166 1
+a166 1
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,DUDS,
+d168 1
+a168 1
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,DVDZ,
+d178 1
+a178 1
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPB,
+d187 1
+a187 1
+      CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPA,
+d217 1
+a217 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+d219 1
+a219 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVert,VCZ,
+d225 1
+a225 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVERT-1,wksp,
+d227 1
+a227 1
+      CALL X04CAF('General',' ',NOFVAR,NOFVERT,NODRES,
+@
+
+
+1.12
+log
+@now passing the grid velocity among the arguments of the call
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.F,v 1.11 2009/01/09 10:25:52 abonfi Exp abonfi $ 
+d64 1
+a64 1
+      DOUBLE PRECISION SUM,VOLUME
+d87 1
+a87 1
+      DO 55 IVERT = 1,NOFVERT - 1
+d91 1
+a91 1
+      WORK(1) = POUTLET
+d95 5
+a99 5
+      WORK(2) = PCN(1,IVERT)
+      WORK(3) = PCN(2,IVERT)
+      WORK(4) = PCN(4,IVERT)
+      WORK(5) = PCN(5,IVERT)
+      WORK(6) = PCN(6,IVERT)
+d101 1
+a101 1
+      IF(IBC.EQ.BC_TYPE_SUBS_OUTLET)THEN
+d103 1
+a103 1
+      ELSEIF(IBC.EQ.BC_TYPE_SUBS_INLET)THEN
+d105 1
+a105 1
+      ENDIF
+d116 2
+a117 2
+      CALL LINEARIZE(IELEM,LALE,VCN,VCB,NDIM,NOFVERT,VCZ,NOFVAR,
+     2VOLUME)
+d119 1
+a119 1
+      CALL PARM2PRIM(NDIM,IELEM)
+d121 3
+a123 3
+      NORDER=NDIM+1
+      NOFEQN=NDIM+2
+      CALL MATSPLITVII(IELEM,NDIM,NORDER,VCN(1,NOFVERT),DUMMY,NORDER,
+d127 20
+a146 2
+      SUM = DDOT(NDIM,UAVG(3),1,VCN(1,NOFVERT),1)/REAL(NDIM)
+      KPOS(1,1,IVERT) = HALF*(SUM+ABS(SUM))
+d150 1
+a150 9
+!     ILOCA = 0
+!     DO 3 J = 2,NOFEQN
+caldo    KPOS(1,J,IVERT) = ZERO
+caldo    KPOS(J,1,IVERT) = ZERO
+!        DO 3 I = 2,NOFEQN
+!           ILOCA = ILOCA + 1
+!           KPOS(I,J,IVERT) = TEMPA(ILOCA)
+!   3 CONTINUE
+      CALL MATINS(KPOS(1,1,IVERT),NOFVAR,TEMPA,NORDER,1,1,1)
+a158 7
+C     timestep
+C
+      SUM = ZERO
+      DO 4 IVAR = 1,NORDER
+          SUM = SUM + WPOS(IVAR)
+    4 CONTINUE
+C
+d161 1
+a161 1
+      CALL SYMM2CONS(ZAVG,DUDS,NOFEQN,NDIM)
+d163 1
+a163 1
+      CALL PARM2SYMM(ZAVG,DVDZ,NOFEQN,NDIM)
+d174 1
+a174 1
+      CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,DUDS,NOFEQN,
+d184 1
+a184 1
+      CALL DGEMM('No','No',NOFEQN,NOFEQN,NOFEQN,ONE,TEMPB,NOFEQN,
+d196 4
+a199 5
+      DO 245 IVAR = 1, NOFEQN
+         wksp((IVERT-1)*NOFVAR+IVAR) = 
+     +   VCZ(IVAR,IVERT) - VCZ(IVAR,NOFVERT) 
+  245 CONTINUE
+C
+a200 1
+          TSTEP(1,IVERT) = SUM
+d204 1
+a204 1
+      CALL DGEMV('No',NOFEQN,NOFEQN,-ONE,TEMPA,NOFEQN,
+a206 10
+c     do i = 1,nofvar
+c        s=0.d0
+c        do j = 1,nofvar
+c          s=s + tempa((j-1)*nofvar+i)*wksp((IVERT-1)*NOFVAR+j)
+c        enddo
+c        nodres(i,ivert)=-s
+c     enddo
+C
+cbug  IF(.NOT.TIMEIMPL)RETURN
+C
+d223 1
+a223 1
+   55 CONTINUE
+@
+
+
+1.11
+log
+@changed number of arguments in the call to MATINS
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE BC28VII(IELEM,VCN,VCZ,PCN,KPOS,NODRES,TSTEP,NDIM,
+d4 1
+a4 1
+C     $Id: bc28vii.F,v 1.10 2008/10/20 13:50:40 abonfi Exp abonfi $ 
+d16 1
+a16 1
+      include 'constants'
+d21 2
+a22 1
+      include 'three'
+d40 1
+a40 1
+     +       VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT)
+d116 2
+a117 1
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+@
+
+
+1.10
+log
+@bug fixed: did not loop over all nodes when running
+in explicit mode
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.F,v 1.10 2008/10/20 13:48:47 abonfi Exp $ 
+d138 1
+a138 1
+      CALL MATINS(KPOS(1,1,IVERT),NOFVAR,TEMPA,NORDER,1,1)
+@
+
+
+1.9
+log
+@removed ICN from the arguments of the call
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.F,v 1.8 2005/08/08 11:13:00 abonfi Exp abonfi $ 
+d212 1
+a212 1
+      IF(.NOT.TIMEIMPL)RETURN
+@
+
+
+1.8
+log
+@the number of entries defining inflow bcs has changed
+with code version 0.11.9
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE BC28VII(IELEM,VCN,VCZ,PCN,ICN,KPOS,NODRES,TSTEP,NDIM,
+d4 1
+a4 1
+C     $Id: bc28vii.f,v 1.7 2005/08/08 07:59:48 abonfi Exp abonfi $ 
+a39 1
+      INTEGER ICN(NOFVERT) 
+d101 1
+a101 2
+            CALL GHOST2VII(VCZ(1,IVERT),ICN(IVERT)+1,VCZ(1,NOFVERT),
+     +              FLOWDIR,WORK,NDIM)
+d103 1
+a103 2
+            CALL GHOST8VII(VCZ(1,IVERT),ICN(IVERT)+1,VCZ(1,NOFVERT),
+     +              FLOWDIR,WORK,NDIM)
+@
+
+
+1.7
+log
+@fixed a serious bug when calling PARM2PRIM
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.f,v 1.6 2003/08/08 03:55:36 abonfi Exp $ 
+d19 1
+d38 2
+a39 2
+     +                 NODRES(NOFVAR,*),TSTEP(NOFVAR,*),PCN(3,NOFVERT),
+     +                 VCN(NDIM,NOFVERT),VCZ(NOFVAR,NOFVERT)
+d64 1
+a64 1
+      DOUBLE PRECISION SUM,VOLUME,s
+d66 1
+a66 1
+      INTEGER IFAIL,IVAR,IVERT,I,J,ILOCA,NORDER,NOFEQN
+d72 1
+a72 1
+     +                 TEMPB(NMAX*NMAX),WORK(5),wksp(NMAX*NMAX)
+d74 1
+a74 1
+      DATA DVDZ,DUDS,DZDU,WORK/125*ZERO,5*ONE/
+d79 4
+a82 2
+caldo CALL X04CAF('General',' ',3,NOFVERT,PCN,
+caldo+3,'PCN matrix ',IFAIL)
+d89 2
+d93 1
+a93 1
+C     resp. total pressure, total temperature, velocity
+d97 3
+a99 1
+      WORK(4) = PCN(3,IVERT)
+d108 9
+a116 7
+caldo
+c     write(6,*)' ibc is ',ibc,ivert,ielem
+c     CALL X04CAF('General',' ',NOFVAR,NOFVERT,VCZ,
+c    +NOFVAR,'VCZ matrix ',IFAIL)
+c     do i = 1,nofvar
+c     write(6,FMT="(4(F20.12,1X))")(VCZ(i,j),j=1,nofvert)
+c     enddo
+d143 6
+a148 4
+c     CALL X04CAF('General',' ',NORDER,NORDER,TEMPA,
+c    +NORDER,'Reduced K matrix ',IFAIL)
+!     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+!    +NOFVAR,'KPOS(+) matrix ',IFAIL)
+d162 7
+a168 6
+caldo
+!     CALL X04CAF('General',' ',NOFEQN,NOFEQN,DUDS,
+!    +NOFEQN,'DUDS matrix ',IFAIL)
+c     CALL X04CAF('General',' ',NOFEQN,NOFEQN,DVDZ,
+c    +NOFEQN,'DVDZ matrix ',IFAIL)
+caldo
+d174 5
+a178 2
+!     CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPB,
+!    +NOFEQN,'TEMPB matrix ',IFAIL)
+d184 4
+a187 2
+c     CALL X04CAF('General',' ',NOFEQN,NOFEQN,TEMPA,
+c    +NOFEQN,'TEMPA matrix ',IFAIL)
+d195 1
+a195 1
+	 wksp((IVERT-1)*NOFVAR+IVAR) = 
+d225 6
+a230 5
+!     write(6,*)' ibc is ',ibc
+!     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+!    +NOFVAR,'K(+) matrix ',IFAIL)
+!     CALL X04CAF('General',' ',NOFVAR,NOFVert,VCZ,
+!    +NOFVAR,'VCZ matrix ',IFAIL)
+d232 1
+d234 6
+a239 4
+c     CALL X04CAF('General',' ',NOFVAR,NOFVERT-1,wksp,
+c    +NOFVAR,'delta matrix ',IFAIL)
+c     CALL X04CAF('General',' ',NOFVAR,NOFVERT,NODRES,
+c    +NOFVAR,'Residual matrix ',IFAIL)
+@
+
+
+1.6
+log
+@boundary types for faces(edges) have been made more descriptive
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.f,v 1.5 2002/09/10 09:25:53 abonfi Exp abonfi $ 
+d111 1
+a111 1
+      CALL PARM2PRIM(IELEM,NDIM)
+@
+
+
+1.5
+log
+@the timestep array is now dimensioned NOFVAR x NOFVERT
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.f,v 1.4 2002/08/24 10:05:26 abonfi Exp abonfi $ 
+d94 1
+a94 1
+      IF(IBC.EQ.2)THEN
+d97 1
+a97 1
+      ELSEIF(IBC.EQ.8)THEN
+@
+
+
+1.4
+log
+@towards the implementation of a coupled approach
+for RANS: the number of variables NOFVAR can now
+be different from the number of mean flow equations
+(hereafter called NOFEQN)
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.f,v 1.3 2001/07/21 10:04:29 abonfi Exp abonfi $ 
+d37 1
+a37 1
+     +                 NODRES(NOFVAR,*),TSTEP(*),PCN(3,NOFVERT),
+d58 1
+a58 1
+C     TSTEP(1:NOFVERT) contribution to the time-step in the
+d183 1
+a183 1
+          TSTEP(IVERT) = SUM
+@
+
+
+1.3
+log
+@passing nodenumber to the routines that create the mirror state
+@
+text
+@d4 1
+a4 1
+C     $Id: bc28vii.f,v 1.2 2001/07/19 10:03:33 abonfi Exp abonfi $ 
+d65 1
+a65 1
+      INTEGER IFAIL,IVAR,IVERT,I,J,ILOCA,NORDER
+d70 2
+a71 1
+     +                 DZDU(75),TEMPA(25),TEMPB(25),WORK(5),wksp(25)
+a77 1
+      VOLUME = ONE
+d81 3
+d87 1
+d89 1
+d96 1
+a96 1
+     +              FLOWDIR,WORK,NDIM,NOFVAR)
+d99 1
+a99 1
+     +              FLOWDIR,WORK,NDIM,NOFVAR)
+d113 2
+a114 1
+      NORDER=NOFVAR-1
+d124 10
+a133 8
+      ILOCA = 0
+      DO 3 J = 2,NOFVAR
+         KPOS(1,J,IVERT) = ZERO
+         KPOS(J,1,IVERT) = ZERO
+         DO 3 I = 2,NOFVAR
+            ILOCA = ILOCA + 1
+            KPOS(I,J,IVERT) = TEMPA(ILOCA)
+    3 CONTINUE
+d136 2
+a137 2
+c     CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+c    +NOFVAR,'KPOS(+) matrix ',IFAIL)
+d148 1
+a148 1
+      CALL SYMM2CONS(ZAVG,DUDS,NOFVAR,NDIM)
+d150 1
+a150 1
+      CALL PARM2SYMM(ZAVG,DVDZ,NOFVAR,NDIM)
+d152 4
+a155 4
+c     CALL X04CAF('General',' ',NOFVAR,NOFVERT,DUDS,
+c    +NOFVAR,'DUDS matrix ',IFAIL)
+c     CALL X04CAF('General',' ',NOFVAR,NOFVERT,DVDZ,
+c    +NOFVAR,'DVDZ matrix ',IFAIL)
+d160 4
+a163 4
+      CALL DGEMM('No','No',NOFVAR,NOFVAR,NOFVAR,ONE,DUDS,NOFVAR,
+     +           KPOS(1,1,IVERT),NOFVAR,ZERO,TEMPB,NOFVAR)
+c     CALL X04CAF('General',' ',NOFVAR,NOFVAR,TEMPB,
+c    +NOFVAR,'TEMPB matrix ',IFAIL)
+d167 4
+a170 4
+      CALL DGEMM('No','No',NOFVAR,NOFVAR,NOFVAR,ONE,TEMPB,NOFVAR,
+     +           DVDZ,NOFVAR,ZERO,TEMPA,NOFVAR)
+c     CALL X04CAF('General',' ',NOFVAR,NOFVAR,TEMPA,
+c    +NOFVAR,'TEMPA matrix ',IFAIL)
+d177 1
+a177 1
+      DO 245 IVAR = 1, NOFVAR
+d187 1
+a187 1
+      CALL DGEMV('No',NOFVAR,NOFVAR,-ONE,TEMPA,NOFVAR,
+d202 1
+a202 1
+          ILOCA = (IVERT-1)*NOFVAR*NOFVAR+1
+d204 3
+a206 3
+     +    CALL MatdZdU(VCZ(1,IVERT),DZDU(ILOCA),NDIM,NOFVAR)
+          CALL DGEMM('No','No',NOFVAR,NOFVAR,NOFVAR,TWO,TEMPA,NOFVAR,
+     +               DZDU(ILOCA),NOFVAR,ZERO,KPOS(1,1,IVERT),
+d208 6
+a213 6
+c     write(6,*)' ibc is ',ibc
+caldo CALL X04CAF('General',' ',NOFVAR,NOFVAR,KPOS(1,1,IVERT),
+c     CALL X04CAF('General',' ',NOFVAR,NOFVAR,TEMPA,
+c    +NOFVAR,'K(+) matrix ',IFAIL)
+c     CALL X04CAF('General',' ',NOFVAR,NOFVert,VCZ,
+c    +NOFVAR,'VCZ matrix ',IFAIL)
+@
+
+
+1.2
+log
+@modifications required to introduce non-uniform
+profiles at the inlet
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE BC28VII(IELEM,VCN,VCZ,KPOS,NODRES,TSTEP,NDIM,NOFVERT,
+     +                  NOFVAR,PCN,IBC)
+d4 1
+a4 1
+C     $Id: bc28vii.f,v 1.1 2001/07/04 06:53:24 abonfi Exp abonfi $ 
+d39 1
+d90 2
+a91 2
+            CALL GHOST2VII(VCZ(1,IVERT),VCZ(1,NOFVERT),FLOWDIR,
+     +              WORK,NDIM,NOFVAR)
+d93 2
+a94 2
+            CALL GHOST8VII(VCZ(1,IVERT),VCZ(1,NOFVERT),FLOWDIR,
+     +              WORK,NDIM,NOFVAR)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+     +                  NOFVAR,IBC)
+d4 1
+a4 1
+C     $Id:$ 
+d37 1
+a37 1
+     +                 NODRES(NOFVAR,*),TSTEP(*),
+d71 1
+a71 1
+      DATA DVDZ,DUDS,DZDU/125*ZERO/
+d77 2
+a78 1
+      WORK(1) = POUTLET
+d81 6
+a86 1
+c     DO 55 IVERT = NOFVERT - 1,1,-1
+@

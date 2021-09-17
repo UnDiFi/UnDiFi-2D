@@ -1,0 +1,157 @@
+head	1.3;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_3:1.3
+	release3_3_2:1.3
+	release3_3_1:1.3
+	release3_3_0:1.2;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2013.01.26.12.01.29;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2002.09.13.15.59.50;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2002.08.23.08.18.47;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Computes laminar and turbulent viscosity for
+the Spalart-Allmaras model; segregated approach
+@
+
+
+1.3
+log
+@changed the name of included files
+@
+text
+@      SUBROUTINE EVALTSA(IELEM,DUMMY1,DUMMY2,NDIM,NOFVERT,NOFVAR,NTURB,
+     &                   DUMMY3,DUMMY4,DUMMY5,DUMMY6,LFLAG,SDUMMY1,
+     &                   SDUMMY2,ZTURB,COMPRESSIBLE,VISCL,VISCT)
+C
+C     $Id: tsa1.f,v 1.2 2002/09/13 15:59:50 abonfi Exp abonfi $
+C
+C
+C     RETURNS a cell-averaged value of the turbulent viscosity
+C     computed using the Spalart-Allmaras model
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'three.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,NTURB
+      DOUBLE PRECISION DENSIT,VISCL
+      DOUBLE PRECISION DUMMY1,DUMMY2,DUMMY3,DUMMY4,DUMMY5,DUMMY6
+      LOGICAL LFLAG,COMPRESSIBLE
+      EXTERNAL SDUMMY1,SDUMMY2
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ZTURB(NTURB,*)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I
+      DOUBLE PRECISION VISCT,TCHI
+C
+      DOUBLE PRECISION TFV1,SUTHERLAW
+      EXTERNAL TFV1,SUTHERLAW
+C     ..
+      VISCT = ZERO
+      DO 1 I = 1,NOFVERT
+          VISCT = VISCT + ZTURB(1,I)
+    1 CONTINUE
+      VISCT = VISCT/NOFVERT
+      IF(COMPRESSIBLE)THEN
+         VISCL = SUTHERLAW(ZERO,ABAR,ASQR)
+         DENSIT= UAVG(1)
+      ELSE
+         VISCL = ONE
+         DENSIT= ONE
+      ENDIF
+      VISCT = MAX(ZERO,VISCT)
+      TCHI = (DENSIT*VISCT)/VISCL
+      VISCT = DENSIT*VISCT*TFV1(TCHI)
+
+      RETURN
+
+      END
+@
+
+
+1.2
+log
+@the list of arguments has been expanded to allow
+compatibility with other routines (coupled approach for RANS)
+@
+text
+@d5 1
+a5 1
+C     $Id: tsa1.f,v 1.1 2002/08/23 08:18:47 abonfi Exp abonfi $
+d14 2
+a15 1
+      INCLUDE 'three'
+d34 1
+a34 1
+      VISCT = 0.D0
+d40 1
+a40 1
+         VISCL = SUTHERLAW(0.d0,ABAR,ASQR)
+d43 2
+a44 2
+         VISCL = 1.d0
+         DENSIT= 1.d0
+d46 1
+a46 1
+      VISCT = MAX(0.d0,VISCT)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE EVALTSA(ZTURB,NTURB,NOFVERT,arg4,arg5,
+     &                   COMPRESSIBLE,VISCL,VISCT)
+d5 1
+a5 1
+C     $Id:$
+d17 5
+a21 3
+      INTEGER NOFVERT,NTURB
+      DOUBLE PRECISION DENSIT,VISCL ,arg4,arg5
+      LOGICAL COMPRESSIBLE
+@

@@ -1,0 +1,892 @@
+!> \par Purpose
+!>
+!> My own time stepping routine; both for steady and un-steady
+!>
+!> @param[in,out] ZROE is the PETSc vec that stores the dependent variables
+!> @param[in,out] VISCT is the PETSc vec that stores the turbulent variable(s)
+!> @param[in,out] PetscMatrix(1,2,3) are PETSc Mats that store: (1) the Jacobian matrix of the mean flow equations; (2) the Jacobian matrix of
+!the turbulent transport equations; (3) the matrix used for solving Laplace's equation for grid motion
+!> @param[in] NodalBcs is an un-used integer
+!> @param[in] IWORK is an integer work array used to pass some mesh information
+!>
+!> \author $Author: abonfi $
+!> \version $Revision: 1.53 $
+!> \date $Date: 2020/04/25 10:18:01 $
+!>
+!>
+      SUBROUTINE myTS(ZROE,VISCT,PetscMatrix,NodalBcs,IWORK)
+C
+C     $Id: myTS.F,v 1.53 2020/04/25 10:18:01 abonfi Exp $
+C
+CCC#define DUMP_EACH_STEP
+CCCC#define DEBUG
+CCC#define XPRINT
+C
+#include "petsc/finclude/petscksp.h"
+#include "petsc/finclude/petscts.h"
+      use petscksp
+      use petscts
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'datatype.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'time.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'time.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'backup.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'io.com'
+C
+CCCCCCCCC#include "solver.com"
+C
+C
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON/CSTAK/DSTAK
+C
+      INTEGER ISTAK(1),IWORK(*)
+C     ..
+C     .. Petsc Vectors ..
+      Vec rhs,dt,ZRoe,ViscT
+      Vec rhs_t
+C     ..
+C     .. Petsc Vectors ..
+      IS, dimension (0:*) :: NodalBcs
+C     ..
+C     .. Petsc Matrices ..
+      Mat, dimension(*) :: PetscMatrix 
+C     ..
+C     .. Petsc KSP ..
+      KSP FlowSolver,TurbulenceSolver,MotionSolver
+C     .. Other Petsc stuff ..
+      MatStructure str
+      TS ts_dummy
+      PetscLogDouble MAXS
+      PetscLogDouble tbeg,tbegall
+#ifdef DEBUG
+      integer locy,locv,IFLAG
+      character*8 fname
+      double precision tmin(MAXNOFVAR),TMAX(MAXNOFVAR),
+     &WKSP5(3*MAXNOFVAR)
+      integer indx(MAXNOFVAR)
+      double precision s
+      PetscScalar      x_array(1)
+      PetscScalar      b_array(1),dt_v(1)
+      PetscOffset i_x,dt_i,idx_i
+#endif
+#ifdef DUMP_EACH_STEP
+      character*20 fullname
+#endif
+      DOUBLE PRECISION sumdiv
+      COMMON/def/sumdiv
+caldo
+      integer J,IADDR
+#ifdef XPRINT
+      DOUBLE PRECISION DNRM2
+#endif
+caldo
+C
+cxxx  COMMON/MYTSCOM/MatA,MatB,MatC,DT
+C     ..
+C     .. Local Scalars ..
+C
+      INTEGER NERR,IOPT,IOK
+      CHARACTER*72 ERRMSG
+      PARAMETER(NERR = 5, IOPT = 1)
+C
+C     NPOIN   number of nodes in the mesh
+C     NELEM   number of elements in the mesh
+C     NFACE   number of faces in the mesh
+C     NBFAC   number of boundary faces in the mesh
+C
+C
+C     DIM     is the space dimension
+C     NOFVERT = DIM+1 is the number of vertices (ONLY linear elements
+C                     are currently allowed)
+C
+C
+      INTEGER NDIM,IFAIL,LWORK,NIT,NGHOST,NBFAC,NELEM,NFACE,ILEV,NBINT,
+     +NOFVAR,NTURB,NOFVERT,NPOIN,NPNOD,ITIMS,ITIME,NITEMS,
+     3NPROBES,NHOLE
+
+      INTEGER SLEN(3)
+      DOUBLE PRECISION TIME
+#ifdef MPI
+      INTEGER LGHOST
+#endif
+C     ..
+C     .. External Subroutines ..
+C
+C     ..
+C     .. External Functions ..
+C
+      INTEGER ISTKGT,ISTKST,I1MACH
+      EXTERNAL ISTKGT,ISTKST,I1MACH
+      CHARACTER*256 OUTFNAME(3)
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DLOG10,IABS,LOG10
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C
+      NDIM   =IWORK(1)
+      NOFVERT=IWORK(2)
+      NOFVAR =IWORK(3)
+      NTURB  =IWORK(4)
+      NPOIN  =IWORK(5)
+      NGHOST =IWORK(6)
+      NELEM  =IWORK(7)
+      NFACE  =IWORK(8)
+      NBFAC  =IWORK(9)
+      NPNOD  =IWORK(10)
+      NPROBES  =IWORK(11)
+      NHOLE = IWORK(12)
+      NBINT = IWORK(13)
+caldo
+      IADDR = LMEDIAN 
+C
+      DO ILEV = 1,256
+         OUTFNAME(1)(ILEV:ILEV) = " "
+         OUTFNAME(2)(ILEV:ILEV) = " "
+         OUTFNAME(3)(ILEV:ILEV) = " "
+      ENDDO 
+C
+C **************************************************************
+C     Create linear solver context (for implicit timestepping only)
+C **************************************************************
+C
+      IF( TIMEIMPL )THEN
+          CALL KSPCreate(PETSC_COMM_WORLD,FlowSolver,IFAIL)
+C
+C         by keeping KSPSetFromOptions() outside the iteration loop 10
+C         we make sure options are read once and forall
+C
+          CALL KSPSetFromOptions(FlowSolver,IFAIL)
+C
+          IF( TURBULENT .AND. SEGREGATED )THEN
+C
+              CALL KSPCreate(PETSC_COMM_WORLD,TurbulenceSolver,IFAIL)
+              CALL KSPSetFromOptions(TurbulenceSolver,IFAIL)
+C
+          ENDIF
+      ENDIF
+C
+C     Create vectors to keep the right hand side
+C
+      CALL VecDuplicate(ZROE,RHS,IFAIL)
+      IF( TURBULENT .AND. SEGREGATED )
+     &CALL VecDuplicate(VISCT,RHS_T,IFAIL)
+C
+      IF(LTIME.AND.LALE)THEN
+c
+c         make a copy of the coordinates x^0 into the third set of locations
+c         |---- n ----| |----XXX----| |---- 0 ----|
+c
+c         the third set of coordinates should always keep the initial (or fixed grid)
+c         and never be updated; it will be used to move/deform the grid in ALE calculations
+c
+            NITEMS = (NPOIN+NGHOST+NPNOD)*NDIM
+            J = LCORG + NITEMS
+            CALL DINIT(NITEMS,1.D+5,DSTAK(J),1) ! fill the second set with large values just for de-bugging
+            J = LCORG + 2*NITEMS
+            CALL DCOPY(NITEMS,DSTAK(LCORG),1,DSTAK(J),1)
+C
+         IF( ALE_LAPLACE_GRID )THEN
+            CALL KSPCreate(PETSC_COMM_WORLD,MotionSolver,IFAIL)
+         ENDIF
+      ENDIF ! LALE
+C
+C    here we are at n=0, i.e. at t=0; for the time being, volumes at (n-1) and (n-2)
+C    are the same as those at t=n, see main.F 
+C
+C    LZROE       |---- n   ----| |---- n-1 ----| |---- n-2 ----|
+C    LCORG       |---- n   ----| |---- XXX ----| |----  0  ----|
+C    LMEDIAN     |---- n   ----| |---- XXX ----|
+C    LVOL        |---- n   ----| |----  n  ----| |---- n-1 ----| |---- n-2 ----|
+C    LFACNOR     |---- n   ----|
+C
+      TIME = ZERO
+      ITIM = 0
+      ITIMS=ITIM+1
+      ITIME=ITIM+ITSTEP
+C
+C     Check the integral before the time loop begins
+C
+      IF(IABS(KAN).EQ.4.AND.LDUMP(5)) ! only for compressible flows, at present
+     1       CALL CHKINT(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     2                  DSTAK(LXYZDOT),DSTAK(LVOL),DSTAK(LZROE),
+     3                  NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     4                  NTURB,TIME)
+caldo
+caldo open(UNIT=97,FILE='ale2.log')
+caldo call print4check(DSTAK(Lcorg),DSTAK(Lvol),DSTAK(Lmedian),
+caldo&DSTAK(Lfacnor),ndim,(NGHOST+NPNOD+NPOIN),nelem,
+caldo&TIME,'Before iterating in real-time ',97)
+C
+C======================================================
+C.....START TIME LOOP
+C======================================================
+C
+      DO 400 ITIM=ITIMS,ITIME ! loop over physical time
+         TIME=TIME+DELT ! this is time at n+1
+C
+         IF(MY_PE.EQ.0)THEN
+            WRITE(IWUNIT,FMT=310)ITIM,TIME,DELT
+            WRITE(IWUNIT,FMT=315)
+         ENDIF
+
+         IF(LTIME)THEN
+C
+C    we are at time level n and we are about to start iterating in pseudo time (if DUALTS = .TRUE.) to advance to time level n+1
+C
+C    at this stage, the following vectors are organized as follows: 
+C
+C    LZROE       |---- n   ----| |---- n-1 ----| |----n-2----|
+C    LCORG       |---- n   ----| |---- XXX ----| |---- 0 ----|
+C    LMEDIAN     |---- n   ----| |---- XXX ----| |----XXX----|
+C    LVOL        |---- n   ----| |----  n  ----| |----n-1----| |----n-2----|
+C    LFACNOR     |---- n+a ----|
+C
+#ifdef MPI
+C
+C     update the ghost regions of the input vector
+C     with correct values from the owning process
+C
+            CALL VecGhostUpdateBegin(ZROE,INSERT_VALUES,
+     &                         SCATTER_FORWARD,IFAIL)
+            CALL VecGhostUpdateEnd(ZROE,INSERT_VALUES,
+     &                       SCATTER_FORWARD,IFAIL)
+C
+#endif
+C
+C.....SHIFT SOLUTIONS IN TIME (OOLD = OLD, OLD = CURRENT)
+C
+            NITEMS = (NGHOST+NPNOD+NPOIN)*NOFVAR
+            DO ILEV = MAXTIMLEVS,2,-1
+                CALL DCOPY(NITEMS,DSTAK(LZROE+(ILEV-2)*NITEMS),1,
+     &                            DSTAK(LZROE+(ILEV-1)*NITEMS),1)
+            ENDDO
+            IF( TURBULENT .AND. SEGREGATED )THEN
+                NITEMS = (NGHOST+NPNOD+NPOIN)*NTURB
+                DO ILEV = MAXTIMLEVS,2,-1
+                    CALL DCOPY(NITEMS,DSTAK(LTURB+(ILEV-2)*NITEMS),1,
+     &                                DSTAK(LTURB+(ILEV-1)*NITEMS),1)
+                ENDDO ! TIME LEVS
+            ENDIF
+C
+C.....SHIFT VOLUMES IN TIME (OOLD = OLD, OLD = CURRENT)
+C
+            IF( LTIME .AND. LALE )THEN
+                DO ILEV = MAXTIMLEVS,2,-1
+                    CALL DCOPY(NELEM,DSTAK(LVOL+(ILEV-1)*NELEM),1,
+     &                               DSTAK(LVOL+(ILEV  )*NELEM),1)
+                ENDDO ! TIME LEVS
+            ENDIF
+C
+C    This is how ZROE and LVOL look like after the shift:
+C
+C    LZROE       |---- n   ----| |----  n  ----| |----n-1----|
+C    LVOL        |---- n   ----| |----  n  ----| |---- n ----| |----n-1----|
+C
+C
+C    Here handle time differencing at the first iteration
+C
+            IF(ITIM.EQ.1)THEN ! test at the first time step only
+C
+               IF(ABS(GAMT).LE.1.D-7)THEN
+C
+C        if I have chosen GAMT=0, then I want to use the 1st order accurate
+C        time integration scheme: there is nothing to be done
+C
+               ELSE
+C
+C        otherwise I check whether the restart file with the solution at the 
+C        (n-1) time level is available
+C
+                  IF((.NOT.LFOOLD))THEN
+                     GAMT = ZERO ! It isn't: I use the first order accurate scheme in the first iteration ONLY
+                  ELSE
+                     GAMT = ONE
+                  ENDIF
+               ENDIF
+            ELSE ! If not at the first time step, use the backup copy
+               GAMT = GAMTBAK
+            ENDIF ! test on ITIM
+            TCOEF(-1) = (HALF*GAMT)
+            TCOEF( 0) =-(ONE+GAMT)
+            TCOEF( 1) = (ONE+HALF*GAMT)
+!        IF(MY_PE.EQ.0)write(6,*)(tcoef(ILEV),ILEV=-1,1,1)
+         ENDIF ! LTIME
+C
+caldo call print4check(DSTAK(Lcorg),DSTAK(Lvol),DSTAK(Lmedian),
+caldo&DSTAK(Lfacnor),ndim,(NGHOST+NPNOD+NPOIN),nelem,
+caldo&TIME,'Before iterating in pseudo-time ',97)
+C
+C
+       IF(LTIME.AND.LALE)THEN
+            IADDR = LMEDIAN + (NPOIN+NGHOST+NPNOD) ! points to the median dual cell at time level n+1
+c
+c    REM: here in NEWGEO() we re-compute some grid metrics, more precisely:
+c         a) measures of the triangle/tetrahedra (LVOL) are stored in VOL(NELEM+1:2*NELEM)
+c         b) measures of the median dual control volumes (LMEDIAN) are stored in MEDIAN(NP+1:2*NP)
+c         c) face normals (LFACNOR) are overwritten on the current ones 
+c         d) cell to face pointers (LCELFAC) are overwritten on the current ones, but should not change
+c         anyway, since it is assumed that the connectivity is un-changed 
+c         e) grid velocities LXYZDOT
+c
+c    this has to be done BEFORE calculating the residual i.e. before calling RHSFunction
+c
+c    in NEWGEO all metrics are updated at some time which is intermediate btw n and n+1 
+c    the areas/volumes of the median dual CVs are however those at n+1 since these
+c    are only needed to update the solution, not to compute the residual
+c
+c    This is how the layout of the following 4 vectors should be organized BEFORE
+c    NEWGEO is called 
+c    a XXX means that those entries are irrelevant 
+c
+cc    LCORG       |---- n   ----| |---- XXX ----| |---- 0 ----|
+cc    LMEDIAN     |---- n   ----| |---- XXX ----| |---- n ----|
+cc                                                    qui dovremmo avere:
+cc    LVOL        |---- n   ----| |----  n  ----| |---- n ----| |---- n-1 ----|
+cc    LFACNOR     |---- n   ----|
+c
+CC
+#if 1
+C
+C     This is a debugging tool that is meant to be used to check whether
+C     those entries are really un-influential in the calculation
+C
+               NITEMS = (NPOIN+NGHOST+NPNOD)
+               J = LMEDIAN + NITEMS
+               CALL DINIT(NITEMS,1.D+5,DSTAK(J),1)
+               NITEMS = (NPOIN+NGHOST+NPNOD)*NDIM
+               J = LCORG + NITEMS
+               CALL DINIT(NITEMS,1.D+5,DSTAK(J),1)
+caldo          J = LVOL + NELEM
+caldo          CALL DINIT(NELEM,1.D+5,DSTAK(J),1)
+caldo          J = LVOL + 2*NELEM
+caldo          CALL DINIT(NELEM,1.D+5,DSTAK(J),1)
+#endif
+CC
+               CALL NEWGEO(MotionSolver,PetscMatrix(3),NodalBcs,
+     2                     ISTAK(LCELNOD),ISTAK(LCELCEL),ISTAK(LPMAP),
+     2                     ISTAK(LCELFAC),DSTAK(LFACNOR),DSTAK(LVOL),
+     3                     DSTAK(LMEDIAN),DSTAK(LCORG),DSTAK(LXYZDOT),
+     3                     ISTAK(LBNDFAC), 
+     4                     NDIM,NOFVERT,NELEM,NPOIN,NGHOST,NPNOD,NFACE,
+     5                     NBFAC,NBINT,NHOLE,TIME)
+       ENDIF ! Arbitrary Lagrangean Eulerian
+C
+C    this is how the following three vectors are organized AFTER NEWGEO has been called
+C    here n is the time level and a = ALFALE (typically = 0.5)
+C
+C    LCORG       |---- n+a ----| |---- n+1 ----| |---- 0 ----|
+C    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+C    LVOL        |---- n+a ----| |---- n+1 ----| |---- n ----| |----n-1----|
+C    LFACNOR     |---- n+a ----|
+C
+C    Warning: these vectors (LCORG,LMEDIAN,LVOL,LFACNOR) are further shifted below
+C
+C **************************************************************
+C     Start iterating in pseudo-time (inner iterations)
+C **************************************************************
+C
+      CALL PetscTime(tbegall,IFAIL)
+C
+      OMEGA = ONE
+      DO 10 ITER = 1,ITMAX
+C
+          CALL PetscTime(tbeg,IFAIL)
+caldo
+#ifdef XPRINT
+            NITEMS = (NGHOST+NPNOD+NPOIN)
+            write(6,*)'ITIM = ',ITIM,' ITER = ',ITER
+            DO ILEV = 1,MAXTIMLEVS
+                K = LZROE+(ILEV-1)*NITEMS*NOFVAR
+                DO J = 0,NOFVAR-1
+                   S= DNRM2(NITEMS,DSTAK(K+J),NOFVAR)
+                   write(6,*)' ILEV = ',ILEV ,' IVAR = ',J,' S = ',S
+                ENDDO
+            ENDDO
+caldo
+#endif
+C
+          NITER = NITER + 1
+C
+C +------------------------------------------------------------+
+C     create a vector to store the local timestep
+C +------------------------------------------------------------+
+C
+#ifdef MPI
+C
+C -- set 0-based indexing; uses block indexing since petsc-3.3 
+C
+          LGHOST = ISTKGT(NGHOST,KIND_INTEGER)
+          CALL GETIDX(NGHOST,1,ISTAK(LTZX),ISTAK(LGHOST))
+C
+C -- create the time-step vector
+C
+          CALL VecCreateGhostBlock(PETSC_COMM_WORLD,NOFVAR,NPOIN*NOFVAR,
+     +                        PETSC_DECIDE,NGHOST,ISTAK(lghost),
+     +                        DT,IFAIL)
+!         WRITE(6,*)'VecCreateGhostBlock (MPI) has ret ',IFAIL,MY_PE
+C
+C -- release memory allocated for LGHOST
+C
+          CALL ISTKRL(1)
+C
+C
+#else
+C
+          CALL VecCreate(PETSC_COMM_SELF,DT,IFAIL)
+          CALL VecSetType(DT,VECSEQ,IFAIL)
+          CALL VecSetBlockSize(DT,NOFVAR,IFAIL)
+          CALL VecSetSizes(DT,NPOIN*NOFVAR,PETSC_DECIDE,IFAIL)
+C
+#endif
+C
+C
+caldo
+#ifdef DEBUG
+      CALL VecNorm(ZROE,NORM_2,s,IFAIL)
+      write(6,*)' ||Z|| upon entry = ',s
+#endif
+C
+C         Compute the residual         
+C
+          CALL RHSFunction(ts_dummy,tbeg,DT,ZROE,RHS,PetscMatrix(1),
+     &                     IWORK,NodalBcs)
+C
+          IF( TIMEIMPL )
+     1    CALL RHSJacobian(ts_dummy,tbeg,ZROE,PetscMatrix(1),
+     2                     PetscMatrix(1),str,IWORK)
+C
+C         Update the solution
+C
+          IF(ABS(KAN).EQ.1)THEN ! scalar problems
+              CALL UPDATE2(NDIM,NOFVAR,NPOIN,FlowSolver,PetscMatrix(1),
+     &                     RHS,DT,ZROE,DSTAK(LMEDIAN),DSTAK(IADDR),
+     2                     NodalBcs) ! Median Dual Cells at n and n+1
+#ifdef DEBUG
+      CALL VecNorm(ZROE,NORM_2,s,IFAIL)
+      write(6,*)' ||Z|| before leaving = ',s
+#endif
+C
+          ELSE
+              IF(IABS(KAN).EQ.4)THEN ! this is for Euler or NS
+                  CALL PARM_TO_CONS(DSTAK(LZROE), NDIM,
+     +                              NOFVAR,NPOIN+NGHOST,LTSQR,IFAIL)
+              ELSEIF(KAN.EQ.-3)THEN ! this is for the Argon plasma
+                  CALL PARM_TO_CONS4Ar(DSTAK(LZROE), NDIM,
+     +                              NOFVAR,NPOIN+NGHOST,.FALSE.,IFAIL)
+              ENDIF  ! KAN
+C
+#ifdef DEBUG
+!     do ivar = 1,NOFVAR
+!     CALL VecStrideNorm(DT,IVAR-1,NORM_2,S,IFAIL) 
+!     if(MY_PE.EQ.0)write(6,*)'ivar = ',ivar,' DT(before update) = ',s
+!     enddo
+      CALL FindVecStrideMinMax(DT,TMIN,TMAX,INDX,WKSP5,NDIM)
+      do ivar = 1,NOFVAR
+      if(MY_PE.EQ.0)write(6,*)'ivar = ',ivar,' min/max = ',tmin(ivar),
+     &tmax(ivar)
+      enddo
+      do ivar = 1,NOFVAR
+      CALL VecStrideNorm(RHS,IVAR-1,NORM_2,S,IFAIL) 
+      if(MY_PE.EQ.0)write(6,*)'ivar = ',ivar,' rhs(before update) = ',s
+      enddo
+C
+C      REM: testlhs MUST be called when ZROE stores the vector of conserved variables
+C
+              CALL PetscOptionsHasName(PETSC_NULL_OBJECT,
+     +             PETSC_NULL_CHARACTER,'-test_lhs',IFLAG,IFAIL)
+              IF(IFLAG.NE.0)THEN
+                  locy = istkgt(npoin*nofvar,4)
+                  locv = istkgt(npoin*nofvar,4)
+                  call testlhs(PetscMatrix(1),ZROE,RHS,DSTAK(LOCY),
+     +                         DSTAK(LOCV),ISTAK(LNODCOD),NPOIN,NOFVAR)
+                  CALL ISTKRL(2)
+                  call EXIT(0)
+              ENDIF
+#endif
+C
+              CALL UPDATE3(NDIM,NOFVAR,NPOIN,FlowSolver,PetscMatrix(1),
+     &                     RHS,DT,ZROE,DSTAK(LMEDIAN),DSTAK(IADDR),
+     3                     NodalBcs) ! Median Dual Cells at n and n+1
+ 
+              IF (IABS(KAN).EQ.4) THEN ! compressible eqns. only
+C
+C             REM: ghost values have NOT been updated in UPDATE3
+C
+                 CALL CONS_TO_PARM(DSTAK(LZROE), NDIM,
+     +                             NOFVAR,NPOIN+NGHOST,LTSQR,IFAIL)
+              ELSEIF(KAN.EQ.-3)THEN ! plasma eqns. only
+C
+C             REM: ghost values have NOT been updated in UPDATE3
+C
+                 CALL CONS_TO_PARM4Ar(DSTAK(LZROE), NDIM,
+     +                             NOFVAR,NPOIN+NGHOST,.FALSE.,IFAIL)
+              ELSE
+                 IFAIL = 0
+              ENDIF ! KAN
+              IF(IFAIL.NE.0)THEN
+                    WRITE(ERRMSG(1:64),FMT=105)'myTS______',MY_PE,"(0)"
+                    CALL SETERR(ERRMSG(1:64),64,NERR,IOPT)
+              ENDIF   ! ifail
+          ENDIF ! KAN
+C
+C    Turbulent equations
+C
+          IF( TURBULENT .AND. SEGREGATED )THEN
+C
+#ifdef MPI
+C
+C     update the ghost regions of the Z (parameter) vector
+C     with correct values from the owning process
+C     this is required because UPDATE3 does NOT update ghost values
+C
+      CALL VecGhostUpdateBegin(ZROE,INSERT_VALUES,
+     &                         SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(ZROE,INSERT_VALUES,
+     &                       SCATTER_FORWARD,IFAIL)
+C
+#endif
+C
+              DO 7 NIT = 1,NSUBIT
+C
+C     create a vector to store the local timestep
+C     note that the timestep vector (DT) had been destroyed
+C     in the UPDATE_ routines
+C
+#ifdef MPI
+C
+              LGHOST = ISTKGT(NGHOST,KIND_INTEGER)
+              CALL GetIdx(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+              CALL VecCreateGhost(PETSC_COMM_WORLD,NPOIN,PETSC_DECIDE,
+     +                            NGHOST,ISTAK(lghost),DT,IFAIL)
+              CALL ISTKRL(1)
+C
+#else
+C
+              CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN,DT,IFAIL)
+#endif
+C
+              CALL RHSFunction_t(ts_dummy,tbeg,DT,VISCT,RHS_T,
+     &                           PetscMatrix(2),IWORK,NodalBcs)
+C
+              CALL RHSJacobian_t(ts_dummy,tbeg,VISCT,PetscMatrix(2),
+     &                           PetscMatrix(2),str,IWORK)
+c
+              CALL UPDATE4(NDIM,NTURB,NPOIN,TurbulenceSolver,
+     +                 PetscMatrix(2),RHS_T,ViscT,DT,NIT,IFAIL,NodalBcs)
+C
+              IF(IFAIL.EQ.0)GOTO 9
+C
+    7         CONTINUE ! sub-iterations for turbulence 
+    9         CONTINUE
+#ifdef MPI
+C
+C     update the ghost regions of the VISCT vector
+C     with correct values from the owning process
+C     this is needed because UPDATE4 does NOT update ghost locations
+C
+      CALL VecGhostUpdateBegin(VISCT,INSERT_VALUES,
+     &                         SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(VISCT,INSERT_VALUES,
+     &                       SCATTER_FORWARD,IFAIL)
+C
+#endif
+C
+          ENDIF  ! turbulent flows
+C
+C
+C  =========================================================
+C  Check NONlinear convergence (on inner iterations)
+C  =========================================================
+C
+!         IF (LOG10(RESL2(IVCNVG,1)/RESL20(1)).LE.TOLER) GOTO 12
+          IF (LOG10(RESL2(IVCNVG,1)).LE.TOLER) THEN
+             IOK = 0
+             GOTO 12
+          ENDIF
+C
+C  =========================================================
+C  Backing up during inner iterations (each IBAK inner iterations)
+C  applies only to steady-state calculations (i.e. when LTIME=.FALSE.)
+C  =========================================================
+C
+          IF( (.NOT.LTIME).AND.((ITER/IBAK)*IBAK.EQ.ITER) ) THEN 
+             LWORK = ISTKGT(MAX(NOFVAR,NTURB)*NPNOD,2)
+             CALL BACKUP(NPOIN,NPNOD,NGHOST,NOFVAR,NTURB,ISTAK(LPMAP),
+     2            ISTAK(LWORK),BAKFILE,VISCTFILE,FOLDFILE)
+             CALL ISTKRL(1)
+             IF(IABS(KAN).NE.1)THEN
+                CALL CHKFLX(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELFAC),
+     1                      ISTAK(LCELNOD),NOFVERT,NELEM,DSTAK(LFACNOR),
+     2                      DSTAK(LZROE),DSTAK(LXYZDOT),NOFVAR,NDIM,
+     3                      NFACE,(IABS(KAN).EQ.4),LDUMP(4),ITER)
+C
+C  Checks the telescoping property of the residual; CHKFLX2 does
+C  not work properly in the coupled RANS case, in which case we skip it
+C
+                IF(.NOT.(TURBULENT.AND.COUPLED))
+     &          CALL CHKFLX2(ISTAK(LCELNOD),ISTAK(LCELFAC),
+     1                       DSTAK(LFACNOR),DSTAK(LXYZDOT),DSTAK(LVOL),
+     2                       DSTAK(LZROE),NELEM,NPOIN,NGHOST,NPNOD,NDIM,
+     3                       NOFVERT,NOFVAR,NTURB)
+             ENDIF
+C
+C     Write skin friction data to a file
+C
+#ifndef MPI
+#if 1
+Crem
+Crem  core dumps
+Crem
+              LWORK = ISTKGT(2*NBFAC,2)
+              CALL WSKIN(DSTAK(LSKINF),DSTAK(LHEAT),ISTAK(LWORK),NWFAC,
+     +        ISTAK(LBNDFAC),NBODY6,'file016.dat')
+              CALL ISTKRL(1)
+#endif
+#endif
+C
+C
+C **************************************************************
+C     Checking memory usage
+C **************************************************************
+C
+              CALL PetscMemoryGetCurrentUsage(MAXS,IFAIL)
+!             CALL PetscMemoryGetMaximumUsage(MAXSIZ,IFAIL)
+              WRITE (NOUT,FMT=9998) ISTKST(3)/2, (ISTKST(3)*100.)/ISTKST
+     +        (4)
+              WRITE (NOUT,FMT=9999) MAXS
+C
+          ENDIF ! if on IBAK
+C
+   10 CONTINUE ! end loop over ITER (pseudo-time loop ot inner iterations)
+      IOK = ITER
+   12 CONTINUE ! point where it jumps when convergence is reached
+C
+C    this is how the following three vectors are organized after NEWGEO has been called
+C    here n is the time level and a = ALFALE (typically = 0.5)
+C
+C    LCORG       |---- n+a ----| |---- n+1 ----| |---- 0 ----|
+C    LMEDIAN     |---- n   ----| |---- n+1 ----| |---- n ----|
+C    LVOL        |---- n+a ----| |---- n+1 ----| |---- n ----| |----n-1----|
+C    LFACNOR     |---- n+a ----|
+C
+C
+C         Put the new (n+1) coordinates and cell volumes
+C         back into the first locations of LCORG and LVOL
+C         for later use in the next physical time step
+C
+       IF( LTIME .AND. LALE )THEN
+           NITEMS = (NPOIN+NGHOST+NPNOD)*NDIM
+           CALL DCOPY(NITEMS,DSTAK(LCORG+NITEMS),1,DSTAK(LCORG),1)
+C    LCORG       |---- n+1 ----| |---- n+1 ----| |---- 0 ----|
+C                       ^               |
+C                       |               |
+C                       +---------------+ 
+C         thre is no need to do so for the median dual cell volumes, so: why do I do so?
+           NITEMS = (NPOIN+NGHOST+NPNOD)
+           CALL DCOPY(NITEMS,DSTAK(LMEDIAN+NITEMS),1,
+     2                       DSTAK(LMEDIAN)       ,1)
+C
+           CALL DCOPY(NELEM,DSTAK(LVOL+NELEM),1,DSTAK(LVOL),1)
+C    LVOL        |---- n+1 ----| |---- n+1 ----| |---- n ----| |---- n-1 ----|
+C                       ^               |
+C                       |               |
+C                       +---------------+ 
+C
+C    this is how the following three vectors are organized NOW
+C    here n is the time level and a = ALFALE (typically = 0.5)
+C
+C    LCORG       |---- n+1 ----| |---- n+1 ----| |---- 0 ----|
+C    LMEDIAN     |---- n+1 ----| |---- n+1 ----| |---- n ----|
+C    LVOL        |---- n+1 ----| |---- n+1 ----| |---- n ----| |----n-1----|
+C    LFACNOR     |---- n+a ----|
+C
+       ENDIF ! ALE
+C
+C      compute the integral of the conserved quantities
+C
+       IF(IABS(KAN).EQ.4.AND.LDUMP(5))
+     1 CALL CHKINT(ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LFACNOR),
+     2             DSTAK(LXYZDOT),DSTAK(LVOL),DSTAK(LZROE),
+     3             NELEM,NPOIN,NGHOST,NPNOD,NDIM,NOFVERT,NOFVAR,
+     4             NTURB,TIME)
+C
+C
+      IF( (LTIME .AND.((ITIM/IBAK)*IBAK.EQ.ITIM)) .OR. 
+     1 (.NOT.LTIME) ) THEN
+C
+             LWORK = ISTKGT(MAX(NOFVAR,NTURB)*NPNOD,2)
+C
+             CALL TRIMADD(BAKFILE,ITIM,OUTFNAME(1),SLEN(1))
+             CALL TRIMADD(VISCTFILE,ITIM,OUTFNAME(2),SLEN(2))
+             CALL TRIMADD(FOLDFILE,ITIM,OUTFNAME(3),SLEN(3))
+             CALL BACKUP(NPOIN,NPNOD,NGHOST,NOFVAR,NTURB,ISTAK(LPMAP),
+     1            ISTAK(LWORK),OUTFNAME(1)(1:SLEN(1)),
+     2            OUTFNAME(2)(1:SLEN(2)),OUTFNAME(3)(1:SLEN(3)))
+C
+             CALL ISTKRL(1) ! release LWORK
+C
+C      Only for compressible or incompressible
+C
+             IF((IABS(KAN).EQ.2).OR.(IABS(KAN).EQ.4))THEN
+             CALL CHKFLX(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELFAC),
+     2                   ISTAK(LCELNOD),NOFVERT,NELEM,DSTAK(LFACNOR),
+     3                   DSTAK(LZROE),DSTAK(LXYZDOT),NOFVAR,NDIM,
+     4                   NFACE,(IABS(KAN).EQ.4),LDUMP(4),ITER)
+             ENDIF
+
+      ENDIF
+      IF( LTIME .AND. (NPROBES.GT.0) )THEN
+          CALL PROBEOUT(ISTAK(LPROBE(1)),DSTAK(LPROBE(2)),NPROBES,
+     1                  DSTAK(LZROE),NOFVAR,ISTAK(LCELNOD),NOFVERT,
+     2                  TIME,IPROBE)
+      ENDIF
+C
+C      Compute the current through all patches
+C
+      IF(LTIME.AND.IABS(KAN).EQ.3.AND.LAPLACE)THEN
+             CALL CURRENTFLUX(ISTAK(LCELNOD),ISTAK(LCELFAC),NOFVERT,
+     2                        NELEM,ISTAK(LBNDFAC),NBFAC,
+     3                        DSTAK(LFACNOR),DSTAK(LXYZDOT),
+     4                        DSTAK(LZROE),NDIM,NOFVAR,
+     5                        NPOIN+NGHOST+NPNOD,DSTAK(LVOL),TIME)
+C
+      ENDIF
+C
+      IF(IOK.NE.0)THEN
+         IF(MY_PE.EQ.0)THEN
+            WRITE(IWUNIT,FMT=325)IOK
+         ENDIF
+!        GOTO 425
+      ENDIF 
+  400 CONTINUE ! end loop over ITIM (time loop)
+C
+! 425 CONTINUE ! 
+C
+      CALL VecDestroy(RHS,IFAIL)
+      IF(TIMEIMPL) CALL KSPDestroy(FlowSolver,IFAIL)
+      IF(TURBULENT .AND. SEGREGATED )THEN
+          CALL VecDestroy(RHS_T,IFAIL)
+          CALL KSPDestroy(TurbulenceSolver,IFAIL)
+      ENDIF
+      IF( LALE .AND. ALE_LAPLACE_GRID )THEN
+          CALL KSPDestroy(MotionSolver,IFAIL)
+      ENDIF
+C
+      RETURN
+  105 FORMAT('CONS_TO_PARM failed when called from ',A10,' on PE # ',I4,
+     &1X,A3)
+  310 FORMAT(/,2X,'TIME-STEP = ',I6,' TIME = ',F12.5,' TIME-STEP SIZE ='
+     &,1X,E12.6) 
+  315 FORMAT('  *********************************************')
+  325 FORMAT(/,2X,'CONVERGENCE HAS NOT BEEN REACHED IN = ',I6,' INNER IT
+     &ERATIONS')
+ 9998 FORMAT (/,5X,'MAXIMUM MEMORY USED IN DSTAK ',I9, ' REAL*8 WORDS ('
+     +,F5.2,' %)')
+ 9999 FORMAT (/,5X,'MAXIMUM MEMORY EVER ALLOCATED BY PETSc ',F12.0,
+     +' BYTES')
+caldo
+caldo
+#ifdef DUMP_EACH_STEP
+      WRITE(FULLNAME(1:9),FMT="(A4,I4.4,A1)")'step',iter,'/'
+      WRITE(FULLNAME(10:20),FMT="(A11)")BAKFILE(1:11)
+      LWORK = ISTKGT(MAX(NOFVAR,NTURB)*NPNOD,2)
+      CALL BACKUP(NPOIN,NPNOD,NGHOST,NOFVAR,NTURB,ISTAK(LPMAP),
+     +            ISTAK(LWORK),FULLNAME,VISCTFILE,FOLDFILE)
+      CALL ISTKRL(1)
+#endif
+C
+#ifdef DUMP
+          IF(LTIME)THEN
+             fname(1:1) = "o"
+             fname(5:8) = ".dat"
+             write(fname(2:4),FMT="(I3.3)")itim
+             i_x = LZROE + NOFVAR*(NPOIN+NGHOST+NPNOD) 
+             CALL solzne(fname(1:8),DSTAK(i_x),
+     &                   NOFVAR,NPOIN+NGHOST+NPNOD,'w')
+             fname(1:1) = "O"
+             i_x = LZROE + NOFVAR*(NPOIN+NGHOST+NPNOD) *2
+             CALL solzne(fname(1:8),DSTAK(i_x),
+     &                   NOFVAR,NPOIN+NGHOST+NPNOD,'w')
+          ENDIF ! LTIME
+#endif
+Caldo
+CC#define DUMP
+Caldo
+#ifdef DUMP
+      CALL VecGetArray(rhs,x_array,i_x,IFAIL)
+      call dcopy(nofvar*npoin,x_array(i_x+1),1,dstak(lzroe),1)
+      CALL VecRestoreArray(rhs,x_array,i_x,IFAIL)
+      LWORK = ISTKGT(MAX(NOFVAR,NTURB)*NPNOD,2)
+      CALL BACKUP(NPOIN,NPNOD,NGHOST,NOFVAR,NTURB,ISTAK(LPMAP),
+     +            ISTAK(LWORK),"res010.dat","res015.dat","old015.dat")
+      call ISTKRL(1)
+      stop
+#endif
+Caldo
+#ifdef PIPPO
+      do ivar = 1,NOFVAR
+      CALL VecStrideNorm(ZROE,IVAR-1,NORM_2,S,IFAIL) 
+      if(MY_PE.EQ.0)write(6,*)'ivar = ',ivar,' s(n+1) = ',s
+      enddo
+      CALL VecDuplicate(ZROE,Zold,IFAIL)
+      NITEMS = (NGHOST+NPNOD+NPOIN)*NOFVAR
+      CALL VecGetArray(Zold,x_array,i_x,IFAIL)
+      call dcopy(NITEMS,dstak(lzroe+NITEMS),1,x_array(i_x+1),1)
+      CALL VecRestoreArray(Zold,x_array,i_x,IFAIL)
+      do ivar = 1,NOFVAR
+      CALL VecStrideNorm(ZOld,IVAR-1,NORM_2,S,IFAIL) 
+      if(MY_PE.EQ.0)write(6,*)'ivar = ',ivar,' s(n) = ',s
+      enddo
+      CALL VecGetArray(Zold,x_array,i_x,IFAIL)
+      call dcopy(NITEMS,dstak(lzroe+2*NITEMS),1,x_array(i_x+1),1)
+      CALL VecRestoreArray(Zold,x_array,i_x,IFAIL)
+      do ivar = 1,NOFVAR
+      CALL VecStrideNorm(ZOld,IVAR-1,NORM_2,S,IFAIL) 
+      if(MY_PE.EQ.0)write(6,*)'ivar = ',ivar,' s(n-1) = ',s
+      enddo
+      CALL VecDestroy(Zold,IFAIL)
+#endif
+Caldo
+caldo
+!     WRITE(FULLNAME(1:11),FMT="(A4,I3.3,A4)")'resu',my_pe+1,'.dat'
+!     CALL VecGhostGetLocalForm(rhs,local_rhs,IFAIL)
+!     CALL VecGetSize(local_rhs,n,IFAIL)
+!     write(6,*)'pe # ',my_pe,n,nofvar*(npoin+nghost)
+!     CALL VecGetArray(local_rhs,x_array,i_x,IFAIL)
+!     call dcopy(nofvar*(npoin+nghost),x_array(i_x+1),1,dstak(lzroe),1)
+!     CALL VecRestoreArray(local_rhs,x_array,i_x,IFAIL)
+!     CALL VecGhostRestoreLocalForm(rhs,local_rhs,IFAIL)
+!     CALL solzne(fullname(1:11),DSTAK(lzroe),
+!    &                   NOFVAR,NPOIN+NGHOST+NPNOD,'w')
+!     stop
+caldo
+      END
+      subroutine trimadd(fname,it,outfname,len)
+      implicit none
+      character*(*) fname,outfname
+      character*7 ext
+      data ext/"_123456"/
+      integer it,len
+      integer k
+      k = index(fname,".") 
+      k = k-1
+      write(ext(2:7),FMT="(I6.6)")it
+      len = k+11
+      outfname(1:len) = fname(1:k)//ext//".dat"
+      return
+      end

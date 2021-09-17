@@ -1,0 +1,83 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.10.59;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@finds number in sorted list (ascending)  with binary search
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE BINSRC(KELEM,KLIST,NLIST,IPOS,LAST)
+*-----------------------------------------------------------------------
+*
+*---Purpose:    finds number in sorted list (ascending)
+*               with binary search.
+*
+*---Input
+*   KELEM           number to be looked up
+*   KLIST           table
+*   NLIST           length of table
+*
+*---Output
+*   IPOS            = 0: name not in table
+*                   > 0: position in table
+*   LAST            for IPOS=0, position behind which number belongs
+*
+*
+*-----------------------------------------------------------------------
+      DIMENSION KLIST(*)
+      IPOS=0
+      LAST=0
+      N=NLIST
+      IF(N.GT.0)  THEN
+         KPOS=0
+   10    M=(N+1)/2
+         LAST=KPOS+M
+         IF (KELEM.LT.KLIST(LAST))  THEN
+            N=M
+            LAST=LAST-1
+            IF (N.GT.1) GOTO 10
+         ELSEIF (KELEM.GT.KLIST(LAST))  THEN
+            KPOS=LAST
+            N=N-M
+            IF (N.GT.0) GOTO 10
+         ELSE
+            IPOS=LAST
+         ENDIF
+      ENDIF
+      END
+@

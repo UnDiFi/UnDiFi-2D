@@ -1,0 +1,55 @@
+
+&&atomi	peso atomico       carica
+Ar		39.948				0
+El		5.4858e-4           -1
+!fine atomi
+
+&& molecole	comp%		hf(eV)
+Ar			100		0.
+Ar^p		0.			15.7596	
+Ar^2p		0.			43.3893	
+Ar^3p		0.			84.1243	
+Ar^4p		0.			143.8103	
+El			0.0			0.0		
+!fine molecole
+
+
+&&reazioni
+Ar	>   Ar^p   + El
+Ar^p	>   Ar^2p  + El
+Ar^2p	>   Ar^3p  + El
+Ar^3p	>   Ar^4p  + El
+
+!fine reazioni
+
+
+&LEGENDA
+GLOBALE
+la lista di ciascun gruppo (atomi, molecole, reazioni)
+deve essere terminata con un rigo che inizi per !
+
+ATOMI
+legge nome atomi su un rigo ed 
+il peso atomico (g/male) sul successivo
+
+MOLECOLE
+legge il nome della specie su un rigo e
+la composizione % e H di formazione (eV) sull’altro
+il nome delle molecole ha dei vincoli.
+In particolare la carica deve essere preceduta da ^
+seguito dal numero di carica a sua volta terminato con
+p      per cariche positive
+m     per cariche negative
+se il numero di carica e’ 1 puo’ essere sottinteso
+vedi esempi
+
+El          simbolo per gli elettroni
+X^np     ione positivo con carica +n
+x^nm    ione negativo con carica -n
+esempio
+H^p
+H^m
+O^2p
+
+$
+

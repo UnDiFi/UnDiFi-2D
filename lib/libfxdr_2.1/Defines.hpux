@@ -1,0 +1,7 @@
+F77CMD 	= fort77
+F77OPTS = +U77 +O3 -K +e +es
+CCCMD  	= c89
+CCOPTS 	= -DIFSTYLE=2
+AR 	= ar
+CPP 	= /lib/cpp
+64_BIT_REALS = -r8

@@ -1,0 +1,39 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	97.12.01.14.43.43;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Common block for the timing
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER NTIMERS
+      PARAMETER(NTIMERS=5)
+      DOUBLE PRECISION TOTTIME(NTIMERS),ITSTIME(NTIMERS)
+      COMMON /COMTIME/ TOTTIME,ITSTIME
+C
+C     ITSTIME CPU time spent per iteration
+C     TOTTIME CPU time spent for all  iteration
+C
+C     ???TIME(1) costo dell' iterazione
+C     ???TIME(2) costo del calcolo del residuo
+C     ???TIME(3) costo del calcolo dell' update 
+C     ???TIME(4) costo del solutore implicito
+C     ???TIME(5) costo del solo acceleratore
+C
+C     ELATIME time elapsed from the beginning of the computation
+@

@@ -1,0 +1,27 @@
+10.5.2013
+2D/compressible.rans/rae2822/case1/test/rcm FAILS (even re-starting) with:
+-matrix_scheme LDA2 -linearization newton -cfl 1. -preconditioning Merkle
+-matrix_scheme LW2 -linearization newton -cfl 1. -preconditioning Merkle
+
+
+--------------------------------------------------------------
+versione 3.2.3 linux vs gnu
+
+con LDA,LDA2
+
+le differenze + significative sono su 2D/compressible.euler/1bB/LDA
+
+con LDA,LW2
+
+le differenze + significative sono su 2D/compressible.euler/1bB/LDA
+
+runtime error in 
+
+/msa20/home/abonfi/testcases/2D/compressible.euler/stanitz/Mach0.69/test
+/msa20/home/abonfi/testcases/2D/compressible.euler/1aB/test
+
+
+con LDA,LDA
+
+le differenze + significative sono su 2D/incompressible.euler/nacaper
+

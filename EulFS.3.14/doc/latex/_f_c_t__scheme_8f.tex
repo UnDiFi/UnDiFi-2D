@@ -1,0 +1,67 @@
+\hypertarget{_f_c_t__scheme_8f}{\section{src/schemes/\-F\-C\-T\-\_\-scheme.f File Reference}
+\label{_f_c_t__scheme_8f}\index{src/schemes/\-F\-C\-T\-\_\-scheme.\-f@{src/schemes/\-F\-C\-T\-\_\-scheme.\-f}}
+}
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{_f_c_t__scheme_8f_a9fe7ce4db6a844a0281b9292abd3c6d7}{fct\-\_\-scheme} (I\-E\-L\-E\-M, V\-C\-N, A\-D\-V\-E\-C\-T\-I\-O\-N, C\-E\-L\-R\-E\-S, S\-O\-U\-R\-C\-E, Q, \hyperlink{myts_8com_a41549d5ede5e2b840495daf35608da41}{D\-T}, N\-O\-D\-R\-E\-S, \hyperlink{blk_euler_i_i_8com_a41ef0ad0ee32dac89987c7180349fc65}{B\-E\-T\-A}, S\-T\-I\-F\-C, N\-D\-I\-M, N\-O\-F\-V\-E\-R\-T, M\-A\-T\-R\-I\-X\-\_\-\-A\-S\-S\-E\-M\-B\-L\-Y)
+\begin{DoxyCompactList}\small\item\em This routine computes the F\-C\-T scheme on one tetrahedron. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{_f_c_t__scheme_8f_a9fe7ce4db6a844a0281b9292abd3c6d7}{\index{F\-C\-T\-\_\-scheme.\-f@{F\-C\-T\-\_\-scheme.\-f}!fct\-\_\-scheme@{fct\-\_\-scheme}}
+\index{fct\-\_\-scheme@{fct\-\_\-scheme}!FCT_scheme.f@{F\-C\-T\-\_\-scheme.\-f}}
+\subsubsection[{fct\-\_\-scheme}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fct\-\_\-scheme (
+\begin{DoxyParamCaption}
+\item[{integer}]{I\-E\-L\-E\-M, }
+\item[{double precision, dimension(ndim,nofvert)}]{V\-C\-N, }
+\item[{double precision, dimension(ndim)}]{A\-D\-V\-E\-C\-T\-I\-O\-N, }
+\item[{double precision}]{C\-E\-L\-R\-E\-S, }
+\item[{double precision}]{S\-O\-U\-R\-C\-E, }
+\item[{double precision, dimension(nofvert)}]{Q, }
+\item[{double precision, dimension(nofvert)}]{D\-T, }
+\item[{double precision, dimension(nofvert)}]{N\-O\-D\-R\-E\-S, }
+\item[{double precision, dimension(nofvert)}]{B\-E\-T\-A, }
+\item[{double precision, dimension(nofvert,nofvert)}]{S\-T\-I\-F\-C, }
+\item[{integer}]{N\-D\-I\-M, }
+\item[{integer}]{N\-O\-F\-V\-E\-R\-T, }
+\item[{logical}]{M\-A\-T\-R\-I\-X\-\_\-\-A\-S\-S\-E\-M\-B\-L\-Y}
+\end{DoxyParamCaption}
+)}}\label{_f_c_t__scheme_8f_a9fe7ce4db6a844a0281b9292abd3c6d7}
+
+
+This routine computes the F\-C\-T scheme on one tetrahedron. 
+
+The blending is the one suggested by Sermeus, Van Ransbeek, Deconinck A\-M\-I\-F 98
+
+Only linear timestepping has been implemented
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em I\-E\-L\-E\-M} & the current simplicial element \\
+\hline
+\mbox{\tt in}  & {\em V\-C\-N} & the N\-D\-I\-M cartesian component of the inward face normal to all N\-O\-F\-V\-E\-R\-T vertices, scaled by its measure \\
+\hline
+\mbox{\tt in}  & {\em A\-D\-V\-E\-C\-T\-I\-O\-N} & the N\-D\-I\-M cartesian component of the advection speed \\
+\hline
+\mbox{\tt out}  & {\em C\-E\-L\-R\-E\-S} & the elemental residual \\
+\hline
+\mbox{\tt in}  & {\em S\-O\-U\-R\-C\-E} & the volume integral of the elemental source term \\
+\hline
+\mbox{\tt in}  & {\em Q} & the N\-O\-F\-V\-E\-R\-T values of the dependent variable \\
+\hline
+\mbox{\tt in,out}  & {\em D\-T} & elemental contribution to the (inverse of the) time step \\
+\hline
+\mbox{\tt out}  & {\em N\-O\-D\-R\-E\-S} & the signals sent to each of the N\-O\-F\-V\-E\-R\-T vertices \\
+\hline
+\mbox{\tt out}  & {\em B\-E\-T\-A} & the distribution matrices \\
+\hline
+\mbox{\tt out}  & {\em S\-T\-I\-F\-C} & the elemental contribution to the implicit matrix (computed only if M\-A\-T\-R\-I\-X\-\_\-\-A\-S\-S\-E\-M\-B\-L\-Y is true) \\
+\hline
+\mbox{\tt in}  & {\em N\-D\-I\-M} & is the dimension of the space \\
+\hline
+\mbox{\tt out}  & {\em N\-O\-F\-V\-E\-R\-T} & is number of vertices of the simplicial elements (= N\-D\-I\-M+1) \\
+\hline
+\mbox{\tt in}  & {\em M\-A\-T\-R\-I\-X\-\_\-\-A\-S\-S\-E\-M\-B\-L\-Y} & when set == .T\-R\-U\-E. the S\-T\-I\-F\-C matrix will be assembled \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,79 @@
+\hypertarget{celptr_8f}{}\doxysection{src/geometry/celptr.f File Reference}
+\label{celptr_8f}\index{src/geometry/celptr.f@{src/geometry/celptr.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{celptr_8f_aa00b93433c2eb3d902ebbf2c5c28f752}{C\+E\+L\+P\+TR}} (I\+E\+L\+EM, N\+E\+L\+EM, I\+C\+E\+L\+N\+OD, I\+C\+E\+L\+F\+AC, V\+OL, Z\+R\+OE, F\+A\+C\+N\+OR, X\+Y\+Z\+D\+OT, N\+D\+IM, N\+O\+F\+V\+E\+RT, N\+O\+F\+V\+AR, L\+DA, I\+CN, V\+CZ, V\+CN, V\+CB, V\+O\+L\+U\+ME)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{celptr_8f_aa00b93433c2eb3d902ebbf2c5c28f752}\label{celptr_8f_aa00b93433c2eb3d902ebbf2c5c28f752}} 
+\index{celptr.f@{celptr.f}!CELPTR@{CELPTR}}
+\index{CELPTR@{CELPTR}!celptr.f@{celptr.f}}
+\doxysubsubsection{\texorpdfstring{CELPTR()}{CELPTR()}}
+{\footnotesize\ttfamily subroutine C\+E\+L\+P\+TR (\begin{DoxyParamCaption}\item[{integer}]{I\+E\+L\+EM,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{integer, dimension(nofvert,$\ast$)}]{I\+C\+E\+L\+N\+OD,  }\item[{integer, dimension(nofvert,$\ast$)}]{I\+C\+E\+L\+F\+AC,  }\item[{double precision, dimension($\ast$)}]{V\+OL,  }\item[{double precision, dimension(nofvar,lda,$\ast$)}]{Z\+R\+OE,  }\item[{double precision, dimension(ndim,$\ast$)}]{F\+A\+C\+N\+OR,  }\item[{double precision, dimension(ndim,$\ast$)}]{X\+Y\+Z\+D\+OT,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{L\+DA,  }\item[{integer, dimension(nofvert)}]{I\+CN,  }\item[{double precision, dimension(nofvar,nofvert,$\ast$)}]{V\+CZ,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CN,  }\item[{double precision, dimension(ndim,nofvert)}]{V\+CB,  }\item[{double precision, dimension($\ast$)}]{V\+O\+L\+U\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+retrieve data for cell {\ttfamily I\+E\+L\+EM} from global arrays
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+E\+L\+EM} & is the current cell in local (per processor) numbering \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & nof cells on the current PE \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+N\+OD} & Cell to node pointer\+: {\ttfamily I\+C\+E\+L\+N\+O\+D(i,j)} gives the global node number of the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+F\+AC} & Cell to face pointer\+: {\ttfamily I\+C\+E\+L\+F\+AC}(i,j\} gives the global face number of the face opposite the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+OL} & area/volume of the simplicial elements (triangles,tetrahedra) \\
+\hline
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & stores the dependent {\ttfamily N\+O\+F\+V\+AR} variables within all meshpoints; Z\+R\+O\+E(1\+:\+N\+O\+F\+V\+A\+R,1,$\ast$) stores the values at time level {\ttfamily n+1},k ; {\ttfamily Z\+R\+O\+E(1\+:\+N\+O\+F\+V\+A\+R,1,$\ast$)} those at tme level n and {\ttfamily Z\+R\+O\+E(1\+:\+N\+O\+F\+V\+A\+R,3,$\ast$)} those at time level {\ttfamily n-\/1}; could actually feed any other vector using the same layout, such as, e.\+g. the nodal coordinates; however, there must be room enough in the unsteady case \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+A\+C\+N\+OR} & Cartesian components of the normals to a face, multiplied by the face area \\
+\hline
+\mbox{\texttt{ in}}  & {\em X\+Y\+Z\+D\+OT} & Cartesian components of the nodal grid velocities \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & nof dofs within each meshpoint \\
+\hline
+\mbox{\texttt{ in}}  & {\em L\+DA} & second leading dimension of {\ttfamily Z\+R\+OE}, should equal N\+P\+O\+I\+N+\+N\+G\+H\+O\+S\+T+\+N\+P\+N\+OD \\
+\hline
+\mbox{\texttt{ out}}  & {\em I\+CN} & returns the vertices of the current simplex in 0-\/based indexing; to be used to insert values into P\+E\+T\+Sc vecs and/or mats \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+CZ} & returns the {\ttfamily N\+O\+F\+V\+AR} dofs of the N\+O\+F\+V\+E\+RT vertices of cell {\ttfamily I\+E\+L\+EM}; V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,1) stores the values at time level {\ttfamily n+1},k ; {\ttfamily V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,2)} those at tme level n and {\ttfamily V\+C\+Z(1\+:\+N\+O\+F\+V\+A\+R,$\ast$,3)} those at time level {\ttfamily n-\/1} \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+CN} & returns the {\ttfamily N\+D\+IM} Cartesian components of the N\+O\+F\+V\+E\+RT faces of cell {\ttfamily I\+E\+L\+EM} \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+CB} & returns the {\ttfamily N\+D\+IM} Cartesian components of the nodal grid velocities at time {\ttfamily n+1/2} of the N\+O\+F\+V\+E\+RT vertices of cell {\ttfamily I\+E\+L\+EM}; only if {\ttfamily L\+A\+LE} is {\ttfamily }.T\+R\+UE. \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+O\+L\+U\+ME} & returns the volume of simplex {\ttfamily I\+E\+L\+EM} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+10 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:45\+:57 
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+on periodic meshes we access the 2nd copy of the cell to node pointer, i.\+e. the original addressing 
+\end{DoxyWarning}

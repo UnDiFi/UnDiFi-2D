@@ -1,0 +1,186 @@
+head	1.3;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.3
+	release3_13_0:1.3
+	release3_12_0:1.3
+	release3_11_0:1.3
+	release3_10_0:1.3
+	release3_8_0:1.3
+	release3_7_1:1.3
+	release3_7_0:1.3
+	release3_4_5:1.3
+	release3_4_4:1.3
+	release3_4_3:1.3
+	release3_4_2:1.3
+	release3_4_1:1.3
+	release3_4_0:1.3
+	release3_3_5:1.3
+	release3_3_4:1.3
+	release3_3_3:1.3
+	release3_3_2:1.3
+	release3_3_1:1.3
+	release3_3_0:1.3;
+locks; strict;
+comment	@c @;
+
+
+1.3
+date	2008.06.10.10.13.12;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2003.08.08.03.42.57;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.17.15.21;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute median dual cell volume
+@
+
+
+1.3
+log
+@changes have been introduced to account for periodicity
+@
+text
+@      SUBROUTINE MEDIAN(VMEDIAN,NPOIN,NGHOST,NPNOD,NP,VOLUME,ICELNOD,
+     &MAP,NOFVERT,NELEM)
+C
+C     $Id:$
+C
+C     Routine for computing the median dual cell ..
+C     note that ICELNOD has not yet been re-mapped
+C     at the time this routine is being called
+C     otherwise we could address ICELNOD(IVERT,NELEM+IELEM)
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'io.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER NELEM,NP,NOFVERT,NPOIN,NGHOST,NPNOD
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION VMEDIAN(*),VOLUME(NELEM)
+      INTEGER ICELNOD(NOFVERT,NELEM),MAP(*)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TEMP,HELP,TVOLUME,VOLMIN,VOLMAX
+      INTEGER IELEM,IPOIN,IVERT,I,JPOIN
+C     ..
+C
+      WRITE(NOUT,2000)
+2000  FORMAT(//' COMPUTATION OF THE MEDIAN DUAL CELL VOLUMES'/' ',31('='
+     &)/)
+      HELP = ONE/REAL(NOFVERT)
+      CALL DINIT(NP,ZERO,VMEDIAN,1)
+      DO 100 IELEM = 1,NELEM
+          TEMP = VOLUME(IELEM)!*HELP
+c what about periodic meshes ?!?!
+          DO 90 IVERT = 1,NOFVERT
+              IPOIN = ICELNOD(IVERT,IELEM)
+              VMEDIAN(IPOIN) = VMEDIAN(IPOIN) + TEMP
+   90     CONTINUE
+  100 CONTINUE
+      CALL DSCAL(NP,HELP,VMEDIAN,1)
+C
+C account for periodicity
+C
+      DO 300 I = 1, NPNOD
+         IPOIN = (NPOIN+NGHOST)+I
+         JPOIN = MAP(I)
+         HELP = VMEDIAN(IPOIN)
+         TEMP = VMEDIAN(JPOIN)
+         VMEDIAN(IPOIN) = VMEDIAN(IPOIN) + TEMP
+         VMEDIAN(JPOIN) = VMEDIAN(JPOIN) + HELP
+  300 CONTINUE
+C
+      TVOLUME = ZERO
+      VOLMIN = 1.D+38
+      VOLMAX = - ONE
+      DO 200 IPOIN = 1,NPOIN+NGHOST
+          HELP = VMEDIAN(IPOIN)
+          TVOLUME = TVOLUME + HELP
+          VOLMIN = MIN(HELP,VOLMIN)
+          VOLMAX = MAX(HELP,VOLMAX)
+!         write(6,*)ipoin,help
+  200 CONTINUE
+!     DO IPOIN = 1,NPOIN+NGHOST+NPNOD
+!        VMEDIAN(IPOIN) = ONE/1600.d0
+!     enddo
+      WRITE(NOUT,500)TVOLUME,VOLMIN,VOLMAX,VOLMAX/VOLMIN
+C
+C     I/O FORMATS
+C
+  500 FORMAT(/10X,'TOTAL VOLUME ......... ',E10.3/, 10X,
+     +'MIN.  VOLUME ......... ',E10.3/, 10X,'MAX.  VOLUME ......... ',
+     +E10.3/, 10X,'MAX/MIN RATIO ........ ',E10.3/)
+C
+      RETURN
+
+      END
+@
+
+
+1.2
+log
+@add the number of meshpoints among the arguments
+of the call
+@
+text
+@d1 2
+d4 1
+a4 1
+      SUBROUTINE MEDIAN(VMEDIAN,NPOIN,VVOLUME,ICELNOD,NOFVERT,NELEM)
+d7 3
+d13 3
+d17 1
+a17 1
+      INTEGER NELEM,NPOIN,NOFVERT
+d20 2
+a21 2
+      DOUBLE PRECISION VMEDIAN(*),VVOLUME(NELEM)
+      INTEGER ICELNOD(NOFVERT,NELEM)
+d24 2
+a25 2
+      DOUBLE PRECISION TEMP
+      INTEGER IELEM,INODE,IVERT
+d27 6
+a32 1
+      CALL DINIT(NPOIN,0.d0,VMEDIAN,1)
+d34 2
+a35 1
+          TEMP = VVOLUME(IELEM)/NOFVERT
+d37 2
+a38 2
+              INODE = ICELNOD(IVERT,IELEM)
+              VMEDIAN(INODE) = VMEDIAN(INODE) + TEMP
+d41 33
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 2
+C
+      SUBROUTINE MEDIAN(VMEDIAN,VVOLUME,ICELNOD,NOFVERT,NELEM)
+d9 1
+a9 1
+      INTEGER NELEM,NOFVERT
+d19 1
+@

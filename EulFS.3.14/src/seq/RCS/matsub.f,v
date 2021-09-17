@@ -1,0 +1,47 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.01.01.22.10.22;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute A := A - B A,B being matrices
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+      SUBROUTINE MATSUB(A,LDA,B,LDB,NR,NC)
+C
+      IMPLICIT NONE 
+C
+C     A := A - B
+C
+C     .. Scalar Arguments ..
+      INTEGER LDA,LDB,NC,NR
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION A(LDA,*),B(LDB,*)
+C     ..
+C     .. Local Scalars ..
+      INTEGER I,J
+C     ..
+      DO 1 J = 1,NC
+          DO 1 I = 1,NR
+              A(I,J) = A(I,J) - B(I,J)
+    1 CONTINUE
+      RETURN
+
+      END
+@

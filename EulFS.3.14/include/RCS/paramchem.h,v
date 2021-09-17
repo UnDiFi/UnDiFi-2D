@@ -1,0 +1,50 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1;
+locks
+	abonfi:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2013.01.26.12.35.40;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Parameters for Argon
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@       real*8 Rgp,Na,MAr,Me,kBol,kBolSI
+       real*8 hArm,hArI
+       parameter(Rgp=8.314472d0,Na=6.0221367d23)
+       parameter(kBol=8.617386d-5,kBolSI=Rgp/Na)
+       parameter(MAr=39.93d0,Me=5.42d-4)
+       parameter(hArm=11.548d0,hArI=15.7596d0)
+@

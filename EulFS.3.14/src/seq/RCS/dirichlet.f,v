@@ -1,0 +1,100 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.01.01.22.10.22;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@PETSc version
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE Dirichlet(nx,nelx,nodcode,NINT,iperm,iwk)
+c-----------------------------------------------------------------------
+c
+c this routine counts the number of boundary points and 
+c reorders the points in such a way that the boundary nodes
+c are last.
+c 
+c nx, nelx, ijk, nodcode, node: see other SUBROUTINEs
+c NINT = on return the number of points on the boundary
+c iperm = permutation array from old orderin to new ordering,
+c iwk   = reverse permutation array or return.
+c On return
+c NINT = number of interior points.
+c 
+c-----------------------------------------------------------------------
+c
+      implicit real*8  (a-h,o-z)
+      dimension iwk(1),iperm(1),nodcode(1)
+C
+c
+corig put all boundary points at the end, backwards
+c     put all Dirichlet points at the end, backwards
+C
+C
+      NINT = 1
+      nbound = nx
+      do 1 j=1, nx
+c
+c     .. if a boundary node, then: 
+c        nodcode(j) > 0 = Dirichlet b.c.
+c        nodcode(j) < 0 = Neumann b.c.
+c
+corig    if (nodcode(j) .eq. 0) then
+         if (nodcode(j) .le. 0) then
+            iperm(NINT) = j
+            NINT = NINT+1
+         else
+            iperm(nbound) = j
+            nbound = nbound-1
+         endif
+ 1    continue
+c-------------------------------------------------------------------
+      NINT = NINT-1
+c 
+c     permute the boundary information and
+c
+c     do 6 k=1, nx
+c        iwk(k) = nodcode(k)
+c6    continue 
+c     do 7 k=1,nx
+c        nodcode(k) = iwk(iperm(k))
+c7    continue
+C
+C     get reverse permutation
+C
+      do 8 k=1, nx
+         iwk(iperm(k)) = k
+ 8    continue
+c
+c     update the elements connectivity matrix
+c
+c     do 10 nel = 1, nelx
+c        do 9 j=1, node
+c           knod = ijk(j,nel)
+c           ijk(j,nel) = iwk(knod) 
+c9       continue
+c10   continue
+c     write(6,*)'Permutation'
+c     write(6,*)(iperm(i),i=1,nx)
+c     write(6,*)'Rank'
+c     write(6,*)(iwk(i),i=1,nx)
+c     pause
+ 9999 FORMAT(10X,A6,' RETURNED IFAIL = ',I2)
+      return
+      end 
+c
+@

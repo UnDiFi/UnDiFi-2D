@@ -1,0 +1,70 @@
+\hypertarget{getvol_8f}{}\doxysection{src/geometry/getvol.f File Reference}
+\label{getvol_8f}\index{src/geometry/getvol.f@{src/geometry/getvol.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{getvol_8f_a1989f0ddd01af83287c646c6dee5ed0c}{C\+M\+P\+V\+OL}} (I\+C\+E\+L\+N\+OD, I\+C\+E\+L\+F\+AC, N\+O\+F\+V\+E\+RT, N\+E\+L\+EM, F\+A\+C\+N\+OR, N\+F\+A\+CE, V\+C\+O\+RG, N\+D\+IM, N\+P\+O\+IN, V\+OL, T\+I\+ME)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{getvol_8f_a1989f0ddd01af83287c646c6dee5ed0c}\label{getvol_8f_a1989f0ddd01af83287c646c6dee5ed0c}} 
+\index{getvol.f@{getvol.f}!CMPVOL@{CMPVOL}}
+\index{CMPVOL@{CMPVOL}!getvol.f@{getvol.f}}
+\doxysubsubsection{\texorpdfstring{CMPVOL()}{CMPVOL()}}
+{\footnotesize\ttfamily subroutine C\+M\+P\+V\+OL (\begin{DoxyParamCaption}\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+N\+OD,  }\item[{integer, dimension(nofvert,nelem)}]{I\+C\+E\+L\+F\+AC,  }\item[{integer}]{N\+O\+F\+V\+E\+RT,  }\item[{integer}]{N\+E\+L\+EM,  }\item[{double precision, dimension(ndim,nface)}]{F\+A\+C\+N\+OR,  }\item[{integer}]{N\+F\+A\+CE,  }\item[{double precision, dimension(ndim,npoin)}]{V\+C\+O\+RG,  }\item[{integer}]{N\+D\+IM,  }\item[{integer}]{N\+P\+O\+IN,  }\item[{double precision, dimension(nelem)}]{V\+OL,  }\item[{double precision}]{T\+I\+ME }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+compute the area (2D) volume (3D) of a simplicial element A formula for computing the volume of a simplicial element {\ttfamily T} (triangle or tetrahedron) is the following\+: \[ |T| = \frac{1}{d^2} \sum_{j=1}^{d+1} \mathbf{x}_j \cdot \mathbf{n}_j. \]
+
+Indeeed, using Gauss theorem one gets\+:
+
+\begin{eqnarray*} d \, |T| &=& \int_{T} \nabla \cdot \mathbf{x} \, \mathrm{d}V = - \oint_{\partial T} \mathbf{x} \cdot d \mathbf{n} = - \underline{\sum_{j=1}^{d+1} \frac{1}{d} \left( \sum_{\ell \neq j} \mathbf{x}_{\ell} \right)} \cdot \mathbf{n}_j \\\ &=& - \frac{1}{d} \sum_{j=1}^{d+1} \left[ \mathbf{x}_j \cdot \underbrace{ \left( \sum_{\ell \neq j} \mathbf{n}_{\ell} \right) }_{ - \mathbf{n}_j } \right] = \frac{1}{d} \sum_{j=1}^{d+1} \mathbf{x}_j \cdot \mathbf{n}_j. \end{eqnarray*} The underlined term in the above equation is the arithmetic average of the values of the dependent variable ({\ttfamily x}) over the face opposite vertex {\ttfamily j}. It equals, without involving any approximation, the surface integral.
+
+This is a consequence of the fact that dependent variable is linear in $x$ and that the faces over which integration is carried are planar (in 2D sides they are are straight segments).
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+N\+OD} & Cell to node pointer\+: {\ttfamily I\+C\+E\+L\+N\+O\+D(i,j)} gives the global node number of the i-\/th vertex of the j-\/th element \\
+\hline
+\mbox{\texttt{ in}}  & {\em I\+C\+E\+L\+F\+AC} & Cell to face pointer\+: {\ttfamily I\+C\+E\+L\+F\+AC}(i,j\} gives the global face number of the face opposite the i-\/th vertex of the ielem-\/th cell; If I\+C\+E\+L\+F\+A\+C(i,ielem) $>$ 0 the normal vector ( which is stored in V\+F\+A\+C\+N\+OR(1\+:N\+D\+IM,I\+A\+B\+S(\+I\+C\+E\+L\+F\+A\+C(i,ielem))) ) points inside the ielem-\/th cell; outside if I\+C\+E\+L\+F\+A\+C(i,ielem) $<$ 0; the storage used for the face (edge) normals is as follows\+: a real array F\+A\+C\+N\+O\+R(1\+:\+N\+D\+I\+M,1\+:\+N\+F\+A\+C\+E) stores all the face(edge) normals of the mesh and an integer pointer\+: -\/N\+F\+A\+CE $<$= I\+C\+E\+L\+F\+A\+C(1\+:\+N\+O\+F\+V\+E\+R\+T,1\+:\+N\+E\+L\+E\+M) $<$= N\+F\+A\+CE gives, with its absolute value, the normal opposite a given vertex of a given element \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+E\+RT} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+E\+L\+EM} & nof boundary faces \\
+\hline
+\mbox{\texttt{ in}}  & {\em F\+A\+C\+N\+OR} & Cartesian components of the normals to a face, multiplied by the face area; Face normals \+: F\+A\+C\+N\+O\+R(i,iface) gives the i-\/th cartesian component of the iface-\/th face. This is the vector normal to a triangular face (edge segment in 2D) scaled by the face area (edge length in 2D) \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+F\+A\+CE} & nof faces in the mesh \\
+\hline
+\mbox{\texttt{ in}}  & {\em V\+C\+O\+RG} & Cartesian coordinates of the meshpoints \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+P\+O\+IN} & nof interior nodes in the mesh \\
+\hline
+\mbox{\texttt{ out}}  & {\em V\+OL} & area/volume of the simplicial elements (triangles,tetrahedra) \\
+\hline
+\mbox{\texttt{ in}}  & {\em T\+I\+ME} & the time when the volumes are computed\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+8 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2020/03/28 09\+:46\+:02 
+\end{DoxyParagraph}

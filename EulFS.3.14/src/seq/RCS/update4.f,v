@@ -1,0 +1,160 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    aldo:1.1; strict;
+comment  @c @;
+
+
+1.1
+date     97.11.29.08.10.39;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Time steppin routine for the Spalart-Allmaras model
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+C ------------------------------ + ------------------------------
+C
+      SUBROUTINE UPDATE4( NDIM, NTURB, NPOIN )
+C
+      IMPLICIT NONE
+C
+C     Implicit timestepping for turbulent equations ..
+C
+      INCLUDE 'constants'
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+      INCLUDE 'paramt.h'
+      INTEGER NDNM
+      PARAMETER(NDNM=3*NMAX)
+      INCLUDE 'conv.com'
+      INCLUDE 'timing.com'
+      INCLUDE 'nloc'
+      INCLUDE 'verbose.com'
+      INCLUDE 'IO'
+C
+C
+      INTEGER NDIM,NTURB,NPOIN
+C
+C
+      INTEGER IVAR,i,LINDX
+      DOUBLE PRECISION ELATIME,CNST,T0,PREVR,tmp
+      SAVE PREVR
+C
+C
+      DOUBLE PRECISION WKSP1(3,NMAX),WKSP2(3,NMAX)
+C
+C
+      DOUBLE PRECISION DNRM2,TIMER
+      integer        NNZERO,ISTKGT,istkst
+      EXTERNAL DNRM2,NNZERO,ISTKGT,istkst,TIMER
+C
+C
+      DATA WKSP1,WKSP2/NDNM*ZERO,NDNM*ZERO/
+C
+C     compute the norms of the nodal residual
+C
+      CALL GETNRM(DSTAK(LCORG),WKSP1,DSTAK(LRESID),NDIM,NTURB,NPOIN,
+     $INMAX,RESMAX,RESL2)
+C
+      IF( ITER .EQ. 1 )PREVR  = RESL2(1)
+C
+      CNST = PREVR/RESL2(1)
+      PREVR = RESL2(1)
+      CNST = MIN( CFLMAX, 2.d0*CNST )
+C     CNST = MIN( CFLMAX, CNST )
+C     CNST = MAX( CNST, CFL )
+C     CNST = MAX( CNST, 1.d0 )
+C     CNST=0.5d0
+C     CNST=1.0d0
+C
+      LINDX = ISTKGT(NPOIN,2)
+C
+C     divide V_i/Dt by the CFL number ...
+C
+C     could use the ldiag pointer here .....
+C
+      CALL DIAPOS(NPOIN,ISTAK(LJACSR),ISTAK(LIACSR),ISTAK(LINDX)) 
+C
+C     Adds V_i/Dt to the diagonal elements of VACSR ...
+C
+      CALL DAXPYI(NPOIN,ONE/CNST,DSTAK(LDTLIN),ISTAK(LINDX),
+     +            DSTAK(LACSR))
+C
+      CALL ISTKRL(1)
+C
+Ccc   CALL prtmt (NPOIN,NPOIN,DSTAK(LACSR),DSTAK(LJACSR),DSTAK(LIACSR),
+CCc  1DSTAK(LRESID),"--",title,key,type,4,2,12)
+C     CALL dump(1,NPOIN,.true.,DSTAK(LACSR),ISTAK(LJACSR),
+C    +ISTAK(LIACSR),14)
+C
+C     set boundary conditions on the l.h.s.
+C
+      CALL SETBC4(NPOIN,NTURB,ISTAK(LNODCOD),
+     +DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR))
+C
+C     CALL prtmt (NPOIN,NPOIN,DSTAK(LACSR),DSTAK(LJACSR),DSTAK(LIACSR),
+C    1DSTAK(LRESID),"--",title,key,type,4,2,13)
+C
+C     solves K du = res
+C
+      T0 = TIMER()
+C
+      CALL ITSOLV(DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR),
+     +            DSTAK(LRESID),DSTAK(LZROERK),NPOIN,NTURB)
+C
+      ITSTIME(4) = ITSTIME(4) + TIMER() - T0
+C
+C     updates the solution : u^(n+1) = u^n + du ..
+C
+      CALL DAXPY(NPOIN,ONE,DSTAK(LZROERK),1,DSTAK(LTURB),1)
+C
+C     Monitor the norms of the update .. 
+C
+      CALL GETNRM(DSTAK(LCORG),WKSP2,DSTAK(LZROERK),NDIM,NTURB,NPOIN,
+     $INDEL,DELMAX,DELL2)
+C
+  299 WRITE(NOUT,200)ITER,CNST
+C
+C     .. Print out the convergence history ..
+C
+      WRITE(NOUT,215)
+      DO 20 IVAR = 1 , NTURB
+         WRITE(6,210)IVAR,DLOG10(RESL2(IVAR)),DLOG10(RESMAX(IVAR)),
+     &   INMAX(IVAR),(WKSP1(I,IVAR),I=1,3)
+   20 CONTINUE
+      WRITE(NOUT,225)
+      DO 30 IVAR = 1 , NTURB
+         WRITE(6,210)IVAR,DLOG10(DELL2(IVAR)),DLOG10(DELMAX(IVAR)),
+     &   INDEL(IVAR),(WKSP2(I,IVAR),I=1,3)
+   30 CONTINUE
+C
+C     ... Writing convergence history to file ...
+C
+      ELATIME = TIMER()
+      WRITE(12,235)NITER,(RESL2(IVAR),RESMAX(IVAR),IVAR=1,NTURB),ELATIME
+C
+      RETURN
+  200 FORMAT(5X,70('-'),/,15X,'TURBULENCE ITERATION # ',I4,10X,'CFL = ',
+     &E10.4/,5X,70('-'),/,
+     &5X,70('-'),/,5X,'Var.',4X,'L2-norm',3X,'L_infty',3X,
+     &'node #',3X,'(',4X,'x',7X,'y',7X,'z',4X,')',/,5X,70('-'))
+  210 FORMAT(5X,I1,5X,F10.5,1X,F10.5,2X,I5,3X,
+     &'(',2(F8.5,','),F8.5,')')
+  215 FORMAT(5X,'Nodal Residual'/)
+  225 FORMAT(5X,'Nodal Update'/)
+  235 FORMAT (I5,3 (1X,E10.4))
+      END
+C
+@

@@ -1,0 +1,4368 @@
+head	1.43;
+access
+	simula
+	caspur
+	abonfi
+	aldo
+	tesistim;
+symbols
+	release3_14_0:1.43
+	release3_13_0:1.43
+	release3_12_0:1.43
+	release3_11_0:1.43
+	release3_10_0:1.43
+	release3_8_0:1.43
+	release3_7_1:1.43
+	release3_7_0:1.42
+	release3_4_5:1.42
+	release3_4_4:1.42
+	release3_4_3:1.41
+	release3_4_2:1.41
+	release3_4_1:1.41
+	release3_4_0:1.41
+	release3_3_5:1.41
+	release3_3_4:1.39
+	release3_3_3:1.39
+	release3_3_2:1.39
+	release3_3_1:1.39
+	release3_3_0:1.39;
+locks; strict;
+comment	@c @;
+
+
+1.43
+date	2020.03.28.09.51.15;	author abonfi;	state Exp;
+branches;
+next	1.42;
+
+1.42
+date	2014.01.30.17.16.33;	author abonfi;	state Exp;
+branches;
+next	1.41;
+
+1.41
+date	2013.05.02.14.21.36;	author abonfi;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	2013.04.27.09.36.52;	author abonfi;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	2012.12.20.10.25.25;	author abonfi;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	2011.12.30.11.26.48;	author abonfi;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2010.10.04.12.42.21;	author abonfi;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2009.06.11.09.45.52;	author abonfi;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2009.01.09.14.06.43;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2009.01.02.11.34.51;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2008.07.28.10.37.39;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2008.07.14.06.39.22;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2005.08.08.11.19.37;	author abonfi;	state Exp;
+branches
+	1.31.1.1;
+next	1.30;
+
+1.30
+date	2002.09.14.09.10.40;	author abonfi;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2002.09.10.09.57.28;	author abonfi;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2002.08.24.10.17.20;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2002.08.10.15.45.29;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2000.11.15.09.10.18;	author aldo;	state Exp;
+branches
+	1.26.1.1;
+next	1.25;
+
+1.25
+date	2000.10.20.08.15.02;	author aldo;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2000.10.12.09.39.30;	author aldo;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2000.08.03.16.45.03;	author aldo;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2000.06.24.09.29.54;	author aldo;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	99.11.29.09.57.10;	author aldo;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	99.09.08.09.04.35;	author aldo;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	99.08.19.16.36.21;	author aldo;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	99.08.18.09.15.17;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	99.08.17.08.11.51;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	98.11.06.16.59.34;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	98.11.06.12.41.06;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	98.08.25.17.27.08;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	98.08.22.08.00.56;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	98.07.28.11.13.17;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.04.17.21.53.12;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.02.09.17.44.07;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.02.03.11.33.43;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.01.26.16.11.40;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.01.07.10.29.43;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.04.23.15.10;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.01.22.00.09;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.12.02.18.23.33;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.30.44;	author aldo;	state Exp;
+branches;
+next	;
+
+1.26.1.1
+date	2002.08.24.10.00.20;	author abonfi;	state Exp;
+branches;
+next	;
+
+1.31.1.1
+date	2009.01.09.13.35.13;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Unsteady Euler eqns. in symmetrizing variables
+@
+
+
+1.43
+log
+@renamed subroutine call
+@
+text
+@!> \copydetails EulerIX()
+      SUBROUTINE EulerVII(IELEM,VCN,VCB,VCZ,NDIM,NOFVERT,NOFVAR,
+     &                    NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     &                    ScalarScheme,MatrixScheme)
+C
+      IMPLICIT NONE 
+C
+C     Unsteady equations in symmetrizing variables ..
+C
+C     $Id: EulerVII.f,v 1.42 2014/01/30 17:16:33 abonfi Exp abonfi $
+C
+C
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'time.h'
+C
+C     NEQMAX is the max. no. of equations (4 in 3D)
+C            for the matrix scheme (solves for dp/ra,du,dv,dw)
+C     MAXNOFEQN is the max. no. of mean flow equations (5 in 3D)
+C
+      INTEGER NEQMAX,LNNVV
+      DOUBLE PRECISION TOLER
+      PARAMETER (NEQMAX=4,TOLER=1.D-15)
+      PARAMETER (LNNVV=MAX_NOFVAR_SQR*MAX_NOFVERT_SQR)
+      INTEGER IWRK,FRSTEQ
+      PARAMETER(IWRK=10,FRSTEQ=2)
+      INTEGER MOVE(IWRK)
+C
+C
+      INCLUDE 'time.com'
+      INCLUDE 'three.com'
+      INCLUDE 'transf.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'bodyf.com'
+C
+C     .. Scalar Arguments ..
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,NTURB
+      DOUBLE PRECISION VOLUME(*)
+      LOGICAL PICARD
+C
+C     .. Array Arguments ..
+      DOUBLE PRECISION VCZ(*),VCN(*),VCB(*),STIFEL(*),NODRES(*),TSTEP(*)
+C
+C     .. External Arguments ..
+      EXTERNAL ScalarScheme,MatrixScheme
+C
+C     .. Local Scalar ..
+      INTEGER IVAR,IVERT,JVERT,IDIM,IADD,JADD,KADD
+      INTEGER NORDER,ifail,M,N,MN,N4,JCOL
+      DOUBLE PRECISION FLUCT,SCALRES,HELP
+      LOGICAL LFLAG
+      LOGICAL unitmat
+C
+C
+C
+C     NODRES(1:NOFVAR,1:NOFVERT) is used to accumulate the
+C         nodal residual in conserved variables and scatter
+C         it to the RHS PETSc vector
+C
+C     TSTEP(1:NOFVERT) is used to accumulate the timestep
+C         and then scatter it to the DT PETSc vector 
+C
+C     SYMMV(1:NOFEQN,1:NOFVERT) is used to store the vector
+C         of symmetrizing variables
+C
+C     DSYMMV(1:NOFEQN,1:NOFVERT) is used to store the change
+C         in the vector of symmetrizing variables
+C
+      DOUBLE PRECISION SYMMV(MAXNOFEQN*MAXNOFVERT),PHI(NEQMAX)
+      DOUBLE PRECISION DSYMMV(MAXNOFEQN*MAXNOFVERT),WKSP(MAXNOFEQN),
+     1                 TAUX(MAXNOFEQN*MAXNOFVERT),SOURCE(MAXNOFVAR),
+     2                 Jacobian(NEQMAX,NEQMAX*3),RESIDUAL(2*NEQMAX),
+     3                 TEMPA(3*MAX_NOFVERT_SQR*MAXNOFEQN**2),
+     4                 TEMPB(3*MAX_NOFVERT_SQR*MAXNOFEQN**2)
+      DOUBLE PRECISION BETA1(NEQMAX*NEQMAX*MAXNOFVERT),
+     1                 BETA(2*MAXNOFEQN*MAXNOFEQN*MAXNOFVERT),
+     2                 STIFC(MAX_NOFVERT_SQR*NEQMAX*NEQMAX)
+C
+C     Need to dimension BETA with 2*MAXNOF etc. otherwise
+C     run-time error in 3D; maybe a bug somewhere
+C
+C     NOFEQN (= DIM+2) is actual no. of mean flow equations
+C     NORDER (= DIM+1) is actual no. of equations being solved
+C                      with the system scheme
+C     NOFVAR (=NOFEQN) when the are no turbulence models
+C
+      INTEGER NOFEQN
+C
+C     RESIDUAL[1:NORDER] stores the residual computed by
+C                        the Matrix scheme as \sum K_j U_j
+C     RESIDUAL[NORDER+1:2*NORDER]
+C                        stores the residual computed by
+C                        the Matrix scheme as \sum C_{ij} U_j
+C     it is used just for debugging purposes, to be compared with
+C     the residual computed as:
+C     dF/dU * dU/dX + dG/dU * dU/dy + [ dH/dU * dU/dz ]
+C
+C
+      DOUBLE PRECISION DDOT
+      EXTERNAL DDOT
+C
+      EXTERNAL MatSplitNum,MatSplitVII
+C
+      DATA SOURCE/MAXNOFVAR*ZERO/
+C
+C     Statement function
+C
+      INTEGER JADDR
+      JADDR(IVERT,JVERT,N) = (((JVERT-1)*NOFVERT+IVERT-1)*N*N) + 1
+C
+      NORDER = NDIM + 1 ! we solve for dp/ra,du,dv,dw
+      NOFEQN = NDIM + 2 ! this is for r,rE,ru,rv,rw
+      N4 = NOFVAR*NOFVAR*NOFVERT*NOFVERT
+C
+C     The element stiffness matrix is initialized to 0.d0
+C
+      IF (PICARD) THEN
+          CALL DINIT(N4,ZERO,STIFEL,1)
+          CALL DINIT((NORDER*NOFVERT)**2,ZERO,STIFC,1)
+      ENDIF
+      IF (LTIME) THEN
+         DTVOL = DELT/VOLUME(1)
+         IF(DUALTS)THEN 
+            CALL DINIT(NOFEQN*NOFEQN*NOFVERT,ZERO,BETA,1)
+            CALL DINIT(NORDER*NORDER*NOFVERT,ZERO,BETA1,1)
+         ENDIF
+      ENDIF
+C
+C     set local residual and timestep to zero (should maybe bring it
+C     in the calling routine)
+C
+      CALL DINIT(NOFVERT*NOFEQN,ZERO,DSYMMV,1)
+      CALL DINIT(NOFVERT*NOFEQN,ZERO,TAUX,1)
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+C
+C    Some initializations ....
+C
+          CALL DINIT(NORDER,ZERO,PHI,1)
+          CALL DINIT(NOFEQN,ZERO,WKSP,1)
+          CALL CHECK(IELEM,NDIM,NOFEQN)
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C
+C     The Jacobian Matrix of the subsystem is assembled and
+C         the eigenvectors computed ..
+C
+      CALL Eigen_VII(Jacobian,NEQMAX,dVdZ,dUdV,NDIM,NOFEQN)
+C
+      IF (ICHECK.EQ.0) GOTO 7
+C
+C --------------- Debugging code starts here ---------------
+C
+C
+C     COMPUTES THE RESIDUAL/VOLUME as:
+C     dF/dU * dU/dX + dG/dU * dU/dy + [ dH/dU * dU/dz ]
+C     for debugging purposes
+C
+      DO 12 idim = 1,NDIM
+          jcol = (idim-1)*NEQMAX + 1
+          CALL DGEMV('N',NORDER,NORDER,ONE,Jacobian(1,jcol),NEQMAX,
+     +               GRAD_CHAR(FrstEq,idim),1,ONE,PHI,1)
+
+   12 CONTINUE
+C
+C --------------- Debugging code ends here ---------------
+C
+    7 CONTINUE
+C
+C     The quasi linear form we discretize is in
+C     symmetrizing variables SYMMV = (dS,dp/(r*a),du,dv,dw)
+C
+C
+C     symmetrizing variables are computed through the relation
+C     \tilde{U}_i = M Z_j
+C     where M = \frac{\partial \tilde{U}}{\partial Z}
+C     in what follows we actually compute
+C      \tilde{U}^t = Z^t M^t where ' denotes transposition
+C     so that symmetrizing variables are stored as
+C     SYMMV(1:NOFVERT,1:NOFEQN) and entropy
+C     appears in the first NOFVERT locations, i.e.
+C
+C     dS(1) dp/ra(1) du(1) dv(1) dw(1)
+C     ....    ....    ..    ..    ..
+C     ....    ....    ..    ..    ..
+C     dS(4) dp/ra(4) du(4) dv(4) dw(4)    
+C
+      CALL DGEMM('Transpose','Transpose',NOFVERT,NOFEQN,NOFEQN,
+     +           ONE,VCZ,NOFVAR,dVdZ,NOFEQN,ZERO,SYMMV,NOFVERT)
+C
+!     CALL R8Mat_Print('G',' ',Nofvar,NOFvert,vcz,Nofvar,
+!    +      'Z variables ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFEQN,nofvert,NODRES,
+!    +      NOFEQN,'Nodal update in U on ENTRY ',IFAIL)
+!     CALL R8Mat_Print('G',' ',Nofvert,NOFEQN,symmv,Nofvert,
+!    +      'SYMM variables ',IFAIL)
+C     pause
+C
+C     ---------- Scalar scheme on the entropy wave ----------
+C
+C     Entropy wave ..
+C
+      IVAR = 1
+C
+C The entropy eqn. is solved using an upwind scheme
+C
+      CALL ScalarScheme(IELEM,VCN,R_SPEED(1,IVAR),SCALRES,ZERO,
+     +                  SYMMV(1),TAUX(1),DSYMMV(1),BETA1,STIFC,NDIM,
+     +                  NOFVERT,PICARD)
+!     write(6,*)ielem
+!     CALL R8Mat_Print('G',' ',Nofvert,Nofeqn,symmv,Nofvert,
+!    +      'symm. vars. after entropy ',IFAIL)
+!     CALL R8Mat_Print('G',' ',Nofvert,Nofeqn,dsymmv,Nofvert,
+!    +      'residual in symm. vars. after entropy ',IFAIL)
+C
+C     the first NOFVERT entries of TAUX now keep
+C     the timestep computed by the Scalar Scheme
+C
+C
+C
+C    Copy the convective jacobian (STIFC) into STIFEL and
+C    reset it to 0. since it will be reused by the matrix scheme
+C
+      IF (LTIME.AND.DUALTS) THEN
+!     CALL R8Mat_Print('G',' ',Nofvert,1,beta1,Nofvert,
+!    +      'vettore beta per entropia',IFAIL)
+! bug somewhere: unless the following dcopy is commented out, one of
+!                the entries in SYMMV is set to 0.d0
+          CALL DCOPY(NOFVERT*NOFVERT,BETA1,1,BETA,NOFVAR*NOFVAR)
+!         CALL MATINS(BETA,NOFEQN,BETA1,1,NOFVERT,NOFVERT,0)
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,BETA1,1) ! maybe useless
+      ENDIF
+      IF (PICARD) THEN
+          CALL DCOPY(NOFVERT*NOFVERT,STIFC,1,STIFEL,NOFVAR*NOFVAR)
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,STIFC,1)
+      ENDIF
+C
+C --------------- Debugging code starts here ---------------
+C
+      IF (ICHECK.NE.0) THEN
+C
+C    Checks for the scalar residual ..
+C
+          FLUCT = DDOT(NDIM,R_SPEED(1,IVAR),1,GRAD_CHAR(IVAR,1),LDW)
+C
+          SCALRES = SCALRES/VOLUME(1)
+          CALL DAXPY(NOFEQN,SCALRES,dUdV((IVAR-1)*NOFEQN+1),1,WKSP,1)
+C
+          IF (DABS(FLUCT-SCALRES).GT.TOLER) THEN
+              WRITE (6,89999) IELEM,IVAR
+              WRITE (6,FMT=*)FLUCT,SCALRES,ABS(FLUCT-SCALRES)
+          ENDIF
+
+      ENDIF
+C
+C --------------- Debugging code ends here ---------------
+C
+C     the matrix of symmetrizing variables (except entropy) is now
+C     transposed so that these are stored (starting at SYMMV(M+1))
+C     as SYMMV(1:NORDER,1:NOFVERT)
+C
+      M = NOFVERT
+      N = NORDER
+      MN = NOFVERT*NORDER
+C
+!     CALL R8Mat_Print('G',' ',Nofvert,Norder,symmv(M+1),Nofvert,
+!    +      'last symm. vars before calling TRANS ',IFAIL)
+C
+      CALL TRANS(SYMMV(M+1),NOFVERT,NORDER,MN,MOVE,IWRK,IFAIL)
+!
+!     CALL R8Mat_Print('G',' ',NOFVERT,NOFEQN,TAUX,Nofvert,
+!    +      'vettore DT before TRANS',IFAIL)
+!
+C
+C     at this stage the matrix SYMM is as follows:
+C
+C     dS(1) dp/ra(1) ...  dp/ra(4)
+C     ....   du(1)   ...   du(4)
+C            dv(1)   ...   dv(4) 
+C     dS(4)  dw(1)   ...   dw(4)
+C
+C
+C     ---------- Matrix scheme ----------
+C
+      SOURCE(2) = -GRAV(1)*VOLUME(1)
+      SOURCE(3) = -GRAV(2)*VOLUME(1)
+      IF(NDIM.EQ.3)SOURCE(4) = -GRAV(3)*VOLUME(1)
+C
+C REM: calling with TAUX(NOFVERT+1) will add new contributions
+C      in the correct locations
+C
+!     CALL R8Mat_Print('G',' ',Norder,Nofvert,symmv(m+1),Norder,
+!    +      'symm. vars before calling the matrixscheme ',IFAIL)
+!     write(6,*)'source ',(source(ivar),ivar=1,norder)
+!
+      CALL MatrixScheme(MatSplitVII,SYMMV(M+1),DSYMMV(M+1),TAUX(M+1),
+     +                  BETA1,STIFC,NORDER,NORDER,NOFVERT,VCN,NDIM,
+     +                  Jacobian,NEQMAX,RESIDUAL,SOURCE,IELEM,PICARD)
+!
+!     write(6,*)'residual ',(residual(ivar),ivar=1,2*norder)
+!     write(6,*)ielem,' bp (2)'
+!     CALL R8Mat_Print('G',' ',Nofvert,Nofeqn,dsymmv,Nofvert,
+!    +      'residual in symm. vars. ',IFAIL)
+!     CALL R8Mat_Print('G',' ',Norder,norder*nofvert,beta1,Norder,
+!    +      'beta1 in EulerVI ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOrder,NOrder*nofvert,BETA1,
+!    +      NOrder,'Beta in symm only last d+1 eqns',IFAIL)
+C
+C     at this stage the matrix DSYMM is as follows (same for TAUX)
+C
+C     dS(1) dp/ra(1) ...  dp/ra(4)
+C     ....   du(1)   ...   du(4)
+C            dv(1)   ...   dv(4) 
+C     dS(4)  dw(1)   ...   dw(4)
+C
+C     the block involving symm. variables other than entropy
+C     is transposed, same thing is done for the timestep
+C
+      CALL TRANS(DSYMMV(M+1),NORDER,NOFVERT,MN,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)THEN
+         WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+         CALL EXIT(IFAIL)
+      ENDIF
+      CALL TRANS(TAUX(M+1),NORDER,NOFVERT,MN,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)THEN
+         WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+         CALL EXIT(IFAIL)
+      ENDIF
+C
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFVERT,TAUX,NoFEQN,
+!    +      'vettore DT dopo TRANS(2)',IFAIL)
+C
+C     so that now it looks like (same for TAUX):
+C
+C     dS(1) dp/ra(1)  du(1)  dv(1)  dw(1)
+C     ....    ...      ...    ...    ...
+C     ....    ...      ...    ...    ...
+C           
+C     dS(4) dp/ra(4)  du(4)  dv(4)  dw(4)
+C
+!     CALL TRANS(TAUX(1),NOFVERT,NOFEQN,NOFEQN*NOFVERT,MOVE,IWRK,IFAIL)
+!     IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+C
+C     compute the timestep: TAUX is transposed, see the table above for DSYMM
+C
+      DO IVERT = 1, NOFVERT ! loop over the vertices
+         JADD = IVERT
+         HELP = ZERO 
+C
+C     sum or maximum over the dofs
+C
+         DO IVAR = 1,NOFEQN ! loop over the NDIM+2 dofs
+            IF( CHAR_TIMESTEPPING )THEN
+               HELP = MAX(HELP,TAUX(JADD))
+            ELSE
+               HELP = HELP + TAUX(JADD)
+            ENDIF
+            JADD = JADD + NOFVERT
+         ENDDO ! end loop over the dofs
+         IADD = (IVERT-1)*NOFVAR
+         DO IVAR = 1,NOFEQN
+            JADD = IADD + IVAR
+            TSTEP(JADD) = HELP
+         ENDDO
+      ENDDO
+C
+C
+C Transform the nodal residual into conserved variables
+C           note that DSYMMV is transposed during the MM product
+C
+      CALL DGEMM('No Transpose','Transpose',NOFEQN,NOFVERT,NOFEQN,
+     +           ONE,dUdV,NOFEQN,DSYMMV(1),NOFVERT,ZERO,NODRES,
+     +           NOFVAR)
+C
+C     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,dUdV,nofeqn,
+C    +      'dUdV variables ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFvar,NOFvert,NODRES,nofvar,
+!    +      'residual (before) ',IFAIL)
+!     pause
+C
+C Insert the element stiffness matrix corresponding to the last
+C d+1 eqns. into the element stiffness matrix of dimension (d+2)
+C the offset equals the number of decoupled eqns.
+C
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Betas ',IFAIL)
+C
+!     write(6,*)ielem,' bp (3)'
+      IF (PICARD) THEN
+         CALL MATINS(STIFEL,NOFVAR,STIFC,NORDER,NOFVERT,NOFVERT,1)
+      ENDIF
+C
+      IF (LTIME.AND.DUALTS) 
+     &CALL MATINS(BETA,NOFEQN,BETA1,NORDER,NOFVERT,1,1)
+!     write(6,*)ielem,' bp (4)'
+C
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Beta after insertion',IFAIL)
+!     pause
+C
+C --------------- Debugging code starts here ---------------
+C
+C    Checks the decomposition ..
+C
+      IF (ICHECK.NE.0) THEN
+          CALL DSCAL(2*NORDER,ONE/VOLUME(1),RESIDUAL,1)
+          LFLAG = .TRUE.
+          DO 18 IVAR = 1,NORDER
+              IF (DABS(PHI(IVAR)-RESIDUAL(IVAR)).GT.
+     +            TOLER) LFLAG = .FALSE.
+   18     CONTINUE
+          IF (LFLAG .EQV. .FALSE.) THEN
+              WRITE (6,99999) IELEM
+              DO 22 IVAR = 1,NORDER
+                  WRITE (6,*) PHI(IVAR),RESIDUAL(IVAR),
+     +              DABS(PHI(IVAR)-RESIDUAL(IVAR))
+   22         CONTINUE
+C
+          ENDIF
+C
+C     transforms the residual into conserved variables
+C
+          CALL DGEMV('N',NOFEQN,NORDER,ONE,dUdV((FrstEq-1)*NOFEQN+1),
+     +               NOFEQN,RESIDUAL,1,ONE,WKSP,1)
+C
+C     test the residual as computed by the "explicit" scheme
+C     WKSP := dUdV(1) * \phi_{entropy} + dUdV(1,FrstEq) * \Phi
+C
+          CALL TEST(DivFlux,WKSP,TOLER,IELEM,NOFEQN)
+      ENDIF ! on ICHECK
+C
+C --------------- Debugging code ends here ---------------
+C
+      IF (PICARD) THEN
+C
+C     compute the transformation matrices from
+C     conserved to parameter variables in the vertices
+C
+          DO 33 IVERT = 1,NOFVERT
+              IADD = (IVERT-1)*NOFVAR+1
+              JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+c
+c a bit of care here: Z and dZdU are dimensioned NOFVAR in
+c subr MatdZdU(), but this should not be a problem if called
+c with NOFEQN
+c
+          CALL MatdZdU(VCZ(IADD),dZdU(JADD),NDIM,NOFEQN)
+   33     CONTINUE
+      ENDIF ! on picard
+C
+      IF (LTIME) THEN
+          DO IVERT = 1,NOFVERT
+              IADD = (IVERT-1)*NOFVAR+1
+              JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+              CALL PARM2CONS(VCZ(IADD),TEMPB(JADD),NOFEQN,NDIM)
+          ENDDO
+      ENDIF
+C
+!     CALL R8Mat_Print('G',' ',NOFVAR,nofvert,NODRES,
+!    +      NOFVAR,'Nodal update in U before td',IFAIL)
+!
+      IF(LTIME)THEN 
+c
+c     compute transformation matrix from 
+c
+         CALL CONS2SYMM(ZAVG,BETA1,NOFEQN,NDIM)
+!
+!           CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+!    +               NOFEQN,NOFEQN,ONE,BETA1,NOFEQN,dUdV,NOFEQN,
+!    2               ZERO,TEMPA(1),NOFEQN) 
+!           IF(.NOT.UNITMAT(TEMPA,NOFEQN,NOFEQN,NOFEQN,1.D-12))THEN
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,BETA1,
+!    +      NOFEQN,'dVdS ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,dUdV,
+!    +      NOFEQN,'dUdV ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,TEMPB,
+!    +      NOFEQN,'TEMPA ',IFAIL)
+!           ENDIF 
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Beta in symm',IFAIL)
+C
+cold     DO IVERT = 1,NOFVERT ! si puo forse ridurre il nof di DGEMM !?!?!?!?!
+cold        JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+cold        CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+cold +               NOFEQN,NOFEQN,ONE,dUdV,NOFEQN,BETA(JADD),NOFEQN,
+cold 2               ZERO,TEMPA(JADD),NOFEQN) 
+cold        CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+cold +               NOFEQN,NOFEQN,ONE,TEMPA(JADD),NOFEQN,BETA1,NOFEQN,
+cold 2               ZERO,BETA(JADD),NOFEQN) 
+cold     ENDDO
+C
+         CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN*NOFVERT,NOFEQN,ONE,dUdV,NOFEQN,
+     2               BETA,NOFEQN,ZERO,TEMPA,NOFEQN) 
+         DO IVERT = 1,NOFVERT
+            JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+            CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,ONE,TEMPA(JADD),NOFEQN,BETA1,NOFEQN,
+     2               ZERO,BETA(JADD),NOFEQN) 
+         ENDDO
+!     write(6,*)ielem
+!     pause
+!     CALL R8Mat_Print('G',' ',NOFEQN,nofvert,NODRES,
+!    +      NOFEQN,'Nodal update in U before the unstdy term',IFAIL)
+C
+         IF(DUALTS)
+     &   CALL UNSTEADY4(TEMPB,BETA,VCZ,NOFVAR,NODRES,STIFEL,VOLUME,
+     &                  NOFEQN,NDIM,NOFVERT,PICARD)
+      ENDIF
+C
+!     write(6,*)'ielem = ',ielem
+!     CALL R8Mat_Print('G',' ',Nofeqn,nofeqn*nofvert,beta,Nofeqn,
+!    +      'beta(U) in EulerVI ',IFAIL)
+!     CALL R8Mat_Print('G',' ',Nofvar,NOFvert*NTIMLEVS,vcz,Nofvar,
+!    +      'Z variables ',IFAIL)
+!     CALL R8Mat_Print('G',' ',NOFEQN,nofvert,NODRES,
+!    +      NOFEQN,'Nodal update in U',IFAIL)
+!     pause
+C
+C
+C     --------------- If explicit, return now  ---------------
+C
+      IF (.NOT.PICARD) RETURN
+C
+C     Add the element stiffness matrix to the global stiffness matrix
+C
+C
+C     transform the element stiffness matrix into conserved variables
+C
+      IF( NOFVAR .EQ. NOFEQN )THEN
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +               NOFVAR*NOFVERT*NOFVERT,NOFVAR,MONE,dUdV,
+     +               NOFVAR,STIFEL,NOFVAR,ZERO,TEMPA,NOFVAR)
+      ELSE
+          DO 13 JVERT = 1, NOFVERT
+             DO 13 IVERT = 1, NOFVERT
+                JADD = JADDR(IVERT,JVERT,NOFEQN)
+                IADD = JADDR(IVERT,JVERT,NOFVAR)
+                CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,MONE,dUdV,
+     +               NOFEQN,STIFEL(IADD),NOFVAR,ZERO,TEMPA(JADD),NOFEQN)
+!     write(6,*)ivert,jvert
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN,tempa(jadd),NOFEQN,
+!    +      'TEMPA ',IFAIL)
+!     pause
+   13     CONTINUE
+      ENDIF
+C
+      CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN*NOFVERT,NOFEQN,TWO,dVdZ,NOFEQN,dZdU,
+     +               NOFEQN,ZERO,TEMPB,NOFEQN)
+!     CALL R8Mat_Print('G',' ',NOFEQN,NOFEQN*nofvert,tempb,NOFEQN,
+!    +      'TEMPB ',IFAIL)
+!     pause
+C
+          DO 35 JVERT = 1,NOFVERT
+                  JADD = (JVERT-1)*NOFEQN*NOFEQN + 1
+          DO 35 IVERT = 1,NOFVERT
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+                  KADD = JADDR(IVERT,JVERT,NOFEQN)
+C
+               CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +              NOFEQN,NOFEQN,ONE,TEMPA(KADD),NOFEQN,
+     +              TEMPB(JADD),NOFEQN,ZERO,STIFEL(IADD),NOFVAR)
+C
+C     now STIFEL contains the convection stiffness matrix in
+C     conserved variables
+C
+!     write(6,*)ivert,jvert
+!     CALL R8Mat_Print('G',' ',Nofvar,Nofvar,stifel(iadd),Nofvar,
+!    +      'C(i,j) ',IFAIL)
+C
+   35     CONTINUE
+!     pause
+C
+C
+      IF (ICHECK.EQ.0) RETURN
+C
+C --------------- Debugging code starts here ---------------
+C
+C     test the residual as computed by the "implicit" scheme
+C     WKSP := dUdV(1) * \phi_{entropy} + dUdV(1,FrstEq) * \Phi
+C
+      CALL DINIT(NOFEQN,ZERO,WKSP,1)
+      CALL DAXPY(NOFEQN,SCALRES,dUdV,1,WKSP,1)
+      CALL DGEMV('N',NOFEQN,NORDER,ONE,dUdV((FrstEq-1)*NOFEQN+1),
+     +           NOFEQN,RESIDUAL(NORDER+1),1,ONE,WKSP,1)
+      CALL TEST(DivFlux,WKSP,TOLER,-IELEM,NOFEQN)
+C
+C --------------- Debugging code ends here ---------------
+C
+      RETURN
+
+89999 FORMAT (5X,'Scalar residual in Element ',I6,' Wave # ',I1)
+99999 FORMAT (5X,'Vector residual in Element ',I6,' EulerVII')
+
+      END
+@
+
+
+1.42
+log
+@VOLUME is now a F77 array
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerVII.f,v 1.41 2013/05/02 14:21:36 abonfi Exp abonfi $
+d197 1
+a197 1
+!     CALL X04CAF('G',' ',Nofvar,NOFvert,vcz,Nofvar,
+d199 1
+a199 1
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,NODRES,
+d201 1
+a201 1
+!     CALL X04CAF('G',' ',Nofvert,NOFEQN,symmv,Nofvert,
+d217 1
+a217 1
+!     CALL X04CAF('G',' ',Nofvert,Nofeqn,symmv,Nofvert,
+d219 1
+a219 1
+!     CALL X04CAF('G',' ',Nofvert,Nofeqn,dsymmv,Nofvert,
+d231 1
+a231 1
+!     CALL X04CAF('G',' ',Nofvert,1,beta1,Nofvert,
+d272 1
+a272 1
+!     CALL X04CAF('G',' ',Nofvert,Norder,symmv(M+1),Nofvert,
+d277 1
+a277 1
+!     CALL X04CAF('G',' ',NOFVERT,NOFEQN,TAUX,Nofvert,
+d298 1
+a298 1
+!     CALL X04CAF('G',' ',Norder,Nofvert,symmv(m+1),Norder,
+d308 1
+a308 1
+!     CALL X04CAF('G',' ',Nofvert,Nofeqn,dsymmv,Nofvert,
+d310 1
+a310 1
+!     CALL X04CAF('G',' ',Norder,norder*nofvert,beta1,Norder,
+d312 1
+a312 1
+!     CALL X04CAF('G',' ',NOrder,NOrder*nofvert,BETA1,
+d336 1
+a336 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFVERT,TAUX,NoFEQN,
+d381 1
+a381 1
+C     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dUdV,nofeqn,
+d383 1
+a383 1
+!     CALL X04CAF('G',' ',NOFvar,NOFvert,NODRES,nofvar,
+d391 1
+a391 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+d403 1
+a403 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+d465 1
+a465 1
+!     CALL X04CAF('G',' ',NOFVAR,nofvert,NODRES,
+d478 1
+a478 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,BETA1,
+d480 1
+a480 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dUdV,
+d482 1
+a482 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,TEMPB,
+d485 1
+a485 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+d509 1
+a509 1
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,NODRES,
+d518 1
+a518 1
+!     CALL X04CAF('G',' ',Nofeqn,nofeqn*nofvert,beta,Nofeqn,
+d520 1
+a520 1
+!     CALL X04CAF('G',' ',Nofvar,NOFvert*NTIMLEVS,vcz,Nofvar,
+d522 1
+a522 1
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,NODRES,
+d549 1
+a549 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,tempa(jadd),NOFEQN,
+d558 1
+a558 1
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,tempb,NOFEQN,
+d576 1
+a576 1
+!     CALL X04CAF('G',' ',Nofvar,Nofvar,stifel(iadd),Nofvar,
+@
+
+
+1.41
+log
+@implements characteristic time stepping
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerVII.f,v 1.39 2012/12/20 10:25:25 abonfi Exp $
+d40 1
+a40 1
+      DOUBLE PRECISION VOLUME
+d124 1
+a124 1
+         DTVOL = DELT/VOLUME
+d252 1
+a252 1
+          SCALRES = SCALRES/VOLUME
+d291 3
+a293 3
+      SOURCE(2) = -GRAV(1)*VOLUME
+      SOURCE(3) = -GRAV(2)*VOLUME
+      IF(NDIM.EQ.3)SOURCE(4) = -GRAV(3)*VOLUME
+d412 1
+a412 1
+          CALL DSCAL(2*NORDER,ONE/VOLUME,RESIDUAL,1)
+d513 2
+a514 2
+     &   CALL UNSTEADY4(TEMPB,BETA,VCZ,NOFVAR,NODRES,STIFEL,NOFEQN,NDIM,
+     &                  NOFVERT,PICARD)
+@
+
+
+1.40
+log
+@the contribution to the time step is now added
+separately for each variable
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerVII.f,v 1.39 2012/12/20 10:25:25 abonfi Exp abonfi $
+d52 1
+a52 1
+      DOUBLE PRECISION FLUCT,SCALRES
+d87 1
+d135 1
+a135 1
+      CALL DINIT(NOFVERT*NORDER,ZERO,TAUX,1)
+a224 23
+C  vertices
+C  |  variables --->
+C  |
+C  V    1   2   3   N
+C     +---+---+---+---+
+C  1  | X |   |   |   |
+C     +---+---+---+---+
+C  2  | X |   |   |   |
+C     +---+---+---+---+
+C  3  | X |   |   |   |
+C     +---+---+---+---+
+C  4  | X |   |   |   |
+C     +---+---+---+---+
+C
+C
+C     copy the timestep from TAUX into TSTEP (update)
+C     ONLY the entries corresponding to the 1st equation (entropy)
+C
+      DO IVERT = 1, NOFVERT
+         IADD = (IVERT-1)*NOFVAR+1
+         TSTEP(IADD) = TSTEP(IADD) + TAUX(IVERT)
+         TAUX(IVERT) = ZERO
+      ENDDO
+d270 2
+a271 1
+      MN = M*N
+d274 6
+a279 2
+      CALL TRANS(SYMMV(M+1),M,N,MN,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d295 2
+a296 2
+C REM: calling with TAUX(1) will insert contributions
+C      in the locations corresponding to the last NORDER eqns
+d302 1
+a302 1
+      CALL MatrixScheme(MatSplitVII,SYMMV(M+1),DSYMMV(M+1),TAUX(1),
+d315 1
+a315 1
+C     at this stage the matrix DSYMM is as follows
+d323 1
+a323 1
+C     is transposed
+d325 13
+a337 2
+      CALL TRANS(DSYMMV(M+1),N,M,MN,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d339 1
+a339 1
+C     so that now it looks like:
+d347 2
+a348 1
+C     copy the timestep from TAUX into TSTEP (update)
+d350 22
+a371 6
+      DO 14 IVERT = 1, NOFVERT
+         DO 14 IVAR = 1, NORDER
+         IADD = (IVERT-1)*NOFVAR+1+IVAR ! the offset is due to the fact that we need to skip entropy
+         JADD = (IVERT-1)*NORDER+IVAR
+         TSTEP(IADD) = TSTEP(IADD) + TAUX(JADD)
+   14 CONTINUE
+@
+
+
+1.39
+log
+@now passing the grid velocity among the arguments of the call
+@
+text
+@d10 1
+a10 1
+C     $Id: EulerVII.f,v 1.38 2011/12/30 11:26:48 abonfi Exp abonfi $
+d224 23
+a246 2
+C     a little trick so that we can directly feed
+C     TAUX to the matrix scheme:
+a247 2
+      CALL TRANS(TAUX,NOFVERT,NORDER,NORDER*NOFVERT,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d312 2
+a313 2
+C REM: calling with TAUX(1) will add new contributions
+C      to those already computed when solving entropy
+d318 1
+d322 1
+d356 3
+a358 2
+         IADD = (IVERT-1)*NOFVAR+1
+         JADD = (IVERT-1)*NORDER+1
+@
+
+
+1.38
+log
+@fixed a bug when DUALTS = .FALSE.
+@
+text
+@d1 4
+a4 3
+      SUBROUTINE EulerVII(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +                    NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     +                    ScalarScheme,MatrixScheme)
+d10 1
+a10 1
+C     $Id: EulerVII.f,v 1.37 2010/10/04 12:42:21 abonfi Exp abonfi $
+d44 1
+a44 1
+      DOUBLE PRECISION VCZ(*),VCN(*),STIFEL(*),NODRES(*),TSTEP(*)
+@
+
+
+1.37
+log
+@minor changes
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.36 2009/06/11 09:45:52 abonfi Exp abonfi $
+d478 2
+a479 1
+         CALL UNSTEADY4(TEMPB,BETA,VCZ,NOFVAR,NODRES,STIFEL,NOFEQN,NDIM,
+@
+
+
+1.36
+log
+@reduced the nof MM products
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.35 2009/01/09 14:06:43 abonfi Exp abonfi $
+d43 1
+a43 3
+      DOUBLE PRECISION VCZ(*),VCN(*),
+     +                 STIFEL(*),NODRES(*),TSTEP(*)
+C
+a47 2
+C
+C
+d74 2
+a75 2
+     3                 TEMPA(MAX_NOFVERT_SQR*MAXNOFEQN**2),
+     4                 TEMPB(MAX_NOFVERT_SQR*MAXNOFEQN**2)
+d77 5
+a81 2
+     6                 BETA(MAXNOFEQN*MAXNOFEQN*MAXNOFVERT),
+     8                 STIFC(MAX_NOFVERT_SQR*NEQMAX*NEQMAX)
+a105 1
+C
+d111 2
+a112 2
+      NORDER = NDIM + 1
+      NOFEQN = NDIM + 2
+d197 2
+d215 2
+d235 2
+d238 1
+d273 2
+d278 8
+d295 3
+d301 2
+a302 1
+!     write(6,*)ielem
+d305 2
+d351 1
+a351 1
+C     pause
+d360 1
+d367 1
+a389 1
+C           PAUSE
+d402 1
+a402 1
+      ENDIF
+d421 1
+a421 1
+      ENDIF
+d442 2
+a443 2
+!    2               ZERO,TEMPB(1),NOFEQN) 
+!           IF(.NOT.UNITMAT(TEMPB,NOFEQN,NOFEQN,NOFEQN,1.D-12))THEN
+d449 1
+a449 1
+!    +      NOFEQN,'TEMPB ',IFAIL)
+d473 4
+d484 3
+a486 1
+!    +      'beta(U) ',IFAIL)
+d489 1
+a518 7
+C
+!         DO 37 JVERT = 1,NOFVERT
+!         DO 37 IVERT = 1,NOFVERT
+!                 IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFEQN*NOFEQN) + 1
+C
+C
+!  37     CONTINUE
+@
+
+
+1.35
+log
+@same as revision 1.31.1.1
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.31.1.1 2009/01/09 13:35:13 abonfi Exp $
+d37 4
+d42 3
+a44 1
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR
+d47 1
+d51 3
+a53 1
+      INTEGER IVAR,IVERT,JVERT,NTURB,IDIM,IADD,JADD,KADD
+d56 1
+a56 1
+      LOGICAL LFLAG,PICARD
+a59 3
+      DOUBLE PRECISION VCZ(*),VCN(*),VOLUME,
+     +                 STIFEL(*),NODRES(*),TSTEP(*)
+C
+d74 4
+a77 4
+      DOUBLE PRECISION SYMMV(MAXNOFEQN*MAXNOFVERT),RESIDUAL(2*NEQMAX),
+     0                DSYMMV(MAXNOFEQN*MAXNOFVERT),WKSP(MAXNOFEQN),
+     1                 TAUX(MAXNOFEQN*MAXNOFVERT),SOURCE(MAXNOFVAR)
+     2                 Jacobian(NEQMAX,NEQMAX*3),PHI(NEQMAX),
+d80 2
+a81 2
+     5                 BETA1(NEQMAX*NEQMAX*MAXNOFVERT),
+     6                 BETA(MAXNOFEQN*MAXNOFEQN*MAXNOFVERT)
+d123 6
+a128 3
+      IF (LTIME.AND.DUALTS) THEN
+          CALL DINIT(NOFEQN*NOFEQN*NOFVERT,ZERO,BETA,1)
+          CALL DINIT(NORDER*NORDER*NOFVERT,ZERO,BETA1,1)
+a412 1
+         DTVOL = DELT/VOLUME
+d432 14
+a445 1
+         DO IVERT = 1,NOFVERT ! si puo forse ridurre il nof di DGEMM !?!?!?!?!
+a447 3
+     +               NOFEQN,NOFEQN,ONE,dUdV,NOFEQN,BETA(JADD),NOFEQN,
+     2               ZERO,TEMPA(JADD),NOFEQN) 
+            CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+d474 1
+a474 1
+     +               NOFVAR*NOFVERT*NOFVERT,NOFVAR,-ONE,dUdV,
+d478 5
+a482 5
+          DO 13 IVERT = 1, NOFVERT
+                  JADD = JADDR(IVERT,JVERT,NOFEQN)
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+          CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,-ONE,dUdV,
+@
+
+
+1.34
+log
+@impreved version in which updates due to different time levels
+are kept in separate locations
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.32 2008/07/14 06:39:22 abonfi Exp abonfi $
+a16 5
+      INCLUDE 'three.com'
+      INCLUDE 'transf.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'bodyf.com'
+      INCLUDE 'time.com'
+d25 1
+a25 1
+      PARAMETER (LNNVV=NMAX*NMAX*VMAX*VMAX)
+d30 6
+a35 3
+      INTEGER LWORK
+      PARAMETER(LWORK=MAX(MAXNOFEQN*MAXNOFVERT*MAXTIMLEVS,
+     &                    MAXNOFEQN**2*MAX_NOFVERT_SQR)) 
+d44 2
+a45 2
+      INTEGER IVAR,IVERT,JVERT,NTURB,IDIM,IADD(5),JADD,KADD,LADD,
+     &ILM1,NORDER,ifail,M,N,MN,N4,JCOL,ILEV
+d48 1
+d68 9
+a76 7
+      DOUBLE PRECISION  SYMMV(MAXNOFEQN*MAXNOFVERT*MAXTIMLEVS),
+     2                 DSYMMV(MAXNOFEQN*MAXNOFVERT*MAXTIMLEVS),
+     +                 TAUX(MAXNOFEQN*MAXNOFVERT),SOURCE(MAXNOFVAR)
+      DOUBLE PRECISION Jacobian(NEQMAX,NEQMAX*3),
+     1   TEMPA(LWORK),TEMPB(LWORK),
+     3   PHI(NEQMAX),WKSP(MAXNOFEQN),RESIDUAL(2*NEQMAX),
+     4   STIFC(MAX_NOFVERT_SQR*NEQMAX*NEQMAX)
+d107 2
+a108 2
+      NORDER = NDIM + 1 ! dp/ra,du,dv,dw i.e. coupled subsystem to be solved
+      NOFEQN = NDIM + 2 ! dS,dp/ra,du,dv,dw
+d117 4
+a120 3
+C
+      IF(LTIME)DTVOL = DELT/VOLUME
+C
+d125 1
+a125 4
+      CALL DINIT(NOFVERT*NOFEQN*NTIMLEVS,ZERO,TEMPA,1)
+      CALL DINIT(NOFVERT*NOFEQN*NTIMLEVS,ZERO,TEMPB,1)
+      CALL DINIT(NOFVERT*NOFEQN*NTIMLEVS,ZERO,SYMMV,1)
+      CALL DINIT(NOFEQN*NOFEQN*NTIMLEVS,ZERO,dVdZ,1) ! useless I believe
+d147 2
+a151 2
+      IF (ICHECK.EQ.0) GOTO 7
+C
+d175 1
+a175 1
+C      \tilde{U}^t = Z^t M^t where ^t denotes transposition
+d180 13
+a192 103
+C          time level: n+1,k             time level: n                      time level: n-1
+C
+C     dS(1) dp/ra(1) du(1) dv(1) dw(1)   dS(1) dp/ra(1) du(1) dv(1) dw(1)   dS(1) dp/ra(1) du(1) dv(1) dw(1)
+C     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     dS(4) dp/ra(4) du(4) dv(4) dw(4)   dS(4) dp/ra(4) du(4) dv(4) dw(4)   dS(4) dp/ra(4) du(4) dv(4) dw(4)    
+C
+C
+C     dSdZ_1 dp/(ra)dZ_1 dudZ_1 dvdZ_1 dwdZ_1
+C     dSdZ_2 dp/(ra)dZ_2 dudZ_2 dvdZ_2 dwdZ_2
+C     dSdZ_3 dp/(ra)dZ_3 dudZ_3 dvdZ_3 dwdZ_3
+C     dSdZ_4 dp/(ra)dZ_4 dudZ_4 dvdZ_4 dwdZ_4
+C     dSdZ_5 dp/(ra)dZ_5 dudZ_5 dvdZ_5 dwdZ_5
+C
+C
+      DO ILEV = 1, NTIMLEVS ! m = 0,+1,-1
+         ILM1 = ILEV-1
+         IADD(1) = (NOFVAR*NOFVERT)*ILM1+1 ! address of Z(n+m)
+         IADD(2) =  NOFVAR         *ILM1+1 ! address of <Z>(n+m)
+         IADD(3) =  NOFVERT        *ILM1+1 ! address of entropy in W
+         IADD(5) = (NOFEQN*NOFEQN )*ILM1+1 ! address of dVdZ(n+m)
+         CALL LINAVG(VCZ(IADD(1)),ZAVG(IADD(2)),NDIM,NOFVERT,NOFVAR)
+         CALL PARM2SYMM(ZAVG(IADD(2)),dVdZ(IADD(5)),NOFEQN,NDIM)
+         CALL SYMM2CONS(ZAVG(IADD(2)),dUdV(IADD(5)),NOFEQN,NDIM)
+C
+!     CALL X04CAF('G',' ',NOFeqn,Nofeqn*NTIMLEVS,dVdZ,NOFEQN,
+!    +'Average value of the dVdZ transf matrix before transp ',IFAIL)
+C
+         CALL TRANS(dVdZ(IADD(5)),NOFEQN,NOFEQN,NOFEQN*NOFEQN,MOVE,IWRK,
+     &IFAIL)
+         IF(IFAIL.NE.0)THEN
+             WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+             CALL EXIT(IFAIL)
+         ENDIF
+C
+C    for each time level we compute entropy first
+C
+C        dS(1) = |Z_1(1) Z_2(1) Z_3(1) Z_4(1) Z_5(1)| dSdZ_1 
+C        dS(2) = |Z_1(2) Z_2(2) Z_3(2) Z_4(2) Z_5(2)| dSdZ_2 
+C        dS(3) = |Z_1(3) Z_2(3) Z_3(3) Z_4(3) Z_5(3)| dSdZ_3 
+C        dS(4) = |Z_1(4) Z_2(4) Z_3(4) Z_4(4) Z_5(4)| dSdZ_4 
+C                                                     dSdZ_5 
+C
+C        i.e dS = Z^t x (1st col of dVdZ)
+C
+C        (NOFVERT , 1) = (NOFVERT , NOFEQN) x (NOFEQN , 1)
+C
+!     CALL X04CAF('G',' ',NOFVAR,Nofvert*NTIMLEVS,VCZ(1),NOFVAR,
+!    +      'Nodal values of the parameter vector ',IFAIL)
+!     CALL X04CAF('G',' ',NOFeqn,Nofeqn*NTIMLEVS,dVdZ,NOFEQN,
+!    +      'Average value of the dVdZ transf matrix ',IFAIL)
+!        CALL X04CAF('G',' ',Nofvert,NOFEQN*NTIMLEVS,SYMMV,NOFVERT,
+!    +      'Nodal values of the SYMMV variables before dgemv',IFAIL)
+C
+C     DGEMV(trans, m, n, alpha, a, lda, x, incx, beta, y, incy)
+C
+C     REM: in DGEMV (m,n) refers to the nof rows/cols of A, not its transpose
+C
+!        IADD(5) = 1
+         CALL DGEMV('Transpose',NOFEQN,NOFVERT,ONE,
+     2              VCZ(IADD(1)),NOFVAR,dVdZ(IADD(5)),1,ZERO,
+     3              SYMMV(IADD(3)),1)
+C
+C        now compute the other NORDER variables: dp/ra,du,dv,dw
+C
+C        (NORDER , NOFVERT) = (NORDER , NOFEQN) x (NOFEQN , NOFVERT)
+C        (m , n) = (m , k) x (k , n)
+C
+C
+C       DGEMM( transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc )
+C
+C        m = rows of op(A) & C
+C        n = cols of op(B) & C
+C        k = cols of op(A) and rows of op(B)
+C
+         IADD(5) = IADD(5) + NOFEQN ! starting address of symm vars other than entropy
+         IADD(4) = NTIMLEVS*NOFVERT+ILM1*NORDER*NOFVERT+1
+         CALL DGEMM('Transpose','No Transpose',NORDER,NOFVERT,NOFEQN,
+     2              ONE,dVdZ(IADD(5)),NOFEQN,VCZ(IADD(1)),NOFVAR,ZERO,
+     3              SYMMV(IADD(4)),NORDER)
+C
+!        CALL X04CAF('G',' ',Nofvert,NOFEQN*NTIMLEVS,SYMMV,NOFVERT,
+!    +      'Nodal values of the SYMMV variables ',IFAIL)
+!     pause
+      ENDDO
+C
+C     now SYMMV looks like:
+C
+C     time level:
+C      n+1    n     n-1      time level: n+1        | time level:    n-1         |time level: n
+C
+C     dS(1) dS(1) dS(1)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|
+C     ....    ...      | du(1)      ...      ...    | du(1)      ...      ...    | du(1)      ...      ...    |
+C     ....    ...      | dv(1)      ...      ...    | dv(1)      ...      ...    | dv(1)      ...      ...    |
+C     dS(4) dS(4) dS(4)| dw(1)      dw(2)    dw(4)  | dw(4)     dw(2)     dw(4)  | dw(4)     dw(2)    dw(4)   |
+C
+C
+!     goto 767
+!     write(6,*)'ielem = ',ielem
+!     CALL X04CAF('G',' ',Nofvert,NOFEQN*NTIMLEVS,TEMPA,NOFVERT,
+!    +      'Nodal values of the SYMMV variables before copy',IFAIL)
+  767 continue
+C
+d203 5
+a207 2
+     +                  SYMMV(1),TAUX(1),TEMPB(1),STIFC,NDIM,NOFVERT,
+     +                  PICARD)
+d216 1
+a216 4
+         IF(IFAIL.NE.0)THEN
+             WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+             CALL EXIT(IFAIL)
+         ENDIF
+d221 6
+d252 9
+a260 4
+C
+!     CALL X04CAF('G',' ',Nofvert,NOFEQN*NTIMLEVS,symmv,Nofvert,
+!    +      'SYMM variables ',IFAIL)
+C
+d271 2
+a272 3
+      IADD(1) = NOFVERT*NTIMLEVS+1
+      CALL MatrixScheme(MatSplitVII,SYMMV(IADD(1)),TEMPB(IADD(1)),
+     +                  TAUX(1),STIFC,NORDER,NORDER,NOFVERT,VCN,NDIM,
+d274 5
+d280 1
+a280 22
+C     the residual in symmetrizing variables (stored in TEMPB) looks like:
+C
+C     time level:
+C      n+1    n     n-1      time level: n+1        | time level:    n-1         |time level: n
+C
+C     dS(1) dS(1) dS(1)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|
+C     ....    ...      | du(1)      ...      ...    | du(1)      ...      ...    | du(1)      ...      ...    |
+C     ....    ...      | dv(1)      ...      ...    | dv(1)      ...      ...    | dv(1)      ...      ...    |
+C     dS(4) dS(4) dS(4)| dw(1)      dw(2)    dw(4)  | dw(4)     dw(2)     dw(4)  | dw(4)     dw(2)    dw(4)   |
+C
+C
+      MN = NOFVERT*NORDER
+      DO ILEV = 1, NTIMLEVS
+         IADD(1) = NOFVERT*NTIMLEVS+MN*(ILEV-1)+1
+         CALL TRANS(TEMPB(IADD(1)),NORDER,NOFVERT,MN,MOVE,IWRK,IFAIL)
+         IF(IFAIL.NE.0)THEN
+             WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+             CALL EXIT(IFAIL)
+         ENDIF
+      ENDDO
+C
+C     now the array TEMPB looks like:
+d282 4
+a285 2
+C          time level: 
+C     n+1,k n     n-1       time level: n+1,k            time level: n-1             time level: n-1
+d287 2
+a288 4
+C     dS(1) dS(1) dS(1) dp/ra(1) du(1) dv(1) dw(1)  dp/ra(1) du(1) dv(1) dw(1)  dp/ra(1) du(1) dv(1) dw(1)
+C     ....  ....   ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     ....  ....   ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     dS(4) dS(1) dS(1) dp/ra(4) du(4) dv(4) dw(4)  dp/ra(4) du(4) dv(4) dw(4)  dp/ra(4) du(4) dv(4) dw(4)    
+d290 2
+d293 1
+a293 25
+!     CALL X04CAF('G',' ',NOFEQN,Nofvert*NTIMLEVS,TEMPB,NofEQN,
+!    +      'SYMM variables Update before copy ',IFAIL)
+C
+C     need to copy entropy time levels into contiguous locations of DSYMM
+C     and similarly for the other (d+1) char variables
+C
+      DO ILEV = 1, NTIMLEVS
+         ILM1 = ILEV-1
+         IADD(1) = (NOFEQN*NOFVERT)*ILM1+1
+         JADD = NOFVERT*ILM1+1
+         CALL DCOPY(NOFVERT,TEMPB(JADD),1,DSYMMV(IADD(1)),1) ! entropy
+         IADD(1) = (NOFEQN*NOFVERT)*ILM1+NOFVERT+1
+         JADD = NTIMLEVS*NOFVERT+(NORDER*NOFVERT)*ILM1+1
+         CALL DCOPY(NOFVERT*NORDER,TEMPB(JADD),1,DSYMMV(IADD(1)),1) ! other variables
+      ENDDO
+C
+C     DSYMMV contains the residual in symmetrizing variables and looks like:
+C
+C
+C           time level: n+1,k            time level: n-1                      time level: n-1
+C
+C     dS(1) dp/ra(1) du(1) dv(1) dw(1)| dS(1) dp/ra(1) du(1) dv(1) dw(1)| dS(1) dp/ra(1) du(1) dv(1) dw(1)|
+C     ....  ....   ..    ..    ..     |   ....  ....   ..    ..    ..   |     ....  ....   ..    ..    .. |
+C     ....  ....   ..    ..    ..     |   ....  ....   ..    ..    ..   |     ....  ....   ..    ..    .. |
+C     dS(4) dp/ra(4) du(4) dv(4) dw(4)| dS(4) dp/ra(4) du(4) dv(4) dw(4)| dS(4) dp/ra(4) du(4) dv(4) dw(4)|
+d295 5
+d304 1
+a304 1
+         IADD(1) = (IVERT-1)*NOFVAR+1
+d306 1
+a306 1
+         TSTEP(IADD(1)) = TSTEP(IADD(1)) + TAUX(JADD)
+d309 1
+d311 5
+a315 17
+C using the transformation matrix dUdV computed at the
+C corresponding time level; then add into the nodal
+C residual
+C
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1) ! not sure this is really needed
+      DO ILEV = 1, NTIMLEVS
+         ILM1 = ILEV-1
+         IADD(1) = (NOFEQN*NOFVERT)*ILM1+1
+         IADD(2) = (NOFEQN*NOFEQN )*ILM1+1
+!        IADD(2) = 1
+         CALL DGEMM('No Transpose','Transpose',NOFEQN,NOFVERT,NOFEQN,
+     +           ONE,dUdV(IADD(2)),NOFEQN,DSYMMV(IADD(1)),NOFVERT,ONE,
+     +           NODRES,NOFVAR)
+!        CALL DGEMM('No Transpose','Transpose',NOFEQN,NOFVERT,NOFEQN,
+!    +           ONE,dUdV(IADD(2)),NOFEQN,DSYMMV(IADD(1)),NOFVERT,ZERO,
+!    +           TEMPA(IADD(1)),NOFEQN)
+      ENDDO
+a316 7
+!     CALL X04CAF('G',' ',Nofeqn,Nofeqn*NTIMLEVS,DuDV,Nofeqn,
+!    +      'dUdV where V = symm. vars. ',IFAIL)
+!     write(6,*)'ielem = ',ielem
+!     CALL X04CAF('G',' ',Nofeqn,Nofvert*NTIMLEVS,tempa,Nofeqn,
+!    +      'residual in cons. vars. ',IFAIL)
+!     CALL X04CAF('G',' ',Nofvert,Nofeqn*NTIMLEVS,dsymmv,Nofvert,
+!    +      'residual in symm. vars. ',IFAIL)
+d318 1
+a318 1
+!    +      'dUdV variables ',IFAIL)
+d320 1
+a320 1
+!    +      'residual ',IFAIL)
+d327 13
+a339 1
+      IF (PICARD) CALL MATINS(STIFEL,NOFVAR,STIFC,NORDER,NOFVERT,1)
+d381 1
+a381 1
+              IADD(1) = (IVERT-1)*NOFVAR+1
+d385 2
+a386 2
+c subr MatdZdU(), but this showd not be a problem if called
+c with noname 
+d388 1
+a388 1
+          CALL MatdZdU(VCZ(IADD(1)),dZdU(JADD),NDIM,NOFEQN)
+d392 51
+d456 1
+a456 1
+     +               NOFVAR*NOFVERT*NOFVERT,NOFVAR,MONE,dUdV,
+d462 1
+a462 1
+                  IADD(1) = JADDR(IVERT,JVERT,NOFVAR)
+d464 2
+a465 2
+     +               NOFEQN,NOFEQN,MONE,dUdV,NOFEQN,STIFEL(IADD(1)),
+     2               NOFVAR,ZERO,TEMPA(JADD),NOFEQN)
+d475 1
+a475 1
+!                 IADD(1) = (((JVERT-1)*NOFVERT+IVERT-1)*NOFEQN*NOFEQN) + 1
+d490 1
+a490 1
+                  IADD(1) = JADDR(IVERT,JVERT,NOFVAR)
+d495 1
+a495 1
+     +              TEMPB(JADD),NOFEQN,ZERO,STIFEL(IADD(1)),NOFVAR)
+a528 32
+C
+C     time level:
+C
+C              n+1                          n                             n-1
+C
+C     dS(1)   dS(2) ... dS(4) |     dS(1)   dS(2) ... dS(4) |     dS(1)   dS(2) ... dS(4) |
+C    dp/ra(1) ...   ...   ... |    dp/ra(1) ...   ...   ... |    dp/ra(1) ...   ...   ... |
+C     du(1)   ...   ...   ... |     du(1)   ...   ...   ... |     du(1)   ...   ...   ... |
+C     dv(1)   ...   ...   ... |     dv(1)   ...   ...   ... |     dv(1)   ...   ...  
+C     dw(1)   ...   ... dw(4) |     dw(1)   ...   ... dw(4) |     dw(1)   ...   ... dw(4) |
+C
+C     now SYMMV looks like:
+C
+C     time level:
+C      n+1    n     n-1      time level: n+1        | time level:    n-1         |time level: n
+C
+C     dS(1) dS(1) dS(1)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|
+C     ....    ...      | du(1)      ...      ...    | du(1)      ...      ...    | du(1)      ...      ...    |
+C     ....    ...      | dv(1)      ...      ...    | dv(1)      ...      ...    | dv(1)      ...      ...    |
+C     dS(4) dS(4) dS(4)| dw(1)      dw(2)    dw(4)  | dw(4)     dw(2)     dw(4)  | dw(4)     dw(2)    dw(4)   |
+C
+C
+C     now the array SYMMV looks like:
+C
+C          time level: 
+C     n+1,k n     n-1       time level: n+1,k            time level: n-1             time level: n-1
+C
+C     dS(1) dS(1) dS(1) dp/ra(1) du(1) dv(1) dw(1)  dp/ra(1) du(1) dv(1) dw(1)  dp/ra(1) du(1) dv(1) dw(1)
+C     ....  ....   ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     ....  ....   ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     dS(4) dS(1) dS(1) dp/ra(4) du(4) dv(4) dw(4)  dp/ra(4) du(4) dv(4) dw(4)  dp/ra(4) du(4) dv(4) dw(4)    
+C
+@
+
+
+1.33
+log
+@unsteady version: updates due to previous time levels
+are kept separate and then summed up
+this versions has a lot of transpose and copy operations
+@
+text
+@d46 1
+a46 1
+      INTEGER IVAR,IVERT,JVERT,NTURB,IDIM,IADD,JADD,KADD,LADD,
+d106 2
+a107 2
+      NORDER = NDIM + 1
+      NOFEQN = NDIM + 2
+d125 2
+d189 8
+a196 1
+      DO ILEV = 1, NTIMLEVS 
+d198 29
+a226 14
+         IADD = (NOFVAR*NOFVERT)*ILM1+1
+         JADD = (NOFEQN*NOFVERT)*ILM1+1
+         KADD = (NOFVAR)        *ILM1+1
+         LADD = (NOFEQN*NOFEQN )*ILM1+1
+!        IF(ILEV.GT.1)THEN
+            CALL LINAVG(VCZ(IADD),ZAVG(KADD),NDIM,NOFVERT,NOFVAR)
+            CALL PARM2SYMM(ZAVG(KADD),dVdZ(LADD),NOFEQN,NDIM)
+            CALL SYMM2CONS(ZAVG(KADD),dUdV(LADD),NOFEQN,NDIM)
+!        ENDIF
+!        LADD = 1
+         CALL DGEMM('Transpose','Transpose',NOFVERT,NOFEQN,NOFEQN,ONE,
+     2              VCZ(IADD),NOFVAR,dVdZ(LADD),NOFEQN,ZERO,TEMPA(JADD),
+     3              NOFVERT)
+      ENDDO
+d228 1
+a228 3
+!     goto 767
+!     write(6,*)'ielem = ',ielem
+!     CALL X04CAF('G',' ',NOFVAR,Nofvert*NTIMLEVS,VCZ(1),NOFEQN,
+d231 24
+a254 4
+!    +      'Average value of dVdZ parameter vector ',IFAIL)
+!     CALL X04CAF('G',' ',Nofvert,NOFEQN*NTIMLEVS,TEMPA,NOFVERT,
+!    +      'Nodal values of the SYMMV variables before copy',IFAIL)
+  767 continue
+d256 5
+a260 2
+C     need to copy entropy time levels into contiguous locations
+C     and similarly for the other char variables
+d262 3
+a264 8
+      DO ILEV = 1, NTIMLEVS
+         ILM1 = ILEV-1
+         IADD = (NOFEQN*NOFVERT)*ILM1+1
+         JADD =         NOFVERT *ILM1+1
+         CALL DCOPY(NOFVERT,TEMPA(IADD),1,SYMMV(JADD),1)
+         IADD = (NOFEQN*NOFVERT)*ILM1+NOFVERT+1
+         JADD = NTIMLEVS*NOFVERT+(NORDER*NOFVERT)*ILM1+1
+         CALL DCOPY(NOFVERT*NORDER,TEMPA(IADD),1,SYMMV(JADD),1)
+d267 1
+a267 1
+C     now the array SYMMV looks like:
+d269 2
+a270 2
+C          time level: 
+C     n+1,k n     n-1       time level: n+1,k            time level: n-1             time level: n-1
+d272 4
+a275 4
+C     dS(1) dS(1) dS(1) dp/ra(1) du(1) dv(1) dw(1)  dp/ra(1) du(1) dv(1) dw(1)  dp/ra(1) du(1) dv(1) dw(1)
+C     ....  ....   ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     ....  ....   ..    ..    ..     ....    ....    ..    ..    ..     ....    ....    ..    ..    ..
+C     dS(4) dS(1) dS(1) dp/ra(4) du(4) dv(4) dw(4)  dp/ra(4) du(4) dv(4) dw(4)  dp/ra(4) du(4) dv(4) dw(4)    
+d278 6
+a283 1
+!     pause
+a336 25
+C     the matrix of symmetrizing variables (except entropy) is now
+C     transposed so that these are stored (starting at SYMMV(M+1))
+C     as SYMMV(1:NORDER,1:NOFVERT)
+C
+      M = NOFVERT
+      N = NORDER
+      MN = NOFVERT*NORDER
+      DO ILEV = 1, NTIMLEVS 
+         IADD = NOFVERT*NTIMLEVS+MN*(ILEV-1)+1
+         CALL TRANS(SYMMV(IADD),NOFVERT,NORDER,MN,MOVE,IWRK,IFAIL)
+         IF(IFAIL.NE.0)THEN
+             WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+             CALL EXIT(IFAIL)
+         ENDIF
+      ENDDO
+C
+C     now SYMMV looks like:
+C
+C     time level:
+C      n+1    n     n-1      time level: n+1        | time level:    n-1         |time level: n
+C
+C     dS(1) dS(1) dS(1)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|dp/ra(1)  dp/ra(2)  dp/ra(4)|
+C     ....    ...      | du(1)      ...      ...    | du(1)      ...      ...    | du(1)      ...      ...    |
+C     ....    ...      | dv(1)      ...      ...    | dv(1)      ...      ...    | dv(1)      ...      ...    |
+C     dS(4) dS(4) dS(4)| dw(1)      dw(2)    dw(4)  | dw(4)     dw(2)     dw(4)  | dw(4)     dw(2)    dw(4)   |
+d351 4
+a354 4
+      IADD = NOFVERT*NTIMLEVS+1
+      CALL MatrixScheme(MatSplitVII,SYMMV(IADD),TEMPB(IADD),TAUX(1),
+     +                  STIFC,NORDER,NORDER,NOFVERT,VCN,NDIM,Jacobian,
+     +                  NEQMAX,RESIDUAL,SOURCE,IELEM,PICARD)
+d368 3
+a370 3
+      DO ILEV = 1, NTIMLEVS 
+         IADD = NOFVERT*NTIMLEVS+MN*(ILEV-1)+1
+         CALL TRANS(TEMPB(IADD),NORDER,NOFVERT,MN,MOVE,IWRK,IFAIL)
+d396 1
+a396 1
+         IADD = (NOFEQN*NOFVERT)*ILM1+1
+d398 2
+a399 2
+         CALL DCOPY(NOFVERT,TEMPB(JADD),1,DSYMMV(IADD),1) ! entropy
+         IADD = (NOFEQN*NOFVERT)*ILM1+NOFVERT+1
+d401 1
+a401 1
+         CALL DCOPY(NOFVERT*NORDER,TEMPB(JADD),1,DSYMMV(IADD),1) ! other variables
+d418 1
+a418 1
+         IADD = (IVERT-1)*NOFVAR+1
+d420 1
+a420 1
+         TSTEP(IADD) = TSTEP(IADD) + TAUX(JADD)
+d431 3
+a433 3
+         IADD = (NOFEQN*NOFVERT)*ILM1+1
+         LADD = (NOFEQN*NOFEQN )*ILM1+1
+!        LADD = 1
+d435 2
+a436 2
+     +           ONE,dUdV(LADD),NOFEQN,DSYMMV(IADD),NOFVERT,ONE,NODRES,
+     +           NOFVAR)
+d438 2
+a439 2
+!    +           ONE,dUdV(LADD),NOFEQN,DSYMMV(IADD),NOFVERT,ZERO,
+!    +           TEMPA(IADD),NOFEQN)
+d501 1
+a501 1
+              IADD = (IVERT-1)*NOFVAR+1
+d508 1
+a508 1
+          CALL MatdZdU(VCZ(IADD),dZdU(JADD),NDIM,NOFEQN)
+d531 1
+a531 1
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+d533 2
+a534 2
+     +               NOFEQN,NOFEQN,MONE,dUdV,
+     +               NOFEQN,STIFEL(IADD),NOFVAR,ZERO,TEMPA(JADD),NOFEQN)
+d544 1
+a544 1
+!                 IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFEQN*NOFEQN) + 1
+d559 1
+a559 1
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+d564 1
+a564 1
+     +              TEMPB(JADD),NOFEQN,ZERO,STIFEL(IADD),NOFVAR)
+d609 21
+@
+
+
+1.32
+log
+@unsteady version, preliminary release
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.31 2005/08/08 11:19:37 abonfi Exp $
+d35 3
+d46 2
+a47 2
+      INTEGER IVAR,IVERT,JVERT,NTURB,IDIM,IADD,JADD,KADD
+      INTEGER NORDER,ifail,M,N,MN,N4,JCOL,ILEV
+d70 1
+a70 1
+     2                 DSYMMV(MAXNOFEQN*MAXNOFVERT),
+d73 1
+a73 2
+     1   TEMPA((MAXNOFEQN*MAXNOFVERT)**2), 
+     2   TEMPB((MAXNOFEQN*MAXNOFVERT)**2),
+d75 1
+a75 2
+     4   STIFC(MAX_NOFVERT_SQR*NEQMAX*NEQMAX),
+     5   dS(MAXNOFVERT*MAXTIMLEVS),dW(MAXNOFVERT*MAXNOFVERT*MAXTIMLEVS)
+d123 2
+a124 1
+      CALL DINIT(NOFVERT*NOFEQN,ZERO,DSYMMV,1)
+d174 1
+a174 1
+C      \tilde{U}^t = Z^t M^t where ' denotes transposition
+d179 6
+a184 4
+C     dS(1) dp/ra(1) du(1) dv(1) dw(1)
+C     ....    ....    ..    ..    ..
+C     ....    ....    ..    ..    ..
+C     dS(4) dp/ra(4) du(4) dv(4) dw(4)    
+a185 2
+cold  CALL DGEMM('Transpose','Transpose',NOFVERT,NOFEQN,NOFEQN,
+cold +           ONE,VCZ,NOFVAR,dVdZ,NOFEQN,ZERO,SYMMV,NOFVERT)
+d188 11
+a198 2
+         IADD = (NOFVAR*NOFVERT)*(ILEV-1)+1
+         JADD = (NOFEQN*NOFVERT)*(ILEV-1)+1
+d200 1
+a200 1
+     2              VCZ(IADD),NOFVAR,dVdZ,NOFEQN,ZERO,SYMMV(JADD),
+d204 9
+d214 2
+a215 1
+C     need to copy time levels into contiguous locations
+d218 7
+a224 6
+         IADD = (NOFEQN*NOFVERT)*(ILEV-1)+1
+         JADD = NOFVERT*(ILEV-1)+1
+         CALL DCOPY(NOFVERT,SYMMV(IADD),1,dS(JADD),1)
+         IADD = (NOFEQN*NOFVERT)*(ILEV-1)+NOFVERT+1
+         JADD = (NORDER*NOFVERT)*(ILEV-1)+1
+         CALL DCOPY(NOFVERT*NORDER,SYMMV(IADD),1,dW(JADD),1)
+d227 10
+a236 18
+      goto 767
+      write(6,*)'ielem = ',ielem
+      DO ILEV = 1, NTIMLEVS 
+         write(6,*)'time level = ',ilev
+         IADD = (NOFVAR*NOFVERT)*(ILEV-1)+1
+         JADD = (NOFEQN*NOFVERT)*(ILEV-1)+1
+         KADD = (NORDER*NOFVERT)*(ILEV-1)+1
+      CALL X04CAF('G',' ',NOFVAR,Nofvert,VCZ(IADD),NOFEQN,
+     +      'Nodal values of the parameter vector ',IFAIL)
+      CALL X04CAF('G',' ',Nofvert,NOFEQN,SYMMV(JADD),NOFVERT,
+     +      'Nodal values of the SYMMV variables ',IFAIL)
+      CALL X04CAF('G',' ',Nofvert,NTIMLEVS,dS(1),Nofvert,
+     +      'Nodal values of the DS variables ',IFAIL)
+      CALL X04CAF('G',' ',Nofvert,NORDER,dW(KADD),NORDER,
+     +      'Nodal values of the dW variables ',IFAIL)
+      ENDDO
+      pause
+  767 continue
+d238 1
+a238 3
+C     CALL X04CAF('G',' ',Nofvert,NOFEQN,symmv,Nofvert,
+C    +      'SYMM variables ',IFAIL)
+C     pause
+d249 1
+a249 1
+     +                  dS(1),TAUX(1),DSYMMV(1),STIFC,NDIM,NOFVERT,
+d259 4
+a262 1
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d298 1
+a298 1
+      MN = M*N
+d300 6
+a305 3
+         IADD = MN*(ILEV-1)+1
+      CALL TRANS(dW(IADD),M,N,MN,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d308 14
+d331 2
+a332 1
+      CALL MatrixScheme(MatSplitVII,dW(1),DSYMMV(M+1),TAUX(1),
+d336 4
+d341 4
+a344 1
+C     at this stage the matrix DSYMM is as follows
+a345 4
+C     dS(1) dp/ra(1) ...  dp/ra(4)
+C     ....   du(1)   ...   du(4)
+C            dv(1)   ...   dv(4) 
+C     dS(4)  dw(1)   ...   dw(4)
+d347 9
+a355 2
+C     the block involving symm. variables other than entropy
+C     is transposed
+d357 1
+a357 2
+      CALL TRANS(DSYMMV(M+1),N,M,MN,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d359 2
+a360 1
+C     so that now it looks like:
+d362 31
+a392 5
+C     dS(1) dp/ra(1)  du(1)  dv(1)  dw(1)
+C     ....    ...      ...    ...    ...
+C     ....    ...      ...    ...    ...
+C           
+C     dS(4) dp/ra(4)  du(4)  dv(4)  dw(4)
+a393 2
+caldo CALL X04CAF('G',' ',Nofvert,NOFEQN,dsymmv,Nofvert,
+caldo+      'SYMM variables Update ',IFAIL)
+a402 1
+C
+d404 3
+a406 1
+C           note that DSYMMV is transposed during the MM product
+d408 8
+a415 2
+      CALL DGEMM('No Transpose','Transpose',NOFEQN,NOFVERT,NOFEQN,
+     +           ONE,dUdV,NOFEQN,DSYMMV(1),NOFVERT,ZERO,NODRES,
+d417 4
+d422 7
+a428 3
+C     write(6,*)ielem
+C     CALL X04CAF('G',' ',Nofvert,Nofvar,dsymmv,Nofvert,
+C    +      'residual in symm. vars. ',IFAIL)
+d430 3
+a432 3
+C    +      'dUdV variables ',IFAIL)
+C     CALL X04CAF('G',' ',NOFvar,NOFvert,NODRES,nofvar,
+C    +      'residual ',IFAIL)
+d578 11
+@
+
+
+1.31
+log
+@added body forces
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.30 2002/09/14 09:10:40 abonfi Exp abonfi $
+d14 8
+a35 7
+      INCLUDE 'constants'
+      INCLUDE 'bnd.h'
+      INCLUDE 'three'
+      INCLUDE 'transf.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'bodyf.com'
+C
+d44 1
+a44 1
+      INTEGER NORDER,ifail,M,N,MN,N4,JCOL
+d66 3
+a68 2
+      DOUBLE PRECISION SYMMV(MAXNOFEQN*VMAX),DSYMMV(MAXNOFEQN*VMAX),
+     +                 TAUX(MAXNOFEQN*VMAX),SOURCE(MAXNOFVAR)
+d70 5
+a74 4
+     +                 TEMPA((MAXNOFEQN*VMAX)**2),
+     2                 TEMPB((MAXNOFEQN*VMAX)**2)
+      DOUBLE PRECISION PHI(NEQMAX),WKSP(MAXNOFEQN),RESIDUAL(2*NEQMAX),
+     +                 STIFC(VMAX*VMAX*NEQMAX*NEQMAX)
+d102 2
+a103 2
+      INTEGER IADDR
+      IADDR(IVERT,JVERT,N) = (((JVERT-1)*NOFVERT+IVERT-1)*N*N) + 1
+d116 3
+a143 2
+      IF (ICHECK.EQ.0) GOTO 7
+C
+d147 2
+d182 41
+a222 2
+      CALL DGEMM('Transpose','Transpose',NOFVERT,NOFEQN,NOFEQN,
+     +           ONE,VCZ,NOFVAR,dVdZ,NOFEQN,ZERO,SYMMV,NOFVERT)
+d237 1
+a237 1
+     +                  SYMMV(1),TAUX(1),DSYMMV(1),STIFC,NDIM,NOFVERT,
+d284 3
+a286 1
+      CALL TRANS(SYMMV(M+1),M,N,MN,MOVE,IWRK,IFAIL)
+d288 1
+d299 1
+a299 1
+      CALL MatrixScheme(MatSplitVII,SYMMV(M+1),DSYMMV(M+1),TAUX(1),
+d303 1
+d325 3
+d423 1
+a423 1
+     +               NOFVAR*NOFVERT*NOFVERT,NOFVAR,-ONE,dUdV,
+d428 2
+a429 2
+                  JADD = IADDR(IVERT,JVERT,NOFEQN)
+                  IADD = IADDR(IVERT,JVERT,NOFVAR)
+d431 1
+a431 1
+     +               NOFEQN,NOFEQN,-ONE,dUdV,
+d457 2
+a458 2
+                  IADD = IADDR(IVERT,JVERT,NOFVAR)
+                  KADD = IADDR(IVERT,JVERT,NOFEQN)
+@
+
+
+1.31.1.1
+log
+@unsteady version: simplified w.r.t. the previous release
+now take into account the fact that parameter vector is
+the dependent variable in the time derivative
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.31 2005/08/08 11:19:37 abonfi Exp abonfi $
+a13 3
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'time.h'
+d22 1
+a22 1
+      PARAMETER (LNNVV=MAX_NOFVAR_SQR*MAX_NOFVERT_SQR)
+d28 3
+a30 2
+      INCLUDE 'time.com'
+      INCLUDE 'three.com'
+a45 1
+      LOGICAL unitmat
+d65 7
+a71 9
+      DOUBLE PRECISION SYMMV(MAXNOFEQN*MAXNOFVERT),RESIDUAL(2*NEQMAX),
+     0                DSYMMV(MAXNOFEQN*MAXNOFVERT),WKSP(MAXNOFEQN),
+     1                 TAUX(MAXNOFEQN*MAXNOFVERT),SOURCE(MAXNOFVAR)
+     2                 Jacobian(NEQMAX,NEQMAX*3),PHI(NEQMAX),
+     3                 TEMPA(MAX_NOFVERT_SQR*MAXNOFEQN**2),
+     4                 TEMPB(MAX_NOFVERT_SQR*MAXNOFEQN**2)
+     5                 BETA1(NEQMAX*NEQMAX*MAXNOFVERT),
+     6                 BETA(MAXNOFEQN*MAXNOFEQN*MAXNOFVERT)
+     8                 STIFC(MAX_NOFVERT_SQR*NEQMAX*NEQMAX)
+d99 2
+a100 2
+      INTEGER JADDR
+      JADDR(IVERT,JVERT,N) = (((JVERT-1)*NOFVERT+IVERT-1)*N*N) + 1
+a111 4
+      IF (LTIME.AND.DUALTS) THEN
+          CALL DINIT(NOFEQN*NOFEQN*NOFVERT,ZERO,BETA,1)
+          CALL DINIT(NORDER*NORDER*NOFVERT,ZERO,BETA1,1)
+      ENDIF
+d179 2
+a180 4
+!     CALL X04CAF('G',' ',Nofvar,NOFvert,vcz,Nofvar,
+!    +      'Z variables ',IFAIL)
+!     CALL X04CAF('G',' ',Nofvert,NOFEQN,symmv,Nofvert,
+!    +      'SYMM variables ',IFAIL)
+d192 2
+a193 5
+     +                  SYMMV(1),TAUX(1),DSYMMV(1),BETA1,STIFC,NDIM,
+     +                  NOFVERT,PICARD)
+!     write(6,*)ielem
+!     CALL X04CAF('G',' ',Nofvert,Nofeqn,dsymmv,Nofvert,
+!    +      'residual in symm. vars. after entropy ',IFAIL)
+a206 6
+      IF (LTIME.AND.DUALTS) THEN
+!     CALL X04CAF('G',' ',Nofvert,1,beta1,Nofvert,
+!    +      'vettore beta per entropia',IFAIL)
+          CALL DCOPY(NOFVERT*NOFVERT,BETA1,1,BETA,NOFVAR*NOFVAR)
+          CALL DINIT(NOFVERT*NOFVERT,ZERO,BETA1,1) ! maybe useless
+      ENDIF
+d252 2
+a253 7
+     +                  BETA1,STIFC,NORDER,NORDER,NOFVERT,VCN,NDIM,
+     +                  Jacobian,NEQMAX,RESIDUAL,SOURCE,IELEM,PICARD)
+!     write(6,*)ielem
+!     CALL X04CAF('G',' ',Nofvert,Nofeqn,dsymmv,Nofvert,
+!    +      'residual in symm. vars. ',IFAIL)
+!     CALL X04CAF('G',' ',NOrder,NOrder*nofvert,BETA1,
+!    +      NOrder,'Beta in symm only last d+1 eqns',IFAIL)
+d292 3
+d297 2
+a298 2
+!     CALL X04CAF('G',' ',NOFvar,NOFvert,NODRES,nofvar,
+!    +      'residual (before) ',IFAIL)
+d305 1
+a305 13
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Betas ',IFAIL)
+C
+      IF (PICARD) THEN
+         CALL MATINS(STIFEL,NOFVAR,STIFC,NORDER,NOFVERT,NOFVERT,1)
+      ENDIF
+C
+      IF (LTIME.AND.DUALTS) 
+     &CALL MATINS(BETA,NOFEQN,BETA1,NORDER,NOFVERT,1,1)
+C
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Beta after insertion',IFAIL)
+!     pause
+d351 2
+a352 2
+c subr MatdZdU(), but this should not be a problem if called
+c with NOFEQN
+a357 51
+      IF (LTIME) THEN
+          DO IVERT = 1,NOFVERT
+              IADD = (IVERT-1)*NOFVAR+1
+              JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+              CALL PARM2CONS(VCZ(IADD),TEMPB(JADD),NOFEQN,NDIM)
+          ENDDO
+      ENDIF
+C
+!     CALL X04CAF('G',' ',NOFVAR,nofvert,NODRES,
+!    +      NOFVAR,'Nodal update in U before td',IFAIL)
+!
+      IF(LTIME)THEN 
+         DTVOL = DELT/VOLUME
+c
+c     compute transformation matrix from 
+c
+         CALL CONS2SYMM(ZAVG,BETA1,NOFEQN,NDIM)
+!
+!           CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+!    +               NOFEQN,NOFEQN,ONE,BETA1,NOFEQN,dUdV,NOFEQN,
+!    2               ZERO,TEMPB(1),NOFEQN) 
+!           IF(.NOT.UNITMAT(TEMPB,NOFEQN,NOFEQN,NOFEQN,1.D-12))THEN
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,BETA1,
+!    +      NOFEQN,'dVdS ',IFAIL)
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dUdV,
+!    +      NOFEQN,'dUdV ',IFAIL)
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,TEMPB,
+!    +      NOFEQN,'TEMPB ',IFAIL)
+!           ENDIF 
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,BETA,
+!    +      NOFEQN,'Beta in symm',IFAIL)
+C
+         DO IVERT = 1,NOFVERT ! si puo forse ridurre il nof di DGEMM !?!?!?!?!
+            JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+            CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,ONE,dUdV,NOFEQN,BETA(JADD),NOFEQN,
+     2               ZERO,TEMPA(JADD),NOFEQN) 
+            CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,ONE,TEMPA(JADD),NOFEQN,BETA1,NOFEQN,
+     2               ZERO,BETA(JADD),NOFEQN) 
+         ENDDO
+C
+         CALL UNSTEADY4(TEMPB,BETA,VCZ,NOFVAR,NODRES,STIFEL,NOFEQN,NDIM,
+     &                  NOFVERT,PICARD)
+      ENDIF
+C
+!     write(6,*)'ielem = ',ielem
+!     CALL X04CAF('G',' ',Nofeqn,nofeqn*nofvert,beta,Nofeqn,
+!    +      'beta(U) ',IFAIL)
+!     CALL X04CAF('G',' ',NOFEQN,nofvert,NODRES,
+!    +      NOFEQN,'Nodal update in U',IFAIL)
+d376 2
+a377 2
+                  JADD = JADDR(IVERT,JVERT,NOFEQN)
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+d405 2
+a406 2
+                  IADD = JADDR(IVERT,JVERT,NOFVAR)
+                  KADD = JADDR(IVERT,JVERT,NOFEQN)
+@
+
+
+1.30
+log
+@the timestep vector is now dimensioned NOFVAR x NPOIN
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.29 2002/09/10 09:57:28 abonfi Exp $
+d17 1
+a17 1
+C     MAXFLEQN is the max. no. of mean flow equations (5 in 3D)
+d19 1
+a19 1
+      INTEGER NEQMAX,MAXFLEQN,LNNVV
+d21 1
+a21 1
+      PARAMETER (NEQMAX=4,MAXFLEQN=5,TOLER=1.D-15)
+d23 2
+a24 2
+      INTEGER IWRK
+      PARAMETER(IWRK=10) 
+d33 1
+d42 1
+a42 1
+      INTEGER IVAR,IVERT,JVERT,FrstEq,NTURB,IDIM,IADD,JADD,KADD
+d65 2
+a66 2
+      DOUBLE PRECISION SYMMV(MAXFLEQN*VMAX),DSYMMV(MAXFLEQN*VMAX),
+     +                 TAUX(MAXFLEQN*VMAX)
+d68 3
+a70 3
+     +                 TEMPA((MAXFLEQN*VMAX)**2),
+     2                 TEMPB((MAXFLEQN*VMAX)**2)
+      DOUBLE PRECISION PHI(NEQMAX),WKSP(5),RESIDUAL(2*NEQMAX),
+d94 1
+a95 1
+      DATA FrstEq/2/
+d178 4
+a181 3
+!     CALL X04CAF('G',' ',Nofvert,NOFEQN,symmv,Nofvert,
+!    +      'SYMM variables ',IFAIL)
+!     pause
+d244 3
+a246 3
+C IF IPAR(9).EQ.0 the eigenvector decomposition is done numerically
+C otherwise the analitical decomposition is employed
+C NOT implemented any more
+d253 1
+a253 1
+     +                  NEQMAX,RESIDUAL,IELEM,PICARD)
+d292 8
+a299 5
+!     CALL X04CAF('G',' ',Nofvert,Nofvar,dsymmv,Nofvert,
+!    +      'residual ',IFAIL)
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dUdV,noname,
+!    +      'dUdV variables ',IFAIL)
+!     pause
+@
+
+
+1.29
+log
+@removed initialization of the nodal residual and time-step vectors
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.28 2002/08/24 10:17:20 abonfi Exp abonfi $
+d14 8
+a21 1
+      INTEGER LNNVV
+d23 3
+a26 3
+C    NEQMAX is the max. no. of equations (4 in 3D)
+C           for the matrix scheme (solves for dp/ra,du,dv,dw)
+C    NORDER is actual no. of equations = DIM+1
+a27 3
+      INTEGER NEQMAX
+      DOUBLE PRECISION TOLER
+      PARAMETER (NEQMAX=4,TOLER=1.D-15)
+a29 2
+C
+C
+d47 3
+a49 3
+      DOUBLE PRECISION Jacobian(NEQMAX,NEQMAX*3)
+      DOUBLE PRECISION PHI(NEQMAX),WKSP(5),RESIDUAL(2*NEQMAX)
+      DOUBLE PRECISION NODRES(*),SYMMV(20),DSYMMV(20)
+d64 11
+a74 4
+C
+C
+      DOUBLE PRECISION TSTEP(*)
+C
+a77 7
+      INTEGER IWRK
+      PARAMETER(IWRK=10) 
+      INTEGER MOVE(IWRK)
+      DOUBLE PRECISION VCZ(*),VCN(*),VOLUME,
+     +                 STIFC(VMAX*VMAX*NEQMAX*NEQMAX),
+     +                 STIFEL(*),TEMPA(400),TEMPB(400)
+C
+d82 1
+a82 1
+C                        the Matrix scheme as \sum_{ij} U_j
+a114 2
+caldo CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1)
+caldo CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+d116 1
+d190 1
+a190 1
+     +                  SYMMV(1),TSTEP,DSYMMV(1),STIFC,NDIM,NOFVERT,
+d193 9
+d246 4
+a249 1
+      CALL MatrixScheme(MatSplitVII,SYMMV(M+1),DSYMMV(M+1),TSTEP,
+d274 7
+d282 1
+d311 1
+a311 1
+     +            1.D-14) LFLAG = .FALSE.
+d331 1
+a331 1
+          CALL TEST(DivFlux,WKSP,1.D-12,IELEM,NOFEQN)
+a412 1
+!     pause
+d415 1
+d425 1
+a425 1
+      CALL DINIT(5,ZERO,WKSP,1)
+@
+
+
+1.28
+log
+@same as 1.26.1.1
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.26.1.1 2002/08/24 10:00:20 abonfi Exp $
+d113 2
+a114 2
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,NODRES,1)
+      CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+@
+
+
+1.27
+log
+@unsuccessfull attempt to make things easier
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.26 2000/11/15 09:10:18 aldo Exp abonfi $
+d22 2
+a23 1
+      PARAMETER (NEQMAX=4)
+d39 1
+a39 1
+      INTEGER IVAR,IVERT,JVERT,FrstEq,NTURB,IDIM,IADD,JADD
+a43 2
+      DOUBLE PRECISION DENS,DENSABARINV,RAINV,Z1SQRINV
+      DOUBLE PRECISION Z1,Z2,Z3,Z4,Z5,TMP1,TMP2
+a44 3
+C
+C
+C
+d56 1
+a56 1
+C     SYMMV(1:NOFVAR,1:NOFVERT) is used to store the vector
+d59 1
+a59 1
+C     DSYMMV(1:NOFVAR,1:NOFVERT) is used to store the change
+d67 1
+d72 1
+a72 1
+      DOUBLE PRECISION VCZ(NOFVAR,*),VCN(*),VOLUME,
+a88 1
+C
+d94 4
+d100 1
+d115 1
+a115 1
+      CALL DINIT(NOFVERT*NOFVAR,ZERO,DSYMMV,1)
+d124 2
+a125 2
+          CALL DINIT(NOFVAR,ZERO,WKSP,1)
+          CALL CHECK(IELEM,NDIM,NOFVAR)
+d134 1
+a134 1
+caldo CALL Eigen_VII(Jacobian,NEQMAX,DVDZ,DUDV,NDIM,NOFVAR)
+d144 1
+a159 138
+C#define DEBUG
+C
+C
+C
+      DENS = UAVG(1)
+      DENSABARINV = DENS/ABAR
+      RAINV = ONE/(DENS*ABAR)
+C
+      R_SPEED(1,1) = UAVG(3)
+      R_SPEED(2,1) = UAVG(4)
+      IF(NDIM.EQ.3)R_SPEED(3,1) = UAVG(5)
+C
+C     Symmetrizing variables ..
+C
+C
+C     Transformation matrix from symmetrizing to conserved variables ..
+C
+      DUDV(1) = ONE
+      DUDV(2) = KINETIC
+      DUDV(3) = UAVG(3)
+      DUDV(4) = UAVG(4)
+C
+      IADD = NOFVAR
+      DUDV(IADD+1) = DENSABARINV
+      DUDV(IADD+2) = DENSABARINV*UAVG(2)
+      DUDV(IADD+3) = DENSABARINV*UAVG(3)
+      DUDV(IADD+4) = DENSABARINV*UAVG(4)
+C
+      IADD = 2*NOFVAR
+      DUDV(IADD+1) = ZERO
+      DUDV(IADD+2) = DENS*UAVG(3)
+      DUDV(IADD+3) = DENS
+      DUDV(IADD+4) = ZERO
+C
+      IADD = 3*NOFVAR
+      DUDV(IADD+1) = ZERO
+      DUDV(IADD+2) = DENS*UAVG(4)
+      DUDV(IADD+3) = ZERO
+      DUDV(IADD+4) = DENS
+C
+      IF(NDIM.EQ.3)THEN
+         DUDV(5) = UAVG(5)
+         DUDV(10) = DENSABARINV*UAVG(5)
+         DUDV(15) = ZERO
+         DUDV(20) = ZERO
+C
+         DUDV(21) = ZERO
+         DUDV(22) = DENS*UAVG(5)
+         DUDV(23) = ZERO
+         DUDV(24) = ZERO
+         DUDV(25) = DENS
+      ENDIF
+C
+      Z1SQRINV = ONE/(ZAVG(1)*ZAVG(1))
+C
+C     Transformation matrix from parameter vector 
+C                             to symmetrizing variables
+C
+      TMP1 = GM1OG / ASQR
+      TMP2 = GM1OG * RAINV
+C
+      dVdZ(1) = TWO*ZAVG(1) - TMP1 * ZAVG(2)
+      dVdZ(2) = TMP2 * ZAVG(2)
+      dVdZ(3) = - ZAVG(3) * Z1SQRINV
+      dVdZ(4) = - ZAVG(4) * Z1SQRINV
+C
+      IADD = NOFVAR
+      dVdZ(IADD+1) = - TMP1 * ZAVG(1)
+      dVdZ(IADD+2) = TMP2 * ZAVG(1)
+      dVdZ(IADD+3) = ZERO
+      dVdZ(IADD+4) = ZERO
+C
+      IADD = 2*NOFVAR
+      dVdZ(IADD+1) = TMP1 * ZAVG(3)
+      dVdZ(IADD+2) = - TMP2 * ZAVG(3)
+      dVdZ(IADD+3) = ONE/ZAVG(1)
+      dVdZ(IADD+4) = ZERO
+C
+      IADD = 3*NOFVAR
+      dVdZ(IADD+1) = TMP1 * ZAVG(4)
+      dVdZ(IADD+2) = - TMP2 * ZAVG(4)
+      dVdZ(IADD+3) = ZERO
+      dVdZ(IADD+4) = ONE/ZAVG(1)
+C
+      IF(NDIM.EQ.3)THEN
+          dVdZ(5 ) = - ZAVG(5) * Z1SQRINV
+          dVdZ(10) = ZERO
+          dVdZ(15) = ZERO
+          dVdZ(20) = ZERO
+C
+          dVdZ(21) = TMP1 * ZAVG(5)
+          dVdZ(22) = - TMP2 * ZAVG(5)
+          dVdZ(23) = ZERO
+          dVdZ(24) = ZERO
+          dVdZ(25) = ONE/ZAVG(1)
+      ENDIF
+C
+C     the vector of symmetrizing variables is 
+C     stored in the 1D array SYMMV as follows:
+C
+C     dS(1) dp/ra(1) dp/ra(2) dp/ra(2)p/ra(4)
+C     ....    du(1)   ..        ..    ..
+C     ....    dv(1)   ..        ..    ..
+C     dS(4)   dw(1)  dw(2)     dw(3) dw(4)    
+C
+C
+      DO 10 IVERT = 1, NOFVERT
+         IADD = NOFVERT+(IVERT-1)*NORDER
+         Z1 = VCZ(1,IVERT)
+         Z2 = VCZ(2,IVERT)
+         Z3 = VCZ(3,IVERT)
+         Z4 = VCZ(4,IVERT)
+         SYMMV(IVERT ) = dVdZ(1,1)*Z1 + dVdZ(1,2)*Z2 + dVdZ(1,3)*Z3 
+     &                                + dVdZ(1,4)*Z4
+         SYMMV(IADD+1) = dVdZ(2,1)*Z1 + dVdZ(2,2)*Z2 + dVdZ(2,3)*Z3 
+     &                                + dVdZ(2,4)*Z4
+         SYMMV(IADD+2) = dVdZ(3,1)*Z1 + dVdZ(3,3)*Z3
+         SYMMV(IADD+3) = dVdZ(4,1)*Z1 + dVdZ(4,4)*Z4
+         IF(NDIM.EQ.3)THEN
+         Z5 = VCZ(5,IVERT)
+         SYMMV(IADD+1) = SYMMV(IADD+1) + dVdZ(1,5)*Z5
+         SYMMV(IADD+2) = SYMMV(IADD+2) + dVdZ(2,5)*Z5
+         SYMMV(IADD+4) =  dVdZ(5,1)*Z1 + dVdZ(5,5)*Z5
+         ENDIF
+   10 CONTINUE
+C
+C    Test if GRAD_CHAR = DVDZ * GRAD_PARM
+C
+C           CALL DGEMM('N','N',NDIM+2,NDIM,NDIM+2,ONE,
+C    +      DVDZ,5,GRAD_PARM,NMAX,0.D0,WORK,NDIM+2)
+C           CALL X04CAF('G',' ',NDIM+2,NDIM,WORK,NDIM+2,
+C    +      'dZdU*dZ matrix ????',IFAIL)
+C           CALL X04CAF('G',' ',NDIM+2,NDIM,GRAD_CHAR,LDW,
+C    +      'dW matrix ????',IFAIL)
+C           PAUSE
+C
+C
+C
+d164 1
+a164 1
+C      \tilde{U}' = Z' M' where ' denotes transposition
+d166 1
+a166 1
+C     SYMMV(1:NOFVERT,1:NOFVAR) and entropy
+d174 3
+a176 3
+corig CALL DGEMM('Transpose','Transpose',NOFVERT,NOFVAR,NOFVAR,
+corig+           ONE,VCZ,NOFVAR,dVdZ,NOFVAR,ZERO,SYMMV,NOFVERT)
+!     CALL X04CAF('G',' ',norder,Nofvert,symmv(nofvert+1),Norder,
+d209 1
+a209 1
+          CALL DAXPY(NOFVAR,SCALRES,dUdV((IVAR-1)*NOFVAR+1),1,WKSP,1)
+d211 1
+a211 1
+          IF (DABS(FLUCT-SCALRES).GT.1.D-15) THEN
+d213 1
+a213 2
+              WRITE (6,*) FLUCT,SCALRES
+C           PAUSE
+d220 9
+d237 1
+a237 1
+     +                  STIFC,NORDER,NOFVERT,VCN,NDIM,Jacobian,
+d265 2
+a266 2
+      CALL DGEMM('No Transpose','Transpose',NOFVAR,NOFVERT,NOFVAR,
+     +           ONE,dUdV,NOFVAR,DSYMMV(1),NOFVERT,ZERO,NODRES,
+d269 5
+a273 5
+c     CALL X04CAF('G',' ',Nofvert,Nofvar,dsymmv,Nofvert,
+c    +      'residual ',IFAIL)
+c     CALL X04CAF('G',' ',Nofvar,Nofvar,dUdV,nmax,
+c    +      'dUdV variables ',IFAIL)
+c     pause
+d301 5
+a305 3
+
+          CALL DGEMV('N',NOFVAR,NORDER,ONE,dUdV((FrstEq-1)*NOFVAR+1),
+     +               NOFVAR,RESIDUAL,1,ONE,WKSP,1)
+d310 1
+a310 1
+          CALL TEST(DivFlux,WKSP,1.D-12,IELEM,NOFVAR)
+d321 8
+a328 2
+              JADD = (IVERT-1)*NOFVAR*NOFVAR+1
+          CALL MatdZdU(VCZ(1,IVERT),dZdU(JADD),NDIM,NOFVAR)
+d343 2
+a344 1
+      CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+d347 18
+a364 3
+      CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +               NOFVAR*NOFVERT,NOFVAR,TWO,dVdZ,NOFVAR,dZdU,
+     +               NOFVAR,ZERO,TEMPB,NOFVAR)
+d366 10
+d377 1
+a377 1
+                  JADD = (JVERT-1)*NOFVAR*NOFVAR + 1
+d379 2
+a380 1
+                  IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFVAR*NOFVAR) + 1
+d382 3
+a384 3
+               CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +              NOFVAR,NOFVAR,ONE,TEMPA(IADD),NOFVAR,
+     +              TEMPB(JADD),NOFVAR,ZERO,STIFEL(IADD),NOFVAR)
+d389 5
+d405 4
+a408 4
+      CALL DAXPY(NOFVAR,SCALRES,dUdV,1,WKSP,1)
+      CALL DGEMV('N',NOFVAR,NORDER,ONE,dUdV((FrstEq-1)*NOFVAR+1),
+     +           NOFVAR,RESIDUAL(NORDER+1),1,ONE,WKSP,1)
+      CALL TEST(DivFlux,WKSP,1.D-15,-IELEM,NOFVAR)
+@
+
+
+1.26
+log
+@not any more including the common with the I/O device units
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.25 2000/10/20 08:15:02 aldo Exp aldo $
+d43 2
+d46 3
+d75 1
+a75 1
+      DOUBLE PRECISION VCZ(*),VCN(*),VOLUME,
+d92 1
+d133 1
+a133 1
+      CALL Eigen_VII(Jacobian,NEQMAX,DVDZ,DUDV,NDIM,NOFVAR)
+d158 39
+d198 98
+d310 5
+a314 4
+      CALL DGEMM('Transpose','Transpose',NOFVERT,NOFVAR,NOFVAR,
+     +           ONE,VCZ,NOFVAR,dVdZ,NOFVAR,ZERO,SYMMV,NOFVERT)
+c     CALL X04CAF('G',' ',Nofvert,NOFVAR,symmv,Nofvert,
+c    +      'SYMM variables ',IFAIL)
+a356 9
+C     the matrix of symmetrizing variables (except entropy) is now
+C     transposed so that these are stored (starting at SYMMV(M+1))
+C     as SYMMV(1:NORDER,1:NOFVERT)
+C
+      M = NOFVERT
+      N = NORDER
+      MN = M*N
+      CALL TRANS(SYMMV(M+1),M,N,MN,MOVE,IWRK,IFAIL)
+      IF(IFAIL.NE.0)WRITE(6,*)'TRANS HAS RETURNED IFAIL = ',IFAIL
+d448 1
+a448 1
+          CALL MatdZdU(VCZ((IVERT-1)*NOFVAR+1),dZdU(JADD),NDIM,NOFVAR)
+@
+
+
+1.26.1.1
+log
+@towards the implementation of a coupled approach
+for RANS: the number of variables NOFVAR can now
+be different from the number of mean flow equations
+(hereafter called NOFEQN)
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.26 2000/11/15 09:10:18 aldo Exp abonfi $
+d22 1
+a22 2
+      DOUBLE PRECISION TOLER
+      PARAMETER (NEQMAX=4,TOLER=1.D-15)
+d38 1
+a38 1
+      INTEGER IVAR,IVERT,JVERT,FrstEq,NTURB,IDIM,IADD,JADD,KADD
+d55 1
+a55 1
+C     SYMMV(1:NOFEQN,1:NOFVERT) is used to store the vector
+d58 1
+a58 1
+C     DSYMMV(1:NOFEQN,1:NOFVERT) is used to store the change
+a65 1
+      INTEGER NOFEQN
+a91 1
+C     Statement function
+a92 3
+      INTEGER IADDR
+      IADDR(IVERT,JVERT,N) = (((JVERT-1)*NOFVERT+IVERT-1)*N*N) + 1
+C
+a93 1
+      NOFEQN = NDIM + 2
+d108 1
+a108 1
+      CALL DINIT(NOFVERT*NOFEQN,ZERO,DSYMMV,1)
+d117 2
+a118 2
+          CALL DINIT(NOFEQN,ZERO,WKSP,1)
+          CALL CHECK(IELEM,NDIM,NOFEQN)
+d127 1
+a127 1
+      CALL Eigen_VII(Jacobian,NEQMAX,dVdZ,dUdV,NDIM,NOFEQN)
+a136 1
+C
+d152 1
+d157 1
+a157 1
+C      \tilde{U}^t = Z^t M^t where ' denotes transposition
+d159 1
+a159 1
+C     SYMMV(1:NOFVERT,1:NOFEQN) and entropy
+d167 4
+a170 5
+      CALL DGEMM('Transpose','Transpose',NOFVERT,NOFEQN,NOFEQN,
+     +           ONE,VCZ,NOFVAR,dVdZ,NOFEQN,ZERO,SYMMV,NOFVERT)
+!     CALL X04CAF('G',' ',Nofvert,NOFEQN,symmv,Nofvert,
+!    +      'SYMM variables ',IFAIL)
+!     pause
+d201 1
+a201 1
+          CALL DAXPY(NOFEQN,SCALRES,dUdV((IVAR-1)*NOFEQN+1),1,WKSP,1)
+d203 1
+a203 1
+          IF (DABS(FLUCT-SCALRES).GT.TOLER) THEN
+d205 2
+a206 1
+              WRITE (6,FMT=*)FLUCT,SCALRES,ABS(FLUCT-SCALRES)
+d230 1
+a230 1
+     +                  STIFC,NORDER,NORDER,NOFVERT,VCN,NDIM,Jacobian,
+d258 2
+a259 2
+      CALL DGEMM('No Transpose','Transpose',NOFEQN,NOFVERT,NOFEQN,
+     +           ONE,dUdV,NOFEQN,DSYMMV(1),NOFVERT,ZERO,NODRES,
+d262 5
+a266 5
+!     CALL X04CAF('G',' ',Nofvert,Nofvar,dsymmv,Nofvert,
+!    +      'residual ',IFAIL)
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,dUdV,noname,
+!    +      'dUdV variables ',IFAIL)
+!     pause
+d294 3
+a296 2
+C
+C     transforms the residual into conserved variables
+a297 3
+          CALL DGEMV('N',NOFEQN,NORDER,ONE,dUdV((FrstEq-1)*NOFEQN+1),
+     +               NOFEQN,RESIDUAL,1,ONE,WKSP,1)
+C
+d301 1
+a301 1
+          CALL TEST(DivFlux,WKSP,1.D-12,IELEM,NOFEQN)
+d312 2
+a313 8
+              IADD = (IVERT-1)*NOFVAR+1
+              JADD = (IVERT-1)*NOFEQN*NOFEQN+1
+c
+c a bit of care here: Z and dZdU are dimensioned NOFVAR in
+c subr MatdZdU(), but this showd not be a problem if called
+c with noname 
+c
+          CALL MatdZdU(VCZ(IADD),dZdU(JADD),NDIM,NOFEQN)
+d328 1
+a328 2
+      IF( NOFVAR .EQ. NOFEQN )THEN
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+d331 3
+a333 18
+      ELSE
+          DO 13 JVERT = 1, NOFVERT
+          DO 13 IVERT = 1, NOFVERT
+                  JADD = IADDR(IVERT,JVERT,NOFEQN)
+                  IADD = IADDR(IVERT,JVERT,NOFVAR)
+          CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN,NOFEQN,-ONE,dUdV,
+     +               NOFEQN,STIFEL(IADD),NOFVAR,ZERO,TEMPA(JADD),NOFEQN)
+!     write(6,*)ivert,jvert
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN,tempa(jadd),NOFEQN,
+!    +      'TEMPA ',IFAIL)
+!     pause
+   13     CONTINUE
+      ENDIF
+C
+!         DO 37 JVERT = 1,NOFVERT
+!         DO 37 IVERT = 1,NOFVERT
+!                 IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFEQN*NOFEQN) + 1
+a334 10
+C
+!  37     CONTINUE
+C
+      CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +               NOFEQN*NOFVERT,NOFEQN,TWO,dVdZ,NOFEQN,dZdU,
+     +               NOFEQN,ZERO,TEMPB,NOFEQN)
+!     CALL X04CAF('G',' ',NOFEQN,NOFEQN*nofvert,tempb,NOFEQN,
+!    +      'TEMPB ',IFAIL)
+!     pause
+C
+d336 1
+a336 1
+                  JADD = (JVERT-1)*NOFEQN*NOFEQN + 1
+d338 1
+a338 2
+                  IADD = IADDR(IVERT,JVERT,NOFVAR)
+                  KADD = IADDR(IVERT,JVERT,NOFEQN)
+d340 3
+a342 3
+               CALL DGEMM('No Transpose','No Transpose',NOFEQN,
+     +              NOFEQN,NOFEQN,ONE,TEMPA(KADD),NOFEQN,
+     +              TEMPB(JADD),NOFEQN,ZERO,STIFEL(IADD),NOFVAR)
+a346 5
+!     write(6,*)ivert,jvert
+!     CALL X04CAF('G',' ',Nofvar,Nofvar,stifel(iadd),Nofvar,
+!    +      'C(i,j) ',IFAIL)
+!     pause
+C
+d358 4
+a361 4
+      CALL DAXPY(NOFEQN,SCALRES,dUdV,1,WKSP,1)
+      CALL DGEMV('N',NOFEQN,NORDER,ONE,dUdV((FrstEq-1)*NOFEQN+1),
+     +           NOFEQN,RESIDUAL(NORDER+1),1,ONE,WKSP,1)
+      CALL TEST(DivFlux,WKSP,TOLER,-IELEM,NOFEQN)
+@
+
+
+1.25
+log
+@the call to the viscous routines has been removed;
+other minor changes
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.24 2000/10/12 09:39:30 aldo Exp aldo $
+a29 1
+      INCLUDE 'IO'
+d204 2
+a205 2
+              WRITE (NOUT,89999) IELEM,IVAR
+              WRITE (NOUT,*) FLUCT,SCALRES
+d286 1
+a286 1
+              WRITE (NOUT,99999) IELEM
+d288 1
+a288 1
+                  WRITE (NOUT,*) PHI(IVAR),RESIDUAL(IVAR),
+@
+
+
+1.24
+log
+@removed the call to the "viscous" routines
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE EulerVII(IELEM,VCN,VCZ,ZTURB,NDIM,NOFVERT,NOFVAR,
+d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.23 2000/08/03 16:45:03 aldo Exp aldo $
+d73 1
+a73 1
+     +                 STIFEL(*),ZTURB(*),TEMPA(400),TEMPB(400)
+d85 2
+a86 2
+      DOUBLE PRECISION DDOT,SUTHERLAW
+      EXTERNAL DDOT,SUTHERLAW
+d104 2
+a105 1
+C     set local residual and timestep to zero
+d108 1
+a109 7
+      CALL DINIT(NOFVERT,ZERO,TSTEP,1)
+C
+C     COMPUTES THE GRADIENT OF THE VARIABLES
+C
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,VOLUME)
+C
+      CALL PARM2PRIM(NDIM,IELEM)
+d170 1
+a170 1
+c     CALL X04CAF('G',' ',Nofvert,Nofvar,symmv,Nofvert,
+@
+
+
+1.23
+log
+@initialised turbulent viscosity within a DATA stmt.
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.22 2000/06/24 09:29:54 aldo Exp aldo $
+d28 1
+a29 1
+      INCLUDE 'stream.com'
+d41 1
+a41 1
+      DOUBLE PRECISION FLUCT,SCALRES,VISCT,VISCL
+d73 1
+a73 5
+     +                 STIFD(VMAX*VMAX*NMAX*NMAX),TEMPB(400),
+     +                 STIFEL(*),ZTURB(*),
+     +                 dZdU(100),TEMPA(400)
+      DOUBLE PRECISION EDDY
+      EXTERNAL EDDY
+d91 1
+a91 2
+      DATA FrstEq,VISCT/2,ZERO/
+      DATA dZdU/100*ZERO/
+a101 1
+          CALL DINIT(N4,ZERO,STIFD,1)
+d133 1
+a133 1
+      CALL Eigen_VII(Jacobian,NEQMAX,NDIM)
+d174 1
+a174 1
+     +           ONE,VCZ,NOFVAR,dVdU,5,ZERO,SYMMV,NOFVERT)
+d207 1
+a207 1
+          CALL DAXPY(NOFVAR,SCALRES,dUdV(1,IVAR),1,WKSP,1)
+d265 1
+a265 1
+     +           ONE,dUdV(1,1),NMAX,DSYMMV(1),NOFVERT,ZERO,NODRES,
+d301 2
+a302 2
+          CALL DGEMV('N',NOFVAR,NORDER,ONE,dUdV(1,FrstEq),NMAX,RESIDUAL,
+     +               1,ONE,WKSP,1)
+a322 1
+      IF (KAN.EQ.4) THEN
+a323 1
+C     Compute cell averaged laminar viscosity
+a324 13
+          VISCL = SUTHERLAW(M_INFTY,ABAR,ASQR)
+          IF(TURBULENT)THEN
+             VISCT = EDDY(ZTURB,1,UAVG(1),VISCL,NOFVERT)
+          ENDIF
+C
+C     compute viscous fluxes
+C
+          CALL VSFLX4(IELEM,VCZ,NODRES,TSTEP,NOFVAR,VCN,dZdU,NDIM,
+     +                NOFVERT,VOLUME,STIFD,VISCL,VISCT,PICARD)
+      ENDIF
+C
+C
+C
+d336 1
+a336 1
+     +               NMAX,STIFEL,NOFVAR,ZERO,TEMPA,NOFVAR)
+d338 1
+a338 1
+     +               NOFVAR*NOFVERT,NOFVAR,TWO,dVdU,5,dZdU,
+a354 5
+C     add the diffusion stiffness matrices from the element
+C     stiffness (convective) matrix
+C
+          IF (KAN.EQ.4) CALL DAXPY(N4,ONE,
+     +                             STIFD(1),1,STIFEL(1),1)
+d364 3
+a366 3
+      CALL DAXPY(NOFVAR,SCALRES,dUdV(1,1),1,WKSP,1)
+      CALL DGEMV('N',NOFVAR,NORDER,ONE,dUdV(1,FrstEq),NMAX,
+     +           RESIDUAL(NORDER+1),1,ONE,WKSP,1)
+a374 41
+
+      END
+CC
+      SUBROUTINE MatdZdU(ZROE,dZdU,NDIM,NOFVAR)
+C
+      IMPLICIT NONE
+      INCLUDE 'constants' 
+C
+      INTEGER NDIM,NOFVAR
+      DOUBLE PRECISION ZROE(NOFVAR),dZdU(NOFVAR,*)
+      DOUBLE PRECISION Z1INV,Z1SQRINV,KINETIC
+C
+C     Assembles the dZdU matrix ...
+C
+      Z1INV = ONE/ZROE(1)
+      Z1SQRINV = Z1INV*Z1INV
+C
+      KINETIC = ZROE(3)*ZROE(3) + ZROE(4)*ZROE(4)
+      IF (NDIM.EQ.3) KINETIC = KINETIC + ZROE(5)*ZROE(5)
+      KINETIC = HALF*KINETIC*Z1SQRINV
+C
+      dZdU(1,1) = HALF*Z1INV
+C
+      dZdU(2,1) = (GM1*KINETIC-HALF*Z1INV*ZROE(2))*Z1INV
+      dZdU(2,2) = GAM*Z1INV
+      dZdU(2,3) = -GM1*ZROE(3)*Z1SQRINV
+      dZdU(2,4) = -GM1*ZROE(4)*Z1SQRINV
+C
+      dZdU(3,1) = -HALF*ZROE(3)*Z1SQRINV
+      dZdU(3,3) = Z1INV
+C
+      dZdU(4,1) = -HALF*ZROE(4)*Z1SQRINV
+      dZdU(4,4) = Z1INV
+C
+      IF (NDIM.EQ.2) RETURN
+C
+      dZdU(2,5) = -GM1*ZROE(5)*Z1SQRINV
+      dZdU(5,1) = -HALF*ZROE(5)*Z1SQRINV
+      dZdU(5,5) = Z1INV
+C
+      RETURN
+@
+
+
+1.22
+log
+@re-introduced turbulence modeling
+@
+text
+@d9 1
+a9 1
+C     $Id: EulerVII.f,v 1.21 1999/11/29 09:57:10 aldo Exp aldo $
+d95 1
+a95 1
+      DATA FrstEq/2/
+@
+
+
+1.21
+log
+@major changes in the arguments;
+some operations have been moved to the calling routine
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE EulerVII(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +                    NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+d9 1
+a9 1
+C     $Id: EulerVII.F,v 1.20 1999/09/08 09:04:35 aldo Exp $
+d39 3
+a41 3
+      INTEGER IVAR,IVERT,JVERT,FrstEq,JCOL,IDIM,IADD,JADD
+      INTEGER NORDER,ifail,M,N,MN,N4
+      DOUBLE PRECISION FLUCT,SCALRES,VISCT,TVI,VISCL,TCHI
+a65 2
+C     ICN   vertices of the current element (0-based indexing)
+C     KCN   same as ICN but with 1-based indexed
+d70 1
+a70 1
+      INTEGER ICN(VMAX),KCN(VMAX),MOVE(IWRK)
+d74 1
+a74 1
+     +                 STIFEL(*),
+d76 2
+d89 2
+a90 2
+      DOUBLE PRECISION DDOT,TFV1,TVT,SUTHERLAW
+      EXTERNAL DDOT,TFV1,TVT,SUTHERLAW
+d95 1
+a95 1
+      DATA FrstEq,VISCT/2,ZERO/
+d334 2
+a335 15
+C
+          IF (TURBULENT) THEN
+C
+C         Compute cell averaged turbulent viscosity
+C         presently this is specialized for the S-A model
+C
+C         reset the pointer to 1 based indexing
+C
+              DO 8 IVERT = 1,NOFVERT
+                  KCN(IVERT) = ICN(IVERT) + 1
+    8         CONTINUE
+              stop 'turb stuff not implemented right now'
+caldo         TVI = TVT(KCN,NOFVERT,DSTAK(LTURB))
+              TCHI = TVI/(VISCL/UAVG(1))
+              VISCT = TVI*TFV1(TCHI)*UAVG(1)
+@
+
+
+1.20
+log
+@bug fixed when initializing STIFC to ZERO in DINIT
+I discovered the bug on CRAY
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE EulerVII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,DT,RHS,A,
+d9 1
+a9 1
+C     $Id: EulerVII.F,v 1.19 1999/08/19 16:36:21 aldo Exp aldo $
+a12 8
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/viewer.h"
+C
+      Vec DT,RHS
+      Mat A
+C
+a26 8
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+      INTEGER KA
+      COMMON /GHOSTCOM/KA
+C
+      INCLUDE 'nloc'
+a27 1
+      INCLUDE 'implicit.h'
+a29 1
+      INCLUDE 'projct.com'
+d33 1
+a33 1
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,NELEM
+d42 1
+a42 1
+      LOGICAL LFLAG,INTERIOR
+d47 1
+a47 1
+      DOUBLE PRECISION NODRES(NMAX*VMAX),SYMMV(20),DSYMMV(20)
+d64 1
+a64 2
+      DOUBLE PRECISION TSTEP(VMAX)
+      INTEGER IDX_P(3*VMAX),IDX_V(NMAX*VMAX),IDX_F(3*VMAX)
+a65 9
+C     IDX_P pointers to the locations in DSTAK(LCORG) where
+C           the nodal coordinates for the current element
+C           are stored (1-based indexing)
+C     IDX_V pointers to the locations in RHS where
+C           the nodal coordinates for the current element
+C           are stored (0-based indexing)
+C     IDX_F pointers to the locations in DSTAK(LFACNOR) where
+C           the cartesian components of the normals for the
+C           current element are stored (1-based indexing)
+a67 1
+C     ICF   normals of the current element (1-based indexing)
+a68 2
+C     N.B.: IDX_P,IDX_F,ICF non vengono utilizzati
+C           e allora, perche` non eliminarli? 
+d72 2
+a73 2
+      INTEGER ICN(VMAX),KCN(VMAX),ICF(VMAX),MOVE(IWRK)
+      DOUBLE PRECISION VCP(3*VMAX),VCZ(NMAX*VMAX),VCN(3*VMAX),VOLUME,
+d76 2
+a77 2
+     +                 STIFEL(VMAX*VMAX*NMAX*NMAX),WORKB(NMAX*NMAX),
+     +                 dZdU(100),WORKA(NMAX*NMAX),TEMPA(400)
+a99 1
+      INTERIOR = IELEM .LE. NELEM
+d104 1
+a104 1
+      IF (TIMEIMPL) THEN
+a115 4
+      CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   DSTAK(LZROE), DSTAK(LFACNOR), NDIM, NOFVERT, NOFVAR, ICN,
+     +   VCZ, VCN, VOLUME)
+C
+a134 3
+caldo if(interior)
+caldo+CALL BOUND(IELEM,ISTAK(LBNDFAC),ISTAK(LTZX),VCZ,VCP,VCN,
+caldo+           NDIM,NOFVAR,NOFVERT,NBFAC,VOLUME)
+d194 1
+a194 1
+     +                  TIMEIMPL)
+d199 1
+a199 1
+      IF (TIMEIMPL) THEN
+d241 3
+a243 10
+      IF (INTERIOR) THEN
+          CALL MatrixScheme(MatSplitVII,SYMMV(M+1),DSYMMV(M+1),TSTEP,
+     +                      STIFC,NORDER,NOFVERT,VCN,NDIM,Jacobian,
+     +                      NEQMAX,RESIDUAL,IELEM,TIMEIMPL)
+
+      ELSE
+          CALL OneDSys_scheme(MatSplitVII,SYMMV(M+1),DSYMMV(M+1),TSTEP,
+     +                        STIFC,NORDER,NOFVERT,VCN,NDIM,Jacobian,
+     +                        NEQMAX,RESIDUAL,IELEM,TIMEIMPL)
+      ENDIF
+d284 1
+a284 1
+      IF (TIMEIMPL) CALL MATINS(STIFEL,NOFVAR,STIFC,NORDER,NOFVERT,1)
+d318 1
+a318 1
+      IF (TIMEIMPL .AND. INTERIOR) THEN
+d329 1
+a329 1
+      IF (KAN.EQ.4 .AND. INTERIOR) THEN
+d345 2
+a346 1
+              TVI = TVT(KCN,NOFVERT,DSTAK(LTURB))
+d354 1
+a354 1
+     +                NOFVERT,VOLUME,STIFD,VISCL,VISCT,TIMEIMPL)
+a356 13
+C     Scatter and add nodal update and timestep to global arrays
+C
+      IF (INTERIOR) THEN
+          CALL VecSetValues(DT,NOFVERT,ICN,TSTEP,ADD_VALUES,IFAIL)
+          CALL VecSetValuesBlocked(RHS,NOFVERT,ICN,NODRES,
+     +                      ADD_VALUES,IFAIL)
+
+      ELSE
+          IADD = (KA-1)*NOFVAR + 1
+          CALL VecSetValue(DT,ICN(KA),TSTEP(KA),ADD_VALUES,IFAIL)
+          CALL VecSetValuesBlocked(RHS,1,ICN(KA),NODRES(IADD),
+     +                      ADD_VALUES,IFAIL)
+      ENDIF
+d361 1
+a361 1
+      IF (.NOT.TIMEIMPL) RETURN
+a364 1
+      IF (INTERIOR) THEN
+d368 1
+a368 1
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+d371 1
+a371 1
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+d375 1
+a375 1
+              DO 35 JVERT = 1,NOFVERT
+d377 1
+a377 1
+              DO 35 IVERT = 1,NOFVERT
+a393 61
+C
+          DO 37 IVERT = 1,NOFVERT
+              DO 37 JVERT = 1,NOFVERT
+                  IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFVAR*NOFVAR) + 1
+#ifdef MPI
+                  CALL MatSetValuesBlockedLocal(A,1,ICN(IVERT),1,
+     +                                     ICN(JVERT),STIFEL(IADD),
+     +                                     ADD_VALUES,IFAIL)
+#else
+                  CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN(JVERT),
+     +                                     STIFEL(IADD),ADD_VALUES,
+     +                                     IFAIL)
+#endif
+   37     CONTINUE
+C
+      ELSE
+C
+C     Ghost cell
+C
+          IADD = (((KA-1)*NOFVERT+KA-1)*NOFVAR*NOFVAR) + 1
+          JADD = (KA-1)*NOFVAR*NOFVAR + 1
+C
+          CALL MatdZdU(VCZ((KA-1)*NOFVAR+1),dZdU(JADD),NDIM,NOFVAR)
+C
+C     transform from symmetrizing to conserved variables
+C
+C     WORK := \tilde{C}_{ij} * M^{-1}
+C     C_{ij} := dUdV * WORK = dUdV * \tilde{C}_{ij} * M^{-1}
+C
+C     WORKA := 2 * PPOSZ * dZdU(KA)
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +         TWO,PPOSZ,nofvar,dZdU(JADD),NOFVAR,ZERO,WORKA,NOFVAR)
+C
+C     WORKB := dVdZ * WORKA = dVdZ * 2 * PPOSZ * dZdU(KA)
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +               ONE,dVdU,5,WORKA,NOFVAR,ZERO,WORKB,NOFVAR)
+C
+C     WORKA := STIFC * WORKB = STIFC * dVdZ * 2 * PPOSZ * dZdU(KA)
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +               ONE,STIFEL(IADD),NOFVAR,WORKB,NOFVAR,ZERO,WORKA,
+     +               NOFVAR)
+C
+C    Postmultiply the element stiffness matrix by the
+C       PPOSU matrix which depends on the b.c.
+C       PPOSU MUST be in conserved variables on entry
+C
+          CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,NOFVAR,
+     +             -ONE,dUdV,NMAX,WORKA,NOFVAR,ZERO,STIFEL(IADD),NOFVAR)
+C
+#ifdef MPI
+          CALL MatSetValuesBlockedLocal(A,1,ICN(KA),1,ICN(KA),
+     +                             STIFEL(IADD),ADD_VALUES,IFAIL)
+#else
+          CALL MatSetValuesBlocked(A,1,ICN(KA),1,ICN(KA),STIFEL(IADD),
+     +                             ADD_VALUES,IFAIL)
+#endif
+C
+      ENDIF
+@
+
+
+1.19
+log
+@changed calling sequence for CELPTR
+@
+text
+@d8 1
+a8 1
+C     $Id: EulerVII.F,v 1.18 1999/08/18 09:15:17 aldo Exp aldo $
+d137 1
+a137 1
+          CALL DINIT(N4,ZERO,STIFC,1)
+@
+
+
+1.18
+log
+@Changed VecSetValues into VecSetValuesBlocked
+@
+text
+@d8 1
+a8 1
+C     $Id: EulerVII.F,v 1.17 1999/08/17 08:11:51 aldo Exp aldo $
+d147 3
+a149 3
+      CALL CELPTR(IELEM,ISTAK(LCELNOD),ISTAK(LCELFAC),DSTAK(LVOL),NDIM,
+     +            NOFVERT,NOFVAR,NELEM,1,ICN,ICF,VCP,VCZ,VCN,VOLUME,
+     +            IDX_P,IDX_V,IDX_F)
+@
+
+
+1.17
+log
+@projectors (PPOSZ) are now dimensioned differently; the
+call to DGEMM has been changed accordingly
+@
+text
+@d8 1
+a8 1
+C     $Id: EulerVII.F,v 1.16 1998/11/07 09:01:00 aldo Exp aldo $
+d405 2
+a406 2
+          CALL VecSetValues(RHS,NOFVAR*NOFVERT,IDX_V,NODRES,ADD_VALUES,
+     +                      IFAIL)
+d411 1
+a411 1
+          CALL VecSetValues(RHS,NOFVAR,IDX_V(IADD),NODRES(IADD),
+@
+
+
+1.16
+log
+@Add automatic identification flag
+@
+text
+@d8 1
+a8 1
+C     $Id$
+d219 2
+d319 6
+d484 1
+a484 1
+     +               TWO,PPOSZ,5,dZdU(JADD),NOFVAR,ZERO,WORKA,NOFVAR)
+@
+
+
+1.15
+log
+@The number of DGEMM calls used to transform the element
+convection matrices into conserved variables has been
+reduced from 3*NOFVERT**2 to NOFVERT**2+2
+@
+text
+@d8 3
+@
+
+
+1.14
+log
+@matrix dZdU ins now stored in contiguous locations
+@
+text
+@d54 1
+a54 1
+      INTEGER NORDER,ifail,j,M,N,MN,N4
+d102 1
+a102 1
+     +                 STIFD(VMAX*VMAX*NMAX*NMAX),
+d104 1
+a104 1
+     +                 dZdU(100),WORKA(NMAX*NMAX)
+d415 6
+a420 1
+          DO 35 IVERT = 1,NOFVERT
+d423 2
+a425 4
+                  JADD = (JVERT-1)*NOFVAR*NOFVAR + 1
+C
+C     WORK := \tilde{C}_{ij} * M^{-1}
+C     C_{ij} := R * WORK = R * \tilde{C}_{ij} * M^{-1}
+d427 3
+a429 11
+                  CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                       NOFVAR,NOFVAR,ONE,STIFEL(IADD),NOFVAR,dVdU,
+     +                       5,ZERO,WORKB,NOFVAR)
+C     sign changed
+                  CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                       NOFVAR,NOFVAR,-ONE,dUdV,NMAX,WORKB,NOFVAR,
+     +                       ZERO,WORKA,NOFVAR)
+C
+                  CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                       NOFVAR,NOFVAR,TWO,WORKA,NOFVAR,
+     +                       dZdU(JADD),NOFVAR,ZERO,STIFEL(IADD),NOFVAR)
+@
+
+
+1.13
+log
+@add an offset inthe call to MATINS
+@
+text
+@d53 1
+a53 1
+      INTEGER IVAR,IVERT,JVERT,FrstEq,JCOL,IDIM,IADD
+d104 1
+a104 1
+     +                 dZdU(5,5,VMAX),WORKA(NMAX*NMAX)
+d358 2
+a359 1
+              CALL MatdZdU(VCZ((IVERT-1)*NOFVAR+1),dZdU(1,1,IVERT),NDIM)
+d419 1
+d434 1
+a434 1
+     +                       dZdU(1,1,JVERT),5,ZERO,STIFEL(IADD),NOFVAR)
+d466 1
+d468 1
+a468 1
+          CALL MatdZdU(VCZ((KA-1)*NOFVAR+1),dZdU(1,1,KA),NDIM)
+d478 1
+a478 1
+     +               TWO,PPOSZ,5,dZdU(1,1,KA),5,ZERO,WORKA,NOFVAR)
+d530 1
+a530 1
+      SUBROUTINE MatdZdU(ZROE,dZdU,NDIM)
+d535 2
+a536 2
+      DOUBLE PRECISION ZROE(*),dZdU(5,*)
+      INTEGER NDIM
+@
+
+
+1.12
+log
+@Some clean up of the code:
+introduced arrays SYYMV and DSYMMV;
+matrix R renamed to dUdV
+@
+text
+@d316 1
+d318 1
+a318 1
+      IF (TIMEIMPL) CALL MATINS(STIFEL,NOFVAR,STIFC,NORDER,NOFVERT)
+@
+
+
+1.11
+log
+@parallel version using pre-processor directives
+@
+text
+@d4 2
+d53 2
+a54 2
+      INTEGER IVAR,JVAR,IVERT,JVERT,FrstEq,JCOL,IDIM,IADD
+      INTEGER NORDER,ifail,j
+d59 1
+a59 2
+      DOUBLE PRECISION Jacobian(NEQMAX,NEQMAX*3),QVEC(NEQMAX*VMAX),
+     +                 DQVEC(NEQMAX*VMAX),ENTROPY(VMAX),DQ(VMAX)
+d61 17
+a77 1
+      DOUBLE PRECISION NODRES(NMAX*VMAX)
+d80 20
+a99 1
+      INTEGER ICN(VMAX),KCN(VMAX),ICF(VMAX)
+d128 1
+d133 3
+a135 3
+          CALL DINIT(NOFVAR*NOFVAR*NOFVERT*NOFVERT,ZERO,STIFEL,1)
+          CALL DINIT(NORDER*NORDER*NOFVERT*NOFVERT,ZERO,STIFC,1)
+          CALL DINIT(NOFVAR*NOFVAR*NOFVERT*NOFVERT,ZERO,STIFD,1)
+d141 1
+a141 2
+      CALL DINIT(NOFVERT*NORDER,ZERO,DQVEC,1)
+      CALL DINIT(NOFVERT,ZERO,DQ,1)
+d152 1
+a152 1
+      CALL Parm2Prim(NDIM,IELEM)
+d195 2
+a196 1
+C     ---------- Scalar scheme on the entropy wave ----------
+a197 1
+C     Entropy wave ..
+a198 1
+      IVAR = 1
+d200 13
+a212 1
+C     Construct nodal values of Entropy
+d214 2
+a215 4
+C        DO 20 IVERT =  1, NOFVERT
+C        ENTROPY(IVERT) = DDOT(NDIM, GRAD_CHAR(IVAR,1), LDW,
+C    +                    VCP((IVERT-1)*NDIM+1), 1)
+C  20 CONTINUE
+d217 1
+a217 1
+C     Compute the nodal values of Entropy as:
+d219 1
+a219 1
+C     S(ivert) = \sum_{i=1}^{d} GRAD_CHAR(1,i) * VCP(i,ivert)
+d221 1
+a221 2
+      CALL DGEMV('Transpose',NDIM,NOFVERT,ONE,VCP,NDIM,GRAD_CHAR(1,1),
+     +           LDW,ZERO,ENTROPY,1)
+d225 3
+a227 2
+      CALL ScalarScheme(IELEM,VCN,R_SPEED(1,IVAR),SCALRES,ZERO,ENTROPY,
+     +                  TSTEP,DQ,STIFC,NDIM,NOFVERT,TIMEIMPL)
+d229 2
+a230 1
+C    Copy the
+a233 3
+c
+c    reset STIFC to 0. since it will be reused by the matrix scheme
+c
+a236 4
+C Transform the nodal residual into conserved variables
+C
+      CALL DGER(NOFVAR,NOFVERT,ONE,R(1,IVAR),1,DQ,1,NODRES,NOFVAR)
+C
+d246 1
+a246 1
+          CALL DAXPY(NOFVAR,SCALRES,R(1,IVAR),1,WKSP,1)
+d258 9
+a269 19
+C
+C    Builds the nodal vectors of unknowns ..
+C
+C    compute Q(ivert) = dW \cdot x(ivert)
+C
+C     DO 10 IVERT = 1 , NOFVERT
+C        DO 10 IVAR =  1, NORDER
+C           JVAR = FrstEq + IVAR - 1
+C           QVEC((IVERT-1)*NORDER+IVAR) =
+C    +      DDOT(NDIM,GRAD_CHAR(JVAR,1),LDW,VCP((IVERT-1)*NDIM+1),1)
+C 10  CONTINUE
+C
+      DO 10 IVAR = 1,NORDER
+          JVAR = FRSTEQ + IVAR - 1
+          CALL DGEMV('Transpose',NDIM,NOFVERT,ONE,VCP,NDIM,
+     +               GRAD_CHAR(JVAR,1),LDW,ZERO,QVEC(IVAR),NORDER)
+   10 CONTINUE
+C
+C
+d272 1
+d275 3
+a277 3
+          CALL MatrixScheme(MatSplitVII,QVEC,DQVEC,TSTEP,STIFC,NORDER,
+     +                      NOFVERT,VCN,NDIM,Jacobian,NEQMAX,RESIDUAL,
+     +                      IELEM,TIMEIMPL)
+d280 3
+a282 3
+          CALL OneDSys_scheme(MatSplitVII,QVEC,DQVEC,TSTEP,STIFC,NORDER,
+     +                        NOFVERT,VCN,NDIM,Jacobian,NEQMAX,RESIDUAL,
+     +                        IELEM,TIMEIMPL)
+d285 21
+d308 1
+d310 3
+a312 2
+      CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVERT,NORDER,
+     +           ONE,R(1,FrstEq),NMAX,DQVEC,NORDER,ONE,NODRES,NOFVAR)
+d315 1
+a315 1
+C d eqns. into the element stiffness matrix of dimension (d+1)
+d321 1
+a321 2
+C
+C    .. Checks the decomposition ..
+d340 2
+a341 2
+          CALL DGEMV('N',NOFVAR,NORDER,ONE,R(1,FrstEq),NMAX,RESIDUAL,1,
+     +               ONE,WKSP,1)
+d344 1
+a344 1
+C     WKSP := R(1) * \phi_{entropy} + R(1,FrstEq) * \Phi
+d353 3
+d370 1
+d397 1
+a397 1
+          CALL VecSetValues(DT,1,ICN(KA),TSTEP(KA),ADD_VALUES,IFAIL)
+d426 1
+a426 1
+     +                       NOFVAR,NOFVAR,-ONE,R,NMAX,WORKB,NOFVAR,
+d441 1
+a441 1
+          IF (KAN.EQ.4) CALL DAXPY(NOFVAR*NOFVAR*NOFVERT*NOFVERT,ONE,
+d469 1
+a469 1
+C     C_{ij} := R * WORK = R * \tilde{C}_{ij} * M^{-1}
+d492 1
+a492 1
+     +               -ONE,R,NMAX,WORKA,NOFVAR,ZERO,STIFEL(IADD),NOFVAR)
+d509 1
+a509 1
+C     WKSP := R(1) * \phi_{entropy} + R(1,FrstEq) * \Phi
+d512 2
+a513 2
+      CALL DAXPY(NOFVAR,SCALRES,R(1,1),1,WKSP,1)
+      CALL DGEMV('N',NOFVAR,NORDER,ONE,R(1,FrstEq),NMAX,
+@
+
+
+1.10
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d391 5
+d399 1
+d438 4
+d444 1
+@
+
+
+1.9
+log
+@Add (though commented out) a call to the routine
+which computes a modified boundary cell residual
+through a least square minimization
+@
+text
+@d7 4
+a10 4
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/viewer.h"
+@
+
+
+1.8
+log
+@Compute laminar viscosity and pass to the
+routines computing the viscous fluxes
+@
+text
+@d131 4
+@
+
+
+1.7
+log
+@Reformatted with Toolpack and simplyfied the
+computation of the nodal values of the characteristc variables
+@
+text
+@d53 1
+a53 1
+      DOUBLE PRECISION FLUCT,SCALRES,VISCT,TVI,VI,TCHI
+d304 3
+a306 1
+C     Compute cell averaged turbulent viscosity
+d310 3
+a312 1
+C     reset the pointer to 1 based indexing
+d318 1
+a318 2
+              VI = SUTHERLAW(M_INFTY,ABAR,ASQR)/UAVG(1)
+              TCHI = TVI/VI
+d325 1
+a325 1
+     +                NOFVERT,VOLUME,STIFD,VISCT,TIMEIMPL)
+@
+
+
+1.6
+log
+@Modified Picard linearization
+@
+text
+@d1 2
+a2 3
+CC
+      SUBROUTINE EulerVII(IELEM,NELEM,NDIM,NOFVERT,NOFVAR,
+     +                    DT,RHS,A,ScalarScheme,MatrixScheme)
+a5 1
+      IMPLICIT NONE
+d17 1
+a17 1
+      PARAMETER(LNNVV=NMAX*NMAX*VMAX*VMAX)
+d23 2
+a24 2
+      INTEGER   NEQMAX
+      PARAMETER(NEQMAX=4)
+a27 1
+C     Commons ..
+d30 1
+a30 1
+      COMMON /CSTAK/ DSTAK
+d32 1
+a32 1
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+d34 1
+a34 1
+      COMMON /GHOSTCOM/ KA
+d57 2
+a58 2
+      DOUBLE PRECISION Jacobian(NEQMAX,NEQMAX*3),
+     +QVEC(NEQMAX*VMAX),DQVEC(NEQMAX*VMAX),QQ(VMAX),DQ(VMAX)
+d64 5
+a68 5
+      DOUBLE PRECISION VCP(3*VMAX),VCZ(NMAX*VMAX),VCN(3*VMAX),
+     +VOLUME,STIFC(VMAX*VMAX*NEQMAX*NEQMAX),
+     +STIFD(VMAX*VMAX*NMAX*NMAX),
+     +STIFEL(VMAX*VMAX*NMAX*NMAX),WORKB(NMAX*NMAX),
+     +dZdU(5,5,VMAX),WORKA(NMAX*NMAX)
+d70 1
+a70 1
+C     RESIDUAL[1:NORDER] stores the residual computed by 
+d72 1
+a72 1
+C     RESIDUAL[NORDER+1:2*NORDER] 
+d81 1
+a81 1
+      EXTERNAL         DDOT,TFV1,TVT,SUTHERLAW
+d86 2
+a87 2
+      DATA FrstEq,VISCT / 2,ZERO /
+      DATA dZdU/ 100*ZERO /
+d90 2
+a91 2
+      NORDER  = NDIM+1
+      INTERIOR = IELEM.LE.NELEM 
+d95 4
+a98 4
+      IF( TIMEIMPL )THEN
+         CALL DINIT(NOFVAR*NOFVAR*NOFVERT*NOFVERT,ZERO,STIFEL,1)
+         CALL DINIT(NORDER*NORDER*NOFVERT*NOFVERT,ZERO,STIFC,1)
+         CALL DINIT(NOFVAR*NOFVAR*NOFVERT*NOFVERT,ZERO,STIFD,1)
+d108 3
+a110 3
+      CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   NDIM, NOFVERT, NOFVAR, NELEM, 1, ICN, ICF, VCP,
+     +   VCZ, VCN, VOLUME, IDX_P, IDX_V, IDX_F)
+d114 1
+a114 2
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +VOLUME)
+d120 1
+a120 1
+      IF( ICHECK .NE. 0 )THEN
+d124 3
+a126 3
+         CALL DINIT(NORDER,ZERO,PHI,1)
+         CALL DINIT(NOFVAR,ZERO,WKSP,1)
+         CALL CHECK(IELEM,NDIM,NOFVAR)
+d136 1
+a136 1
+      IF(ICHECK.EQ.0)GOTO 7
+d144 5
+a148 5
+      DO 12 idim = 1 , NDIM
+         jcol = (idim-1) * NEQMAX + 1
+         CALL DGEMV( 'N', NORDER, NORDER, ONE, Jacobian
+     +   (1,jcol), NEQMAX, GRAD_CHAR(FrstEq,idim), 1, ONE, PHI, 1)
+ 
+d161 10
+a170 1
+C     Construct the "Characteristic" variable
+d172 2
+a173 4
+         DO 20 IVERT =  1, NOFVERT
+         QQ(IVERT) = DDOT(NDIM, GRAD_CHAR(IVAR,1), LDW,
+     +                    VCP((IVERT-1)*NDIM+1), 1)
+   20 CONTINUE
+d175 1
+a175 1
+C The advection eqn. is solved using an upwind scheme
+d177 2
+a178 2
+      CALL ScalarScheme( IELEM, VCN, R_SPEED(1,IVAR), SCALRES, ZERO,
+     +   QQ, TSTEP, DQ, STIFC, NDIM, NOFVERT, TIMEIMPL )
+d182 1
+a182 1
+      IF( TIMEIMPL )THEN
+d185 1
+a185 1
+c    reset STIFC to 0. since it will be reused by the matrix scheme 
+d196 1
+a196 1
+      IF( ICHECK .NE. 0 )THEN
+d200 1
+a200 1
+         FLUCT = DDOT(NDIM,R_SPEED(1,IVAR),1,GRAD_CHAR(IVAR,1),LDW)
+d202 2
+a203 2
+         SCALRES = SCALRES/VOLUME
+         CALL DAXPY(NOFVAR,SCALRES,R(1,IVAR),1,WKSP,1)
+d205 3
+a207 3
+         IF( DABS( FLUCT - SCALRES ) .GT. 1.D- 15)THEN
+            WRITE(NOUT,89999)IELEM,IVAR
+            WRITE(NOUT,*)FLUCT,SCALRES
+d209 2
+a210 1
+         ENDIF
+d223 12
+a234 16
+C    qcs. di meglio si dovrebbe poter fare...
+C
+C
+      DO 10 IVERT = 1 , NOFVERT
+         DO 10 IVAR =  1, NORDER
+            JVAR = FrstEq + IVAR - 1
+            QVEC((IVERT-1)*NORDER+IVAR) =
+     +      DDOT(NDIM,GRAD_CHAR(JVAR,1),LDW,VCP((IVERT-1)*NDIM+1),1)
+  10  CONTINUE
+C
+C
+C     Mi sa che non VA............
+C
+C     CALL DGEMM('No transpose','No Transpose',NORDER,NDIM,
+C    +NOFVERT,ONE,GRAD_CHAR(FrstEq,1),LDW,VCP,NDIM,ZERO,
+C    +QVEC,NORDER)
+d240 10
+a249 9
+         IF( INTERIOR )THEN
+            CALL MatrixScheme(MatSplitVII,QVEC,DQVEC,TSTEP,STIFC,NORDER,
+     +                        NOFVERT,VCN,NDIM,Jacobian,NEQMAX,
+     +                        RESIDUAL,IELEM,TIMEIMPL)
+         ELSE
+            CALL OneDSys_scheme(MatSplitVII,QVEC,DQVEC,TSTEP,STIFC,
+     +                        NORDER,NOFVERT,VCN,NDIM,Jacobian,NEQMAX,
+     +                        RESIDUAL,IELEM,TIMEIMPL)
+         ENDIF
+d254 2
+a255 3
+      CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVERT,
+     +           NORDER,ONE,R(1,FrstEq),NMAX,DQVEC,NORDER,ONE,
+     +           NODRES,NOFVAR)
+d260 1
+a260 2
+      IF( TIMEIMPL )
+     +CALL MATINS(STIFEL,NOFVAR,STIFC,NORDER,NOFVERT)
+d267 13
+a279 13
+      IF( ICHECK .NE. 0 )THEN
+         CALL DSCAL(2*NORDER,ONE/VOLUME,RESIDUAL,1)
+         LFLAG = .TRUE.
+         DO 18 IVAR =  1, NORDER
+            IF( DABS( PHI(IVAR) - RESIDUAL(IVAR) ) .GT. 1.D- 14)LFLAG
+     +      =.FALSE.
+   18    CONTINUE
+         IF(LFLAG.EQV..FALSE.)THEN
+            WRITE(NOUT,99999)IELEM
+            DO 22 IVAR =  1, NORDER
+               WRITE(NOUT,*)PHI(IVAR),RESIDUAL(IVAR),DABS(PHI(IVAR)-
+     &         RESIDUAL(IVAR))
+   22       CONTINUE
+d282 4
+a285 3
+         ENDIF
+         CALL DGEMV( 'N' , NOFVAR , NORDER , ONE , R(1,FrstEq)
+     +   , NMAX , RESIDUAL , 1 , ONE , WKSP ,  1)
+d290 1
+a290 1
+         CALL TEST( DivFlux , WKSP , 1.D-12, IELEM , NOFVAR )
+d295 1
+a295 1
+      IF( TIMEIMPL .AND. INTERIOR )THEN
+d297 3
+a299 4
+      DO 33 IVERT = 1, NOFVERT
+         CALL MatdZdU(VCZ( (IVERT-1)*NOFVAR+1 ), dZdU(1,1,IVERT),
+     +                NDIM ) 
+   33 CONTINUE
+d302 1
+a302 1
+      IF( KAN .EQ. 4 .AND. INTERIOR ) THEN
+d306 1
+a306 1
+          IF(TURBULENT)THEN
+d311 1
+a311 1
+                 KCN(IVERT) = ICN(IVERT)+1
+d313 3
+a315 3
+              TVI   = TVT(KCN,NOFVERT,DSTAK(LTURB))
+              VI    = SUTHERLAW(M_INFTY,ABAR,ASQR)/UAVG(1)
+              TCHI  = TVI/VI
+d321 2
+a322 3
+          CALL VSFLX4(IELEM,VCZ,NODRES,TSTEP,NOFVAR,VCN,dZdU,
+     +                NDIM,NOFVERT,VOLUME,
+     +                STIFD,VISCT,TIMEIMPL)
+d327 1
+a327 1
+      IF( INTERIOR )THEN 
+d331 1
+d333 1
+a333 1
+          IADD = (KA-1)*NOFVAR+1
+d335 3
+a337 3
+          CALL VecSetValues(RHS,NOFVAR,IDX_V( IADD ),
+     +                      NODRES( IADD ),ADD_VALUES,IFAIL)
+      ENDIF 
+d342 1
+a342 1
+      IF( .NOT. TIMEIMPL )RETURN
+d346 1
+a346 1
+      IF( INTERIOR )THEN
+d353 1
+a353 1
+                 IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFVAR*NOFVAR)+1
+d358 3
+a360 3
+                 CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                      NOFVAR,NOFVAR,ONE,STIFEL(IADD),NOFVAR,
+     +                      dVdU,5,ZERO,WORKB,NOFVAR)
+d362 7
+a368 8
+                 CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                      NOFVAR,NOFVAR,-ONE,R,NMAX,WORKB,NOFVAR,
+     +                      ZERO,WORKA,NOFVAR)
+C
+                 CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                      NOFVAR,NOFVAR,TWO,WORKA,NOFVAR,
+     +                      dZdU(1,1,JVERT),5,
+     +                      ZERO,STIFEL(IADD),NOFVAR)
+d378 2
+a379 2
+      IF( KAN.EQ.4 )CALL DAXPY(NOFVAR*NOFVAR*NOFVERT*NOFVERT,
+     +                         ONE,STIFD(1),1,STIFEL(1),1)  
+d383 4
+a386 3
+                 IADD = (((JVERT-1)*NOFVERT+IVERT-1)*NOFVAR*NOFVAR)+1
+                 CALL MatSetValuesBlocked(A,1,ICN(IVERT),1,ICN(JVERT),
+     +                                    STIFEL(IADD),ADD_VALUES,IFAIL)
+d389 1
+a389 1
+      ELSE 
+d393 1
+a393 1
+          IADD = (((KA-1)*NOFVERT+KA-1)*NOFVAR*NOFVAR)+1
+d395 1
+a395 1
+          CALL MatdZdU(VCZ((KA-1)*NOFVAR+1), dZdU(1,1,KA), NDIM ) 
+d404 2
+a405 3
+                 CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                      NOFVAR,NOFVAR,TWO,PPOSZ,5,
+     +                      dZdU(1,1,KA),5,ZERO,WORKA,NOFVAR)
+d409 2
+a410 3
+                 CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                      NOFVAR,NOFVAR,ONE,dVdU,5,WORKA,
+     +                      NOFVAR,ZERO,WORKB,NOFVAR)
+d414 3
+a416 3
+                 CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                      NOFVAR,NOFVAR,ONE,STIFEL(IADD),NOFVAR,
+     +                      WORKB,NOFVAR,ZERO,WORKA,NOFVAR)
+d422 2
+a423 3
+         CALL DGEMM('No Transpose','No Transpose',NOFVAR,NOFVAR,
+     +              NOFVAR,-ONE,R,NMAX,
+     +              WORKA,NOFVAR,ZERO,STIFEL(IADD),NOFVAR)
+d425 2
+a426 2
+         CALL MatSetValuesBlocked(A,1,ICN(KA),1,ICN(KA),
+     +                            STIFEL(IADD),ADD_VALUES,IFAIL)
+d430 1
+a430 1
+      IF( ICHECK .EQ. 0 )RETURN
+d441 1
+a441 1
+      CALL TEST( DivFlux , WKSP , 1.D-15, -IELEM , NOFVAR )
+d446 4
+a449 2
+89999 FORMAT(5X,'Scalar residual in Element ',I6,' Wave # ',I1)
+99999 FORMAT(5X,'Vector residual in Element ',I6,' EulerVII')
+d455 2
+a456 1
+      INCLUDE 'constants'
+d466 2
+a467 2
+      KINETIC = ZROE(3)*ZROE(3)+ZROE(4)*ZROE(4)
+      IF(NDIM.EQ.3)KINETIC = KINETIC + ZROE(5)*ZROE(5)
+d470 1
+a470 1
+      dZdU(1,1) = HALF * Z1INV
+d472 4
+a475 4
+      dZdU(2,1) = ( GM1 * KINETIC - HALF*Z1INV*ZROE(2) )*Z1INV
+      dZdU(2,2) = GAM * Z1INV
+      dZdU(2,3) =-GM1 * ZROE(3) * Z1SQRINV
+      dZdU(2,4) =-GM1 * ZROE(4) * Z1SQRINV
+d477 1
+a477 1
+      dZdU(3,1) =-HALF * ZROE(3) * Z1SQRINV
+d480 1
+a480 1
+      dZdU(4,1) =-HALF * ZROE(4) * Z1SQRINV
+d483 1
+a483 1
+      IF( NDIM.EQ.2 )RETURN 
+d485 2
+a486 2
+      dZdU(2,5) =-GM1 * ZROE(5) * Z1SQRINV
+      dZdU(5,1) =-HALF * ZROE(5) * Z1SQRINV
+d490 1
+@
+
+
+1.5
+log
+@Turbulent viscosity is now computed only for interior elements
+@
+text
+@d70 2
+a71 1
+     +STIFEL(VMAX*VMAX*NMAX*NMAX),WORK(NMAX*NMAX)
+d90 1
+d295 1
+a295 1
+C     Compute cell averaged turbulent viscosity
+d297 5
+a301 1
+C     compute viscous fluxes
+d305 2
+d319 6
+a324 3
+          CALL VSFLX4(IELEM,VCZ,NODRES,TSTEP,NOFVAR,VCN,
+     +            NDIM,NOFVERT,VOLUME,
+     +            STIFD,VISCT,TIMEIMPL)
+d352 1
+d361 2
+a362 2
+     +                      dVdU,5,ZERO,WORK,NOFVAR)
+C     sign changed 
+d364 6
+a369 1
+     +                      NOFVAR,NOFVAR,-ONE,R,NMAX,WORK,NOFVAR,
+d396 2
+d403 14
+d419 1
+a419 5
+     +                      dVdU,5,ZERO,WORK,NOFVAR)
+C     sign changed 
+                 CALL DGEMM('No Transpose','No Transpose',NOFVAR,
+     +                      NOFVAR,NOFVAR,-ONE,R,NMAX,WORK,NOFVAR,
+     +                      ZERO,STIFEL(IADD),NOFVAR)
+d426 3
+a428 2
+     +              NOFVAR,ONE,STIFEL(IADD),NOFVAR,
+     +              PPOSU,5,ZERO,WORK,NOFVAR)
+d430 1
+a430 1
+     +                            WORK,ADD_VALUES,IFAIL)
+d454 38
+@
+
+
+1.4
+log
+@Sign changed to the diffusion matrix
+@
+text
+@d66 1
+a66 1
+      INTEGER ICN(VMAX),ICF(VMAX)
+d295 5
+a299 6
+      IF(TURBULENT)THEN
+          TVI   = TVT(ICN,NOFVERT,DSTAK(LTURB))
+          VI    = SUTHERLAW(M_INFTY,ABAR,ASQR)/UAVG(1)
+          TCHI  = TVI/VI
+          VISCT = TVI*TFV1(TCHI)*UAVG(1)
+      ENDIF
+d301 1
+a301 1
+C     compute viscous fluxes
+d303 9
+a311 2
+      IF( KAN .EQ. 4 .AND. INTERIOR )
+     +CALL VSFLX4(IELEM,VCZ,NODRES,TSTEP,NOFVAR,VCN,
+d314 1
+@
+
+
+1.3
+log
+@PETSc version
+@
+text
+@d353 1
+a353 1
+C     substract the diffusion stiffness matrices from the element
+d357 1
+a357 1
+     +                         -ONE,STIFD(1),1,STIFEL(1),1)  
+@
+
+
+1.2
+log
+@Add include for bnd.h
+@
+text
+@a1 2
+CC------------------------------+------------------------------
+CC
+d3 1
+a3 1
+     +                    ScalarScheme,MatrixScheme)
+d9 7
+d22 1
+a22 1
+C       for the matrix scheme (solves for dp/ra,du,dv,dw)
+d36 2
+d44 1
+d54 1
+a54 1
+      INTEGER IVAR,JVAR,IVERT,FrstEq,JCOL,IDIM
+d64 1
+a64 1
+      DOUBLE PRECISION DT(VMAX)
+d70 1
+a70 1
+     +STIFEL(VMAX*VMAX*NMAX*NMAX)
+d107 1
+a107 1
+      CALL DINIT(NOFVERT,ZERO,DT,1)
+a117 5
+C     if(ielem.gt.nelem)then
+C     CALL X04CAF('General',' ',NOFVAR,NOFVERT,GRAD_PARM,NMAX,
+C    +            'dZ',IFAIL)
+C     endif
+C
+d173 1
+a173 1
+     +   QQ, DT, DQ, STIFC, NDIM, NOFVERT, TIMEIMPL )
+d238 2
+a239 2
+         IF( INTERIOR )THEN ! i.e. a boundary cell
+            CALL MatrixScheme(MatSplitVII,QVEC,DQVEC,DT,STIFC,NORDER,
+d243 2
+a244 2
+            CALL OneDSys_scheme(MatSplitVII,QVEC,DQVEC,DT,STIFC,NORDER,
+     +                        NOFVERT,VCN,NDIM,Jacobian,NEQMAX,
+d305 3
+a307 3
+     +CALL VSFLX4(IELEM,VCZ,NODRES,DT,NOFVAR,VCN,
+     +                     NDIM,NOFVERT,VOLUME,
+     +STIFD,VISCT,TIMEIMPL)
+d311 11
+a321 2
+      CALL DAXPYI( NOFVERT, 1.D0, DT, ICN, DSTAK(LDTLIN) )
+      CALL DAXPYI( NOFVAR*NOFVERT, 1.D0, NODRES, IDX_V, DSTAK(LRESID) )
+d327 38
+a364 1
+C     .. Add the element stiffness matrix to the global stiffness matrix
+a365 3
+      IF( IELEM .LE. NELEM )THEN
+         CALL ASSMBM(IELEM,DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR),
+     &   ICN,STIFEL,STIFD,NOFVERT,NOFVAR,.FALSE.,(KAN.EQ.4),SORTED)
+d367 28
+a394 2
+         CALL ASSMBCI(IELEM,DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR),
+     &   ICN,STIFEL,NOFVERT,NOFVAR,.FALSE.,(KAN.EQ.4),SORTED)
+a415 195
+CC
+CC
+      SUBROUTINE Eigen_VII(Matrix,LDA,NDIM)
+C
+C     .. Symmetrizing variables (dS,dp/(r*a),velocity) variables ..
+C        as observed by E. van der Weide any choice of variables,
+C        at least when using linear schemes, gives the same
+C        result: see also "EulerV.f" where conserved variables
+C        are used ..
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'constants'
+C
+      INCLUDE 'three'
+C
+C
+      INTEGER LDA,NDIM
+C
+      DOUBLE PRECISION Matrix(LDA,LDA,*)
+C
+      DOUBLE PRECISION DENS,DENSABARINV,DENSINVABARINV
+      INTEGER IDIM,ifail
+C
+C
+      DOUBLE PRECISION DDOT
+      EXTERNAL         DDOT
+C
+C
+      DENS = UAVG(1)
+      DENSABARINV = DENS/ABAR
+      DENSINVABARINV = ONE/(DENS*ABAR)
+C
+C     Symmetrizing variables ..
+C
+      DO 11 IDIM = 1 , NDIM
+C
+         GRAD_CHAR(1,IDIM) = GRAD_PRIM(1,IDIM) -
+     &   GRAD_PRIM(2,IDIM)/ASQR
+         GRAD_CHAR(2,IDIM) = GRAD_PRIM(2,IDIM)*DENSINVABARINV
+         GRAD_CHAR(3,IDIM) = GRAD_PRIM(3,IDIM)
+         GRAD_CHAR(4,IDIM) = GRAD_PRIM(4,IDIM)
+         GRAD_CHAR(5,IDIM) = GRAD_PRIM(5,IDIM)
+C
+C     Advection speed for entropy ..
+C
+         R_SPEED(IDIM,1) = UAVG(2+IDIM)
+C
+   11 CONTINUE ! End loop on IDIM
+C
+      IDIM = 1
+C
+      Matrix(1,1,IDIM) = UAVG(3)
+      Matrix(1,2,IDIM) = ABAR
+      Matrix(1,3,IDIM) = ZERO
+      Matrix(1,4,IDIM) = ZERO
+C
+      Matrix(2,1,IDIM) = ABAR
+      Matrix(2,2,IDIM) = UAVG(3)
+      Matrix(2,3,IDIM) = ZERO
+      Matrix(2,4,IDIM) = ZERO
+C
+      Matrix(3,1,IDIM) = ZERO
+      Matrix(3,2,IDIM) = ZERO
+      Matrix(3,3,IDIM) = UAVG(3)
+      Matrix(3,4,IDIM) = ZERO
+C
+      Matrix(4,1,IDIM) = ZERO
+      Matrix(4,2,IDIM) = ZERO
+      Matrix(4,3,IDIM) = ZERO
+      Matrix(4,4,IDIM) = UAVG(3)
+*
+      IDIM = 2
+C
+      Matrix(1,1,IDIM) = UAVG(4)
+      Matrix(1,2,IDIM) = ZERO
+      Matrix(1,3,IDIM) = ABAR
+      Matrix(1,4,IDIM) = ZERO
+C
+      Matrix(2,1,IDIM) = ZERO
+      Matrix(2,2,IDIM) = UAVG(4)
+      Matrix(2,3,IDIM) = ZERO
+      Matrix(2,4,IDIM) = ZERO
+C
+      Matrix(3,1,IDIM) = ABAR
+      Matrix(3,2,IDIM) = ZERO
+      Matrix(3,3,IDIM) = UAVG(4)
+      Matrix(3,4,IDIM) = ZERO
+C
+      Matrix(4,1,IDIM) = ZERO
+      Matrix(4,2,IDIM) = ZERO
+      Matrix(4,3,IDIM) = ZERO
+      Matrix(4,4,IDIM) = UAVG(4)
+*
+      IDIM = 3
+C
+      Matrix(1,1,IDIM) = UAVG(5)
+      Matrix(1,2,IDIM) = ZERO
+      Matrix(1,3,IDIM) = ZERO
+      Matrix(1,4,IDIM) = ABAR
+C
+      Matrix(2,1,IDIM) = ZERO
+      Matrix(2,2,IDIM) = UAVG(5)
+      Matrix(2,3,IDIM) = ZERO
+      Matrix(2,4,IDIM) = ZERO
+C
+      Matrix(3,1,IDIM) = ZERO
+      Matrix(3,2,IDIM) = ZERO
+      Matrix(3,3,IDIM) = UAVG(5)
+      Matrix(3,4,IDIM) = ZERO
+C
+      Matrix(4,1,IDIM) = ABAR
+      Matrix(4,2,IDIM) = ZERO
+      Matrix(4,3,IDIM) = ZERO
+      Matrix(4,4,IDIM) = UAVG(5)
+C
+C     Transformation matrix from symmetrizing to conserved variables ..
+C
+      R(1,1) = ONE
+      R(2,1) = KINETIC
+      R(3,1) = UAVG(3)
+      R(4,1) = UAVG(4)
+      R(5,1) = UAVG(5)
+C
+      R(1,2) = DENSABARINV
+      R(2,2) = DENSABARINV*UAVG(2)
+      R(3,2) = DENSABARINV*UAVG(3)
+      R(4,2) = DENSABARINV*UAVG(4)
+      R(5,2) = DENSABARINV*UAVG(5)
+C
+      R(1,3) = ZERO
+      R(2,3) = DENS*UAVG(3)
+      R(3,3) = DENS
+      R(4,3) = ZERO
+      R(5,3) = ZERO
+C
+      R(1,4) = ZERO
+      R(2,4) = DENS*UAVG(4)
+      R(3,4) = ZERO
+      R(4,4) = DENS
+      R(5,4) = ZERO
+C
+      R(1,5) = ZERO
+      R(2,5) = DENS*UAVG(5)
+      R(3,5) = ZERO
+      R(4,5) = ZERO
+      R(5,5) = DENS
+C
+      IF( .NOT. TIMEIMPL )RETURN
+C
+C     Transformation matrix from conserved to symmetrizing variables ..
+C
+      dVdU(1,1) = ONE - HALF * GM1 * MACHSQR
+      dVdU(2,1) = GM1 * DENSINVABARINV * KINETIC
+      dVdU(3,1) = - UAVG(3) / DENS
+      dVdU(4,1) = - UAVG(4) / DENS
+      dVdU(5,1) = - UAVG(5) / DENS
+C
+      dVdU(1,2) = - GM1 / ASQR
+      dVdU(2,2) = GM1 * DENSINVABARINV
+      dVdU(3,2) = ZERO
+      dVdU(4,2) = ZERO
+      dVdU(5,2) = ZERO
+C
+      dVdU(1,3) = GM1 / ASQR * UAVG(3)
+      dVdU(2,3) = - GM1 * DENSINVABARINV * UAVG(3)
+      dVdU(3,3) = ONE/DENS
+      dVdU(4,3) = ZERO
+      dVdU(5,3) = ZERO
+C
+      dVdU(1,4) = GM1 / ASQR * UAVG(4)
+      dVdU(2,4) = - GM1 * DENSINVABARINV * UAVG(4)
+      dVdU(3,4) = ZERO
+      dVdU(4,4) = ONE/DENS
+      dVdU(5,4) = ZERO
+C
+      dVdU(1,5) = GM1 / ASQR * UAVG(5)
+      dVdU(2,5) = - GM1 * DENSINVABARINV * UAVG(5)
+      dVdU(3,5) = ZERO
+      dVdU(4,5) = ZERO
+      dVdU(5,5) = ONE/DENS
+C
+C    .. Test if VRIGHT*VLEFT = Identity ..
+C
+C           CALL DGEMM('N','N',NDIM+2,NDIM+2,NDIM+2,1.D0,R,NMAX,
+C    +      dVdU,5,0.D0,WORK,5)
+C           CALL X04CAF('G',' ',NDIM+2,NDIM+2,WORK,5,
+C    +      'Identity matrix ????',IFAIL)
+C           PAUSE
+C
+      RETURN
+      END
+CC
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d23 1
+@

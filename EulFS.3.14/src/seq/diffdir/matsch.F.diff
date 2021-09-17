@@ -1,0 +1,13 @@
+6c6,8
+< C     $Id: matsch.F,v 1.22 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+>       IMPLICIT NONE
+> C
+> C     $Id: matsch.F,v 1.22 2016/11/10 11:25:13 abonfi Exp $
+16a19
+> #include "petsc/finclude/petscsys.h"
+19,22d21
+<       use petscvec 
+<       use petscmat 
+< C
+<       IMPLICIT NONE

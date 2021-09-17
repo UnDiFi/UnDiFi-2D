@@ -1,0 +1,1 @@
+../seq/getnrm.f

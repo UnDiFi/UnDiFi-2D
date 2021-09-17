@@ -1,0 +1,78 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	98.02.09.17.34.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Compute production and destruction terms in the nodes
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE PRIN(VISCL,VISCT,WALLD,OMEGA,ST,P,D,CV,
+     +                NODCODE,NDIM,NOFVAR,NPOIN)
+
+      IMPLICIT NONE
+
+C     INCLUDE 'paramt.h'
+C     INCLUDE 'bnd.h'
+C     INCLUDE 'constants'
+C     INCLUDE 'stream.com'
+
+C     .. Scalar Arguments ..
+      INTEGER NDIM,NOFVAR,NPOIN
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION VISCL(NPOIN),VISCT(NPOIN),WALLD(NPOIN),
+     +P(NPOIN),D(NPOIN),ST(NPOIN),OMEGA(NPOIN),CV(NPOIN)
+      INTEGER NODCODE(NPOIN)
+C     ..
+C     .. Local Scalars ..
+      INTEGER IPOIN
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC SQRT
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION newTSC,tbprod,tbdest
+      EXTERNAL newTSC,tbprod,tbdest
+C     ..
+      DO 1 IPOIN = 1,NPOIN
+C
+         if( nodcode(ipoin) .eq. 1000 )then
+             P(ipoin) = P(ipoin)/cv(ipoin)
+             D(ipoin) = D(ipoin)/cv(ipoin)
+         else
+C
+        ST(IPOIN) = newTSC(OMEGA(IPOIN),WALLD(IPOIN),
+     +                     VISCT(IPOIN),VISCL(IPOIN))
+C
+          P(IPOIN) = TBPROD(VISCT(IPOIN),VISCL(IPOIN),
+     +               ST(IPOIN))
+          D(IPOIN) = TBDEST(WALLD(IPOIN),ST(IPOIN),
+     +               VISCT(IPOIN),VISCL(IPOIN))
+C
+      endif
+C
+    1 CONTINUE
+
+C     call SOLZNE('stilde.dat',ST,1,NPOIN,'w')
+C     call SOLZNE('prod.dat',P,1,NPOIN,'w')
+C     call SOLZNE('dest.dat',D,1,NPOIN,'w')
+C     stop
+      RETURN
+
+      END
+@

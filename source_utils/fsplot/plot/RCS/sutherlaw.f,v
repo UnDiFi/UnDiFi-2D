@@ -1,0 +1,63 @@
+head	1.2;
+access
+	abonfi;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.2
+date	2020.02.05.11.26.17;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.15.37.28;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Sutherland law
+@
+
+
+1.2
+log
+@Accounts for different kinds on non-dimensionalisations
+when dealing with compressible flows
+@
+text
+@      DOUBLE PRECISION FUNCTION SUTHERLAW( ABAR, ASQR )
+C
+      IMPLICIT NONE
+      DOUBLE PRECISION ABAR,ASQR
+      DOUBLE PRECISION C1,C2,C3,C4,ADIM
+      common /visclaw/ C1,C2,C3,C4,ADIM
+
+C
+C
+      SUTHERLAW = C1*C4*ABAR*ASQR/(C2*ASQR+C3)
+C
+      RETURN
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+      DOUBLE PRECISION FUNCTION SUTHERLAW( M_INFTY, ABAR, ASQR )
+d4 4
+a8 2
+      DOUBLE PRECISION M_INFTY,ABAR,ASQR
+      DOUBLE PRECISION TEMP
+d10 1
+a10 2
+      TEMP = M_INFTY*M_INFTY
+      SUTHERLAW = 1.404D0*(M_INFTY*TEMP)*ABAR*ASQR/(TEMP*ASQR+0.404D0)
+@

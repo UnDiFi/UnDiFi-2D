@@ -1,0 +1,2246 @@
+head	1.48;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.48
+	release3_13_0:1.48
+	release3_12_0:1.48
+	release3_11_0:1.48
+	release3_10_0:1.48
+	release3_8_0:1.48
+	release3_7_1:1.47
+	release3_7_0:1.47
+	release3_4_5:1.45
+	release3_4_4:1.45
+	release3_4_3:1.43
+	release3_4_2:1.43
+	release3_4_1:1.43
+	release3_4_0:1.42
+	release3_3_5:1.41
+	release3_3_4:1.41
+	release3_3_3:1.40
+	release3_3_2:1.40
+	release3_3_1:1.40
+	release3_3_0:1.38;
+locks; strict;
+comment	@c @;
+
+
+1.48
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.47;
+
+1.47
+date	2016.11.10.12.06.40;	author abonfi;	state Exp;
+branches;
+next	1.46;
+
+1.46
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.45;
+
+1.45
+date	2015.04.01.13.58.48;	author abonfi;	state Exp;
+branches;
+next	1.44;
+
+1.44
+date	2014.03.12.15.39.31;	author abonfi;	state Exp;
+branches;
+next	1.43;
+
+1.43
+date	2013.06.06.10.34.38;	author abonfi;	state Exp;
+branches;
+next	1.42;
+
+1.42
+date	2013.05.15.10.33.02;	author abonfi;	state Exp;
+branches;
+next	1.41;
+
+1.41
+date	2013.04.27.06.35.42;	author abonfi;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	2013.01.26.11.44.02;	author abonfi;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	2013.01.26.11.30.51;	author abonfi;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	2012.08.09.07.29.41;	author abonfi;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2012.04.03.12.16.13;	author abonfi;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2012.03.06.10.21.00;	author abonfi;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2011.12.14.09.53.31;	author abonfi;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2011.09.16.07.21.18;	author abonfi;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2009.06.11.08.24.02;	author abonfi;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2008.06.10.10.10.50;	author abonfi;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2005.07.17.19.07.09;	author aldo;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2004.12.20.16.30.43;	author aldo;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2002.02.19.09.19.00;	author abonfi;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2001.11.09.14.21.30;	author abonfi;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2001.10.19.10.39.13;	author abonfi;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2001.10.08.16.01.33;	author abonfi;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2001.10.08.15.48.37;	author abonfi;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2001.07.19.09.49.00;	author abonfi;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2001.06.25.12.10.29;	author abonfi;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2001.05.24.10.28.04;	author abonfi;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2000.12.06.13.42.22;	author aldo;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2000.08.03.12.53.27;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2000.06.09.16.30.28;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	99.12.09.20.44.51;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	99.11.05.20.40.09;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	99.09.01.11.03.12;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	98.11.25.17.01.47;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	98.11.17.17.02.13;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.08.07.13.26.10;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.07.27.12.41.39;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.03.09.17.02.14;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.01.24.12.32.47;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.05.10.32.51;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.02.15.33.14;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.01.22.08.14;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.08.49.33;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@implicit timestepping for Scalar problems
+@
+
+
+1.48
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE UPDATE2( NDIM, NOFVAR, NPOIN, solver, A, RHS, DT, Z,
+     & VMDCO, VMDCN, NodalBcs )
+C
+C     $Id: update2.F,v 1.47 2016/11/10 12:06:40 abonfi Exp abonfi $
+C
+C     Implicit timestepping for scalar equations ..
+C
+CCCC#define DO_NOT_UPDATE
+CCCC#define DEBUG
+C
+CCCC#include "petsc/finclude/petscvec.h"
+CCCC#include "petsc/finclude/petscmat.h"
+CCCC#include "petsc/finclude/petscis.h"
+#include "petsc/finclude/petscksp.h"
+      use petscksp
+C
+      IMPLICIT NONE
+C
+C
+      INCLUDE 'constants.h'
+      INCLUDE 'paramt.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'time.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+      INTEGER NDNM
+      PARAMETER(NDNM=3*NMAX)
+C
+      INCLUDE 'conv.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'verbose.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'io.com'
+      INCLUDE 'time.com'
+      COMMON /TIMING/TBEGALL
+C
+CCCC#define DEBUG
+C
+      INTEGER NDIM,NOFVAR,NPOIN,IFAIL,ITS,Number_of_DirichletNodes,
+     &NITEMS
+C
+      INTEGER IVAR,ROWBGN,ROWEND,IPOIN,I,MY_PE,NI
+      DOUBLE PRECISION CNST,S,DTMAX
+C
+      DOUBLE PRECISION VMDCO(*),VMDCN(*) ! Volume of the Median Dual cell New=(n+1) Old=n
+      DOUBLE PRECISION WKSP1(3,NMAX),WKSP2(3,NMAX)
+      INTEGER IDX_V(1)
+      CHARACTER*11 fname
+C
+      DOUBLE PRECISION dnrm2
+      EXTERNAL DNRM2
+C
+      DATA WKSP1,WKSP2,ITS/NDNM*ZERO,NDNM*ZERO,0/
+C
+C     Petsc stuff
+C
+      Mat A,B
+      Vec RHS,DT,Z,X
+      KSP solver
+      PetscLogDouble TBEGALL,telapsed,tbeg,tend
+      PetscScalar DT_V(1)
+      PetscOffset DT_I,IDX_I
+      PetscScalar x_array(1)
+      PetscScalar rhs_array(1)
+      PetscScalar z_array(1)
+      PetscOffset i_x,i_rhs,i_z
+      IS, dimension(0:*) :: NodalBcs
+C     ..
+C
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IFAIL)
+C
+      CALL VecNorm(RHS,NORM_2,RESL2(1,1),IFAIL)
+      CALL VecNorm(RHS,NORM_INFINITY,RESMAX(1,1),IFAIL)
+#ifdef DEBUG
+      call VecNorm(RHS,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||RHS|| before  is ',s
+      call VecNorm(Z,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||Z|| before everything else is ',s
+#endif
+#ifdef DEBUG
+      IF(TIMEIMPL)THEN
+         call MatNorm(A,NORM_FROBENIUS,s,ifail)
+         if(MY_PE.EQ.0)write(6,*)'||A|| before is ',s
+      ENDIF
+#endif
+C
+      IF( ITER .EQ. 1 )THEN
+          RESMAX0(1) = RESMAX(1,1)
+          RESL20(1) = RESL2(1,1)
+      ENDIF
+C
+C     For pure advection problems, the inverse of
+C         the local timestep in the Dirichlet Nodes
+C         is 0., so we set it to the maximum DT
+C
+      IF(KAN.EQ.-1)THEN
+          CALL VecMax(DT,PETSC_NULL_INTEGER,DTMAX,IFAIL)
+          CALL VecGetOwnerShipRange(DT,ROWBGN,ROWEND,IFAIL)
+          CALL VecGetArray(DT,DT_V,DT_I,IFAIL)
+          CALL ISGetIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,IFAIL)
+          CALL ISGetSize(NodalBcs(SupersonicNodes),
+     &                   Number_of_DirichletNodes,IFAIL)
+          DO 10 I = 1, Number_of_DirichletNodes
+C     supersonic nodes are 0-based indexed
+              IPOIN = IDX_V(IDX_I+I)+ 1- ROWBGN
+#ifdef DEBUG
+              s = DT_V(DT_I+IPOIN)
+#endif
+              DT_V(DT_I+IPOIN) = DTMAX
+#ifdef DEBUG
+              write(6,*)'Supersonic node was ',s,
+     &' now is ',dt_v(dt_i+IPOIN)
+#endif
+   10     CONTINUE
+          CALL VecRestoreArray(DT,DT_V,DT_I,IFAIL)
+          CALL ISRestoreIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,
+     &                          IFAIL)
+      ENDIF
+#ifdef DEBUG
+      call VecNorm(DT,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||DT|| after supersonic nodes  is ',s
+#endif
+C
+C     Handles hanging nodes
+C
+      CALL ISGetSize(NodalBcs(HangingNodes),NI,IFAIL)
+      IF( NI .GT. 0 .AND. IGLOB .EQ. 1 )THEN
+          CALL VecMax(DT,PETSC_NULL_INTEGER,DTMAX,IFAIL)
+          CALL VecGetOwnerShipRange(DT,ROWBGN,ROWEND,IFAIL)
+          CALL VecGetArray(DT,x_array,i_x,IFAIL)
+          CALL ISGetIndices(NodalBcs(HangingNodes),IDX_V,IDX_I,IFAIL)
+          DO 13 I = 1, NI, NOFVAR
+C     hanging nodes are 0-based indexed
+              IPOIN = (IDX_V(IDX_I+I))+ 1- ROWBGN
+#ifdef DEBUG
+              s = x_array(i_x+IPOIN)
+#endif
+              x_array(i_x+IPOIN) = DTMAX
+#ifdef DEBUG
+              write(6,*)'Hanging node was ',s,
+     &' now is ',x_array(i_x+IPOIN)
+#endif
+   13     CONTINUE
+          CALL VecRestoreArray(DT,x_array,i_x,IFAIL)
+          CALL ISRestoreIndices(NodalBcs(HangingNodes),IDX_V,IDX_I,
+     &                          IFAIL)
+      ENDIF
+#ifdef DEBUG
+      call VecNorm(DT,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||DT|| after hanging nodes  is ',s
+#endif
+C
+C     Global time-stepping (if required)
+C
+      IF( IGLOB .EQ. 0 )THEN
+          IF( LTIME )THEN ! Time-accurate
+             CALL VecGetArray(DT,DT_V,DT_I,IFAIL)
+             DO 12 IPOIN = 1, NPOIN ! May not be ok in mpi !
+                DT_V(DT_I+IPOIN) = VMDCO(IPOIN)/DELT
+   12     CONTINUE
+             CALL VecRestoreArray(DT,DT_V,DT_I,IFAIL)
+          ELSE ! Pseudo-un-steady
+             CALL VecMax(DT,PETSC_NULL_INTEGER,DTMAX,IFAIL)
+             CALL VecSet(DT,DTMAX,IFAIL)
+          ENDIF
+      ENDIF
+C
+C     time V/dt to file, if required
+C
+      IF(LDUMP(2))THEN
+         CALL VecGetArray(DT,x_array,i_x,IFAIL)
+         fname = 'dtv0000.dat'
+         write(fname(4:7),FMT="(I4.4)")ITER
+         CALL solzne(fname,x_array(i_x+1),nofvar,npoin,"w")
+         CALL VecRestoreArray(DT,x_array,i_x,IFAIL)
+      ENDIF
+C
+      IF( TIMEIMPL )THEN
+C
+C     scale the CFL
+C
+          CNST = RESL20(1)/RESL2(1,1)
+          CNST = MIN( CFLMAX(1), CFL(1)*CNST )
+C
+C     divide V_i/Dt by the CFL number ...
+C
+          CALL VecScale(DT,ONE/CNST,IFAIL)
+C
+C     Adds V_i/Dt to the diagonal elements of A ...
+C
+#ifdef DEBUG
+          call VecNorm(DT,NORM_2,s,ifail)
+          if(MY_PE.EQ.0)write(6,*)'||dt|| before MatDiagonalSet is ',s
+#endif
+          CALL MatDiagonalSet(A,DT,ADD_VALUES,IFAIL)
+#ifdef DEBUG
+          call MatNorm(A,NORM_FROBENIUS,s,ifail)
+          if(MY_PE.EQ.0)write(6,*)'||A|| after MatDiagonalSet is ',s
+#endif
+C
+      ELSE ! explicit timestepping
+caldo
+C
+C   0 maxes the lines INvisible to the preprocessor
+#if 0
+          CALL VecGetArray(RHS,DT_V,DT_I,IFAIL)
+             DO 16 IPOIN = 1, NPOIN ! May not be ok in mpi !
+                write(6,*)ipoin,'dV/dt = ',
+     &(vmdcn(ipoin)-VMDCO(IPOIN))/delt,' rhs = ',dt_v(dt_i+ipoin)
+   16     CONTINUE
+          CALL VecRestoreArray(RHS,DT_V,DT_I,IFAIL)
+#endif
+caldo
+#ifdef DEBUG
+      call VecNorm(DT,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||DT|| before VecPointwiseDivide is ',s
+      call VecMin(DT,PETSC_NULL_INTEGER,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'min(||DT||) before is ',s
+      call VecNorm(RHS,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||RHS|| before VecPointwiseDivide is ',s
+#endif
+          CALL VecPointwiseDivide(RHS,RHS,DT,IFAIL)
+          IF( CFL(1) .NE. ONE )CALL VecScale(RHS,CFL(1),IFAIL)
+          CNST = CFL(1)
+      ENDIF
+C
+#ifdef DEBUG
+      call VecNorm(RHS,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||RHS|| after VecPointwiseDivide is ',s
+#endif
+C
+C     We do not need DT any more
+C
+      CALL VecDestroy(DT,IFAIL)
+C
+C     dump nodal residual when using -dump_nodal_residual
+C     for debugging purposes
+C
+      IF(LDUMP(1))THEN
+         fname = 'rhs0000.dat'
+         WRITE(fname(4:7),FMT="(I4.4)")ITER
+         CALL VecGetArray(rhs,x_array,i_x,IFAIL)
+         CALL solzne(fname,x_array(i_x+1),nofvar,npoin,"w")
+         CALL VecRestoreArray(rhs,x_array,i_x,IFAIL)
+      ENDIF
+C
+C     modify the stiffness matrix structure to account for
+C     Dirichlet b.c. this is done only for the first iteration
+C
+      IF( TIMEIMPL )THEN
+C
+CCCCCCC#ifdef MPI
+CCCCCCCCALL MatZeroRowsLocal(A,SupersonicNodes,ONE,IFAIL)
+CCCCCCC#else
+CCCCCCC#endif
+C
+          CALL MatZeroRowsIS(A,NodalBcs(SupersonicNodes),ONE,
+     &                       PETSC_NULL_VEC,PETSC_NULL_VEC,IFAIL)
+C
+C     is it really needed to re-assemble the matrix???
+C
+          CALL MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY,IFAIL)
+          CALL MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY,IFAIL)
+C
+C     This will remove the entries from the matrix; but when
+C     you assemble the matrix for the next time-step it will not
+C     insert those unneeded values (the values that would be zeroed
+C     in the next call to MatZeroRows()). This is a very efficient
+C     way to do multiple linear systems BUT assumes
+C
+C     1) the rows you want to zero remain the same for each successive
+C        linear system in the series
+C     2) you are not adding new nonzeros in other parts of the matrix
+C        at later timesteps (because the above option will cause those
+C        new values to be ignored).
+C
+caldo    CALL MatSetOption(A,MAT_NO_NEW_NONZERO_LOCATIONS,IFAIL)
+#ifdef DEBUG
+          call MatNorm(A,NORM_FROBENIUS,s,ifail)
+          if(MY_PE.EQ.0)write(6,*)'||A|| after JacBCs is ',s
+#endif
+C
+      ENDIF
+C
+      IF( TIMEIMPL )THEN
+C
+C     create a vector to store the solution
+C
+#ifdef MPI
+          CALL VecCreateMPI(PETSC_COMM_WORLD,NPOIN,PETSC_DECIDE,X,IFAIL)
+#else
+          CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN,X,IFAIL)
+#endif
+C
+C     Sets the matrix (and preconditioner) associated with the linear system
+C
+          CALL KSPSetOperators(solver,A,A,IFAIL)
+          CALL KSPSetUp(solver,IFAIL)
+C
+C     Solve THE linear system
+C
+          CALL PetscTime(tbeg,IFAIL)
+          CALL KSPSolve(solver,RHS,X,IFAIL)
+          CALL KSPGetIterationNumber(solver,ITS,IFAIL)
+          CALL PetscTime(tend,IFAIL)
+C
+C     Update the nodal unknown vector by forming Z := X + Z
+C
+          CALL VecAXPY(Z,ONE,X,IFAIL)
+C
+      ELSE ! explicit timestepping
+C
+C     Update the nodal unknown vector by forming Z := RHS + Z
+C
+          IF(LALE)THEN
+            CALL VecGetArray(rhs,rhs_array,i_rhs,IFAIL)
+            CALL VecGetArray(z,z_array,i_z,IFAIL)
+            CALL RHS4ALE(NOFVAR,NPOIN,rhs_array(i_rhs+1),
+     &                   z_array(i_z+1),VMDCO,VMDCN)
+            CALL VecRestoreArray(z,z_array,i_z,IFAIL)
+            CALL VecRestoreArray(rhs,rhs_array,i_rhs,IFAIL)
+C           we should do it better, RHSBC1 has already been called previously
+            CALL RHSBC1( rhs, NodalBcs )
+C   0 maxes the lines INvisible to the preprocessor
+#if 0
+            CALL VecGetArray(rhs,rhs_array,i_rhs,IFAIL)
+            write(6,*)dnrm2(npoin,rhs_array(i_rhs+i),1)
+            do i  = 1,npoin
+               write(6,*)i,rhs_array(i_rhs+i)
+            enddo 
+            CALL VecRestoreArray(rhs,rhs_array,i_rhs,IFAIL)
+#endif
+          ENDIF
+C
+#ifdef DO_NOT_UPDATE
+      write(6,*)'Not updating the mean flow eqns'
+      GOTO 456
+#endif
+C
+#ifdef DEBUG
+          call VecNorm(Z,NORM_2,s,ifail)
+          if(MY_PE.EQ.0)write(6,*)'||Z|| before VecAXPY is ',s
+          call VecNorm(RHS,NORM_2,s,ifail)
+          if(MY_PE.EQ.0)write(6,*)'||RHS|| before VecAXPY is ',s
+#endif
+          CALL VecAXPY(Z,ONE,RHS,IFAIL)
+#ifdef DEBUG
+          call VecNorm(RHS,NORM_2,s,ifail)
+          if(MY_PE.EQ.0)write(6,*)'||RHS|| after VecAXPY is ',s
+          call VecNorm(Z,NORM_2,s,ifail)
+          if(MY_PE.EQ.0)write(6,*)'||Z|| after VecAXPY is ',s
+#endif
+C
+#ifdef DO_NOT_UPDATE
+  456 CONTINUE
+#endif
+          X = RHS
+C
+      ENDIF
+#ifdef DEBUG
+      call VecNorm(X,NORM_2,s,ifail)
+      if(MY_PE.EQ.0)write(6,*)'||X|| after KSP solve  is ',s
+#endif
+C
+C     Monitor the norms of the update ..
+C
+      CALL VecNorm(X,NORM_2,DELL2(1,1),IFAIL)
+      CALL VecNorm(X,NORM_INFINITY,DELMAX(1,1),IFAIL)
+C
+      IF(MY_PE.EQ.0)THEN
+C
+          WRITE(IWUNIT,200)ITER,ITS,CNST
+C
+C     .. Print out the convergence history ..
+C
+          WRITE(IWUNIT,215)
+          DO 20 IVAR =  1, NOFVAR
+              WRITE(IWUNIT,210)IVAR,DLOG10(RESL2(IVAR,1)), DLOG10(RESMAX
+     +        (IVAR,1)),INMAX(IVAR,1),(WKSP1(I,IVAR),I=1,3)
+   20     CONTINUE
+          WRITE(IWUNIT,225)
+          DO 30 IVAR =  1, NOFVAR
+              WRITE(IWUNIT,210)IVAR,DLOG10(DELL2(IVAR,1)), DLOG10(DELMAX
+     +        (IVAR,1)),INDEL(IVAR,1),(WKSP2(I,IVAR),I=1,3)
+   30     CONTINUE
+C
+C     Writing convergence history to file ...
+C
+          CALL PetscTime(telapsed,IFAIL)
+          telapsed=telapsed-tbegall
+          WRITE (IHST1,FMT=235) NITER,ITS,tend-tbeg,telapsed,RESL2(1,1),
+     +    CNST
+          WRITE (IHST2,FMT=235) NITER,ITS,tend-tbeg,telapsed,RESMAX
+     +    (1,1),CNST
+      ENDIF
+C
+C     clear memory allocated for the solution vector
+C
+      IF(TIMEIMPL)THEN
+             CALL VecDestroy(X,IFAIL)
+      ENDIF
+C
+      RETURN
+C
+C
+  200 FORMAT(5X,70('-'),/,25X,'ITERATION # ',I4,' (',I4,') CFL = ',
+     +E10.4/,5X,70('-'),/,
+     +5X,70('-'),/,5X,'Var.',4X,'L2-norm',3X,'L_infty',3X,
+     +'node #',3X,'(',4X,'x',7X,'y',7X,'z',4X,')',/,5X,70('-'))
+  210 FORMAT(5X,I1,5X,F10.5,1X,F10.5,2X,I5,3X,
+     +'(',2(F8.5,','),F8.5,')')
+  215 FORMAT(5X,'Nodal Residual'/)
+  225 FORMAT(5X,'Nodal Update'/)
+  235 FORMAT (I5,1X,I4,4 (1X,E10.4))
+C
+      END
+@
+
+
+1.47
+log
+@KSPSetOperators() no longer has the MatStructure argument.
+@
+text
+@d2 1
+a2 1
+     & VMDCO, VMDCN )
+d4 1
+a4 3
+C     $Id: update2.F,v 1.46 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+      IMPLICIT NONE
+d11 3
+a13 3
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+d15 4
+a18 1
+#include "petsc/finclude/petscis.h"
+a19 5
+      Mat A,B
+      Vec RHS,DT,Z,X
+      KSP solver
+      PetscLogDouble TBEGALL,telapsed,tbeg,tend
+      COMMON /TIMING/TBEGALL
+d25 1
+a28 2
+#include "iset.com"
+C
+d35 1
+d49 12
+d67 1
+a67 3
+C
+      DOUBLE PRECISION dnrm2
+      EXTERNAL DNRM2
+a69 2
+      DATA WKSP1,WKSP2,ITS/NDNM*ZERO,NDNM*ZERO,0/
+C
+d100 3
+a102 2
+          CALL ISGetIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+          CALL ISGetSize(SupersonicNodes,Number_of_DirichletNodes,IFAIL)
+d116 2
+a117 1
+          CALL ISRestoreIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+d126 1
+a126 1
+      CALL ISGetSize(HangingNodes,NI,IFAIL)
+d131 1
+a131 1
+          CALL ISGetIndices(HangingNodes,IDX_V,IDX_I,IFAIL)
+d145 2
+a146 1
+          CALL ISRestoreIndices(HangingNodes,IDX_V,IDX_I,IFAIL)
+d257 2
+a258 2
+          CALL MatZeroRowsIS(A,SupersonicNodes,ONE,PETSC_NULL_OBJECT,
+     &                       PETSC_NULL_OBJECT,IFAIL)
+d323 1
+a323 1
+            CALL RHSBC1( rhs )
+@
+
+
+1.46
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.45 2015/04/01 13:58:48 abonfi Exp abonfi $
+d290 1
+a290 1
+          CALL KSPSetOperators(solver,A,A,SAME_NONZERO_PATTERN,IFAIL)
+@
+
+
+1.45
+log
+@dump nodal residual and time-step to file, if required
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.44 2014/03/12 15:39:31 abonfi Exp abonfi $
+d13 5
+a17 5
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscksp.h"
+#include "finclude/petscis.h"
+@
+
+
+1.44
+log
+@re-formatting some debugging output
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.43 2013/06/06 10:34:38 abonfi Exp abonfi $
+d52 1
+d161 9
+d228 11
+@
+
+
+1.43
+log
+@now includes bnd.h
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.42 2013/05/15 10:33:02 abonfi Exp abonfi $
+d191 2
+a192 2
+                write(6,*)ipoin,(vmdcn(ipoin)-VMDCO(IPOIN))/delt,
+     &dt_v(dt_i+ipoin)
+@
+
+
+1.42
+log
+@chenged PetscGetTime into PetscTime to comply with Petsc revision 3.4.0
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.41 2013/04/27 06:35:42 abonfi Exp abonfi $
+a23 3
+C
+#include "iset.com"
+C
+d28 1
+d31 2
+@
+
+
+1.41
+log
+@added a few debugging options and the capability
+of handling hanging nodes
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.40 2013/01/26 11:44:02 abonfi Exp abonfi $
+d274 1
+a274 1
+          CALL PetscGetTime(tbeg,IFAIL)
+d277 1
+a277 1
+          CALL PetscGetTime(tend,IFAIL)
+d361 1
+a361 1
+          CALL PetscGetTime(telapsed,IFAIL)
+@
+
+
+1.40
+log
+@changed the name of an included header file
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.39 2013/01/26 11:30:51 abonfi Exp abonfi $
+d11 1
+d46 1
+a46 1
+      INTEGER IVAR,ROWBGN,ROWEND,IPOIN,I,MY_PE
+d72 2
+d100 3
+d104 4
+d112 32
+d160 1
+d186 2
+d197 8
+d210 5
+d296 1
+d312 6
+d319 6
+d326 1
+d328 1
+d344 1
+a344 1
+  299     WRITE(IWUNIT,200)ITER,ITS,CNST
+@
+
+
+1.39
+log
+@changed the name of included header/common files
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.38 2012/08/09 07:29:41 abonfi Exp abonfi $
+d26 1
+a26 1
+      INCLUDE 'constants'
+@
+
+
+1.38
+log
+@now handles ALE calculations (with explicit time integrator)
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.37 2012/04/03 12:16:13 abonfi Exp abonfi $
+d28 2
+d32 1
+d34 1
+a34 1
+      INCLUDE 'nloc'
+a35 1
+      INCLUDE 'implicit.h'
+a37 2
+C
+      INCLUDE 'time.h'
+@
+
+
+1.37
+log
+@changes needed to pass the grid velocity down to the lower level routines
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.36 2012/03/06 10:21:00 abonfi Exp abonfi $
+d10 1
+d58 1
+d142 10
+d233 1
+a233 1
+     &                        z_array(i_z+1),VMDCO,VMDCN)
+d236 10
+d247 6
+d255 1
+@
+
+
+1.36
+log
+@bug fixed with wrong declaration for idx_v
+@
+text
+@d2 1
+a2 1
+     & VMEDIAN )
+d4 1
+a4 1
+C     $Id: update2.F,v 1.35 2011/12/14 09:53:31 abonfi Exp abonfi $
+a19 1
+      PetscOffset DT_I,IDX_I
+d47 1
+a47 1
+      DOUBLE PRECISION VMEDIAN(*)
+d49 1
+d51 5
+a55 1
+      INTEGER IDX_V(1)
+d107 1
+a107 1
+                DT_V(DT_I+IPOIN) = VMEDIAN(IPOIN)/DELT
+d217 8
+@
+
+
+1.35
+log
+@changes required due to the upgrade to petsc-3.2
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.34 2011/09/16 07:21:18 abonfi Exp abonfi $
+d51 1
+a51 1
+      PetscOffset IDX_V(1)
+@
+
+
+1.34
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.33 2009/06/11 13:10:58 abonfi Exp abonfi $
+d155 2
+a156 1
+          CALL MatZeroRowsIS(A,SupersonicNodes,ONE,IFAIL)
+@
+
+
+1.33
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.32 2009/06/11 08:24:02 abonfi Exp abonfi $
+d11 1
+a11 1
+#include "finclude/petsc.h"
+@
+
+
+1.32
+log
+@changed some debugging stuff
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.31 2008/06/10 10:10:50 abonfi Exp abonfi $
+d11 5
+a15 5
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscksp.h"
+#include "include/finclude/petscis.h"
+@
+
+
+1.31
+log
+@introduced a number of changes to allow
+time accurate calculations
+@
+text
+@d4 1
+a4 1
+C     $Id: update2.F,v 1.30 2005/07/17 19:07:09 aldo Exp abonfi $
+d40 2
+d62 10
+d125 4
+d130 4
+d175 4
+d217 4
+@
+
+
+1.30
+log
+@changes require to upgrade to petsc-2.3.0
+@
+text
+@d1 2
+a2 1
+      SUBROUTINE UPDATE2( NDIM, NOFVAR, NPOIN, solver, A, RHS, DT, Z )
+d4 1
+a4 1
+C     $Id: update2.F,v 1.29 2004/12/20 16:30:43 aldo Exp aldo $
+d37 5
+a41 1
+      INTEGER NDIM,NOFVAR,NPOIN,IFAIL,ITS,Number_of_DirichletNodes
+d46 1
+d85 15
+d115 1
+a115 2
+      ELSE
+caldo     CALL VecPointwiseDivide(RHS,DT,RHS,IFAIL)
+a177 1
+cold      CALL SLESSolve(solver,RHS,X,ITS,IFAIL)
+a181 1
+cold      CALL VecAXPY(ONE,X,Z,IFAIL)
+d184 1
+a184 1
+      ELSE
+a187 1
+cold      CALL VecAXPY(ONE,RHS,Z,IFAIL)
+@
+
+
+1.29
+log
+@removed shell preconditioners
+@
+text
+@d1 1
+d3 1
+a3 1
+      SUBROUTINE UPDATE2( NDIM, NOFVAR, NPOIN, sles, A, RHS, DT, Z )
+a9 4
+C     $Id: update2.F,v 1.28 2002/02/19 09:19:00 abonfi Exp aldo $
+C     $Header: /afs/caspur.it/user/b/bonfigli/EulFS.0.10.13/src/seq/RCS/update2.
+C
+C
+d13 1
+a13 2
+#include "include/finclude/petscsles.h"
+#include "include/finclude/petscpc.h"
+d18 1
+a18 1
+      SLES sles
+d88 1
+a88 1
+          CALL VecScale(ONE/CNST,DT,IFAIL)
+d95 3
+a97 2
+          CALL VecPointwiseDivide(RHS,DT,RHS,IFAIL)
+          IF( CFL(1) .NE. ONE )CALL VecScale(CFL(1),RHS,IFAIL)
+d115 1
+a115 1
+          CALL MatZeroRows(A,SupersonicNodes,ONE,IFAIL)
+d148 1
+a148 3
+C     Sets the matrix associated with the linear system
+C
+              CALL SLESSetOperators(sles,A,A,SAME_NONZERO_PATTERN,IFAIL)
+d150 2
+d156 3
+a158 1
+          CALL SLESSolve(sles,RHS,X,ITS,IFAIL)
+d161 1
+a161 1
+C     Update the nodal unknown vector by forming Z := Z + X
+d163 2
+a164 1
+          CALL VecAXPY(ONE,X,Z,IFAIL)
+d168 1
+a168 1
+C     Update the nodal unknown vector by forming Z := Z + RHS
+d170 2
+a171 1
+          CALL VecAXPY(ONE,RHS,Z,IFAIL)
+a176 1
+C
+@
+
+
+1.28
+log
+@changed Scalar into PetscScalar to comply with PETSc 2.1.1
+@
+text
+@d9 1
+a9 1
+C     $Id: update2.F,v 1.27 2001/11/09 14:21:30 abonfi Exp abonfi $
+a22 1
+      PC pc
+a24 1
+      PCType meth
+a48 1
+      integer user_defined_pc
+a49 1
+      EXTERNAL PierluigiPCApply,PierluigiSetup
+a150 21
+C Set a user-defined shell preconditioner, if desired
+C
+          call PetscOptionsHasName(PETSC_NULL_CHARACTER,
+     +    '-user_defined_pc',user_defined_pc,IFAIL)
+C 
+          IF (user_defined_pc .eq. 1) THEN
+C
+              IF( ITER .EQ. 1)THEN 
+                  call SetMyOwnPC(sles,A,B,X,NPOIN,NOFVAR,IFAIL)
+              ENDIF 
+C
+c
+c  call at each iteration
+c
+c  Set operators. Here the matrix that defines the linear system
+c  also serves as the preconditioning matrix.
+c 
+              call SLESSetOperators(sles,A,B,
+     +        SAME_NONZERO_PATTERN,IFAIL)
+          ELSE
+C
+a154 13
+C     check if we are using ASM
+C
+              call SLESGetPC(sles,pc,IFAIL)
+              call PCGetType(pc,meth,IFAIL)
+              IF ( meth(1:3) .EQ. "asm" .AND. isolap .NE. -1 .AND.
+     +      ITER .EQ. 1)then
+                  call PCASMSetLocalSubdomains(pc,1,isolap,IFAIL)
+                  call PCASMSetOverlap(pc,0,IFAIL)
+              ENDIF
+
+ 
+          ENDIF
+C
+@
+
+
+1.27
+log
+@revised and simplyfied version to cope with
+user defined preconditioners
+@
+text
+@d9 1
+a9 1
+C     $Id: update2.F,v 1.26 2001/10/19 10:39:13 abonfi Exp abonfi $
+d44 1
+a44 1
+      INTEGER IVAR,ROWBGN,ROWEND,IPOIN,I,MY_PE,IDX_V(1)
+d47 3
+a49 1
+      DOUBLE PRECISION WKSP1(3,NMAX),WKSP2(3,NMAX),DT_V(1)
+@
+
+
+1.26
+log
+@goes hand in hand with PCPierluigi rev 1.2
+@
+text
+@d9 1
+a9 1
+C     $Id: update2.F,v 1.25 2001/10/08 16:01:33 abonfi Exp abonfi $
+a24 1
+      double  precision info(MAT_INFO_SIZE)
+a28 4
+      PC  asm,bjacobi
+      Vec work1,work2
+      common /mypcs/ asm,bjacobi,work1,work2
+C
+a41 7
+C     FORTRAN stack
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+d49 2
+a50 3
+      integer nr,nnz,lwork1,lwork2,lwork3,user_defined_pc
+      integer        ISTKGT,istkst
+      EXTERNAL DNRM2,ISTKGT,istkst
+d161 2
+a162 47
+C
+              call MatGetInfo(A,MAT_LOCAL,info,ifail)
+              nnz = info(MAT_INFO_NZ_ALLOCATED)
+              nr = info(MAT_INFO_ROWS_LOCAL)
+C
+              LWORK1 = ISTKGT(NR+1,2)
+              LWORK2 = ISTKGT(NR+1,2)
+              LWORK3 = ISTKGT(NNZ,2)
+C
+C     this should be done only once
+C     constructs the sparsity pattern of the reduced matrix
+C
+              CALL riduci(A,B,ISTAK(LWORK1),ISTAK(LWORK2),ISTAK
+     +        (LWORK3))
+              CALL ISTKRL(3)
+caldo
+ 
+ 
+!  Set linear solver defaults for this problem (optional).
+!   - By extracting the PC context from the SLES context,
+!     we can then directly call any PC routines
+!     to set various options.
+ 
+              call SLESGetPC(sles,pc,IFAIL)
+ 
+!
+!  Set a user-defined shell preconditioner
+!
+ 
+!  (Required) Indicate to PETSc that we are using a shell preconditioner
+              call PCSetType(pc,PCSHELL,IFAIL)
+ 
+caldo         call PCShellSetName(pc,"pierluigi",IFAIL)
+C
+C  (Required) Set the user-defined routine for applying the preconditioner
+C
+              call PCShellSetApply(pc,PierluigiPCApply,
+     +        PETSC_NULL_OBJECT, IFAIL)
+C
+C  (Optional) Set the user-defined routine for doing
+C  any setup required for the preconditioner
+C  whenever the matrix operator is changed; i.e. at each
+C  non-linear iteration 
+C
+              call PCShellSetSetUp(pc,PierluigiSetup,IFAIL)
+C
+C  (Optional) Do any "una tantum" setup required for the preconditioner
+a163 2
+              ENDIF 
+              call PierluigiPCSetUp(A,B,x,IFAIL)
+d167 3
+a169 4
+!  Set operators. Here the matrix that defines the linear system
+!  also serves as the preconditioning matrix.
+!             call PierluigiSetup(ifail,IFAIL)
+ 
+a171 1
+caldo
+a183 1
+                  write(6,*)'Setting local subdomains' 
+a248 8
+C 
+          IF (user_defined_pc .eq. PETSC_TRUE) THEN
+              call PCDestroy(asm,IFAIL)
+              call PCDestroy(bjacobi,IFAIL)
+              call VecDestroy(work1,IFAIL)
+              call VecDestroy(work2,IFAIL)
+          ENDIF
+C
+@
+
+
+1.25
+log
+@changed Options into PetscOptions as of PETSc 2.1.0
+@
+text
+@d9 1
+a9 1
+C     $Id: update2.F,v 1.24 2001/10/08 15:48:37 abonfi Exp abonfi $
+a17 1
+#include "include/finclude/petscksp.h"
+d20 1
+a20 1
+      Mat A,Pmat
+a23 1
+      KSP ksp
+d27 1
+d30 4
+d64 1
+a64 1
+      EXTERNAL SampleShellPCApply
+d170 1
+a170 1
+ 
+d173 2
+d184 1
+d186 1
+a186 1
+              CALL riduci(A,Pmat,ISTAK(LWORK1),ISTAK(LWORK2),ISTAK
+d189 1
+a189 3
+ 
+!  Set operators. Here the matrix that defines the linear system
+!  also serves as the preconditioning matrix.
+a190 2
+              call SLESSetOperators(sles,A,Pmat,
+     +        DIFFERENT_NONZERO_PATTERN,IFAIL)
+d193 2
+a194 2
+!   - By extracting the KSP and PC contexts from the SLES context,
+!     we can then directly directly call any KSP and PC routines
+a196 1
+              call SLESGetKSP(sles,ksp,IFAIL)
+d206 5
+a210 2
+!  (Required) Set the user-defined routine for applying the preconditioner
+              call PCShellSetApply(pc,SampleShellPCApply,
+d212 18
+a229 2
+!  (Optional) Do any setup required for the preconditioner
+              call SampleShellPCSetUp(A,Pmat,x,IFAIL)
+d231 3
+d239 12
+a253 1
+C     Solves THE linear system
+a254 1
+C
+d310 11
+a320 1
+      IF(TIMEIMPL)CALL VecDestroy(X,IFAIL)
+@
+
+
+1.24
+log
+@changed PLog into PetscLog to comply with PETSC 2.1.0
+@
+text
+@d9 1
+a9 1
+C     $Id: update2.F,v 1.23 2001/07/19 09:49:00 abonfi Exp abonfi $
+d165 2
+a166 2
+          call OptionsHasName(PETSC_NULL_CHARACTER,'-user_defined_pc',
+     +    user_defined_pc,IFAIL)
+@
+
+
+1.23
+log
+@add some timing and re-formatted
+@
+text
+@d9 1
+a9 1
+C     $Id: update2.F,v 1.22 2001/06/25 12:10:29 abonfi Exp bonfigli $
+d28 1
+a28 1
+      PLogDouble TBEGALL,telapsed,tbeg,tend
+@
+
+
+1.22
+log
+@implements the preconditioner written by Pierluigi Amodio
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.21 2001/05/24 10:28:04 abonfi Exp bonfigli $
+C     $Header: /afs/caspur.it/group/bm5/bonfigli/EulFS.0.10.12/src/seq/RCS/update2.F,v 1.21 2001/05/24 10:28:04 abonfi Exp bonfigli $
+d28 2
+d66 1
+a66 1
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IFAIL) 
+d71 3
+a73 3
+      IF( ITER .EQ. 1 )THEN 
+         RESMAX0(1) = RESMAX(1,1)
+         RESL20(1)  = RESL2(1,1)
+d78 1
+a78 1
+C         is 0., so we set it to the maximum DT 
+d81 6
+a86 6
+         CALL VecMax(DT,PETSC_NULL_INTEGER,DTMAX,IFAIL)
+         CALL VecGetOwnerShipRange(DT,ROWBGN,ROWEND,IFAIL)
+         CALL VecGetArray(DT,DT_V,DT_I,IFAIL)
+         CALL ISGetIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+         CALL ISGetSize(SupersonicNodes,Number_of_DirichletNodes,IFAIL) 
+         DO 10 I = 1, Number_of_DirichletNodes 
+d88 5
+a92 5
+            IPOIN = IDX_V(IDX_I+I)+1 - ROWBGN
+            DT_V(DT_I+IPOIN) = DTMAX
+   10    CONTINUE
+         CALL VecRestoreArray(DT,DT_V,DT_I,IFAIL)
+         CALL ISRestoreIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+d118 1
+a118 1
+      CALL VecDestroy(DT,IFAIL) 
+d137 2
+a138 2
+C     This will remove the entries from the matrix; but when 
+C     you assemble the matrix for the next time-step it will not 
+d146 1
+a146 1
+C        at later timesteps (because the above option will cause those 
+d166 11
+a176 11
+     +          user_defined_pc,IFAIL)
+
+      IF (user_defined_pc .eq. 1) THEN
+C
+      call MatGetInfo(A,MAT_LOCAL,info,ifail)
+      nnz = info(MAT_INFO_NZ_ALLOCATED)
+      nr = info(MAT_INFO_ROWS_LOCAL)
+C
+      LWORK1 = ISTKGT(NR+1,2)
+      LWORK2 = ISTKGT(NR+1,2)
+      LWORK3 = ISTKGT(NNZ,2)
+d180 4
+a183 3
+      CALL riduci(A,Pmat,ISTAK(LWORK1),ISTAK(LWORK2),ISTAK(LWORK3))
+      CALL ISTKRL(3)
+
+d186 4
+a189 9
+     
+          call SLESSetOperators(sles,A,Pmat,
+     +             DIFFERENT_NONZERO_PATTERN,IFAIL)
+c     write(6,*)'SLESSetOperators has returned ifail = ',ifail,my_pe
+c same nonzero pattern
+
+caldo     call SLESSetOperators(sles,A,A,
+caldo+             DIFFERENT_NONZERO_PATTERN,IFAIL)
+
+d194 4
+a197 4
+
+      call SLESGetKSP(sles,ksp,IFAIL)
+      call SLESGetPC(sles,pc,IFAIL)
+
+d201 4
+a204 4
+
+!  (Required) Indicate to PETSc that we are using a shell preconditioner 
+      call PCSetType(pc,PCSHELL,IFAIL)
+
+d206 2
+a207 2
+      call PCShellSetApply(pc,SampleShellPCApply,PETSC_NULL_OBJECT,     &
+     &        IFAIL)
+d209 3
+a211 3
+      call SampleShellPCSetUp(A,Pmat,x,IFAIL)
+
+      ELSE
+d215 3
+a217 3
+          CALL SLESSetOperators(sles,A,A,SAME_NONZERO_PATTERN,IFAIL)
+
+      ENDIF
+d221 4
+d226 1
+d240 1
+a240 1
+      ENDIF 
+a241 9
+#ifdef MPI
+C     update the ghost regions with correct values 
+C            from the owning process
+C            for the Vector of the unknowns (Z)
+C
+C
+caldo CALL VecGhostUpdateBegin(Z,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+caldo CALL VecGhostUpdateEnd(Z,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+#endif
+d243 1
+a243 1
+C     Monitor the norms of the update .. 
+d250 1
+a250 1
+  299 WRITE(IWUNIT,200)ITER,ITS,CNST
+d254 10
+a263 10
+      WRITE(IWUNIT,215)
+      DO 20 IVAR = 1 , NOFVAR
+         WRITE(IWUNIT,210)IVAR,DLOG10(RESL2(IVAR,1)),
+     &   DLOG10(RESMAX(IVAR,1)),INMAX(IVAR,1),(WKSP1(I,IVAR),I=1,3)
+   20 CONTINUE
+      WRITE(IWUNIT,225)
+      DO 30 IVAR = 1 , NOFVAR
+         WRITE(IWUNIT,210)IVAR,DLOG10(DELL2(IVAR,1)),
+     &   DLOG10(DELMAX(IVAR,1)),INDEL(IVAR,1),(WKSP2(I,IVAR),I=1,3)
+   30 CONTINUE
+d267 6
+a272 2
+      WRITE (IHST1,FMT=235) NITER,ITS,RESL2(1,1),CNST
+      WRITE (IHST2,FMT=235) NITER,ITS,RESMAX(1,1),CNST
+d290 1
+a290 1
+  235 FORMAT (I5,1X,I4,2 (1X,E10.4))
+@
+
+
+1.21
+log
+@removed useless call to VecGhostUpdate
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.20 2000/12/06 13:42:22 aldo Exp abonfi $
+C     $Header: /home1/navier/abonfi/EulFS.0.10.12/src/seq/RCS/update2.F,v 1.20 2000/12/06 13:42:22 aldo Exp abonfi $
+d16 1
+d18 1
+a18 1
+#include "include/finclude/petscsles.h"
+d21 1
+a21 1
+      Mat A
+d24 2
+d27 1
+d42 7
+d56 1
+a56 1
+      DOUBLE PRECISION DNRM2
+d59 2
+d161 54
+d218 2
+@
+
+
+1.20
+log
+@now works again in parallel
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.19 2000/11/15 09:15:09 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.11/src/seq/RCS/update2.F,v 1.19 2000/11/15 09:15:09 aldo Exp aldo $
+d176 2
+a177 2
+      CALL VecGhostUpdateBegin(Z,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(Z,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+@
+
+
+1.19
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.18 2000/10/19 16:10:34 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/update2.F,v 1.18 2000/10/19 16:10:34 aldo Exp aldo $
+d23 1
+a23 1
+      Scalar RHS_V(1)
+d40 1
+a40 2
+      INTEGER IVAR,LOCA,LOCB,IPOIN,i,MY_PE,LIWORK,RHS_I,IDX_I,IDX_V(1),
+     +DT_I
+d67 1
+d73 1
+a73 1
+            IPOIN = IDX_V(IDX_I+I)+1
+d108 6
+a113 1
+      IF( TIMEIMPL .AND. ITER .EQ. 1 )THEN
+a114 3
+#ifdef MPI
+          CALL MatZeroRowsLocal(A,SupersonicNodes,ONE,IFAIL)
+#else
+a115 1
+#endif
+d134 1
+a134 1
+          CALL MatSetOption(A,MAT_NO_NEW_NONZERO_LOCATIONS,IFAIL)
+@
+
+
+1.18
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.17 2000/08/03 12:53:27 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.10/src/seq/RCS/update2.F,v 1.17 2000/08/03 12:53:27 aldo Exp aldo $
+d36 1
+a36 1
+      INCLUDE 'IO'
+d203 2
+a204 2
+      WRITE (7,FMT=235) NITER,ITS,RESL2(1,1),CNST
+      WRITE (8,FMT=235) NITER,ITS,RESMAX(1,1),CNST
+@
+
+
+1.17
+log
+@some variables in conv.com have changed
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.16 2000/06/09 16:30:28 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.7/src/seq/RCS/update2.F,v 1.16 2000/06/09 16:30:28 aldo Exp aldo $
+d14 5
+a18 5
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/pc.h"
+#include "include/finclude/sles.h"
+#include "include/finclude/is.h"
+d93 1
+a93 1
+          CALL MatDiagonalShift(A,DT,IFAIL)
+@
+
+
+1.16
+log
+@now includes index sets from iset.com
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.15 1999/12/09 20:44:51 aldo Exp aldo $
+C     $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.5/src/seq/RCS/update2.F,v 1.15 1999/12/09 20:44:51 aldo Exp aldo $
+d54 2
+a55 2
+      CALL VecNorm(RHS,NORM_2,RESL2(1),IFAIL)
+      CALL VecNorm(RHS,NORM_INFINITY,RESMAX(1),IFAIL)
+d58 2
+a59 2
+         RESMAX0 = RESMAX(1)
+         RESL20  = RESL2(1)
+d84 2
+a85 2
+          CNST = RESL20/RESL2(1)
+          CNST = MIN( CFLMAX, CFL*CNST )
+d97 2
+a98 2
+          IF( CFL .NE. ONE )CALL VecScale(CFL,RHS,IFAIL)
+          CNST = CFL
+d181 2
+a182 2
+      CALL VecNorm(X,NORM_2,DELL2(1),IFAIL)
+      CALL VecNorm(X,NORM_INFINITY,DELMAX(1),IFAIL)
+d192 2
+a193 2
+         WRITE(IWUNIT,210)IVAR,DLOG10(RESL2(IVAR)),DLOG10(RESMAX(IVAR)),
+     &   INMAX(IVAR),(WKSP1(I,IVAR),I=1,3)
+d197 2
+a198 2
+         WRITE(IWUNIT,210)IVAR,DLOG10(DELL2(IVAR)),DLOG10(DELMAX(IVAR)),
+     &   INDEL(IVAR),(WKSP2(I,IVAR),I=1,3)
+d203 2
+a204 2
+      WRITE (7,FMT=235) NITER,ITS,RESL2(1),CNST
+      WRITE (8,FMT=235) NITER,ITS,RESMAX(1),CNST
+@
+
+
+1.15
+log
+@changed MPI_COMM_ into PETSC_COMM_
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.14 1999/11/05 20:40:09 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/update2.F,v 1.14 1999/11/05 20:40:09 aldo Exp aldo $
+d25 1
+a25 5
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/COMISET/SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+@
+
+
+1.14
+log
+@integer replaced by IS
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.13 1999/09/01 11:03:12 aldo Exp $
+C     $Header: /usr/users/caspur/EulFS.0.9.7/src/seq/RCS/update2.F,v 1.13 1999/09/01 11:03:12 aldo Exp $
+d146 1
+a146 1
+          CALL VecCreateMPI(MPI_COMM_WORLD,NPOIN,PETSC_DECIDE,X,IFAIL)
+d148 1
+a148 1
+          CALL VecCreateSeq(MPI_COMM_SELF,NPOIN,X,IFAIL)
+@
+
+
+1.13
+log
+@removed unused declaration
+@
+text
+@d9 2
+a10 2
+C     $Id: update2.F,v 1.12 1998/11/25 17:01:47 aldo Exp aldo $
+C     $Header: /c9/tracs/aldo/EulFS.0.9.7/src/seq/RCS/update2.F,v 1.12 1998/11/25 17:01:47 aldo Exp aldo $
+d18 1
+d24 7
+a38 1
+      INCLUDE 'iset.com'
+@
+
+
+1.12
+log
+@naming of I/O devices has changed
+@
+text
+@d9 2
+a10 2
+C     $Id$
+C     $Header$
+d44 2
+a45 2
+      integer        NNZERO,ISTKGT,istkst
+      EXTERNAL DNRM2,NNZERO,ISTKGT,istkst
+@
+
+
+1.11
+log
+@removed a pre-processor directive previously used for Linux
+@
+text
+@d10 1
+a23 4
+      DOUBLE PRECISION DSTAK(1)
+      COMMON /CSTAK/ DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+a27 1
+      INCLUDE 'nboun.com'
+d106 26
+a131 1
+          CALL LHSBC1( A )
+d183 1
+a183 1
+  299 WRITE(NOUT,200)ITER,ITS,CNST
+d187 1
+a187 1
+      WRITE(NOUT,215)
+d189 1
+a189 1
+         WRITE(6,210)IVAR,DLOG10(RESL2(IVAR)),DLOG10(RESMAX(IVAR)),
+d192 1
+a192 1
+      WRITE(NOUT,225)
+d194 1
+a194 1
+         WRITE(6,210)IVAR,DLOG10(DELL2(IVAR)),DLOG10(DELMAX(IVAR)),
+d209 2
+a220 8
+C     WRITE(6,*)'Solution vector norm is ',S
+C     WRITE(6,*)'Z vector norm is ',dnrm2(npoin,dstak(lzroe),1)
+C     write(6,*) 'VecScale has returned ',IFAIL
+C     write(6,*) 'MatDiagonalShift has returned ',IFAIL
+C     write(6,*) 'VecCreateSeqWithArray has returned ',IFAIL
+C     write(6,*) 'SetBC4 has returned ',IFAIL
+C     write(6,*) 'SLESSolve has returned ',IFAIL
+C     write(6,*) 'SLESSetOperators has returned ',IFAIL
+a221 1
+C
+@
+
+
+1.10
+log
+@Add automatic identification flag
+@
+text
+@a54 1
+#ifdef PARCH_linux
+a56 6
+#else
+      CALL VecGetArray(RHS,RHS_V,RHS_I,IFAIL)
+      CALL GETNRM(DSTAK(LCORG),WKSP1,RHS_V(RHS_I+1),NDIM,NOFVAR,NPOIN,
+     +            INMAX,RESMAX,RESL2)
+      CALL VecRestoreArray(RHS,RHS_V,RHS_I,IFAIL)
+#endif
+a57 1
+C
+a175 1
+      ENDIF
+d181 1
+a195 1
+  230 FORMAT(15X,'NONZERO ENTRIES IN THE REDUCED MATRIX ',I8/)
+@
+
+
+1.9
+log
+@parallel version; also handles case of infinite timestep
+@
+text
+@d6 6
+a21 3
+C
+C     Implicit timestepping for scalar equations ..
+C
+@
+
+
+1.8
+log
+@the vector of the unknowns is now a PETSc vector and
+is among the arguments of the subroutine
+@
+text
+@d32 2
+d36 1
+a36 1
+      INTEGER NDIM,NOFVAR,NPOIN,IFAIL,ITS
+d38 3
+a40 2
+      INTEGER IVAR,LOCA,LOCB,IPOIN,i,LOCX,LIWORK,RHS_I
+      DOUBLE PRECISION CNST,S
+d42 1
+a42 1
+      DOUBLE PRECISION WKSP1(3,NMAX),WKSP2(3,NMAX)
+d50 2
+d68 18
+a101 5
+caldo
+          CALL VecMax(DT,I,S,IFAIL)
+          CALL VecSet(S,DT,IFAIL)
+caldo
+C         write(6,*)S
+d115 1
+a115 4
+          LIWORK = ISTKGT(NPOIN1,2)
+          CALL IINIT(NPOIN1,0,ISTAK(LIWORK),1)
+          CALL LHSBC1( NPOIN, ISTAK(LNODCOD), A, ISTAK(LIWORK) )
+          CALL ISTKRL(1)
+d122 3
+d126 1
+d150 10
+d165 1
+a165 4
+C     CALL GETNRM(DSTAK(LCORG),WKSP2,DSTAK(LOCX),NDIM,NOFVAR,NPOIN,
+C    +            INDEL,DELMAX,DELL2)
+C
+C
+d181 1
+@
+
+
+1.7
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d2 1
+a2 1
+      SUBROUTINE UPDATE2( NDIM, NOFVAR, NPOIN, sles, A, RHS, DT )
+d13 1
+a13 2
+      Vec RHS,DT
+      Vec X
+d64 3
+d79 5
+a83 2
+          CALL VecMin(DT,I,S,IFAIL)
+          write(6,*)S
+d103 2
+d107 1
+a107 5
+      LOCX = ISTKGT(NPOIN,4)
+      CALL VecCreateSeqWithArray(MPI_COMM_SELF,NPOIN,DSTAK(LOCX),X,
+     +                           IFAIL)
+C
+      IF( TIMEIMPL )THEN
+d117 4
+d123 1
+a123 1
+         CALL VecCopy(RHS,X,IFAIL)
+d125 1
+a125 1
+      ENDIF 
+d127 1
+a127 1
+C     .. updates the solution : u^(n+1) = u^n + du ..
+d129 1
+a129 1
+C     Update the nodal unknown vector by forming Z := Z + X
+d131 1
+a131 5
+      DO 5 IPOIN = 0, NPOIN-1
+	 LOCA = LZROE + IPOIN
+	 LOCB = LOCX + IPOIN
+         DSTAK(LOCA) = DSTAK(LOCA) + DSTAK(LOCB)
+    5 CONTINUE
+d133 2
+a134 1
+C     Monitor the norms of the update .. 
+d136 2
+a137 2
+      CALL GETNRM(DSTAK(LCORG),WKSP2,DSTAK(LOCX),NDIM,NOFVAR,NPOIN,
+     +            INDEL,DELMAX,DELL2)
+a139 3
+C     CALL VecNorm(X,NORM_2,S,IFAIL)
+C     CALL VecNorm(X,NORM_2,DELL2(1),IFAIL)
+C     CALL VecNorm(X,NORM_INFINITY,DELMAX(1),IFAIL)
+d163 1
+a163 2
+      CALL VecDestroy(X,IFAIL)
+      CALL ISTKRL(1) 
+@
+
+
+1.6
+log
+@restored explicit timestepping for scalar problems
+@
+text
+@d6 5
+a10 5
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/pc.h"
+#include "include/FINCLUDE/sles.h"
+@
+
+
+1.5
+log
+@# of linear iterations are now written to file
+@
+text
+@d16 1
+d37 1
+a37 1
+      INTEGER IVAR,LOCA,LOCB,IPOIN,i,LOCX,LIWORK
+d46 1
+a46 2
+      DATA WKSP1,WKSP2/NDNM*ZERO,NDNM*ZERO/
+C
+d48 1
+d51 7
+d64 3
+a66 2
+      CNST = RESL20/RESL2(1)
+      CNST = MIN( CFLMAX, CFL*CNST )
+d70 1
+a70 1
+      CALL VecScale(ONE/CNST,DT,IFAIL)
+d74 9
+a82 1
+      CALL MatDiagonalShift(A,DT,IFAIL)
+a87 4
+C     applies b.c. on the l.h.s.
+C
+C     CALL SETBC3( NPOIN, RHS, ISTAK(LNODCOD), A )
+C
+d91 1
+a91 1
+      IF( ITER .EQ. 1 )THEN
+d104 2
+d108 1
+a108 1
+      CALL SLESSetOperators(sles,A,A,SAME_NONZERO_PATTERN,IFAIL)
+d112 7
+a118 1
+      CALL SLESSolve(sles,RHS,X,ITS,IFAIL)
+a121 2
+      CALL VecNorm(X,NORM_2,S,IFAIL)
+C
+d130 5
+a134 1
+C     .. Monitor the norms of the update .. 
+d136 3
+a138 2
+      CALL VecNorm(X,NORM_2,DELL2(1),IFAIL)
+      CALL VecNorm(X,NORM_INFINITY,DELMAX(1),IFAIL)
+@
+
+
+1.4
+log
+@cleaned up
+@
+text
+@d133 3
+d151 2
+a152 1
+  235 FORMAT (I5,7 (1X,E10.4))
+@
+
+
+1.3
+log
+@call to LHSBC1 inserted
+@
+text
+@d67 4
+a78 1
+          write(6,*)npoin1
+@
+
+
+1.2
+log
+@PETSC version
+@
+text
+@d28 1
+a28 1
+      INCLUDE 'timing.com'
+d36 1
+a36 1
+      INTEGER IVAR,LOCA,LOCB,IPOIN,i,LOCX
+d47 1
+d63 1
+a63 1
+C     Adds V_i/Dt to the diagonal elements of VACSR ...
+d69 1
+a69 1
+      CALL SETBC3( NPOIN, RHS, ISTAK(LNODCOD), A )
+d71 2
+a72 1
+C     the following overwrites the matrix structure
+d74 7
+a80 1
+C     CALL SETBC4( NPOIN, RHS, ISTAK(LNODCOD), A )
+a95 2
+C     write(6,*) 'Convergence reached in ',ITS,' iterations'
+C
+d102 3
+a104 3
+      DO 5 IPOIN = 1, NPOIN
+	 LOCA = LZROE + IPOIN-1
+	 LOCB = LOCX + IPOIN-1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+C ------------------------------ + ------------------------------
+d4 1
+a4 1
+      SUBROUTINE UPDATE2( NDIM, NOFVAR, NPOIN, NINT )
+d6 10
+a15 1
+      IMPLICIT NONE
+d17 1
+a17 1
+C     .. Implicit timestepping for scalar equations ..
+a19 1
+C     INCLUDE 'stack.com'
+d34 1
+a34 2
+      INTEGER NDIM,NOFVAR,NPOIN,NINT
+      INTEGER i1,i2,i3,ipointer
+d36 2
+a37 2
+      INTEGER IVAR,NR,NC,NNZR,i,LINDX
+      DOUBLE PRECISION ELATIME,CNST,T0
+d41 1
+a41 1
+      DOUBLE PRECISION DNRM2,TIMER
+d43 1
+a43 1
+      EXTERNAL DNRM2,NNZERO,ISTKGT,istkst,TIMER
+d47 2
+a48 3
+C
+      CALL GETNRM(DSTAK(LCORG),WKSP1,DSTAK(LRESID),NDIM,NOFVAR,NPOIN,
+     $INMAX,RESMAX,RESL2)
+d58 1
+a58 1
+      LINDX = ISTKGT(NPOIN,2)
+d60 1
+a60 1
+C     ... divide V_i/Dt by the CFL number ...
+d62 1
+d64 3
+a66 3
+      CALL DIAPOS(NPOIN,ISTAK(LJACSR),ISTAK(LIACSR),ISTAK(LINDX)) 
+c
+c     ... Adds V_i/Dt to the diagonal elements of VACSR ...
+d68 1
+a68 2
+      CALL DAXPYI(NPOIN,ONE/CNST,DSTAK(LDTLIN),ISTAK(LINDX),
+     &DSTAK(LACSR))
+d70 1
+a70 1
+      CALL ISTKRL(1)
+d72 1
+a72 1
+C     applies b.c. on the l.h.s.
+d74 1
+a74 2
+      CALL SETBC3( NPOIN, DSTAK(LRESID), ISTAK(LNODCOD), DSTAK(LACSR),
+     +ISTAK(LJACSR), ISTAK(LIACSR))
+d76 3
+a78 2
+C     ipointer = istkgt(npoin,4)
+C     call dinit(npoin,0.d0,dstak(ipointer),1) 
+d80 1
+a80 3
+C     CALL amux(npoin,dstak(lzroe),dstak(lzroerk),dstak(lacsr),
+C    +dstak(ljacsr),dstak(liacsr)) 
+C     call daxpy(npoin,-1.d0,dstak(lresid),1,dstak(lzroerk),1)
+d82 1
+a82 7
+C     do i = 1,npoin
+C        i1 = lresid +i-1
+C        i2 = lzroerk +i-1
+C        i3 = lnodcod +i-1
+C        write(17,*)dstak(i1),dstak(i2),dstak(i1)+dstak(i2),istak(i3)
+C     enddo
+C     stop
+d84 1
+a84 2
+C     CALL prtmt (NPOIN,NPOIN,DSTAK(LACSR),DSTAK(LJACSR),DSTAK(LIACSR),
+C    1DSTAK(LRESID),"--",title,key,type,4,2,13)
+d86 1
+a86 1
+C     .. solves K du = res
+d88 1
+a88 1
+      T0 = TIMER()
+d90 1
+a90 2
+      CALL ITSOLV(DSTAK(LACSR),ISTAK(LJACSR),ISTAK(LIACSR),
+     $DSTAK(LRESID),DSTAK(LZROERK),NPOIN,NOFVAR)
+d92 1
+a92 1
+      ITSTIME(4) = ITSTIME(4) + TIMER() - T0
+d94 1
+a94 1
+C     .. updates the solution : u^(n+1) = u^n + du ..
+d96 5
+a100 1
+      CALL DAXPY(NPOIN,ONE,DSTAK(LZROERK),1,DSTAK(LZROE),1)
+d104 2
+a105 2
+      CALL GETNRM(DSTAK(LCORG),WKSP2,DSTAK(LZROERK),NDIM,NOFVAR,NPOIN,
+     $INDEL,DELMAX,DELL2)
+d107 1
+a107 1
+  299 WRITE(NOUT,200)ITER,CNST
+d122 6
+a127 13
+C     IF(DLOG10(RESL2(1)).LE.-5.)THEN
+C          WRITE(6,*)'***********************************'
+C          WRITE(6,*)'SWitching to Newton' 
+C          WRITE(6,*)'***********************************'
+C          PICARD=.FALSE.
+C          NEWTON=.TRUE.
+C     ENDIF
+C
+C     ... Writing convergence history to file ...
+C
+      ELATIME = TIMER()
+      WRITE(7,235)NITER,(RESL2(IVAR),IVAR=1,NOFVAR),CNST,ELATIME
+      WRITE(8,235)NITER,(RESMAX(IVAR),IVAR=1,NOFVAR),CNST,ELATIME
+d130 4
+a133 4
+  200 FORMAT(5X,70('-'),/,25X,'ITERATION # ',I4,10X,'CFL = ',
+     &E10.4/,5X,70('-'),/,
+     &5X,70('-'),/,5X,'Var.',4X,'L2-norm',3X,'L_infty',3X,
+     &'node #',3X,'(',4X,'x',7X,'y',7X,'z',4X,')',/,5X,70('-'))
+d135 1
+a135 1
+     &'(',2(F8.5,','),F8.5,')')
+d140 8
+@

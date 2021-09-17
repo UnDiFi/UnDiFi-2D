@@ -1,0 +1,99 @@
+
+               #######                 #######  #####
+               #        #    #  #      #       #     #
+               #        #    #  #      #       #
+               #####    #    #  #      #####    #####
+               #        #    #  #      #             #
+               #        #    #  #      #       #     #
+               #######   ####   ###### #        #####
+
+
+
+ MEMORY ALLOCATION   
+ ===================
+
+
+
+ INPUT OF NODES          ON PROCESSOR   0
+ ===============
+          MAX. NUMBER OF NODES (NPOIN+NGHOST+NPNOD)= 10599
+          MAX. NUMBER OF GHOST NODES       (NGHOST)=     0
+          RATIO NGHOST/(NPOIN+NGHOST+NPNOD)        =  0.00
+          DIMENSIONS OF THE PROBLEM          (NDIM)=    2
+
+
+
+ INPUT OF ELEMENTS          ON PROCESSOR  0
+ =================
+          NUMBER OF ELEMENTS            (NELEM)=  20926
+          NUMBER OF NODES PER ELEMENT (NOFVERT)=      3
+
+
+
+ INPUT OF BOUNDARIES          ON PROCESSOR   0
+ ===================
+          NUMBER OF BOUNDARY FACES     (NBFAC)=  272
+          NUMBER OF INTER-PROCS. FACES (NBINT)=    0
+          NUMBER OF HOLES              (NHOLE)=    1
+
+
+
+ PERIODIC NODES          ON PROCESSOR   0
+ ===============
+          NUMBER OF PERIODIC NODES   (NPOIN)=     0
+
+               BOUNDARY POINTS (NBPOIN) =    272
+
+
+ INITIAL-BOUNDARY CONDITIONS 
+ ============================
+
+            Inlet Total Temperature  (      TREF) =0.318000E+03
+               Inlet Total Pressure  (      PTOT) =0.124600E+06
+             Outlet Static Pressure  (   POUTLET) =0.117057E+06
+                  Reference Length   (     CHORD) =0.778000E-01
+                   Reynolds Number   (        RE) =0.166242E+07
+
+
+ COMPUTATION OF THE NORMALS           ON PROCESSOR   0
+ ==========================
+          ESTIMATED NUMBER OF FACES(EDGES) :    31525
+
+          COMPUTING NORMALS .................... 31525
+
+
+
+ COMPUTATION OF THE CELL VOLUMES
+ ===============================
+
+          VOLUMES....................   20926
+
+
+          TOTAL VOLUME .........  0.499E+04
+          MIN.  VOLUME .........  0.752E-11
+          MAX.  VOLUME .........  0.312E+02
+          MAX/MIN RATIO ........  0.414E+13
+
+
+
+ CHECKING BOUNDARIES ON PE #   0
+ ===================
+
+          CHECKING BOUNDARY FACES ....................   272
+
+          THERE ARE   241 BOUNDARY FACES COLOURED  1
+          THERE ARE    31 BOUNDARY FACES COLOURED  2
+          PERIODIC             BOUNDARY FACES :    241  (.2032D+01)
+          SUBSONIC OUTLET      BOUNDARY FACES :     31  (.2509D+03)
+                                                         ---------
+                                                         .2529D+03
+
+          BOUNDARY SCALED NORMALS SUM UP TO .1465E-13
+                              (should be 0.E+00)
+
+
+     MEMORY ALLOCATED IN DSTAK 38000000 REAL*8 WORDS
+
+     Reading solution from:
+file003.dat                                                                                                                                                                                                                                                    
+

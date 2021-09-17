@@ -1,0 +1,71 @@
+Runtime arguments are: -itmax\ 20 -scalar_scheme\ LDA  -matrix_scheme\ LDA -linearization\ picard
+running testcase :  2D/1aA  with:  eulfs14
+running testcase :  2D/1aA  with:  eulfs
+running testcase :  2D/1aB  with:  eulfs14
+running testcase :  2D/1aB  with:  eulfs
+running testcase :  2D/1bB/LDA  with:  eulfs14
+running testcase :  2D/1bB/LDA  with:  eulfs
+running testcase :  2D/1bE/LDA  with:  eulfs14
+running testcase :  2D/1bE/LDA  with:  eulfs
+running testcase :  2D/1bF/LDA  with:  eulfs14
+running testcase :  2D/1bF/LDA  with:  eulfs
+running testcase :  2D/2aC/jcc/LDA/newton/  with:  eulfs14
+running testcase :  2D/2aC/jcc/LDA/newton/  with:  eulfs
+running testcase :  2D/2aG/  with:  eulfs14
+running testcase :  2D/2aG/  with:  eulfs
+running testcase :  3D/compressible.euler/sinus/6/  with:  eulfs14
+running testcase :  3D/compressible.euler/sinus/6/  with:  eulfs
+3,20c3,20
+<     3   16 0.2929E+00 0.1391E+01 0.2961E+00 0.2356E+00 0.4234E+00 0.3647E+02
+<     4   17 0.2487E+00 0.1196E+01 0.2724E+00 0.2595E+00 0.4042E+00 0.4296E+02
+<     5   17 0.2390E+00 0.1238E+01 0.2409E+00 0.2410E+00 0.3806E+00 0.4470E+02
+<     6   18 0.2173E+00 0.1165E+01 0.2064E+00 0.2072E+00 0.3500E+00 0.4916E+02
+<     7   19 0.1916E+00 0.1048E+01 0.1819E+00 0.1683E+00 0.3059E+00 0.5575E+02
+<     8   19 0.1653E+00 0.9169E+00 0.1632E+00 0.1304E+00 0.2530E+00 0.6465E+02
+<     9   21 0.1393E+00 0.7804E+00 0.1447E+00 0.9683E-01 0.1986E+00 0.7671E+02
+<    10   22 0.1144E+00 0.6448E+00 0.1243E+00 0.6902E-01 0.1483E+00 0.9342E+02
+<    11   23 0.9120E-01 0.5160E+00 0.1025E+00 0.4726E-01 0.1055E+00 0.1172E+03
+<    12   25 0.7033E-01 0.3984E+00 0.8065E-01 0.3108E-01 0.7158E-01 0.1519E+03
+<    13   26 0.5219E-01 0.2956E+00 0.6039E-01 0.1962E-01 0.4628E-01 0.2047E+03
+<    14   27 0.3706E-01 0.2098E+00 0.4288E-01 0.1189E-01 0.2855E-01 0.2883E+03
+<    15   28 0.2506E-01 0.1419E+00 0.2884E-01 0.6924E-02 0.1681E-01 0.4263E+03
+<    16   28 0.1610E-01 0.9111E-01 0.1838E-01 0.3892E-02 0.9491E-02 0.6634E+03
+<    17   29 0.9843E-02 0.5568E-01 0.1113E-01 0.2127E-02 0.5165E-02 0.1085E+04
+<    18   29 0.5758E-02 0.3256E-01 0.6461E-02 0.1139E-02 0.2732E-02 0.1855E+04
+<    19   29 0.3254E-02 0.1840E-01 0.3627E-02 0.6039E-03 0.1417E-02 0.3283E+04
+<    20   29 0.1796E-02 0.1015E-01 0.1991E-02 0.3187E-03 0.7258E-03 0.5949E+04
+---
+>     3   16 0.2928E+00 0.1390E+01 0.2960E+00 0.2355E+00 0.4226E+00 0.3648E+02
+>     4   17 0.2472E+00 0.1187E+01 0.2710E+00 0.2595E+00 0.3997E+00 0.4321E+02
+>     5   17 0.2362E+00 0.1221E+01 0.2379E+00 0.2409E+00 0.3713E+00 0.4524E+02
+>     6   18 0.2143E+00 0.1147E+01 0.2033E+00 0.2068E+00 0.3371E+00 0.4986E+02
+>     7   19 0.1885E+00 0.1031E+01 0.1792E+00 0.1677E+00 0.2915E+00 0.5667E+02
+>     8   20 0.1623E+00 0.9006E+00 0.1609E+00 0.1297E+00 0.2389E+00 0.6582E+02
+>     9   21 0.1365E+00 0.7656E+00 0.1426E+00 0.9613E-01 0.1860E+00 0.7824E+02
+>    10   22 0.1119E+00 0.6317E+00 0.1222E+00 0.6837E-01 0.1380E+00 0.9548E+02
+>    11   24 0.8903E-01 0.5044E+00 0.1005E+00 0.4670E-01 0.9754E-01 0.1200E+03
+>    12   25 0.6848E-01 0.3885E+00 0.7885E-01 0.3063E-01 0.6576E-01 0.1560E+03
+>    13   26 0.5066E-01 0.2874E+00 0.5881E-01 0.1927E-01 0.4228E-01 0.2109E+03
+>    14   27 0.3586E-01 0.2033E+00 0.4159E-01 0.1164E-01 0.2594E-01 0.2980E+03
+>    15   28 0.2417E-01 0.1370E+00 0.2786E-01 0.6760E-02 0.1521E-01 0.4420E+03
+>    16   28 0.1548E-01 0.8770E-01 0.1769E-01 0.3790E-02 0.8553E-02 0.6901E+03
+>    17   29 0.9440E-02 0.5346E-01 0.1068E-01 0.2066E-02 0.4642E-02 0.1132E+04
+>    18   29 0.5515E-02 0.3122E-01 0.6189E-02 0.1105E-02 0.2451E-02 0.1937E+04
+>    19   29 0.3117E-02 0.1763E-01 0.3472E-02 0.5850E-03 0.1270E-02 0.3428E+04
+>    20   29 0.1721E-02 0.9736E-02 0.1906E-02 0.3083E-03 0.6505E-03 0.6207E+04
+running testcase :  2D/compressible.ns/lbl5e5/  with:  eulfs14
+running testcase :  2D/compressible.ns/lbl5e5/  with:  eulfs
+running testcase :  2D/incompressible.euler/naca  with:  eulfs14
+running testcase :  2D/incompressible.euler/naca  with:  eulfs
+running testcase :  3D/compressible.euler/fan/  with:  eulfs14
+running testcase :  3D/compressible.euler/fan/  with:  eulfs
+running testcase :  2D/compressible.euler/stanitz/Mach0.69  with:  eulfs14
+running testcase :  2D/compressible.euler/stanitz/Mach0.69  with:  eulfs
+running testcase :  2D/incompressible.euler/stanitz/Mach0.26  with:  eulfs14
+running testcase :  2D/incompressible.euler/stanitz/Mach0.26  with:  eulfs
+running testcase :  3D/compressible.euler/stanitz/Mach0.69  with:  eulfs14
+running testcase :  3D/compressible.euler/stanitz/Mach0.69  with:  eulfs
+running testcase :  3D/incompressible.euler/stanitz/Mach0.26/nopre  with:  eulfs14
+running testcase :  3D/incompressible.euler/stanitz/Mach0.26/nopre  with:  eulfs
+running testcase :  3D/incompressible.euler/stanitz/Mach0.26/he  with:  eulfs14
+running testcase :  3D/incompressible.euler/stanitz/Mach0.26/he  with:  eulfs

@@ -1,0 +1,4713 @@
+head	1.98;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.98
+	release3_13_0:1.98
+	release3_12_0:1.98
+	release3_11_0:1.98
+	release3_10_0:1.98
+	release3_8_0:1.97
+	release3_7_1:1.96
+	release3_7_0:1.95
+	release3_4_5:1.92
+	release3_4_4:1.92
+	release3_4_3:1.92
+	release3_4_2:1.91
+	release3_4_1:1.86
+	release3_4_0:1.82
+	release3_3_5:1.81
+	release3_3_4:1.81
+	release3_3_3:1.80
+	release3_3_2:1.80
+	release3_3_1:1.80
+	release3_3_0:1.79;
+locks
+	abonfi:1.98; strict;
+comment	@c @;
+
+
+1.98
+date	2020.04.24.06.02.45;	author abonfi;	state Exp;
+branches;
+next	1.97;
+
+1.97
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.96;
+
+1.96
+date	2020.03.28.09.42.25;	author abonfi;	state Exp;
+branches;
+next	1.95;
+
+1.95
+date	2020.02.07.14.20.17;	author abonfi;	state Exp;
+branches;
+next	1.94;
+
+1.94
+date	2018.01.22.14.07.45;	author abonfi;	state Exp;
+branches;
+next	1.93;
+
+1.93
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.92;
+
+1.92
+date	2013.09.17.09.59.16;	author abonfi;	state Exp;
+branches;
+next	1.91;
+
+1.91
+date	2013.08.22.11.58.51;	author abonfi;	state Exp;
+branches;
+next	1.90;
+
+1.90
+date	2013.07.18.14.48.59;	author abonfi;	state Exp;
+branches;
+next	1.89;
+
+1.89
+date	2013.07.18.11.23.42;	author abonfi;	state Exp;
+branches;
+next	1.88;
+
+1.88
+date	2013.07.17.10.37.13;	author abonfi;	state Exp;
+branches;
+next	1.87;
+
+1.87
+date	2013.06.28.09.07.04;	author abonfi;	state Exp;
+branches;
+next	1.86;
+
+1.86
+date	2013.06.25.07.10.19;	author abonfi;	state Exp;
+branches;
+next	1.85;
+
+1.85
+date	2013.06.08.09.41.38;	author abonfi;	state Exp;
+branches;
+next	1.84;
+
+1.84
+date	2013.06.06.10.50.44;	author abonfi;	state Exp;
+branches;
+next	1.83;
+
+1.83
+date	2013.06.04.16.04.29;	author abonfi;	state Exp;
+branches;
+next	1.82;
+
+1.82
+date	2013.05.15.10.33.02;	author abonfi;	state Exp;
+branches;
+next	1.81;
+
+1.81
+date	2013.03.28.10.18.17;	author abonfi;	state Exp;
+branches;
+next	1.80;
+
+1.80
+date	2013.01.26.11.48.03;	author abonfi;	state Exp;
+branches;
+next	1.79;
+
+1.79
+date	2013.01.04.10.53.41;	author abonfi;	state Exp;
+branches;
+next	1.78;
+
+1.78
+date	2012.08.09.07.21.11;	author abonfi;	state Exp;
+branches;
+next	1.77;
+
+1.77
+date	2011.12.30.10.50.25;	author abonfi;	state Exp;
+branches;
+next	1.76;
+
+1.76
+date	2011.09.16.07.23.26;	author abonfi;	state Exp;
+branches;
+next	1.75;
+
+1.75
+date	2011.03.30.09.06.54;	author abonfi;	state Exp;
+branches;
+next	1.74;
+
+1.74
+date	2010.10.04.12.16.51;	author abonfi;	state Exp;
+branches;
+next	1.73;
+
+1.73
+date	2009.06.11.13.10.58;	author abonfi;	state Exp;
+branches;
+next	1.72;
+
+1.72
+date	2009.06.11.08.52.37;	author abonfi;	state Exp;
+branches;
+next	1.71;
+
+1.71
+date	2008.06.10.10.10.50;	author abonfi;	state Exp;
+branches;
+next	1.70;
+
+1.70
+date	2008.02.25.09.35.37;	author abonfi;	state Exp;
+branches;
+next	1.69;
+
+1.69
+date	2006.11.28.10.59.47;	author abonfi;	state Exp;
+branches;
+next	1.68;
+
+1.68
+date	2006.11.27.09.42.40;	author abonfi;	state Exp;
+branches;
+next	1.67;
+
+1.67
+date	2005.10.22.11.03.52;	author abonfi;	state Exp;
+branches;
+next	1.66;
+
+1.66
+date	2005.09.09.08.47.41;	author abonfi;	state Exp;
+branches;
+next	1.65;
+
+1.65
+date	2005.08.08.10.58.54;	author abonfi;	state Exp;
+branches;
+next	1.64;
+
+1.64
+date	2002.11.02.16.03.26;	author abonfi;	state Exp;
+branches;
+next	1.63;
+
+1.63
+date	2002.09.14.09.02.43;	author abonfi;	state Exp;
+branches;
+next	1.62;
+
+1.62
+date	2001.11.09.14.23.44;	author abonfi;	state Exp;
+branches;
+next	1.61;
+
+1.61
+date	2001.10.17.15.37.25;	author abonfi;	state Exp;
+branches;
+next	1.60;
+
+1.60
+date	2001.10.08.15.48.37;	author abonfi;	state Exp;
+branches;
+next	1.59;
+
+1.59
+date	2001.07.19.09.49.37;	author abonfi;	state Exp;
+branches;
+next	1.58;
+
+1.58
+date	2001.07.04.06.49.07;	author abonfi;	state Exp;
+branches;
+next	1.57;
+
+1.57
+date	2001.05.24.10.25.39;	author abonfi;	state Exp;
+branches;
+next	1.56;
+
+1.56
+date	2001.05.05.08.16.52;	author abonfi;	state Exp;
+branches;
+next	1.55;
+
+1.55
+date	2001.01.20.13.50.34;	author aldo;	state Exp;
+branches;
+next	1.54;
+
+1.54
+date	2000.12.06.13.37.53;	author aldo;	state Exp;
+branches;
+next	1.53;
+
+1.53
+date	2000.11.22.14.31.01;	author aldo;	state Exp;
+branches;
+next	1.52;
+
+1.52
+date	2000.11.16.13.43.03;	author aldo;	state Exp;
+branches;
+next	1.51;
+
+1.51
+date	2000.11.15.09.15.09;	author aldo;	state Exp;
+branches;
+next	1.50;
+
+1.50
+date	2000.11.10.17.10.50;	author aldo;	state Exp;
+branches;
+next	1.49;
+
+1.49
+date	2000.10.26.15.24.44;	author aldo;	state Exp;
+branches;
+next	1.48;
+
+1.48
+date	2000.09.29.09.22.20;	author aldo;	state Exp;
+branches;
+next	1.47;
+
+1.47
+date	2000.08.17.10.15.40;	author aldo;	state Exp;
+branches;
+next	1.46;
+
+1.46
+date	2000.08.16.10.21.07;	author aldo;	state Exp;
+branches
+	1.46.1.1;
+next	1.45;
+
+1.45
+date	2000.06.23.16.38.58;	author aldo;	state Exp;
+branches;
+next	1.44;
+
+1.44
+date	2000.06.20.07.59.47;	author aldo;	state Exp;
+branches;
+next	1.43;
+
+1.43
+date	2000.06.19.16.07.56;	author aldo;	state Exp;
+branches;
+next	1.42;
+
+1.42
+date	2000.03.24.15.09.34;	author aldo;	state Exp;
+branches;
+next	1.41;
+
+1.41
+date	99.12.27.09.19.17;	author aldo;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	99.12.06.12.12.21;	author aldo;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	99.11.05.20.57.58;	author aldo;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	99.09.29.09.50.33;	author aldo;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	99.09.03.11.06.42;	author aldo;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	99.09.02.08.35.54;	author aldo;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	99.08.31.15.19.13;	author aldo;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	99.03.19.11.57.32;	author aldo;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	99.02.18.17.37.43;	author aldo;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	99.01.18.18.53.08;	author aldo;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	98.12.23.11.52.34;	author aldo;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	98.12.10.18.00.03;	author simula;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	98.12.02.09.21.02;	author aldo;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	98.11.25.17.03.01;	author aldo;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	98.11.17.18.48.12;	author aldo;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	98.11.17.17.00.32;	author aldo;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	98.11.07.08.54.23;	author aldo;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	98.11.06.16.59.34;	author aldo;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	98.11.03.17.39.01;	author aldo;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	98.11.03.16.33.21;	author aldo;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	98.10.07.17.58.46;	author aldo;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	98.08.25.06.20.43;	author aldo;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	98.08.24.10.17.50;	author aldo;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	98.08.22.08.02.27;	author aldo;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	98.08.07.13.21.27;	author aldo;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	98.07.27.11.50.24;	author aldo;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	98.07.24.08.35.26;	author aldo;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	98.05.17.08.51.17;	author aldo;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	98.04.21.21.02.19;	author aldo;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	98.04.07.12.51.31;	author aldo;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	98.03.16.17.10.45;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	98.03.09.17.01.24;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.03.02.17.26.39;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.02.12.16.53.33;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.02.09.17.45.43;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.01.16.17.58.09;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.01.07.13.36.56;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.01.05.10.32.51;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.01.02.15.33.14;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.01.01.22.00.32;	author aldo;	state Exp;
+branches;
+next	;
+
+1.46.1.1
+date	2000.08.18.13.47.31;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.98
+log
+@Petsc matrices are now stored in an array of derived types
+@
+text
+@!> \par Purpose
+!>                                                                   
+!> \verbatim
+!>       An unstructured triangular/tetrahedral code for             
+!>         solving the compressible and incompressible               
+!>           Euler and (RANS) NavierStokes equations                
+!>           (as well as scalar advectiondiffusion)                 
+!>            using multidimensional upwind residual                 
+!>         distribution (Fluctuation Splitting) schemes.             
+!> \endverbatim
+!>                                                                   
+CC   $Id: main.F,v 1.97 2020/04/23 09:46:19 abonfi Exp abonfi $
+!>                                                                   
+!>                                                                   
+!>       Written by:                                                 
+!>       Aldo Bonfiglioli                                            
+!>       Dipartimento di Ingegneria e Fisica dell' Ambiente          
+!>       Universita` della Basilicata                                
+!>       Contrada Macchia Romana                                     
+!>       85100 Potenza Italy                                         
+!>       Tel: ++39.0971.205.203                                      
+!>       Email:aldo.bonfiglioli@@unibas.it                           
+!>       Home page: http://www.unibas.it/utenti/bonfiglioli/www.html 
+!>                                                                   
+!> \author $Author: abonfi $
+!> \version $Revision: 1.97 $
+!> \date $Date: 2020/04/23 09:46:19 $
+!> 
+!> 
+      PROGRAM EULFS
+C
+#define XPRINT
+C
+CCCC#include "petsc/finclude/petscsys.h"
+CCCC#include "petsc/finclude/petscvec.h"
+CCCC#include "petsc/finclude/petscmat.h"
+CCCC#include "petsc/finclude/petscis.h"
+#include "petsc/finclude/petscts.h"
+      use petscts
+C
+      IMPLICIT NONE
+C
+#include "mapping.com"
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'datatype.h'
+      INCLUDE 'implicit.h'
+      INCLUDE 'time.h'
+      INCLUDE 'constants.h'
+C
+      INCLUDE 'stack.com'
+      INCLUDE 'conv.com'
+      INCLUDE 'verbose.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'ibc8.com'
+      INCLUDE 'backup.com'
+      INCLUDE 'flags.com'
+      INCLUDE 'nloc.com'
+      INCLUDE 'io.com'
+      INCLUDE 'periodic.com'
+      INCLUDE 'newtoneps.com'
+      INCLUDE 'time.com'
+C
+      INTEGER MY_PE,NPROCS
+      COMMON/MPICOM/MY_PE,NPROCS
+C
+C
+      INTEGER ISTAK(1)
+C     ..
+C     .. Petsc Vectors ..
+      Vec ZRoe,ViscT
+C     ..
+C     .. Petsc Matrices ..
+      Mat, dimension (3) :: PetscMatrices
+C     ..
+C     .. Petsc array of Isets ..
+      IS, dimension (0:NCOLOR+9) :: NodalBcs
+C     ..
+C     .. Petsc Sles ..
+      PetscLogDouble tbeg,tend,totime
+C     ..
+C     .. Local Scalars ..
+C
+C
+C GRID RELATED VARIABLES
+C
+C
+C     NPOIN   number of nodes in the mesh
+C     NBPOIN  number of boundary points in the mesh
+C     NELEM   number of elements in the mesh
+C     NFACE   number of faces in the mesh
+C     NBFAC   number of boundary faces in the mesh
+C     NWFAC   number of viscous wall boundary faces in the mesh
+C     NHOLE   number of bodies(holes) in the mesh (ONLY for 2D)
+C
+C
+C     NDIM     is the space dimension
+C     NOFVERT = NDIM+1 is the number of vertices (ONLY linear elements
+C                     are currently allowed)
+C
+C
+      INTEGER NDIM,I,J,IFAIL,LWORKD,NGHOST,LWORKA,LWORKB,
+     +        NBFAC,NBODY4,NBPOIN,NELEM,NFACE,NHOLE,NOPT,
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,NPNOD,NITEMS,
+     +        rowbgn,rowend,NBINT,IWORK(15),OPT(10),NPROBES
+      integer ilev,k
+      double precision s,dnrm2
+      DOUBLE PRECISION HELP
+      LOGICAL LFLAG
+#ifdef MPI
+      INTEGER LGHOST
+      CHARACTER OUTFILE*10
+#endif
+      CHARACTER DATADIR*255,MESHFILE*255,NGHBFILE*255,PTOTFILE*255,
+     +          PBCSFILE*255,STARFILE*255,WDISTFILE*255,PROBEOUT*16,
+     +          EXT*3,TIMEFILE*10,CLFILE*255,SKINFILE*255,PROBEDATA*17,
+     4          SOMEFILE*255
+C     ..
+C     .. External Subroutines ..
+C
+C     ..
+C     .. External Functions ..
+C
+      INTEGER ISTKGT,ISTKST,I1MACH
+      DOUBLE PRECISION D1MACH,STORE
+      EXTERNAL ISTKGT,ISTKST,I1MACH,D1MACH,STORE
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC DLOG10,IABS,LOG10
+C     ..
+C     .. Equivalences ..
+      EQUIVALENCE (DSTAK(1),ISTAK(1))
+C
+      PetscLogDouble tbegall
+      COMMON/TIMING/tbegall
+C     ..
+C
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C                 Beginning of program
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+C
+C
+      HELP = STORE(DSQRT(D1MACH(4)))
+C
+C **************************************************************
+C     Set the length of the static stack ..
+C **************************************************************
+C
+      CALL ISTKIN(NVA,4)
+C
+C **************************************************************
+C     Initialize PETSc
+C **************************************************************
+C
+      CALL PetscInitialize(PETSC_NULL_CHARACTER,IFAIL)
+      CALL PetscTime(tbeg,IFAIL)
+      totime = 0.d0
+      tbegall = tbeg
+!     CALL PetscMemorySetGetMaximumUsage(IFAIL)
+C
+C **************************************************************
+C     Get the number (MY_PE) of the current processor; will be
+C         0 for the uni-processor case
+C **************************************************************
+C
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IFAIL)
+      CALL MPI_Comm_size(PETSC_COMM_WORLD,NPROCS,IFAIL)
+C
+C **************************************************************
+C     Set OUTPUT devices
+C **************************************************************
+C
+#ifdef MPI
+      IWUNIT = 8
+      NOUT = 10
+      WRITE(EXT,FMT="(I3.3)")MY_PE+1
+      OUTFILE = 'output.' // EXT
+      OPEN(UNIT=NOUT,FILE=OUTFILE,FORM="FORMATTED",STATUS="UNKNOWN")
+      IF(MY_PE.EQ.0)THEN
+          OPEN(UNIT=IWUNIT,FILE='fspl.out',FORM="FORMATTED",
+     +    STATUS="UNKNOWN")
+      ENDIF
+#else
+      NOUT = I1MACH(2)
+      IWUNIT = NOUT
+#endif
+C
+      DO 778 I = 1,255
+         MESHFILE(I:I)  = CHAR(0)
+         NGHBFILE(I:I)  = CHAR(0)
+         STARFILE(I:I)  = CHAR(0)
+         FOLDFILE(I:I)  = CHAR(0)
+         BAKFILE(I:I)   = CHAR(0)
+         WDISTFILE(I:I) = CHAR(0)
+         VISCTFILE(I:I) = CHAR(0)
+         PBCSFILE(I:I) = CHAR(0)
+         PTOTFILE(I:I) = CHAR(0)
+         SKINFILE(I:I) = CHAR(0)
+         CLFILE(I:I) = CHAR(0)
+  778 CONTINUE
+C
+C
+C **************************************************************
+C     file for timing (written by all processors)
+C **************************************************************
+C
+      WRITE(EXT,FMT="(I3.3)")MY_PE
+      TIMEFILE = 'timing.' // EXT
+      OPEN(UNIT=ITIM1,FILE=TIMEFILE,FORM="FORMATTED",STATUS="UNKNOWN")
+C
+C **************************************************************
+C     Read info from the input datafile
+C **************************************************************
+C
+      CALL READVAL(MESHFILE,NGHBFILE,STARFILE,FOLDFILE,BAKFILE,
+     +             VISCTFILE,WDISTFILE,PBCSFILE,PTOTFILE,CLFILE,
+     2             SKINFILE,DATADIR,NTURB)
+C
+C **************************************************************
+C     Open files to dump the convergence history
+C **************************************************************
+C
+      IF(MY_PE.EQ.0)THEN
+      OPEN (IHST1,FILE='convhst.l2',FORM='formatted',STATUS='UNKNOWN')
+      OPEN (IHST2,FILE='convhst.max',FORM='formatted',STATUS='UNKNOWN')
+          IF(TURBULENT .AND. SEGREGATED)
+     +OPEN(IHST3,FILE='convhst.turb',FORM='formatted',STATUS='UNKNOWN')
+      ENDIF 
+C
+      IF( IABS(KAN) .EQ. 3 .AND. LAPLACE )THEN
+      IWEFLX = 117
+      OPEN(UNIT=IWEFLX,FILE='eflux.out',FORM="FORMATTED",
+     +    STATUS="UNKNOWN")
+      ENDIF
+C
+C **************************************************************
+C     Reading datafiles
+C **************************************************************
+C
+      CALL READAT(NELEM,NPOIN,NGHOST,NPNOD,NBPOIN,NFACE,NBFAC,NBINT,
+     +            NHOLE,NOFVERT,NDIM,NOFVAR,NTURB,
+     2            MESHFILE,NGHBFILE,PBCSFILE,CLFILE)
+caldo
+      IF(ABS(KAN).EQ.2.OR.ABS(KAN).EQ.4.OR.ABS(KAN).EQ.3)
+     &CALL SETIBC(NDIM,NOFVAR)
+      IF(IABS(KAN).EQ.3) THEN
+         CALL readArgon()
+      ENDIF
+caldo
+C
+C **************************************************************
+C     Open probe files, if any 
+C **************************************************************
+C
+      PROBEDATA = "probedataXXX.dat" 
+      WRITE(PROBEDATA(10:12),FMT="(I3.3)")MY_PE+1
+      INQUIRE(FILE=PROBEDATA,EXIST=LFLAG)
+      IF(LFLAG)THEN
+         OPEN(IPROBE,FILE=PROBEDATA,STATUS="OLD")
+         READ(IPROBE,*)NPROBES
+         LPROBE(1) = ISTKGT(NPROBES,KIND_INTEGER)
+         LPROBE(2) = ISTKGT(NPROBES*NOFVERT,KIND_REAL8)
+         CALL PROBEIN(ISTAK(LPROBE(1)),DSTAK(LPROBE(2)),NPROBES,NOFVERT,
+     &                IPROBE)
+         CLOSE(IPROBE)
+         PROBEOUT = "probeoutXXX.dat" 
+         WRITE(PROBEOUT(9:11),FMT="(I3.3)")MY_PE+1
+         OPEN(IPROBE,FILE=PROBEOUT,STATUS="UNKNOWN")
+      ELSE
+         NPROBES = 0
+      ENDIF
+      IWORK(11) = NPROBES
+C
+C **************************************************************
+C     Open files to dump the integral of the conserved quantities
+C **************************************************************
+C
+      IF(LDUMP(5))THEN
+         SOMEFILE = 'integral.' // EXT
+         OPEN(IHST4,FILE=SOMEFILE(1:12),FORM='formatted',
+     &        STATUS='UNKNOWN')
+         WRITE(IHST4,*)'# itim, iter, t, integrals'
+      ENDIF
+C
+C **************************************************************
+C     Computing geometrical quantities ..
+C **************************************************************
+C
+C     REM: routine EXGEO() is called with the number of 
+C          meshpoints being equal to NPOIN+NGHOST+NPNOD
+C
+      CALL EXGEO(NELEM,NOFVAR,NPOIN,NGHOST,NPNOD,NPOIN+NGHOST+NPNOD,
+     1           NBPOIN,NFACE,NBFAC,NBINT,NWFAC,NBODY4,NBODY6,NHOLE,
+     2           NOFVERT,NDIM)
+C
+      WRITE(NOUT,FMT=9995)NVA
+C
+C     changes the connectivity of those cells laying close
+C     to one of the periodic boundaries
+C     Note that all FORTRAN arrays are allocated for NPOIN+NGHOST+NPNOD
+C     while PETSc vectors for NPOIN+NGHOST
+C     this extra room is used in subr. BACKUP
+C     (a little bit tricky)
+C
+C     observe that it may not be irrelevant to move
+C     PERIODIC() BEFORE EXGEO() because of the addressing
+C     of periodic gridpoints
+C
+      IF (PERIODIC_MESH) CALL PERIODIC(NPOIN,NGHOST,NPNOD,NELEM,
+     +                   NOFVAR,NOFVERT,ISTAK(LCELNOD),ISTAK(LPMAP))
+C
+C **************************************************************
+C     form PETSc Vectors to store the right hand side (RHS),
+C                solution (ZROE) vectors and turbulent viscosity (ViscT)
+C **************************************************************
+C
+#ifdef MPI
+C
+C
+C -- set 0-based indexing; uses block indexing since petsc-3.3 
+C
+      LGHOST = ISTKGT(NGHOST,KIND_INTEGER)
+      CALL GETIDX(NGHOST,1,ISTAK(LTZX),ISTAK(LGHOST))
+C
+C -- create the vector of the unknowns:
+C           memory is provided by the FORTRAN static vector
+C           whose pointer is LZROE
+C
+      CALL VecCreateGhostBlockWithArray(PETSC_COMM_WORLD,NOFVAR,
+     2                                  NOFVAR*NPOIN,PETSC_DECIDE,
+     3                                  NGHOST,ISTAK(LGHOST),
+     +                                  DSTAK(LZROE),ZROE,IFAIL)
+C
+C     WRITE(6,*)'VecCreateGhostBlockWithArray has ret IOK = ',IFAIL,
+C    &' on array Z and PE = ',MY_PE
+C
+      CALL ISTKRL(1) ! release LGHOST
+C
+      IF(TURBULENT.AND.SEGREGATED)THEN
+C
+         LGHOST = ISTKGT(NGHOST,KIND_INTEGER)
+         CALL GETIDX(NGHOST,1,ISTAK(LTZX),ISTAK(LGHOST))
+C
+         CALL VecCreateGhostWithArray(PETSC_COMM_WORLD,NPOIN,
+     +                             PETSC_DECIDE,NGHOST,
+     +                             ISTAK(LGHOST),DSTAK(LTURB),
+     +                             ViscT,IFAIL)
+C
+         CALL ISTKRL(1) ! release LGHOST
+C
+      ENDIF
+C
+#else
+C
+C    create vectors for: flow variables, turbulent viscosity
+C
+      CALL VecCreateSeqWithArray(PETSC_COMM_SELF,NOFVAR,NOFVAR*NPOIN,
+     +                           DSTAK(LZROE),ZROE,IFAIL)
+      IF(TURBULENT.AND.SEGREGATED)
+     +CALL VecCreateSeqWithArray(PETSC_COMM_SELF,NTURB,NPOIN,
+     +                           DSTAK(LTURB),ViscT,IFAIL)
+C
+#endif
+C
+C
+c
+c  =========================================================
+c               Set -restart_file filename to restart
+c  =========================================================
+c
+      IF (ISTART.EQ.0) THEN
+C
+cxxxx    
+C         IF(TURBULENT.AND.COUPLED)THEN
+C         u_infty(nofvar) = 1.d0
+C         ENDIF
+cxxxx   
+          J = LZROE - 1
+          DO 1 I = 1,NOFVAR
+              J = J + 1
+              CALL DINIT(NPOIN+NGHOST,U_INFTY(I),DSTAK(J),NOFVAR) ! why not + NPNOD ?!?!?!
+    1     CONTINUE
+C
+          WRITE (NOUT,FMT=115) (U_INFTY(I),I=1,NOFVAR)
+C
+C     if (TURBULENT.AND.COUPLED) the freestream viscosity is initialized
+C         within TURBINI (see below)
+C
+      ELSE
+C
+C     in the un-steady case the initial solution is read into
+C     U^{n+1} then copied onto U^{n} and U^{n-1}; see below
+C
+          NITEMS = NPOIN+NGHOST+NPNOD
+          CALL SOLZNE(STARFILE,DSTAK(LZROE),NOFVAR,NITEMS,'r')
+!     CALL R8Mat_Print('General',' ',Nofvar,(NPOIN+NGHOST+NPNOD)*NTIMLEVS,
+!    +    DSTAK(LZROE),Nofvar,'Z array just after solzne ',IFAIL)
+      ENDIF
+C
+C **************************************************************
+C     Create the index sets that store informations on
+C     the boundary conditions of the boundary nodes
+C **************************************************************
+C
+      LWORKA = ISTKGT(NOFVAR*(NPOIN+NGHOST+NPNOD),KIND_INTEGER)
+      LWORKB = ISTKGT(NPOIN+NGHOST+NPNOD,KIND_INTEGER)
+      CALL BNDRY_ISET(NodalBcs,ISTAK(LWORKA),ISTAK(LBNDFAC),NBFAC,
+     &          ISTAK(LCELNOD),NOFVERT,ISTAK(LWORKB),NDIM,NOFVAR,NPOIN,
+     &          NGHOST,NPNOD,NELEM)
+      CALL VecGetOwnerShipRange(ZROE,ROWBGN,ROWEND,IFAIL)
+      CALL ISET(NodalBcs,ISTAK(LWORKA),ISTAK(LBNDFAC),NBFAC,
+     &          ISTAK(LCELNOD),NOFVERT,ISTAK(LWORKB),NDIM,NOFVAR,NPOIN,
+     &          NGHOST,NPNOD,NELEM,ROWBGN,(ABS(KAN).EQ.4))
+      CALL ISTKRL(2)
+C
+C **************************************************************
+C     Check if there are subsonic inflow boundaries and
+C     the corresponding file with the total pressure profile. 
+C     REM: NLIST = no. meshpoints on the inflow bnd 
+C     *** NLIST is set in the previous call to ISET() ***
+C **************************************************************
+C
+      IF(NLIST.NE.0)THEN
+C
+C        LKLIST,LVLIST is stored in ibc8.com
+C
+         LKLIST = ISTKGT(NLIST,KIND_INTEGER)
+         LVLIST = ISTKGT(nVarsInlet*NLIST,KIND_REAL8)
+         LWORKA = ISTKGT(NLIST,KIND_REAL8)
+         LWORKB = ISTKGT(NLIST,KIND_INTEGER)
+C
+         CALL SETPTO(PTOTFILE,ISTAK(LKLIST),DSTAK(LVLIST),
+     +               DSTAK(LWORKA),ISTAK(LWORKB),NDIM,NOFVAR)
+C     clear only workarrays
+         CALL ISTKRL(2)
+      ENDIF
+C
+c     CALL MPI_Barrier(PETSC_COMM_WORLD,IFAIL) 
+c     CALL MPI_Abort(PETSC_COMM_WORLD,-10,IFAIL) 
+C
+C **************************************************************
+C     Set velocity to zero on no-slip surfaces and
+C     temperature on isothermal walls; skip if a scalar problem
+C **************************************************************
+C
+      IF(ABS(KAN).EQ.2.OR.ABS(KAN).EQ.4)
+     &          CALL INIT(NodalBcs,ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     &          NOFVERT,DSTAK(LZROE),DSTAK(LCORG),ROWBGN,NDIM,NOFVAR,
+     &          NPOIN,(ABS(KAN).EQ.4),(ISTART.NE.0))
+C
+C **************************************************************
+C     Initialize turbulent stuff (only for KAN = +2,+4)
+C **************************************************************
+C
+C
+      IF (TURBULENT) THEN
+          IF(SEGREGATED)THEN
+              CALL VecGetOwnerShipRange(VISCT,ROWBGN,ROWEND,IFAIL)
+          ELSE
+              CALL VecGetOwnerShipRange(ZROE,ROWBGN,ROWEND,IFAIL)
+          ENDIF
+          LWORKA = ISTKGT(NOFVAR*NPOIN,2)
+          LWORKB = ISTKGT(NPOIN+NGHOST,2)
+          CALL ISET_T(NodalBcs,ISTAK(LWORKA),ISTAK(LBNDFAC),NBFAC,
+     &          ISTAK(LCELNOD),NOFVERT,ISTAK(LWORKB),NDIM,NOFVAR,NPOIN,
+     &          NGHOST,ROWBGN,(ABS(KAN).EQ.4))
+          CALL ISTKRL(2)
+          CALL TURBINI(NodalBcs,NOFVERT,NOFVAR,NDIM,NPOIN+NGHOST+NPNOD,
+     +                 DSTAK(LTURB),DSTAK(LZROE),DSTAK(LTD),DSTAK(LTTD),
+     +                 (ISTART.NE.0),ROWBGN,VISCTFILE,WDISTFILE)
+C
+      ENDIF
+C
+C **************************************************************
+C     Build the stiffness matrix ...
+C **************************************************************
+C
+      OPT(1) = MAT_KEEP_NONZERO_PATTERN
+      OPT(2) = MAT_STRUCTURALLY_SYMMETRIC
+      IF (TIMEIMPL ) THEN
+c
+c we do not use OPT(2) at present
+c
+          NOPT = 1
+#ifdef MPI
+          CALL MatAllocaMPI(PetscMatrices(1),NDIM,NOFVERT,NOFVAR,NELEM,
+     +                      NPOIN,NGHOST,OPT,NOPT,MAPPING(1),
+     +                      'Flow equation matrix')
+          IF( TURBULENT .AND. SEGREGATED )
+     +    CALL MatAllocaMPI(PetscMatrices(2),NDIM,NOFVERT,NTURB,NELEM,
+     +                      NPOIN,NGHOST,OPT,NOPT,MAPPING(2),
+     +                      'Turbulence equation matrix')
+#else
+          CALL MatAllocaSeq(PetscMatrices(1),NDIM,NOFVERT,NOFVAR,NELEM,
+     +                      NPOIN,NGHOST,OPT,NOPT,
+     3                      'Flow equation matrix')
+          IF( TURBULENT .AND. SEGREGATED )
+     +    CALL MatAllocaSeq(PetscMatrices(2),NDIM,NOFVERT,NTURB,NELEM,
+     +                      NPOIN,NGHOST,OPT,NOPT,
+     &                      'Turbulence equation matrix')
+#endif
+C
+      ENDIF 
+      IF ( LALE .AND. ALE_LAPLACE_GRID ) THEN
+          NOPT = 1
+#ifdef MPI
+          CALL MatAllocaMPI(PetscMatrices(3),NDIM,NOFVERT,1,NELEM,NPOIN,
+     +                      NGHOST,OPT,NOPT,MAPPING(3),
+     +                      'Motion solver matrix')
+#else
+          CALL MatAllocaSeq(PetscMatrices(3),NDIM,NOFVERT,1,NELEM,NPOIN,
+     +                      NGHOST,OPT,NOPT,'Motion solver matrix')
+#endif
+      ENDIF 
+C
+C **************************************************************
+C     Checking memory usage
+C **************************************************************
+C
+!     CALL PetscMemoryGetCurrentUsage(MAXSIZ,IFAIL)
+!     WRITE (NOUT,FMT=9994) MAXSIZ
+      WRITE (NOUT,FMT=9998) ISTKST(3)/2,
+     +          (ISTKST(3)*100.)/ISTKST(4)
+C
+      IWORK(1) = NDIM
+      IWORK(2) = NOFVERT
+      IWORK(3) = NOFVAR
+      IWORK(4) = NTURB
+      IWORK(5) = NPOIN
+      IWORK(6) = NGHOST
+      IWORK(7) = NELEM
+      IWORK(8) = NFACE
+      IWORK(9) = NBFAC
+      IWORK(10) = NPNOD
+      IWORK(12) = NHOLE
+      IWORK(13) = NBINT
+C
+      IF(LTIME)THEN 
+C
+C
+C     Copy current time level into the previous ones
+C     this should be done after all initializations
+C     have been performed
+C     Z(LZROE) contains u^{0} which is then copied
+C     onto u^{n} and u^{n-1}
+C     when re-starting reads time level n-1
+C
+         DO I = 2,MAXTIMLEVS
+            NITEMS = (NPOIN+NGHOST+NPNOD)*NOFVAR
+            J = LZROE + (I-1)*NITEMS
+            CALL DCOPY(NITEMS,DSTAK(LZROE),1,DSTAK(J),1)
+         ENDDO
+         IF( LALE )THEN ! save a copy of the original mesh
+            NITEMS = (NPOIN+NGHOST+NPNOD)*NDIM
+            CALL DCOPY(NITEMS,DSTAK(LCORG),1,DSTAK(LCORG+2*NITEMS),1)
+C
+C     Copy the current volumes into those at time levels n-1 n-2
+C     LVOL        |---- n   ----| |---- n ----| |---- n-1 ----| |---- n-2 ----|
+C
+            IF( (NTIMLEVS.EQ.3) )THEN
+               DO I = 1,MAXTIMLEVS
+                  J = LVOL + I*NELEM
+                  CALL DCOPY(NELEM,DSTAK(LVOL),1,DSTAK(J),1)
+               ENDDO
+            ENDIF
+C        Open log file
+              OPEN(UNIT=IOALE,FILE='ale.log',FORM='formatted')
+         ENDIF ! test on LALE
+C
+C
+C     time level (n-1) is read from a datafile and then
+C     copied into n; it will then
+C     be shifted into (n-1) at the beginning of the time loop
+C
+         IF((ISTART.NE.0).AND.(NTIMLEVS.EQ.3))THEN
+             INQUIRE(FILE=FOLDFILE,EXIST=LFOOLD)
+             IF(LFOOLD)THEN
+                NITEMS = NPOIN+NGHOST+NPNOD
+                J  = LZROE+NOFVAR*NITEMS ! points to the solution at (n)
+                CALL SOLZNE(FOLDFILE,DSTAK(J),NOFVAR,NITEMS,'r')
+caldo
+#ifdef XPRINT
+            NITEMS = (NGHOST+NPNOD+NPOIN)
+            DO ILEV = 1,MAXTIMLEVS
+                K = LZROE+(ILEV-1)*NITEMS*NOFVAR
+                DO J = 0,NOFVAR-1
+                   S= DNRM2(NITEMS,DSTAK(K+J),NOFVAR)
+                   write(6,*)' ILEV = ',ILEV ,' IVAR = ',J,' S = ',S
+                ENDDO
+            ENDDO
+#endif
+caldo
+             ELSE ! there is no restart file for time level n-1
+                WRITE(NOUT,FMT=105)
+             ENDIF
+         ENDIF ! on ISTART
+      ENDIF ! on LTIME
+C
+C     Pseudo-time stepping
+C
+      CALL myTS(ZROE,VISCT,PetscMatrices,NodalBcs,IWORK)
+C
+      CALL PetscTime(tend,IFAIL)
+      totime = totime + tend-tbeg
+C
+C  =========================================================
+C
+      LWORKD = ISTKGT(2*NBFAC,2)
+      CALL WSKIN(DSTAK(LSKINF),DSTAK(LHEAT),ISTAK(LWORKD),
+     +           NWFAC,ISTAK(LBNDFAC),NBODY6,SKINFILE)
+      CALL ISTKRL(1)
+C
+      LWORKD = ISTKGT(MAX(NOFVAR,NTURB)*NPNOD,2)
+      CALL BACKUP(NPOIN,NPNOD,NGHOST,NOFVAR,NTURB,ISTAK(LPMAP),
+     +            ISTAK(LWORKD),BAKFILE,VISCTFILE,FOLDFILE)
+      IF(IABS(KAN).NE.1)
+     1       CALL CHKFLX(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELFAC),
+     2                   ISTAK(LCELNOD),NOFVERT,NELEM,DSTAK(LFACNOR),
+     3                   DSTAK(LZROE),DSTAK(LXYZDOT),NOFVAR,NDIM,NFACE,
+     4                   (IABS(KAN).EQ.4),LDUMP(4),ITER)
+caldo        CALL AVGFLX(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELFAC),
+caldo2                   ISTAK(LCELNOD),NOFVERT,NELEM,DSTAK(LFACNOR),
+caldo3                   DSTAK(LZROE),NOFVAR,NDIM,NFACE ,
+caldo4                   (IABS(KAN).EQ.4),ITER)
+      CALL ISTKRL(1)
+C
+!     CALL PetscMemoryGetMaximumUsage(MAXSIZ,IFAIL)
+      WRITE (NOUT,FMT=9998) ISTKST(3)/2, (ISTKST(3)*100.)/ISTKST(4)
+!     WRITE (NOUT,FMT=9994) MAXSIZ
+C
+caldo CLOSE(NOUT)
+caldo CLOSE(IWUNIT)
+C
+      CALL clearmem( ZROE, VISCT, PetscMatrices, NodalBcs, NOFVAR )
+C
+      CALL PetscFinalize(IFAIL)
+C
+      CLOSE(UNIT=ITIM1)
+      IF(LDUMP(5))CLOSE(IHST4)
+      IF(MY_PE.EQ.0)THEN
+          WRITE(IWUNIT,FMT=*)'time spend ',totime
+          CLOSE(IHST1)
+          CLOSE(IHST2)
+          IF(TURBULENT .AND. SEGREGATED)CLOSE(IHST3)
+      ENDIF 
+C
+C *************** I/O FORMATS *****************
+C
+  105 FORMAT (5X,'Solution at n=-1 NOT found; using current solution',/)
+  115 FORMAT (5X,'Initial conditions are :',/,5X,8 (E12.6,2X),/)
+ 9995 FORMAT (/,5X,'MEMORY ALLOCATED IN DSTAK ',I9,' REAL*8 WORDS')
+ 9998 FORMAT (/,5X,'MAXIMUM MEMORY USED IN DSTAK ',I9,
+     +       ' REAL*8 WORDS (',F5.2,' %)')
+
+      END
+@
+
+
+1.97
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@d12 1
+a12 1
+CC   $Id: main.F,v 1.96 2020/03/28 09:42:25 abonfi Exp abonfi $
+d26 2
+a27 2
+!> \version $Revision: 1.96 $
+!> \date $Date: 2020/03/28 09:42:25 $
+d75 1
+a75 1
+      Mat PetscMatA,PetscMatB ,PetscMatC
+d487 2
+a488 2
+          CALL MatAllocaMPI(PetscMatA,NDIM,NOFVERT,NOFVAR,NELEM,NPOIN,
+     +                      NGHOST,OPT,NOPT,MAPPING(1),
+d491 2
+a492 2
+     +    CALL MatAllocaMPI(PetscMatB,NDIM,NOFVERT,NTURB,NELEM,NPOIN,
+     +                      NGHOST,OPT,NOPT,MAPPING(2),
+d495 3
+a497 2
+          CALL MatAllocaSeq(PetscMatA,NDIM,NOFVERT,NOFVAR,NELEM,NPOIN,
+     +                      NGHOST,OPT,NOPT,'Flow equation matrix')
+d499 2
+a500 2
+     +    CALL MatAllocaSeq(PetscMatB,NDIM,NOFVERT,NTURB,NELEM,NPOIN,
+     +                      NGHOST,OPT,NOPT,
+d508 1
+a508 1
+          CALL MatAllocaMPI(PetscMatC,NDIM,NOFVERT,1,NELEM,NPOIN,
+d512 1
+a512 1
+          CALL MatAllocaSeq(PetscMatC,NDIM,NOFVERT,1,NELEM,NPOIN,
+d602 1
+a602 3
+!     write(6,*)'before myTS: ',(iwork(i),i=1,10)
+      CALL myTS(ZROE,VISCT,PetscMatA,PetscMatB,PetscMatC,
+     &          NodalBcs,IWORK)
+d635 1
+a635 2
+      CALL clearmem( ZROE, VISCT, PetscMatA, PetscMatB,
+     &               PetscMatC, NodalBcs, NOFVAR )
+@
+
+
+1.96
+log
+@renamed a call
+@
+text
+@d12 1
+a12 1
+CC   $Id: main.F,v 1.95 2020/02/07 14:20:17 abonfi Exp abonfi $
+d26 2
+a27 2
+!> \version $Revision: 1.95 $
+!> \date $Date: 2020/02/07 14:20:17 $
+d34 7
+a42 6
+#include "petsc/finclude/petscsys.h"
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscmat.h"
+#include "petsc/finclude/petscis.h"
+#include "petsc/finclude/petscts.h"
+C
+d77 3
+d408 3
+a410 3
+      CALL BNDRY_ISET(ISTAK(LWORKA),ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     &          NOFVERT,ISTAK(LWORKB),NDIM,NOFVAR,NPOIN,NGHOST,NPNOD,
+     &          NELEM)
+d412 3
+a414 3
+      CALL ISET(ISTAK(LWORKA),ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     &          NOFVERT,ISTAK(LWORKB),NDIM,NOFVAR,NPOIN,NGHOST,NPNOD,
+     &          NELEM,ROWBGN,(ABS(KAN).EQ.4))
+d448 3
+a450 3
+     &          CALL INIT(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),NOFVERT,
+     &          DSTAK(LZROE),DSTAK(LCORG),ROWBGN,NDIM,NOFVAR,NPOIN,
+     &          (ABS(KAN).EQ.4),(ISTART.NE.0))
+d465 3
+a467 3
+          CALL ISET_T(ISTAK(LWORKA),ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),
+     &          NOFVERT,ISTAK(LWORKB),NDIM,NOFVAR,NPOIN,NGHOST,
+     &          ROWBGN,(ABS(KAN).EQ.4))
+d469 1
+a469 1
+          CALL TURBINI(NOFVERT,NOFVAR,NDIM,NPOIN+NGHOST+NPNOD,
+d601 1
+d603 1
+a603 1
+     &          ITMAX,IWORK)
+d637 1
+a637 1
+     &               PetscMatC, NOFVAR )
+@
+
+
+1.95
+log
+@removed unused variables
+@
+text
+@d12 1
+a12 1
+CC   $Id: main.F,v 1.94 2018/01/22 14:07:45 abonfi Exp abonfi $
+d26 2
+a27 2
+!> \version $Revision: 1.94 $
+!> \date $Date: 2018/01/22 14:07:45 $
+d393 1
+a393 1
+!     CALL X04CAF('General',' ',Nofvar,(NPOIN+NGHOST+NPNOD)*NTIMLEVS,
+@
+
+
+1.94
+log
+@changed FORMAT to fit large numbers
+@
+text
+@d12 1
+a12 1
+CC   $Id: main.F,v 1.93 2016/11/10 11:25:13 abonfi Exp abonfi $
+d26 2
+a27 2
+!> \version $Revision: 1.93 $
+!> \date $Date: 2016/11/10 11:25:13 $
+a76 1
+      PetscLogDouble SPACE,FRAGS,MAXS,MAXSIZ
+a646 2
+  100 FORMAT (17 (10X,I7,/),2 (10X,E9.6,/),10X,A1,/,4 (10X,A40,/),
+     +       5 (10X,F10.4,/))
+a648 4
+  208 FORMAT (/,5X,'Convergenge has been achieved in ',I7,1X,
+     +       'iterations',/,5X,'-- CPU time spend : ',F7.2,' sec.',/)
+ 9994 FORMAT (/,5X,'MAXIMUM MEMORY USED BY THE PROGRAM ',F12.0,
+     +       ' BYTES')
+a649 2
+ 9996 FORMAT (5X,'Skin friction file written to file016.dat')
+ 9997 FORMAT (I6,5(1X,E12.6))
+a651 2
+ 9999 FORMAT (/,5X,'MAXIMUM MEMORY EVER ALLOCATED BY PETSc ',F12.0,
+     +       ' BYTES')
+@
+
+
+1.93
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d12 1
+a12 1
+CC   $Id: main.F,v 1.92 2013/09/17 09:59:16 abonfi Exp abonfi $
+d26 2
+a27 2
+!> \version $Revision: 1.92 $
+!> \date $Date: 2013/09/17 09:59:16 $
+d656 1
+a656 1
+ 9995 FORMAT (/,5X,'MEMORY ALLOCATED IN DSTAK ',I8,' REAL*8 WORDS')
+d659 1
+a659 1
+ 9998 FORMAT (/,5X,'MAXIMUM MEMORY USED IN DSTAK',I8,
+@
+
+
+1.92
+log
+@re-organized the ALE stuff
+@
+text
+@d12 1
+a12 1
+CC   $Id: main.F,v 1.91 2013/08/22 11:58:51 abonfi Exp abonfi $
+d26 2
+a27 2
+!> \version $Revision: 1.8 $
+!> \date $Date: 2013/08/20 14:48:46 $
+d36 5
+a40 5
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscmat.h"
+#include "finclude/petscis.h"
+#include "finclude/petscts.h"
+@
+
+
+1.91
+log
+@added an argument when calling CHKFLX
+@
+text
+@d1 29
+a31 27
+C **********************************************************************
+C **********************************************************************
+C **                                                                  **
+C **      An unstructured triangular/tetrahedral code for             **
+C **        solving the compressible and incompressible               **
+C **          Euler and (RANS) Navier-Stokes equations                **
+C **          (as well as scalar advection-diffusion)                 **
+C **           using multidimensional upwind residual                 **
+C **        distribution (Fluctuation Splitting) schemes.             **
+C **                                                                  **
+C **  $Id: main.F,v 1.90 2013/07/18 14:48:59 abonfi Exp abonfi $
+C **                                                                  **
+C **                                                                  **
+C **      Written by:                                                 **
+C **      Aldo Bonfiglioli                                            **
+C **      Dipartimento di Ingegneria e Fisica dell' Ambiente          **
+C **      Universita` della Basilicata                                **
+C **      Contrada Macchia Romana                                     **
+C **      85100 Potenza Italy                                         **
+C **      Tel: ++39.0971.205.203                                      **
+C **      Fax: ++39.0971.205.160                                      **
+C **      E-mail:aldo.bonfiglioli@@unibas.it                           **
+C **      Home page: http://www.unibas.it/utenti/bonfiglioli/www.html **
+C **                                                                  **
+C **********************************************************************
+C **********************************************************************
+C
+d551 13
+a563 2
+              NITEMS = (NPOIN+NGHOST+NPNOD)*NDIM
+              CALL DCOPY(NITEMS,DSTAK(LCORG),1,DSTAK(LCORG+2*NITEMS),1)
+d593 2
+a594 2
+         ENDIF
+      ENDIF
+d621 1
+a621 1
+caldo3                   DSTAK(LZROE),NOFVAR,NDIM,NFACE,
+@
+
+
+1.90
+log
+@introduced ALE_LAPLACE_GRID
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.89 2013/07/18 11:23:42 abonfi Exp abonfi $
+d604 1
+a604 1
+     3                   DSTAK(LZROE),NOFVAR,NDIM,NFACE,
+@
+
+
+1.89
+log
+@IALE has been renamed into IOALE
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.88 2013/07/17 10:37:13 abonfi Exp abonfi $
+d499 1
+a499 1
+      IF ( LALE .AND. ALE_READ_GRID ) THEN
+@
+
+
+1.88
+log
+@removed the Petsc Vec XYZdot, i.e. the grid velocities
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.87 2013/06/28 09:07:04 abonfi Exp abonfi $
+d551 1
+a551 1
+              OPEN(UNIT=IALE,FILE='ale.log',FORM='formatted')
+@
+
+
+1.87
+log
+@now correctly allocates the matrix used in the Motion Solver
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.86 2013/06/25 07:10:19 abonfi Exp abonfi $
+d69 1
+a69 1
+      Vec ZRoe,ViscT,XYZdot
+a551 32
+              IF( ALE_READ_GRID )THEN
+C
+#ifdef MPI
+C
+C -- set 0-based indexing; uses block indexing since petsc-3.3 
+C
+                 LGHOST = ISTKGT(NGHOST,KIND_INTEGER)
+                 CALL GETIDX(NGHOST,1,ISTAK(LTZX),ISTAK(LGHOST))
+C
+C -- create the vector of the grid velocities:
+C           memory is provided by the FORTRAN static vector
+C           whose pointer is LXYZDOT
+C
+                 CALL VecCreateGhostBlockWithArray(PETSC_COMM_WORLD,
+     2                                  NDIM,NDIM*NPOIN,PETSC_DECIDE,
+     3                                  NGHOST,ISTAK(LGHOST),
+     +                                  DSTAK(LXYZDOT),XYZdot,IFAIL)
+C
+C
+                 CALL ISTKRL(1) ! release LGHOST
+C
+C
+#else
+C
+C    create vectors for: grid velocities
+C
+                 CALL VecCreateSeqWithArray(PETSC_COMM_SELF,NDIM,
+     +                           NDIM*NPOIN,DSTAK(LXYZDOT),XYZdot,IFAIL)
+C
+#endif
+C
+              ENDIF ! test on ALE_READ_GRID
+d585 1
+a585 1
+      CALL myTS(ZROE,VISCT,XYZdot,PetscMatA,PetscMatB,PetscMatC,
+d619 1
+a619 1
+      CALL clearmem( ZROE, VISCT, XYZdot, PetscMatA, PetscMatB,
+@
+
+
+1.86
+log
+@writing the current to a file;
+first steps towards the implementation of deformable grids
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.85 2013/06/08 09:41:38 abonfi Exp abonfi $
+a445 22
+caldo
+      IF( IABS(KAN).EQ.3 .AND. LAPLACE )THEN
+!            LWORKA = ISTKGT(NPOIN+NGHOST+NPNOD,KIND_INTEGER)
+!            CALL IINIT(NPOIN+NGHOST+NPNOD,0,ISTAK(LWORKA),1)
+!            call NODCOD(ISTAK(LWORKA),NPOIN,NBPOIN,ISTAK(LCELNOD),
+!    +                  NOFVERT,NELEM,ISTAK(LBNDFAC),NBFAC)
+!            CALL SET_BC_LAPLACE(NPOIN+NGHOST+NPNOD,DSTAK(LCORG),
+!    &                           NDIM,DSTAK(LZROE),NOFVAR,
+!    &                           ISTAK(LWORKA))
+!            CALL ISTKRL(1)
+!            LWORKA = ISTKGT(NPOIN+NGHOST+NPNOD,KIND_REAL8)
+!            SOMEFILE(1:11) = "voltage.dat"
+!            SOMEFILE(12:12) = CHAR(0)
+!            NITEMS = 1
+!            CALL SOLZNE(SOMEFILE,DSTAK(LWORKA),NITEMS,
+!    &                   NPOIN+NGHOST+NPNOD,'r')
+!            CALL DCOPY(NPOIN+NGHOST+NPNOD,DSTAK(LWORKA),1,
+!    &       DSTAK(LZROE+NOFVAR-1),NOFVAR)
+!            CALL ISTKRL(1)
+!         CALL SetBC4Laplace(DSTAK(LZROE))
+      ENDIF
+caldo
+d502 1
+a502 1
+          CALL MatAllocaMPI(PetscMatC,NDIM,NOFVERT,NDIM,NELEM,NPOIN,
+d505 2
+a506 1
+          CALL MatAllocaSeq(PetscMatC,NDIM,NOFVERT,NDIM,NELEM,NPOIN,
+a507 1
+#else
+@
+
+
+1.85
+log
+@handles the coupling btw Laplace's eqn
+and the plasma flow
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.84 2013/06/06 10:50:44 abonfi Exp abonfi $
+d30 1
+d69 1
+a69 1
+      Vec ZRoe,ViscT
+d72 1
+a72 1
+      Mat PetscMatA,PetscMatB 
+d226 6
+d496 2
+a498 2
+          OPT(1) = MAT_KEEP_NONZERO_PATTERN
+          OPT(2) = MAT_STRUCTURALLY_SYMMETRIC
+d521 11
+d574 33
+a606 1
+         ENDIF
+d639 2
+a640 1
+      CALL myTS(ZROE,VISCT,PetscMatA,PetscMatB,ITMAX,IWORK)
+d673 2
+a674 1
+      CALL clearmem( ZROE, VISCT, PetscMatA, PetscMatB, NOFVAR )
+@
+
+
+1.84
+log
+@call bndry_iset
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.83 2013/06/04 16:04:29 abonfi Exp abonfi $
+d24 1
+a24 1
+C **      E-mail:bonfiglioli@@unibas.it                                **
+a373 12
+caldo
+          IF( IABS(KAN).EQ.3 .AND. LAPLACE )THEN
+             LWORKA = ISTKGT(NPOIN+NGHOST+NPNOD,KIND_INTEGER)
+             CALL IINIT(NPOIN+NGHOST+NPNOD,0,ISTAK(LWORKA),1)
+             call NODCOD(ISTAK(LWORKA),NPOIN,NBPOIN,ISTAK(LCELNOD),
+     +                  NOFVERT,NELEM,ISTAK(LBNDFAC),NBFAC)
+             CALL SET_BC_LAPLACE(NPOIN+NGHOST+NPNOD,DSTAK(LCORG),
+     &                           NDIM,DSTAK(LZROE),NOFVAR,
+     &                           ISTAK(LWORKA))
+             CALL ISTKRL(1)
+         ENDIF
+caldo
+d439 22
+@
+
+
+1.83
+log
+@improved support for solving Laplace's equation
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.82 2013/05/15 10:33:02 abonfi Exp abonfi $
+d406 1
+a406 1
+      LWORKA = ISTKGT(NOFVAR*NPOIN,KIND_INTEGER)
+d408 3
+@
+
+
+1.82
+log
+@chenged PetscGetTime into PetscTime to comply with Petsc revision 3.4.0
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.81 2013/03/28 10:18:17 abonfi Exp abonfi $
+d235 3
+a237 1
+      IF(IABS(KAN).EQ.3) CALL readArgon()
+d373 13
+a385 1
+          WRITE (NOUT,FMT=115) (U_INFTY(I),I=1,5)
+d627 1
+a627 1
+  115 FORMAT (5X,'Initial conditions are :',/,5X,5 (E12.6,2X),/)
+@
+
+
+1.81
+log
+@opens file for dumping the integral of the conserved variables
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.80 2013/01/26 11:48:03 abonfi Exp abonfi $
+d151 1
+a151 1
+      CALL PetscGetTime(tbeg,IFAIL)
+d564 1
+a564 1
+      CALL PetscGetTime(tend,IFAIL)
+@
+
+
+1.80
+log
+@added support for an Argon plasma
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.79 2013/01/04 10:53:41 abonfi Exp abonfi $
+d111 2
+a112 1
+     +          EXT*3,TIMEFILE*10,CLFILE*255,SKINFILE*255,PROBEDATA*17
+d262 11
+d600 1
+@
+
+
+1.79
+log
+@upgrade to petsc-3.3: ghosted entries are now addressed by block indices
+also changed some library calls
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.78 2012/08/09 07:21:11 abonfi Exp abonfi $
+d232 3
+a234 1
+      IF(ABS(KAN).EQ.2.OR.ABS(KAN).EQ.4)CALL SETIBC(NDIM,NOFVAR)
+@
+
+
+1.78
+log
+@adds NHOLE and NBINT in the IWORK array;
+also adds an argument in the call to INIT
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.77 2011/12/30 10:50:25 abonfi Exp abonfi $
+d293 1
+a293 1
+C -- set 0-based indexing 
+d295 2
+a296 2
+      LGHOST = ISTKGT(NGHOST*NOFVAR,2)
+      CALL GETIDX(NGHOST,NOFVAR,ISTAK(LTZX),ISTAK(LGHOST))
+d302 4
+a305 4
+      CALL VecCreateGhostWithArray(PETSC_COMM_WORLD,NOFVAR*NPOIN,
+     +                             PETSC_DECIDE,NOFVAR*NGHOST,
+     +                             ISTAK(LGHOST),DSTAK(LZROE),
+     +                             ZROE,IFAIL)
+d307 2
+d310 1
+a310 1
+      CALL ISTKRL(1)
+d314 2
+a315 2
+      LGHOST = ISTKGT(NGHOST*NTURB,KIND_INTEGER)
+      CALL GETIDX(NGHOST,NTURB,ISTAK(LTZX),ISTAK(LGHOST))
+d317 1
+a317 1
+      CALL VecCreateGhostWithArray(PETSC_COMM_WORLD,NPOIN,
+d322 2
+d330 1
+a330 1
+      CALL VecCreateSeqWithArray(PETSC_COMM_SELF,NOFVAR*NPOIN,
+d333 1
+a333 1
+     +CALL VecCreateSeqWithArray(PETSC_COMM_SELF,NPOIN,
+a337 5
+C -- set the block size equal to the number of variables NOFVAR
+C
+      IF(NOFVAR.GT.1)THEN 
+          CALL VecSetBlockSize(ZROE,NOFVAR,IFAIL)
+      ENDIF
+d514 1
+@
+
+
+1.77
+log
+@call to setcoeff has been removed
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.76 2011/09/16 07:23:26 abonfi Exp abonfi $
+d136 1
+d420 1
+a420 1
+     &          (ABS(KAN).EQ.4))
+d494 2
+d512 5
+a527 4
+caldo
+caldo           J  = LZROE+2*NOFVAR*NITEMS ! points to the solution at (n)
+caldo           CALL DINIT(NOFVAR*NITEMS,1.D+38,DSTAK(J),1)
+caldo
+@
+
+
+1.76
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.75 2011/03/30 09:06:54 abonfi Exp abonfi $
+a495 5
+C     Set coefficients needed to evaluate the mass matrices
+C         in compressible flows
+C
+         IF(ABS(KAN).EQ.4)
+     &   CALL SETCOEFF(CALPHA,CGAMMA,NDIM,NOFVERT,MAXNOFVERT)
+@
+
+
+1.75
+log
+@experimenting with the calculation of an averaged point
+for flux calculation
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.74 2010/10/04 12:16:51 abonfi Exp abonfi $
+d33 1
+a33 1
+#include "finclude/petsc.h"
+d264 3
+a266 3
+      CALL EXGEO(NELEM,NPOIN,NGHOST,NPNOD,NPOIN+NGHOST+NPNOD,NBPOIN,
+     1           NFACE,NBFAC,NBINT,NWFAC,NBODY4,NBODY6,NHOLE,NOFVERT,
+     2           NDIM)
+d449 1
+a449 1
+          OPT(1) = MAT_KEEP_ZEROED_ROWS
+d454 1
+a454 1
+          NOPT = 1 
+d568 1
+a568 1
+     4                   (IABS(KAN).EQ.4),ITER)
+@
+
+
+1.74
+log
+@added support for probing data at specific locations
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.73 2009/06/11 13:10:58 abonfi Exp abonfi $
+d569 4
+@
+
+
+1.73
+log
+@location of PETSc include file ahs chanegd with release 3.0.0
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.72 2009/06/11 08:52:37 abonfi Exp abonfi $
+d100 1
+a100 1
+     +        rowbgn,rowend,NBINT,IWORK(15),OPT(10)
+d104 1
+a104 1
+      LOGICAL LFLAG 
+d110 2
+a111 2
+     +          PBCSFILE*255,STARFILE*255,WDISTFILE*255,
+     +          EXT*3,TIMEFILE*10,CLFILE*255,SKINFILE*255
+d167 2
+a168 2
+      IWUNIT = 19
+      NOUT = 20
+d235 23
+d520 2
+a521 2
+             INQUIRE(FILE=FOLDFILE,EXIST=LFLAG)
+             IF(LFLAG)THEN
+d564 5
+@
+
+
+1.72
+log
+@updated reading/writing solutions at previous time levels
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.71 2008/06/10 10:10:50 abonfi Exp abonfi $
+d33 5
+a37 5
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscmat.h"
+#include "include/finclude/petscis.h"
+#include "include/finclude/petscts.h"
+@
+
+
+1.71
+log
+@introduced a number of changes to allow
+time accurate calculations
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.70 2008/02/25 09:35:37 abonfi Exp abonfi $
+d97 1
+a97 1
+      INTEGER NDIM,I,IFAIL,J,LWORKD,NGHOST,LWORKA,LWORKB,
+d101 2
+d104 1
+a136 1
+!     WRITE(6,*)'machine eps = ',ROOT_MACHINE_EPS
+d185 1
+d208 3
+a210 3
+      CALL READVAL(MESHFILE,NGHBFILE,STARFILE,BAKFILE,VISCTFILE,
+     +             WDISTFILE,PBCSFILE,PTOTFILE,CLFILE,SKINFILE,
+     2             DATADIR,NTURB)
+a339 3
+          CALL SOLZNE(STARFILE,DSTAK(LZROE),NOFVAR,NPOIN+NGHOST+NPNOD,
+     >                'r')
+      ENDIF
+d341 7
+a347 5
+      IF(LTIME)THEN 
+         DO J = 1,MAXTIMLEVS
+            NITEMS = (NPOIN+NGHOST+NPNOD)*NOFVAR
+            CALL DCOPY(DSTAK(LZROE),1,DSTAK(LZROE+J*NITEMS),1)
+         ENDDO
+a349 1
+C
+d471 53
+d535 1
+a535 1
+     +NWFAC,ISTAK(LBNDFAC),NBODY6,SKINFILE)
+d540 1
+a540 1
+     +            ISTAK(LWORKD),BAKFILE,VISCTFILE)
+d566 1
+@
+
+
+1.70
+log
+@now computes machine eps and stores in common
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.69 2006/11/28 10:59:47 abonfi Exp abonfi $
+d45 2
+a46 1
+      INCLUDE 'constants'
+d55 1
+a55 1
+      INCLUDE 'nloc'
+d59 1
+d99 1
+a99 1
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,NPNOD,
+d238 3
+a240 2
+      CALL EXGEO(NELEM,NPOIN+NGHOST+NPNOD,NBPOIN,NFACE,NBFAC,
+     +           NBINT,NWFAC,NBODY4,NBODY6,NHOLE,NOFVERT,NDIM)
+d251 3
+d328 1
+a328 1
+              CALL DINIT(NPOIN+NGHOST,U_INFTY(I),DSTAK(J),NOFVAR)
+d333 3
+d337 1
+a337 1
+          CALL SOLZNE(STARFILE,DSTAK(LZROE),NOFVAR,NPOIN+NGHOST+npnod,
+d341 7
+@
+
+
+1.69
+log
+@I had to split declarations of PETSc variables on multiple
+lines; I suspect a bug in the GNU Fortran 95 (GCC) 4.1.1 compiler
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.68 2006/11/27 09:42:40 abonfi Exp abonfi $
+d44 1
+a47 1
+C
+d57 4
+a60 3
+      INCLUDE 'implicit.h'
+      INTEGER MY_PE
+      COMMON/MPICOM/MY_PE
+d99 1
+d114 2
+a115 1
+      EXTERNAL ISTKGT,ISTKST,I1MACH
+d131 2
+a132 1
+C
+d156 1
+@
+
+
+1.68
+log
+@Now handles skin friction file more appropriately;
+also works in parallel
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.67 2005/10/22 11:03:52 abonfi Exp abonfi $
+d71 2
+a72 1
+      PetscLogDouble SPACE,FRAGS,MAXS,MAXSIZ,tbeg,tend,totime,tbegall
+d120 2
+a121 1
+      COMMON/TIMING/TBEGALL
+@
+
+
+1.67
+log
+@implemented c-lines
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.66 2005/09/09 08:47:41 abonfi Exp abonfi $
+d103 1
+a103 1
+     +          EXT*3,TIMEFILE*10,CLFILE*255
+d179 1
+d197 2
+a198 1
+     +             WDISTFILE,PBCSFILE,PTOTFILE,CLFILE,DATADIR,NTURB)
+a455 2
+C
+#ifndef MPI
+d458 1
+a458 1
+     +NWFAC,ISTAK(LBNDFAC),NBODY6,'file016.dat')
+a459 1
+#endif
+@
+
+
+1.66
+log
+@changes required to handle ANNULAR cascade flows
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.65 2005/08/08 10:58:54 abonfi Exp abonfi $
+d49 1
+d88 2
+a89 2
+C     DIM     is the space dimension
+C     NOFVERT = DIM+1 is the number of vertices (ONLY linear elements
+d93 1
+a93 1
+      INTEGER DIM,I,IFAIL,J,LWORKD,NGHOST,LWORKA,LWORKB,
+d103 1
+a103 1
+     +          EXT*3,TIMEFILE*10
+d179 1
+a189 2
+      TIMEFILE = 'mytime.' // EXT
+      OPEN(UNIT=ITIM2,FILE=TIMEFILE,FORM="FORMATTED",STATUS="UNKNOWN")
+d196 1
+a196 1
+     +             WDISTFILE,PBCSFILE,PTOTFILE,DATADIR,NTURB)
+d214 2
+a215 2
+     +            NHOLE,NOFVERT,DIM,NOFVAR,NTURB,
+     2            MESHFILE,NGHBFILE,PBCSFILE)
+d217 1
+a217 1
+      IF(ABS(KAN).EQ.2.OR.ABS(KAN).EQ.4)CALL SETIBC(DIM,NOFVAR)
+d228 1
+a228 1
+     +           NBINT,NWFAC,NBODY4,NBODY6,NHOLE,NOFVERT,DIM)
+d330 1
+a330 1
+      LWORKB = ISTKGT(NPOIN+NGHOST,KIND_INTEGER)
+d333 2
+a334 2
+     &          NOFVERT,ISTAK(LWORKB),DIM,NOFVAR,NPOIN,NGHOST,
+     &          ROWBGN,(ABS(KAN).EQ.4))
+d354 1
+a354 1
+     +               DSTAK(LWORKA),ISTAK(LWORKB),DIM,NOFVAR)
+d369 1
+a369 1
+     &          DSTAK(LZROE),DSTAK(LCORG),ROWBGN,DIM,NOFVAR,NPOIN,
+d386 1
+a386 1
+     &          NOFVERT,ISTAK(LWORKB),DIM,NOFVAR,NPOIN,NGHOST,
+d389 1
+a389 1
+          CALL TURBINI(NOFVERT,NOFVAR,DIM,NPOIN+NGHOST+NPNOD,
+d407 1
+a407 1
+          CALL MatAllocaMPI(PetscMatA,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,
+d411 1
+a411 1
+     +    CALL MatAllocaMPI(PetscMatB,DIM,NOFVERT,NTURB,NELEM,NPOIN,
+d415 1
+a415 1
+          CALL MatAllocaSeq(PetscMatA,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,
+d418 1
+a418 1
+     +    CALL MatAllocaSeq(PetscMatB,DIM,NOFVERT,NTURB,NELEM,NPOIN,
+d434 1
+a434 1
+      IWORK(1) = DIM
+a478 1
+      CLOSE(UNIT=ITIM2)
+@
+
+
+1.65
+log
+@the number of subsonic inlet bcs has changed
+also some reformatting and cosmetic changes
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.64 2002/11/02 16:03:26 abonfi Exp aldo $
+d55 1
+d270 1
+a270 1
+      LGHOST = ISTKGT(NGHOST*NTURB,2)
+d329 2
+a330 2
+      LWORKA = ISTKGT(NOFVAR*NPOIN,2)
+      LWORKB = ISTKGT(NPOIN+NGHOST,2)
+@
+
+
+1.64
+log
+@minor cosmetic change
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.63 2002/09/14 09:02:43 abonfi Exp abonfi $
+a35 1
+#include "include/finclude/petscsles.h"
+d43 1
+d63 1
+a63 1
+      Vec dt,ZRoe,ViscT
+d66 1
+a66 1
+      Mat A,B 
+a68 1
+      TS ts_dummy
+a69 1
+      PetscOffset IDX_I
+a72 1
+      double precision s
+d91 8
+a98 4
+      INTEGER DIM,I,IFAIL,J,LWORKD,NIT,NGHOST,LWORKA,LWORKB,LWORKC,
+     +        NBFAC,NBODY4,NBPOIN,NELEM,NFACE,NHOLE,NOPT,NI,LDA,
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,LTINDX,N,NPNOD,IDX_V(1),
+     +        rowbgn,rowend,NBINT,LGHOST,IFLAG,IWORK(15),OPT(10)
+d101 1
+a101 1
+     +          OUTFILE*10,EXT*3,TIMEFILE*10
+d140 1
+d261 1
+a261 1
+     +                             ISTAK(lghost),DSTAK(LZROE),
+d340 1
+d347 4
+a350 4
+         LKLIST = ISTKGT(NLIST,2)
+         LVLIST = ISTKGT(3*NLIST,4)
+         LWORKA = ISTKGT(NLIST,4)
+         LWORKB = ISTKGT(NLIST,2)
+a366 2
+caldo&          CALL INIT(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),NOFVERT,
+caldo&          DSTAK(LZROE),ROWBGN,DIM,NOFVAR,NPOIN,(ABS(KAN).EQ.4))
+d406 2
+a407 2
+          CALL MatAllocaMPI(A,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,NGHOST,
+     +                      OPT,NOPT,MAPPING(1),
+d410 2
+a411 2
+     +    CALL MatAllocaMPI(B,DIM,NOFVERT,NTURB,NELEM,NPOIN,NGHOST,
+     +                      OPT,NOPT,MAPPING(2),
+d414 2
+a415 2
+          CALL MatAllocaSeq(A,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,NGHOST,
+     +                      OPT,NOPT,'Flow equation matrix')
+d417 3
+a419 2
+     +    CALL MatAllocaSeq(B,DIM,NOFVERT,NTURB,NELEM,NPOIN,NGHOST,
+     +                      OPT,NOPT,'Turbulence equation matrix')
+d428 2
+a429 2
+      CALL PetscGetResidentSetSize(MAXSIZ,IFAIL)
+      WRITE (NOUT,FMT=9994) MAXSIZ
+d446 1
+a446 1
+      CALL myTS(ZROE,VISCT,A,B,ITMAX,IWORK)
+d466 1
+a466 1
+      CALL PetscGetResidentSetSize(MAXSIZ,IFAIL)
+d468 1
+a468 1
+      WRITE (NOUT,FMT=9994) MAXSIZ
+d473 1
+a473 1
+      CALL clearmem( ZROE, VISCT, A, B, NOFVAR )
+@
+
+
+1.63
+log
+@supports coupled solution strategy for RANS
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.62 2001/11/09 14:23:44 abonfi Exp abonfi $
+d221 3
+d231 2
+a232 4
+C     NPOIN is returned as NPOIN-NPNOD where NPNOD is half the
+C     # of periodic nodes
+C     Note that all FORTRAN arrays are allocated for NPOIN
+C     while PETSc vectors for NPOIN-NPNOD
+d241 2
+a242 3
+C     form PETSc right hand side (RHS) and 
+C                solution (ZROE) vectors and 
+C                turbulent viscosity (ViscT)
+@
+
+
+1.62
+log
+@de-allocation of some PETSc objects has moved to another
+routine
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.61 2001/10/17 15:37:25 abonfi Exp abonfi $
+d202 1
+a202 1
+          IF(TURBULENT)
+d265 1
+a265 1
+      IF(TURBULENT)THEN
+d283 2
+a284 1
+      IF(TURBULENT)CALL VecCreateSeqWithArray(PETSC_COMM_SELF,NPOIN,
+d302 5
+d374 1
+d376 5
+a382 1
+          CALL VecGetOwnerShipRange(VISCT,ROWBGN,ROWEND,IFAIL)
+d387 3
+a389 4
+          CALL TURBINI(NBFAC,NBODY6,NOFVERT,NELEM,
+     +                 ISTAK(LNODCOD),DIM,NPOIN+NGHOST+NPNOD,
+     +                 DSTAK(LTURB),(ISTART.NE.0),
+     +                 ROWBGN,VISCTFILE,WDISTFILE)
+d408 1
+a408 1
+          IF( TURBULENT )
+d415 1
+a415 1
+          IF( TURBULENT )
+d481 1
+a481 1
+          IF(TURBULENT)CLOSE(IHST3)
+@
+
+
+1.61
+log
+@moved PetscGetTime AFTER PetscInitialize
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.60 2001/10/08 15:48:37 abonfi Exp abonfi $
+a39 1
+#include "iset.com"
+d461 1
+a461 42
+C  =========================================================
+C     clear memory allocated by PETSc 
+C     N.B. when INITIAL_GUESS_NONZERO is defined in update3.F
+C          the solution vector X is not destroyed
+C  =========================================================
+C
+      CALL VecDestroy(ZROE,IFAIL)
+      IF(TURBULENT) CALL VecDestroy(VISCT,IFAIL)
+C
+      IF( TIMEIMPL )THEN
+          CALL MatDestroy(A,IFAIL)
+          IF(TURBULENT)THEN
+              CALL MatDestroy(B,IFAIL)
+          ENDIF
+      ENDIF
+C
+C     clear Index sets
+C
+      IF(NOFVAR.EQ.1)THEN
+         CALL ISDestroy(SupersonicNodes,IFAIL)
+      ELSE
+         CALL ISDestroy(SupersonicVariables,IFAIL)
+      ENDIF
+      CALL ISDestroy(NoSlipVelocities,IFAIL)
+#if 0
+      CALL ISDestroy(CnstPressure,IFAIL)
+      CALL ISDestroy(Internal_inflow,IFAIL)
+#endif
+      CALL ISDestroy(Isothermal,IFAIL)
+      IF(TURBULENT)THEN
+          CALL ISDestroy(NoSlipNodes,IFAIL)
+          CALL ISDestroy(FreestreamTurbulence,IFAIL)
+      ENDIF
+C
+C
+#ifdef MPI
+      IF(TIMEIMPL)THEN
+          CALL ISLocalToGlobalMappingDestroy(mapping(1),IFAIL)
+          IF(TURBULENT)
+     +    CALL ISLocalToGlobalMappingDestroy(mapping(2),IFAIL)
+      ENDIF 
+#endif
+@
+
+
+1.60
+log
+@changed PLog into PetscLog to comply with PETSC 2.1.0
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.59 2001/07/19 09:49:37 abonfi Exp abonfi $
+a123 3
+      CALL PetscGetTime(tbeg,IFAIL)
+      totime = 0.d0
+      tbegall = tbeg
+d137 3
+@
+
+
+1.59
+log
+@made some changes following the new implementation
+of inflow bcs starting with version 0.10.13
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.58 2001/07/04 06:49:07 abonfi Exp abonfi $
+d20 1
+a20 1
+C **      Via della Tecnica, 3                                        **
+d22 1
+a22 1
+C **      Tel: ++39.0971.205.                                         **
+d71 1
+a71 1
+      PLogDouble SPACE,FRAGS,MAXS,MAXSIZ,tbeg,tend,totime,tbegall
+d126 1
+@
+
+
+1.58
+log
+@changed boundary conditions for inflow/outflow
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.57 2001/05/24 10:25:39 abonfi Exp abonfi $
+d51 1
+d331 1
+a331 1
+C     REM: NI = no. meshpoints on the inflow bnd x no. b.c.s (=NDIM+1)
+d334 11
+a344 27
+#if 0
+      CALL ISGetSize(Internal_inflow,NI,IFAIL)
+      IF(NI.NE.0)THEN
+         IF(IABS(KAN).EQ.4)THEN
+             LDA = (DIM+1)
+         ELSE
+             LDA = DIM
+         ENDIF
+         NI = NI/LDA
+C
+C        LPTOT is stored in nloc
+C
+         LPTOT = ISTKGT(3*NI,4)
+         LWORKA = ISTKGT(NI,2)
+         LWORKB = ISTKGT(NI,2)
+         LWORKC = ISTKGT(NI,2)
+         LWORKD = ISTKGT(NI,4)
+C
+C     make a copy of the index set with stride LDA
+C     remember that the IS addresses row number (0-based indexed)
+C     NOT meshpoint numbers
+C
+         CALL ISGetIndices(Internal_inflow,IDX_V,IDX_I,IFAIL)
+         CALL ICOPY(NI,IDX_V(IDX_I+1),LDA,ISTAK(LWORKC),1)
+         CALL ISRestoreIndices(Internal_inflow,IDX_V,IDX_I,IFAIL)
+         CALL SETPTO(PTOTFILE,ISTAK(LWORKA),DSTAK(LPTOT),DSTAK(LWORKD),
+     +               ISTAK(LWORKB),ISTAK(LWORKC),NI,DIM,NOFVAR)
+d346 1
+a346 1
+         CALL ISTKRL(4)
+a347 1
+#endif
+d349 2
+a350 2
+C     CALL MPI_Barrier(PETSC_COMM_WORLD,IFAIL) 
+C     CALL MPI_Abort(PETSC_COMM_WORLD,-10,IFAIL) 
+@
+
+
+1.57
+log
+@allows specifying an inlet profile
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.56 2001/05/05 08:16:52 abonfi Exp abonfi $
+d333 1
+d363 1
+d501 1
+d504 1
+@
+
+
+1.56
+log
+@a minor revision
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.55 2001/01/20 13:50:34 aldo Exp abonfi $
+d94 1
+a94 1
+      INTEGER DIM,I,IFAIL,J,LWORK,NIT,NGHOST,LWORKA,LWORKB,LWORKC,
+d344 1
+a344 1
+         LPTOT = ISTKGT(NI,4)
+d348 1
+d357 2
+a358 2
+         CALL SETPTO(PTOTFILE,ISTAK(LWORKA),DSTAK(LPTOT),ISTAK(LWORKB),
+     +               ISTAK(LWORKC),NI,DIM,NOFVAR)
+d360 1
+a360 1
+         CALL ISTKRL(3)
+d457 2
+a458 2
+      LWORK = ISTKGT(2*NBFAC,2)
+      CALL WSKIN(DSTAK(LSKINF),DSTAK(LHEAT),ISTAK(LWORK),
+d463 1
+a463 1
+      LWORK = ISTKGT(MAX(NOFVAR,NTURB)*NPNOD,2)
+d465 1
+a465 1
+     +            ISTAK(LWORK),BAKFILE,VISCTFILE)
+@
+
+
+1.55
+log
+@add variable inlet profile for total pressure and also
+extended to INcompressible flows
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.54 2000/12/06 13:37:53 aldo Exp aldo $
+d211 1
+a211 1
+     2            MESHFILE,NGHBFILE,PBCSFILE,PTOTFILE)
+d329 2
+a330 4
+C     the corresponding file with the total pressure
+C     profile. 
+C     REM: NI = no. meshpoints on the inflow bnd x
+C          no. b.c.s (=NDIM+1)
+d476 2
+d481 2
+d498 3
+d505 2
+@
+
+
+1.54
+log
+@changes to make periodic b.c. work in parallel
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.53 2000/11/22 14:31:01 aldo Exp aldo $
+d71 1
+d94 3
+a96 3
+      INTEGER DIM,I,IFAIL,J,LWORK,NIT,NGHOST,LWORKA,LWORKB,
+     +        NBFAC,NBODY4,NBPOIN,NELEM,NFACE,NHOLE,NOPT,
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,LTINDX,N,NPNOD,
+d98 1
+a98 1
+      CHARACTER DATADIR*255,MESHFILE*255,NGHBFILE*255,
+d173 1
+d192 1
+a192 1
+     +             WDISTFILE,PBCSFILE,DATADIR,NTURB)
+d211 1
+a211 1
+     2            MESHFILE,NGHBFILE,PBCSFILE)
+d327 37
+d373 2
+d376 2
+a377 1
+     &          DSTAK(LZROE),ROWBGN,DIM,NOFVAR,NPOIN,(ABS(KAN).EQ.4))
+@
+
+
+1.53
+log
+@a few changes to make the scalar code work again
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.52 2000/11/16 13:43:03 aldo Exp aldo $
+a52 1
+      INCLUDE 'periodic.com'
+d95 1
+a95 1
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,LTINDX,N,
+d97 3
+a99 3
+      CHARACTER DATADIR*120,MESHFILE*120,NGHBFILE*120,
+     +          STARFILE*120,WDISTFILE*120,OUTFILE*10,
+     +          EXT*3,TIMEFILE*10
+d164 11
+d190 1
+a190 1
+     +             WDISTFILE,DATADIR,NTURB)
+d207 3
+a209 2
+      CALL READAT(NELEM,NPOIN,NGHOST,NBPOIN,NFACE,NBFAC,NBINT,NHOLE,
+     +            NOFVERT,DIM,NOFVAR,NTURB,MESHFILE,NGHBFILE)
+d218 2
+a219 2
+      CALL EXGEO(NELEM,NPOIN+nghost,NBPOIN,NFACE,NBFAC,NBINT,NWFAC,
+     +           NBODY4,NBODY6,NHOLE,NOFVERT,DIM)
+d233 2
+a234 2
+      IF (PERIODIC_MESH) CALL PERIODIC(NPOIN,NELEM,NOFVAR,NOFVERT,
+     +ISTAK(LCELNOD))
+d350 1
+a350 1
+     +                 ISTAK(LNODCOD),DIM,NPOIN+nghost+npnod,
+d403 1
+d422 4
+a425 2
+      CALL BACKUP(NPOIN+NGHOST,NELEM,DIM,NOFVERT,NOFVAR,NTURB,
+     +                    BAKFILE,VISCTFILE)
+d468 2
+d471 5
+a475 2
+           WRITE(IWUNIT,FMT=*)'time spend ',totime
+      ENDIF
+@
+
+
+1.52
+log
+@changed some I/O unit numbers
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.51 2000/11/15 09:15:09 aldo Exp aldo $
+d200 1
+a200 1
+      CALL SETIBC(DIM,NOFVAR)
+d313 11
+a323 1
+      CALL INIT(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),NOFVERT,
+d339 3
+a341 3
+     +                           ISTAK(LNODCOD),DIM,NPOIN+nghost+npnod,
+     +                           DSTAK(LTURB),(ISTART.NE.0),
+     +                           ROWBGN,VISCTFILE,WDISTFILE)
+@
+
+
+1.51
+log
+@changed the name of the included file containing I/O devices
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.50 2000/11/10 17:10:50 aldo Exp aldo $
+d156 4
+a159 2
+      OPEN(UNIT=IWUNIT,FILE='fspl.out',FORM="FORMATTED",
+     +     STATUS="UNKNOWN")
+d166 1
+a166 1
+C     file for timing
+d187 2
+a188 2
+          OPEN (IHIST1,FILE='convhst.l2',FORM='formatted',STATUS='UNKNOWN')
+          OPEN (IHIST2,FILE='convhst.max',FORM='formatted',STATUS='UNKNOWN')
+d190 1
+a190 1
+     +    OPEN(IHIST3,FILE='convhst.turb',FORM='formatted',STATUS='UNKNOWN')
+@
+
+
+1.50
+log
+@changed subroutine INIT; hence the call
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.49 2000/10/26 15:24:44 aldo Exp $
+d55 1
+a55 1
+      INCLUDE 'IO'
+d169 1
+a169 1
+      OPEN(UNIT=44,FILE=TIMEFILE,FORM="FORMATTED",STATUS="UNKNOWN")
+d171 1
+a171 1
+      OPEN(UNIT=45,FILE=TIMEFILE,FORM="FORMATTED",STATUS="UNKNOWN")
+d185 2
+a186 2
+          OPEN (7,FILE='convhst.l2',FORM='formatted',STATUS='UNKNOWN')
+          OPEN (8,FILE='convhst.max',FORM='formatted',STATUS='UNKNOWN')
+d188 1
+a188 1
+     +    OPEN(12,FILE='convhst.turb',FORM='formatted',STATUS='UNKNOWN')
+a385 1
+      WRITE(45,*)ITER,tend-tbeg
+@
+
+
+1.49
+log
+@some changes in the subroutines called, also v2.0.29 of PETSc (header files)
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.48 2000/09/29 09:22:20 aldo Exp aldo $
+d311 2
+a312 1
+      CALL INIT(DSTAK(LZROE),ROWBGN,DIM,NOFVAR,NPOIN)
+@
+
+
+1.48
+log
+@restored 0-based indexing and other minor changes
+@
+text
+@d13 1
+a13 1
+C **  $Id: main.F,v 1.47 2000/08/17 10:15:40 aldo Exp aldo $
+d34 5
+a38 5
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/sles.h"
+#include "include/finclude/is.h"
+#include "include/finclude/ts.h"
+d41 1
+a53 1
+      INCLUDE 'mapping.com'
+d94 4
+a97 4
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,NIT,NGHOST,LWORKA,LWORKB,
+     +        NBFAC,NBODY4,NBPOIN,NELEM,NFACE,NHOLE,
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,LTINDX,N,locy,locv,
+     +        rowbgn,rowend,NBINT,LGHOST,IFLAG,IWORK(15)
+d318 7
+d328 2
+a329 9
+     +                           VISCTFILE,WDISTFILE)
+          CALL TURBOBC(ISTAK(LBNDFAC),NBFAC,
+     +    ISTAK(LCELNOD),NOFVERT,ISTAK(LNODCOD),DSTAK(LTURB),NOFVAR,
+     +    NPOIN)
+C
+          LWORK = ISTKGT(NOFVAR*NPOIN,2)
+          CALL VecGetOwnerShipRange(ZROE,ROWBGN,ROWEND,IFAIL)
+          CALL ISET3(ISTAK(LWORK),ISTAK(LNODCOD),DIM,NTURB,NPOIN,ROWBGN)
+          CALL ISTKRL(1)  
+d337 6
+d344 7
+a350 1
+          CALL MatAllocaMPI(A,B,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,NGHOST)
+d352 5
+a356 1
+          CALL MatAllocaSeq(A,B,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,NGHOST)
+d419 1
+d421 1
+d425 1
+a425 1
+      CALL ISDestroy(SupersonicVariables,IFAIL)
+a426 1
+      CALL ISDestroy(NoSlipNodes,IFAIL)
+d428 4
+d433 5
+a437 1
+      IF(TIMEIMPL)CALL ISLocalToGlobalMappingDestroy(mapping,IFAIL)
+@
+
+
+1.47
+log
+@introduced 0-based indexing for the ghost nodes
+@
+text
+@d13 1
+a13 2
+C **  $Id: main.F,v 1.46 2000/08/16 10:21:07 aldo Exp aldo $
+C **  $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.9/src/seq/RCS/main.F,v 1.46 2000/08/16 10:21:07 aldo Exp aldo $
+d22 1
+a22 1
+C **      Tel: ++39.0971.205.150                                      **
+a50 1
+C     INCLUDE 'rk.com'
+d98 2
+a99 2
+      CHARACTER DATADIR*80,MESHFILE*80,NGHBFILE*80,
+     +          STARFILE*80,WDISTFILE*80,OUTFILE*10,
+d123 1
+d232 5
+d241 3
+a243 3
+      CALL VecCreateGhostBlockWithArray(PETSC_COMM_WORLD,NOFVAR,
+     +                             NPOIN*NOFVAR,PETSC_DECIDE,NGHOST,
+     +                             ISTAK(LTZX),DSTAK(LZROE),
+d247 2
+d251 2
+d256 1
+a256 1
+     +                             ISTAK(LTZX),DSTAK(LTURB),
+a330 6
+#ifdef MPI
+C
+C     the following to make sure that ghost values are
+C         correctly updated from the owning processor,
+C         since some of the initialization routines only
+C         act upon the NPOIN locations
+a331 7
+caldo CALL VecGhostUpdateBegin(ZROE,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+caldo CALL VecGhostUpdateEnd(ZROE,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+C
+c  do same with turbulent viscosity
+C
+#endif
+C
+d363 2
+@
+
+
+1.46
+log
+@major restructuring for release 0.10.9;
+though still keeping 1-based indexing for the ghost nodes
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.45 2000/06/23 16:38:58 aldo Exp aldo $
+C **  $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.7/src/seq/RCS/main.F,v 1.45 2000/06/23 16:38:58 aldo Exp aldo $
+a105 6
+C     EXTERNAL BACKUP,CONS_TO_PARM,DCOPY,DINIT,
+C    +         EULERII,EULERIIBIS,EULERVII,EULERHYB,EULERHYB3D,
+C    +         EULERVIII,EULERIX,EXGEO,ISTKIN,N_SCHEME,
+C    +LDA_scheme,NL_SCHEME,PSI_SCHEME,SUPG_SCHEME,FCT_scheme,
+C    +PARM_TO_CONS,READAT,READVAL,SCALAR,SCLSCH,SOLZNE,
+C    +         UPDATE2,UPDATE3,TURBO,NSYS_SCHEME
+a231 1
+      LGHOST = ISTKGT(NOFVAR*NGHOST,2)
+a232 10
+C -- reset the list of ghost nodes to 0-based indexing
+C
+      CALL GETIDX(NGHOST,NOFVAR,ISTAK(Ltzx),ISTAK(LGHOST))
+C
+C -- create the r.h.s. vector
+C
+caldo CALL VecCreateGhost(PETSC_COMM_WORLD,NOFVAR*NPOIN,PETSC_DECIDE,
+caldo+                    NOFVAR*NGHOST,ISTAK(lghost),RHS,IFAIL)
+C
+C
+d237 3
+a239 3
+      CALL VecCreateGhostWithArray(PETSC_COMM_WORLD,NOFVAR*NPOIN,
+     +                             PETSC_DECIDE,NOFVAR*NGHOST,
+     +                             ISTAK(lghost),DSTAK(LZROE),
+a241 2
+C -- release memory allocated for the GHOST array
+      CALL ISTKRL(1) 
+d243 1
+a243 1
+      IF(.NOT.TURBULENT)GOTO 46
+a244 1
+      LGHOST = ISTKGT(NGHOST,2)
+a245 4
+C -- reset the list of ghost nodes to 0-based indexing
+C
+      CALL GetIdx(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+C
+d248 1
+a248 1
+     +                             ISTAK(lghost),DSTAK(LTURB),
+d251 1
+a251 4
+C -- release memory allocated for the GHOST array
+      CALL ISTKRL(1) 
+C
+   46 CONTINUE
+d255 1
+a255 1
+C    create vectors for: r.h.s., flow variables, turbulent viscosity
+a256 1
+caldo CALL VecCreateSeq(PETSC_COMM_SELF,NOFVAR*NPOIN,RHS,IFAIL)
+a266 1
+caldo     CALL VecSetBlockSize(RHS,NOFVAR,IFAIL)
+d330 2
+a331 2
+      CALL VecGhostUpdateBegin(ZROE,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+      CALL VecGhostUpdateEnd(ZROE,INSERT_VALUES,SCATTER_FORWARD,IFAIL)
+@
+
+
+1.46.1.1
+log
+@removed unused variables and also restored 0-based indexing
+for the ghost nodes
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.46 2000/08/16 10:21:07 aldo Exp aldo $
+C **  $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.9/src/seq/RCS/main.F,v 1.46 2000/08/16 10:21:07 aldo Exp aldo $
+d66 1
+a66 1
+      Vec ZRoe,ViscT
+d72 2
+a73 1
+      PLogDouble MAXSIZ,tbeg,tend,totime,tbegall
+d96 1
+a96 1
+      INTEGER DIM,I,IFAIL,J,LWORK,NGHOST,LWORKA,LWORKB,
+d98 2
+a99 2
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,
+     +        rowbgn,rowend,NBINT,LGHOST,IWORK(15)
+a144 1
+      CALL PetscGetTime(tbeg,IFAIL)
+d244 6
+d282 1
+a282 1
+C    create vectors for: flow variables, turbulent viscosity
+d284 1
+d295 1
+d352 13
+@
+
+
+1.45
+log
+@add hybrid schemes and rewritten call to iset
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.44 2000/06/20 07:59:47 aldo Exp aldo $
+C **  $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.7/src/seq/RCS/main.F,v 1.44 2000/06/20 07:59:47 aldo Exp aldo $
+d39 1
+d51 2
+a52 1
+      INCLUDE 'rk.com'
+d66 1
+a66 1
+      Vec rhs,dt,ZRoe,ViscT
+d72 1
+a72 1
+      SLES FlowSolver,TurbulenceSolver 
+d97 5
+a101 5
+     +        NBFAC,NBODY4,NBODY6,NBPOIN,NELEM,NFACE,NHOLE,
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,NWFAC,LTINDX,N,IERR,locy,locv,
+     +        rowbgn,rowend,NBINT,LGHOST,IFLAG
+      CHARACTER BAKFILE*80,DATADIR*80,MESHFILE*80,NGHBFILE*80,
+     +          STARFILE*80,VISCTFILE*80,WDISTFILE*80,OUTFILE*10,
+d106 6
+a111 6
+      EXTERNAL BACKUP,CONS_TO_PARM,DCOPY,DINIT,
+     +         EULERII,EULERIIBIS,EULERVII,EULERHYB,EULERHYB3D,
+     +         EULERVIII,EULERIX,EXGEO,ISTKIN,N_SCHEME,
+     +LDA_scheme,NL_SCHEME,PSI_SCHEME,SUPG_SCHEME,FCT_scheme,
+     +PARM_TO_CONS,READAT,READVAL,SCALAR,SCLSCH,SOLZNE,
+     +         SUBABB,SUBABC,UPDATE2,UPDATE3,TURBO,NSYS_SCHEME
+d144 1
+a144 1
+      CALL PetscInitialize(PETSC_NULL_CHARACTER,IERR)
+d151 1
+a151 1
+      CALL MPI_Comm_rank(PETSC_COMM_WORLD,MY_PE,IERR)
+d204 3
+d246 2
+a247 2
+      CALL VecCreateGhost(PETSC_COMM_WORLD,NOFVAR*NPOIN,PETSC_DECIDE,
+     +                    NOFVAR*NGHOST,ISTAK(lghost),RHS,IFAIL)
+d284 1
+a284 1
+      CALL VecCreateSeq(PETSC_COMM_SELF,NOFVAR*NPOIN,RHS,IERR)
+d295 1
+a295 1
+          CALL VecSetBlockSize(RHS,NOFVAR,IFAIL)
+d327 1
+d330 1
+a330 1
+     &          (ABS(KAN).EQ.4))
+d332 1
+a332 1
+      CALL INIT(DSTAK(LZROE),DIM,NOFVAR,NPOIN)
+d348 1
+a348 1
+          CALL VecGetOwnerShipRange(RHS,ROWBGN,ROWEND,IFAIL)
+a379 16
+C     Create linear solver context (for implicit timestepping only)
+C **************************************************************
+C
+      IF( .NOT. TIMEIMPL )GOTO 14
+      CALL SLESCreate(PETSC_COMM_WORLD,FlowSolver,IERR)
+      CALL SLESSetFromOptions(FlowSolver,IERR)
+C
+      IF( TURBULENT )THEN
+C
+          CALL SLESCreate(PETSC_COMM_WORLD,TurbulenceSolver,IERR)
+          CALL SLESSetFromOptions(TurbulenceSolver,IERR)
+C
+      ENDIF
+   14 CONTINUE
+C
+C **************************************************************
+d388 9
+a396 137
+C **************************************************************
+C     Start iterating in pseudo-time (NONlinear iterations)
+C **************************************************************
+C
+      CALL PetscGetTime(tbegall,IFAIL)
+C
+      DO 10 ITER = 1,ITMAX
+C
+      CALL PetscGetTime(tbeg,IFAIL)
+C
+C         goto 888
+          NITER = NITER + 1
+C +------------------------------------------------------------+
+C     create a vector to store the local timestep
+C +------------------------------------------------------------+
+C
+#ifdef MPI
+C
+          LGHOST = ISTKGT(NGHOST,2)
+C
+C -- set 0-based indexing 
+C
+          CALL GETIDX(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+C
+C -- create the time-step vector
+C
+          CALL VecCreateGhost(PETSC_COMM_WORLD,NPOIN,PETSC_DECIDE,
+     +                        NGHOST,ISTAK(lghost),DT,IFAIL)
+C
+C -- release memory allocated for LGHOST
+C
+          CALL ISTKRL(1) 
+C
+#else
+C
+          CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN,DT,IERR)
+C
+#endif
+C
+C **************************************************************
+C         Scalar case (ABS(KAN)=1;NOFVAR=1)
+C **************************************************************
+C
+          IF (IABS(KAN).EQ.1) THEN
+C
+              DO 2 KSTAGE = 1,NSTAGES
+                  CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                        NELEM,NFACE,NBFAC,DT,RHS,A,SCALAR)
+C
+C +------------------------------------------------------------+
+C         Updates the solution
+C +------------------------------------------------------------+
+C
+               CALL UPDATE2(DIM,NOFVAR,NPOIN,FlowSolver,A,RHS,DT,ZROE)
+C
+
+    2         CONTINUE
+C
+C **************************************************************
+C         Euler and Navier-Stokes
+C **************************************************************
+C
+          ELSEIF (IABS(KAN).EQ.4 .OR. IABS(KAN).EQ.2) THEN
+C
+C         Compute NODAL residuals ..
+C
+C         HE splitting for supersonic 2D flows
+C
+                  IF (DECOMP.EQ.2) THEN
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERII)
+C
+C         HE splitting
+C
+    
+                  ELSEIF (DECOMP.EQ.3) THEN
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERIIBIS)
+C
+C         Hybrid
+C
+
+                  ELSEIF (DECOMP.EQ.4) THEN
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERHYB)
+C
+C         Hybrid 3D
+C
+
+                  ELSEIF (DECOMP.EQ.5) THEN
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERHYB3D)
+C
+C         Unsteady compressible 
+C
+                  ELSEIF (DECOMP.EQ.7) THEN
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERVII)
+C
+C         Unsteady incompressible
+C
+                  ELSEIF (DECOMP.EQ.8) THEN
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERVIII)
+C
+C         Pseudo-Unsteady incompressible
+C
+                  ELSEIF (DECOMP.EQ.9) THEN
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                            NELEM,NFACE,NBFAC,DT,RHS,A,EULERIX)
+C
+                  ELSE
+                      STOP 'INVALID DECOMP'
+C
+                  ENDIF
+C
+C         Update the solution
+C
+                  IF (IABS(KAN).EQ.4) CALL PARM_TO_CONS(DSTAK(LZROE),
+     +                                     DIM,NOFVAR,NPOIN+NGHOST)
+C
+      CALL OptionsHasName(PETSC_NULL_CHARACTER,'-test_lhs',IFLAG,IERR)
+      IF(IFLAG.NE.0)THEN
+          locy = istkgt(npoin*nofvar,4)
+          locv = istkgt(npoin*nofvar,4)
+          call testlhs(A,ZROE,RHS,DSTAK(LOCY),DSTAK(LOCV),
+     +                 ISTAK(LNODCOD),NPOIN,NOFVAR)
+          stop
+      ENDIF
+C
+                  CALL UPDATE3(DIM,NOFVAR,NPOIN,FlowSolver,A,RHS,DT,
+     +                         ZROE)
+C
+                  IF (IABS(KAN).EQ.4) CALL CONS_TO_PARM(DSTAK(LZROE),
+     +                                     DIM,NOFVAR,NPOIN+NGHOST)
+C
+C    Turbulent equations
+d398 1
+a398 3
+  888     CONTINUE
+c         goto 6
+              IF( .NOT. TURBULENT )GOTO 6
+a399 124
+C    Destroy the RHS vector and recreate it with smaller dimension
+C
+              CALL VecDestroy(RHS,IFAIL)
+#ifdef MPI
+C
+              LGHOST = ISTKGT(NGHOST,2)
+              CALL GetIdx(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+              CALL VecCreateGhost(PETSC_COMM_WORLD,NPOIN,PETSC_DECIDE,
+     +                            NGHOST,ISTAK(lghost),RHS,IFAIL)
+              CALL ISTKRL(1) 
+C
+#else
+              CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN,RHS,IERR)
+#endif
+C
+          NIT = 0 
+    8     CONTINUE
+          NIT = NIT+1
+C
+C     create a vector to store the local timestep
+C     note that the timestep vector (DT) had been destroyed
+C     in the UPDATE_ routines
+C
+#ifdef MPI
+C
+              LGHOST = ISTKGT(NGHOST,2)
+              CALL GetIdx(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+              CALL VecCreateGhost(PETSC_COMM_WORLD,NPOIN,PETSC_DECIDE,
+     +                            NGHOST,ISTAK(lghost),DT,IFAIL)
+              CALL ISTKRL(1) 
+C
+#else
+C
+              CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN,DT,IERR)
+#endif
+C
+cold          CALL TURBO(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,RHS,DT,B,
+cold +                   NL_SCHEME)
+caldo
+              CALL NODRES_T(DIM,NOFVERT,NOFVAR,NTURB,NPOIN,NGHOST,
+     +                    NELEM,NFACE,NBFAC,DT,VISCT,RHS,B,TURBO,
+     &                    NL_SCHEME,NSYS_SCHEME)
+caldo
+              CALL UPDATE4(DIM,NTURB,NPOIN,TurbulenceSolver,B,
+     +                     RHS,ViscT,DT,NIT,IFAIL)
+C             call vecnorm(ViscT,norm_2,s,ifail)
+C             write(6,*)'nora visct ',s
+C
+              IF( NSUBIT .EQ. 1 )GOTO 7 
+C
+C     keep iterating until the residual starts decreasing 
+C
+C             IF( IFAIL .EQ. 0 .AND. NIT .GE. NSUBIT )GOTO 7
+              IF( NIT .GE. NSUBIT )GOTO 7
+              GOTO 8 
+C
+    7     CONTINUE
+          ENDIF
+C
+C    release memory allocated for r.h.s vector for turbulence eqn.
+C
+          CALL VecDestroy(RHS,IFAIL)
+C
+C    and re-create it for Navier-Stokes
+C
+#ifdef MPI
+C
+          LGHOST = ISTKGT(NOFVAR*NGHOST,2)
+          CALL GetIdx(NGHOST,NOFVAR,ISTAK(Ltzx),ISTAK(LGHOST))
+          CALL VecCreateGhost(PETSC_COMM_WORLD,NOFVAR*NPOIN,
+     +                        PETSC_DECIDE,NOFVAR*NGHOST,
+     +                        ISTAK(lghost),RHS,IFAIL)
+          CALL ISTKRL(1) 
+C
+#else
+          CALL VecCreateSeq(PETSC_COMM_SELF,NPOIN*NOFVAR,RHS,IERR)
+#endif
+C
+          CALL VecSetBlockSize(RHS,NOFVAR,IFAIL)
+C
+    6 CONTINUE
+C
+C  =========================================================
+C  Check NONlinear convergence
+C  =========================================================
+C
+          IF (LOG10(RESL2(IVCNVG)/RESL20).LE.TOLER) GOTO 12
+C
+C
+C  =========================================================
+C  Backing up (if required)
+C  =========================================================
+C
+          IF ((ITER/IBAK)*IBAK.EQ.ITER) THEN
+c
+c     Computes the mass flux through 
+C              the boundaries .... well, not any more
+c
+              CALL BACKUP(NPOIN+NGHOST,NELEM,DIM,NOFVERT,NOFVAR,NTURB,
+     +                    BAKFILE,VISCTFILE)
+C
+C     Write skin friction data to a file (not any more)
+C
+#ifndef MPI
+      LWORK = ISTKGT(2*NBFAC,2)
+      CALL WSKIN(DSTAK(LSKINF),DSTAK(LHEAT),ISTAK(LWORK),
+     +NWFAC,ISTAK(LBNDFAC),NBODY6,'file016.dat')
+      CALL ISTKRL(1)
+#endif
+C
+C
+C **************************************************************
+C     Checking memory usage
+C **************************************************************
+C
+              CALL PetscTrSpace(SPACE,FRAGS,MAXS,IFAIL)
+              CALL PetscGetResidentSetSize(MAXSIZ,IFAIL)
+              WRITE (NOUT,FMT=9998) ISTKST(3)/2,
+     +          (ISTKST(3)*100.)/ISTKST(4)
+              WRITE (NOUT,FMT=9999) MAXS
+              WRITE (NOUT,FMT=9994) MAXSIZ
+C
+          ENDIF
+C
+a400 1
+C
+a405 2
+   10 CONTINUE
+   12 CONTINUE
+a427 1
+      CALL VecDestroy(RHS,IFAIL)
+a430 1
+          CALL SLESDestroy(FlowSolver,IFAIL)
+a431 1
+              CALL SLESDestroy(TurbulenceSolver,IFAIL)
+d447 1
+a447 1
+      CALL PetscFinalize(IERR)
+a451 2
+C
+      STOP
+@
+
+
+1.44
+log
+@changes to comply to rev 1.16 of iset.F
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.43 2000/06/19 16:07:56 aldo Exp aldo $
+C **  $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.7/src/seq/RCS/main.F,v 1.43 2000/06/19 16:07:56 aldo Exp aldo $
+d322 3
+a324 2
+      CALL ISET(ISTAK(LWORKA),ISTAK(LBNDFAC),NBFAC,
+     &ISTAK(LCELNOD),NOFVERT,ISTAK(LWORKB),DIM,NOFVAR,NPOIN,NGHOST)
+d326 1
+a326 1
+      CALL INIT(DSTAK(LZROE),NOFVAR,NPOIN)
+d481 2
+a482 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,
+     +                            NFACE,NBFAC,DT,RHS,A,EULERHYB)
+d488 2
+a489 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,
+     +                            NFACE,NBFAC,DT,RHS,A,EULERHYB3D)
+@
+
+
+1.43
+log
+@add hybrid scheme and routines to create new index sets
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.42 2000/03/24 15:09:34 aldo Exp aldo $
+C **  $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.5/src/seq/RCS/main.F,v 1.42 2000/03/24 15:09:34 aldo Exp aldo $
+d94 1
+a94 1
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,NIT,NGHOST,
+a313 9
+C **************************************************************
+C     Count Dirichlet/Neumann nodes ..
+C **************************************************************
+C
+      IF (IABS(KAN).EQ.1) THEN
+              CALL SUBABB(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),NOFVERT,
+     +                    NELEM,ISTAK(LNODCOD),NPOIN+NGHOST)
+
+      ENDIF
+d316 2
+a317 10
+C     Count supersonic nodes ..
+C **************************************************************
+C
+      IF (IABS(KAN).EQ.4) THEN
+          CALL SUBABB(ISTAK(LBNDFAC),NBFAC,ISTAK(LCELNOD),NOFVERT,NELEM,
+     +                ISTAK(LNODCOD),NPOIN)
+      ENDIF
+C
+C **************************************************************
+C     Counts VISCOUS WALL boundary nodes
+d320 6
+a325 8
+C     NOTE that this routine must be called AFTER
+C     the flow variables have been initialized,
+C     so that the velocity components can be set to 0.0
+C     on viscous walls
+C
+      IF (KAN.EQ.4 .OR. KAN.EQ.2) CALL SUBABC(ISTAK(LBNDFAC),NBFAC,
+     +    ISTAK(LCELNOD),NOFVERT,ISTAK(LNODCOD),DSTAK(LZROE),NOFVAR,
+     +    NPOIN)
+d331 2
+a332 1
+      IF(NTURB.NE.0)CALL TURBINI(NBFAC,NBODY6,NOFVERT,NELEM,
+d336 9
+a358 32
+
+C
+C **************************************************************
+C     Create the index sets that store informations on
+C     the boundary conditions of the boundary nodes
+C **************************************************************
+C
+      LWORK = ISTKGT(NOFVAR*NPOIN,2)
+      CALL VecGetOwnerShipRange(RHS,ROWBGN,ROWEND,IFAIL)
+      CALL ISET(ISTAK(LWORK),ISTAK(LNODCOD),DIM,NOFVAR,NPOIN,ROWBGN)
+      CALL ISTKRL(1)  
+C
+      IF (ABS(KAN).EQ.2) CALL SUBPTO(ISTAK(LBNDFAC),NBFAC,
+     +    ISTAK(LCELNOD),NOFVERT,ISTAK(LNODCOD),DSTAK(LZROE),NOFVAR,
+     +    NPOIN)
+C
+      LWORK = ISTKGT(NOFVAR*NPOIN,2)
+      CALL VecGetOwnerShipRange(RHS,ROWBGN,ROWEND,IFAIL)
+      CALL ISET2(ISTAK(LWORK),ISTAK(LNODCOD),DIM,NOFVAR,NPOIN,ROWBGN)
+      CALL ISTKRL(1)  
+C
+      IF (TURBULENT) THEN
+          CALL TURBOBC(ISTAK(LBNDFAC),NBFAC,
+     +    ISTAK(LCELNOD),NOFVERT,ISTAK(LNODCOD),DSTAK(LTURB),NOFVAR,
+     +    NPOIN)
+C
+      LWORK = ISTKGT(NOFVAR*NPOIN,2)
+      CALL VecGetOwnerShipRange(RHS,ROWBGN,ROWEND,IFAIL)
+      CALL ISET3(ISTAK(LWORK),ISTAK(LNODCOD),DIM,NTURB,NPOIN,ROWBGN)
+      CALL ISTKRL(1)  
+      ENDIF
+C
+d705 3
+a707 1
+      CALL ISDestroy(SupersonicNodes,IFAIL)
+d709 1
+@
+
+
+1.42
+log
+@again writing skin friction coefficient to file file016.dat
+(N.B. only the single-processor version is working)
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.41 1999/12/27 09:19:17 aldo Exp aldo $
+C **  $Header: /usr/people/aldo/CFD_codes/EulFS.0.10.1/src/seq/RCS/main.F,v 1.41 1999/12/27 09:19:17 aldo Exp aldo $
+d40 2
+a59 6
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/COMISET/SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+C
+d75 1
+d105 1
+a105 1
+     +         EULERII,EULERIIBIS,EULERVII,
+d109 1
+a109 1
+     +         SUBABB,SUBABC,UPDATE2,UPDATE3
+d380 20
+d448 1
+d484 2
+a485 2
+                  CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,
+     +                        NFACE,NBFAC,DT,RHS,A,SCALAR)
+d507 2
+a508 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,
+     +                            NFACE,NBFAC,DT,RHS,A,EULERII)
+d514 14
+d529 1
+a529 1
+     +                            NFACE,NBFAC,DT,RHS,A,EULERIIBIS)
+d534 2
+a535 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,
+     +                            NFACE,NBFAC,DT,RHS,A,EULERVII)
+d540 2
+a541 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,
+     +                            NFACE,NBFAC,DT,RHS,A,EULERVIII)
+d546 2
+a547 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NGHOST,NELEM,
+     +                            NFACE,NBFAC,DT,RHS,A,EULERIX)
+d576 2
+d616 7
+a622 2
+              CALL TURBO(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,RHS,DT,B,
+     +                   NL_SCHEME)
+d625 2
+d682 8
+@
+
+
+1.41
+log
+@some cleanup
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.40 1999/12/06 12:12:21 aldo Exp $
+C **  $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/main.F,v 1.40 1999/12/06 12:12:21 aldo Exp $
+d665 6
+@
+
+
+1.40
+log
+@working version using FD jacobian
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.39 1999/11/05 20:57:58 aldo Exp aldo $
+C **  $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/main.F,v 1.39 1999/11/05 20:57:58 aldo Exp aldo $
+d23 2
+a24 2
+C **      Tel: ++39.0971.202.659                                       **
+C **      Fax: (+39).0971.56.537                                       **
+a37 2
+#include "include/finclude/pc.h"
+#include "include/finclude/ksp.h"
+a54 1
+      INCLUDE 'rsize.com'
+d75 1
+a75 2
+      PLogDouble SPACE,FRAGS,MAXS,MAXSIZ,tbeg,tend,totime
+      DOUBLE PRECISION starttime, endtime
+a85 1
+C     NBELEM  number of boundary elements in the mesh
+d98 1
+a98 1
+     +        NBELEM,NBFAC,NBODY4,NBODY6,NBPOIN,NELEM,NFACE,NHOLE,
+d125 1
+a125 1
+      COMMON/TRASH/NGHOST
+a131 7
+#ifdef PARCH_linux
+#else
+#ifdef PARCH_alpha
+#else
+      IF(MY_PE.EQ.0)starttime = MPI_Wtime() 
+#endif
+#endif
+a214 7
+CCCCC
+CCCCC
+CCCCC
+c     LTZX = ISTKGT(NELEM,2)
+c     CALL SUBWII(ISTAK(LTZX),ISTAK(LBNDFAC),NELEM,NBFAC)
+CCCCC
+C
+d240 1
+a240 1
+      CALL GetIdx(NGHOST,NOFVAR,ISTAK(Ltzx),ISTAK(LGHOST))
+d374 2
+a375 1
+C     Create the index sets ...
+d412 1
+d414 1
+d422 1
+a422 1
+C     Start iterating in pseudo-time
+d425 2
+d442 1
+a442 1
+          CALL GetIdx(NGHOST,1,ISTAK(Ltzx),ISTAK(LGHOST))
+a464 1
+C
+d466 2
+a467 2
+                  CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+     +                        NBFAC,DT,RHS,A,SCALAR)
+d489 2
+a490 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+     +                            NBFAC,DT,RHS,A,EULERII)
+d496 2
+a497 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+     +                            NBFAC,DT,RHS,A,EULERIIBIS)
+d502 2
+a503 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+     +                            NBFAC,DT,RHS,A,EULERVII)
+d508 2
+a509 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+     +                            NBFAC,DT,RHS,A,EULERVIII)
+d514 2
+a515 2
+                      CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+     +                            NBFAC,DT,RHS,A,EULERIX)
+d529 2
+a530 2
+          locy = istkgt(npoin*nofvar,IREAL)
+          locv = istkgt(npoin*nofvar,IREAL)
+a619 1
+      IF (LOG10(RESL2(IVCNVG)/RESL20).LE.TOLER) GOTO 12
+d621 11
+a631 5
+c
+c  =========================================================
+c  Backing up (if required)
+c  =========================================================
+c
+d640 1
+a640 1
+C     Write skin friction data to a file
+d642 3
+a644 15
+              IF( KAN .EQ. 2 .OR. KAN .EQ. 4 )THEN
+                  LWORK = ISTKGT(2*NWFAC,2)
+                  CALL WSKIN(DSTAK(LSKINF),DSTAK(LHEAT),ISTAK(LWORK),
+     +                       NWFAC,ISTAK(LBNDFAC),NBODY6,'file016.dat') 
+                  CALL ISTKRL(1)
+                  IF( TURBULENT )THEN
+                     LTINDX = ISTKGT(NWFAC,IREAL)
+                     CALL WTINDX(DSTAK(LSKINF),DSTAK(LTINDX),
+     +                    DSTAK(LVOL),NWFAC,ISTAK(LBNDFAC),NBODY6,
+     +                    DIM,NOFVERT,NOFVAR,(KAN.EQ.4),
+     +                    'file017.dat')
+                     CALL ISTKRL(1)
+                  ENDIF
+                  WRITE(NOUT,FMT=9996)
+              ENDIF
+a668 10
+C     Write skin friction data to a file
+C
+      IF( KAN .EQ. 2 .OR. KAN .EQ. 4 )THEN
+          LWORK = ISTKGT(2*NWFAC,2)
+          CALL WSKIN(DSTAK(LSKINF),DSTAK(LHEAT),ISTAK(LWORK),NWFAC,
+     +               ISTAK(LBNDFAC),NBODY6,'file016.dat') 
+          CALL ISTKRL(1)
+          WRITE(NOUT,FMT=9996)
+      ENDIF
+C
+a672 1
+  999 continue
+a674 1
+C     call petsctrdump(ierr) 
+d676 1
+d678 1
+a701 5
+#ifdef PARCH_linux
+#else
+#ifdef PARCH_alpha
+#else
+           endtime   = MPI_Wtime() 
+a702 3
+           WRITE(IWUNIT,FMT=*)'That took ',endtime-starttime,' seconds'
+#endif
+#endif
+@
+
+
+1.39
+log
+@replaced integer with IS
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.38 1999/09/29 09:50:33 aldo Exp aldo $
+C **  $Header: /ehome10/tracs/aldo/EulFS.0.9.7/src/seq/RCS/main.F,v 1.38 1999/09/29 09:50:33 aldo Exp aldo $
+d481 2
+a482 28
+               IF (ISCHEME.EQ.1)THEN
+                  CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+     +                        RHS,DT,A,N_SCHEME)
+               ELSEIF(ISCHEME.EQ.2)THEN
+                  CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+     +                        RHS,DT,A,PSI_SCHEME)
+               ELSEIF(ISCHEME.EQ.3)THEN
+                  CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+     +                        RHS,DT,A,LDA_SCHEME)
+               ELSEIF(ISCHEME.EQ.4)THEN
+                  CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+     +                        RHS,DT,A,NL_SCHEME)
+C              ELSEIF(ISCHEME.EQ.5)THEN
+C                 CALL SCALAR(VA,FV_scheme)
+C              ELSEIF(ISCHEME.EQ.6)THEN
+C                 CALL SCALAR(VA,FVL1_scheme)
+               ELSEIF(ISCHEME.EQ.7)THEN
+                  CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+     +                        RHS,DT,A,SUPG_SCHEME)
+               ELSEIF(ISCHEME.EQ.9)THEN
+                  CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+     +                        RHS,DT,A,FCT_SCHEME)
+C              ELSEIF(ISCHEME.EQ.9)THEN
+C                 CALL SCALAR(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,
+C    +                        SUPGAV_SCHEME)
+               ELSE
+                  STOP 'Invalid scheme for SCALAR' 
+               ENDIF
+d494 1
+a494 1
+C
+d708 1
+a708 1
+      call petsctrdump(ierr) 
+@
+
+
+1.38
+log
+@writing some more timings and stuff
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.37 1999/09/03 11:06:42 aldo Exp aldo $
+C **  $Header: /c9/tracs/aldo/EulFS.0.9.7/src/seq/RCS/main.F,v 1.37 1999/09/03 11:06:42 aldo Exp aldo $
+d40 1
+a52 1
+      INCLUDE 'iset.com'
+d61 7
+d137 4
+d142 2
+d734 1
+d760 4
+d767 2
+@
+
+
+1.37
+log
+@now calls ISTKGT with IREAL as second argument
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.36 1999/09/02 08:35:54 aldo Exp aldo $
+C **  $Header: /c9/tracs/aldo/EulFS.0.9.7/src/seq/RCS/main.F,v 1.36 1999/09/02 08:35:54 aldo Exp aldo $
+d71 2
+a72 1
+      PLogDouble SPACE,FRAGS,MAXS
+d130 4
+d159 1
+a159 1
+      NOUT = 20 + MY_PE
+d170 1
+d172 1
+d177 2
+d212 2
+d416 8
+d427 1
+d430 2
+d648 1
+a648 1
+caldo6    IF (LOG10(RESL2(IVCNVG)).LE.TOLER) GOTO 12
+d682 1
+d686 1
+d690 1
+d692 2
+d714 1
+a714 1
+C
+d716 1
+d745 6
+d760 3
+d765 1
+a765 1
+ 9998 FORMAT (5X,'MAXIMUM MEMORY USED IN DSTAK',I8,
+d767 1
+a767 1
+ 9999 FORMAT (5X,'MAXIMUM MEMORY EVER ALLOCATED BY PETSc ',F12.0,
+@
+
+
+1.36
+log
+@last argument of ISTKGT has been changed so that it
+will work on t3e
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.35 1999/08/31 15:19:13 aldo Exp aldo $
+C **  $Header: /c9/tracs/aldo/EulFS.0.9.7/src/seq/RCS/main.F,v 1.35 1999/08/31 15:19:13 aldo Exp aldo $
+d535 2
+a536 2
+          locy = istkgt(npoin*nofvar,4)
+          locv = istkgt(npoin*nofvar,4)
+d649 1
+a649 1
+                     LTINDX = ISTKGT(NWFAC,ISIZE)
+@
+
+
+1.35
+log
+@minor cleanup
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.34 1999/03/19 11:57:32 aldo Exp aldo $
+C **  $Header: /home/aldo/EulFS.0.9.5/src/seq/RCS/main.F,v 1.34 1999/03/19 11:57:32 aldo Exp aldo $
+d57 1
+d649 1
+a649 1
+                     LTINDX = ISTKGT(NWFAC,4)
+@
+
+
+1.34
+log
+@duplicated variable removed
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.31 1998/12/23 11:52:34 aldo Exp aldo $
+C **  $Header: main.F,v 1.33 99/02/18 17:37:43 aldo Exp $
+d23 2
+a24 2
+C **      Tel: ++39.971.474.659                                       **
+C **      Fax: (+39).971.56.537                                       **
+d70 1
+a84 2
+C     NBODY4  number of inviscid wall bodies in the mesh
+C     NBODY6  number of viscous wall bodies in the mesh
+d99 1
+a99 1
+     +          EXT*3
+a122 5
+#ifdef PARCH_hpux
+      REAL*4 DTIME
+      REAL*4 TARRAY(2),T1
+#endif
+C     ..
+d164 6
+a403 3
+#ifdef PARCH_hpux
+      t1 = dtime(tarray)
+#endif
+d658 1
+d661 1
+a669 3
+#ifdef PARCH_hpux
+      t1 = dtime(tarray)
+#endif
+a715 4
+#ifdef PARCH_hpux
+      write(IWUNIT,208)NITER,TARRAY(1)
+#endif
+C
+d727 4
+a730 1
+ 9998 FORMAT (5X,'MAXIMUM MEMORY USED ',I8,' REAL*8 WORDS (',F5.2,' %)')
+@
+
+
+1.33
+log
+@Add option -test_lhs
+@
+text
+@d14 1
+a14 1
+C **  $Header: main.F,v 1.32 99/01/18 18:53:08 aldo Exp $
+d94 1
+a94 1
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,iflag,NIT,NGHOST,
+@
+
+
+1.32
+log
+@now handles H-E splittin for incompressible flows
+@
+text
+@d14 1
+a14 1
+C **  $Header: /home2/aldo/EulFS.0.9.5/src/seq/RCS/main.F,v 1.31 1998/12/23 11:52:34 aldo Exp aldo $
+d97 1
+a97 1
+     +        rowbgn,rowend,NBINT,LGHOST
+d535 8
+a542 5
+c     locy = istkgt(npoin*nofvar,4)
+c     locv = istkgt(npoin*nofvar,4)
+c     call testlhs(A,ZROE,RHS,DSTAK(LOCY),DSTAK(LOCV),
+c    +             ISTAK(LNODCOD),NPOIN,NOFVAR)
+c     stop
+@
+
+
+1.31
+log
+@calling sequence for testlhs has been changed
+@
+text
+@d13 2
+a14 2
+C **  $Id: main.F,v 1.29 1998/12/02 09:21:02 aldo Exp simula $
+C **  $Header: main.F,v 1.30 98/12/10 18:00:03 simula Exp $
+d106 3
+a108 3
+     +         EULERVIII,EXGEO,ISTKIN,N_SCHEME,LDA_scheme,
+     +NL_SCHEME,PSI_SCHEME,SUPG_SCHEME,FCT_scheme,
+     +PARM_TO_CONS,READAT,READVAL,SCALAR,SCLSCH,SOLZNE,STIFMAT,
+d519 6
+d534 1
+a534 1
+c
+@
+
+
+1.30
+log
+@now destroying unneeded objects
+@
+text
+@d14 1
+a14 1
+C **  $Header: /home/simula/aldo/EulFS.0.9.5/src/seq/RCS/main.F,v 1.29 1998/12/02 09:21:02 aldo Exp simula $
+d528 6
+a533 5
+C
+C     locy = istkgt(npoin*nofvar,4)
+C     locv = istkgt(npoin*nofvar,4)
+C     call testlhs(A,DSTAK(LZROE),RHS,DSTAK(LOCY),DSTAK(LOCV),
+C    +             ISTAK(LNODCOD),NPOIN,NOFVAR)
+@
+
+
+1.29
+log
+@now calling MatAllocaXXX in place of STIFMAT
+@
+text
+@d13 2
+a14 2
+C **  $Id$
+C **  $Header: main.F,v 1.28 98/11/25 17:03:01 aldo Exp $
+d52 2
+d699 9
+@
+
+
+1.28
+log
+@redefined I/O devices (especially for the parallel case)
+minor changes for the periodic version
+@
+text
+@d14 1
+a14 1
+C **  $Header: main.F,v 1.27 98/11/17 18:48:12 aldo Exp $
+d379 5
+a383 1
+          CALL STIFMAT(A,B,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,NGHOST)
+@
+
+
+1.27
+log
+@Turbulent viscosity is now stored as a PETSc vector
+@
+text
+@d14 1
+a14 1
+C **  $Header$
+d97 2
+a98 1
+     +          STARFILE*80,VISCTFILE*80,WDISTFILE*80
+d111 2
+a112 2
+      INTEGER ISTKGT,ISTKST
+      EXTERNAL ISTKGT,ISTKST
+d152 17
+d305 2
+a306 3
+          npoin=npoin+npnod
+          CALL SOLZNE(STARFILE,DSTAK(LZROE),NOFVAR,NPOIN+NGHOST,'r')
+          npoin=npoin-npnod
+d346 1
+a346 1
+     +                           ISTAK(LNODCOD),DIM,NPOIN,
+d642 1
+a642 1
+                  WRITE(6,FMT=9996)
+d671 1
+a671 1
+          WRITE(6,FMT=9996)
+d678 2
+d696 1
+a696 1
+      write(6,208)NITER,TARRAY(1)
+@
+
+
+1.26
+log
+@add two new filenames: one for the nearest wall distance,
+the other one for the turbulent viscosity
+@
+text
+@d6 1
+a6 1
+C **      Un unstructured triangular/tetrahedral code for             **
+d13 2
+a14 1
+C **  $Id$                                                            **
+d61 1
+a61 1
+      Vec rhs,dt,ZRoe
+d204 2
+a205 1
+C                solution (ZROE) vectors
+d234 18
+d254 2
+d258 3
+a260 1
+     +                           DSTAK(LZROE),ZROE,IERR)
+d560 1
+a560 1
+     +                     RHS,DT,NIT,IFAIL)
+@
+
+
+1.25
+log
+@Add the Automatic Identification flag
+@
+text
+@d96 1
+a96 1
+     +          STARFILE*80
+d153 2
+a154 1
+      CALL READVAL(MESHFILE,NGHBFILE,STARFILE,BAKFILE,DATADIR,NTURB)
+d306 2
+a307 1
+     +                           DSTAK(LTURB),(ISTART.NE.0))
+d584 1
+a584 1
+     +                    BAKFILE)
+d621 1
+a621 1
+     +                    BAKFILE)
+@
+
+
+1.24
+log
+@add a preprocessor directive for hpux
+@
+text
+@d13 2
+@
+
+
+1.23
+log
+@dealing with periodicity
+@
+text
+@d118 4
+a121 1
+C     .. Data statements ..
+d353 3
+d610 3
+d647 4
+@
+
+
+1.22
+log
+@now handles periodic nodes
+@
+text
+@d48 1
+d257 1
+d259 1
+@
+
+
+1.21
+log
+@add an option to use the FCT scheme
+@
+text
+@d180 13
+a192 1
+C     IF (PERIODIC_MESH) CALL PERIODIC(NPOIN,NELEM,NOFVAR)
+@
+
+
+1.20
+log
+@add the HE splitting
+@
+text
+@d100 1
+a100 1
+     +NL_SCHEME,PSI_SCHEME,SUPG_SCHEME,
+d395 3
+@
+
+
+1.19
+log
+@parallel version, using pre-processor directives
+@
+text
+@d98 1
+a98 1
+     +         EULERII,EULERVII,
+d419 2
+d424 3
+a426 1
+     
+d428 6
+d437 2
+@
+
+
+1.18
+log
+@add a variable NBINT equal to the number of inter-processor
+boundary edges/faces
+processor ID(MY_PE) moved to a common block
+@
+text
+@d91 1
+a91 1
+     +        rowbgn,rowend,NBINT
+d98 1
+a98 1
+     +         EULERVII,
+d115 1
+d286 15
+d420 3
+a422 4
+                      STOP 'DECOMP =2 NOT IMPLEMENTED YET'
+CXXX                  CALL SCLSCH(DIM,NOFVERT,NOFVAR,NPOIN,NELEM,NFACE,
+CXXX +                            NBFAC,EULERII)
+CXXX
+d543 2
+a544 1
+              CALL BACKUP(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,NTURB,BAKFILE)
+d577 2
+a578 1
+      CALL BACKUP(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,NTURB,BAKFILE)
+@
+
+
+1.17
+log
+@variable ROWBGN is passed to subroutine ISET
+@
+text
+@d51 2
+d88 1
+a88 1
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,iflag,NIT,MY_PE,NGHOST,
+d91 1
+a91 1
+     +        rowbgn,rowend
+d163 1
+a163 1
+      CALL READAT(NELEM,NPOIN,NGHOST,NBPOIN,NFACE,NBFAC,NHOLE,
+d170 1
+a170 1
+      CALL EXGEO(NELEM,NPOIN+nghost,NBPOIN,NFACE,NBFAC,NWFAC,
+@
+
+
+1.16
+log
+@some pre-processor directives for parallel processing
+@
+text
+@d88 2
+a89 1
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,NWFAC,LTINDX,N,IERR,locy,locv
+d284 8
+@
+
+
+1.15
+log
+@preliminary parallel version :
+defined NGHOST some calling sequences changed: READAT()
+@
+text
+@d3 25
+d55 1
+a55 1
+      Vec rhs,dt
+d120 3
+a122 1
+C     Set the length of the stack ..
+d125 5
+a129 1
+
+d132 10
+a141 1
+      CALL MPI_Comm_rank(MPI_COMM_WORLD,MY_PE,IERR)
+d145 15
+a159 7
+      OPEN (7,FILE='convhst.l2',FORM='formatted',STATUS='UNKNOWN')
+      OPEN (8,FILE='convhst.max',FORM='formatted',STATUS='UNKNOWN')
+      IF(TURBULENT)
+     +OPEN (12,FILE='convhst.turb',FORM='formatted',STATUS='UNKNOWN')
+c
+c     Reading datafiles ..
+c
+d163 1
+d165 1
+d167 1
+a167 1
+      CALL EXGEO(NELEM,NPOIN,NBPOIN,NFACE,NBFAC,NWFAC,
+d169 1
+d178 12
+a189 1
+C     form right hand side PETSc vector
+d191 32
+a222 1
+      CALL VecCreateSeq(PETSC_COMM_WORLD,NOFVAR*NPOIN,RHS,IERR)
+d234 1
+a234 1
+              CALL DINIT(NPOIN,U_INFTY(I),DSTAK(J),NOFVAR)
+d240 1
+a240 1
+          CALL SOLZNE(STARFILE,DSTAK(LZROE),NOFVAR,NPOIN,'r')
+d243 1
+a243 1
+C
+d245 1
+d249 1
+a249 1
+     +                    NELEM,ISTAK(LNODCOD),NPOIN)
+d253 1
+d255 1
+d262 1
+d264 1
+d275 1
+d277 1
+a282 1
+      IF (TIMEIMPL ) THEN
+d284 1
+d286 1
+d288 2
+a289 1
+          CALL STIFMAT(A,B,DIM,NOFVERT,NOFVAR,NELEM,NPOIN,-NPOIN)
+a291 3
+
+C
+C  =========================================================
+d293 3
+a295 1
+C     Create linear solver context
+d298 1
+a298 1
+      CALL SLESCreate(MPI_COMM_WORLD,FlowSolver,IERR)
+d303 1
+a303 1
+          CALL SLESCreate(MPI_COMM_WORLD,TurbulenceSolver,IERR)
+d308 3
+a310 1
+C
+d314 22
+d337 1
+a337 1
+C     create a vector to store the local timestep
+d339 1
+a339 1
+          CALL VecCreateSeq(PETSC_COMM_WORLD,NPOIN,DT,IERR)
+d341 3
+d375 1
+d377 1
+d379 1
+a379 1
+               CALL UPDATE2(DIM,NOFVAR,NPOIN,FlowSolver,A,RHS,DT)
+d384 4
+d414 1
+a414 1
+     +                                     DIM,NOFVAR,NPOIN)
+d421 2
+a422 1
+                  CALL UPDATE3(DIM,NOFVAR,NPOIN,FlowSolver,A,RHS,DT)
+d425 1
+a425 1
+     +                                     DIM,NOFVAR,NPOIN)
+d434 11
+a444 1
+              CALL VecCreateSeq(PETSC_COMM_WORLD,NPOIN,RHS,IERR)
+d454 12
+a465 1
+              CALL VecCreateSeq(PETSC_COMM_WORLD,NPOIN,DT,IERR)
+a466 2
+C             CALL TURBO2(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,RHS,DT,B,
+C    +                   NL_SCHEME)
+d482 3
+d486 17
+a502 1
+          CALL VecCreateSeq(PETSC_COMM_WORLD,NPOIN*NOFVAR,RHS,IERR)
+d570 1
+@
+
+
+1.14
+log
+@Periodic boundary conditions disabled
+@
+text
+@d61 1
+a61 1
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,iflag,NIT,RANK,
+d64 2
+a65 1
+      CHARACTER BAKFILE*80,MESHFILE*80,NGHBFILE*80,STARFILE*80
+d101 1
+a101 1
+      CALL MPI_Comm_rank(MPI_COMM_WORLD,rank,IERR)
+d103 1
+a103 1
+      CALL READVAL(MESHFILE,NGHBFILE,STARFILE,BAKFILE,NTURB)
+d112 2
+a113 2
+      CALL READAT(NELEM,NPOIN,NBPOIN,NFACE,NBFAC,NHOLE,NOFVERT,DIM,
+     +            NOFVAR,NTURB,MESHFILE,NGHBFILE)
+d187 1
+a187 1
+          CALL STIFMAT(A,B,DIM,NOFVERT,NOFVAR,NELEM,NPOIN)
+d322 2
+a323 1
+              IF( IFAIL .EQ. 0 .AND. NIT .GE. NSUBIT )GOTO 7
+@
+
+
+1.13
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d124 1
+a124 1
+      IF (PERIODIC_MESH) CALL PERIODIC(NPOIN,NELEM,NOFVAR)
+@
+
+
+1.12
+log
+@minor changes, some clean-up
+@
+text
+@d6 6
+a11 6
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/mat.h"
+#include "include/FINCLUDE/sles.h"
+#include "include/FINCLUDE/pc.h"
+#include "include/FINCLUDE/ksp.h"
+d61 1
+a61 1
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,iflag,RANK,
+d300 4
+d315 10
+a324 1
+     +                     RHS,DT)
+a327 2
+
+C
+@
+
+
+1.11
+log
+@modified call to subr. PERIODIC
+@
+text
+@d118 6
+a123 1
+C
+d132 1
+a132 1
+c               Set istart = 1 to restart
+d150 1
+a150 3
+C  =========================================================
+C
+C     .. Count Dirichlet/Neumann nodes ..
+a214 1
+C ------------------------------ + ------------------------------
+a217 1
+C ------------------------------ + ------------------------------
+d246 1
+a246 2
+C
+C     .. Updates the solution
+d255 1
+a255 12
+C        .. Copy ZROE --> ZROE0
+C
+CXXX          CALL DCOPY(NOFVAR*NPOIN,DSTAK(LZROE),1,DSTAK(LZROERK),1)
+C
+C        .. Transform ZROE0 into conserved variables ..
+C
+CXXX          IF (IABS(KAN).EQ.4) CALL PARM_TO_CONS(DSTAK(LZROERK),DIM,
+CXXX +                                 NOFVAR,NPOIN)
+C
+C
+C
+C        .. Compute NODAL residuals ..
+d276 1
+a276 1
+C        .. Update the solution ..
+a316 1
+C ------------------------------ + ------------------------------
+d328 2
+a329 2
+c     .. Computes the mass flux through the boundaries ..
+C        well, not any more
+@
+
+
+1.10
+log
+@support for periodic meshes
+@
+text
+@d73 1
+a73 1
+     +         SUBABB,SUBABC,UPDATE1,UPDATE2,UPDATE3
+d119 1
+a119 1
+      IF (PERIODIC_MESH) CALL PERIODIC(NOFVAR)
+@
+
+
+1.9
+log
+@restored explicit timestepping for scalar problems
+@
+text
+@a105 3
+C     OPEN (9,FILE='coeff.dat',FORM='formatted',STATUS='UNKNOWN')
+C     OPEN (10,FILE='timing1.dat',FORM='formatted',STATUS='UNKNOWN')
+C     OPEN (11,FILE='timing2.dat',FORM='formatted',STATUS='UNKNOWN')
+d109 1
+a109 1
+c     .. Reading datafiles ..
+d119 2
+d248 1
+a248 8
+C                 IF (TIMEIMPL) THEN
+                      CALL UPDATE2(DIM,NOFVAR,NPOIN,FlowSolver,A,RHS,DT)
+C                 ELSE
+C                     STOP 'Explicit time-stepping NOT implemented'
+C                     CALL UPDATE1(KSTAGE,DSTAK(LCORG),DSTAK(LRESID),
+C    +                             DSTAK(LDTLIN),DSTAK(LZROE),
+C    +                             DSTAK(LZROERK),DIM,NOFVAR,NPOIN)
+C                 ENDIF
+d294 2
+a295 2
+C     call test(A,DSTAK(LZROE),RHS,DSTAK(LOCY),DSTAK(LOCV),
+C    +ISTAK(LNODCOD),NPOIN,NOFVAR)
+a297 1
+    
+@
+
+
+1.8
+log
+@timing files are not open any more
+@
+text
+@d193 1
+d203 1
+d248 2
+a249 2
+
+                  IF (TIMEIMPL) THEN
+d251 2
+a252 2
+                  ELSE
+                      STOP 'Explicit time-stepping NOT implemented'
+d256 1
+a256 1
+                  ENDIF
+d405 7
+a411 5
+      CALL SLESDestroy(FlowSolver,IFAIL)
+      CALL MatDestroy(A,IFAIL)
+      IF(TURBULENT)THEN
+          CALL SLESDestroy(TurbulenceSolver,IFAIL)
+          CALL MatDestroy(B,IFAIL)
+@
+
+
+1.7
+log
+@Reverted to the previous approach for the turbulence modeling
+@
+text
+@a85 1
+      COMMON /trashcom/ nbfac
+d107 2
+a108 2
+      OPEN (10,FILE='timing1.dat',FORM='formatted',STATUS='UNKNOWN')
+      OPEN (11,FILE='timing2.dat',FORM='formatted',STATUS='UNKNOWN')
+@
+
+
+1.6
+log
+@writing heat flux to the file
+@
+text
+@d325 3
+a327 1
+              CALL TURBO2(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,RHS,DT,B,
+a328 2
+C             CALL TURBO(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,RHS,DT,B,
+C    +                   NL_SCHEME)
+@
+
+
+1.5
+log
+@PETSc objects destryed before finilizing
+@
+text
+@d61 1
+a61 1
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,iflag,len,NVISCN,RANK,
+d68 1
+a68 1
+      EXTERNAL BACKUP,CONS_TO_PARM,DCOPY,DINIT,EULERII,
+d85 2
+d251 4
+a254 3
+                      CALL UPDATE1(KSTAGE,DSTAK(LCORG),DSTAK(LRESID),
+     +                             DSTAK(LDTLIN),DSTAK(LZROE),
+     +                             DSTAK(LZROERK),DIM,NOFVAR,NPOIN)
+d325 1
+a325 1
+              CALL TURBO(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,RHS,DT,B,
+d327 2
+d357 2
+a358 2
+                  CALL WSKIN(DSTAK(LSKINF),ISTAK(LWORK),NWFAC,
+     +                       ISTAK(LBNDFAC),NBODY6,'file016.dat') 
+d390 1
+a390 1
+          CALL WSKIN(DSTAK(LSKINF),ISTAK(LWORK),NWFAC,
+@
+
+
+1.4
+log
+@Opening of tubulent convergence history file
+@
+text
+@a22 1
+C     INCLUDE 'timing.com'
+d61 1
+a61 1
+      INTEGER DIM,I,IFAIL,J,KSTAGE,LWORK,iflag,len,NVISCN,
+d63 1
+a63 1
+     +        NOFVAR,NTURB,NOFVERT,NPOIN,NWFAC,LTINDX,N,IERR,FLG,RANK
+d121 1
+a121 1
+C     form right hand side and time step
+a173 2
+C     note that the wall distance is computed for the "natural" node
+C     numbering 
+a257 1
+C         goto 13
+a268 1
+CXXX          DO 4 KSTAGE = 1,NSTAGES
+d281 1
+a281 1
+CXXX
+a284 5
+CXXX
+CXXX              ELSE
+CXXX                  STOP 'INVALID DECOMP'
+CXXX
+                  ENDIF
+d286 2
+d289 1
+d296 6
+a301 2
+CXXX              IF (TIMEIMPL) THEN
+                      CALL UPDATE3(DIM,NOFVAR,NPOIN,FlowSolver,A,RHS,DT)
+a302 5
+CXXX              ELSE
+CXXX                  CALL UPDATE1(KSTAGE,DSTAK(LCORG),DSTAK(LRESID),
+CXXX +                             DSTAK(LDTLIN),DSTAK(LZROE),
+CXXX +                             DSTAK(LZROERK),DIM,NOFVAR,NPOIN)
+CXXX              ENDIF
+d311 1
+a311 1
+C    Release the RHS vector and recreate it with smaller dimension
+d317 2
+a321 5
+C             TIMEIMPL = .FALSE.
+C
+CXXX          IF( .NOT. TIMEIMPL )CALL DCOPY(NPOIN,DSTAK(LTURB),1,
+CXXX +                                       DSTAK(LZROERK),1)              
+C
+d324 2
+a325 12
+C             CALL TURBO(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,LDA_SCHEME)
+CXXX          IF (TIMEIMPL) THEN
+                  CALL UPDATE4(DIM,NTURB,NPOIN,TurbulenceSolver,B,
+     +                         RHS,DT)
+CXXX
+CXXX          ELSE
+CXXX          i = 1
+CXXX              CALL UPDATE1(i,DSTAK(LCORG),DSTAK(LRESID),
+CXXX +                         DSTAK(LDTLIN),DSTAK(LTURB),
+CXXX +                         DSTAK(LZROERK),DIM,i,NPOIN)
+CXXX          ENDIF
+C             TIMEIMPL = .TRUE.
+d395 10
+@
+
+
+1.3
+log
+@Now handles turbulent flows with PETSc
+@
+text
+@d109 1
+a109 1
+      IF(NTURB.NE.0)
+@
+
+
+1.2
+log
+@call to SUBABC changed
+@
+text
+@d34 1
+a34 1
+      Mat A 
+d37 1
+a37 1
+      SLES sles 
+d90 4
+a96 4
+C
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C                 Beginning of program
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+d98 1
+a98 3
+      call PetscInitialize(PETSC_NULL_CHARACTER,ierr)
+C
+      call MPI_Comm_rank(MPI_COMM_WORLD,rank,ierr)
+d100 1
+d117 1
+a117 1
+C     .. Computing geometrical quantities ..
+d124 1
+a124 6
+      CALL VecCreate(PETSC_COMM_WORLD,NOFVAR*NPOIN,RHS,ierr)
+C
+C     we might create dt at each iteration and then destroy it before
+C        solving the system
+C
+      CALL VecCreate(PETSC_COMM_WORLD,NPOIN,dt,ierr)
+d178 3
+a180 3
+CXXX  IF(NTURB.NE.0)CALL TURBINI(NBFAC,NBODY6,NOFVERT,NELEM,
+CXXX +                           ISTAK(LNODCOD),
+CXXX +                           DIM,NPOIN,DSTAK(LTURB),(ISTART.NE.0))
+d186 1
+a186 1
+          CALL STIFMAT(A,DIM,NOFVERT,NOFVAR,NELEM,NPOIN)
+a187 15
+C     Reorder the nearest wall distance array according to the
+C     "new" ordering (if any) 
+C
+CXXX      IF(NTURB.NE.0.AND.REORDERING)THEN
+C
+CXXX          CALL M01ZAF(ISTAK(LPERM),1,NPOIN,IFAIL)
+CXXX          CALL M01EAF(DSTAK(LTD),1,NPOIN,ISTAK(LPERM),IFAIL)
+CXXX          CALL M01EAF(DSTAK(LTTD),1,NPOIN,ISTAK(LPERM),IFAIL)
+CXXX          CALL M01EAF(DSTAK(LTURB),1,NPOIN,ISTAK(LPERM),IFAIL)
+CXXX          CALL M01ZAF(ISTAK(LPERM),1,NPOIN,IFAIL)
+CXXX          IF(IFAIL .GT. 0)THEN
+CXXX             WRITE(NOUT,*)'M01EAF',IFAIL
+CXXX             STOP
+CXXX          ENDIF
+CXXX      ENDIF
+d195 2
+a196 1
+      CALL SLESCreate(MPI_COMM_WORLD,sles,IERR)
+d198 6
+a203 1
+      CALL SLESSetFromOptions(sles,IERR)
+d207 1
+d209 1
+d211 1
+a211 1
+          NITER = NITER + 1
+a218 6
+C     .. Make a copy of the flow variables
+C
+COLD          CALL DCOPY(NPOIN,DSTAK(LZROE),1,DSTAK(LZROERK),1)
+C             CALL VecCopy(zroe,zroerk,IFAIL)
+C
+C
+d250 1
+a250 1
+                      CALL UPDATE2(DIM,NOFVAR,NPOIN,sles,A,RHS,DT)
+d304 1
+a304 1
+                      CALL UPDATE3(DIM,NOFVAR,NPOIN,sles,A,RHS,DT)
+d315 5
+d321 2
+a322 1
+CXXX4         CONTINUE
+d324 3
+a326 1
+C    Turbulent equations
+a327 2
+CXX13         CONTINUE
+CXXX          IF( NTURB .LE. 0 )GOTO 6
+d332 3
+a334 1
+CXXX          CALL TURBO(NPOIN,NELEM,DIM,NOFVERT,NOFVAR,NL_SCHEME)
+d337 2
+a338 1
+CXXX              CALL UPDATE4(DIM,NTURB,NPOIN)
+d348 2
+d354 1
+a354 1
+    6 continue
+d416 1
+a416 1
+      call PetscFinalize(ierr)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d73 2
+a74 3
+     +PARM_TO_CONS,READAT,READVAL,SCALAR,SCLSCH,SETBC1,SOLZNE,STIFMAT,
+     +         SUBAAA,SUBABB,SUBABC,UPDATE1,UPDATE2,UPDATE3
+      common /datav/ nviscn
+d178 1
+a178 1
+     +    NPOIN,NVISCN)
+@

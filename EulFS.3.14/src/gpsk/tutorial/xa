@@ -1,0 +1,4 @@
+    /* - - - - - - - - - - - New Stage - - - - - - - - - - - - -
+    ierr = MatGetOrdering(A,rtype,&isrow,&iscol);CHKERRQ(ierr);
+     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    ierr = MatGetOrdering(A,mytype,&isrow,&iscol);CHKERRQ(ierr);

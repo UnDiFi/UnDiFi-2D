@@ -1,0 +1,40 @@
+\hypertarget{seq_2nodres_8_f}{\section{src/seq/nodres.F File Reference}
+\label{seq_2nodres_8_f}\index{src/seq/nodres.\-F@{src/seq/nodres.\-F}}
+}
+{\ttfamily \#include \char`\"{}finclude/petscsys.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscvec.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscmat.\-h\char`\"{}}\\*
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{seq_2nodres_8_f_afe82d6b12790dae1c4e9686db54b5f82}{nodres} (N\-D\-I\-M, N\-O\-F\-V\-E\-R\-T, N\-O\-F\-V\-A\-R, N\-T\-U\-R\-B, \hyperlink{mesh_8com_ae28c1572321efcd8715b974d87d20c58}{N\-P\-O\-I\-N}, N\-G\-H\-O\-S\-T, N\-P\-N\-O\-D, \hyperlink{mesh_8com_aee5e75b79d0e815c0603cfbccc618957}{N\-E\-L\-E\-M}, \hyperlink{mesh_8com_a78142d59d4cbb9fedbede16187658dd3}{N\-F\-A\-C\-E}, N\-B\-F\-A\-C, \hyperlink{myts_8com_a0c4fbcdb78e6b50c8919d714e4b5a694}{Z\-R\-O\-E}, Petsc\-D\-T, Petsc\-R\-H\-S, Petsc\-A, S\-C\-A\-L\-A\-R\-S\-C\-H\-E\-M\-E, M\-A\-T\-R\-I\-X\-S\-C\-H\-E\-M\-E, T\-Model\-Scheme, Euler\-Model, N\-S\-Model, Turbulence\-Model)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{seq_2nodres_8_f_afe82d6b12790dae1c4e9686db54b5f82}{\index{seq/nodres.\-F@{seq/nodres.\-F}!nodres@{nodres}}
+\index{nodres@{nodres}!seq/nodres.F@{seq/nodres.\-F}}
+\subsubsection[{nodres}]{\setlength{\rightskip}{0pt plus 5cm}subroutine nodres (
+\begin{DoxyParamCaption}
+\item[{integer}]{N\-D\-I\-M, }
+\item[{integer}]{N\-O\-F\-V\-E\-R\-T, }
+\item[{integer}]{N\-O\-F\-V\-A\-R, }
+\item[{integer}]{N\-T\-U\-R\-B, }
+\item[{integer}]{N\-P\-O\-I\-N, }
+\item[{integer}]{N\-G\-H\-O\-S\-T, }
+\item[{integer}]{N\-P\-N\-O\-D, }
+\item[{integer}]{N\-E\-L\-E\-M, }
+\item[{integer}]{N\-F\-A\-C\-E, }
+\item[{integer}]{N\-B\-F\-A\-C, }
+\item[{double precision, dimension(nofvar$\ast$npoin)}]{Z\-R\-O\-E, }
+\item[{}]{Petsc\-D\-T, }
+\item[{}]{Petsc\-R\-H\-S, }
+\item[{}]{Petsc\-A, }
+\item[{external}]{S\-C\-A\-L\-A\-R\-S\-C\-H\-E\-M\-E, }
+\item[{external}]{M\-A\-T\-R\-I\-X\-S\-C\-H\-E\-M\-E, }
+\item[{external}]{T\-Model\-Scheme, }
+\item[{external}]{Euler\-Model, }
+\item[{external}]{N\-S\-Model, }
+\item[{external}]{Turbulence\-Model}
+\end{DoxyParamCaption}
+)}}\label{seq_2nodres_8_f_afe82d6b12790dae1c4e9686db54b5f82}

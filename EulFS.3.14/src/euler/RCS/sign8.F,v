@@ -1,0 +1,281 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	99.11.25.10.37.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@compute sign matrix for the Unpreconditioned INcompressible eqns.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@C
+      SUBROUTINE SIGN8(IELEM,NDIM,NORDER,VECN,DUMMY,LDJ,
+     +                 KMAT,KPOS,KNEG,VLEFT,VRIGHT,LDA,
+     +                 WR,LPOS,LNEG,EIGENDECO)
+C
+C     $Id$ 
+C     $Header$ 
+C
+C
+C     Subroutine is used to compute the positive projector
+C     for the UNpreconditioned pseudo-compressible (incompressible)
+C     Euler equations
+C
+#define DEBUG
+C
+C************************************************************
+C
+C     NORDER:   is the order of the system to be solved (INPUT)
+C     VNOR:     is the face normal (INPUT)
+C     KMAT:     the jacobian matrix times the face normal (OUTPUT)
+C     KPOS:     is the "positive" part of the jacobian matrix (OUTPUT)
+C     KNEG:     is the "negative" part of the jacobian matrix (OUTPUT)
+C     VLEFT:    is left eigenvector matrix of the jacobian matrix (OUTPUT)
+C     VRIGHT:   is right eigenvector matrix of the jacobian matrix (OUTPUT)
+C     LD:       is the leading dimension of the previous matrices
+C     WR:       eigenvalues of the jacobian matrix (OUTPUT)
+C     LPOS:     positive eigenvalues of the jacobian matrix (OUTPUT)
+C     LNEG:     negative eigenvalues of the jacobian matrix (OUTPUT)
+C
+C************************************************************
+C
+      IMPLICIT NONE
+C
+C
+      INCLUDE 'paramt.h'
+C
+      INCLUDE 'three'
+      INCLUDE 'chorin.com'
+      INCLUDE 'flags.com'
+C
+      INCLUDE 'constants'
+C
+      INTEGER   IELEM,NDIM,NORDER,LDA,LDJ
+      LOGICAL   EIGENDECO
+C
+      DOUBLE PRECISION VECN(*)
+      DOUBLE PRECISION DUMMY(LDJ,*)
+      DOUBLE PRECISION KMAT(LDA,*),KPOS(LDA,*),KNEG(LDA,*),
+     >       VLEFT(LDA,*),VRIGHT(LDA,*),WR(*),LPOS(*),LNEG(*)
+C
+      DOUBLE PRECISION UDOTM,AREAINV,AREA,CSQRINV,
+     >                 CSQR,C,LPLUS,LMINS,ANX,ANY,ANZ
+C
+      INTEGER I,J,K,IDIM,IFAIL
+      INTEGER TABLE(3,3),INDX
+      DOUBLE PRECISION VECM(3),VECS(3),VECT(3)
+#ifdef DEBUG
+      LOGICAL WARNA
+      DOUBLE PRECISION WORK1(25)
+#endif
+      DOUBLE PRECISION SURF,SUM1,SUM2,UDOTS,UDOTT,TEMP1
+C
+      DATA (table(1,j),j=1,3) / 1,0,0 /
+      DATA (table(2,j),j=1,3) / 0,1,0 /
+      DATA (table(3,j),j=1,3) / 0,0,1 /
+C
+      DOUBLE PRECISION DDOT,DNRM2
+      INTEGER   ISDMIN
+      LOGICAL   UNITMAT,NULLMAT
+      EXTERNAL  ISDMIN,DDOT,DNRM2,UNITMAT,NULLMAT
+C
+      INTRINSIC DSQRT
+C
+      DATA ANX,ANY,ANZ / 3*ZERO /
+C
+C     UDOTM is the dot product between the velocity vector
+C           and the face normal
+C
+      ANX = VECN(1)/NDIM
+      ANY = VECN(2)/NDIM
+      UDOTM = ZAVG(2) * ANX + ZAVG(3) * ANY
+      IF( NDIM .EQ. 3 )THEN
+         ANZ = VECN(3)/NDIM
+         UDOTM = UDOTM + ZAVG(4) * ANZ
+      ENDIF
+C
+C     Jacobian Matrix for primitive variables ..
+C
+c     KMAT(1,1) = ZERO
+c     KMAT(1,2) = BETA*ANX
+c     KMAT(1,3) = BETA*ANY
+c
+c     KMAT(2,1) = ANX
+c     KMAT(2,2) = ZAVG(2) * ANX + UDOTM
+c     KMAT(2,3) = ZAVG(2) * ANY
+c
+c     KMAT(3,1) = ANY
+c     KMAT(3,2) = ZAVG(3) * ANX
+c     KMAT(3,3) = ZAVG(3) * ANY + UDOTM
+c
+c     IF( NDIM .EQ. 3 )THEN
+c         KMAT(1,4) = BETA*ANZ
+c         KMAT(2,4) = ZAVG(2) * ANZ
+c         KMAT(3,4) = ZAVG(3) * ANZ
+c         KMAT(4,1) = ANZ
+c         KMAT(4,2) = ZAVG(4) * ANX
+c         KMAT(4,3) = ZAVG(4) * ANY
+c         KMAT(4,4) = ZAVG(4) * ANZ + UDOTM
+c     ENDIF
+C
+c     IF( EIGENDECO .EQV. .FALSE. )RETURN
+C
+      AREA = VECN(1)*VECN(1)+VECN(2)*VECN(2)
+      IF( NDIM .EQ. 3 )AREA = AREA + VECN(3)*VECN(3)
+      AREA = SQRT(AREA)
+      AREAINV = ONE/AREA
+C
+      AREA = AREA/NDIM
+C
+C     Some useful constants ..
+C
+      UDOTM = UDOTM / AREA
+      CSQR = UDOTM * UDOTM + BETA
+      C = DSQRT( CSQR )
+      CSQRINV = ONE/CSQR
+C
+      LPLUS = UDOTM + C
+      LMINS = UDOTM - C
+C
+C     Eigenvalues ..
+C
+      WR(1) = AREA * UDOTM
+      WR(2) = AREA * LMINS
+      WR(3) = AREA * LPLUS
+      WR(4) = AREA * UDOTM
+C
+      IF( NDIM .EQ. 2 )THEN
+         VECM(1) = VECN(1) * AREAINV
+         VECM(2) = VECN(2) * AREAINV
+         VECM(3) = ZERO
+         VECS(1) = - VECM(2)
+         VECS(2) = VECM(1)
+         VECS(3) = ZERO
+         VECT(1) = ZERO
+         VECT(2) = ZERO
+         VECT(3) =  ONE
+      ELSE
+         VECM(1) = VECN(1) * AREAINV
+         VECM(2) = VECN(2) * AREAINV
+         VECM(3) = VECN(3) * AREAINV
+         INDX = ISDMIN(NDIM,VECM,1)
+         VECS(1) = table(2,INDX) * VECM(3) - table(3,INDX) * VECM(2)
+         VECS(2) = table(3,INDX) * VECM(1) - table(1,INDX) * VECM(3)
+         VECS(3) = table(1,INDX) * VECM(2) - table(2,INDX) * VECM(1)
+         SURF = ONE/DNRM2(NDIM,VECS,1)
+         VECS(1) = VECS(1)*SURF
+         VECS(2) = VECS(2)*SURF
+         VECS(3) = VECS(3)*SURF
+         CALL CROSS_PROD( VECM , VECS , VECT )
+      ENDIF 
+C
+      UDOTM = DDOT(NDIM,ZAVG(2),1,VECM,1)
+      UDOTS = DDOT(NDIM,ZAVG(2),1,VECS,1)
+      UDOTT = DDOT(NDIM,ZAVG(2),1,VECT,1)
+C
+C     Left Eigenvectors ..
+C
+      VLEFT(1,1) =-UDOTS*CSQRINV
+      VLEFT(2,1) = HALF * CSQRINV
+      VLEFT(3,1) = HALF * CSQRINV
+      IF(NDIM.EQ.3)VLEFT(4,1) =-UDOTT*CSQRINV
+C
+C     Right Eigenvectors ..
+C
+      VRIGHT(1,1) = ZERO
+      VRIGHT(1,2) = LPLUS * C
+      VRIGHT(1,3) =-LMINS * C
+      IF(NDIM.EQ.3)VRIGHT(1,4) = ZERO
+C
+C     Left Eigenvectors ..
+C
+         VLEFT(1,2) = VECS(1) - UDOTM*CSQRINV*UDOTS*VECM(1)
+         VLEFT(2,2) = HALF * CSQRINV * LMINS * VECM(1)
+         VLEFT(3,2) = HALF * CSQRINV * LPLUS * VECM(1)
+C
+         VLEFT(1,3) = VECS(2) - UDOTM*CSQRINV*UDOTS*VECM(2)
+         VLEFT(2,3) = HALF * CSQRINV * LMINS * VECM(2)
+         VLEFT(3,3) = HALF * CSQRINV * LPLUS * VECM(2)
+C
+         IF( NDIM .EQ. 3 )THEN
+            VLEFT(4,2) = VECT(1) - UDOTM*CSQRINV*UDOTT*VECM(1)
+            VLEFT(4,3) = VECT(2) - UDOTM*CSQRINV*UDOTT*VECM(2)
+            VLEFT(1,4) = VECS(3) - UDOTM*CSQRINV*UDOTS*VECM(3)
+            VLEFT(2,4) = HALF * CSQRINV * LMINS * VECM(3)
+            VLEFT(3,4) = HALF * CSQRINV * LPLUS * VECM(3)
+            VLEFT(4,4) = VECT(3) - UDOTM*CSQRINV*UDOTT*VECM(3)
+         ENDIF
+C
+C     Right Eigenvectors ..
+C
+         VRIGHT(2,1) = VECS(1)
+         VRIGHT(2,2) = ZAVG(2) - LPLUS * VECM(1)
+         VRIGHT(2,3) = ZAVG(2) - LMINS * VECM(1)
+C
+         VRIGHT(3,1) = VECS(2)
+         VRIGHT(3,2) = ZAVG(3) - LPLUS * VECM(2)
+         VRIGHT(3,3) = ZAVG(3) - LMINS * VECM(2)
+C
+         IF( NDIM .EQ. 3 )THEN
+             VRIGHT(2,4) = VECT(1)
+             VRIGHT(3,4) = VECT(2)
+C
+             VRIGHT(4,1) = VECS(3)
+             VRIGHT(4,2) = ZAVG(4) - LPLUS * VECM(3)
+             VRIGHT(4,3) = ZAVG(4) - LMINS * VECM(3)
+             VRIGHT(4,4) = VECT(3)
+         ENDIF 
+C
+#ifdef DEBUG
+C
+C     Test if VRIGHT*VLEFT = Identity ..
+C
+            CALL DGEMM('N','N',NORDER,NORDER,NORDER,1.D0,VRIGHT,LDA,
+     +                 VLEFT,LDA,0.D0,WORK1,NORDER)
+C
+         WARNA = UNITMAT( WORK1, NORDER, NORDER, NORDER, 1.D-15 )
+C
+         IF( .NOT. WARNA )THEN
+            CALL X04CAF('G',' ',NORDER,NORDER,WORK1,NORDER,
+     +                  'Left * Right eigenvectors',IFAIL)
+            PAUSE
+         ENDIF
+#endif
+C
+C     Positive and negative eigenvalues ..
+C
+      DO 12 IDIM = 1 , NORDER
+         LPOS(IDIM) = HALF * (ONE + SIGN(ONE,WR(IDIM)) )
+   12 CONTINUE
+C
+C     compute VRIGHT * LAMBDA(+/-) * VLEFT
+C
+      DO 15 J = 1 , NORDER
+         DO 15 I = 1 , NORDER
+         SUM1 = ZERO
+         SUM2 = ZERO
+            DO 13 K = 1 , NORDER
+               TEMP1= VRIGHT(I,K) * VLEFT(K,J)
+               SUM1 = SUM1 + TEMP1* LPOS(K)
+c              SUM2 = SUM2 + TEMP1* LNEG(K)
+   13       CONTINUE
+         KPOS(I,J) = SUM1
+   15 CONTINUE
+C
+C
+      RETURN
+      END
+@

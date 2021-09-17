@@ -1,0 +1,54 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@c @;
+
+
+1.1
+date	2013.01.24.08.15.55;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@computes the factorial n!
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      DOUBLE PRECISION FUNCTION FACT(N)
+      INTEGER N
+      INTEGER J
+      FACT=1
+      DO 10 J=2,N
+         FACT=FACT*J
+ 10   CONTINUE
+      RETURN
+      END
+
+@

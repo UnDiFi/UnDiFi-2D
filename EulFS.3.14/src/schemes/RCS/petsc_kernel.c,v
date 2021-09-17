@@ -1,0 +1,313 @@
+head	1.6;
+access;
+symbols
+	release3_14_0:1.6
+	release3_13_0:1.6
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.4
+	release3_4_4:1.4
+	release3_4_3:1.4
+	release3_4_2:1.4
+	release3_4_1:1.4
+	release3_4_0:1.4
+	release3_3_5:1.4
+	release3_3_4:1.4
+	release3_3_3:1.4
+	release3_3_2:1.4
+	release3_3_1:1.4
+	release3_3_0:1.4;
+locks; strict;
+comment	@ * @;
+
+
+1.6
+date	2020.03.25.07.36.41;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2016.11.10.15.10.17;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2013.01.24.07.53.03;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2012.10.08.16.45.24;	author abonfi;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2002.02.22.15.35.22;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2001.11.28.08.27.02;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@interface for calling PETSc kernels Kernel_A_gets_inverse_A_
+from F77 (Federico Massaioli)
+@
+
+
+1.6
+log
+@handles an unknown block-size bs
+@
+text
+@
+/* */
+#include <stdlib.h>
+#include <stdio.h>
+#include "petsc.h"
+/* */
+
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_2(MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_3(MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_4(MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_5(MatScalar *, PetscInt *, MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_6(MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_7(MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_9(MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_15(MatScalar *, PetscInt *, MatScalar *, PetscReal, PetscBool, PetscBool *);
+extern PetscErrorCode PetscLINPACKgefa(MatScalar*,PetscInt,PetscInt*, PetscBool, PetscBool *);
+extern PetscErrorCode PetscLINPACKgedi(MatScalar*,PetscInt,PetscInt*,MatScalar*);
+
+static PetscErrorCode (*a[8])(MatScalar *mat, PetscReal, PetscBool, PetscBool *);
+
+int solven_(int *n, MatScalar *mat)
+{
+PetscBool      allowzeropivot=PETSC_FALSE,zeropivotdetected;
+    switch(*n) {   
+		case 5:	
+		    {
+			PetscInt ipvt[5];
+			MatScalar work[5*5];
+			return (int)PetscKernel_A_gets_inverse_A_5(mat, ipvt, work, (PetscReal)0.0, allowzeropivot,&zeropivotdetected);
+			}
+		case 15:
+		    {
+			PetscInt ipvt[15];
+			MatScalar work[15*15];
+			return (int)PetscKernel_A_gets_inverse_A_15(mat, ipvt, work, (PetscReal)0.0, allowzeropivot,&zeropivotdetected);
+			}
+		case 2:
+		case 3:
+		case 4:
+		case 6:
+		case 7:
+		case 9:
+			return (int)a[(*n-2)](mat, (PetscReal) 0.0, allowzeropivot,&zeropivotdetected);
+		default:
+			printf("Cannot deal with this bs");
+			return *n;
+/*
+			{
+			PetscInt ipvt[*n];
+			MatScalar work[*n * *n];
+                        int q = (int)PetscLINPACKgefa(mat, (PetscInt)*n, ipvt, allowzeropivot,&zeropivotdetected);
+                        if (q) return q;                                                                                                                                                                           
+                        return (int)PetscLINPACKgedi(mat, (PetscInt)*n, ipvt, work);
+			}
+*/
+	}
+}
+
+
+void setsolven_(int *ierr)
+{
+    a[0] = PetscKernel_A_gets_inverse_A_2;
+    a[1] = PetscKernel_A_gets_inverse_A_3;
+    a[2] = PetscKernel_A_gets_inverse_A_4;
+    a[3] = NULL;
+    a[4] = PetscKernel_A_gets_inverse_A_6;
+    a[5] = PetscKernel_A_gets_inverse_A_7;
+	a[6] = NULL;
+	a[7] = PetscKernel_A_gets_inverse_A_9;
+    *ierr = 0;
+}
+@
+
+
+1.5
+log
+@new arguments being passed to the petsc routines in release 3.7
+@
+text
+@d4 1
+d45 3
+a50 1
+/* */
+d55 1
+@
+
+
+1.4
+log
+@upgraded to petsc 3.3-p5
+@
+text
+@d2 1
+a2 12
+/*
+#ifdef PETSC_HAVE_FORTRAN_CAPS
+#define solven_ SOLVEN
+#elif !defined(PETSC_HAVE_FORTRAN_UNDERSCORE) && !defined(FORTRANDOUBLEUNDERSCORE)
+#define solven_ solven
+#endif
+#ifdef PETSC_HAVE_FORTRAN_CAPS
+#define setsolven_ SETSOLVEN
+#elif !defined(PETSC_HAVE_FORTRAN_UNDERSCORE) && !defined(FORTRANDOUBLEUNDERSCORE)
+#define setsolven_ setsolven
+#endif
+*/
+d5 1
+a5 3
+/*
+#include "/usr/local/src/petsc/petsc-3.3-p5/src/mat/blockinvert.h"
+*/
+d7 10
+a16 10
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_2(MatScalar *, PetscReal);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_3(MatScalar *, PetscReal);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_4(MatScalar *, PetscReal);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_5(MatScalar *, PetscInt *, MatScalar *, PetscReal);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_6(MatScalar *, PetscReal);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_7(MatScalar *, PetscReal);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_9(MatScalar *, PetscReal);
+extern PetscErrorCode PetscKernel_A_gets_inverse_A_15(MatScalar *, PetscInt *, MatScalar *, PetscReal);
+extern PetscErrorCode  PetscLINPACKgefa(MatScalar*,PetscInt,PetscInt*);
+extern PetscErrorCode  PetscLINPACKgedi(MatScalar*,PetscInt,PetscInt*,MatScalar*);
+d18 1
+a18 1
+static PetscErrorCode (*a[8])(MatScalar *mat, PetscReal);
+d22 1
+d28 1
+a28 1
+			return (int)PetscKernel_A_gets_inverse_A_5(mat, ipvt, work, (PetscReal)0.0);
+d34 1
+a34 1
+			return (int)PetscKernel_A_gets_inverse_A_15(mat, ipvt, work, (PetscReal)0.0);
+d42 1
+a42 1
+			return (int)a[(*n-2)](mat, (PetscReal) 0.0);
+d47 2
+a48 1
+                        int q = (int)PetscLINPACKgefa(mat, (PetscInt)*n, ipvt);
+@
+
+
+1.3
+log
+@versione per PETSc 3.2
+@
+text
+@d16 3
+d20 10
+a29 8
+extern PetscErrorCode Kernel_A_gets_inverse_A_2(MatScalar *, PetscReal);
+extern PetscErrorCode Kernel_A_gets_inverse_A_3(MatScalar *, PetscReal);
+extern PetscErrorCode Kernel_A_gets_inverse_A_4(MatScalar *, PetscReal);
+extern PetscErrorCode Kernel_A_gets_inverse_A_5(MatScalar *, PetscInt *, MatScalar *, PetscReal);
+extern PetscErrorCode Kernel_A_gets_inverse_A_6(MatScalar *, PetscReal);
+extern PetscErrorCode Kernel_A_gets_inverse_A_7(MatScalar *, PetscReal);
+extern PetscErrorCode Kernel_A_gets_inverse_A_9(MatScalar *, PetscReal);
+extern PetscErrorCode Kernel_A_gets_inverse_A_15(MatScalar *, PetscInt *, MatScalar *, PetscReal);
+d40 1
+a40 1
+			return (int)Kernel_A_gets_inverse_A_5(mat, ipvt, work, (PetscReal)0.0);
+d46 1
+a46 1
+			return (int)Kernel_A_gets_inverse_A_15(mat, ipvt, work, (PetscReal)0.0);
+d59 3
+a61 3
+			int q = (int)LINPACKdgefa(mat, (PetscInt)*n, ipvt);
+			if (q) return q;
+			return (int)LINPACKdgedi(mat, (PetscInt)*n, ipvt, work, (PetscReal)0.0);
+d69 3
+a71 3
+    a[0] = Kernel_A_gets_inverse_A_2;
+    a[1] = Kernel_A_gets_inverse_A_3;
+    a[2] = Kernel_A_gets_inverse_A_4;
+d73 2
+a74 2
+    a[4] = Kernel_A_gets_inverse_A_6;
+    a[5] = Kernel_A_gets_inverse_A_7;
+d76 1
+a76 1
+	a[7] = Kernel_A_gets_inverse_A_9;
+@
+
+
+1.2
+log
+@a few bug fixes (hopefully)
+@
+text
+@a0 3
+/*
+  $Id: petsc_kernel.c,v 1.1 2001/11/28 08:27:02 abonfi Exp abonfi $
+*/
+d14 1
+d17 8
+a24 6
+extern int Kernel_A_gets_inverse_A_2(MatScalar *);
+extern int Kernel_A_gets_inverse_A_3(MatScalar *);
+extern int Kernel_A_gets_inverse_A_4(MatScalar *);
+extern int Kernel_A_gets_inverse_A_5(MatScalar *);
+extern int Kernel_A_gets_inverse_A_6(MatScalar *);
+extern int Kernel_A_gets_inverse_A_7(MatScalar *);
+d26 1
+a26 1
+static int (*a[8])(MatScalar *mat);
+d30 30
+a59 2
+    return a[*n](mat);
+    }
+d62 1
+a62 1
+int setsolven_(int ierr)
+d64 9
+a72 7
+    a[2] = Kernel_A_gets_inverse_A_2;
+    a[3] = Kernel_A_gets_inverse_A_3;
+    a[4] = Kernel_A_gets_inverse_A_4;
+    a[5] = Kernel_A_gets_inverse_A_5;
+    a[6] = Kernel_A_gets_inverse_A_6;
+    a[7] = Kernel_A_gets_inverse_A_7;
+    ierr = 0;
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+  $Id:$
+d4 13
+d28 1
+a28 1
+int solveN(int n, MatScalar *mat)
+d30 1
+a30 1
+    return a[n](mat);
+d34 1
+a34 1
+int setsolveN(int ierr)
+d42 1
+@

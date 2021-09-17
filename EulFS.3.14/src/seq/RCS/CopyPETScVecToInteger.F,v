@@ -1,0 +1,56 @@
+head	1.1;
+access
+	simula
+	caspur;
+symbols;
+locks; strict;
+
+
+1.1
+date	98.12.02.09.17.44;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Make a copy of a PETSc Vector into an integer array
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      SUBROUTINE CopyPETScVecToInteger(x,ix)
+
+      IMPLICIT NONE
+
+C
+C     Make a copy of a PETSc Vector into an integer array (ix)
+C
+C     $Id$
+C     $Header$
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+C
+      Vec x
+
+      PetscOffset x_i
+      Scalar x_v(1)
+
+      INTEGER IX(*)
+      INTEGER I,NI,IFAIL
+
+      CALL VecGetSize(x,ni,ifail)
+      CALL VecGetArray(x,x_v,x_i,ifail)
+      DO 1 i = 1,ni
+         ix(i) = int(x_v(x_i+i))
+    1 CONTINUE
+
+      CALL VecRestoreArray(x,x_v,x_i,ifail)
+      RETURN
+      END
+@

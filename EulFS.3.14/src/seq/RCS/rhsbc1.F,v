@@ -1,0 +1,552 @@
+head	1.18;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.18
+	release3_13_0:1.18
+	release3_12_0:1.18
+	release3_11_0:1.18
+	release3_10_0:1.18
+	release3_8_0:1.18
+	release3_7_1:1.17
+	release3_7_0:1.17
+	release3_4_5:1.16
+	release3_4_4:1.16
+	release3_4_3:1.16
+	release3_4_2:1.16
+	release3_4_1:1.16
+	release3_4_0:1.15
+	release3_3_5:1.15
+	release3_3_4:1.15
+	release3_3_3:1.15
+	release3_3_2:1.15
+	release3_3_1:1.15
+	release3_3_0:1.14;
+locks; strict;
+comment	@c @;
+
+
+1.18
+date	2020.04.23.09.46.19;	author abonfi;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2016.11.10.11.25.13;	author abonfi;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2013.06.06.10.34.38;	author abonfi;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2013.01.26.11.30.51;	author abonfi;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.09.16.07.19.48;	author abonfi;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2009.06.11.13.12.51;	author abonfi;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2002.02.19.09.25.46;	author abonfi;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2001.05.24.10.26.37;	author abonfi;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2000.12.06.13.40.45;	author aldo;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2000.11.22.14.40.04;	author aldo;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.10.19.16.10.34;	author aldo;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2000.06.09.16.28.01;	author aldo;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.11.05.20.34.14;	author aldo;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.11.07.09.01.00;	author aldo;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.07.29.11.31.04;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.05.10.08.24.31;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.02.10.08.53.46;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.01.02.15.33.14;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@set b.c. on the rhs. for scalar problems
+@
+
+
+1.18
+log
+@changes required by petsc release 3.8 and
+NodalBcs, which is an array of derived type TS
+in now passed using arguments in the calls
+@
+text
+@      SUBROUTINE RHSBC1( RHS, NodalBcs )
+C
+C     This routine sets the boundary conditions in the
+C     "EXPLICIT" residual for scalar problems ..
+C
+C     $Id: rhsbc1.F,v 1.17 2016/11/10 11:25:13 abonfi Exp abonfi $
+C
+C
+#include "petsc/finclude/petscvec.h"
+#include "petsc/finclude/petscis.h"
+      use petscvec
+      use petscis
+C
+      IMPLICIT NONE
+C
+      INCLUDE 'paramt.h'
+      INCLUDE 'constants.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'iset.h'
+C
+C
+      INTEGER MY_PE 
+      COMMON/MPICOM/MY_PE
+C
+      Vec RHS
+      IS, dimension(0:*) :: NodalBcs
+C
+      INTEGER IPOIN,I,IFAIL,NI
+      PetscScalar RHS_V(1)
+      PetscOffset RHS_I,IDX_I
+      INTEGER IDX_V(1),ROWBGN,ROWEND
+C
+C
+C    EXPLICIT Treatment of dirichlet nodes
+C
+      CALL VecGetOwnerShipRange(RHS,ROWBGN,ROWEND,IFAIL)
+      CALL VecGetArray(RHS,RHS_V,RHS_I,IFAIL)
+C
+      CALL ISGetSize(NodalBcs(SupersonicNodes),NI,IFAIL)
+      CALL ISGetIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,IFAIL)
+C
+      DO 1000 I= 1 , NI
+C
+          IPOIN = IDX_V(IDX_I+I)
+          IPOIN = IPOIN-ROWBGN
+          RHS_V(RHS_I+IPOIN+1) = ZERO
+C
+ 1000 CONTINUE
+C
+      CALL VecRestoreArray(RHS,RHS_V,RHS_I,IFAIL)
+      CALL ISRestoreIndices(NodalBcs(SupersonicNodes),IDX_V,IDX_I,IFAIL)
+C
+C
+      RETURN
+      END 
+@
+
+
+1.17
+log
+@changed the location of petsc's header files
+when migrating to version 3.6
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE RHSBC1( RHS ) 
+d6 1
+a6 1
+C     $Id: rhsbc1.F,v 1.16 2013/06/06 10:34:38 abonfi Exp abonfi $
+a8 3
+      IMPLICIT NONE
+C
+#include "petsc/finclude/petscsys.h"
+d11 4
+d17 1
+d19 1
+a19 1
+      INCLUDE 'constants.h'
+a20 1
+#include "iset.com"
+d26 1
+d39 2
+a40 2
+      CALL ISGetSize(SupersonicNodes,NI,IFAIL)
+      CALL ISGetIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+d51 1
+a51 1
+      CALL ISRestoreIndices(SupersonicNodes,IDX_V,IDX_I,IFAIL)
+@
+
+
+1.16
+log
+@now includes bnd.h
+@
+text
+@d6 1
+a6 1
+C     $Id: rhsbc1.F,v 1.15 2013/01/26 11:30:51 abonfi Exp abonfi $
+d11 3
+a13 3
+#include "finclude/petscsys.h"
+#include "finclude/petscvec.h"
+#include "finclude/petscis.h"
+@
+
+
+1.15
+log
+@changed the name of included header/common files
+@
+text
+@d6 1
+a6 1
+C     $Id: rhsbc1.F,v 1.14 2011/09/16 07:19:48 abonfi Exp abonfi $
+a14 2
+#include "iset.com"
+C
+d16 1
+d18 2
+@
+
+
+1.14
+log
+@Changed PETSc header file to comply with version 3.1
+@
+text
+@d6 1
+a6 1
+C     $Id: rhsbc1.F,v 1.13 2009/06/11 13:12:51 abonfi Exp abonfi $
+d18 1
+a18 1
+      INCLUDE 'constants'
+@
+
+
+1.13
+log
+@location of PETSc include file has changed with release 3.0.0
+@
+text
+@d6 1
+a6 1
+C     $Id: rhsbc1.F,v 1.12 2002/02/19 09:25:46 abonfi Exp $
+d11 1
+a11 1
+#include "finclude/petsc.h"
+@
+
+
+1.12
+log
+@changed Scalar into PetscScalar to comply to ver. 2.1.1
+@
+text
+@d6 1
+a6 1
+C     $Id: rhsbc1.F,v 1.11 2001/05/24 10:26:37 abonfi Exp abonfi $
+d11 3
+a13 3
+#include "include/finclude/petsc.h"
+#include "include/finclude/petscvec.h"
+#include "include/finclude/petscis.h"
+@
+
+
+1.11
+log
+@removed duplicated declaration
+@
+text
+@a0 2
+C
+C
+d6 1
+a6 1
+C     $Id: rhsbc1.F,v 1.10 2000/12/06 13:40:45 aldo Exp abonfi $
+d26 1
+a26 1
+      Scalar RHS_V(1)
+@
+
+
+1.10
+log
+@comments removed
+@
+text
+@d8 1
+a8 1
+C     $Id: rhsbc1.F,v 1.9 2000/11/22 14:40:04 aldo Exp aldo $
+d27 1
+a27 1
+      INTEGER IPOIN,I,NI,IFAIL,NI
+@
+
+
+1.9
+log
+@fixed the row offset
+@
+text
+@d8 1
+a8 1
+C     $Id: rhsbc1.F,v 1.8 2000/10/19 16:10:34 aldo Exp aldo $
+a40 1
+caldo goto 777
+a43 4
+          write(40+my_pe,*)ipoin
+          if((ipoin.lt.rowbgn) .or. (ipoin.gt.rowend) )then
+              write(6,*)my_pe,rowbgn,ipoin,rowend
+          endif
+d45 1
+a45 1
+C         RHS_V(RHS_I+IPOIN+1) = ZERO
+a47 1
+  777 CONTINUE
+@
+
+
+1.8
+log
+@changed include file names for PETSc rev. 2.0.29
+@
+text
+@d8 1
+a8 1
+C     $Id: rhsbc1.F,v 1.7 2000/06/09 16:28:01 aldo Exp aldo $
+d17 2
+a19 3
+C
+      Vec RHS
+C
+d22 2
+a23 1
+#include "iset.com"
+d25 1
+a25 1
+C
+d27 1
+a27 1
+      INTEGER IPOIN,I,NI,IFAIL,Number_of_SupersonicNodes
+d30 1
+a30 1
+      INTEGER IDX_V(1)
+d35 1
+d37 2
+d41 2
+a42 3
+      CALL ISGetSize(SupersonicNodes,Number_of_SupersonicNodes,IFAIL)
+C
+      DO 1000 I= 1 , Number_of_SupersonicNodes
+d45 6
+a50 1
+          RHS_V(RHS_I+IPOIN+1) = ZERO
+d53 1
+@
+
+
+1.7
+log
+@now including index sets in common iset.com
+@
+text
+@d8 1
+a8 1
+C     $Id: rhsbc1.F,v 1.6 1999/11/05 20:34:14 aldo Exp aldo $
+d14 2
+a15 3
+#include "include/finclude/vec.h"
+#include "include/finclude/viewer.h"
+#include "include/finclude/is.h"
+@
+
+
+1.6
+log
+@corrected bug with IS previously defined as integer
+@
+text
+@d8 1
+a8 1
+C     $Id$
+d24 1
+a24 5
+      IS SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+
+      COMMON/COMISET/SupersonicNodes,SupersonicVariables,
+     +NoSlipNodes,NoSlipVelocities
+@
+
+
+1.5
+log
+@Add automatic identification flag
+@
+text
+@d23 6
+a28 3
+C     INCLUDE 'visco.com'
+C     INCLUDE 'flags.com'
+      INCLUDE 'iset.com'
+d33 3
+a35 2
+      DOUBLE PRECISION RHS_V(1)
+      INTEGER RHS_I,IDX_V(1),IDX_I
+@
+
+
+1.4
+log
+@Using Index Sets to identify boundary nodes
+@
+text
+@d8 3
+@
+
+
+1.3
+log
+@Include files path for PETSC fortran header files
+has been changed to comply to rev. 2.0.22 of PETSc
+@
+text
+@d3 1
+a3 2
+      SUBROUTINE RHSBC1( NPOIN, NDIM, RHS, 
+     +                   IX, Y, NODCODE) 
+d13 1
+d20 3
+a22 2
+      INCLUDE 'visco.com'
+      INCLUDE 'flags.com'
+a23 1
+      INTEGER NPOIN,NDIM
+a24 1
+      INTEGER NODCODE(NPOIN),IX(*)
+d26 3
+a28 2
+      INTEGER IPOIN,ICODE,NI,IFAIL
+      DOUBLE PRECISION Y(*)
+a29 6
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"vec.before",
+C    +                         VIEWER_STDOUT_SELF,IFAIL) 
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +                     VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IFAIL)
+C
+C     CALL VecView(RHS,VIEWER_STDOUT_SELF,IFAIL)
+d33 2
+a34 3
+      NI=0 
+C
+      DO 1000 IPOIN = 1 , NPOIN
+d36 1
+a36 1
+      ICODE = NODCODE( IPOIN )
+d38 1
+a38 1
+C     viscous wall ..
+d40 2
+a41 4
+      IF( ICODE .LT. 0 )THEN
+              NI=NI+1
+              IX(NI) = IPOIN-1
+      ENDIF
+a43 10
+      CALL DINIT(NI,ZERO,Y,1)
+      CALL VecSetValues(RHS,NI,IX,Y,INSERT_VALUES,IFAIL)
+C
+      CALL VecAssemblyBegin(RHS,IFAIL)
+      CALL VecAssemblyEnd(RHS,IFAIL)
+C
+C     CALL ViewerFileOpenASCII(MPI_COMM_SELF,"vec.output",
+C    +                         VIEWER_STDOUT_SELF,IFAIL) 
+C     CALL ViewerSetFormat(VIEWER_STDOUT_SELF,
+C    +                     VIEWER_FORMAT_ASCII_DEFAULT,"pippo",IFAIL)
+d45 2
+a46 4
+C     CALL VecView(RHS,VIEWER_STDOUT_SELF,IFAIL)
+C
+C     CALL VecNorm(RHS,NORM_2,S,IFAIL)
+C     write(6,*)s 
+a49 6
+C     write(6,*)'VecSetValues has returned ',ifail
+C     write(6,*)ipoin,ni,(y(i),i=1,ni),(ix(i),i=1,ni)
+C     write(6,*)'VecSetValues has returned ',ifail
+C     write(6,*)'VecAssemblyBegin has returned ',ifail
+C     write(6,*)'VecAssemblyEnd has returned ',ifail
+C     write(6,*)'Leaving SETBC1'
+a50 2
+C
+C
+@
+
+
+1.2
+log
+@Unused variables removed
+@
+text
+@d11 3
+a13 3
+#include "include/FINCLUDE/petsc.h"
+#include "include/FINCLUDE/vec.h"
+#include "include/FINCLUDE/viewer.h"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d27 1
+a27 1
+      INTEGER IPOIN,ICODE,NI,IDIM,i,IFAIL
+@

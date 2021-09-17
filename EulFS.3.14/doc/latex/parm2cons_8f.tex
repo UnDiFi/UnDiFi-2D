@@ -1,0 +1,50 @@
+\hypertarget{parm2cons_8f}{}\doxysection{src/euler/parm2cons.f File Reference}
+\label{parm2cons_8f}\index{src/euler/parm2cons.f@{src/euler/parm2cons.f}}
+\doxysubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{parm2cons_8f_a34a0e1e740e66773d9d039f3c4e8c686}{P\+A\+R\+M2\+C\+O\+NS}} (Z\+R\+OE, D\+U\+DZ, N\+O\+F\+V\+AR, N\+D\+IM)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{parm2cons_8f_a34a0e1e740e66773d9d039f3c4e8c686}\label{parm2cons_8f_a34a0e1e740e66773d9d039f3c4e8c686}} 
+\index{parm2cons.f@{parm2cons.f}!PARM2CONS@{PARM2CONS}}
+\index{PARM2CONS@{PARM2CONS}!parm2cons.f@{parm2cons.f}}
+\doxysubsubsection{\texorpdfstring{PARM2CONS()}{PARM2CONS()}}
+{\footnotesize\ttfamily subroutine P\+A\+R\+M2\+C\+O\+NS (\begin{DoxyParamCaption}\item[{double precision, dimension(nofvar)}]{Z\+R\+OE,  }\item[{double precision, dimension(nofvar,nofvar)}]{D\+U\+DZ,  }\item[{integer}]{N\+O\+F\+V\+AR,  }\item[{integer}]{N\+D\+IM }\end{DoxyParamCaption})}
+
+\begin{DoxyParagraph}{Purpose}
+
+\end{DoxyParagraph}
+Compute the transformation matrix from parameter vector to conserved variables
+
+\[ \frac{\partial U}{\partial Z} = \left[ \begin{array}{ccccc} 2 z_1 & 0 & 0 & 0 & 0 \\ \frac{z_2}{\gamma} & \frac{z_1}{\gamma} & \frac{\gamma-1}{\gamma} z_3 & \frac{\gamma-1}{\gamma} z_4 & \frac{\gamma-1}{\gamma} z_5 \\ z_3 & 0 & z_1 & 0 & 0 \\ z_4 & 0 & 0 & z_1 & 0 \\ z_5 & 0 & 0 & 0 & z_1 \end{array} \right] \]
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em Z\+R\+OE} & Roe\textquotesingle{}s parameter vector \\
+\hline
+\mbox{\texttt{ out}}  & {\em D\+U\+DZ} & is the matrix $ \frac{\partial U}{\partial Z} $ \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+O\+F\+V\+AR} & leading dimension of D\+U\+DZ \\
+\hline
+\mbox{\texttt{ in}}  & {\em N\+D\+IM} & dimension of the space\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+
+\end{DoxyAuthor}
+\begin{DoxyParagraph}{Author}
+abonfi 
+\end{DoxyParagraph}
+\begin{DoxyVersion}{Version}
+
+\end{DoxyVersion}
+\begin{DoxyParagraph}{Revision}
+1.\+5 
+\end{DoxyParagraph}
+\begin{DoxyDate}{Date}
+
+\end{DoxyDate}
+\begin{DoxyParagraph}{Date}
+2013/08/21 10\+:30\+:45 
+\end{DoxyParagraph}

@@ -1,0 +1,236 @@
+head	1.4;
+access;
+symbols;
+locks
+	abonfi:1.4; strict;
+comment	@c @;
+
+
+1.4
+date	97.12.03.09.59.37;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	97.12.01.15.45.09;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	97.11.29.18.29.19;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	97.11.29.09.22.49;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Briver routine for computing boundary viscous fluxes
+@
+
+
+1.4
+log
+@Fixed bug for the definition of kinematic viscosity for
+compressible flow cases
+@
+text
+@      SUBROUTINE BNDVFLX(BVSFLX,IBNDFAC,
+     &NBFAC,NELEM,NPOIN,NDIM,NOFVERT,NOFVAR,NVAR)
+C
+      IMPLICIT NONE
+C
+C     .. Parameters ..
+C
+      INCLUDE 'paramt.h'
+      INTEGER LNNVV
+      PARAMETER(LNNVV=NMAX*NMAX*VMAX*VMAX)
+      INCLUDE 'constants'
+C
+C     .. Commons ..
+C
+      DOUBLE PRECISION DSTAK(1)
+      COMMON/CSTAK/DSTAK
+      INTEGER ISTAK(1)
+      EQUIVALENCE(DSTAK(1),ISTAK(1))
+C
+      INCLUDE 'implicit.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'bnd'
+      INCLUDE 'three'
+      INCLUDE 'nloc'
+      INCLUDE 'flags.com'
+      INCLUDE 'stream.com'
+      INCLUDE 'IO'
+C
+      EXTERNAL BVSFLX
+C
+C
+      INTEGER NBFAC,NELEM,NPOIN,NDIM,NOFVERT,NOFVAR,NVAR
+      INTEGER IBC,IELEM,IVERT,IFACE,LOC ,i,ICLR
+C
+C
+      INTEGER IBNDFAC(3,NBFAC) 
+C
+      INTEGER IDX_P(3*VMAX),IDX_V(NMAX*VMAX),IDX_F(3*VMAX)
+      INTEGER ICN(VMAX),ICF(VMAX)
+      DOUBLE PRECISION VCP(3*VMAX),VCZ(NMAX*VMAX),VCN(3*VMAX),
+     +VOLUME,STIFD(VMAX*VMAX*NMAX*NMAX),
+     +DT(VMAX),NODRES(NMAX*VMAX)
+C
+C
+C     LOC is a pointer to the position of the current face
+C         in the array SKINF; it assumes that boundary faces
+C         are ordered for increasing color
+C
+      DOUBLE PRECISION VISCT,TCHI,TVI,VI
+C
+C
+      DOUBLE PRECISION PRESSI,PRESSC,TFV1,TVT,SUTHERLAW
+      EXTERNAL         PRESSI,PRESSC,TFV1,TVT,SUTHERLAW
+C
+C
+      DATA VISCT/ZERO/
+C
+C
+      LOC = LSKINF-1
+C
+      IF( TIMEIMPL )THEN
+          CALL DINIT(NOFVAR*NOFVAR*NOFVERT*NOFVERT,ZERO,STIFD,1)
+      ENDIF
+C
+C     Loop over all boundary faces
+C
+      DO 100 IFACE = 1, NBFAC
+C
+         ICLR =  IBNDFAC(3,IFACE)
+         IBC = ICOLOR( ICLR )
+C
+C     .. Skip inviscid walls
+C
+         IF( IBC .EQ. 4 )GOTO 100
+C
+         IELEM = IBNDFAC(1,IFACE)
+         IVERT = IBNDFAC(2,IFACE)
+C
+         CALL CELPTR(IELEM, ISTAK(LCELNOD), ISTAK(LCELFAC), DSTAK(LVOL),
+     +   NDIM, NOFVERT, NOFVAR, NELEM, 1, ICN, ICF, VCP,
+     +   VCZ, VCN, VOLUME, IDX_P, IDX_V, IDX_F)
+C
+         IF    ( KAN .EQ. 2 )THEN
+      CALL LINEARIZE(IELEM,.FALSE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +VOLUME)
+
+C
+C     Compute pressure force
+C
+            IF(IBC.EQ.6)CALL PFORCE( ICLR, IVERT, VCN, NDIM, VCZ,
+     +                               NOFVAR, NOFVERT, PRESSI )
+            IF(TURBULENT)THEN
+                TVI   = TVT(ICN,NOFVERT,DSTAK(LTURB))
+                VI    = ONE
+                TCHI  = TVI/VI
+                VISCT = TVI*TFV1(TCHI)
+            ENDIF
+C
+         ELSEIF( KAN .EQ. 4 )THEN
+C 
+      CALL LINEARIZE(IELEM,.TRUE.,VCN,NDIM,NOFVERT,VCZ,NOFVAR,
+     +VOLUME)
+
+            CALL PARM2PRIM(NDIM,IELEM)
+C
+C     Compute pressure force
+C
+            IF(IBC.EQ.6)CALL PFORCE( ICLR, IVERT, VCN, NDIM, VCZ,
+     +                               NOFVAR, NOFVERT, PRESSC )
+            IF(TURBULENT)THEN
+                TVI   = TVT(ICN,NOFVERT,DSTAK(LTURB))
+                VI    = SUTHERLAW(M_INFTY,ABAR,ASQR)/UAVG(1)
+                TCHI  = TVI/VI
+                VISCT = TVI*TFV1(TCHI)*UAVG(1)
+            ENDIF
+C
+         ELSE
+C
+            STOP 'Invalid KAN in Subroutine BNDVFLX'
+C
+         ENDIF
+C
+         IF( IBC .EQ. 6 )LOC=LOC+1
+C
+C     reset LOCAL timestep and nodal residual to 0.d0
+C
+         CALL DINIT(NOFVAR*NOFVERT,ZERO,NODRES,1)
+         CALL DINIT(NOFVERT,ZERO,DT,1)
+C
+         CALL BVSFLX(ICLR,IELEM,IVERT,VCZ,NODRES,DT,NOFVAR,NOFVERT,VCN,
+     &   NDIM,VOLUME,STIFD,VISCT,DSTAK(LOC),(IBC.EQ.6),TIMEIMPL)
+C
+C     Scatter and add nodal update and timestep to global arrays
+C
+      CALL DAXPYI( NOFVERT, 1.D0, DT, ICN, DSTAK(LDTLIN) )
+      CALL DAXPYI( NOFVAR*NOFVERT, 1.D0, NODRES, IDX_V, DSTAK(LRESID) )
+C
+C     Assemble the stiffness matrix
+C
+         IF( TIMEIMPL )
+     +       CALL ASSMBCII(IELEM,IVERT,ICN,NOFVERT,DSTAK(LACSR),
+     +   ISTAK(LJACSR),ISTAK(LIACSR),STIFD,NOFVAR,SORTED)
+  100 CONTINUE
+C
+      RETURN
+      END
+@
+
+
+1.3
+log
+@Now handles the computation of aerodynamic forces for
+multiple bodies: ICLR now passed to BVSFLX
+@
+text
+@d112 1
+a112 1
+                VI    = SUTHERLAW(M_INFTY,ABAR,ASQR)
+@
+
+
+1.2
+log
+@Bug in arguments passed to PFORCE cured
+@
+text
+@d33 1
+a33 1
+      INTEGER IBC,IELEM,IVERT,IFACE,LOC ,i
+d69 2
+a70 1
+         IBC = ICOLOR( IBNDFAC(3,IFACE) )
+d90 1
+a90 1
+            IF(IBC.EQ.6)CALL PFORCE( IVERT, VCN, NDIM, VCZ,
+d108 1
+a108 1
+            IF(IBC.EQ.6)CALL PFORCE( IVERT, VCN, NDIM, VCZ,
+d130 1
+a130 1
+         CALL BVSFLX(IELEM,IVERT,VCZ,NODRES,DT,NOFVAR,NOFVERT,VCN,
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d89 2
+a90 1
+            IF(IBC.EQ.6)CALL PFORCE( IVERT, NDIM, NOFVERT, PRESSI )
+d107 2
+a108 1
+            IF(IBC.EQ.6)CALL PFORCE( IVERT, NDIM, NOFVERT, PRESSC )
+@

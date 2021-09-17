@@ -1,0 +1,508 @@
+head	1.6;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_14_0:1.6
+	release3_13_0:1.6
+	release3_12_0:1.6
+	release3_11_0:1.6
+	release3_10_0:1.6
+	release3_8_0:1.6
+	release3_7_1:1.6
+	release3_7_0:1.6
+	release3_4_5:1.6
+	release3_4_4:1.6
+	release3_4_3:1.6
+	release3_4_2:1.6
+	release3_4_1:1.6
+	release3_4_0:1.6
+	release3_3_5:1.6
+	release3_3_4:1.5
+	release3_3_3:1.5
+	release3_3_2:1.5
+	release3_3_1:1.5
+	release3_3_0:1.5;
+locks; strict;
+comment	@c @;
+
+
+1.6
+date	2013.04.27.09.35.18;	author abonfi;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2013.01.24.07.46.33;	author abonfi;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.06.11.09.02.29;	author abonfi;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.12.20.14.15.37;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2003.12.08.19.15.20;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2003.12.08.03.32.24;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@FS version of the 1st order upwind FV scheme
+@
+
+
+1.6
+log
+@the contribution to the timestep is now added
+separately for each variable
+@
+text
+@!> \copydetails LDASYS_SCHEME()
+      SUBROUTINE FVSys_scheme(MATRIXSPLITTER,W,NODRES,TSTEP,BETA,STIFC,
+     &NORDER,NDOF,NOFVERT,VCN,NDIM,DFGHDU,LDJ,CELRES,SOURCE,IELEM,
+     &MATRIX_ASSEMBLY)
+C
+      IMPLICIT NONE
+C
+C
+!> This routine computes the FV scheme for systems on one tetrahedron
+!! or triangle
+C
+      include 'paramt.h'
+      include 'constants.h'
+      include 'flags.com'
+      include 'time.com'
+C
+C     .. External Arguments ..
+C
+      EXTERNAL  MATRIXSPLITTER
+C
+C     .. Scalar Arguments ..
+C
+      INTEGER NORDER,FrstEq,IELEM,LDJ,LDQ,NDOF,NDIM,NOFVERT
+C
+C     .. Array Arguments ..
+C
+      DOUBLE PRECISION DFGHDU(LDJ,*),W(NDOF,NOFVERT),CELRES(*),
+     &TSTEP(NDOF,NOFVERT),NODRES(NDOF,NOFVERT),SOURCE(*),
+     &VCN(NDIM,NOFVERT),BETA(*),STIFC(NDOF,NDOF,NOFVERT,NOFVERT)
+C
+C     .. Local Scalars ..
+C
+      INTEGER INODE,IVERT,IVAR,IDIM,IROW,I,J
+      DOUBLE PRECISION TEMP1,DENOM
+      LOGICAL MATRIX_ASSEMBLY
+C
+C     .. Local Arrays ..
+C
+      DOUBLE PRECISION KPOS(MAXNOFEQN,MAXNOFEQN),
+     &KNEG(MAXNOFEQN,MAXNOFEQN),KMAT(MAXNOFEQN,MAXNOFEQN,VMAX),
+     &J_dot_N(MAXNOFEQN,MAXNOFEQN),
+     &DQ(MAXNOFEQN),WKSP4(MAXNOFEQN),WKSP5(MAXNOFEQN),
+     &VLEFT(MAXNOFEQN,MAXNOFEQN),VRIGHT(MAXNOFEQN,MAXNOFEQN),
+     &VN(3),WR(MAXNOFEQN),WPOS(MAXNOFEQN),WNEG(MAXNOFEQN)
+C
+C     .. External Functions ..
+C
+C
+C     .. External Subroutines ..
+C
+      EXTERNAL DSCAL
+C
+C     .. Intrinsic Functions ..
+C
+      INTRINSIC DBLE
+C
+C     .. Data Statements ..
+C
+      DATA VN /3*ZERO/
+C
+C     .. Executable Statements ..
+C
+      DENOM = ONE/REAL(NOFVERT)
+      CALL DSCAL(NORDER,ZERO,CELRES,1)! residual = - fluctuation
+C
+      IF(ICHECK.NE.0)THEN
+C
+         CALL DSCAL(MAXNOFEQN,ZERO,WKSP5,1)
+         CALL DINIT(MAXNOFEQN*MAXNOFEQN*VMAX,ZERO,KMAT,1)
+C
+C Compute the K's
+C
+         DO 10 IVERT =  1, NOFVERT
+C
+C.. The jacobian matrix is dotted with the face normal
+C   and saved in KMAT; the fluctuation is computed
+C
+C
+cold        CALL MATRIXSPLITTER(IELEM,NORDER,VN,DFGHDU,LDJ,
+cold +      K(1,1,IVERT),KPOS(1,1),KNEG(1,1),VLEFT,VRIGHT,MAXNOFEQN,WR,
+cold +      WPOS,WNEG,.FALSE.)
+            CALL MATRIXSPLITTER(IELEM,NDIM,NORDER,VCN(1,IVERT),DFGHDU,
+     +      LDJ,KMAT(1,1,IVERT),KPOS(1,1),KNEG(1,1),VLEFT,VRIGHT,
+     +      MAXNOFEQN,WR,WPOS,WNEG,.FALSE.)
+C
+            CALL DGEMV('N',NORDER,NORDER,ONE,KMAT(1,1,IVERT),MAXNOFEQN,
+     +      W(1,IVERT),1,ONE,CELRES,1)
+C
+   10    CONTINUE ! End loop over vertices
+      ENDIF ! ICHECK
+C
+C.. Loop over the edges ..
+C
+      DO 15 I = 1 , NOFVERT
+         DO 14 J = 1, NOFVERT
+            IF(J.EQ.I)GOTO 14
+c
+c.. Compute [n(j)-n(i)]/d
+c
+            DO 17 IDIM =  1, NDIM
+   17       VN(IDIM) = VCN(IDIM,J) - VCN(IDIM,I)
+C
+            DO 19 IROW =  1, NORDER
+   19       DQ(IROW) = W(IROW,J) - W(IROW,I)
+C
+C
+C       .. The matrix is split into its positive and negative parts
+C
+C       .. Numerically or Analitically ..
+C
+            CALL MATRIXSPLITTER(IELEM,NDIM,NORDER,VN,DFGHDU,LDJ,
+     +      J_dot_N,KPOS(1,1),KNEG(1,1),VLEFT,VRIGHT,MAXNOFEQN,WR,WPOS,
+     +      WNEG,.TRUE.)
+ 
+C
+C *************** Contribution to node J ***************
+C
+C.. NODRES[J] := NODRES[J] - [K(JI)]^+*[U(J)-U(I)]/(d+1)
+C
+C.. WKSP4 := [KPOS(J)-KPOS(I)]*[U(J)-U(I)]/(d+1)
+C
+            CALL DGEMV('N',NORDER,NORDER,-DENOM,KPOS,MAXNOFEQN,
+     +      DQ, 1,ZERO,NODRES(1,J),1)
+C
+            IF(ICHECK.NE.0)CALL DAXPY(NORDER,-ONE,NODRES(1,J),1,WKSP5,1)
+C
+            DO 7 IVAR =  1, NORDER
+    7       TSTEP(IVAR,J) = TSTEP(IVAR,J) + WPOS(IVAR)
+C
+C
+C
+   14 CONTINUE ! End loop over edges
+   15 CONTINUE ! End loop over edges
+C
+      IF(ICHECK.NE.0)THEN
+C
+         DO IVAR =  1, NORDER
+            TEMP1 = WKSP5(IVAR) - CELRES(IVAR)
+            IF(DABS(TEMP1).GT.1.D-15)THEN
+               WRITE(6,*)'FV system scheme, elem ',IELEM,' var # ',IVAR,
+     +         ' computed ',WKSP5(IVAR),' "true" ',CELRES(IVAR)
+            ENDIF
+         ENDDO
+      ENDIF
+      IF(MATRIX_ASSEMBLY)STOP ' Picard iteration NOT implemented in FV'
+      IF(LTIME)STOP ' Mass-matrix NOT implemented in FV'
+C
+      RETURN
+      END
+@
+
+
+1.5
+log
+@cosmetic changes and preliminary Doxygen documentation
+@
+text
+@d128 1
+a128 1
+    7       TSTEP(1,J) = TSTEP(1,J) + WPOS(IVAR)
+@
+
+
+1.4
+log
+@added BETA among the arguments of the call
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE FVSys_scheme(MatrixSplitter,QVEC,DU,DTLIN,BETA,STIFC,
+     &NORDER,NDOF,NOFVERT,VCN,NDIM,DFGHDU,LDJ,RESIDUAL,SOURCE,IELEM,
+a7 1
+C ----------------------------------- + -----------------------------------
+d9 2
+a10 21
+C NORDER                is the order of the system to solve for, i.e.
+C                       the order of the matrix DFGHDU.
+C FrstEq                is the first among the NOFVAR variable which
+C                       appears into the system of order NORDER.
+C IELEM                 is the current element.
+C DFGHDU(LDJ,*) is the Jacobian Matrix of the system.
+C LDJ                   is the leading dimension of DFGHDU.
+C QVEC                  stores by columns the NORDER variables of the
+C                       NOFVERT vertices.
+C LDQ                   is the leading dimension of QVEC.
+C RESIDUAL              stores the NORDER residual of the system.
+C MatrixSplitter        is the procedure used to compute the eigenvector 
+C                       decomposition of the matrix DFGHDU.
+C DTLIN                 is the nodal timestep.
+C DU(5,*)               is the nodal residual.
+C
+C ----------------------------------- + -----------------------------------
+C
+C
+C This routine computes the FV scheme for systems on one tetrahedron
+C or triangle
+d19 1
+a19 1
+      EXTERNAL  MatrixSplitter
+d27 3
+a29 3
+      DOUBLE PRECISION DFGHDU(LDJ,*),QVEC(NDOF,NOFVERT),RESIDUAL(*),
+     &DTLIN(NDOF,NOFVERT),DU(NDOF,NOFVERT),SOURCE(*),VCN(NDIM,NOFVERT),
+     &BETA(*),STIFC(NDOF,NDOF,NOFVERT,NOFVERT)
+d42 1
+a42 1
+     &DQVEC(MAXNOFEQN),WKSP4(MAXNOFEQN),WKSP5(MAXNOFEQN),
+d64 1
+a64 1
+      CALL DSCAL(NORDER,ZERO,RESIDUAL,1)! residual = - fluctuation
+d79 1
+a79 1
+cold        CALL MatrixSplitter(IELEM,NORDER,VN,DFGHDU,LDJ,
+d82 1
+a82 1
+            CALL MatrixSplitter(IELEM,NDIM,NORDER,VCN(1,IVERT),DFGHDU,
+d87 1
+a87 1
+     +      QVEC(1,IVERT),1,ONE,RESIDUAL,1)
+d104 1
+a104 1
+   19       DQVEC(IROW) = QVEC(IROW,J) - QVEC(IROW,I)
+d111 1
+a111 1
+            CALL MatrixSplitter(IELEM,NDIM,NORDER,VN,DFGHDU,LDJ,
+d118 1
+a118 1
+C.. DU[J] := DU[J] - [K(JI)]^+*[U(J)-U(I)]/(d+1)
+d123 1
+a123 1
+     +      DQVEC, 1,ZERO,DU(1,J),1)
+d125 1
+a125 1
+            IF(ICHECK.NE.0)CALL DAXPY(NORDER,-ONE,DU(1,J),1,WKSP5,1)
+d128 1
+a128 1
+    7       DTLIN(1,J) = DTLIN(1,J) + WPOS(IVAR)
+d138 1
+a138 1
+            TEMP1 = WKSP5(IVAR) - RESIDUAL(IVAR)
+d141 1
+a141 1
+     +         ' computed ',WKSP5(IVAR),' "true" ',RESIDUAL(IVAR)
+@
+
+
+1.3
+log
+@Umich version
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE FVSys_scheme(MatrixSplitter,QVEC,DU,DTLIN,STIFC,NORDER,
+     &NDOF,NOFVERT,VCN,NDIM,DFGHDU,LDJ,RESIDUAL,SOURCE,IELEM,
+d32 1
+a32 1
+      include 'constants'
+d34 1
+d48 1
+a48 1
+     &STIFC(NDOF,NDOF,NOFVERT,NOFVERT)
+d165 1
+@
+
+
+1.2
+log
+@2003 version of the FV scheme
+@
+text
+@d113 2
+a114 1
+         DO 15 J = I + 1, NOFVERT
+d136 1
+a136 1
+C.. DU[J] := DU[J] - RIGHT[1,FrstEq]*[KNEG(J)-KNEG(I)]*[U(J)-U(I)]/(d+1)
+d146 1
+a146 1
+    7       DTLIN(1,J) = DTLIN(1,J) - WNEG(IVAR)
+a147 2
+cold        CALL DGEMV('N',NOFVAR,NORDER,-ONE,R(1,FrstEq),5,WKSP4,1,ONE,
+cold +      DU(1,INODE),1)
+a148 18
+C.. WKSP4 := [KNEG(J)-KNEG(I)]*[U(J)-U(I)]/(d+1)
+C
+            CALL DGEMV('N',NORDER,NORDER,-DENOM,KNEG,MAXNOFEQN,
+     +      DQVEC,1,ZERO,DU(1,I),1)
+C
+            IF(ICHECK.NE.0)CALL DAXPY(NORDER,-ONE,DU(1,I),1,WKSP5,1)
+C
+C *************** Contribution to node I ***************
+C
+C.. DU[I] := DU[I] - RIGHT[1,FrstEq]*[KPOS(J)-KPOS(I)]*[U(J)-U(I)]/(d+1)
+C
+cold        INODE = ICN(I)
+C
+            DO 9 IVAR =  1, NORDER
+    9       DTLIN(1,I) = DTLIN(1,I) + WPOS(IVAR)
+C
+cold        CALL DGEMV('N',NOFVAR,NORDER,-ONE,R(1,FrstEq),5,WKSP4,1,ONE,
+cold +      DU(1,INODE),1)
+d150 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 3
+a3 2
+      SUBROUTINE FVSys_scheme(NORDER,FrstEq,IELEM,JacobianMatrix,LDJ,
+     &QVEC,LDQ,RESIDUAL,MatrixSplitter,DTLIN,DU)
+d10 1
+a10 1
+C                       the order of the matrix JacobianMatrix.
+d14 2
+a15 2
+C JacobianMatrix(LDJ,*) is the Jacobian Matrix of the system.
+C LDJ                   is the leading dimension of JacobianMatrix.
+d21 1
+a21 1
+C                       decomposition of the matrix JacobianMatrix.
+d31 3
+a33 6
+      include 'common8/sys_schemes'
+      include 'common8/constants'
+      include 'common8/cell'
+      include 'common8/three'
+      include 'common8/int_flags'
+      include 'common8/dim_flags'
+d41 1
+a41 1
+      INTEGER	NORDER,FrstEq,IELEM,LDJ,LDQ
+d45 3
+a47 2
+      DOUBLE PRECISION 	JacobianMatrix(LDJ,1),QVEC(LDQ,1),RESIDUAL(1),
+     &DTLIN(1),DU(5,1)
+d51 3
+a53 2
+      INTEGER	INODE,IVERT,IVAR,IDIM,IROW,I,J
+      DOUBLE PRECISION TEMP1
+d57 6
+a62 5
+      DOUBLE PRECISION 	KPOS(NMAX,NMAX),KNEG(NMAX,NMAX),
+     &			J_dot_N(NMAX,NMAX),K(NMAX,NMAX,4)
+      DOUBLE PRECISION	DQVEC(NMAX),WKSP4(NMAX),WKSP5(NMAX)
+      DOUBLE PRECISION  VLEFT(NMAX,NMAX),VRIGHT(NMAX,NMAX)
+      DOUBLE PRECISION	VN(3),WR(NMAX),WPOS(NMAX),WNEG(NMAX)
+d69 1
+a69 1
+      EXTERNAL	DSCAL
+d81 1
+d86 2
+a87 1
+         CALL DSCAL(NMAX,ZERO,WKSP5,1)
+d93 2
+a94 2
+C	.. The jacobian matrix is dotted with the face normal
+C		and saved in K
+a95 1
+            CALL DSCAL(NMAX*NMAX,ZERO,K(1,1,IVERT),1)
+d97 6
+a102 3
+            CALL MatrixSplitter(IELEM,NORDER,VN,JacobianMatrix,LDJ,
+     +      K(1,1,IVERT),KPOS(1,1),KNEG(1,1),VLEFT,VRIGHT,NMAX,WR,
+     +      WPOS,WNEG,.FALSE.)
+d104 2
+a105 2
+            CALL DGEMV('N',NORDER,NORDER,ONE,K(1,1,IVERT),NMAX,QVEC
+     +      (1,IVERT),1,ONE,RESIDUAL,1)
+d110 1
+a110 1
+C	.. Loop over the edges ..
+d115 1
+a115 1
+c	.. Compute [n(j)-n(i)]/d
+d117 1
+a117 1
+            DO 17 IDIM =  1, DIM
+d128 3
+a130 3
+            CALL MatrixSplitter(IELEM,NORDER,VN,JacobianMatrix,LDJ,
+     +      J_dot_N,KPOS(1,1),KNEG(1,1),VLEFT,VRIGHT,NMAX,WR,WPOS,WNEG,
+     +      .TRUE.)
+d135 1
+a135 1
+C	.. DU[J] := DU[J] - RIGHT[1,FrstEq]*[KNEG(J)-KNEG(I)]*[U(J)-U(I)]/(d+1)
+d137 1
+a137 1
+C	.. WKSP4 := [KPOS(J)-KPOS(I)]*[U(J)-U(I)]/(d+1)
+d139 2
+a140 2
+            CALL DGEMV('N',NORDER,NORDER,ONE/ANOFVERT,KPOS,NMAX, DQVEC,
+     +      1,ZERO,WKSP4,1)
+d142 1
+a142 2
+            IF(ICHECK.NE.0)CALL DAXPY(NORDER,ONE,WKSP4,1,WKSP5,1)
+            INODE = ICN(J)
+d145 1
+a145 1
+    7       DTLIN(INODE) = DTLIN(INODE) - WNEG(IVAR)
+d147 2
+a148 2
+            CALL DGEMV('N',NOFVAR,NORDER,-ONE,R(1,FrstEq),5,WKSP4,1,ONE,
+     +      DU(1,INODE),1)
+d150 1
+a150 1
+C	.. WKSP4 := [KNEG(J)-KNEG(I)]*[U(J)-U(I)]/(d+1)
+d152 2
+a153 2
+            CALL DGEMV('N',NORDER,NORDER,ONE/ANOFVERT,KNEG,NMAX, DQVEC,
+     +      1,ZERO,WKSP4,1)
+d155 1
+a155 1
+            IF(ICHECK.NE.0)CALL DAXPY(NORDER,ONE,WKSP4,1,WKSP5,1)
+d159 1
+a159 1
+C	.. DU[I] := DU[I] - RIGHT[1,FrstEq]*[KPOS(J)-KPOS(I)]*[U(J)-U(I)]/(d+1)
+d161 1
+a161 1
+            INODE = ICN(I)
+d164 1
+a164 1
+    9       DTLIN(INODE) = DTLIN(INODE) + WPOS(IVAR)
+d166 2
+a167 2
+            CALL DGEMV('N',NOFVAR,NORDER,-ONE,R(1,FrstEq),5,WKSP4,1,ONE,
+     +      DU(1,INODE),1)
+d172 1
+a172 1
+*
+d181 1
+@

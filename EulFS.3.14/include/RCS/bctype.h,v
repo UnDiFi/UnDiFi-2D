@@ -1,0 +1,47 @@
+head	1.1;
+access;
+symbols
+	release3_14_0:1.1
+	release3_13_0:1.1
+	release3_12_0:1.1
+	release3_11_0:1.1
+	release3_10_0:1.1
+	release3_8_0:1.1
+	release3_7_1:1.1
+	release3_7_0:1.1
+	release3_4_5:1.1
+	release3_4_4:1.1
+	release3_4_3:1.1
+	release3_4_2:1.1
+	release3_4_1:1.1
+	release3_4_0:1.1
+	release3_3_5:1.1
+	release3_3_4:1.1
+	release3_3_3:1.1
+	release3_3_2:1.1
+	release3_3_1:1.1
+	release3_3_0:1.1;
+locks; strict;
+comment	@ * @;
+
+
+1.1
+date	2013.01.25.08.21.38;	author abonfi;	state Exp;
+branches;
+next	;
+
+
+desc
+@Integer parameters used to choose whether inflow/outflow
+boundary conditions should be set strongly or weakly
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@      INTEGER BC_TYPE_WEAK,BC_TYPE_STRONG
+      PARAMETER(BC_TYPE_WEAK=1,BC_TYPE_STRONG=2)
+@

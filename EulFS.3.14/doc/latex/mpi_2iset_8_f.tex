@@ -1,0 +1,51 @@
+\hypertarget{mpi_2iset_8_f}{\section{src/mpi/iset.F File Reference}
+\label{mpi_2iset_8_f}\index{src/mpi/iset.\-F@{src/mpi/iset.\-F}}
+}
+{\ttfamily \#include \char`\"{}finclude/petscsys.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscvec.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}finclude/petscis.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}iset.\-com\char`\"{}}\\*
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{mpi_2iset_8_f_af38962e0be9fc6bcabd0b07f202567e7}{iset} (I\-D\-X, I\-B\-N\-D\-F\-A\-C, N\-B\-F\-A\-C, I\-C\-E\-L\-N\-O\-D, N\-O\-F\-V\-E\-R\-T, N\-O\-D\-C\-O\-D\-E, N\-D\-I\-M, N\-O\-F\-V\-A\-R, \hyperlink{mesh_8com_ae28c1572321efcd8715b974d87d20c58}{N\-P\-O\-I\-N}, N\-G\-H\-O\-S\-T, N\-P\-N\-O\-D, \hyperlink{mesh_8com_aee5e75b79d0e815c0603cfbccc618957}{N\-E\-L\-E\-M}, R\-O\-W\-B\-G\-N, C\-O\-M\-P\-R\-E\-S\-S\-I\-B\-L\-E)
+\item 
+subroutine \hyperlink{mpi_2iset_8_f_a66ee82f2074a3f320de34d4fb54d0c5f}{setflag} (I\-B\-N\-D\-F\-A\-C, N\-B\-F\-A\-C, N\-O\-D\-C\-O\-D\-E, N\-P, I\-C\-E\-L\-N\-O\-D, N\-O\-F\-V\-E\-R\-T, \hyperlink{bnd_8com_a80aa0313e1ef320813f587804c852992}{I\-C\-O\-L\-O\-R}, B\-C\-\_\-\-T\-Y\-P\-E)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{mpi_2iset_8_f_af38962e0be9fc6bcabd0b07f202567e7}{\index{mpi/iset.\-F@{mpi/iset.\-F}!iset@{iset}}
+\index{iset@{iset}!mpi/iset.F@{mpi/iset.\-F}}
+\subsubsection[{iset}]{\setlength{\rightskip}{0pt plus 5cm}subroutine iset (
+\begin{DoxyParamCaption}
+\item[{integer, dimension(npoin)}]{I\-D\-X, }
+\item[{integer, dimension(3,nbfac)}]{I\-B\-N\-D\-F\-A\-C, }
+\item[{integer}]{N\-B\-F\-A\-C, }
+\item[{integer, dimension(nofvert,$\ast$)}]{I\-C\-E\-L\-N\-O\-D, }
+\item[{integer}]{N\-O\-F\-V\-E\-R\-T, }
+\item[{integer, dimension(npoin+nghost)}]{N\-O\-D\-C\-O\-D\-E, }
+\item[{integer}]{N\-D\-I\-M, }
+\item[{integer}]{N\-O\-F\-V\-A\-R, }
+\item[{integer}]{N\-P\-O\-I\-N, }
+\item[{integer}]{N\-G\-H\-O\-S\-T, }
+\item[{integer}]{N\-P\-N\-O\-D, }
+\item[{integer}]{N\-E\-L\-E\-M, }
+\item[{integer}]{R\-O\-W\-B\-G\-N, }
+\item[{logical}]{C\-O\-M\-P\-R\-E\-S\-S\-I\-B\-L\-E}
+\end{DoxyParamCaption}
+)}}\label{mpi_2iset_8_f_af38962e0be9fc6bcabd0b07f202567e7}
+\hypertarget{mpi_2iset_8_f_a66ee82f2074a3f320de34d4fb54d0c5f}{\index{mpi/iset.\-F@{mpi/iset.\-F}!setflag@{setflag}}
+\index{setflag@{setflag}!mpi/iset.F@{mpi/iset.\-F}}
+\subsubsection[{setflag}]{\setlength{\rightskip}{0pt plus 5cm}subroutine setflag (
+\begin{DoxyParamCaption}
+\item[{integer, dimension(3,nbfac)}]{I\-B\-N\-D\-F\-A\-C, }
+\item[{integer}]{N\-B\-F\-A\-C, }
+\item[{integer, dimension($\ast$)}]{N\-O\-D\-C\-O\-D\-E, }
+\item[{integer}]{N\-P, }
+\item[{integer, dimension(nofvert,$\ast$)}]{I\-C\-E\-L\-N\-O\-D, }
+\item[{}]{N\-O\-F\-V\-E\-R\-T, }
+\item[{integer, dimension($\ast$)}]{I\-C\-O\-L\-O\-R, }
+\item[{integer}]{B\-C\-\_\-\-T\-Y\-P\-E}
+\end{DoxyParamCaption}
+)}}\label{mpi_2iset_8_f_a66ee82f2074a3f320de34d4fb54d0c5f}

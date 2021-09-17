@@ -1,0 +1,145 @@
+Runtime arguments are: -itmax\ 15 -ksp_divtol\ 1.e10 -scalar_scheme\ LDA -matrix_scheme\ LW2 -linearization\ newton -cfl\ 10.
+running testcase :  2D/compressible.euler/1aA  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.euler/1aA  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+running testcase :  2D/compressible.euler/1aB  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.euler/1aB  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+7,8c7,8
+<     7   88 0.6885E-02 0.5507E-01 0.4049E-02 0.3184E-02 0.3535E+02
+<     8   45 0.9348E-02 0.7431E-01 0.4071E-02 0.4544E-02 0.2604E+02
+---
+>     7   88 0.6889E-02 0.5510E-01 0.4049E-02 0.3184E-02 0.3533E+02
+>     8   50 0.9367E-02 0.7384E-01 0.4068E-02 0.4487E-02 0.2598E+02
+running testcase :  2D/compressible.euler/1bB/LDA  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.euler/1bB/LDA  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+2,15c2,15
+<     2  115 0.4714E-02 0.1179E+05 0.3511E-01 0.5250E-01 0.5163E+02
+<     3   65 0.5916E-02 0.1479E+05 0.1189E-01 0.2347E-01 0.4114E+02
+<     4  311 0.1863E-02 0.4658E+04 0.9087E-02 0.2257E-01 0.1306E+03
+<     5  167 0.2269E-02 0.5673E+04 0.7562E-02 0.1931E-01 0.1073E+03
+<     6  402 0.1383E-02 0.3457E+04 0.7575E-02 0.1876E-01 0.1760E+03
+<     7   67 0.1095E-02 0.2737E+04 0.6353E-02 0.1744E-01 0.2223E+03
+<     8  570 0.8042E-03 0.2010E+04 0.5680E-02 0.1562E-01 0.3027E+03
+<     9 1288 0.7423E-03 0.1856E+04 0.5132E-02 0.1350E-01 0.3279E+03
+<    10  652 0.4455E-03 0.1114E+04 0.4494E-02 0.1149E-01 0.5463E+03
+<    11   90 0.3885E-03 0.9713E+03 0.3734E-02 0.8995E-02 0.6265E+03
+<    12   55 0.3511E-03 0.8777E+03 0.3069E-02 0.6869E-02 0.6932E+03
+<    13   33 0.2549E-01 0.6373E+05 0.4119E-02 0.5268E-02 0.9547E+01
+<    14  299 0.7887E-02 0.1972E+05 0.3633E-02 0.5025E-02 0.3086E+02
+<    15 **** 0.1958E-02 0.4894E+04 0.3906E-02 0.4936E-02 0.1243E+03
+---
+>     2  114 0.4714E-02 0.1179E+05 0.3511E-01 0.5250E-01 0.5163E+02
+>     3   65 0.5972E-02 0.1493E+05 0.1168E-01 0.2343E-01 0.4075E+02
+>     4  474 0.1833E-02 0.4581E+04 0.1017E-01 0.2203E-01 0.1328E+03
+>     5  152 0.2259E-02 0.5648E+04 0.7748E-02 0.1976E-01 0.1077E+03
+>     6  394 0.1135E-02 0.2837E+04 0.6771E-02 0.1849E-01 0.2145E+03
+>     7  266 0.1370E-02 0.3425E+04 0.6301E-02 0.1698E-01 0.1776E+03
+>     8  929 0.6222E-03 0.1555E+04 0.5638E-02 0.1567E-01 0.3912E+03
+>     9  389 0.7749E-03 0.1937E+04 0.5001E-02 0.1300E-01 0.3141E+03
+>    10  539 0.4165E-03 0.1041E+04 0.4410E-02 0.1115E-01 0.5844E+03
+>    11  720 0.3938E-03 0.9844E+03 0.3615E-02 0.8599E-02 0.6181E+03
+>    12  476 0.5882E-03 0.1470E+04 0.3185E-02 0.6711E-02 0.4138E+03
+>    13  392 0.3534E-03 0.8835E+03 0.2664E-02 0.5592E-02 0.6887E+03
+>    14  103 0.2454E-03 0.6135E+03 0.2168E-02 0.4266E-02 0.9918E+03
+>    15  329 0.2920E-03 0.7299E+03 0.1768E-02 0.3054E-02 0.8336E+03
+running testcase :  2D/incompressible.euler/1bE  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/incompressible.euler/1bE  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+running testcase :  2D/incompressible.euler/1bF  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/incompressible.euler/1bF  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+5c5
+<     5   49 0.4996E-02 0.4875E-02 0.3321E-02 0.4872E+02
+---
+>     5   49 0.4995E-02 0.4875E-02 0.3321E-02 0.4872E+02
+running testcase :  2D/compressible.ns/2aC/jcc/  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.ns/2aC/jcc/  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+running testcase :  2D/compressible.rans/rae2822/case1/test/rcm  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.rans/rae2822/case1/test/rcm  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+8,15c8,15
+<     8   89 0.2044E-06 0.2380E-06 0.2471E-06 0.8928E-07 0.4545E-04 0.8936E+06
+<     9   79 0.1261E-07 0.1169E-06 0.3279E-07 0.6056E-07 0.3693E-03 0.1100E+06
+<    10  104 0.1061E-08 0.3689E-09 0.4571E-09 0.1317E-09 0.4395E-05 0.9242E+07
+<    11  105 0.5445E-11 0.6296E-10 0.1377E-10 0.7076E-11 0.3853E-08 0.1054E+11
+<    12   76 0.2503E-13 0.1771E-12 0.5017E-13 0.3212E-13 0.2417E-08 0.1681E+11
+<    13   65 0.2146E-13 0.1600E-12 0.4332E-13 0.2562E-13 0.2252E-08 0.1804E+11
+<    14   70 0.2319E-13 0.1687E-12 0.4739E-13 0.2723E-13 0.2518E-08 0.1613E+11
+<    15   72 0.2051E-13 0.1611E-12 0.4382E-13 0.2756E-13 0.2335E-08 0.1739E+11
+---
+>     8   89 0.2044E-06 0.2379E-06 0.2471E-06 0.8933E-07 0.4545E-04 0.8936E+06
+>     9   79 0.1263E-07 0.1170E-06 0.3283E-07 0.6057E-07 0.3693E-03 0.1100E+06
+>    10  104 0.1061E-08 0.3637E-09 0.4568E-09 0.1332E-09 0.4395E-05 0.9242E+07
+>    11  105 0.4101E-11 0.3442E-10 0.7993E-11 0.2760E-11 0.3854E-08 0.1054E+11
+>    12   78 0.2709E-13 0.1926E-12 0.5441E-13 0.3031E-13 0.2417E-08 0.1681E+11
+>    13   72 0.2169E-13 0.1683E-12 0.4491E-13 0.2585E-13 0.2252E-08 0.1804E+11
+>    14   72 0.2208E-13 0.1683E-12 0.4418E-13 0.2826E-13 0.2518E-08 0.1613E+11
+>    15   71 0.2250E-13 0.1545E-12 0.4240E-13 0.2872E-13 0.2335E-08 0.1739E+11
+running testcase :  2D/incompressible.ns/2aG/  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/incompressible.ns/2aG/  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+9c9
+<     9  115 0.2785E-04 0.9387E-03 0.3053E-04 0.1072E+04
+---
+>     9  115 0.2785E-04 0.9387E-03 0.3052E-04 0.1072E+04
+running testcase :  2D/compressible.ns/fplate/lbl5e5/coarse  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.ns/fplate/lbl5e5/coarse  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+8c8
+<     8   49 0.5803E-05 0.1688E-03 0.1638E-03 0.3605E-04 0.1058E+05
+---
+>     8   49 0.5802E-05 0.1688E-03 0.1638E-03 0.3605E-04 0.1058E+05
+10c10
+<    10   48 0.4437E-05 0.1229E-03 0.5904E-04 0.1907E-05 0.1453E+05
+---
+>    10   48 0.4438E-05 0.1229E-03 0.5904E-04 0.1907E-05 0.1453E+05
+12c12
+<    12   50 0.5135E-06 0.1420E-04 0.2389E-04 0.4500E-05 0.1258E+06
+---
+>    12   50 0.5136E-06 0.1420E-04 0.2389E-04 0.4501E-05 0.1258E+06
+14,15c14,15
+<    14   51 0.4771E-07 0.1385E-05 0.2575E-05 0.4340E-06 0.1290E+07
+<    15   51 0.1186E-06 0.3361E-05 0.8502E-07 0.1606E-05 0.5316E+06
+---
+>    14   51 0.4771E-07 0.1385E-05 0.2575E-05 0.4339E-06 0.1290E+07
+>    15   51 0.1187E-06 0.3363E-05 0.8503E-07 0.1607E-05 0.5313E+06
+running testcase :  2D/incompressible.euler/naca  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/incompressible.euler/naca  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+running testcase :  2D/incompressible.euler/nacaper  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/incompressible.euler/nacaper  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+8,15c8,15
+<     8   39 0.1717E-02 0.2093E-02 0.2920E-03 0.7298E+02
+<     9   43 0.1431E-02 0.1896E-02 0.1875E-03 0.8756E+02
+<    10   54 0.1060E-02 0.1992E-02 0.1566E-03 0.1182E+03
+<    11   65 0.5079E-03 0.2113E-02 0.1176E-03 0.2467E+03
+<    12   77 0.3440E-03 0.1850E-02 0.7555E-04 0.3641E+03
+<    13   89 0.2193E-03 0.1439E-02 0.8165E-04 0.5714E+03
+<    14   88 0.2017E-03 0.9882E-03 0.5136E-04 0.6212E+03
+<    15   86 0.1458E-03 0.7106E-03 0.3701E-04 0.8592E+03
+---
+>     8   36 0.1908E-02 0.2096E-02 0.2985E-03 0.6565E+02
+>     9   43 0.1463E-02 0.1900E-02 0.1955E-03 0.8562E+02
+>    10   51 0.1109E-02 0.1978E-02 0.1597E-03 0.1130E+03
+>    11   62 0.5640E-03 0.2119E-02 0.1244E-03 0.2221E+03
+>    12   82 0.3214E-03 0.1899E-02 0.7340E-04 0.3898E+03
+>    13   80 0.3472E-03 0.1462E-02 0.1004E-03 0.3608E+03
+>    14   94 0.1781E-03 0.1108E-02 0.7013E-04 0.7033E+03
+>    15   85 0.1777E-03 0.7729E-03 0.4028E-04 0.7048E+03
+running testcase :  2D/compressible.euler/naca  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.euler/naca  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+running testcase :  2D/compressible.euler/stanitz/Mach0.69  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/compressible.euler/stanitz/Mach0.69  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+running testcase :  2D/incompressible.euler/stanitz/Mach0.26  with:  eulfs3.2.3-linux_intel
+running testcase :  2D/incompressible.euler/stanitz/Mach0.26  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+running testcase :  3D/compressible.euler/sinus/6/A  with:  eulfs3.2.3-linux_intel
+running testcase :  3D/compressible.euler/sinus/6/A  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+14,15c14,15
+<    14   21 0.1491E-05 0.1207E-04 0.8914E-05 0.6430E-05 0.1463E-04 0.7167E+07
+<    15   21 0.3232E-08 0.1361E-07 0.2340E-08 0.2375E-08 0.2842E-08 0.3305E+10
+---
+>    14   21 0.1490E-05 0.1207E-04 0.8915E-05 0.6430E-05 0.1463E-04 0.7169E+07
+>    15   21 0.3234E-08 0.1362E-07 0.2349E-08 0.2374E-08 0.2847E-08 0.3303E+10
+running testcase :  3D/compressible.euler/sinus/6/B  with:  eulfs3.2.3-linux_intel
+running testcase :  3D/compressible.euler/sinus/6/B  with:  eulfs3.2.3-linux_gnu64ompi-4.5.1
+10,12c10,12
+<    10   21 0.1794E-04 0.1363E-03 0.9476E-04 0.7313E-04 0.1723E-03 0.5955E+06
+<    11   21 0.3853E-07 0.1620E-06 0.3613E-07 0.3626E-07 0.5454E-07 0.2773E+09
+<    12   22 0.1298E-10 0.6110E-10 0.1251E-10 0.9103E-11 0.1095E-10 0.8229E+12
+---
+>    10   21 0.1794E-04 0.1362E-03 0.9476E-04 0.7313E-04 0.1723E-03 0.5955E+06
+>    11   21 0.3859E-07 0.1623E-06 0.3602E-07 0.3622E-07 0.5458E-07 0.2769E+09
+>    12   23 0.1266E-10 0.5907E-10 0.1194E-10 0.9079E-11 0.1086E-10 0.8438E+12

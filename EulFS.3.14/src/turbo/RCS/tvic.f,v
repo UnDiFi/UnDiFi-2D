@@ -1,0 +1,94 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    ; strict;
+comment  @c @;
+
+
+1.2
+date     97.12.02.18.23.21;  author aldo;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     97.11.29.08.10.39;  author aldo;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Function for the Spalart-Allmaras model
+@
+
+
+1.2
+log
+@Add include for bnd.h
+@
+text
+@
+C///////////////////////////////////////////////////////////////////////
+
+C       Identification Keywords:
+
+C       @@(#)tvic.f      1.0.0.1 4/1/95  95/08/21        12:00:00
+C       /alpha1/users/mubadmin/scalar/sccs/s.tvic.f
+C
+
+C///////////////////////////////////////////////////////////////////////
+
+C//////////////////////////////////////////////////////////////////////
+C
+      DOUBLE PRECISION FUNCTION TVIC(COMPRESSIBLE)
+*
+*
+*      DESCRIPTION:
+*      -----------
+*
+*      molecular viscosity computation
+*      (Spalart & Allmaras model: version )
+*
+*      FILE HISTORY:
+*      ------------
+*
+*      LANGUAGE : Fortran 77
+*      LAST CHANGE : November 97
+*
+*  ==============================================================
+
+
+      INCLUDE 'paramt.h'
+      INCLUDE 'bnd.h'
+      INCLUDE 'constants'
+      INCLUDE 'stream.com'
+      INCLUDE 'three'
+
+C     .. Scalar Arguments ..
+      LOGICAL COMPRESSIBLE
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION SUTHERLAW
+      EXTERNAL SUTHERLAW
+C     ..
+      IF (COMPRESSIBLE) THEN
+          TVIC = SUTHERLAW(M_INFTY,ABAR,ASQR)/UAVG(1)
+
+      ELSE
+          TVIC = ONE
+      ENDIF
+
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d33 1
+a34 1
+C     INCLUDE 'turb.com'
+@

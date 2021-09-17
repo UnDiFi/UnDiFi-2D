@@ -1,0 +1,3 @@
+in main viene assegnato U_(nofvar) = 1
+in main non si passa da ISET_T
+in bndvflx TurbulenceModel = LAMINAR

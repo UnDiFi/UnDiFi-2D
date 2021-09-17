@@ -1,0 +1,51 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@ * @;
+
+
+1.1
+date	99.10.25.09.03.26;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@timing routine for LINUX
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/*
+  From David Klein (klein@@sunrise.huji.ac.za)
+*/
+
+#include <sys/times.h>
+#include <unistd.h>
+
+#include "f2c.h"
+
+doublereal dtime_(tarray)
+real *tarray;
+{
+  struct tms buf;
+  time_t ticks;
+
+    /* System generated locals */
+    real ret_val;
+
+    /* Parameter adjustments */
+    --tarray;
+
+    /* Function Body */
+  ticks=times(&buf);
+  tarray[1]=buf.tms_utime/100.0;
+  ret_val=tarray[1];
+  return ret_val;
+}
+@

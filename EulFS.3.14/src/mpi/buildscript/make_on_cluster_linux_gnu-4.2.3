@@ -1,0 +1,21 @@
+export PATH=/usr/local/gcc-4.2.3/bin:$PATH
+export PETSC_DIR=/usr/local/src/petsc/petsc-3.2-p7
+export FSPL_DIR=$HOME/CFD_codes/EulFS.3.2.3
+export PETSC_ARCH=linux_gnu-4.2.3
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/gcc-4.2.3/lib
+
+echo Using gcc: `which gcc`
+echo
+echo Using F95: `which gfortran`
+echo
+
+echo PETSC_DIR is: $PETSC_DIR
+echo
+echo PETSC_ARCH is: $PETSC_ARCH
+echo
+echo LD_LIBRARY_PATH is: $LD_LIBRARY_PATH
+echo
+
+sleep 2
+
+make install

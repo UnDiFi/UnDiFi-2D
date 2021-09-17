@@ -1,0 +1,216 @@
+C
+*=*=*=*= UPDATE4.html =*=*=*=*
+<HEADER>
+<TITLE>SUBROUTINE UPDATE4</TITLE>
+</HEADER>
+<BODY>
+<H1>SUBROUTINE UPDATE4</H1>
+
+<PRE>
+
+      SUBROUTINE <A NAME=UPDATE4>UPDATE4</A>( <A HREF=#NDIM>NDIM</A>, <A HREF=#NOFVAR>NOFVAR</A>, <A HREF=#NPOIN>NPOIN</A>, <A HREF=#sles>sles</A>, <A HREF=#B>B</A>, <A HREF=#RHS>RHS</A>, <A HREF=#ViscT>ViscT</A>, <A HREF=#DT>DT</A>,
+     +                    <A HREF=#NIT>NIT</A>, <A HREF=#IFLAG>IFLAG</A> )
+C
+      IMPLICIT NONE
+C
+C
+C     Implicit timestepping for the one-eqn. turbulence model ..
+C
+C
+C     $Id: update4.F,v 1.20 1999/11/05 20:46:24 aldo Exp aldo $
+C     $Header: /home/aldo/EulFS.0.10.1/src/seq/RCS/update4.F,v 1.20 1999/11/05 2
+C
+#include "include/finclude/petsc.h"
+#include "include/finclude/vec.h"
+#include "include/finclude/mat.h"
+#include "include/finclude/pc.h"
+#include "include/finclude/sles.h"
+C
+      Mat B
+      Vec RHS,DT,ViscT
+      Vec X,V
+      SLES sles
+      Scalar RHS_V(1)
+      PetscOffset RHS_I
+      INCLUDE 'constants'
+      DOUBLE PRECISION <A NAME=DSTAK>DSTAK</A>(1)
+      COMMON /<A NAME=CSTAK>CSTAK</A>/ <A NAME=DSTAK>DSTAK</A>
+      INTEGER <A NAME=ISTAK>ISTAK</A>(1)
+      EQUIVALENCE(<A NAME=DSTAK>DSTAK</A>(1),<A NAME=ISTAK>ISTAK</A>(1))
+      INCLUDE 'paramt.h'
+      INTEGER <A NAME=NDNM>NDNM</A>
+      PARAMETER(<A NAME=NDNM>NDNM</A>=3*<A NAME=NMAX>NMAX</A>)
+      INCLUDE 'conv.com'
+      INCLUDE 'nboun.com'
+      INCLUDE 'nloc'
+      INCLUDE 'verbose.com'
+      INCLUDE 'implicit.h'
+      INCLUDE 'IO'
+      INTEGER <A NAME=MY_PE>MY_PE</A>
+      COMMON/<A NAME=MPICOM>MPICOM</A>/<A NAME=MY_PE>MY_PE</A>
+C
+      INTEGER <A NAME=NDIM>NDIM</A>,<A NAME=NOFVAR>NOFVAR</A>,<A NAME=NPOIN>NPOIN</A>,<A NAME=IFAIL>IFAIL</A>,<A NAME=ITS>ITS</A>,<A NAME=NIT>NIT</A>
+C
+      INTEGER <A NAME=IVAR>IVAR</A>,<A NAME=LOCA>LOCA</A>,<A NAME=LOCB>LOCB</A>,<A NAME=IPOIN>IPOIN</A>,<A NAME=i>i</A>,<A NAME=LOCX>LOCX</A>,<A NAME=LOCV>LOCV</A>,<A NAME=LIWORK>LIWORK</A>,<A NAME=IFLAG>IFLAG</A>,
+     +<A NAME=ICOUNT>ICOUNT</A>
+      DOUBLE PRECISION <A NAME=CNST>CNST</A>,<A NAME=S>S</A>,<A NAME=PREVR>PREVR</A>,<A NAME=RES0>RES0</A>,<A NAME=al>al</A>,<A NAME=be>be</A>,<A NAME=ALPHA>ALPHA</A>,<A NAME=BETA>BETA</A>,<A NAME=TEMP>TEMP</A>
+      parameter (<A NAME=al>al</A>=0.9d0/99.d0,<A NAME=be>be</A>=0.1d0-<A NAME=al>al</A>)
+      SAVE <A NAME=PREVR>PREVR</A>,<A NAME=ALPHA>ALPHA</A>,<A NAME=BETA>BETA</A>,<A NAME=TEMP>TEMP</A>,<A NAME=ICOUNT>ICOUNT</A>,<A NAME=CNST>CNST</A>
+C
+      DOUBLE PRECISION <A NAME=WKSP1>WKSP1</A>(3,<A NAME=NMAX>NMAX</A>),<A NAME=WKSP2>WKSP2</A>(3,<A NAME=NMAX>NMAX</A>)
+C
+      DOUBLE PRECISION <A NAME=DNRM2>DNRM2</A>
+      integer        <A NAME=ISTKGT>ISTKGT</A>,<A NAME=istkst>istkst</A>
+      EXTERNAL <A NAME=DNRM2>DNRM2</A>,<A NAME=ISTKGT>ISTKGT</A>,<A NAME=istkst>istkst</A>
+C
+      DATA <A HREF=#WKSP1>WKSP1</A>,<A HREF=#WKSP2>WKSP2</A>,<A HREF=#IFAIL>IFAIL</A>,<A HREF=#ICOUNT>ICOUNT</A>/<A HREF=#NDNM>NDNM</A>*<A HREF=#ZERO>ZERO</A>,<A HREF=#NDNM>NDNM</A>*<A HREF=#ZERO>ZERO</A>,2*0/
+C
+C     a quite bad fix to overcome the problem with
+C     VecGetArray() under LINUX ....... to be removed
+C
+      CALL <A NAME=UPDATE4_VECGETARRAY_1  >VecGetArray</A>(<A HREF=#RHS>RHS</A>,<A HREF=#RHS_V>RHS_V</A>,<A HREF=#RHS_I>RHS_I</A>,<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=UPDATE4_GETNRM_1  >GETNRM</A>(<A HREF=#DSTAK>DSTAK</A>(<A HREF=#LCORG>LCORG</A>),<A HREF=#WKSP1>WKSP1</A>,<A NAME=UPDATE4_RHS_V_1  >RHS_V</A>(<A HREF=#RHS_I>RHS_I</A>+1),<A HREF=#NDIM>NDIM</A>,<A HREF=#NOFVAR>NOFVAR</A>,<A HREF=#NPOIN>NPOIN</A>,
+     +            <A HREF=#INMAX>INMAX</A>,<A HREF=#RESMAX>RESMAX</A>,<A HREF=#RESL2>RESL2</A>)
+      CALL <A NAME=UPDATE4_VECRESTOREARRAY_1  >VecRestoreArray</A>(<A HREF=#RHS>RHS</A>,<A NAME=UPDATE4_RHS_V_2  >RHS_V</A>,<A HREF=#RHS_I>RHS_I</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+      IF( <A HREF=#ITER>ITER</A> .EQ. 1 )<A HREF=#PREVR>PREVR</A>  = <A NAME=UPDATE4_RESL2_1  >RESL2</A>(1)
+      IF( <A HREF=#ITER>ITER</A> .EQ. 1 )THEN
+          <A HREF=#CNST>CNST</A> = <A HREF=#CFLSTART>CFLSTART</A>
+      ELSE
+          <A HREF=#CNST>CNST</A> = <A HREF=#CNST>CNST</A>*<A HREF=#CFLRATIO>CFLRATIO</A>
+      ENDIF
+      GOTO 55
+C
+C     ALPHA = RES(ITER-1,NIT)/RES(ITER,NIT) where n refers to the outer
+C             iteration counter 1 <= ITER <= NITER while k refers
+C             to the inner iteration counter 1 <= NIT <= NSUBIT
+C
+C     BETA = RES(ITER,1)/RES(ITER,NIT)
+C
+C     TEMP = RES(ITER,NIT-1)/RES(ITER,NIT)
+C
+      IF( <A HREF=#NIT>NIT</A> .EQ. 1 )THEN
+          <A HREF=#BETA>BETA</A> = <A NAME=UPDATE4_RESL2_2  >RESL2</A>(1)
+          <A HREF=#ALPHA>ALPHA</A> = <A HREF=#PREVR>PREVR</A>/<A HREF=#BETA>BETA</A>
+          <A HREF=#PREVR>PREVR</A> = <A NAME=UPDATE4_RESL2_3  >RESL2</A>(1)
+          <A HREF=#TEMP>TEMP</A> = <A NAME=UPDATE4_RESL2_4  >RESL2</A>(1)
+      ENDIF
+      <A HREF=#CNST>CNST</A> = <A HREF=#ALPHA>ALPHA</A>*<A HREF=#BETA>BETA</A>/<A NAME=UPDATE4_RESL2_5  >RESL2</A>(1)
+C
+C     IFLAG is a flag stating whether the sub-iterations are
+C           converging or not
+C
+      IF( <A HREF=#TEMP>TEMP</A>/<A NAME=UPDATE4_RESL2_6  >RESL2</A>(1) .LE. <A HREF=#ONE>ONE</A> )THEN
+          <A HREF=#IFLAG>IFLAG</A> = -1
+          <A HREF=#ICOUNT>ICOUNT</A> = 0
+      ELSE
+C
+C     make sure to perform at least NSUBIT iterations once
+C          the residual starts decreasing
+C
+          IF( <A HREF=#ICOUNT>ICOUNT</A> .GE. <A HREF=#NSUBIT>NSUBIT</A> )THEN
+              <A HREF=#IFLAG>IFLAG</A> = 0
+              <A HREF=#ICOUNT>ICOUNT</A> = 0
+          ELSE
+              <A HREF=#ICOUNT>ICOUNT</A> = <A HREF=#ICOUNT>ICOUNT</A> + 1
+              <A HREF=#IFLAG>IFLAG</A> = 10
+          ENDIF
+      ENDIF
+      <A HREF=#TEMP>TEMP</A> = <A NAME=UPDATE4_RESL2_7  >RESL2</A>(1)
+C
+   55 CONTINUE
+C
+C     CNST = MAX( 0.5d0, CNST )
+      <A HREF=#CNST>CNST</A> = <A HREF=#MIN>MIN</A>( <A HREF=#CFL_MAX>CFL_MAX</A>,<A HREF=#CNST>CNST</A> )
+C
+C     if( iter .lt. 100 )CNST = al * iter + be
+C
+C     divide V_i/Dt by the CFL number ...
+C
+      CALL <A NAME=UPDATE4_VECSCALE_1  >VecScale</A>(<A HREF=#ONE>ONE</A>/<A HREF=#CNST>CNST</A>,<A HREF=#DT>DT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Adds V_i/Dt to the diagonal elements of B ...
+C
+      CALL <A NAME=UPDATE4_MATDIAGONALSHIFT_1  >MatDiagonalShift</A>(<A HREF=#B>B</A>,<A HREF=#DT>DT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     We do not need DT any more
+C
+      CALL <A NAME=UPDATE4_VECDESTROY_1  >VecDestroy</A>(<A HREF=#DT>DT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     modify the stiffness matrix structure to account for
+C     no-slip wall b.c. this is done only for the first iteration
+C
+      IF( <A HREF=#ITER>ITER</A> .EQ. 1 )THEN
+          CALL <A NAME=UPDATE4_LHSBC5_1  >LHSBC5</A>( <A HREF=#B>B</A> )
+      ENDIF
+C
+C     create a vector to store the solution
+C
+      CALL <A NAME=UPDATE4_VECCREATESEQ_1  >VecCreateSeq</A>(<A HREF=#PETSC_COMM_SELF>PETSC_COMM_SELF</A>,<A HREF=#NPOIN>NPOIN</A>,<A HREF=#X>X</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Sets the matrix associated with the linear system
+C
+      CALL <A NAME=UPDATE4_SLESSETOPERATORS_1  >SLESSetOperators</A>(<A HREF=#sles>sles</A>,<A HREF=#B>B</A>,<A HREF=#B>B</A>,<A HREF=#SAME_NONZERO_PATTERN>SAME_NONZERO_PATTERN</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Solve THE linear system
+C
+      CALL <A NAME=UPDATE4_SLESSOLVE_1  >SLESSolve</A>(<A HREF=#sles>sles</A>,<A HREF=#RHS>RHS</A>,<A HREF=#X>X</A>,<A HREF=#ITS>ITS</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Update the nodal unknown vector by forming ViscT := ViscT + X
+C
+      CALL <A NAME=UPDATE4_VECAXPY_1  >VecAXPY</A>(<A HREF=#ONE>ONE</A>,<A HREF=#X>X</A>,<A HREF=#ViscT>ViscT</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+C     Monitor the norms of the update ..
+
+      CALL <A NAME=UPDATE4_VECNORM_1  >VecNorm</A>(<A HREF=#X>X</A>,<A HREF=#NORM_2>NORM_2</A>,<A NAME=UPDATE4_DELL2_1  >DELL2</A>(1),<A HREF=#IFAIL>IFAIL</A>)
+      CALL <A NAME=UPDATE4_VECNORM_2  >VecNorm</A>(<A HREF=#X>X</A>,<A HREF=#NORM_INFINITY>NORM_INFINITY</A>,<A NAME=UPDATE4_DELMAX_1  >DELMAX</A>(1),<A HREF=#IFAIL>IFAIL</A>)
+C
+      IF(<A HREF=#MY_PE>MY_PE</A>.EQ.0)THEN
+  299 WRITE(<A HREF=#IWUNIT>IWUNIT</A>,200)<A HREF=#ITER>ITER</A>,<A HREF=#ITS>ITS</A>,<A HREF=#CNST>CNST</A>
+C
+C     Print out the convergence history ..
+C
+      WRITE(<A HREF=#IWUNIT>IWUNIT</A>,215)
+      DO 20 <A HREF=#IVAR>IVAR</A> = 1 , <A HREF=#NOFVAR>NOFVAR</A>
+         WRITE(<A HREF=#IWUNIT>IWUNIT</A>,210)<A HREF=#IVAR>IVAR</A>,<A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE4_RESL2_8  >RESL2</A>(<A HREF=#IVAR>IVAR</A>)),<A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE4_RESMAX_1  >RESMAX</A>(<A HREF=#IVAR>IVAR</A>)),
+     &   <A NAME=UPDATE4_INMAX_1  >INMAX</A>(<A HREF=#IVAR>IVAR</A>),(<A HREF=#WKSP1>WKSP1</A>(<A HREF=#I>I</A>,<A HREF=#IVAR>IVAR</A>),<A HREF=#I>I</A>=1,3)
+   20 CONTINUE
+      WRITE(<A HREF=#IWUNIT>IWUNIT</A>,225)
+      DO 30 <A HREF=#IVAR>IVAR</A> = 1 , <A HREF=#NOFVAR>NOFVAR</A>
+         WRITE(<A HREF=#IWUNIT>IWUNIT</A>,210)<A HREF=#IVAR>IVAR</A>,<A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE4_DELL2_2  >DELL2</A>(<A HREF=#IVAR>IVAR</A>)),<A HREF=#DLOG10>DLOG10</A>(<A NAME=UPDATE4_DELMAX_2  >DELMAX</A>(<A HREF=#IVAR>IVAR</A>)),
+     &   <A NAME=UPDATE4_INDEL_1  >INDEL</A>(<A HREF=#IVAR>IVAR</A>),(<A HREF=#WKSP2>WKSP2</A>(<A HREF=#I>I</A>,<A HREF=#IVAR>IVAR</A>),<A HREF=#I>I</A>=1,3)
+   30 CONTINUE
+C
+C     Writing convergence history to file ...
+C
+      WRITE(12,235)<A HREF=#NITER>NITER</A>,<A HREF=#ITS>ITS</A>,<A NAME=UPDATE4_RESL2_9  >RESL2</A>(1),<A NAME=UPDATE4_RESMAX_2  >RESMAX</A>(1),<A HREF=#CNST>CNST</A>
+      ENDIF
+
+C     clear memory allocated for the solution vector
+C
+      CALL <A NAME=UPDATE4_VECDESTROY_2  >VecDestroy</A>(<A HREF=#X>X</A>,<A HREF=#IFAIL>IFAIL</A>)
+C
+      RETURN
+  200 FORMAT(5X,70('-'),/,14X,'TURBULENCE ITERATION # ',I4,
+     +' (',I4,') CFL = ',E10.4/,5X,70('-'),/,
+     +5X,70('-'),/,5X,'Var.',4X,'L2-norm',3X,'L_infty',3X,
+     +'node #',3X,'(',4X,'x',7X,'y',7X,'z',4X,')',/,5X,70('-'))
+  210 FORMAT(5X,I1,5X,F10.5,1X,F10.5,2X,I5,3X,
+     +'(',2(F8.5,','),F8.5,')')
+  215 FORMAT(5X,'Nodal Residual'/)
+  225 FORMAT(5X,'Nodal Update'/)
+  230 FORMAT(15X,'NONZERO ENTRIES IN THE REDUCED MATRIX ',I8/)
+  235 FORMAT (I5,1X,I4,3 (1X,E10.4))
+C
+C     WRITE(6,*)'Solution vector norm is ',S
+C     WRITE(6,*)'Z vector norm is ',dnrm2(npoin,dstak(lzroe),1)
+C     write(6,*) 'VecScale has returned ',IFAIL
+C     write(6,*) 'MatDiagonalShift has returned ',IFAIL
+C     write(6,*) 'VecCreateSeqWithArray has returned ',IFAIL
+C     write(6,*) 'SetBC4 has returned ',IFAIL
+C     write(6,*) 'SLESSolve has returned ',IFAIL
+C     write(6,*) 'SLESSetOperators has returned ',IFAIL
+      END
+</PRE>
+C
+</BODY>

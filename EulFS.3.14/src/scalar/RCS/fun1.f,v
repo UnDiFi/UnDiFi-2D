@@ -1,0 +1,98 @@
+head	1.2;
+access
+	abonfi
+	tesistim;
+symbols
+	release3_4_3:1.2
+	release3_4_2:1.2
+	release3_4_1:1.2
+	release3_4_0:1.2
+	release3_3_5:1.2
+	release3_3_4:1.2
+	release3_3_3:1.2
+	release3_3_2:1.2
+	release3_3_1:1.2
+	release3_3_0:1.2;
+locks
+	abonfi:1.2; strict;
+comment	@c @;
+
+
+1.2
+date	2013.01.24.08.08.43;	author abonfi;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.02.07.10.24.20;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@testcase #5,two-dimensional
+@
+
+
+1.2
+log
+@Added RCS Id marker
+@
+text
+@      DOUBLE PRECISION FUNCTION FUNSOU1(X,Y,A,B,EPS)
+C
+C     $Id$
+C
+      IMPLICIT NONE
+C
+C     Source term for Laplace's equation
+C     A*U_X+B*U_Y - EPS*(U_XX+U_YY) = SOURCE
+C
+C     The convection speed is (A,B)
+C
+C     EPS is the diffusion coefficient
+C
+C     SOURCE=
+C
+C     [(A-2*EPS)*Y+(B-2*EPS)*X]*EXP(X+Y)
+C     [(A-2*EPS)+(B-2*EPS)]*X*Y*EXP(X+Y)
+C
+C     with U = X*Y*EXP(X+Y)
+C
+C
+      INCLUDE 'constants.h'
+
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION A,B,EPS,X,Y
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION TEMPA,TEMPB
+C     ..
+C     .. Intrinsic Functions ..
+      INTRINSIC EXP
+C     ..
+      TEMPA = A - TWO*EPS
+      TEMPB = B - TWO*EPS
+
+      FUNSOU1 = ((TEMPA*Y+TEMPB*X)+ (TEMPA+TEMPB)*X*Y)*EXP(X+Y)
+
+      RETURN
+
+      END
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 3
+d22 1
+a22 1
+
+d33 2
+a34 2
+      TEMPA = A - 2.d0*EPS
+      TEMPB = B - 2.d0*EPS
+@

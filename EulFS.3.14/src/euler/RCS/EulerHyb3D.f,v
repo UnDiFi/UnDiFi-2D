@@ -1,0 +1,372 @@
+head	1.4;
+access
+	abonfi
+	aldo;
+symbols;
+locks; strict;
+comment	@c @;
+
+
+1.4
+date	2000.10.20.08.15.02;	author aldo;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.08.03.16.41.44;	author aldo;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.06.24.09.25.04;	author aldo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.06.20.09.25.21;	author aldo;	state Exp;
+branches;
+next	;
+
+
+desc
+@Hybrid scheme (Pietro & Pino) in 3D
+@
+
+
+1.4
+log
+@the call to the viscous routines has been removed;
+other minor changes
+@
+text
+@      SUBROUTINE EulerHyb3D(IELEM,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +                    NTURB,NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+     +                    ScalarScheme,MatrixScheme)
+C
+      IMPLICIT NONE 
+C
+C     Hybrid scheme
+C
+C     $Id: EulerHyb3D.f,v 1.3 2000/08/03 16:41:44 aldo Exp aldo $
+C
+C
+      INCLUDE 'paramt.h'
+C
+C    NEQMAX is the max. no. of equations (4 in 3D)
+C           for the matrix scheme (solves for dp/ra,du,dv,dw)
+C
+      INTEGER IMACH
+      INCLUDE 'constants'
+C
+C
+      DOUBLE PRECISION DSTAK
+      COMMON /CSTAK/DSTAK(1)
+      INTEGER ISTAK(1)
+      EQUIVALENCE(ISTAK(1),DSTAK(1))
+C
+C
+      INCLUDE 'three'
+      INCLUDE 'nloc'
+      INCLUDE 'conv.com'
+C
+C
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,NTURB,NERR,IOPT
+      INTEGER ICHPSI(4)
+C
+      INTRINSIC SQRT
+C
+C     ScalarScheme and MatrixScheme must be for the subsonic case.
+      EXTERNAL ScalarScheme,MatrixScheme,PSI_scheme,LDASys_scheme
+     +         ,N_scheme, NSys_scheme, LimNSys_scheme
+C
+C
+      INTEGER IVAR,IVERT,JVERT,IPOIN
+      DOUBLE PRECISION SUM,MACHMIN
+      LOGICAL LFLAG,PICARD
+      CHARACTER*72 ERRMSG
+C
+C
+      DOUBLE PRECISION NODRES(*)
+C
+C     NODRES(1:NOFVAR,1:NOFVERT) is used to accumulate the
+C         nodal residual in conserved variables and scatter
+C         it to the RHS PETSc vector
+C
+C     TSTEP(1:NOFVERT) is used to accumulate the timestep
+C         and then scatter it to the DT PETSc vector 
+C
+C
+C
+      DOUBLE PRECISION TSTEP(*)
+C
+C
+C
+      DOUBLE PRECISION VCZ(NOFVAR,NOFVERT),VCN(*),VOLUME,STIFEL(*)
+C
+      INTEGER I,L,LDA
+C
+C
+      INTEGER IADDR
+      IADDR(L,LDA,I) = (I-1)*LDA+L
+C
+C
+C
+C
+C
+caldo
+      DO 20 JVERT = 1, NOFVERT
+          IPOIN = ISTAK(IADDR(LCELNOD,NOFVERT,IELEM))
+          ICHPSI(JVERT) = ISTAK(IADDR(LCHPSI,1,IPOIN))
+   20 CONTINUE
+caldo
+C
+c     Compute minimum Mach number:
+
+      MACHMIN = ZERO
+
+            DO  JVERT = 1 , NOFVERT
+
+      IF(NDIM.EQ.3)
+     &UAVG(5) = VCZ(5,JVERT)/VCZ(1,JVERT) ! z componenet of the velocity vector
+      UAVG(4) = VCZ(4,JVERT)/VCZ(1,JVERT) ! y componenet of the velocity vector
+      UAVG(3) = VCZ(3,JVERT)/VCZ(1,JVERT) ! x componenet of the velocity vector
+      UAVG(2) = VCZ(2,JVERT)/VCZ(1,JVERT) ! Total Enthalpy
+      UAVG(1) = VCZ(1,JVERT)*VCZ(1,JVERT) ! Density
+C
+      KINETIC = UAVG(3)*UAVG(3) + UAVG(4)*UAVG(4)
+      IF( NDIM .EQ. 3 )KINETIC = KINETIC + UAVG(5)*UAVG(5)
+      KINETIC = HALF * KINETIC
+      ASQR = GM1 * ( UAVG(2) - KINETIC )
+      IF( ASQR .LT. ZERO )THEN
+         WRITE(ERRMSG(1:68),FMT=333)ASQR,IELEM
+  333 FORMAT('EULERHYB3D',1X,'Negative averaged sound speed ',F7.3,
+     &       ' in element ',I8)
+         NERR = 6
+         IOPT = 1
+         CALL SETERR(ERRMSG(1:68),68,NERR,IOPT)
+      ENDIF
+      ABAR      = SQRT(ASQR)
+c     MACHSQR   = DMAX1( TWO * KINETIC / ASQR, EPSQR_STAG) ! Barth & Deconinck
+      MACHSQR   = TWO * KINETIC / ASQR
+      MACH      = SQRT( MACHSQR )
+
+      MACHMIN = dmin1(MACHMIN,MACH)
+               
+            END DO    
+
+c     Compute average Mach number:
+
+      DO 10 IVAR = 1 , NOFVAR
+       SUM = ZERO
+            DO 12 JVERT = 1 , NOFVERT
+               SUM = SUM + VCZ( IVAR , JVERT )
+   12       CONTINUE
+      ZAVG(IVAR) = SUM / NOFVERT
+   10 CONTINUE
+
+      IF(NDIM.EQ.3)
+     &UAVG(5) = ZAVG(5)/ZAVG(1) ! z componenet of the velocity vector
+      UAVG(4) = ZAVG(4)/ZAVG(1) ! y componenet of the velocity vector
+      UAVG(3) = ZAVG(3)/ZAVG(1) ! x componenet of the velocity vector
+      UAVG(2) = ZAVG(2)/ZAVG(1) ! Total Enthalpy
+      UAVG(1) = ZAVG(1)*ZAVG(1) ! Density
+C
+      KINETIC = UAVG(3)*UAVG(3) + UAVG(4)*UAVG(4)
+      IF( NDIM .EQ. 3 )KINETIC = KINETIC + UAVG(5)*UAVG(5)
+      KINETIC = HALF * KINETIC
+      ASQR = GM1 * ( UAVG(2) - KINETIC )
+      IF( ASQR .LT. ZERO )THEN
+         WRITE(ERRMSG(1:68),FMT=333)ASQR,IELEM
+         NERR = 6
+         IOPT = 1
+         CALL SETERR(ERRMSG(1:68),68,NERR,IOPT)
+      ENDIF
+      ABAR      = SQRT(ASQR)
+c     MACHSQR   = DMAX1( TWO * KINETIC / ASQR, EPSQR_STAG) ! Barth & Deconinck
+      MACHSQR   = TWO * KINETIC / ASQR
+      MACH      = SQRT( MACHSQR )
+
+      IMACH = ZERO
+      DO JVERT = 1, NOFVERT
+         IMACH = IMACH + ICHPSI(JVERT)
+      END DO
+
+
+      if (MACH.lt.ONE) then
+
+c     CALL EulerIIbis(IELEM,VCN,VCZ,NDIM, 
+      CALL EulerVII(IELEM,VCN,VCZ,NDIM, 
+     +NOFVERT,NOFVAR,NTURB,NODRES,TSTEP,
+     +STIFEL,VOLUME,PICARD, ScalarScheme,MatrixScheme)
+
+      else
+
+c     CALL EulerIIbis(IELEM,VCN,VCZ,NDIM, 
+      CALL EulerVII(IELEM,VCN,VCZ,NDIM, 
+     +NOFVERT,NOFVAR,NTURB,NODRES,TSTEP,
+     +STIFEL,VOLUME,PICARD, PSI_scheme,LimNSys_scheme)
+
+      end if
+
+      END
+C
+@
+
+
+1.3
+log
+@STOP replaced by a call to SETERR
+@
+text
+@d1 1
+a1 1
+      SUBROUTINE EulerHyb3D(IELEM,VCN,VCZ,VISCT,NDIM,NOFVERT,NOFVAR,
+d9 1
+a9 1
+C     $Id: EulerHyb3D.f,v 1.2 2000/06/24 09:25:04 aldo Exp aldo $
+d48 1
+a48 1
+      DOUBLE PRECISION NODRES(*),VISCT(NOFVERT)
+d156 2
+a157 2
+c     CALL EulerIIbis(IELEM,VCN,VCZ,VISCT,NDIM, 
+      CALL EulerVII(IELEM,VCN,VCZ,VISCT,NDIM, 
+d163 2
+a164 2
+c     CALL EulerIIbis(IELEM,VCN,VCZ,VISCT,NDIM, 
+      CALL EulerVII(IELEM,VCN,VCZ,VISCT,NDIM, 
+@
+
+
+1.2
+log
+@modifiche introdotte da Aldo
+@
+text
+@d9 1
+a9 1
+C     $Id$
+d32 1
+a32 1
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR,NTURB
+a33 1
+      INTEGER NFROZ(90000)
+d45 1
+d100 6
+a105 2
+         WRITE(6,*)'Negative averaged pressure in element ',IELEM
+         STOP
+d138 4
+a141 2
+         WRITE(6,*)'Negative averaged pressure in element ',IELEM
+         STOP
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+      SUBROUTINE EulerHyb3D(IELEM,LCHPSI,VCN,VCZ,NDIM,NOFVERT,NOFVAR,
+     +                    NODRES,TSTEP,STIFEL,VOLUME,PICARD,
+d9 1
+a11 1
+C
+a12 2
+      INTEGER LNNVV
+      PARAMETER (LNNVV=NMAX*NMAX*VMAX*VMAX)
+a15 1
+C    NORDER is actual no. of equations = DIM+1
+a16 1
+      INTEGER NEQMAX
+a17 1
+      PARAMETER (NEQMAX=4)
+d19 1
+a19 1
+c     INCLUDE 'bnd.h'
+d21 4
+d26 1
+d28 1
+a29 3
+c     INCLUDE 'flags.com'
+c     INCLUDE 'stream.com'
+c     INCLUDE 'IO'
+d32 2
+a33 2
+      INTEGER IELEM,NDIM,NOFVERT,NOFVAR
+      INTEGER LCHPSI(NOFVERT)
+d43 1
+a43 3
+      INTEGER IVAR,IVERT,JVERT,FrstEq,JCOL,IDIM,IADD,JADD
+      INTEGER NORDER,ifail,M,N,MN,N4
+      DOUBLE PRECISION FLUCT,SCALRES,VISCT,TVI,VISCL,TCHI
+d48 1
+a48 3
+c     DOUBLE PRECISION Jacobian(NEQMAX,NEQMAX*3)
+c     DOUBLE PRECISION PHI(NEQMAX),WKSP(5),RESIDUAL(2*NEQMAX)
+      DOUBLE PRECISION NODRES(*)  !,SYMMV(20),DSYMMV(20)
+a56 2
+C     SYMMV(1:NOFVAR,1:NOFVERT) is used to store the vector
+C         of symmetrizing variables
+a57 2
+C     DSYMMV(1:NOFVAR,1:NOFVERT) is used to store the change
+C         in the vector of symmetrizing variables
+d59 1
+a61 4
+      DOUBLE PRECISION TSTEP(*)
+C
+C     ICN   vertices of the current element (0-based indexing)
+C     KCN   same as ICN but with 1-based indexed
+d63 1
+d65 1
+a65 9
+c     INTEGER IWRK
+c     PARAMETER(IWRK=10) 
+c     INTEGER ICN(VMAX),KCN(VMAX),MOVE(IWRK)
+      DOUBLE PRECISION VCZ(NOFVAR,NOFVERT)
+     +                ,VCN(*),VOLUME,
+c    +                 STIFC(VMAX*VMAX*NEQMAX*NEQMAX),
+c    +                 STIFD(VMAX*VMAX*NMAX*NMAX),TEMPB(400),
+     +                 STIFEL(*)
+c    +                ,dZdU(100),TEMPA(400)
+a66 8
+C     RESIDUAL[1:NORDER] stores the residual computed by
+C                        the Matrix scheme as \sum K_j U_j
+C     RESIDUAL[NORDER+1:2*NORDER]
+C                        stores the residual computed by
+C                        the Matrix scheme as \sum_{ij} U_j
+C     it is used just for debugging purposes, to be compared with
+C     the residual computed as:
+C     dF/dU * dU/dX + dG/dU * dU/dy + [ dH/dU * dU/dz ]
+d68 2
+a70 2
+c     DOUBLE PRECISION DDOT,TFV1,TVT,SUTHERLAW
+c     EXTERNAL DDOT,TFV1,TVT,SUTHERLAW
+a71 1
+c     EXTERNAL MatSplitNum,MatSplitVII
+a73 2
+c     DATA FrstEq,VISCT/2,ZERO/
+c     DATA dZdU/100*ZERO/
+d75 6
+a81 4
+      NORDER = NDIM + 1
+      N4 = NOFVAR*NOFVAR*NOFVERT*NOFVERT
+
+
+d144 1
+a144 1
+         IMACH = IMACH + LCHPSI(JVERT)
+d150 3
+a152 3
+      CALL EulerVII(IELEM,LCHPSI,VCN,VCZ,NDIM, 
+c     CALL EulerIIbis(IELEM,LCHPSI,VCN,VCZ,NDIM, 
+     +NOFVERT,NOFVAR,NODRES,TSTEP,
+d157 3
+a159 3
+      CALL EulerVII(IELEM,LCHPSI,VCN,VCZ,NDIM, 
+c     CALL EulerIIbis(IELEM,LCHPSI,VCN,VCZ,NDIM, 
+     +NOFVERT,NOFVAR,NODRES,TSTEP,
+@

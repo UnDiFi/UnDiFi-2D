@@ -1,0 +1,33 @@
+      INTEGER     LCORG,LZROE,LTURB,LCELNOD,LCELFAC,LCELCEL,
+     1 LFACNOR,LBNDFAC,LVOL,LNODCOD,LSKINF,LHEAT,LTD,LTZX,LTTD,LCHPSI,
+     2 LPMAP,LFREE,LMEDIAN
+      COMMON/NLOC/LCORG,LZROE,LTURB,LCELNOD,LCELFAC,LCELCEL,
+     1 LFACNOR,LBNDFAC,LVOL,LNODCOD,LSKINF,LHEAT,LTD,LTZX,LTTD,LCHPSI,
+     2 LPMAP,LFREE,LMEDIAN
+C
+C     Common block for POINTERS 
+C
+C     LCORG   ---> CORG(1:NDIM,1:NPOIN)
+C     LZROE   ---> ZROE(1:NOFVAR,1:NPOIN)
+C     LCELNOD ---> ICELNOD(1:NOFVERT,1:NELEM)
+C     LCELFAC ---> ICELFAC(1:NOFVERT,1:NELEM)
+C     LCELCEL ---> ICELCEL(1:NOFVERT,1:NELEM)
+C     LFACNOR ---> FACNOR(1:NDIM,1:NFACE)
+C     LBNDFAC ---> IBNDFAC(1:3,1:NBFACE)
+C     LVOL    ---> VOL(1:NELEM)
+C     LNODCOD ---> INODCOD(1:NPOIN)
+C     LSKINF  ---> SKIN(1:*) Skin friction coefficient on wall edges
+C     LHEAT   ---> HEAT(1:*) Heat flux coefficient on wall edges
+C     LTD     ---> TD(1:NPOIN) Nearest wall distance
+C     LTZX    ---> unused
+C     LPMAP   ---> mapping for periodic nodes
+C     LPTOT   ---> map of inlet total pressure
+C
+C
+C
+C
+C	********** BE CAREFUL **********
+C
+C	If you modify the NLOC common, you have to modify the
+C	same common in the routine "blockdata" where it is NOT included. 
+C

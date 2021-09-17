@@ -1,0 +1,132 @@
+      SUBROUTINE FCT_SCHEME(IELEM,VCN,ADVECTION,CELRES,SOURCE,Q,DT,
+     +                      NODRES,CMAT,NDIM,NOFVERT,TIMEIMPL)
+C
+C
+C This routine computes the FCT scheme on one tetrahedron
+C
+C
+c Only linear timestepping has been implemented
+c
+C
+C
+C
+C
+C
+C     .. Parameters ..
+      DOUBLE PRECISION ZERO
+      REAL ONE
+      PARAMETER (ZERO=0.D0,ONE=1.D0)
+C     ..
+C     .. Scalar Arguments ..
+      DOUBLE PRECISION CELRES,SOURCE
+      INTEGER IELEM,NDIM,NOFVERT
+      LOGICAL TIMEIMPL
+C     ..
+C     .. Array Arguments ..
+      DOUBLE PRECISION ADVECTION(NDIM),CMAT(NOFVERT,NOFVERT),
+     +                 DT(NOFVERT),NODRES(NOFVERT),Q(NOFVERT),
+     +                 VCN(NDIM,NOFVERT)
+C     ..
+C     .. Local Scalars ..
+      DOUBLE PRECISION ALPH,DENOM,KPOS,S,SUM,TEMPA,TEMPB,UIN,UOUT
+      REAL TEMP
+      INTEGER I,IVAR,IVERT,J,JVERT,POSI,TAG
+C     ..
+C     .. Local Arrays ..
+      DOUBLE PRECISION DQ(4),K(4)
+      INTEGER POS(4),TARGET(4)
+C     ..
+C     .. External Functions ..
+      DOUBLE PRECISION DDOT,DNRM2
+      EXTERNAL DDOT,DNRM2
+C     ..
+C     .. External Subroutines ..
+      EXTERNAL SETERR
+C     ..
+C
+C     .. Intrinsic Functions ..
+      INTRINSIC ABS
+C     ..
+      IF (SOURCE.NE.0.D0) CALL SETERR(
+     +                              33HPSI SCHEME - NON ZERO SOURCE TERM
+     +                                ,33,995,2)
+C
+      POSI = 0
+      TAG = 0
+      CELRES = ZERO
+      KPOS = ZERO
+      UIN = ZERO
+      UOUT = ZERO
+C
+C Loops over all vertices
+C
+      DO 10 IVERT = 1,NOFVERT
+c
+c Dotting advection speed with normal
+c
+          SUM = DDOT(NDIM,VCN(1,IVERT),1,ADVECTION,1)
+          K(IVERT) = SUM/NDIM
+c
+          CELRES = CELRES + Q(IVERT)*K(IVERT)
+c
+          IF (K(IVERT).GT.ZERO) THEN
+              POSI = POSI + 1
+              POS(POSI) = IVERT
+              KPOS = KPOS + K(IVERT)
+              UOUT = UOUT + K(IVERT)*Q(IVERT)
+
+          ELSE
+              UIN = UIN - K(IVERT)*Q(IVERT)
+              NODRES(IVERT) = ZERO
+          ENDIF
+c
+   10 CONTINUE
+C
+      IF (POSI.EQ.0) RETURN
+C
+      UIN = UIN/KPOS
+      UOUT = UOUT/KPOS
+C
+C computation of alpha
+C
+c ... Looping over downstream nodes
+      DO 32 I = 1,POSI
+          J = POS(I)
+          DENOM = DENOM + ABS( K(J) * (Q(J)-UIN) )
+c
+c
+   32 CONTINUE
+      DENOM = MAX(DENOM,1.D-12)
+      ALPH = ONE - ABS(CELRES)/DENOM
+c     if(alph.lt.0.d0.or.alph.gt.1.d0)then
+c           write(6,*)'problem with alpha ',ielem,alph
+c     write(6,*)ielem,alph
+c           pause
+c     endif
+C
+C Target tracking
+C
+      SUM = ZERO
+c ... Looping over downstream nodes
+      DO 30 I = 1,POSI
+          J = POS(I)
+          TEMPA = -K(J)* (Q(J)-UIN)
+          TEMPB = K(J)* (Q(J)-UOUT)
+c
+          NODRES(J) = TEMPA + ALPH*TEMPB
+c
+c Linear time-step for all the downstream nodes
+c
+          DT(J) = DT(J) + K(J)
+   30 CONTINUE
+C
+C
+C ---------- Distribution of the source term using LDA ----------
+C
+      IF (TIMEIMPL) CALL SETERR(
+     +           52HPSI SCHEME IMPLICIT TIME INTEGRATION NOT IMPLEMENTED
+     +                          ,52,999,2)
+C
+      RETURN
+
+      END

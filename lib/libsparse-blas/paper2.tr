@@ -1,0 +1,631 @@
+.. From convex!dodson@anl-mcs.ARPA Mon Aug 31 19:53:55 1987
+.. From: convex!dodson@anl-mcs.ARPA (Dave Dodson)
+.. Subject: sparse blas algorithm
+.. Enclosed is the sparse blas algorithm 
+\" tbl file | eqn | nitroff -ms
+.hw spars-ity
+.ft 3
+.ps 11
+.EQ
+gsize 11
+delim @@
+.EN
+.TL
+.ps 12
+.in 0
+Model Implementation and Test Package for
+.sp
+the Sparse Basic Linear Algebra Subprograms
+.AU
+.ps 11
+.in 0
+David S. Dodson
+.AI
+.ps 10
+.in 0
+Convex Computer Corporation
+701 N. Plano Road
+Richardson, Texas 75081
+.AU
+.ps 11
+.in 0
+Roger G. Grimes
+.AI
+.ps 10
+.in 0
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+.AU
+.ps 11
+.in 0
+John G. Lewis
+.AI
+.ps 10
+.in 0
+Boeing Computer Services, M/S 7L-21
+P.O. Box 24346
+Seattle, Washington 98124-0346
+.FS
+.ps 10
+.vs 11p
+Typeset on \*(DY.
+.FE
+.sp 2
+.QS
+.ps 10
+.in .25i
+.ll -.25i
+.I Abstract
+\(em This paper describes a model implementation and test software for the
+Sparse Basic Linear Algebra Subprograms (Sparse BLAS).
+The Sparse BLAS perform vector operations common to sparse linear algebra, with
+the goal of providing efficient, but portable, implementations of algorithms
+for high performance computers.
+The model implementation provides a portable set of Fortran 77 Sparse BLAS for
+use on machines where specially tuned implementations do not exist or are not
+required.
+The test software is designed to verify that tuned implementations meet the
+specifications of the Sparse BLAS and that implementations are correctly
+installed.
+.in
+.ll
+.QE
+.ps 11
+.vs 16
+.nr PS 11
+.nr VS 16
+.nr PD 0.5v
+.NH
+Introduction
+.PP
+In [2] we defined the basic operations, along with naming conventions and
+argument lists, for a set of extensions to the Basic Linear Algebra Subprograms
+[6,7].
+These extensions perform vector operations common to sparse linear algebra.
+They provide a standard framework around which modular, portable, and efficient
+Fortran 77 codes may be developed for many problems addressed by sparse linear
+algebra.
+We hope that tuned (perhaps assembly language) implementations of these
+routines will be developed for many machines, especially for vector and other
+high-performance computers.
+Thus, programs that call the Sparse BLAS can be efficient across a wide range
+of machines.
+.PP
+To support and encourage the use of the Sparse BLAS, this algorithm contains
+two software components:
+.IP (1)
+A model implementation of the Sparse BLAS in ANSI standard Fortran 77.
+This enables the Sparse BLAS to be used on any machine, regardless of whether
+a tuned implementation exists.
+It is described in Section 2.
+.IP (2)
+Test programs designed to ensure that implementations adhere to the definition
+and have been installed correctly.
+The test programs are described in Section 4.
+
+.NH
+The Model Implementation
+.NH 2
+Efficiency
+.PP
+The model implementation is likely to achieve considerable efficiency on a
+scalar computer with a good optimizing compiler.
+For example, with the highest level of optimization, the IBM Fortran H
+compiler achieves nearly the greatest possible asymptotic computational rate
+for all of the Sparse BLAS.
+.PP
+Satisfactory efficiency can be expected for the model implementation of _DOT-I
+and _GTHR- on a vector computer with a good vectorizing compiler if the
+underlying hardware has vector instructions for dealing with the required
+indirect addressing.
+For example, with CFT 1.14 on CRAY X-MP processors having the hardware
+scatter-gather feature, the model implementation of SGTHR achieves 70 percent
+of the asymptotic rate of a tuned assembly language version.
+.PP
+On the other hand, the unmodified model implementation of _AXPYI, _ROTI, and
+_SCTR will perform only at scalar speed on a vector processor or sequential
+speed on a parallel processor.
+The reasons and remedy are discussed in \(sc3.
+.PP
+Finally, on vector processors that do not have instructions for handling
+indirect addressing in vector mode, the efficiency obtained with the model
+implementation will depend largely on the ability of the Fortran compiler to
+generate optimal scalar code.
+This is well illustrated on the CRAY-1S, where the model implementation of
+CDOTCI compiled with CFT 1.13 achieves only 25 percent of the performance of
+an optimized assembly language version [9].
+
+.NH 2
+Language standards
+.PP
+The model implementation of the Sparse BLAS is written entirely in portable
+ANSI standard Fortran 77 with one exception.
+The routines that require a ``double precision complex'' data type (names
+beginning with ``Z'') use the following extensions to standard Fortran:
+.IP
+COMPLEX*16 type specification statements;
+.IP
+a DCONGJ intrinsic function whose argument and result are of type COMPLEX*16;
+and
+.IP
+COMPLEX*16 constants formed by enclosing a pair of double precision constants
+in parentheses.
+
+.NH
+Notes on Implementation
+.PP
+Here we offer some advice to those planning to develop a machine-specific
+implementation of the Sparse BLAS.
+The following possibilities should be considered:
+.IP (a)
+Use machine-specific extensions to Fortran, such as array syntax, compiler
+directives, or calls to library routines.
+.IP (b)
+Code the routines in assembly language.
+.PP
+Vectorizing or parallelizing Fortran compilers will detect apparent recurrences
+in some of the routines where an indirectly-addressed array is used as both an
+input and an output argument.
+For example, for the loop in SAXPYI:
+.KS
+.TS
+center;
+r1 l.
+	DO 10 I = 1, NZ
+	   Y(INDX(I)) = A * X(I) + Y(INDX(I))
+10	CONTINUE
+.TE
+.KE
+a vectorizing or parallelizing compiler will be unable to completely vectorize
+or parallelize this loop unless it is informed that the values in INDX are
+distinct.
+Then the loop iterations are independent and can be processed in vector or
+parallel mode.
+Optimizing compilers usually allow the programmer some machine-specific method,
+such as a compiler directive, for conveying this information.
+.PP
+Even when the indirectly-addressed array is used only as an output, a
+parallelizing compiler will recognize possible storage hazards in which
+different values might be stored in the same array element.
+The compiler will then inhibit parallelization because the result might be
+unpredictable if the loop iterations were not performed sequentially.
+Thus, for the loop in SSCTR:
+.KS
+.TS
+center;
+r1 l.
+	DO 10 I = 1, NZ
+	   Y(INDX(I)) = X(I)
+10	CONTINUE
+.TE
+.KE
+a parallelizing compiler will be able to distribute the loop iterations among
+the processors and allow them to be performed in any order only if it is told
+that the indices are distinct.
+.PP
+Because the restriction is imposed for certain routines that the values in INDX
+all must be distinct, all of the DO loops in the model implementation are safe
+for vectorization or parallelization.
+If available, a compiler directive should be inserted for any DO loop for which
+a vectorizing or parallelizing Fortran compiler detects a block to optimization.
+.PP
+In many applications of sparse linear algebra, the sparse vectors manipulated
+by the Sparse BLAS are the rows or columns of sparse matrices.
+Even when a sparse matrix is huge, it is common that the number of nonzero
+elements in a row or column is small.
+Therefore, it is important that the Sparse BLAS be as fast as possible for
+small values of NZ.
+The asymptotic performance, achieved as @roman NZ ~->~ inf@ is of less
+importance than in dense linear algebra.
+Hence, in a tuned implementation, it might be desirable to use different code,
+separately optimized for small and large NZ, switching from one to the
+other at an appropriate threshold.
+
+.NH
+The Test Programs
+.PP
+A separate test program exists for each of the four data types, REAL, DOUBLE
+PRECISION, COMPLEX, and COMPLEX*16.
+All test programs conform to the same pattern with only the minimum necessary
+changes, so we shall talk generically about ``the test program'' in the
+singular.
+The program has been designed not merely to check whether the model
+implementation has been installed correctly, but also to serve as a validation
+tool, and even as a modest debugging aid, for any tuned implementation.
+The test program has the following features:
+.IP
+The parameters of the test problems are specified in a data file that can be
+modified easily to test specific vector lengths or for debugging.
+.IP
+The data for the test problems are generated internally and the results are
+checked internally.
+.IP
+The program checks that no arguments are changed by the routines except the
+expected output vector or vectors.
+.IP
+Null operations, i.e., those with negative or zero vector lengths, are checked.
+.IP
+The program generates a concise summary report on the tests.
+
+.NH 2
+Language standards
+.PP
+The Sparse BLAS test program is written entirely in portable ANSI standard
+Fortran 77, except that the test programs for the ``double precision complex''
+routines, use the following extensions to standard Fortran:
+.IP
+COMPLEX*16 type specification statements;
+.IP
+a DBLE intrinsic function, with one COMPLEX*16 argument and a DOUBLE PRECISION
+result and delivering the real part of the argument;
+.IP
+a DCMPLX intrinsic function that forms a COMPLEX*16 quantity from one or two
+DOUBLE PRECISION arguments;
+.IP
+a DCONGJ intrinsic function that delivers the COMPLEX*16 complex conjugate of
+its COMPLEX*16 argument;
+.IP
+COMPLEX*16 constants formed by enclosing a pair of double precision constants
+in parentheses.
+
+.NH 2
+Parameters of the Test Problems
+.PP
+Each test problem (i.e., each call of a subprogram to be tested) depends on a
+choice of values for the following parameters (where relevant to the particular
+subprogram):
+.IP
+the number of nonzeros, NZ;
+.IP
+the dimension, @n@, of the vector space containing @x@ and @y@;
+.IP
+the scalar @a@; and
+.IP
+for REAL and DOUBLE PRECISION, the scalars @c@ and @s@.
+.PP
+The values of these parameters are defined by a data file.
+Specifically, the program reads in a set @S sub roman NZ@ of values of NZ, a set
+@S sub a@ of values of @a@, and a set @S sub cs@ of ordered pairs @(c,s)@ of
+Givens rotation parameters.
+For each value of NZ, the values of @n@ are generated from NZ by
+@n ~ roman { = ~ 2 ~ max (NZ,1) }@.
+.PP
+The sets @S sub roman NZ@, @S sub a@, and @S sub cs@ should be chosen to
+exercise all segments of the code and all special or extreme cases such as
+@roman { NZ ~<~ 0 }@, @roman { NZ ~=~ 0 }@, @a ~ roman = ~ 0@,
+@(c,s) ~ roman = ~ (1,0)@, etc.
+A data file that specifies sets of parameters suitable for many machines is
+supplied with the test program, but installers and implementors must be alert
+to the possible need to extend or modify them (see Appendix).
+
+.NH 2
+Data for the Test Problems
+.PP
+Data for the arrays X and Y are generated using simple expressions involving
+the SIN and COS intrinsic functions.
+Data for the array INDX are generated by several schemes that should be
+sufficient to test the indirect addressing.
+Elements in these arrays that are not supposed to be referenced by a
+subprogram (e.g., X(NZ+1), X(NZ+2), ..., INDX(NZ+1), INDX(NZ+2), ..., and the
+values of Y whose indices are not listed in INDX) are initialized to a
+``rogue'' value to increase the likelihood that a reference to them will be
+detected.
+The rogue value is @-10 sup 10@ for REAL and DOUBLE PRECISION quantities,
+(@-10 sup 10@,@-10 sup 10@) for COMPLEX and COMPLEX*16, and @-10 sup 7@ for
+INTEGER.
+If an illegal subscript error is reported or a memory addressing error occurs,
+or if a fatal error is reported and an element of the computed result is of
+order @10 sup 10@, then the routine has almost certainly referenced the wrong
+element of an array.
+
+.NH 2
+Checking the Results
+.PP
+After calling each Sparse BLAS subprogram, the test program thoroughly checks
+its operation in two ways.
+First, each of the arguments is checked to see if it has been changed.
+This includes checking all elements of array arguments, including the
+supposedly unreferenced ones.
+If any values other than the correct elements of the result vector or vectors
+have been changed, a fatal error is reported.
+.PP
+Second, the test program checks the result vector or vectors.
+We expect exact results from the routines that merely move data without doing
+any floating point arithmetic. 
+For subprograms that do use floating point arithmetic to compute their results,
+exact agreement between the results and those computed by simple Fortran code is
+not expected since the results are not necessarily computed by the same
+sequences of floating-point operations.
+However, the differences are expected to be insignificant to working precision
+in the following precise sense.
+.PP
+In the _DOT-I routines, the absolute error in @w ~ roman = ~ x sup T y@ is
+bounded by
+.EQ
+|w hat~-~w|~<=~ roman NZ ~ epsilon |x| sup T |y|,
+.EN
+where @epsilon@ is the relative machine precision and @|x| sup T@ denotes the
+vector @(|x sub 1 |,|x sub 2 |,...,|x sub n |) sup T@ ([5], p. 36).
+Since this bound is usually a substantial over-estimate, we use the following
+semi-empirical approach: the test ratio
+.EQ
+{|w hat~-~w|} over {epsilon |x| sup T |y|}
+.EN
+is compared with a constant threshold value that is defined in the data file.
+Test ratios greater than the threshold are flagged as ``suspect''.
+On the basis of experience, a value of 5 is recommended.
+The precise value is not critical.
+Errors in the routines are likely to be errors in array indexing, which will
+almost certainly lead to a totally incorrect result.
+A more subtle potential error is the use of a single precision variable in a
+double precision computation.
+This is likely to lead to a loss of about half the machine precision.
+Therefore, the test program regards a test ratio greater than
+@epsilon sup {-1/2}@ as a fatal error.
+.PP
+In the _AXPYI routines, each component of the result vector is regarded as an
+inner product of length 2:
+.EQ
+y sub i ~ roman = ~ [ a~~~1 ] ~ left [ cpile { x sub i above y sub i } right ]
+.EN
+and the dot product error bound given above is applied to componentwise.
+Similarly, in the _ROTI routines, each component of the result vectors is
+regarded as an inner product of length 2:
+.EQ
+x sub i ~ roman = ~ [ c~~~s ] ~ left [ cpile { {x sub i} above {y sub i} } right ]
+.EN
+.EQ
+y sub i ~ roman = ~ [ -s~~c ] ~ left [ cpile { {x sub i} above {y sub i} } right ]
+.EN
+
+.NH
+Efficiency Obtained via a Tuned Implementation
+.PP
+Most sparse Gaussian elimination factorization algorithms spend the vast
+majority of their execution time in the Sparse BLAS _AXPYI loop:
+.KS
+.TS
+center;
+r1 l.
+	DO 10 I = 1, NZ
+	   Y(INDX(I)) = A * X(I) + Y(INDX(I))
+10	CONTINUE
+.TE
+.KE
+Dembart and Neves analyzed seven different formulations of this loop on the
+CDC STAR 100, and determined that there were combinations of vector length
+and vector density for which each of the formulations was the fastest [1].
+Similar analyses by those authors showed corresponding results for the CYBER
+203 and 205, although the ratios changed.
+For reasonable combinations of vector lengths and densities, the most
+important of the seven formulations was the same on all three machines, and
+can be presented as a sequence of calls to two Sparse BLAS and one original
+BLAS:
+.KS
+.TS
+center;
+l.
+CALL SGTHR (NZ,Y,INDX,TEMP)
+CALL SAXPY (NZ,A,X,1,TEMP,1)
+CALL SSCTR (NZ,TEMP,Y,INDX)
+.TE
+.KE
+This uses a temporary array and two data movement operations, but takes
+advantage of the vector arithmetic units for the numerical operations.
+On the CRAY-1, the original SAXPYI loop written in Fortran executes at a
+maximum rate of about 4 million floating point operations per second (MFLOPS).
+Woo and Levesque analyzed the above SGTHR-SAXPY-SSCTR approach, and showed
+that its maximum rate in assembly language was about 8 MFLOPS [10].
+Alternatively, the fastest known assembly language implementation of the
+original loop performs asymptotically at 13 MFLOPS, using only the scalar
+hardware, and is faster than the SGTHR-SAXPY-SSCTR method for every NZ [9].
+.PP
+In [8], Lewis and Simon presented timing comparisons for factorization of
+seven sparse matrix test problems, selected from the Harwell/Boeing sparse
+matrix collection [3], by two versions of SPARSPAK [4].
+The first version was derived by inserting a few compiler directives, while
+the second version was obtained by replacing the Fortran SAXPYI loops with
+calls to tuned CRAY X-MP assembly language implementations of SAXPYI [9].
+The seven test problems were run on a CRAY X-MP without the hardware
+scatter/gather feature, so that both the Fortran and assembly language SAXPYI
+loops were done in scalar mode, and on a CRAY X-MP that was equipped with
+hardware scatter/gather, where both SAXPYI loops were done in vector mode.
+Table I presents the total factorization time obtained with the Fortran version
+relative to the time for the tuned SAXPYI on the same machine.
+
+.KS
+.ce
+Table I.  Relative Execution Times for Sparse Matrix Factorization.
+.ce
+(CRAY X-MP, CFT 1.14, normalized so tuned implementation = 1)
+.ps 10
+.vs 13
+.TS
+center;
+l ce ce
+l ce ce
+l n n.
+_
+Problem	Without hardware	With hardware
+\^	scatter/gather	scatter/gather
+_
+STK3562	2.49	1.14
+STK3948	2.97	1.24
+STK4884	2.77	1.20
+LRGPWR	1.07	0.93
+ST10974	2.59	1.16
+ST11948	2.80	1.22
+ST15439	2.79	1.25
+_
+unweighted mean	2.49	1.16
+_
+.TE
+.ps
+.vs
+.KE
+.PP
+Lewis and Simon conclude with the comment that their version of SPARSPAK had
+been modified with calls to SAXPYI and other computational kernels several
+years ago.
+The underlying hardware had changed several times, but, because the details
+of the hardware were encapsulated in a subroutine library, it was possible
+to reap the benefits of hardware improvements without any code modifications
+to SPARSPAK.
+This demonstrates the achievement of the goal of portability with efficiency.
+
+.SH
+References
+.IP [1]
+B. Dembart and K.W. Neves, ``Sparse Triangular Factorization on Vector
+Computers,'' \fIExploring Applications of Parallel Processing,\fR Electric
+Power Research Institute, EL-566-QR, Palo Alto, California (1977), pp. 22-25.
+.IP [2]
+D.S. Dodson, R.G. Grimes, and J.G. Lewis, ``Sparse Extensions to the Fortran
+Basic Linear Algebra Subprograms,'' \fIthis journal.\fR
+.IP [3]
+I.S. Duff, R.G. Grimes, J.G. Lewis, and W.G. Poole, ``Sparse Matrix Test
+Problems,'' \fISIGNUM Newsletter,\fR, (1982), p. 22.
+.IP [4]
+A. George and J.W. Liu, \fIComputer Solution of Large Sparse Positive Definite
+Systems,\fR Prentice-Hall, Inc., Englewood Cliffs, New Jersey, (1982).
+.IP [5]
+G.H. Golub and C.F. Van Loan, \fIMatrix Computations,\fR The Johns Hopkins
+University Press, Baltimore, Maryland, (1983).
+.IP [6]
+C.L. Lawson, R.J. Hanson, D.R. Kincaid, and F.T. Krogh, ``Basic Linear Algebra
+Subprograms for Fortran Usage,'' \fIACM Transactions on Mathematical
+Software 5\fR, 3 (September, 1979), pp. 308-323.
+.IP [7]
+C.L. Lawson, R.J. Hanson, D.R. Kincaid, and F.T. Krogh, ``Algorithm 539: Basic
+Linear Algebra Subprograms for Fortran Usage,'' \fIACM Transactions on
+Mathematical Software 5\fR, 3 (September, 1979), pp. 324-325.
+.IP [8]
+J.G. Lewis and H.D. Simon, ``The Impact of Hardware Gather/Scatter on Sparse
+Gaussian Elimination,'' \fIProceedings of the 1986 International Conference on
+Parallel Processing,\fR (K. Hwang, S. Jacobs, and E. Swartzlander, eds.), IEEE
+Computer Society, Los Angeles, (1986).
+.IP [9]
+\fIVectorPak Users Manual - CRAY Supplement,\fR Publication Number 20460-0501,
+Boeing Computer Services, Seattle, (1986).
+.IP [10]
+P.T. Woo and J.M. Levesque, ``Benchmarking a Sparse Elimination Routine on the
+CYBER 205 and the CRAY-1,'' \fIProceedings of the Sixth SPE Symposium on
+Reservoir Simulation,\fR (1982).
+.bp
+.SH
+Appendix: Installation Notes
+.SH
+A1. Installing the Model Implementation
+.PP
+The subprograms fall into four sets according to the data type: REAL, DOUBLE
+PRECISION, COMPLEX, and COMPLEX*16 (subprogram names beginning with S, D, C,
+and Z, respectively).
+If the Fortran compiler supports compiler directives to indicate where
+vectorization or parallelization is safe, these can be inserted in the source
+code at the places indicated in the comments.
+Compile the sets to be installed and create an object library.
+
+.SH
+A2. Testing the Model Implementation
+.PP
+Select the test programs corresponding to the data types handled by the
+subprograms that have been installed.
+.PP
+An annotated example of a data file for the test program can be obtained by
+editing the comments at the start of the main program.
+This defines the name and unit number of the output file and various parameters
+of the tests.
+The data file is read using list-directed input from unit NIN, which is set to
+5 in a PARAMETER statement in the main program.
+The data file for the REAL routines is illustrated below.
+
+.KS
+.ps 10
+.vs 13
+.TS
+center;
+l l l
+r l l. 
+Record no.	Record contents
+	
+1	`SBLATS.SUMM'	NAME OF OUTPUT FILE
+2	6	UNIT NUMBER OF OUTPUT FILE
+3	100	MAX NUMBER OF PRINTED ERROR MESSAGES
+4	5.0	THRESHOLD VALUE OF TEST RATIO
+5	6	NUMBER OF VALUES OF NZ
+6	-1  0  1  2  5  9	VALUES OF NZ
+7	3	NUMBER OF VALUES OF A
+8	0.0  1.0  0.7	VALUES OF A
+9	5	NUMBER OF VALUES OF (C,S)
+10	0.0 1.0 0.0 -0.6  0.8	VALUES OF C
+11	0.0 0.0 0.0  0.8 -0.6	VALUES OF S
+.TE
+.ps
+.vs
+.KE
+.PP
+Change the first record of the data file, if necessary, to ensure that the file
+name is legal on your system.
+No other changes to the data file should be necessary before an initial run of
+the test program, although some changes may be needed to ensure that the tests
+are sufficiently thorough (see below).
+.PP
+Compile the test program, link in the required subprograms, and run the test
+program using the data file as input.
+.PP
+If the tests using the supplied data file are completed successfully, consider
+whether the tests have been sufficiently thorough.
+For example, on a machine with vector registers, at least one value of NZ
+greater than the length of a vector register should be used or important parts
+of the compiled code may not be exercised by the tests.
+.PP
+The tests may fail with either ``suspect results'' or ``fatal errors''.
+Suspect results, where the test ratio is slightly greater than the threshold,
+are probably caused by anomalies in floating point arithmetic on the machine;
+if this explanation is considered to be sufficient, increase the value of the
+test ratio in the data file.
+Fatal errors most probably indicate a compilation error or corruption of the
+source text.
+An error detected by the system, e.g., an array subscript out of bounds or
+use of an uninitialized variable, is almost certainly due to the same causes.
+
+.SH
+A3. Testing a Tuned Implementation
+.PP
+Proceed initially as described in section A2.
+Consider very carefully what changes need to be made to the data file to
+ensure that the implementation has been thoroughly tested.
+For example, if the technique of loop-unrolling is used, make certain that
+sufficient values of NZ are used to test all the clean-up code.
+Similarly, if any values of A or (C,S) are treated specially, add them to the
+data file.
+
+.SH
+A4. Changing the Parameters of the Test
+.PP
+The values supplied in the data file must satisfy certain restrictions,
+dependent upon the following symbolic constants defined in PARAMETER
+statements in the main program:
+
+.KS
+.ps 10
+.vs
+.TS
+center;
+c c c
+l l a.
+Name	Meaning	Value
+
+NNZMAX	Maximum number of values of NZ	24
+NZMAX	Maximum value of NZ	320
+NAMAX	Maximum number of values of A	7
+NGMAX	Maximum number of values of C and S	7
+.TE
+.ps
+.vs
+.KE
+
+If necessary, modify the PARAMETER statements that define these symbolic
+constants.
+

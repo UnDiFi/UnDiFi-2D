@@ -1,0 +1,14 @@
+6c6,8
+< C     $Id: tmodel.F,v 1.13 2016/11/10 11:25:13 abonfi Exp abonfi $
+---
+> C     $Id: tmodel.F,v 1.13 2016/11/10 11:25:13 abonfi Exp $
+> C
+>       IMPLICIT NONE
+18a21
+> #include "petsc/finclude/petscsys.h"
+21,25d23
+<       use petscvec
+<       use petscmat
+< C
+<       IMPLICIT NONE
+< C
