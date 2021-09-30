@@ -1,12 +1,10 @@
 /***************************************************************************
                               input_parameters.c
                                ----------------
-This is input_parameters: it reads and saves all the necessary informations
-         needed to set up and run the computation  from the inputfile
-                             --------------------
-    begin                : Wed Apr 24 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+This is input_parameters: it parses the inputfile and and saves all the necessary 
+         parameters  needed to set up and run the computation   
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -94,11 +92,3 @@ void input_parameters()
       if ( initial_state == 9 ) t_max = 1./6. ;
 }
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
