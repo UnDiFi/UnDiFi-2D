@@ -2,11 +2,10 @@
                           conservative_fluctuation.c
                           --------------------------
        This is conservative_fluctuation: here the contour integral of
-                    the (space-time) fluxes is performed
-                             -------------------
-    begin                : Fri May 10 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+   the (space-time) fluxes is performed. The temporal  part is kept explicit
+     using the error correction approach of Ricchiuto-Abgrall JCP 2010		    
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -532,11 +531,3 @@ void fluctuationRK3( int e )
        }
 }
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
