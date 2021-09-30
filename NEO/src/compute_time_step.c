@@ -1,13 +1,10 @@
 /***************************************************************************
                              compute_time_step.c
                              -------------------
-    This is compute_time_step: it computes the time steps associated to
-     first and second time level such that the past shield condition
-                is satisfied for a linear scalar equation
-                             -------------------
-    begin                : Mon May 6 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    This is compute_time_step:  local and global time steps computed
+      from a CFL condition based on the wost case contraint (LF scheme)
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -195,11 +192,3 @@ void compute_time_step()
 /*printf("Timestep is %le ", dt);*/
 }
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
