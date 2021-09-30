@@ -1,11 +1,9 @@
 /***************************************************************************
                                  wrap_it_up.c
                                  ------------
-  This is wrap_it_up: it ends the computation and gives some...final infos
+                  This is wrap_it_up: the run ends here 
                              -------------------
-    begin                : Wed May 15 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -37,11 +35,3 @@ void wrap_it_up()
      printf( "\n" ) ;
 }
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
