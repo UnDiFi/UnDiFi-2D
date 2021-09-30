@@ -1,13 +1,11 @@
 /***************************************************************************
                               upwind_matrices.c
                               -----------------
- This is upwind_matrices: the model-independent computation of the positive
+ This is upwind_matrices: the model-dependent computation of the positive
    upwind perameters K_PLUS fully using the eigenspectrum of the system
                               is performed here
-                             -------------------
-    begin                : Tue May 14 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -137,12 +135,3 @@ void compute_upwind_Keys( int e )
 
      alpha = 0.5*( max_v + max_c )*max_h ;
 }
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
