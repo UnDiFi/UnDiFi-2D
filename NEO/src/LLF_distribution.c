@@ -1,12 +1,10 @@
 /***************************************************************************
-                               N_distribution.c
+                              LLF_distribution.c
                                ----------------
-  This is N_distribution: here the distribution of the cell fluctuation is
-     performed through the N scheme distribution function KP(U_i-U_c)
+This is LLF_distribution:  distribution performed via the limited nonlinear
+function  Psi(B_LF) phi_T with B_LF phi_T = phi_T/3 + alpha (U_i - bar U)
                              -------------------
-    begin                : Tue May 14 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr 
  ***************************************************************************/
 #include "common.h"
 
@@ -199,12 +197,3 @@ void LLF_unsteady( int e )
          }
 }
 
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
