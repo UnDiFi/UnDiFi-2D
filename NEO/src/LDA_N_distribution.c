@@ -1,8 +1,8 @@
 /***************************************************************************
-                               N_distribution.c
+                               LDA_N_distribution.c
                                ----------------
-  This is N_distribution: here the distribution of the cell fluctuation is
-     performed through the N scheme distribution function KP(U_i-U_c)
+  This is LDA_N_distribution: the distribution of the fluctuation is performed
+    via the blended  distribution  theta KP(U_i-U_c) + (1-theta) beta_LDA phi_T
                              -------------------
     Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
