@@ -53,13 +53,3 @@ void ( *fluctuation2 )( int ) ;
 void ( *move_the_mesh )( int ) ;
 void ( *supersonic_residual )( int ) ; /* Face global index  */
 
-
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
