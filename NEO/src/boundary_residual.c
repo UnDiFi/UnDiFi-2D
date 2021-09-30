@@ -3,11 +3,16 @@
                              -------------------
   This is boundary_residual: it drives the computation of the additional
             residual coming from the boundary conditions.
-               It is largely based on a weak approach
+   Colored boundaries correspond to
+    case 0: Fitted shocks - the soution is set already form the RH conditions
+    case 1: Supersonic inlet - the solution is fully (strongly) imposted
+    case 2: Supersonic outlet - nothing happens (as in case 0)
+    case 3: Wall - the normal component of the momentum residual is set to zero 
+    case 4: Sub-sonic outlet using weak conditions based on a Steger-Warming flux
+    case 5: Far field/inled - Full state weakly imposed depending on the charateristics sign
+                               (weak conditions based on a Steger-Warming flux)
                              -------------------
-    begin                : Wed May 15 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -66,12 +71,3 @@ void boundary_conditions()
                   }
          }
 }
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
