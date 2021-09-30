@@ -2,11 +2,9 @@
                          set_numerical_integration.c
                          ---------------------------
 This is set_numerical_integration: the weights for the numerical evaluation
-           of line, surface and volume integrals are set here
+        of time, line, surface and volume integrals are set here
                              -------------------
-    begin                : Thu May 2 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -192,11 +190,3 @@ void set_numerical_integration()
 }
 
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
