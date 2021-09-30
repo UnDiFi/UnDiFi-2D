@@ -3,6 +3,7 @@
                                ----------------
 This is LLF_distribution:  distribution performed via the limited nonlinear
 function  Psi(B_LF) phi_T with B_LF phi_T = phi_T/3 + alpha (U_i - bar U)
+ the term K Theta phi_T is a streamline dissipation added in smooth flows  
                              -------------------
     Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr 
  ***************************************************************************/
