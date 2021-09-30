@@ -1,11 +1,9 @@
 /***************************************************************************
                                      ale.c
                            -----------------------
-				   ale stuff
+            Geometrical functions related to the ALE formulation
                              -------------------
-    begin                : Thu May 2 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
 ***************************************************************************/
 
 #include "common.h"
