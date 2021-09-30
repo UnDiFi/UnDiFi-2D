@@ -1,13 +1,10 @@
 /***************************************************************************
                             pseudo_time_stepper.c
                             ---------------------
-    This is pseudo_time_stepper : it drives an explicit pseudo time loop
-     to convergence through the computation of the nodal residuals and
-                              the nodal updates
-                             -------------------
-    begin                : Tue May 7 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    This is pseudo_time_stepper : it drives an explicit  time loop
+     through the computation of the nodal residuals and the nodal updates
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -96,11 +93,3 @@ void pseudo_time_stepper()
        }
 }
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
