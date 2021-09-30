@@ -3,8 +3,7 @@
                              -------------------
           This is read_spatial_grid: every function reading from the
                    (externally provided) grid_file is here.
-MIND: The grid-file format to be used should be the .grd (modified .dpl).
-      It is structured as follows:
+MIND: The .grd grid-file format is an in-house format structured as follows:
                                - header      : dimension NE NN NF NBF
                                - blank line
                                - e:=1 -> NE  : e_node_1 ... e_node_vertex
@@ -16,10 +15,8 @@ MIND: The grid-file format to be used should be the .grd (modified .dpl).
                                - f:=1 -> NBF : f_n1... f_ndimension
                                                type_n1... type_ndimension
                                                f_type
-                         -------------------
-    begin                : Thu Apr 25 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+                          -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -170,12 +167,3 @@ void read_spatial_grid_header()
 	fscanf( grid_header, "%d %d %d %d \n", &dummy, &NE, &NN, &NBF ) ;
 	fclose ( grid_header ) ;
 }
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
