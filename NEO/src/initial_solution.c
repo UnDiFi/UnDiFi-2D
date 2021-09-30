@@ -2,13 +2,9 @@
                               initial_solution.c
                               ------------------
 This is initial_solution: depending on the value of initial_state, it reads
-          or just sets up the initial solution for the computation
-                             --------------------
-    begin                : Mon May 6 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be,
-
-
+    an initial solution file  or sets up the initial solution values 
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
 ***************************************************************************/
 #include "common.h"
 
@@ -728,13 +724,4 @@ void initial_solution()
       break ;
     }
 }
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
 
