@@ -2,10 +2,8 @@
                               select_function.c
                               -----------------
           This is select_function: function pointers are assigned here
-                             -------------------
-    begin                : Thu Apr 25 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
 ***************************************************************************/
 #include "common.h"
 
@@ -171,13 +169,4 @@ void select_function()
   /**************************************************************************/
   /**************************************************************************/
 }
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
 
