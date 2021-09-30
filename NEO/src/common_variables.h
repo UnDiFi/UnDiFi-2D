@@ -1,12 +1,10 @@
 /***************************************************************************
                           common_variables.h
                                --------
-This is common_varibles: it contains and defines all the variables accessible
-                         from anywhere in the program.
-                             -------------------
-    begin                : Wed Apr 24 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+This is common_varibles: it contains and defines all the variables (dangerously)
+                 accessible from anywhere in the program.
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 
 struct element_struct   *element ;
