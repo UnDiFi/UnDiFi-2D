@@ -1,12 +1,10 @@
 /***************************************************************************
                                   geometry.c
                                   ----------
- This is geometry: here the external grid is read and preprocessed to store
-       and compute all the usefull informations for the computation
-                             -------------------
-    begin                : Thu May 2 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+ This is geometry: here the external grid is read and preprocessing invoked
+   to store and compute all the usefull informations for the computation
+                              -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr   
  ***************************************************************************/
 #include "common.h"
 
@@ -46,11 +44,3 @@ extern void set_numerical_integration() ;
           set_numerical_integration() ;
 }
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
