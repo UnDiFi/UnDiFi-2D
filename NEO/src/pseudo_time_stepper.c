@@ -1,7 +1,7 @@
 /***************************************************************************
                             pseudo_time_stepper.c
                             ---------------------
-    This is pseudo_time_stepper : it drives an explicit  time loop
+  This is pseudo_time_stepper : it drives the loop on the explicit sub-stages 
      through the computation of the nodal residuals and the nodal updates
                               -------------------
     Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
