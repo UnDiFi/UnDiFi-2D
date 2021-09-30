@@ -4,9 +4,7 @@
   This is model_0: it contains all the model dependent functions used for
         the solution of the 2D EULER equations with PERFECT GAS EOS
                              -------------------
-    begin                : Tue May 7 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
 ***************************************************************************/
 #include "common.h"
 
@@ -880,16 +878,5 @@ void out_2D_Euler( int m )
       node[n2].Res[3] += dt * length * numerical_int.face_weight[k]*numerical_int.face_coordinate[k][1] * work_vector0[3] ;
 }  
 }
-
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
-
 
 
