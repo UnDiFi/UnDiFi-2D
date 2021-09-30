@@ -3,10 +3,9 @@
                            -----------------------
 This is element_preprocessing: the geometry of each element is computed and
  processed here to have all the necessary informations for the computation
-                             -------------------
-    begin                : Thu May 2 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+ this contains all the necessary functions for the fixed mesh case
+                            -------------------
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
 ***************************************************************************/
 #include "common.h"
 
@@ -152,11 +151,3 @@ void element_preprocessing()
 
 
 }
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
