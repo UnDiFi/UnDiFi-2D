@@ -5,9 +5,7 @@
    the code, including small algebraic functions for matrix-matrix and
  matrix vector multiplications, matrix-matrix and vector-vector summation
                              -------------------
-    begin                : Mon May 6 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr
  ***************************************************************************/
 #include "common.h"
 
@@ -547,11 +545,3 @@ void supersonic_residual_std( int v )
 
 }
 
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
