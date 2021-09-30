@@ -1,12 +1,10 @@
 /***************************************************************************
-                               N_distribution.c
+                              LW_distribution.c
                                ----------------
-  This is N_distribution: here the distribution of the cell fluctuation is
-     performed through the N scheme distribution function KP(U_i-U_c)
+This is LW_distribution: the distribution of the fluctuation is performed via
+     the Lax-Wandroff distribution function  phi_T/3 +  Dt K phi_T/2|T|
                              -------------------
-    begin                : Tue May 14 2002
-    copyright            : (C) 2002 by Mario Ricchiuto
-    email                : ricchiut@vki.ac.be
+    Code developed by M. Ricchiuto, Inria - mario.ricchiuto@inria.fr 
  ***************************************************************************/
 #include "common.h"
 
@@ -115,12 +113,3 @@ void LW_unsteady( int e )
           }
 }
 
-
-/***************************************************************************
- *                                                                         *
- *   This program has been developed at the von Karman Institute for Fluid *
- *   Dynamics by Mario Ricchiuto. Any change or update must be done in a   *
- *   clean way and it must be clearly commented.                           *
- *   Mario Ricchiuto                                                       *
- *                                              23/04/2002                 *
- ***************************************************************************/
