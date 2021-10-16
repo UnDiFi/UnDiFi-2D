@@ -36,21 +36,19 @@ Detailed documentation can be found in the `doc` folder.
 Citing
 ------
 
-If you publish work which mentions UnDiFi-2D, or UnDiFi-2D has been useful
+If you publish work which mentions UnDiFi-2D or UnDiFi-2D has been useful
 in your research, please kindly cite the following paper:
 
 ~~~
-@article{campoli-2019,
-  author  = {L. Campoli, A. Assonitis, A. Bonfiglioli, Ciallella, R. Paciorri, M. Ricchiuto},
-  title   = {{UnDiFi, an Unstructured Discontinuity Fitting algorithm code}},
-  journal = {Computer Physics Communications },
-  volume  = {},
-  number  = {},
-  pages   = {},
-  year    = {},
-  issn    = {},
-  doi     = {},
-  url     = {},
+@article{CAMPOLI2021108202,
+title = {UnDiFi-2D: an Unstructured Discontinuity Fitting code for 2D grids},
+journal = {Computer Physics Communications},
+pages = {108202},
+year = {2021},
+issn = {0010-4655},
+doi = {https://doi.org/10.1016/j.cpc.2021.108202},
+url = {https://www.sciencedirect.com/science/article/pii/S0010465521003143},
+author = {L. Campoli and A. Assonitis and M. Ciallella and R. Paciorri and A. Bonfiglioli and M. Ricchiuto},
 }
 ~~~
 
