@@ -10,13 +10,13 @@ cd doc
 ./makedoc.sh
 echo Done!
 cd ..
-#
+
 #echo Compiling in tools
 cd tools
 ./compile.sh
 echo Done!
 cd ..
-#
+
 #echo Compiling in lib
 cd lib
 make
@@ -27,7 +27,7 @@ then
 fi
 echo Done!
 cd ..
-#
+
 echo Compiling PETSC 3.14.6
 ##### Comment these lines if petsc is already downloaded
 wget ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.14.6.tar.gz
@@ -37,7 +37,7 @@ rm petsc-3.14.6.tar.gz
 cd petsc-3.14.6
 PETSC_DIR1=${PWD}
 export PETSC_DIR=${PETSC_DIR1}
-#./configure --with-cc=gcc --with-cxx=g++ --with-fc=gfortran --download-mpich --download-fblaslapack
+./configure --with-cc=gcc --with-cxx=g++ --with-fc=gfortran --download-mpich --download-fblaslapack
 #Extract petsc_arch from newest folder name
 PETSC_ARC=$(ls -td -- */ | head -n 1 | cut -d'/' -f1)
 export PETSC_ARCH=${PETSC_ARC}
