@@ -75,7 +75,7 @@
      +                 ispclr(5,nspmax)
 
       logical shtopolchanged
-      logical neo, eulfs
+      logical neo, eulfs, su2
 
       character        typespecpoints*5,
      +                 typeshocks*1
@@ -144,13 +144,14 @@
 !     Read command line arguments
       integer           :: no, n_args
       character(len=20) :: testcase
-      character(len=20) :: args(5)
+      character(len=20) :: args(6)
+      character(len=20) :: solvername
       logical           :: steady, unsteady
 
       n_args = command_argument_count();
-      if (n_args /= 5) then
+      if (n_args /= 5 .and. n_args /= 6) then
         write(*,*) 'Usage: ../../bin/UnDiFi-2D_x86_64
-     +              0 501 false true "TestCaseName"'
+     +              0 501 false true "TestCaseName" [su2]'
         call abort()
       end if
       do i = 1, n_args
@@ -163,14 +164,29 @@
       read(args(4),*) steady
       read(args(5),*) testcase
 
+!     optional 6th arg: a solver name that overrides args(3) when it
+!     is a solver EULFS/NEO's boolean can't express (currently only
+!     "su2"); omitted (n_args==5) is fully backward compatible with
+!     every existing eulfs/neo caller (scripts/run_steady.sh, etc.)
+      solvername = ""
+      su2 = .false.
+      if (n_args == 6) then
+        solvername = args(6)
+        su2 = (trim(solvername) == "su2")
+      end if
+      if (su2) then
+        eulfs = .false.
+      end if
+
       write(*,*) 'nbegin: ',    nbegin
       write(*,*) 'nsteps: ',    nsteps
       write(*,*) 'Use eulfs? ', eulfs
+      write(*,*) 'Use su2? ',   su2
       write(*,*) 'Is steady? ', steady
       write(*,*) 'testcase: ',  testcase
 
-!     flag to select the shock-capturing solver, eulfs or neo
-      NEO = (.not. EULFS)
+!     flag to select the shock-capturing solver, eulfs, neo, or su2
+      NEO = (.not. EULFS) .and. (.not. SU2)
 
 !     flag to select the type of simulation: steady or unsteady
       UNSTEADY = (.not. STEADY)
@@ -959,6 +975,76 @@
          if(ifail.ne.0)then
            write(6,*)'dat2triangle has returned an error code ifail = ',
      &ifail
+            call exit(1)
+         endif
+
+         write(*,1002)' ok'
+
+! ***********************************
+      elseif (SU2) then ! SU2 SOLVER
+! ***********************************
+
+! **********************************************************************
+!  Convert the triangle files into SU2's native mesh + restart state:
+!  echo na0x.1 / su2case | triangle2su2
+!  "su2case" is a fixed basename (not fname) so su2case.cfg's
+!  MESH_FILENAME/SOLUTION_FILENAME/RESTART_FILENAME never have to
+!  change across outer iterations even though the Triangle basename
+!  (fname) does. No periodic-BC support yet (see source_utils/
+!  triangle2su2/main.f) -- fine for now, CircularCylinder has none.
+! **********************************************************************
+
+         write(*,1001,advance='no')'triangle2su2           -->  '
+         execmd = "printf '" // fname(1:7)
+     +   // ".1\nsu2case'|"
+     +   // bindir(1:10)//"triangle2su2-"//hostype(1:6)
+     +   // " > log/triangle2su2.log"
+         ifail = system(execmd)
+         call flush(6)
+         if(ifail.ne.0)then
+           write(6,*)
+     +'triangle2su2 has returned an error code ifail = ',ifail
+            call exit(1)
+         endif
+
+         write(*,1002)' ok'
+
+! **************************
+!  Run one step of SU2 code
+! **************************
+!  su2case.cfg sets ITER=1 with RESTART_SOL=YES: one implicit step
+!  per outer UNDIFI iteration, the SU2 analogue of EulFS's -itmax 1.
+
+         write(*,1001,advance='no')'su2                    -->  '
+         execmd = bindir(1:10) // "SU2_CFD"
+     +   // " su2case.cfg > log/su2.log"
+
+         ifail = system(execmd)
+         call flush(6)
+         if(ifail.ne.0)then
+            write(6,*)'su2 has returned an error code ifail = ',ifail
+            call exit(1)
+         endif
+
+         write(*,1002)' ok'
+
+! **********************************************************************
+!  Convert su2case's restart state back into triangle fmt:
+!  echo na0x.1 / su2case | su22triangle
+!  The file na0x.1.node will be overwritten with the values updated by
+!  the code and a copy with "old" values is copied in na0x.1.node.BAK
+! **********************************************************************
+
+         write(*,1001,advance='no')'su22triangle           -->  '
+         execmd = "printf '" // fname(1:7)
+     +   // ".1\nsu2case'|"
+     +   // bindir(1:10)//"su22triangle-"//hostype(1:6)
+     +   // " > log/su22triangle.log"
+         ifail = system(execmd)
+         call flush(6)
+         if(ifail.ne.0)then
+           write(6,*)
+     +'su22triangle has returned an error code ifail = ',ifail
             call exit(1)
          endif
 

@@ -28,14 +28,14 @@ C
       INTEGER   NOFVERT,NDIM,NDOF
       PARAMETER(NDIM=2,NOFVERT=(NDIM+1),NDOF=4)
 C
-      INTEGER ILEN(10)
+      INTEGER ILEN(10),KSU2
 C
       INTEGER  ISTKGT,LENSTR
       EXTERNAL ISTKGT,LENSTR
 C
       DOUBLE PRECISION EPS,GAM
       COMMON /EPSCOM/EPS
-      CHARACTER FNAME(10)*255
+      CHARACTER FNAME(10)*255,SU2NAME*255
 C
       equivalence(nt,nelem)
       equivalence(ns,npoin)
@@ -51,6 +51,10 @@ C
       FNAME(10) = "file.1"
       WRITE(6,*)'Enter fname'
       READ(5,*)FNAME(10)
+      SU2NAME = "file"
+      WRITE(6,*)'Enter SU2 output basename'
+      READ(5,*)SU2NAME
+      KSU2 = LENSTR(SU2NAME)
       K = LENSTR(FNAME(10))
       FNAME(1)(1:K+5) = FNAME(10)(1:K)//".node"
       FNAME(2)(1:K+4) = FNAME(10)(1:K)//".ele"
@@ -122,7 +126,7 @@ C
       WRITE(6,*)'Done'
 C
       CALL WSU2(DSTAK(LCORG),NDIM,DSTAK(LOCZ),NDOF,ISTAK(LCELNOD),
-     &ISTAK(LBNDPTR),NPOIN,NELEM,NBFAC,GAM,FNAME(10),K)
+     &ISTAK(LBNDPTR),NPOIN,NELEM,NBFAC,GAM,SU2NAME,KSU2)
 C
       CALL EXIT(0)
       END
