@@ -60,7 +60,7 @@ Using a ILU(0) preconditioning.
 Convergence criteria of the linear solver: 1e-06.
 Max number of linear iterations: 10.
 No CFL adaptation.
-Courant-Friedrichs-Lewy number:      0.1
+Courant-Friedrichs-Lewy number:    0.002
 
 ------------------ Convergence Criteria  ( Zone 0 ) ---------------------
 Maximum number of solver subiterations: 1.
@@ -92,17 +92,12 @@ Restart file name: su2case_restart.
 +-----------------------------------------------------------------------+
 |                         Euler wall|                                bc3|
 +-----------------------------------------------------------------------+
-|                  Internal boundary|                                bc5|
-|                                   |                                bc6|
-|                                   |                                bc7|
-|                                   |                                bc8|
-|                                   |                                bc9|
-|                                   |                               bc10|
-+-----------------------------------------------------------------------+
-|          Supersonic inlet boundary|                                bc1|
-+-----------------------------------------------------------------------+
-|         Supersonic outlet boundary|                                bc2|
+|                          Far-field|                                bc1|
+|                                   |                                bc2|
 |                                   |                                bc4|
++-----------------------------------------------------------------------+
+|                  Periodic boundary|                             bc10_1|
+|                                   |                             bc10_2|
 +-----------------------------------------------------------------------+
 
 -------------------- Output Preprocessing ( Zone 0 ) --------------------
@@ -117,15 +112,16 @@ Volume output fields: COORDINATES, SOLUTION, PRIMITIVE
 
 ------------------- Geometry Preprocessing ( Zone 0 ) -------------------
 Two dimensional problem.
-457 grid points.
-696 volume elements.
-5 surface markers.
+460 grid points.
+692 volume elements.
+6 surface markers.
 47 boundary elements in index 0 (Marker = bc1).
 12 boundary elements in index 1 (Marker = bc2).
 19 boundary elements in index 2 (Marker = bc3).
 12 boundary elements in index 3 (Marker = bc4).
-124 boundary elements in index 4 (Marker = bc10).
-696 triangles.
+67 boundary elements in index 4 (Marker = bc10_1).
+67 boundary elements in index 5 (Marker = bc10_2).
+692 triangles.
 Setting point connectivity.
 Renumbering points (Reverse Cuthill McKee Ordering).
 Recomputing point connectivity.
@@ -139,20 +135,22 @@ Area of the computational grid: 7.10272.
 Searching for the closest normal neighbors to the surfaces.
 Storing a mapping from global to local point index.
 Compute the surface curvature.
-Max K: 10.2117. Mean K: 0.550602. Standard deviation K: 1.92281.
+Max K: 13.5068. Mean K: 0.760611. Standard deviation K: 2.41584.
 Computing mesh quality statistics for the dual control volumes.
 +--------------------------------------------------------------+
 |           Mesh Quality Metric|        Minimum|        Maximum|
 +--------------------------------------------------------------+
-|    Orthogonality Angle (deg.)|        46.0593|        89.6614|
-|     CV Face Area Aspect Ratio|        1.00378|        7.18734|
-|           CV Sub-Volume Ratio|              1|        7.71465|
+|    Orthogonality Angle (deg.)|        47.6526|        89.6614|
+|     CV Face Area Aspect Ratio|        1.01072|         8.0493|
+|           CV Sub-Volume Ratio|              1|        10.4329|
 +--------------------------------------------------------------+
 Finding max control volume width.
 Wetted area = 3.12786 m.
 Area projection in the x-plane = 0 m, y-plane = 0.996289 m.
 Max. coordinate in the x-direction = 0.998375 m, y-direction = 1 m.
 Min. coordinate in the x-direction = -4.37114e-08 m, y-direction = -1 m.
+Matching the periodic boundary points for marker pair 1.
+ Matched 136 points with a max distance of: 0.
 Computing wall distances.
 
 -------------------- Solver Preprocessing ( Zone 0 ) --------------------
@@ -202,7 +200,7 @@ Simulation Run using the Single-zone Driver
 +----------------------------------------------------------------+
 |  Inner_Iter|    rms[Rho]|   rms[RhoE]|          CL|          CD|
 +----------------------------------------------------------------+
-|           0|   -0.618788|   -0.870081|    0.003796|    2.675104|
+|           0|   -1.139992|   -1.434057|    0.016888|    2.502920|
 
 ----------------------------- Solver Exit -------------------------------
 
@@ -210,7 +208,7 @@ Maximum number of iterations reached (ITER = 1) before convergence.
 +-----------------------------------------------------------------------+
 |      Convergence Field     |     Value    |   Criterion  |  Converged |
 +-----------------------------------------------------------------------+
-|                    rms[Rho]|     -0.618788|         < -14|          No|
+|                    rms[Rho]|      -1.13999|         < -14|          No|
 +-----------------------------------------------------------------------+
 -------------------------------------------------------------------------
 +-----------------------------------------------------------------------+

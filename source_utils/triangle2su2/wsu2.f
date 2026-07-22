@@ -24,14 +24,34 @@ C
       DOUBLE PRECISION XY(NDIM,*),ZROE(NDOF,*),GAM
       INTEGER ICELNOD(3,*),IBNDPTR(3,*)
 C
-      INTEGER MAXCLR
-      PARAMETER(MAXCLR=20)
+      INTEGER MAXCLR,MAXSIDE
+      PARAMETER(MAXCLR=20,MAXSIDE=2)
 C
       INTEGER I,J,K,IPOIN,IELEM,IVERT,IN1,IN2,NCOLR,ICOLR(MAXCLR)
-      INTEGER NPOUT
+      INTEGER NPOUT,IR1,IR2,ISIDE,NMARKS
       INTEGER IMAP(NPOIN)
       DOUBLE PRECISION RHO,H,U,V,Q2,P,RHOE,GM1
       CHARACTER FWORK*255,MSHNAME*255
+C
+C     type.dat's convention (also used by EulFS's own "-colors" bc-type
+C     array, see tests/*/.petscrc): colours 1..MINPHY are ordinary
+C     physical boundaries (wall/inlet/outlet), colours > MINPHY are
+C     reserved, one per shock/discontinuity, for the fitted front's
+C     double-point seam. EulFS assigns that seam colour BC_TYPE_PERIODIC
+C     (bc type 0), pairing the coincident upstream/downstream point
+C     chains so the two sides of the discontinuity stay coupled;
+C     SU2 has no equivalent of EulFS's colour-keyed BC dispatch, so
+C     each such colour is split here into its (at most MAXSIDE, i.e.
+C     up/down) connected components -- found by union-find over the
+C     colour's own boundary edges, since the two chains are disjoint
+C     point sets even though geometrically coincident -- and written
+C     as separate markers "bc<I>_<side>" for su2case.cfg to pair with
+C     MARKER_PERIODIC (a zero transform, since the pairs are
+C     coincident, not offset).
+C
+      INTEGER MINPHY
+      PARAMETER(MINPHY=4)
+      INTEGER IPAR(NPOIN),ICOMP(NPOIN),NCPCLR(MAXCLR)
 C
       INTEGER JCYCL
       EXTERNAL JCYCL
@@ -105,27 +125,136 @@ C
          ENDIF
    40 CONTINUE
 C
-      NCOLR = 0
-      DO 50 I = 1,MAXCLR
-         IF(ICOLR(I).GT.0)NCOLR = NCOLR + 1
-   50 CONTINUE
+C     Union-find over each shock-seam colour's own boundary edges to
+C     split it into its up-/down-side connected components. IPAR(p)=0
+C     means point p hasn't been touched by a seam edge yet; otherwise
+C     IPAR is the union-find parent array (root when IPAR(p)==p).
 C
-      WRITE(21,FMT='(A,I0)')'NMARK= ',NCOLR
-      DO 70 I = 1,MAXCLR
+      DO 45 IPOIN = 1,NPOIN
+         IPAR(IPOIN) = 0
+         ICOMP(IPOIN) = 0
+   45 CONTINUE
+      DO 47 I = 1,MAXCLR
+         NCPCLR(I) = 0
+   47 CONTINUE
+      DO 60 I = MINPHY+1,MAXCLR
+         IF(ICOLR(I).LE.0)GOTO 60
+         DO 55 J = 1,NBFAC
+            IF(IBNDPTR(3,J).NE.I)GOTO 55
+            IELEM = IBNDPTR(1,J)
+            IVERT = IBNDPTR(2,J)
+            IN1 = ICELNOD(JCYCL(IVERT+1),IELEM)
+            IN2 = ICELNOD(JCYCL(IVERT+2),IELEM)
+            IF(IPAR(IN1).EQ.0)IPAR(IN1) = IN1
+            IF(IPAR(IN2).EQ.0)IPAR(IN2) = IN2
+            IR1 = IN1
+   51       IF(IPAR(IR1).NE.IR1)THEN
+               IR1 = IPAR(IR1)
+               GOTO 51
+            ENDIF
+            IR2 = IN2
+   52       IF(IPAR(IR2).NE.IR2)THEN
+               IR2 = IPAR(IR2)
+               GOTO 52
+            ENDIF
+            IF(IR1.NE.IR2)IPAR(IR2) = IR1
+   55    CONTINUE
+C
+C        second sweep: assign each root (in first-seen order) a
+C        1-based side index local to this colour
+C
+         DO 58 J = 1,NBFAC
+            IF(IBNDPTR(3,J).NE.I)GOTO 58
+            IELEM = IBNDPTR(1,J)
+            IVERT = IBNDPTR(2,J)
+            IN1 = ICELNOD(JCYCL(IVERT+1),IELEM)
+            IR1 = IN1
+   56       IF(IPAR(IR1).NE.IR1)THEN
+               IR1 = IPAR(IR1)
+               GOTO 56
+            ENDIF
+            IF(ICOMP(IR1).EQ.0)THEN
+               NCPCLR(I) = NCPCLR(I) + 1
+               IF(NCPCLR(I).GT.MAXSIDE)THEN
+                  WRITE(6,*)'WSU2: colour ',I,' splits into more ',
+     &            'than ',MAXSIDE,' sides -- not a simple shock seam,',
+     &            ' aborting'
+                  CALL EXIT(1)
+               ENDIF
+               ICOMP(IR1) = NCPCLR(I)
+            ENDIF
+   58    CONTINUE
+   60 CONTINUE
+C
+      NCOLR = 0
+      DO 65 I = 1,MINPHY
+         IF(ICOLR(I).GT.0)NCOLR = NCOLR + 1
+   65 CONTINUE
+      NMARKS = NCOLR
+      DO 66 I = MINPHY+1,MAXCLR
+         NMARKS = NMARKS + NCPCLR(I)
+   66 CONTINUE
+C
+      WRITE(21,FMT='(A,I0)')'NMARK= ',NMARKS
+C
+C     ordinary physical boundaries: one marker "bc<I>" per colour
+C
+      DO 70 I = 1,MINPHY
          IF(ICOLR(I).LE.0)GOTO 70
          WRITE(21,FMT='(A,I0)')'MARKER_TAG= bc',I
          WRITE(21,FMT='(A,I0)')'MARKER_ELEMS= ',ICOLR(I)
          K = 0
-         DO 60 J = 1,NBFAC
-            IF(IBNDPTR(3,J).NE.I)GOTO 60
+         DO 68 J = 1,NBFAC
+            IF(IBNDPTR(3,J).NE.I)GOTO 68
             IELEM = IBNDPTR(1,J)
             IVERT = IBNDPTR(2,J)
             IN1 = IMAP(ICELNOD(JCYCL(IVERT+1),IELEM))
             IN2 = IMAP(ICELNOD(JCYCL(IVERT+2),IELEM))
             WRITE(21,FMT='(I0,2(1X,I0),1X,I0)')3,IN1-1,IN2-1,K
             K = K + 1
-   60    CONTINUE
+   68    CONTINUE
    70 CONTINUE
+C
+C     shock-seam colours: one marker "bc<I>_<side>" per connected
+C     component, "side" numbered as assigned above
+C
+      DO 90 I = MINPHY+1,MAXCLR
+         IF(ICOLR(I).LE.0)GOTO 90
+         DO 85 ISIDE = 1,NCPCLR(I)
+            WRITE(21,FMT='(A,I0,A,I0)')'MARKER_TAG= bc',I,'_',ISIDE
+            K = 0
+            DO 75 J = 1,NBFAC
+               IF(IBNDPTR(3,J).NE.I)GOTO 75
+               IELEM = IBNDPTR(1,J)
+               IVERT = IBNDPTR(2,J)
+               IN1 = ICELNOD(JCYCL(IVERT+1),IELEM)
+               IR1 = IN1
+   72          IF(IPAR(IR1).NE.IR1)THEN
+                  IR1 = IPAR(IR1)
+                  GOTO 72
+               ENDIF
+               IF(ICOMP(IR1).EQ.ISIDE)K = K + 1
+   75       CONTINUE
+            WRITE(21,FMT='(A,I0)')'MARKER_ELEMS= ',K
+            K = 0
+            DO 80 J = 1,NBFAC
+               IF(IBNDPTR(3,J).NE.I)GOTO 80
+               IELEM = IBNDPTR(1,J)
+               IVERT = IBNDPTR(2,J)
+               IN1 = ICELNOD(JCYCL(IVERT+1),IELEM)
+               IR1 = IN1
+   77          IF(IPAR(IR1).NE.IR1)THEN
+                  IR1 = IPAR(IR1)
+                  GOTO 77
+               ENDIF
+               IF(ICOMP(IR1).NE.ISIDE)GOTO 80
+               IN2 = ICELNOD(JCYCL(IVERT+2),IELEM)
+               WRITE(21,FMT='(I0,2(1X,I0),1X,I0)')3,
+     &         IMAP(IN1)-1,IMAP(IN2)-1,K
+               K = K + 1
+   80       CONTINUE
+   85    CONTINUE
+   90 CONTINUE
       CLOSE(21)
 C
 C     ---------------------------------------------------------------
@@ -137,8 +266,8 @@ C
       WRITE(22,FMT='(A)')
      &'"PointID","x","y","Density","Momentum_x","Momentum_y",'//
      &'"Energy"'
-      DO 80 IPOIN = 1,NPOIN
-         IF(IMAP(IPOIN).EQ.0)GOTO 80
+      DO 100 IPOIN = 1,NPOIN
+         IF(IMAP(IPOIN).EQ.0)GOTO 100
          RHO  = ZROE(1,IPOIN)**2
          H    = ZROE(2,IPOIN)/ZROE(1,IPOIN)
          U    = ZROE(3,IPOIN)/ZROE(1,IPOIN)
@@ -148,11 +277,11 @@ C
          RHOE = P/GM1 + 0.5D0*RHO*Q2
          WRITE(22,FMT='(I0,6('','',ES24.16E3))')IMAP(IPOIN)-1,
      &   XY(1,IPOIN),XY(2,IPOIN),RHO,RHO*U,RHO*V,RHOE
-   80 CONTINUE
+  100 CONTINUE
       CLOSE(22)
 C
       WRITE(6,*)'WSU2: wrote ',MSHNAME(1:LENFNAM+4),' and a matching ',
-     &'restart file with ',NCOLR,' boundary marker(s)'
+     &'restart file with ',NMARKS,' boundary marker(s)'
 C
       RETURN
       END

@@ -3,25 +3,25 @@
 
  Enter fname
  Enter SU2 input basename
-     NPOIN =    10351     NELEM      696     NFACE =     1151 NHOLE   = 61
+     NPOIN =    10351     NELEM      692     NFACE =     1150 NHOLE   = 66
  Reading mesh..........
- Opening and reading        10351  meshpoints from na00042.1.node
+ Opening and reading        10351  meshpoints from na00501.1.node
  Done ! 
- Opening and reading          696  triangles from na00042.1.ele
+ Opening and reading          692  triangles from na00501.1.ele
  Done ! 
- Opening and reading          696  neighbours from na00042.1.neigh
+ Opening and reading          692  neighbours from na00501.1.neigh
  Done ! 
- There appear to be          214  bndry faces 
- Opening and reading         1151  faces from na00042.1.edge
- Boundary faces are          214         214
- Bndry edges coloured            0  are          937
+ There appear to be          224  bndry faces 
+ Opening and reading         1150  faces from na00501.1.edge
+ Boundary faces are          224         224
+ Bndry edges coloured            0  are          926
  Bndry edges coloured            1  are           47
  Bndry edges coloured            2  are           12
  Bndry edges coloured            3  are           19
  Bndry edges coloured            4  are           12
- Bndry edges coloured           10  are          124
+ Bndry edges coloured           10  are          134
  Done
  Reading SU2 restart file..........
  Done
-               BOUNDARY POINTS (NBPOIN) =    214
+               BOUNDARY POINTS (NBPOIN) =    224
   K =            9
