@@ -1,0 +1,35 @@
+
+
+ This code converts triangle files into EulFS files 
+
+
+ Enter fname
+ Trying to open na00501.1.node
+ Trying to open na00501.1.ele
+ Trying to open na00501.1.edge
+ Trying to open na00501.1.poly
+     NPOIN =    10351     NELEM      702     NFACE =     1157 NHOLE = 58
+
+
+ MEMORY ALLOCATION   
+ ===================
+
+ Reading mesh..........
+ Opening and reading        10351  meshpoints from na00501.1.node
+ Done ! 
+ Opening and reading          702  triangles from na00501.1.ele
+ Done ! 
+ Opening and reading          702  neighbours from na00501.1.neigh
+ Done ! 
+ There appear to be          208  bndry faces 
+ Opening and reading         1157  faces from na00501.1.edge
+ Boundary faces are          208         208
+ Bndry edges coloured            0  are          949
+ Bndry edges coloured            1  are           47
+ Bndry edges coloured            2  are           12
+ Bndry edges coloured            3  are           19
+ Bndry edges coloured            4  are           12
+ Bndry edges coloured           10  are          118
+ Done
+Are there any periodic surfaces? y/n  There are            0  periodic nodes
+ NPOIN is currently set to        10351

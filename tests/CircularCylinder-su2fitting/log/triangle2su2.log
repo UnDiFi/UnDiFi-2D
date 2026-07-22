@@ -1,0 +1,27 @@
+
+ This code converts triangle files into SU2 files 
+
+ Enter fname
+ Enter SU2 output basename
+ Trying to open na00043.1.node
+ Trying to open na00043.1.ele
+ Trying to open na00043.1.edge
+ Trying to open na00043.1.poly
+     NPOIN =    10353     NELEM      356     NFACE =      593 NHOLE   = 62
+ Reading mesh..........
+ Opening and reading        10353  meshpoints from na00043.1.node
+ Done ! 
+ Opening and reading          356  triangles from na00043.1.ele
+ Done ! 
+ Opening and reading          356  neighbours from na00043.1.neigh
+ Done ! 
+ There appear to be          118  bndry faces 
+ Opening and reading          593  faces from na00043.1.edge
+ Cannot match boundary face          158       10352       10353 within subroutine rtri
+ Boundary faces are          119         118
+ Bndry edges coloured            0  are          474
+ Bndry edges coloured            1  are           47
+ Bndry edges coloured            2  are            3
+ Bndry edges coloured            4  are            3
+ Bndry edges coloured           10  are           65
+ Non matching boundary faces

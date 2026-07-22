@@ -1,0 +1,9 @@
+  open file sh99.dat
+  n.           1 shocks/discontinuities
+  shock/discontinuity n.           1
+  kind of discontinuity:S
+  n. of points         236
+           1
+ C    
+           1           1
+           1           2

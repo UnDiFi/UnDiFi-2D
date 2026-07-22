@@ -1,0 +1,22 @@
+ node           50  on the bndry has become a phantom
+ node           87  on the bndry has become a phantom
+ node          102  has become a phantom
+ node          169  has become a phantom
+ node          202  has become a phantom
+ node          277  has become a phantom
+ node          284  has become a phantom
+ node          288  has become a phantom
+ node          289  has become a phantom
+ node          294  has become a phantom
+ node          297  has become a phantom
+ node          300  has become a phantom
+ node          307  has become a phantom
+ node          309  has become a phantom
+ node          312  has become a phantom
+ node          317  has become a phantom
+ node          318  has become a phantom
+ node          322  has become a phantom
+ node          332  has become a phantom
+ node          342  has become a phantom
+ number of phantom nodes (incl. those on the bndry)          20
+ uh! oh! there are            2  phantom nodes         on the boundary

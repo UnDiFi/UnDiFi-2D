@@ -1,0 +1,4 @@
+ subr changebndryptr; nbfac was =           90
+ subr changebndryptr; nbpoin was =           90
+ subr changebndryptr; npoin was =          351
+ Subr ChangeBndryPtr; NBFAC is now =           90
