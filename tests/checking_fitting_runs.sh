@@ -73,14 +73,13 @@ then
      if [ -e checksum_fitting_eulfs ]
      then
       tail -n 1 convergenza.dat > out.log
-      diff out.log checksum_fitting_eulfs > out
-      if [   $? -eq 0  ]  
-      then 
-        echo test $dir ok 
+      python3 ../tools/compare.py scalar checksum_fitting_eulfs out.log
+      if [   $? -eq 0  ]
+      then
+        echo test $dir ok
       else
-       echo test $dir failed 
+       echo test $dir failed
       fi
-      rm out
       rm out.log
      else
       echo test $dir checksum missing
@@ -107,17 +106,16 @@ then
      if [ -e checksum_fitting_neo ]
      then
       tail -n 1 residual_norm.dat > out.log
-      diff out.log checksum_fitting_neo > out
+      python3 ../tools/compare.py scalar checksum_fitting_neo out.log
       if [   $? -eq 0  ]
       then
         echo test $dir ok
       else
        echo test $dir failed
       fi
-      rm out
       rm out.log
      else
-      echo test $dir checksum missing 
+      echo test $dir checksum missing
      fi
    else
         echo test $dir not completed or executed 

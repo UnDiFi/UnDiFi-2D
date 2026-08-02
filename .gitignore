@@ -81,3 +81,4 @@ tests/**/NEO_data/output/*
 # --- Editor / OS cruft --------------------------------------------------------
 .DS_Store
 *.swp
+__pycache__/

@@ -75,14 +75,13 @@ then
       tail -n 1 convhst.l2 > out1.log
       cut -c34-  out1.log > out.log
       rm out1.log
-      diff out.log checksum_capturing_eulfs > out
-      if [   $? -eq 0  ]  
-      then 
-        echo test $dir ok 
+      python3 ../tools/compare.py scalar checksum_capturing_eulfs out.log
+      if [   $? -eq 0  ]
+      then
+        echo test $dir ok
       else
-       echo test $dir failed 
+       echo test $dir failed
       fi
-      rm out
       rm out.log
      else
       echo test $dir checksum missing
@@ -109,17 +108,16 @@ then
      if [ -e checksum_fitting_neo ]
      then
       tail -n 1 residual_norm.dat > out.log
-      diff out.log checksum_fitting_neo > out
+      python3 ../tools/compare.py scalar checksum_fitting_neo out.log
       if [   $? -eq 0  ]
       then
         echo test $dir ok
       else
        echo test $dir failed
       fi
-      rm out
       rm out.log
      else
-      echo test $dir checksum missing 
+      echo test $dir checksum missing
      fi
    else
         echo test $dir not completed or executed 
