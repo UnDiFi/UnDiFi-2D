@@ -1,0 +1,25 @@
+#!MC 1410
+$!AlterData 
+  Equation = '{rho} = V3*V3'
+$!AlterData 
+  Equation = '{k} = 0.5 * ( V6*V6 + V5*V5 ) / {rho}'
+$!AlterData 
+  Equation = '{H} = V4/V3'
+$!AlterData 
+  Equation = '{Ma} = SQRT( 2.00 * {k} / (0.40 * ( {H} - {k} )) )'
+$!AlterData 
+  Equation = '{p} = 0.40/1.40 * {rho} * ( {H} - {k} )'
+$!AlterData 
+  Equation = '{S} = {p} / ({rho}**1.4)'
+$!AlterData 
+  Equation = '{Pt} = {p} + {k}'
+$!AlterData 
+  Equation = '{T} = {p} / {rho}'
+$!AlterData 
+  Equation = '{u} = V5/V3'
+$!AlterData 
+  Equation = '{v} = V6/V3'
+$!AlterData 
+  Equation = '{T0} = {T} * (1.+0.2*{Ma}*{Ma})'
+$!AlterData 
+  Equation = '{p0} = {p} * ((1.+0.2*{Ma}*{Ma})**3.5)'
