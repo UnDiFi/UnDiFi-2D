@@ -1,0 +1,26 @@
+{
+  "kind": "scalar",
+  "reference": "checksum_capturing_eulfs",
+  "candidate": "/home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/SSInteractions1-2/eulfs_capturing_steady/candidate_scalar.log",
+  "reference_values": [
+    7.6e-06,
+    4.41e-06,
+    5.344e-06,
+    2.739e-06,
+    1.0
+  ],
+  "candidate_values": [
+    7.6e-06,
+    4.41e-06,
+    5.344e-06,
+    2.739e-06,
+    1.0
+  ],
+  "rtol": 1e-09,
+  "atol": 1e-12,
+  "l2": 0.0,
+  "linf": 0.0,
+  "rel_l2": 0.0,
+  "within_tolerance": true,
+  "pass": true
+}

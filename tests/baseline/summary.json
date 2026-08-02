@@ -1,0 +1,266 @@
+[
+  {
+    "case": "CircularCylinder",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 3.45989246,
+    "exit_status": 0,
+    "dir": "CircularCylinder/eulfs_capturing_steady"
+  },
+  {
+    "case": "CircularCylinder",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 582.448288798,
+    "exit_status": 0,
+    "dir": "CircularCylinder/eulfs_fitting_steady"
+  },
+  {
+    "case": "CircularCylinder",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 427.1004803,
+    "exit_status": 0,
+    "dir": "CircularCylinder/neo_fitting_steady"
+  },
+  {
+    "case": "CoaSHCK",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 113.18347297,
+    "exit_status": 0,
+    "dir": "CoaSHCK/eulfs_capturing_steady"
+  },
+  {
+    "case": "CoaSHCK",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 1060.360789757,
+    "exit_status": 0,
+    "dir": "CoaSHCK/eulfs_fitting_steady"
+  },
+  {
+    "case": "CoaSHCK",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 1380.556458547,
+    "exit_status": 0,
+    "dir": "CoaSHCK/neo_fitting_steady"
+  },
+  {
+    "case": "MachReflection-1",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 127.828773779,
+    "exit_status": 0,
+    "dir": "MachReflection-1/eulfs_capturing_steady"
+  },
+  {
+    "case": "MachReflection-1",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 1136.317092904,
+    "exit_status": 0,
+    "dir": "MachReflection-1/eulfs_fitting_steady"
+  },
+  {
+    "case": "MachReflection-1",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 1518.869220554,
+    "exit_status": 0,
+    "dir": "MachReflection-1/neo_fitting_steady"
+  },
+  {
+    "case": "MachReflection-2",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 129.805310386,
+    "exit_status": 0,
+    "dir": "MachReflection-2/eulfs_capturing_steady"
+  },
+  {
+    "case": "MachReflection-2",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 1247.755018222,
+    "exit_status": 0,
+    "dir": "MachReflection-2/eulfs_fitting_steady"
+  },
+  {
+    "case": "MachReflection-2",
+    "run": "neo_fitting_steady",
+    "verdict": "FAIL",
+    "wallclock_seconds": 1654.85283715,
+    "exit_status": 0,
+    "dir": "MachReflection-2/neo_fitting_steady"
+  },
+  {
+    "case": "NACA0012_M080_A0",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 44.936902892,
+    "exit_status": 0,
+    "dir": "NACA0012_M080_A0/eulfs_capturing_steady"
+  },
+  {
+    "case": "NACA0012_M080_A0",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 704.395701109,
+    "exit_status": 0,
+    "dir": "NACA0012_M080_A0/eulfs_fitting_steady"
+  },
+  {
+    "case": "NACA0012_M080_A0",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 748.997422467,
+    "exit_status": 0,
+    "dir": "NACA0012_M080_A0/neo_fitting_steady"
+  },
+  {
+    "case": "Q1D",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 38.679746167,
+    "exit_status": 0,
+    "dir": "Q1D/eulfs_capturing_steady"
+  },
+  {
+    "case": "Q1D",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 739.981674063,
+    "exit_status": 0,
+    "dir": "Q1D/eulfs_fitting_steady"
+  },
+  {
+    "case": "Q1D",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 786.861681053,
+    "exit_status": 0,
+    "dir": "Q1D/neo_fitting_steady"
+  },
+  {
+    "case": "RegularReflection-1",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 66.488720812,
+    "exit_status": 0,
+    "dir": "RegularReflection-1/eulfs_capturing_steady"
+  },
+  {
+    "case": "RegularReflection-1",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 824.905001823,
+    "exit_status": 0,
+    "dir": "RegularReflection-1/eulfs_fitting_steady"
+  },
+  {
+    "case": "RegularReflection-1",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 930.314534149,
+    "exit_status": 0,
+    "dir": "RegularReflection-1/neo_fitting_steady"
+  },
+  {
+    "case": "RegularReflection-2",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 67.980094262,
+    "exit_status": 0,
+    "dir": "RegularReflection-2/eulfs_capturing_steady"
+  },
+  {
+    "case": "RegularReflection-2",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 854.920061746,
+    "exit_status": 0,
+    "dir": "RegularReflection-2/eulfs_fitting_steady"
+  },
+  {
+    "case": "RegularReflection-2",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 876.767683229,
+    "exit_status": 0,
+    "dir": "RegularReflection-2/neo_fitting_steady"
+  },
+  {
+    "case": "SSInteractions1-2",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 65.945560662,
+    "exit_status": 0,
+    "dir": "SSInteractions1-2/eulfs_capturing_steady"
+  },
+  {
+    "case": "SSInteractions1-2",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 889.11944614,
+    "exit_status": 0,
+    "dir": "SSInteractions1-2/eulfs_fitting_steady"
+  },
+  {
+    "case": "SSInteractions1-2",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 881.614459793,
+    "exit_status": 0,
+    "dir": "SSInteractions1-2/neo_fitting_steady"
+  },
+  {
+    "case": "SSInteractions2-1",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 67.708327149,
+    "exit_status": 0,
+    "dir": "SSInteractions2-1/eulfs_capturing_steady"
+  },
+  {
+    "case": "SSInteractions2-1",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 830.256366938,
+    "exit_status": 0,
+    "dir": "SSInteractions2-1/eulfs_fitting_steady"
+  },
+  {
+    "case": "SSInteractions2-1",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 803.277540924,
+    "exit_status": 0,
+    "dir": "SSInteractions2-1/neo_fitting_steady"
+  },
+  {
+    "case": "SSInteractions2-2",
+    "run": "eulfs_capturing_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 65.306890539,
+    "exit_status": 0,
+    "dir": "SSInteractions2-2/eulfs_capturing_steady"
+  },
+  {
+    "case": "SSInteractions2-2",
+    "run": "eulfs_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 876.453520796,
+    "exit_status": 0,
+    "dir": "SSInteractions2-2/eulfs_fitting_steady"
+  },
+  {
+    "case": "SSInteractions2-2",
+    "run": "neo_fitting_steady",
+    "verdict": "PASS",
+    "wallclock_seconds": 827.197329033,
+    "exit_status": 0,
+    "dir": "SSInteractions2-2/neo_fitting_steady"
+  }
+]

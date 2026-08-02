@@ -76,7 +76,8 @@ tests/**/NEO_data/input/*
 tests/**/NEO_data/output/*
 !tests/**/NEO_data/input/empty_file
 !tests/**/NEO_data/output/empty_file
-/tests/run.log
+tests/**/run.log
+tests/**/.baseline.lock
 
 # --- Editor / OS cruft --------------------------------------------------------
 .DS_Store

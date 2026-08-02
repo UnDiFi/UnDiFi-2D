@@ -1,0 +1,2 @@
+FAIL  scalar  /home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/MachReflection-2/neo_fitting_steady/candidate_scalar.log
+  shock -: l2=1e-06 linf=1e-06 rel_l2=1.09514e-07 

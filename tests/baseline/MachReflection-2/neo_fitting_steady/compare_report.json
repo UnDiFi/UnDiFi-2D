@@ -1,0 +1,18 @@
+{
+  "kind": "scalar",
+  "reference": "checksum_fitting_neo",
+  "candidate": "/home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/MachReflection-2/neo_fitting_steady/candidate_scalar.log",
+  "reference_values": [
+    -9.131263
+  ],
+  "candidate_values": [
+    -9.131264
+  ],
+  "rtol": 1e-09,
+  "atol": 1e-12,
+  "l2": 9.999999992515995e-07,
+  "linf": 9.999999992515995e-07,
+  "rel_l2": 1.0951387549034558e-07,
+  "within_tolerance": false,
+  "pass": false
+}

@@ -1,0 +1,36 @@
+VERDICT  CASE                         RUN                         WALL(s)  EXIT
+PASS     CircularCylinder             eulfs_capturing_steady          3.5     0
+PASS     CircularCylinder             eulfs_fitting_steady          582.4     0
+PASS     CircularCylinder             neo_fitting_steady            427.1     0
+PASS     CoaSHCK                      eulfs_capturing_steady        113.2     0
+PASS     CoaSHCK                      eulfs_fitting_steady         1060.4     0
+PASS     CoaSHCK                      neo_fitting_steady           1380.6     0
+PASS     MachReflection-1             eulfs_capturing_steady        127.8     0
+PASS     MachReflection-1             eulfs_fitting_steady         1136.3     0
+PASS     MachReflection-1             neo_fitting_steady           1518.9     0
+PASS     MachReflection-2             eulfs_capturing_steady        129.8     0
+PASS     MachReflection-2             eulfs_fitting_steady         1247.8     0
+FAIL     MachReflection-2             neo_fitting_steady           1654.9     0
+PASS     NACA0012_M080_A0             eulfs_capturing_steady         44.9     0
+PASS     NACA0012_M080_A0             eulfs_fitting_steady          704.4     0
+PASS     NACA0012_M080_A0             neo_fitting_steady            749.0     0
+PASS     Q1D                          eulfs_capturing_steady         38.7     0
+PASS     Q1D                          eulfs_fitting_steady          740.0     0
+PASS     Q1D                          neo_fitting_steady            786.9     0
+PASS     RegularReflection-1          eulfs_capturing_steady         66.5     0
+PASS     RegularReflection-1          eulfs_fitting_steady          824.9     0
+PASS     RegularReflection-1          neo_fitting_steady            930.3     0
+PASS     RegularReflection-2          eulfs_capturing_steady         68.0     0
+PASS     RegularReflection-2          eulfs_fitting_steady          854.9     0
+PASS     RegularReflection-2          neo_fitting_steady            876.8     0
+PASS     SSInteractions1-2            eulfs_capturing_steady         65.9     0
+PASS     SSInteractions1-2            eulfs_fitting_steady          889.1     0
+PASS     SSInteractions1-2            neo_fitting_steady            881.6     0
+PASS     SSInteractions2-1            eulfs_capturing_steady         67.7     0
+PASS     SSInteractions2-1            eulfs_fitting_steady          830.3     0
+PASS     SSInteractions2-1            neo_fitting_steady            803.3     0
+PASS     SSInteractions2-2            eulfs_capturing_steady         65.3     0
+PASS     SSInteractions2-2            eulfs_fitting_steady          876.5     0
+PASS     SSInteractions2-2            neo_fitting_steady            827.2     0
+
+32 PASS, 1 FAIL, 0 NO_CHECKSUM, 33 total
