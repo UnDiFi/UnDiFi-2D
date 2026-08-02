@@ -52,11 +52,16 @@ lib/libgeometry/temp/
 
 # --- Per-run generated output under tests/<case>/ ---------------------------
 # Produced by a run and removed again by the matching tests/<case>/clean.sh;
-# none of this is hand-authored input. Seed mesh files (na00.1.*, na99.*)
-# and checked-in reference results (e.g. su2_fitting/na00501.1.*) do NOT
-# match these patterns and stay tracked.
+# none of this is hand-authored input. The seed mesh (na00.1.*) and
+# checked-in reference results (e.g. su2_fitting/na00501.1.*) do NOT
+# match these patterns and stay tracked. na99.* (the backup-file prefix,
+# see fnameback in main.f) looked like a keeper too until a real run
+# showed otherwise: on completion it's relocated into stepNNNNN/, so a
+# top-level na99.* left behind is exactly as transient as everything
+# else here.
 tests/**/step[0-9][0-9][0-9][0-9][0-9]*/
 tests/**/na[0-9][0-9][0-9][0-9][0-9].*
+tests/**/na99.*
 tests/**/*.BAK
 tests/**/fort.*
 tests/**/bndry*.dat
