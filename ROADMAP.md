@@ -576,6 +576,35 @@ argument for the whole project and should be in every paper.**
 Ordering note: M3 and M5 are independent and can proceed in parallel once M2
 lands. M7 depends on M2 (object model) and E1/E2, **not** on M3/M4.
 
+## Issue map
+
+| Issue | Milestone | Title |
+|---|---|---|
+| [#11](../../issues/11) | M0 | Foundations: CMake, tolerance-aware regression harness, CI, profiling baseline |
+| [#12](../../issues/12) | M1 | Phase 1 — fixed-form F77 → free-form Fortran 2018 |
+| [#13](../../issues/13) | M1 | Phase 2 — replace `istak/dstak` and compile-time size limits |
+| [#14](../../issues/14) | M2 | Phase 3 — `discontinuity_t` / `special_point_t` object model |
+| [#15](../../issues/15) | M2 | Phase 3.7 — abstract `flow_solver_t` interface (unblocks #4–#10) |
+| [#16](../../issues/16) | M3 | Phase 4 — OpenMP + spatial acceleration structures |
+| [#17](../../issues/17) | M4 | Phase 5a — solver-as-library coupling |
+| [#18](../../issues/18) | M4 | Phase 5b — coarray / MPI distributed fitting |
+| [#19](../../issues/19) | M8 | Phase 6 — OpenACC GPU offload |
+| [#20](../../issues/20) | — | Phase 7.5 — unit test suite for the physics kernels |
+| [#21](../../issues/21) | E1 | Multi-species / variable-γ gas model |
+| [#22](../../issues/22) | E2 | Closed discontinuity curves |
+| [#23](../../issues/23) | E3 | Slip lines, expansion fans, material interfaces |
+| [#24](../../issues/24) | E4 / M5 | Configuration classification and topology transition |
+| [#25](../../issues/25) | M5 | WP-A — consolidate existing configurations, Edney I–VI matrix |
+| [#26](../../issues/26) | M6 | WP-C — double Mach reflection |
+| [#27](../../issues/27) | M6 | WP-D — von Neumann / Vasilev / Guderley reflection |
+| [#28](../../issues/28) | M7 | WP-E — shock–bubble interaction |
+| [#29](../../issues/29) | — | WP-F — multiple bubbles, bubble–wall, collapse |
+| [#30](../../issues/30) | — | Phase 7 — I/O, input format, HDF5/XDMF, documentation |
+
+Pre-existing solver-coupling issues #3–#10 are subsumed by #15: once
+`flow_solver_t` exists, each becomes one module implementing three deferred
+procedures.
+
 ## Risk register
 
 | Risk | Impact | Mitigation |
