@@ -1,0 +1,106 @@
+name: build
+
+# Part of issue #11 (ROADMAP.md Phase 0). Scope: verify source/ and
+# source_utils/ build cleanly, on the compilers the roadmap targets, and
+# that the regression comparator's own self-check passes.
+#
+# Deliberately NOT in scope yet: running the actual 12 test cases
+# end-to-end. That needs PETSc/EulFS (and, for the su2fitting cases, a
+# separately-built SU2_CFD) plus the 501-iteration checksummed reference
+# runs from issue #11's baseline-capture task, which hasn't landed yet.
+# Once it does, add a job here that builds NEO (self-contained, no PETSc)
+# and runs the NEO-based fitting cases through checking_fitting_runs.sh.
+
+on:
+  push:
+    branches: [master, "modernization-f2018"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-gfortran:
+    name: build (gfortran, ${{ matrix.build_type }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_Fortran_COMPILER=gfortran
+          -DCMAKE_C_COMPILER=gcc
+
+      - name: Build
+        run: cmake --build build -j2
+
+      - name: Sanity-check the driver binary
+        run: |
+          output=$(./build/bin/UnDiFi-2D 2>&1 || true)
+          echo "$output" | grep -q "Usage:" && echo "UnDiFi-2D: usage message OK"
+
+      - name: Sanity-check triangle against a real seed mesh
+        run: |
+          set -e
+          workdir=$(mktemp -d)
+          cp tests/CircularCylinder/na00.1.* "$workdir"/
+          cd "$workdir"
+          "${{ github.workspace }}/build/bin/triangle" -nep na00.1
+          test -f na00.2.node
+
+  build-ifx:
+    name: build (ifx, ${{ matrix.build_type }})
+    runs-on: ubuntu-latest
+    # Intel's apt repo is third-party infrastructure this project doesn't
+    # control; don't let a transient mirror problem there block the
+    # gfortran signal above, which is the one that has to stay green.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Intel oneAPI Fortran compiler
+        run: |
+          wget -qO- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
+            | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" \
+            | sudo tee /etc/apt/sources.list.d/oneAPI.list
+          sudo apt-get update
+          sudo apt-get install -y intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp
+
+      - name: Configure
+        run: |
+          source /opt/intel/oneapi/setvars.sh
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_Fortran_COMPILER=ifx \
+            -DCMAKE_C_COMPILER=icx
+
+      - name: Build
+        run: |
+          source /opt/intel/oneapi/setvars.sh
+          cmake --build build -j2
+
+      - name: Sanity-check the driver binary
+        run: |
+          source /opt/intel/oneapi/setvars.sh
+          output=$(./build/bin/UnDiFi-2D 2>&1 || true)
+          echo "$output" | grep -q "Usage:" && echo "UnDiFi-2D: usage message OK"
+
+  comparator-selftest:
+    name: regression comparator selftest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: pip install -r tests/tools/requirements.txt
+      - run: python3 tests/tools/compare.py selftest
