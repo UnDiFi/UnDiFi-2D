@@ -1,3 +1,8 @@
+# --- CMake build directories -------------------------------------------------
+/build/
+/build-*/
+CMakeUserPresets.json
+
 # --- Compiled objects, modules, and archives -------------------------------
 *.o
 *.mod

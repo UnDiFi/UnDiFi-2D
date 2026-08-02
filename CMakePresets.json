@@ -1,0 +1,74 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 20, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "gfortran-debug",
+      "displayName": "gfortran, Debug (runtime checks)",
+      "binaryDir": "${sourceDir}/build/gfortran-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_Fortran_COMPILER": "gfortran",
+        "CMAKE_C_COMPILER": "gcc"
+      }
+    },
+    {
+      "name": "gfortran-release",
+      "displayName": "gfortran, Release",
+      "binaryDir": "${sourceDir}/build/gfortran-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_Fortran_COMPILER": "gfortran",
+        "CMAKE_C_COMPILER": "gcc"
+      }
+    },
+    {
+      "name": "ifx-debug",
+      "displayName": "Intel ifx, Debug (runtime checks)",
+      "binaryDir": "${sourceDir}/build/ifx-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_Fortran_COMPILER": "ifx",
+        "CMAKE_C_COMPILER": "icx"
+      }
+    },
+    {
+      "name": "ifx-release",
+      "displayName": "Intel ifx, Release",
+      "binaryDir": "${sourceDir}/build/ifx-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_Fortran_COMPILER": "ifx",
+        "CMAKE_C_COMPILER": "icx"
+      }
+    },
+    {
+      "name": "nvfortran-debug",
+      "displayName": "NVHPC nvfortran, Debug (runtime checks)",
+      "binaryDir": "${sourceDir}/build/nvfortran-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_Fortran_COMPILER": "nvfortran",
+        "CMAKE_C_COMPILER": "nvc"
+      }
+    },
+    {
+      "name": "nvfortran-release",
+      "displayName": "NVHPC nvfortran, Release",
+      "binaryDir": "${sourceDir}/build/nvfortran-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_Fortran_COMPILER": "nvfortran",
+        "CMAKE_C_COMPILER": "nvc"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "gfortran-debug", "configurePreset": "gfortran-debug" },
+    { "name": "gfortran-release", "configurePreset": "gfortran-release" },
+    { "name": "ifx-debug", "configurePreset": "ifx-debug" },
+    { "name": "ifx-release", "configurePreset": "ifx-release" },
+    { "name": "nvfortran-debug", "configurePreset": "nvfortran-debug" },
+    { "name": "nvfortran-release", "configurePreset": "nvfortran-release" }
+  ]
+}
