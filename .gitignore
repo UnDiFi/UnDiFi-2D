@@ -1,0 +1,78 @@
+# --- Compiled objects, modules, and archives -------------------------------
+*.o
+*.mod
+*.lo
+*.la
+
+# --- Autotools build byproducts (lib/libtirpc-1.3.1) ------------------------
+*~
+.libs/
+config.log
+config.status
+Makefile.in
+autom4te.cache/
+
+# --- Vendored/downloaded third-party builds ---------------------------------
+# Fetched and rebuilt from scratch by compile_all.sh on every run.
+/petsc-3.14.6/
+
+# --- Build scratch for lib/libgeometry --------------------------------------
+# Regenerated from the tracked geometry.f90 by geometryf90.sh (f90split).
+lib/libgeometry/temp/
+
+# --- Compiled driver / tool binaries -----------------------------------------
+# bin/x86_64/{f77split,f90split} and bin/.empty are intentionally tracked;
+# everything else placed directly in bin/ is a build product.
+/bin/*
+!/bin/.empty
+!/bin/x86_64/
+/source/UnDiFi-2D_x86_64
+/NEO/src/CRD_euler
+/EulFS.3.14/src/mpi/peulfs*-arch-linux-c-debug
+/EulFS.3.14/src/seq/EulFS_
+/EulFS.3.14/src/seq/EulFS_x86_64
+/source_utils/fsplot/plot/fsplot-*
+/source_utils/dat2triangle/dat2triangle-NEW-*
+/source_utils/su22triangle/su22triangle-x86_64
+/source_utils/triangle2su2/triangle2su2-x86_64
+/source_utils/triangle2dat/triangle2dat-NEW-*
+/source_utils/triangle-v1.6/showme_*
+/source_utils/triangle-v1.6/triangle_*
+/source_utils/Triangle2grd/triangle2grd
+/source_utils/Na_creation/Na_creation
+/source_utils/NEO2triangle/NEO2triangle
+/source_utils/Na00x2vvvv/na2vvvv
+/source_utils/Grid_0/neogrid0
+/source_utils/dat2paraview/dat2paraview
+
+# --- Per-run generated output under tests/<case>/ ---------------------------
+# Produced by a run and removed again by the matching tests/<case>/clean.sh;
+# none of this is hand-authored input. Seed mesh files (na00.1.*, na99.*)
+# and checked-in reference results (e.g. su2_fitting/na00501.1.*) do NOT
+# match these patterns and stay tracked.
+tests/**/step[0-9][0-9][0-9][0-9][0-9]*/
+tests/**/na[0-9][0-9][0-9][0-9][0-9].*
+tests/**/*.BAK
+tests/**/fort.*
+tests/**/bndry*.dat
+tests/**/bndflux.*
+tests/**/convergenza.dat
+tests/**/convhst.*
+tests/**/timing.000
+tests/**/triangle.log
+tests/**/shocknor.dat
+tests/**/slip-free.*
+tests/**/tecplot.phy
+tests/**/vdt010.dat
+tests/**/residual_norm.dat
+tests/**/file0*.dat
+tests/**/log/*.log
+tests/**/NEO_data/input/*
+tests/**/NEO_data/output/*
+!tests/**/NEO_data/input/empty_file
+!tests/**/NEO_data/output/empty_file
+/tests/run.log
+
+# --- Editor / OS cruft --------------------------------------------------------
+.DS_Store
+*.swp

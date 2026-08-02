@@ -85,7 +85,7 @@ SRCS    = fx_msh_sps.f \
 	        re_inp_data.f \
 	        wrt_sdw_info.f \
 	        co_norm.f \
-	        co_pnt_dipl.f \
+	        co_pnt_dspl.f \
 					co_state_dps.f \
 					fx_state_dps.f \
 					mv_dps.f \
