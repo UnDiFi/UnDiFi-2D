@@ -59,14 +59,6 @@ subroutine co_norm(xysh,&
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
-!     .. arrays in common ..
-  real(wp) dstak(1)
-  integer(i4) istak(1)
-  common/cstak/dstak
-
-!     .. equivalences ..
-  equivalence(dstak(1), istak(1))
-
 !     input:
 !     -----
 !     xysh   x,y coords of the shock points
