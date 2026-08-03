@@ -449,7 +449,6 @@ subroutine fx_dps_loc(&
 !       write(*,*)'2',xysh(1,ip1,ish1)
 !       write(*,*)
 
-!aldo
       ish1 = shinspps(1, 1, isppnts)                    ! temporary code
       i = shinspps(2, 1, isppnts) - 1                  ! temporary code
       ip1 = 1 + i*(nshockpoints(ish1) - 1)               ! temporary code
@@ -462,8 +461,6 @@ subroutine fx_dps_loc(&
 
 !         xysh(1,ip1,ish1)=xi                             ! temporary code
 !         xysh(1,ip2,ish2)=xi                             ! temporary code
-
-!aldo
 
 ! if triple point
     elseif (typespecpoints(isppnts) .eq. 'TP') then

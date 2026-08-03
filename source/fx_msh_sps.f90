@@ -238,18 +238,6 @@ subroutine fx_msh_sps(&
       x0 = xyshd(1, ip1, ish1)
       y0 = xyshd(2, ip1, ish1)
 
-!aldo
-!         do ibf=1,nbfac
-!          i1 = ibndfac(1,ibf)
-!          i2 = ibndfac(2,ibf)
-!          x1 = xy(1,i1)
-!          y1 = xy(2,i1)
-!          x2 = xy(1,i2)
-!          y2 = xy(2,i2)
-!         write(8,*)ibf,(y0-y1)*(x2-x1)-(x0-x1)*(y2-y1)
-!         enddo
-!aldo
-
       iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
       write (8, *) 'typespecpoints:', typespecpoints(isppnts)
       write (8, *) 's(1) ', s1, x0, y0, iedg1
@@ -380,7 +368,6 @@ subroutine fx_msh_sps(&
 
       x0 = xyshd(1, ip1, ish1)
       y0 = xyshd(2, ip1, ish1)
-!aldo
       do ibf = 1, nbfac
         i1 = ibndfac(1, ibf)
         i2 = ibndfac(2, ibf)
@@ -390,7 +377,6 @@ subroutine fx_msh_sps(&
         y2 = xy(2, i2)
         write (8, *) ibf, (y0 - y1)*(x2 - x1) - (x0 - x1)*(y2 - y1)
       end do
-!aldo
 
       iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
       write (8, *) 'typespecpoints:', typespecpoints(isppnts)
@@ -523,7 +509,6 @@ subroutine fx_msh_sps(&
       x0 = xyshd(1, ip1, ish1)
       y0 = xyshd(2, ip1, ish1)
 
-!aldo
       do ibf = 1, nbfac
         i1 = ibndfac(1, ibf)
         i2 = ibndfac(2, ibf)
@@ -533,7 +518,6 @@ subroutine fx_msh_sps(&
         y2 = xy(2, i2)
         write (8, *) ibf, (y0 - y1)*(x2 - x1) - (x0 - x1)*(y2 - y1)
       end do
-!aldo
 
       iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
       write (8, *) 'typespecpoints:', typespecpoints(isppnts)

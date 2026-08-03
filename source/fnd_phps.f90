@@ -53,16 +53,6 @@ subroutine fnd_phps(nface,&
 ! set to 0 the number of phantom nodes and the color of the  phantom nodes
 ! is set to 0
   nphpoin = 0
-!aldo
-!aldo  The following cycle is no more necessary because
-!aldo  before entering in this routine NODCOD is reset
-!aldo  to the value which had for the background grid
-!aldo  that is WITHOUT phantom nodes
-!aldo
-!      do k = 1, npoin
-!       if(nodcod(k).eq.-1)nodcod(k)=0
-!       if(nodcod(k).eq.-2)nodcod(k)=2
-!      end do
 
 !      find mesh cells crossed by the shock
   do ish = 1, nshocks
@@ -101,13 +91,10 @@ subroutine fnd_phps(nface,&
 ! if distance is too small the node become a phantom node
             if (d1 .ge. 0 .and. d1 .lt. sndmin .and. nodcod(n1) .eq. 0) nodcod(n1) = -1
             if (d1 .ge. 0 .and. d1 .lt. sndmin .and. nodcod(n1) .gt. 0) nodcod(n1) = -2
-!aldo
             if (d2 .ge. 0 .and. d2 .lt. sndmin .and. nodcod(n2) .eq. 0) nodcod(n2) = -1
             if (d2 .ge. 0 .and. d2 .lt. sndmin .and. nodcod(n2) .gt. 0) nodcod(n2) = -2
-!aldo
             if (d3 .ge. 0 .and. d3 .lt. sndmin .and. nodcod(n3) .eq. 0) nodcod(n3) = -1
             if (d3 .ge. 0 .and. d3 .lt. sndmin .and. nodcod(n3) .gt. 0) nodcod(n3) = -2
-!aldo
 
           end if
         end if
@@ -164,41 +151,6 @@ subroutine fnd_phps(nface,&
   write (8, *) 'subr changebndryptr; npoin was = ', npoin
 
   do 1 ipoin = 1, npoin
-
-!     if the node was de-activated (NODCOD=-2)
-!     it is searched in the INODPTR vector
-
-! previously commented
-!          if( nodcod(ipoin) .eq. -2 )then
-!              call binsrc(ipoin,inodptr(1,1),nbpoin,ipos,last)
-!              if(ipos.eq.0)then
-!                  write(8,*)'entry not found for ',ipoin
-!                  write(*,*)'entry not found for ',ipoin
-!                  stop
-!               endif
-!               write(8,*)'removing node ',ipoin,
-!     &                   ' belongs to edges ',(inodptr(ipos,k),k=2,3)
-!               do 6 k = 2,3
-!                  iface = inodptr(ipos,k)
-!                  if( ibndfac(1,iface) .ne. ipoin )then
-!                      inode(k-1) = ibndfac(1,iface)
-!                  else
-!                      inode(k-1) = ibndfac(2,iface)
-!                  endif
-!    6          continue
-!    the face is modified
-!            iface = inodptr(ipos,2)
-!            ibndfac(1,iface) = inode(1)
-!            ibndfac(2,iface) = inode(2)
-!            write(8,*)'face ',iface,' has been updated with ',
-!     &(inode(k),k=1,2)
-!aldo
-!            iface = inodptr(ipos,3)
-!            write(8,*)'face ',iface,' has been removed'
-!            ibndfac(1,iface) = ibndfac(1,iface)
-!            ibndfac(2,iface) = ibndfac(2,iface)
-!            ibndfac(3,iface) =-ibndfac(3,iface)
-!         endif
 1   continue
     write (8, *) 'Subr ChangeBndryPtr; NBFAC is now = ', NBFAC
 ! part before commented

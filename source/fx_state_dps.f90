@@ -165,12 +165,10 @@ subroutine fx_state_dps(&
       zroeshd(3, ip, ish) = zroeshd(3, ip, ish) - dumx
       zroeshd(4, ip, ish) = zroeshd(4, ip, ish) - dumy
 
-!aldo
       if (vshnor(2, ip, ish) .gt. 0.3) then
         wsh(1, ip, ish) = wsh(1, ip, ish)/dx
         wsh(2, ip, ish) = wsh(1, ip, ish)/dx
       end if
-!aldo
 
 !       if triple point
     elseif (typespecpoints(isppnts) .eq. 'TP') then
@@ -194,7 +192,6 @@ subroutine fx_state_dps(&
       i = shinspps(2, 4, isppnts) - 1
       ip4 = 1 + i*(nshockpoints(ish4) - 1)
 
-!aldo
 ! determine family of shock  1
       f1 = vshnor(1, ip1, ish1)*zroeshu(4, ip1, ish1) -&
       &vshnor(2, ip1, ish1)*zroeshu(3, ip1, ish1)
@@ -230,7 +227,6 @@ subroutine fx_state_dps(&
         xtpi(2) = gm1/ga*(zroeshd(1, ip1, ish1)*zroeshd(2, ip1, ish1)&
         &- 0.5d0*help) ! pressure
       end if
-!aldo
 
 ! state 2
       xtpi(8) = ZROESHu(4, IP2, ish2)/ZROESHu(1, IP2, ish2) ! y-component
@@ -273,8 +269,6 @@ subroutine fx_state_dps(&
 !          write(*,*)
 !          pause
 
-!aldo
-
 ! state 3
       xtpi(12) = ZROESHdOLD(4, IP2, ish2)/ZROESHdOLD(1, IP2, ish2) ! y-component
       xtpi(11) = ZROESHdOLD(3, IP2, ish2)/ZROESHdOLD(1, IP2, ish2) ! x-component
@@ -292,8 +286,6 @@ subroutine fx_state_dps(&
 
       R14OLD = sqrt(GA*xtpi(14)/xtpi(13)) +&
       &GM1*0.5d0*(xtpi(15)*DXR14 + xtpi(16)*DYR14)
-
-!aldo
 
 ! slopes of the shocks
 
@@ -439,28 +431,6 @@ subroutine fx_state_dps(&
       z3v = z1v*xtp(11)
       z4v = z1v*xtp(12)
 
-!aldo
-!        dumz1v=z1v-ZROESHd(1,IP2,ISH2)
-!        dumz2v=z2v-ZROESHd(2,IP2,ISH2)
-!        dumz3v=z3v-ZROESHd(3,IP2,ISH2)
-!        dumz4v=z4v-ZROESHd(4,IP2,ISH2)
-!
-!        write(*,*)'dumz1v:',dumz1v
-!        write(*,*)'dumz2v:',dumz2v
-!        write(*,*)'dumz3v:',dumz3v
-!        write(*,*)'dumz4v:',dumz4v
-!        write(*,*)
-!
-!        ZROESHd(1,IP2+1,ISH2)=ZROESHd(1,IP2+1,ISH2)+dumz1v*0.5
-!        ZROESHd(2,IP2+1,ISH2)=ZROESHd(2,IP2+1,ISH2)+dumz2v*0.5
-!        ZROESHd(3,IP2+1,ISH2)=ZROESHd(3,IP2+1,ISH2)+dumz3v*0.5
-!        ZROESHd(4,IP2+1,ISH2)=ZROESHd(4,IP2+1,ISH2)+dumz4v*0.5
-!
-!        ZROESHu(1,IP4+1,ISH4)=ZROESHu(1,IP4+1,ISH4)+dumz1v*0.5
-!        ZROESHu(2,IP4+1,ISH4)=ZROESHu(2,IP4+1,ISH4)+dumz2v*0.5
-!        ZROESHu(3,IP4+1,ISH4)=ZROESHu(3,IP4+1,ISH4)+dumz3v*0.5
-!        ZROESHu(4,IP4+1,ISH4)=ZROESHu(4,IP4+1,ISH4)+dumz4v*0.5
-
 ! .. to downstream reflected shock
       ZROESHd(1, IP2, ISH2) = z1v
       ZROESHd(2, IP2, ISH2) = z2v
@@ -492,7 +462,6 @@ subroutine fx_state_dps(&
       ZROESHd(2, IP4, ISH4) = z2v
       ZROESHd(3, IP4, ISH4) = z3v
       ZROESHd(4, IP4, ISH4) = z4v
-!aldo
 
 ! sum the contribution along incident shock to the velocity of triple point
       taux12 = cos(xtp(17))
@@ -1059,38 +1028,6 @@ subroutine fx_state_dps(&
       help = zroeshd(3, ip1, ish1)**2 + zroeshd(4, ip1, ish1)**2
       xtpi(6) = gm1/ga*(zroeshd(1, ip1, ish1)*zroeshd(2, ip1, ish1)&
       &- 0.5d0*help) ! pressure
-
-!          write(*,*)'stato 1'
-!          write(*,*)'z1:',zroeshu(1,ip1,ish1)
-!          write(*,*)'z2:',zroeshu(2,ip1,ish1)
-!          write(*,*)'z3:',zroeshu(3,ip1,ish1)
-!          write(*,*)'z4:',zroeshu(4,ip1,ish1)
-
-!          write(*,*)'stato 2'
-!          write(*,*)'z1:',zroeshu(1,ip2,ish2),zroeshd(1,ip1,ish1)
-!          write(*,*)'z2:',zroeshu(2,ip2,ish2),zroeshd(2,ip1,ish1)
-!          write(*,*)'z3:',zroeshu(3,ip2,ish2),zroeshd(3,ip1,ish1)
-!          write(*,*)'z4:',zroeshu(4,ip2,ish2),zroeshd(4,ip1,ish1)
-
-!          zroeshd(1,ip2,ish2)=2.1
-!          zroeshd(2,ip2,ish2)=8.95
-!          zroeshd(3,ip2,ish2)=0.1
-!          zroeshd(4,ip2,ish2)=0.1
-
-!          write(*,*)"state 3"
-!          write(*,*)'z1:',zroeshd(1,ip2,ish2)
-!          write(*,*)'z2:',zroeshd(2,ip2,ish2)
-!          write(*,*)'z3:',zroeshd(3,ip2,ish2)
-!          write(*,*)'z4:',zroeshd(4,ip2,ish2)
-!aldo
-!          zroeshd(4,ip2,ish2)=
-!    +      (zroeshd(3,ip2,ish2)+zroeshd(4,ip2,ish2))*0.5
-!          zroeshd(3,ip2,ish2)=zroeshd(4,ip2,ish2)
-!          zroeshd(1,ip2,ish2)=2.1
-!          zroeshd(2,ip2,ish2)=8.95
-!          zroeshd(3,ip2,ish2)=0.1
-!          zroeshd(4,ip2,ish2)=0.1
-!aldo
 
 ! state 3
       xtpi(12) = ZROESHd(4, IP2, ish2)/ZROESHd(1, IP2, ish2) ! y-component

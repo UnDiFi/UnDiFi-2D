@@ -124,7 +124,6 @@ subroutine co_pnt_dspl(&                   ! not used
       i = shinspps(2, 4, isppnts) - 1
       ip4 = 1 + i*(nshockpoints(ish4) - 1)
 
-!aldo
 !         determine the family of shock 1
       f1 = vshnor(1, ip1, ish1)*zroeshu(4, ip1, ish1) -&
       &vshnor(2, ip1, ish1)*zroeshu(3, ip1, ish1)
@@ -140,7 +139,6 @@ subroutine co_pnt_dspl(&                   ! not used
 !         write(*,*)'f2:',f2
 
 !         pause
-!aldo
 
 !         move incident shock point
       if (ip1 .eq. 1) then
@@ -206,8 +204,6 @@ subroutine co_pnt_dspl(&                   ! not used
       xyshd(1, ip4, ish4) = xyshd(1, ip4, ish4) + eps*tx
       xyshd(2, ip4, ish4) = xyshd(2, ip4, ish4) + eps*ty
 
-!aldo
-
 !     if incident shock and reflected shock belong to opposite family
 !     overlap incident shock upstream point with mach stem upstream point
 !     write(*,*)'f1,f2:',f1,f2
@@ -241,8 +237,6 @@ subroutine co_pnt_dspl(&                   ! not used
           xyshu(k, ip2, ish2) = dum
         end do
       end if
-
-!aldo
 
 !         overlap mach stem downstream point with downstream point
 !         of the contact discontinuity (be careful to the orientation

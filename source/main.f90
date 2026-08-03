@@ -216,12 +216,6 @@ program undifi_2d
   ShTopolChanged = .false.
 ! Vale
 
-!caldo
-!      eulfs = .true.
-!      !eulfs = .false.
-!      neo = (.not. eulfs)
-!caldo
-
 !     NDIM = 2
 !     NDOF = 4 ! will be reset within rtri
 

@@ -82,7 +82,6 @@ subroutine chg_bnd_ptr(&
 
         write (8, *) 'Face ', iface, ' has been updated with ',&
         &(inode(k), k=1, 2)
-!aldo
         iface = inodptr(ipos, 3)
         write (8, *) 'face ', iface, ' has been removed'
         ibndptr(1, iface) = ibndptr(1, iface)

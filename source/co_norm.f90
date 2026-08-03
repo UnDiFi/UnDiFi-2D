@@ -376,10 +376,6 @@ subroutine co_norm(xysh,&
             taux = -taux
             tauy = -tauy
           end if
-!aldo
-!             taux=1.0
-!             tauy=0.0
-
           vshnor(1, ip1, ish1) = taux
           vshnor(2, ip1, ish1) = tauy
 
@@ -400,7 +396,6 @@ subroutine co_norm(xysh,&
 
         end if
       end do
-!aldo
 
 !         compute normal of the first internal point
       ish1 = shinspps(1, 1, isppnts)
@@ -431,8 +426,6 @@ subroutine co_norm(xysh,&
 
 !         vshnor(1,ip2,ish1)=-tauy/dum
 !         vshnor(2,ip2,ish1)=taux/dum
-
-!aldo
 
 !      if the shock point is a connection or periodic connection
 

@@ -81,11 +81,6 @@ subroutine ch_sh_topology(&
 !     and fix the shinspps elements for the second shock
   typespecpoints(isppnts) = 'rr'
 
-!aldo
-!     shinspps(1,2,isppnts)=shinspps(1,1,isppnts)
-!     shinspps(2,2,isppnts)=shinspps(2,1,isppnts)
-!aldo
-
   shinspps(1, 2, isppnts) = nshocks
   shinspps(2, 2, isppnts) = 1
   ispclr(2, isppnts) = ispclr(1, isppnts)

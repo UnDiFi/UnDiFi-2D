@@ -389,11 +389,7 @@ double precision function futp(i, y, a, b, r14, dxr14, dyr14, r23, unsh1,&
       nx14 = -tauy14
       ny14 = taux14
 
-!aldo
-!         nx14= 0.9
-!         ny14=-sqrt(1.00-nx14**2)
       un2 = u2*dxr14 + v2*dyr14
-!aldo
 
 ! calculation of the normal and tangential velocity components
 !         un2=u2*nx14+v2*ny14
