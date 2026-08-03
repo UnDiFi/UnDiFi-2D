@@ -59,7 +59,13 @@ subroutine COORDS(X, Y, X1, X2, X3, Y1, Y2, Y3, R, IER)
 ! AREA = 3-1 X 3-2
 !
   AREA = U(1)*V(2) - U(2)*V(1)
-  if (AREA .eq. 0.d0) goto 1
+  if (AREA .eq. 0.d0) then
+!
+! VERTICES ARE COLLINEAR
+!
+    IER = 1
+    return
+  end if
 !
 ! R(1) = (2-3 X 2-(X,Y))/AREA, R(2) = (1-(X,Y) X 1-3)/AREA,
 !   R(3) = (1-2 X 1-(X,Y))/AREA
@@ -70,11 +76,6 @@ subroutine COORDS(X, Y, X1, X2, X3, Y1, Y2, Y3, R, IER)
   R(2) = (U(2)*YP - V(2)*XP)/AREA
   R(3) = (U(3)*YP - V(3)*XP)/AREA
   IER = 0
-  return
-!
-! VERTICES ARE COLLINEAR
-!
-1 IER = 1
   return
 
 end subroutine COORDS

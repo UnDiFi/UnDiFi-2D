@@ -344,31 +344,38 @@ subroutine fnd_phps(nface,&
 
       dimension a(nmax, nmax), b(nmax), x(nmax)
 !     Triangularization of matrix A with partial pivot
-      do 10 k = 1, n - 1
+      do k = 1, n - 1
         imax = k
-        do 3 i1 = k + 1, n
+        do i1 = k + 1, n
           if (abs(a(i1, k)) .gt. abs(a(imax, k))) imax = i1
-3         continue
-          if (imax .eq. k) goto 7
-          do 5 j1 = k, n
+        end do
+        if (imax .ne. k) then
+          do j1 = k, n
             app = a(imax, j1)
             a(imax, j1) = a(k, j1)
-5           a(k, j1) = app
-            app = b(k)
-            b(k) = b(imax)
-            b(imax) = app
-7           do 10 i = k + 1, n
-              pik = a(i, k)/a(k, k)
-              a(i, k) = 0.0d+00
-              b(i) = b(i) - pik*b(k)
-              do 10 j = k + 1, n
-10              a(i, j) = a(i, j) - pik*a(k, j)
+            a(k, j1) = app
+          end do
+          app = b(k)
+          b(k) = b(imax)
+          b(imax) = app
+        end if
+        do i = k + 1, n
+          pik = a(i, k)/a(k, k)
+          a(i, k) = 0.0d+00
+          b(i) = b(i) - pik*b(k)
+          do j = k + 1, n
+            a(i, j) = a(i, j) - pik*a(k, j)
+          end do
+        end do
+      end do
 !     Calculate results with backward substitution
-                x(n) = b(n)/a(n, n)
-                do 30 i = n - 1, 1, -1
-                  summ = 0
-                  do 20 j = i + 1, n
-20                  summ = summ + a(i, j)*x(j)
-30                  x(i) = (b(i) - summ)/a(i, i)
-                    return
-                    end subroutine solg
+      x(n) = b(n)/a(n, n)
+      do i = n - 1, 1, -1
+        summ = 0
+        do j = i + 1, n
+          summ = summ + a(i, j)*x(j)
+        end do
+        x(i) = (b(i) - summ)/a(i, i)
+      end do
+      return
+    end subroutine solg

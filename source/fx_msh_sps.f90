@@ -993,12 +993,12 @@ integer(i4) function findbedg(xy, ndim, ibndfac, nbfac, xsh, ysh, s)
   real(wp) tline
   tline(x, y) = (y - y1)*(x2 - x1) - (x - x1)*(y2 - y1)
 
-  do 10 ibfac = 1, nbfac
+  do ibfac = 1, nbfac
     i1 = ibndfac(1, ibfac)
     i2 = ibndfac(2, ibfac)
     ibc = ibndfac(3, ibfac)
 
-    if (ibc .lt. 0) goto 10
+    if (ibc .lt. 0) cycle
     x1 = xy(1, i1)
     y1 = xy(2, i1)
     x2 = xy(1, i2)
@@ -1018,8 +1018,8 @@ integer(i4) function findbedg(xy, ndim, ibndfac, nbfac, xsh, ysh, s)
         return
       end if
     end if
-10  continue
-    findbedg = -1
+  end do
+  findbedg = -1
 
-    return
-    end function findbedg
+  return
+end function findbedg

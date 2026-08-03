@@ -93,46 +93,47 @@ subroutine co_utp(y, r14, dxr14, dyr14, r23, unsh1, yn1, flag1, ifail)
 ! initialization of the iteration counter
   icont = 0
 
-10 do i = 1, nn
-    yn(i) = yn1(i)
-    bb(i) = futp(i, yn1, a, b, r14, dxr14, dyr14, r23, unsh1, flag1)
+100 format(20(1x, f10.5))
+  do
+    do i = 1, nn
+      yn(i) = yn1(i)
+      bb(i) = futp(i, yn1, a, b, r14, dxr14, dyr14, r23, unsh1, flag1)
 !       write(*,*)i,bb(i)
-  end do
+    end do
 
 ! jacobian calculation
-  do i = 1, nn
+    do i = 1, nn
 !       bb(i)=futp(i,yn,a,b,r14,r23,unsh1,flag1)
-    do j = 1, nn
-      do k = 1, nn
-        yn1(k) = yn(k)
-      end do
+      do j = 1, nn
+        do k = 1, nn
+          yn1(k) = yn(k)
+        end do
 !         dum1=futp(i,yn1,a,b,r14,r23,unsh1,flag1)
-      dyn1 = abs(yn1(j))*.001
-      if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
-      yn1(j) = yn(j) + dyn1
-      dum2 = futp(i, yn1, a, b, r14, dxr14, dyr14, r23, unsh1, flag1)
-      yn1(j) = yn(j) - dyn1
-      dum1 = futp(i, yn1, a, b, r14, dxr14, dyr14, r23, unsh1, flag1)
-      g(i, j) = (dum2 - dum1)/(2*dyn1)
+        dyn1 = abs(yn1(j))*.001
+        if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
+        yn1(j) = yn(j) + dyn1
+        dum2 = futp(i, yn1, a, b, r14, dxr14, dyr14, r23, unsh1, flag1)
+        yn1(j) = yn(j) - dyn1
+        dum1 = futp(i, yn1, a, b, r14, dxr14, dyr14, r23, unsh1, flag1)
+        g(i, j) = (dum2 - dum1)/(2*dyn1)
 !         g(i,j)=(dum2-dum1)/(dyn1)
+      end do
     end do
-  end do
 
 !     write(*,100)((g(i,j),j=1,20),i=1,20)
-100 format(20(1x, f10.5))
-  call solg(nn, nn, g, bb, dyn)
-  do i = 1, nn
-    yn1(i) = yn(i) - 0.5*dyn(i)
+    call solg(nn, nn, g, bb, dyn)
+    do i = 1, nn
+      yn1(i) = yn(i) - 0.5*dyn(i)
 !      write(*,*)i,yn(i),yn1(i),dyn(i)
-  end do
+    end do
 
 ! calculation and check of residual
-  dum = 0.
-  do i = 1, nn
-    dum = dum + abs(yn1(i) - yn(i))
-  end do
-  icont = icont + 1
-  write (8, *) 'conv--->', dum, icont
+    dum = 0.
+    do i = 1, nn
+      dum = dum + abs(yn1(i) - yn(i))
+    end do
+    icont = icont + 1
+    write (8, *) 'conv--->', dum, icont
 !     if(dum.gt.10.)then
 !        write(*,*)'change r23 --> r14'
 !        flag1=.false.
@@ -143,11 +144,11 @@ subroutine co_utp(y, r14, dxr14, dyr14, r23, unsh1, yn1, flag1, ifail)
 !     a(11,12)=-yn1(15)
 
 ! recalculate r14 using the new vector n14
-  sx14 = yn1(19)
-  taux14 = cos(sx14)
-  tauy14 = sin(sx14)
-  nx14 = -tauy14
-  ny14 = taux14
+    sx14 = yn1(19)
+    taux14 = cos(sx14)
+    tauy14 = sin(sx14)
+    nx14 = -tauy14
+    ny14 = taux14
 
 !      r14=sqrt(ga*y(14)/y(13))+
 !    &        gm1*0.5d0*(y(15)*nx14+y(16)*ny14)
@@ -158,18 +159,20 @@ subroutine co_utp(y, r14, dxr14, dyr14, r23, unsh1, yn1, flag1, ifail)
 !      write(*,*)i,futp(i,yn1,a,b)
 !     enddo
 
-  if (icont .eq. 1) then
-    dumold = dum
-    goto 10
-  end if
-  if (dum .gt. dumold .and. icont .gt. 1) then
-    ifail = .true.
-    return
-  end if
-  if (dum .gt. 1e-07) then
-    dumold = dum
-    goto 10
-  end if
+    if (icont .eq. 1) then
+      dumold = dum
+      cycle
+    end if
+    if (dum .gt. dumold .and. icont .gt. 1) then
+      ifail = .true.
+      return
+    end if
+    if (dum .gt. 1e-07) then
+      dumold = dum
+      cycle
+    end if
+    exit
+  end do
 
   write (8, *) 'initial and final state'
   do i = 1, nn

@@ -279,14 +279,14 @@ subroutine co_norm(xysh,&
           ii = ii + 1
         end if
       end do
-      if (ii .lt. nshockpoints(ish)/2.) goto 234
-      do i = 1, nshockpoints(ish)
+      if (ii .ge. nshockpoints(ish)/2.) then
+        do i = 1, nshockpoints(ish)
 ! vale   vshnor(1,i,ish)= -vshnor(1,i,ish)
 ! vale   vshnor(2,i,ish)= -vshnor(2,i,ish)
-        vshnor(1, i, ish) = -vshnor(1, i, ish)
-        vshnor(2, i, ish) = -vshnor(2, i, ish)
-      end do
-234   continue
+          vshnor(1, i, ish) = -vshnor(1, i, ish)
+          vshnor(2, i, ish) = -vshnor(2, i, ish)
+        end do
+      end if
 
     end if
   end do

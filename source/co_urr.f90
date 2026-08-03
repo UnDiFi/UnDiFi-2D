@@ -69,49 +69,51 @@ subroutine co_urr(y, tauwx, tauwy, yn1)
     yn1(i) = y(i)
   end do
 
-10 do i = 1, nn
-    yn(i) = yn1(i)
-    bb(i) = futp1(i, yn1, a, b, tauwx, tauwy)
+100 format(15(1x, f10.5))
+  do
+    do i = 1, nn
+      yn(i) = yn1(i)
+      bb(i) = futp1(i, yn1, a, b, tauwx, tauwy)
 !       write(*,*)i,bb(i)
-  end do
+    end do
 
 !     compute jacobian
-  do i = 1, nn
-    do j = 1, nn
-      do k = 1, nn
-        yn1(k) = yn(k)
-      end do
-      dyn1 = abs(yn1(j))*.01
-      if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
-      yn1(j) = yn(j) + dyn1
+    do i = 1, nn
+      do j = 1, nn
+        do k = 1, nn
+          yn1(k) = yn(k)
+        end do
+        dyn1 = abs(yn1(j))*.01
+        if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
+        yn1(j) = yn(j) + dyn1
 !         yn1(j)=yn(j)
-      dum2 = futp1(i, yn1, a, b, tauwx, tauwy)
-      yn1(j) = yn(j) - dyn1
+        dum2 = futp1(i, yn1, a, b, tauwx, tauwy)
+        yn1(j) = yn(j) - dyn1
 !         yn1(j)=yn(j)
-      dum1 = futp1(i, yn1, a, b, tauwx, tauwy)
-      g(i, j) = (dum2 - dum1)/(2d0*dyn1)
+        dum1 = futp1(i, yn1, a, b, tauwx, tauwy)
+        g(i, j) = (dum2 - dum1)/(2d0*dyn1)
 !         g(i,j)=(dum2-dum1)/(1d0*dyn1)
+      end do
     end do
-  end do
 
 !     write(*,100)((g(i,j),j=1,nn),i=1,nn)
-100 format(15(1x, f10.5))
-  call solg(nn, 15, g, bb, dyn)
-  do i = 1, nn
-    yn1(i) = yn(i) - dyn(i)
+    call solg(nn, 15, g, bb, dyn)
+    do i = 1, nn
+      yn1(i) = yn(i) - dyn(i)
 !       write(*,*)i,yn(i),yn1(i),dyn(i)
-  end do
+    end do
 
 !     compute and check residual
-  dum = 0.
-  do i = 1, nn
-    dum = dum + abs(yn1(i) - yn(i))
-  end do
+    dum = 0.
+    do i = 1, nn
+      dum = dum + abs(yn1(i) - yn(i))
+    end do
 !     write(*,*)dum
 !     pause
 !     continue
 
-  if (dum .gt. 1e-06) goto 10
+    if (dum .le. 1e-06) exit
+  end do
 
   return
 end subroutine co_urr

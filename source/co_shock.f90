@@ -83,31 +83,32 @@ subroutine co_shock(x1, x2, wshk, R14)
   yn1(3) = uv
   yn1(4) = w
 
-10 do i = 1, 4
-    yn(i) = yn1(i)
-  end do
+  do
+    do i = 1, 4
+      yn(i) = yn1(i)
+    end do
 
 ! compute jacobian
-  do i = 1, 4
-    b(i) = f(i, yn)
-    do j = 1, 4
-      do k = 1, 4
-        yn1(k) = yn(k)
-      end do
+    do i = 1, 4
+      b(i) = f(i, yn)
+      do j = 1, 4
+        do k = 1, 4
+          yn1(k) = yn(k)
+        end do
 !         dum1=f(i,yn1)
-      dyn1 = abs(yn1(j))*.001
-      if (dyn1 .le. 1.0d-7) dyn1 = 1.0d-7
+        dyn1 = abs(yn1(j))*.001
+        if (dyn1 .le. 1.0d-7) dyn1 = 1.0d-7
 
-      yn1(j) = yn(j) - dyn1
-      dum1 = f(i, yn1)
+        yn1(j) = yn(j) - dyn1
+        dum1 = f(i, yn1)
 
-      yn1(j) = yn(j) + dyn1
-      dum2 = f(i, yn1)
-      g(i, j) = (dum2 - dum1)/(2.0d0*dyn1)
+        yn1(j) = yn(j) + dyn1
+        dum2 = f(i, yn1)
+        g(i, j) = (dum2 - dum1)/(2.0d0*dyn1)
 !         g(i,j)=(dum2-dum1)/(dyn1)
 
+      end do
     end do
-  end do
 
 ! invert jacobian matrix
 !     call invmat(g,g1,4)
@@ -121,19 +122,20 @@ subroutine co_shock(x1, x2, wshk, R14)
 !       yn1(i)=yn(i)-dyn(i)
 !     enddo
 
-  nn = 4
-  call solg(nn, nn, g, b, dyn)
-  do i = 1, 4
-    yn1(i) = yn(i) - 0.2d0*dyn(i)
+    nn = 4
+    call solg(nn, nn, g, b, dyn)
+    do i = 1, 4
+      yn1(i) = yn(i) - 0.2d0*dyn(i)
 !      yn1(i)=yn(i)-dyn(i)
-  end do
+    end do
 
 ! compute and check residual
-  dum = 0.
-  do i = 1, 4
-    dum = dum + abs(yn1(i) - yn(i))
+    dum = 0.
+    do i = 1, 4
+      dum = dum + abs(yn1(i) - yn(i))
+    end do
+    if (dum .le. 1d-07) exit
   end do
-  if (dum .gt. 1d-07) goto 10
 
   wshk = yn1(4)
 !     wshk=help*ABS(yn1(4))
@@ -194,194 +196,206 @@ subroutine invmat(a, b, r)
 !     r     : dimension (max 20) (integer)
   integer(i4) r, j, i, k, l
   real(wp) a(4, 4), b(4, 4), c(4, 4)
+  logical found_pivot
 
-  do 2 i = 1, r
-    do 3 j = 1, r
+  do i = 1, r
+    do j = 1, r
       b(i, j) = 0.d+00
       c(i, j) = a(i, j)
-3     continue
-2     continue
-      do 1 i = 1, r
-        b(i, i) = 1.d+00
-1       continue
-        do 10 j = 1, r
-          do 20 i = j, r
-            if (a(i, j) .ne. 0.) goto 210
-20          continue
-            do 21 i = 1, r
-              if (a(j, i) .ne. 0.) goto 211
-21            continue
-              goto 10
-211           write (*, *) 'singular matrix'
-              return
-210           do 30 k = 1, r
-                s = a(j, k)
-                a(j, k) = a(i, k)
-                a(i, k) = s
-                s = b(j, k)
-                b(j, k) = b(i, k)
-                b(i, k) = s
-30              continue
-                t = 1/a(j, j)
-                do 40 k = 1, r
-                  a(j, k) = t*a(j, k)
-                  b(j, k) = t*b(j, k)
-40                continue
-                  do 50 l = 1, r
-                    if (l .eq. j) goto 50
-                    t = -a(l, j)
-                    do 60 k = 1, r
-                      a(l, k) = a(l, k) + t*a(j, k)
-                      b(l, k) = b(l, k) + t*b(j, k)
-60                    continue
-50                    continue
-10                    continue
-                      do 110 i = 1, r
-                        do 120 j = 1, r
-                          a(i, j) = c(i, j)
-120                       continue
-110                       continue
-100                       return
-                          end subroutine invmat
+    end do
+  end do
+  do i = 1, r
+    b(i, i) = 1.d+00
+  end do
+  do j = 1, r
+    found_pivot = .false.
+    do i = j, r
+      if (a(i, j) .ne. 0.) then
+        found_pivot = .true.
+        exit
+      end if
+    end do
 
-                          subroutine co_dc(x1, x2, wdc)
+    if (.not. found_pivot) then
+      do i = 1, r
+        if (a(j, i) .ne. 0.) then
+          write (*, *) 'singular matrix'
+          return
+        end if
+      end do
+      cycle
+    end if
+
+    do k = 1, r
+      s = a(j, k)
+      a(j, k) = a(i, k)
+      a(i, k) = s
+      s = b(j, k)
+      b(j, k) = b(i, k)
+      b(i, k) = s
+    end do
+    t = 1/a(j, j)
+    do k = 1, r
+      a(j, k) = t*a(j, k)
+      b(j, k) = t*b(j, k)
+    end do
+    do l = 1, r
+      if (l .eq. j) cycle
+      t = -a(l, j)
+      do k = 1, r
+        a(l, k) = a(l, k) + t*a(j, k)
+        b(l, k) = b(l, k) + t*b(j, k)
+      end do
+    end do
+  end do
+  do i = 1, r
+    do j = 1, r
+      a(i, j) = c(i, j)
+    end do
+  end do
+  return
+end subroutine invmat
+
+subroutine co_dc(x1, x2, wdc)
 
 !     x1(1) and x2(1) upstream and downstream density
 !     x1(2) and x2(2) upstream and downstream pressure
 !     x1(3) and x2(3) upstream and downstream normal velocity
 !     wdc  contact discontinuity velocity
 
-                            use mod_kinds, only: wp, i4
-                            implicit none(type, external)
-                            external solg
-                            include 'paramt.h'
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  external solg
+  include 'paramt.h'
 
-                            real(wp) x1, x2, wdc
-                            dimension x1(4), x2(4)
+  real(wp) x1, x2, wdc
+  dimension x1(4), x2(4)
 
-                            integer(i4) I, J, K, NN
-                            real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta, R1, R2, S1, S2, dyn
-                            real(wp) fdc, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
-                            dimension yn(7), yn1(7), g(7, 7), g1(7, 7), dyn(7), b(7)
+  integer(i4) I, J, K, NN
+  real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta, R1, R2, S1, S2, dyn
+  real(wp) fdc, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
+  dimension yn(7), yn1(7), g(7, 7), g1(7, 7), dyn(7), b(7)
 
-                            common/dc/gam, delta, R1, R2, S1, S2
+  common/dc/gam, delta, R1, R2, S1, S2
 
-                            ro1 = x1(1)
-                            p1 = x1(2)
-                            u1 = x1(3)
-                            ro2 = x2(1)
-                            p2 = x2(2)
-                            u2 = x2(3)
-                            wdc = wdc
+  ro1 = x1(1)
+  p1 = x1(2)
+  u1 = x1(3)
+  ro2 = x2(1)
+  p2 = x2(2)
+  u2 = x2(3)
+  wdc = wdc
 
 ! assign constants
-                            gam = GA
-                            delta = (gam - 1.0)/2.
+  gam = GA
+  delta = (gam - 1.0)/2.
 
 ! compute invariants
-                            R1 = sqrt(gam*p1/ro1) + delta*u1
-                            R2 = sqrt(gam*p2/ro2) - delta*u2
-                            S1 = p1/ro1**gam
-                            S2 = p2/ro2**gam
+  R1 = sqrt(gam*p1/ro1) + delta*u1
+  R2 = sqrt(gam*p2/ro2) - delta*u2
+  S1 = p1/ro1**gam
+  S2 = p2/ro2**gam
 
 ! compute the downstream state and shock velocity with Newton-Raphson method
 
 ! initialize the vector of unknowns
-                            yn1(1) = ro1
-                            yn1(2) = p1
-                            yn1(3) = u1
-                            yn1(4) = ro2
-                            yn1(5) = p2
-                            yn1(6) = u2
-                            yn1(7) = wdc
+  yn1(1) = ro1
+  yn1(2) = p1
+  yn1(3) = u1
+  yn1(4) = ro2
+  yn1(5) = p2
+  yn1(6) = u2
+  yn1(7) = wdc
 
-10                          do i = 1, 7
-                              yn(i) = yn1(i)
-                            end do
+  do
+    do i = 1, 7
+      yn(i) = yn1(i)
+    end do
 
 ! compute jacobian
-                            do i = 1, 7
-                              b(i) = fdc(i, yn)
-                              do j = 1, 7
-                                do k = 1, 7
-                                  yn1(k) = yn(k)
-                                end do
+    do i = 1, 7
+      b(i) = fdc(i, yn)
+      do j = 1, 7
+        do k = 1, 7
+          yn1(k) = yn(k)
+        end do
 !         dum1=fdc(i,yn1)
-                                dyn1 = abs(yn1(j))*.01
-                                if (dyn1 .le. 1.0d-7) dyn1 = 1.0d-7
+        dyn1 = abs(yn1(j))*.01
+        if (dyn1 .le. 1.0d-7) dyn1 = 1.0d-7
 
-                                yn1(j) = yn(j) - dyn1
-                                dum1 = fdc(i, yn1)
+        yn1(j) = yn(j) - dyn1
+        dum1 = fdc(i, yn1)
 
-                                yn1(j) = yn(j) + dyn1
-                                dum2 = fdc(i, yn1)
-                                g(i, j) = (dum2 - dum1)/(2.0d0*dyn1)
+        yn1(j) = yn(j) + dyn1
+        dum2 = fdc(i, yn1)
+        g(i, j) = (dum2 - dum1)/(2.0d0*dyn1)
 !         g(i,j)=(dum2-dum1)/(dyn1)
 
-                              end do
-                            end do
+      end do
+    end do
 
-                            nn = 7
-                            call solg(nn, nn, g, b, dyn)
+    nn = 7
+    call solg(nn, nn, g, b, dyn)
 !     write(*,*)'******'
-                            do i = 1, 7
+    do i = 1, 7
 !      yn1(i)=yn(i)-0.5d0*dyn(i)
-                              yn1(i) = yn(i) - dyn(i)
+      yn1(i) = yn(i) - dyn(i)
 !      write(*,*)i,yn1(i)
-                            end do
+    end do
 
 ! compute and check residual
-                            dum = 0.
-                            do i = 1, 7
-                              dum = dum + abs(yn1(i) - yn(i))
-                            end do
+    dum = 0.
+    do i = 1, 7
+      dum = dum + abs(yn1(i) - yn(i))
+    end do
 !     write(*,*)dum
-                            if (dum .gt. 1d-10) goto 10
+    if (dum .le. 1d-10) exit
+  end do
 
-                            wdc = yn1(7)
-                            x1(1) = yn1(1)
-                            x1(2) = yn1(2)
-                            x1(3) = yn1(3)
-                            x2(1) = yn1(4)
-                            x2(2) = yn1(5)
-                            x2(3) = yn1(6)
+  wdc = yn1(7)
+  x1(1) = yn1(1)
+  x1(2) = yn1(2)
+  x1(3) = yn1(3)
+  x2(1) = yn1(4)
+  x2(2) = yn1(5)
+  x2(3) = yn1(6)
 
-                            return
-                          end subroutine co_dc
+  return
+end subroutine co_dc
 
-                          real(wp) function fdc(i, y)
-                            use mod_kinds, only: wp, i4
-                            integer(i4) i
-                            real(wp) y
-                            dimension y(7)
-                            real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta
-                            real(wp) R1, R2, S1, S2
-                            common/dc/gam, delta, R1, R2, S1, S2
+real(wp) function fdc(i, y)
+  use mod_kinds, only: wp, i4
+  integer(i4) i
+  real(wp) y
+  dimension y(7)
+  real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta
+  real(wp) R1, R2, S1, S2
+  common/dc/gam, delta, R1, R2, S1, S2
 
-                            ro1 = y(1)
-                            p1 = y(2)
-                            u1 = y(3)
-                            ro2 = y(4)
-                            p2 = y(5)
-                            u2 = y(6)
-                            w = y(7)
+  ro1 = y(1)
+  p1 = y(2)
+  u1 = y(3)
+  ro2 = y(4)
+  p2 = y(5)
+  u2 = y(6)
+  w = y(7)
 
-                            fdc = 0.d+0
-                            if (i .eq. 1) then
-                              fdc = sqrt(gam*p1/ro1) + delta*u1 - R1
-                            elseif (i .eq. 2) then
-                              fdc = p1/ro1**gam - S1
-                            elseif (i .eq. 3) then
-                              fdc = sqrt(gam*p2/ro2) - delta*u2 - R2
-                            elseif (i .eq. 4) then
-                              fdc = p2/ro2**gam - S2
-                            elseif (i .eq. 5) then
-                              fdc = p1 - p2
-                            elseif (i .eq. 6) then
-                              fdc = u1 - u2
-                            elseif (i .eq. 7) then
-                              fdc = w - u1
-                            end if
+  fdc = 0.d+0
+  if (i .eq. 1) then
+    fdc = sqrt(gam*p1/ro1) + delta*u1 - R1
+  elseif (i .eq. 2) then
+    fdc = p1/ro1**gam - S1
+  elseif (i .eq. 3) then
+    fdc = sqrt(gam*p2/ro2) - delta*u2 - R2
+  elseif (i .eq. 4) then
+    fdc = p2/ro2**gam - S2
+  elseif (i .eq. 5) then
+    fdc = p1 - p2
+  elseif (i .eq. 6) then
+    fdc = u1 - u2
+  elseif (i .eq. 7) then
+    fdc = w - u1
+  end if
 
-                            return
-                          end function fdc
+  return
+end function fdc

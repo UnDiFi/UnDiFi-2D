@@ -83,47 +83,49 @@ subroutine co_uqp(y, wqpx, wqpy, yn1)
     yn1(i) = y(i)
   end do
 
-10 do i = 1, nn
-    yn(i) = yn1(i)
-    bb(i) = futp2(i, yn1, a, b, wqpx, wqpy)
-  end do
+100 format(24(1x, f10.5))
+  do
+    do i = 1, nn
+      yn(i) = yn1(i)
+      bb(i) = futp2(i, yn1, a, b, wqpx, wqpy)
+    end do
 
 ! jacobian calculation
-  do i = 1, nn
-    do j = 1, nn
-      do k = 1, nn
-        yn1(k) = yn(k)
+    do i = 1, nn
+      do j = 1, nn
+        do k = 1, nn
+          yn1(k) = yn(k)
+        end do
+        dyn1 = abs(yn1(j))*.001
+        if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
+        yn1(j) = yn(j) + dyn1
+        dum2 = futp2(i, yn1, a, b, wqpx, wqpy)
+        yn1(j) = yn(j) - dyn1
+        dum1 = futp2(i, yn1, a, b, wqpx, wqpy)
+        g(i, j) = (dum2 - dum1)/(2*dyn1)
       end do
-      dyn1 = abs(yn1(j))*.001
-      if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
-      yn1(j) = yn(j) + dyn1
-      dum2 = futp2(i, yn1, a, b, wqpx, wqpy)
-      yn1(j) = yn(j) - dyn1
-      dum1 = futp2(i, yn1, a, b, wqpx, wqpy)
-      g(i, j) = (dum2 - dum1)/(2*dyn1)
     end do
-  end do
 
 !     write(*,100)((g(i,j),j=1,24),i=1,24)
-100 format(24(1x, f10.5))
-  call solg(nn, nn, g, bb, dyn)
-  do i = 1, nn
-    yn1(i) = yn(i) - 0.5*dyn(i)
+    call solg(nn, nn, g, bb, dyn)
+    do i = 1, nn
+      yn1(i) = yn(i) - 0.5*dyn(i)
 !      write(*,*)i,yn(i),yn1(i),dyn(i)
-  end do
+    end do
 
 ! calculation and check of residual
-  dum = 0.
-  do i = 1, nn
-    dum = dum + abs(yn1(i) - yn(i))
-  end do
-  write (8, *) 'conv--->', dum
+    dum = 0.
+    do i = 1, nn
+      dum = dum + abs(yn1(i) - yn(i))
+    end do
+    write (8, *) 'conv--->', dum
 !     if(dum.gt.10.)then
 !        write(*,*)'change r23 --> r14'
 !        flag1=.false.
 !      endif
 
-  if (dum .gt. 1e-11) goto 10
+    if (dum .le. 1e-11) exit
+  end do
 
   write (8, *)
   do i = 1, nn
