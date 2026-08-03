@@ -45,46 +45,46 @@ program undifi_2d
 
 !    .. parameters ..
   include 'paramt.h'
-  integer*4 nin,nout
-  parameter (nin=5,nout=6)
+  integer*4 nin, nout
+  parameter(nin=5, nout=6)
   integer nva
-  parameter (nva=9990000)
+  parameter(nva=9990000)
 
 !     .. array definitions
-  double precision xysh  ( ndim,  npshmax, nshmax),&
-  &xyshu ( ndim,  npshmax, nshmax),&
-  &xyshd ( ndim,  npshmax, nshmax),&
-  &zroeshuold( ndof,  npshmax, nshmax),&
-  &zroeshdold( ndof,  npshmax, nshmax),&
-  &norsh ( ndim,  npshmax, nshmax),&
-  &wsh   ( ndim,  npshmax, nshmax)
+  double precision xysh(ndim, npshmax, nshmax),&
+  &xyshu(ndim, npshmax, nshmax),&
+  &xyshd(ndim, npshmax, nshmax),&
+  &zroeshuold(ndof, npshmax, nshmax),&
+  &zroeshdold(ndof, npshmax, nshmax),&
+  &norsh(ndim, npshmax, nshmax),&
+  &wsh(ndim, npshmax, nshmax)
 
 !     arrays for unsteady predictor-corrector time accurate integration
-  double precision xyshnew       ( ndim,  npshmax, nshmax),&
-  &norshnew      ( ndim,  npshmax, nshmax),&
-  &wshnew        ( ndim,  npshmax, nshmax),&
-  &wshmean       ( ndim,  npshmax, nshmax),&
-  &zroeshuoldnew ( ndof,  npshmax, nshmax),&
-  &zroeshdoldnew ( ndof,  npshmax, nshmax),&
-  &varray(ndim,30000) ! modify with the logic dstak/istak
+  double precision xyshnew(ndim, npshmax, nshmax),&
+  &norshnew(ndim, npshmax, nshmax),&
+  &wshnew(ndim, npshmax, nshmax),&
+  &wshmean(ndim, npshmax, nshmax),&
+  &zroeshuoldnew(ndof, npshmax, nshmax),&
+  &zroeshdoldnew(ndof, npshmax, nshmax),&
+  &varray(ndim, 30000) ! modify with the logic dstak/istak
 
-  integer*4        nodcodsh(npshmax,nshmax),&
+  integer*4 nodcodsh(npshmax, nshmax),&
   &nshocksegs(nshmax),&
   &nshockpoints(nshmax),&
-  &shinspps(2,5,nspmax),&
-  &ispclr(5,nspmax)
+  &shinspps(2, 5, nspmax),&
+  &ispclr(5, nspmax)
 
   logical shtopolchanged
   logical neo, eulfs, su2
 
-  character        typespecpoints*5,&
+  character typespecpoints*5,&
   &typeshocks*1
 
-  dimension        typespecpoints(nspmax),&
+  dimension typespecpoints(nspmax),&
   &typeshocks(nshmax)
 
 !     .. scalar definition
-  INTEGER*4       nShocks,&
+  integer*4 nShocks,&
   &nPhamPoints,&
   &nSpecPoints
 
@@ -106,37 +106,37 @@ program undifi_2d
 
 !     .. local scalars ..
   integer i,&
-  &nshockpointsold(nshmax),ish,&
-  &nholes,totshockpoints,ii,&
-  &nvt,ifail,nsteps,nitems,nbegin
+  &nshockpointsold(nshmax), ish,&
+  &nholes, totshockpoints, ii,&
+  &nvt, ifail, nsteps, nitems, nbegin
 
 !     .. local arrays ..
-  integer istak(1),lout(0:2)
+  integer istak(1), lout(0:2)
 
 !     pointers in 0 refer to the background mesh
-  integer lbndfac(0:2),lcelcel(0:2),lcelnod(0:2),lcorg(0:2),&
-  &lnodcod(0:2),lzroe(0:2),ledgptr(0:2),lnodptr(0:2),&
-  &lshnor,lxyshold,lxyshnew,lwork,lpmap(0:2)
-  integer nbfac(0:2),nelem(0:2),nhole(0:2),nedge(0:2),npoin(0:2),&
-  &nbpoin(0:2),nbfac_sh,npnod(0:2)
-  integer lia(0:2),lja(0:2),liclr(0:2),nclr(0:2)
+  integer lbndfac(0:2), lcelcel(0:2), lcelnod(0:2), lcorg(0:2),&
+  &lnodcod(0:2), lzroe(0:2), ledgptr(0:2), lnodptr(0:2),&
+  &lshnor, lxyshold, lxyshnew, lwork, lpmap(0:2)
+  integer nbfac(0:2), nelem(0:2), nhole(0:2), nedge(0:2), npoin(0:2),&
+  &nbpoin(0:2), nbfac_sh, npnod(0:2)
+  integer lia(0:2), lja(0:2), liclr(0:2), nclr(0:2)
   logical fndbnds
 
 !     .. external functions ..
-  integer  initxdr,istkgt,istkst,system
+  integer initxdr, istkgt, istkst, system
 !     external initxdr,istkgt,istkst,system
-  external initxdr,istkgt,istkst
+  external initxdr, istkgt, istkst
   double precision rand
   external rand
 
 !     .. external subroutines ..
-  external dinit,iinit,istkin,istkrl
+  external dinit, iinit, istkin, istkrl
 
 !     .. common blocks ..
-  common /cstak/dstak
+  common/cstak/dstak
 
 !     .. equivalences ..
-  equivalence (dstak(1),istak(1))
+  equivalence(dstak(1), istak(1))
 
 !     Time steps for predictor-corrector
   double precision dtpr, dtco, nowtime
@@ -148,9 +148,9 @@ program undifi_2d
   character(len=20) :: solvername
   logical           :: steady, unsteady
 
-  n_args = command_argument_count();
+  n_args = command_argument_count(); 
   if (n_args /= 5 .and. n_args /= 6) then
-    write(*,*) 'Usage: ../../bin/UnDiFi-2D_x86_64&
+    write (*, *) 'Usage: ../../bin/UnDiFi-2D_x86_64&
     &                                 0 501 false true "TestCaseName" [su2]'
     call abort()
   end if
@@ -158,11 +158,11 @@ program undifi_2d
     call get_command_argument(i, args(i))
     args(i) = trim(adjustl(args(i)))
   end do
-  read(args(1),*) nbegin
-  read(args(2),*) nsteps
-  read(args(3),*) eulfs
-  read(args(4),*) steady
-  read(args(5),*) testcase
+  read (args(1), *) nbegin
+  read (args(2), *) nsteps
+  read (args(3), *) eulfs
+  read (args(4), *) steady
+  read (args(5), *) testcase
 
 !     optional 6th arg: a solver name that overrides args(3) when it
 !     is a solver EULFS/NEO's boolean can't express (currently only
@@ -178,12 +178,12 @@ program undifi_2d
     eulfs = .false.
   end if
 
-  write(*,*) 'nbegin: ',    nbegin
-  write(*,*) 'nsteps: ',    nsteps
-  write(*,*) 'Use eulfs? ', eulfs
-  write(*,*) 'Use su2? ',   su2
-  write(*,*) 'Is steady? ', steady
-  write(*,*) 'testcase: ',  testcase
+  write (*, *) 'nbegin: ', nbegin
+  write (*, *) 'nsteps: ', nsteps
+  write (*, *) 'Use eulfs? ', eulfs
+  write (*, *) 'Use su2? ', su2
+  write (*, *) 'Is steady? ', steady
+  write (*, *) 'testcase: ', testcase
 
 !     flag to select the shock-capturing solver, eulfs, neo, or su2
   NEO = (.not. EULFS) .and. (.not. SU2)
@@ -193,21 +193,21 @@ program undifi_2d
 
 ! --------- set character variables
 
-  bindir  = "../../bin/"
+  bindir = "../../bin/"
   hostype = "x86_64"
 !     hostype = 'i386'
-  write(*,*)'1 ',hostype
+  write (*, *) '1 ', hostype
 
 !     gastype = "g140"
 !     gastype = 'g167'
 
 !     necessary for EulFS ALE
   velfile = "gridvel_000001.dat"
-  mode    = 'w'
+  mode = 'w'
 
 ! Vale
 !     flag used in fx_dps_loc.f for the shock reflection on a wedge
-  ShTopolChanged=.false.
+  ShTopolChanged = .false.
 ! Vale
 
 !caldo
@@ -219,33 +219,33 @@ program undifi_2d
 !     NDIM = 2
 !     NDOF = 4 ! will be reset within rtri
 
-  call istkin(nva,4)
+  call istkin(nva, 4)
 
 ! ---------- allocate space
 
 !     write (nout,fmt=4000)
 
-4000 format (/,/,' memory allocation   ',/,' ',19 ('='),/)
+4000 format(/, /, ' memory allocation   ', /, ' ', 19('='),/)
 
   ifail = system("echo 'Running on' `uname -a` > triangle.log")
   ifail = system("date >> triangle.log")
 
-  if(eulfs)then
+  if (eulfs) then
     execmd = "rm -fv convergenza.dat"
     ifail = system(execmd)
-    if(ifail.ne.0)call exit(ifail)
+    if (ifail .ne. 0) call exit(ifail)
 
 !        copy file .petsrc in home
 !        for UNSTEADY EulFS simulations this file
 !        will be overwritten with .petsrc_predictor and
 !        .petsrc_corrector in their respective steps
 !        They only differ in the dt value
-    if (.not.UNSTEADY) then
+    if (.not. UNSTEADY) then
       execmd = "cp -fv .petscrc .petscrc"
-    endif
+    end if
 !        ifail = system(execmd)
-    if(ifail.ne.0)call exit(ifail)
-  endif
+    if (ifail .ne. 0) call exit(ifail)
+  end if
 
 !     the initial grid is stored in a file called na00.1
   fname = "na00.1"
@@ -256,8 +256,8 @@ program undifi_2d
 !  allocate additional space for mesh points and segments
 ! **********************************************************************
 
-  write(*,1001,advance='no')'readmesh               -->  '
-  fndbnds=.true.
+  write (*, 1001, advance='no') 'readmesh               -->  '
+  fndbnds = .true.
 !     fndbnds=.false.
   call readmesh(&
   &lbndfac(0),&
@@ -281,7 +281,7 @@ program undifi_2d
   &liclr(0),&
   &nclr(0),&
   &fndbnds)
-  write(*,1002)' ok'
+  write (*, 1002) ' ok'
 1001 format(a)
 1002 format(a)
 
@@ -289,11 +289,11 @@ program undifi_2d
 !  Read pmap
 ! **********************************************************************
 
-  write(*,1001,advance='no')'readpmap               -->  '
+  write (*, 1001, advance='no') 'readpmap               -->  '
   call readpmap(npoin(0),&
   &npnod(0),&
   &lpmap(0))
-  write(*,1002)' ok'
+  write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Make backups of some of the arrays of the background mesh:
@@ -301,17 +301,17 @@ program undifi_2d
 !  the boundary node pointer (nodptr)
 ! **********************************************************************
 
-  write(*,1001,advance='no')'copy mesh(0) in mesh(2)-->  '
-  nitems = nbfac(0)+2*nshmax*neshmax
-  lbndfac(2) = istkgt(3*nitems   ,2)
-  lnodptr(2) = istkgt(3*nbpoin(0),2)
-  lnodcod(2) = istkgt(npoin(0),2)
-  call icopy(3*nbfac(0), istak(lbndfac(0)),1,istak(lbndfac(2)),1)
-  call icopy(3*nbpoin(0),istak(lnodptr(0)),1,istak(lnodptr(2)),1)
-  call icopy(npoin(0),istak(lnodcod(0)),1,istak(lnodcod(2)),1)
-  nbfac(2)  = nbfac(0)
+  write (*, 1001, advance='no') 'copy mesh(0) in mesh(2)-->  '
+  nitems = nbfac(0) + 2*nshmax*neshmax
+  lbndfac(2) = istkgt(3*nitems, 2)
+  lnodptr(2) = istkgt(3*nbpoin(0), 2)
+  lnodcod(2) = istkgt(npoin(0), 2)
+  call icopy(3*nbfac(0), istak(lbndfac(0)), 1, istak(lbndfac(2)), 1)
+  call icopy(3*nbpoin(0), istak(lnodptr(0)), 1, istak(lnodptr(2)), 1)
+  call icopy(npoin(0), istak(lnodcod(0)), 1, istak(lnodcod(2)), 1)
+  nbfac(2) = nbfac(0)
   nbpoin(2) = nbpoin(0)
-  write(*,1002)' ok'
+  write (*, 1002) ' ok'
 
   lout(0) = istkst(1) ! number of arrays allocated in the stack
 !     write(6,*)lout(0),' arrays have been allocated on the background mesh'
@@ -334,9 +334,9 @@ program undifi_2d
 !  shock/discontinuity integration and additional hole point
 ! **********************************************************************
 
-  write(*,1001,advance='no')'re_inp_data            -->  '
+  write (*, 1001, advance='no') 're_inp_data            -->  '
   call re_inp_data
-  write(*,1002)' ok'
+  write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Read the timesteps.dat file containing information about the dt
@@ -347,13 +347,13 @@ program undifi_2d
 
   if (UNSTEADY) then
 
-    write(*,1001,advance='no')'re_dt_data             -->  '
-    open(unit=12,file='timesteps.dat',status='old',action='read')
-    read(12,*) dtpr
-    read(12,*) dtco
-    close(12)
-    write(*,1002)' ok'
-    write(*,'(1x,f7.4, 1x, f7.4)') dtpr, dtco
+    write (*, 1001, advance='no') 're_dt_data             -->  '
+    open (unit=12, file='timesteps.dat', status='old', action='read')
+    read (12, *) dtpr
+    read (12, *) dtco
+    close (12)
+    write (*, 1002) ' ok'
+    write (*, '(1x,f7.4, 1x, f7.4)') dtpr, dtco
 
   end if ! UNSTEADY
 
@@ -361,14 +361,14 @@ program undifi_2d
 !  Read file sh00.dat containing information about shock/discontinuity
 ! **********************************************************************
 
-  write(*,1001,advance='no')'re_sdw_info            -->  '
+  write (*, 1001, advance='no') 're_sdw_info            -->  '
   call re_sdw_info(&
   &xysh,&
-  &dstak(lzroe(0)+npoin(0)*ndof),&                        !upstream state
-  &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),&    !downstream state
+  &dstak(lzroe(0) + npoin(0)*ndof),&                        !upstream state
+  &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),&    !downstream state
   &zroeshuold,&
   &zroeshdold,&
-  &istak(lnodcod(0)+npoin(0)),&
+  &istak(lnodcod(0) + npoin(0)),&
   &dstak(lcorg(0)),&   !vale
   &istak(lbndfac(0)),& !vale
   &nbfac(0),&          !vale
@@ -381,7 +381,7 @@ program undifi_2d
   &typespecpoints,&
   &shinspps,&
   &ispclr)
-  write(*,1002)' ok'
+  write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Shock points (equally-spaced) redistribution strategy
@@ -390,21 +390,21 @@ program undifi_2d
 
   if (STEADY) then
 
-    write(*,1001,advance='no')'rd_sps_eq              -->  '
+    write (*, 1001, advance='no') 'rd_sps_eq              -->  '
     call rd_dps_eq(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &nshocks,&
     &nshockpoints,&
     &nshocksegs)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
-    call dcopy(nshmax*npshmax*ndof,dstak(lzroe(0)+npoin(0)*ndof),1,&
-    &zroeshuold,1)
+    call dcopy(nshmax*npshmax*ndof, dstak(lzroe(0) + npoin(0)*ndof), 1,&
+    &zroeshuold, 1)
     call dcopy(nshmax*npshmax*ndof,&
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),1,&
-    &zroeshdold,1)
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof), 1,&
+    &zroeshdold, 1)
 
   end if ! STEADY
 
@@ -427,11 +427,11 @@ program undifi_2d
 
   if (UNSTEADY) then
 
-    write(*,1001,advance='no')'co_norm                -->  '
+    write (*, 1001, advance='no') 'co_norm                -->  '
     call co_norm(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &norsh,&
     &nshocks,&
     &nshockpoints,&
@@ -445,26 +445,26 @@ program undifi_2d
     &istak(liclr(0)),&
     &nclr(0),&
     &dstak(lcorg(0)))
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 !       fix the normal orientation which otherwise
 !       creates problems due to steady flow upstream
     if (testcase == 'ShockExpansion') then
       do no = 1, nshockpoints(1)
-        norsh(1,no,1)=-norsh(1,no,1)
-        norsh(2,no,1)=-norsh(2,no,1)
-      enddo
+        norsh(1, no, 1) = -norsh(1, no, 1)
+        norsh(2, no, 1) = -norsh(2, no, 1)
+      end do
     end if
 
 ! **********************************************************************
 !  Compute the velocity of the shock (wsh)
 ! **********************************************************************
 
-    write(*,1001,advance='no')'co_state_dps           -->  '
+    write (*, 1001, advance='no') 'co_state_dps           -->  '
     call co_state_dps(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &zroeshuold,&
     &zroeshdold,&
     &norsh,&
@@ -474,19 +474,19 @@ program undifi_2d
     &nshocksegs,&
     &typeshocks,&
     &i)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Fix the states in the discontinuity points
 ! **********************************************************************
 
-    write(*,1001,advance='no')'fx_state_dps           -->  '
+    write (*, 1001, advance='no') 'fx_state_dps           -->  '
     call fx_state_dps(&
     &xysh,&
-    &dstak(lcorg(0)+npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0)+npoin(0)*ndim+nshmax*npshmax*ndim),& ! downstream coord.
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
+    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &zroeshuold,&
     &zroeshdold,&
     &norsh,&
@@ -505,7 +505,7 @@ program undifi_2d
     &istak(liclr(0)),&
     &nclr(0),&
     &dstak(lcorg(0)))
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
   end if ! UNSTEADY testcases
 
@@ -523,13 +523,13 @@ program undifi_2d
 !     write(6,*)' enter the no steps '
 !     write(6,*)
 !     read(5,*)nsteps
-  write(6,*)
-  write(6,*)' starting the time loop'
-  write(6,*)
-  do 1000 i=1+nbegin,nsteps+nbegin
-    write(6,*)'***********************************'
-    write(6,*)' time level is ',i
-    write(6,*)'                                   '
+  write (6, *)
+  write (6, *) ' starting the time loop'
+  write (6, *)
+  do 1000 i = 1 + nbegin, nsteps + nbegin
+    write (6, *) '***********************************'
+    write (6, *) ' time level is ', i
+    write (6, *) '                                   '
 
 ! **********************************************************************
 !  Find the cells crossed by the shock and the phantom points and
@@ -537,7 +537,7 @@ program undifi_2d
 !  presence of phantom points
 ! **********************************************************************
 
-    write(*,1001,advance='no')'fnd_phps               -->  '
+    write (*, 1001, advance='no') 'fnd_phps               -->  '
     call fnd_phps(&
     &nedge(0),&
     &istak(lbndfac(0)),&
@@ -556,17 +556,17 @@ program undifi_2d
     &nshocksegs,&
     &nphampoints,&
     &istak(lpmap(0)))
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Compute the normal unit vector to shocks and discontinuities
 ! **********************************************************************
 
-    write(*,1001,advance='no')'co_norm                -->  '
+    write (*, 1001, advance='no') 'co_norm                -->  '
     call co_norm(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &norsh,&
     &nshocks,&
     &nshockpoints,&
@@ -580,15 +580,15 @@ program undifi_2d
     &istak(liclr(0)),&
     &nclr(0),&
     &dstak(lcorg(0)))
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 !     fix the normal orientation which otherwise
 !     creates problems due to steady flow upstream
     if (testcase == 'ShockExpansion') then
       do no = 1, nshockpoints(1)
-        norsh(1,no,1)=-norsh(1,no,1)
-        norsh(2,no,1)=-norsh(2,no,1)
-      enddo
+        norsh(1, no, 1) = -norsh(1, no, 1)
+        norsh(2, no, 1) = -norsh(2, no, 1)
+      end do
     end if
 
 ! **********************************************************************
@@ -598,7 +598,8 @@ program undifi_2d
     if (STEADY) then
 
 !       goto 2340
-      write(*,1001,advance='no')'interp_sp              -->  '
+      write (*, 1001, advance='no') 'interp_sp              -->  '
+!    +       nshockpointsold)
       call interp_sp(&
       &istak(lcelnod(0)),&
       &nvt,&
@@ -606,18 +607,17 @@ program undifi_2d
       &dstak(lcorg(0)),&
       &dstak(lzroe(0)),&
       &xysh,&
-      &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-      &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
       &norsh,&
       &npoin(0),&
       &nshocks,&
-!    +       nshockpointsold)
       &nshockpoints,&
       &typeshocks,&
       &nspecpoints,&
       &typespecpoints,&
       &shinspps)
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
     end if ! STEADY
 
@@ -626,13 +626,13 @@ program undifi_2d
 !  discontinuity point
 ! **********************************************************************
 
-    write(*,1001,advance='no')'co_pnt_dspl            -->  '
+    write (*, 1001, advance='no') 'co_pnt_dspl            -->  '
     call co_pnt_dspl(&
     &xysh,&
-    &dstak(lcorg(0)+npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0)+npoin(0)*ndim+nshmax*npshmax*ndim),& ! downstream coord.
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &istak(lnodcod(0)+npoin(0)),&
+    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
+    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &istak(lnodcod(0) + npoin(0)),&
     &norsh,&
     &nshocks,&
     &nshockpoints,&
@@ -642,13 +642,13 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Fix the mesh around the special points
 ! **********************************************************************
 
-    write(*,1001,advance='no')'fx_msh_sps             -->  '
+    write (*, 1001, advance='no') 'fx_msh_sps             -->  '
     call fx_msh_sps(&
     &istak(lbndfac(0)),&
     &istak(lnodcod(0)),&
@@ -658,8 +658,8 @@ program undifi_2d
     &nelem(0),&
     &dstak(lcorg(0)),&
     &xysh,&
-    &dstak(lcorg(0)+npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0)+npoin(0)*ndim+nshmax*npshmax*ndim),& ! downstream coord.
+    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
+    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
     &npoin(0),&
     &nshocks,&
     &nshockpoints,&
@@ -668,7 +668,7 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Copy shock(0) in shock(1)
@@ -696,20 +696,20 @@ program undifi_2d
 !       and we can use "new" ones, at the cost of additional
 !       memory allocation.
 
-      write(*,1001,advance='no')'copy sh(0) in sh(1)    -->  '
-      call dcopy(ndim*npshmax*nshmax,xysh,      1,xyshnew,      1)
-      call dcopy(ndim*npshmax*nshmax,zroeshdold,1,zroeshdoldnew,1)
-      call dcopy(ndim*npshmax*nshmax,zroeshuold,1,zroeshuoldnew,1)
-      call dcopy(ndim*npshmax*nshmax,norsh,     1,norshnew,     1)
-      call dcopy(ndim*npshmax*nshmax,wsh,       1,wshnew,       1)
-      write(*,1002)' ok'
+      write (*, 1001, advance='no') 'copy sh(0) in sh(1)    -->  '
+      call dcopy(ndim*npshmax*nshmax, xysh, 1, xyshnew, 1)
+      call dcopy(ndim*npshmax*nshmax, zroeshdold, 1, zroeshdoldnew, 1)
+      call dcopy(ndim*npshmax*nshmax, zroeshuold, 1, zroeshuoldnew, 1)
+      call dcopy(ndim*npshmax*nshmax, norsh, 1, norshnew, 1)
+      call dcopy(ndim*npshmax*nshmax, wsh, 1, wshnew, 1)
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Compute the grid velocity
 !  Note: also the shock velocity vector is required
 ! **********************************************************************
 
-      write(*,1001,advance='no')'calc_vel               -->  '
+      write (*, 1001, advance='no') 'calc_vel               -->  '
       call calc_vel(&
       &npoin(0),&
       &varray,&
@@ -720,21 +720,21 @@ program undifi_2d
       &'y',&
       &nowtime,&
       &testcase)
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  It gives to EulFS info about grid velocity needed for the ALE
 ! **********************************************************************
 
       if (EULFS) then
-        write(*,1001, advance='no')'solzne                -->   '
+        write (*, 1001, advance='no') 'solzne                -->   '
         call solzne(&
         &velfile,&
         &varray,&
         &ndim,&
-        &npoin(0)+2*npshmax*nshmax,&
+        &npoin(0) + 2*npshmax*nshmax,&
         &mode)
-        write(*,1002)' ok'
+        write (*, 1002) ' ok'
       end if ! EULFS
 
     end if ! END UNSTEADY
@@ -743,8 +743,8 @@ program undifi_2d
 !  Write new poly file including all mesh points except phantom points
 ! **********************************************************************
 
-    write(fname(3:7),fmt="(i5.5)")i
-    write(*,1001,advance='no')'wtri                   -->  '
+    write (fname(3:7), fmt="(i5.5)") i
+    write (*, 1001, advance='no') 'wtri                   -->  '
     call wtri(&
     &istak(lbndfac(0)),&
     &nbfac(0),&
@@ -753,20 +753,20 @@ program undifi_2d
     &nvt,&
     &dstak(lcorg(0)),&
     &xysh,&
-    &dstak(lcorg(0)+npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0)+npoin(0)*ndim+nshmax*npshmax*ndim),& ! downstream coord.
+    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
+    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
     &dstak(lzroe(0)),&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &istak(lnodcod(0)),&
-    &istak(lnodcod(0)+npoin(0)),&
+    &istak(lnodcod(0) + npoin(0)),&
     &npoin(0),&
     &fname(1:7),&
     &nshocks,&
     &nshockpoints,&
     &nshocksegs,&
     &nphampoints)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  If use NEO and it is the 1st iteration, creates the neogrid0.grd
@@ -774,17 +774,17 @@ program undifi_2d
 ! **********************************************************************
 
     if (NEO) then ! NEO solver
-      if ( i == 1+nbegin .and. testcase=="ShockExpansion" ) then
-        write(*,1001,advance='no')'neogrid0               -->  '
-        execmd = bindir(1:10) // 'neogrid0'
-        ifail  = system(execmd)
-        call flush(6)
-        if (ifail.ne.0) then
-          write(6,*)'neogrid0 has returned an error code ifail = ',&
+      if (i == 1 + nbegin .and. testcase == "ShockExpansion") then
+        write (*, 1001, advance='no') 'neogrid0               -->  '
+        execmd = bindir(1:10)//'neogrid0'
+        ifail = system(execmd)
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'neogrid0 has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
-        write(*,1002)' ok'
+        end if
+        write (*, 1002) ' ok'
       end if
     end if
 
@@ -795,19 +795,19 @@ program undifi_2d
 !        write(6,*)
 !        write(6,*)' meshing with triangle; input file is ',fname(1:7)
 !        write(6,*)
-    write(*,1001,advance='no')'triangle               -->  '
+    write (*, 1001, advance='no') 'triangle               -->  '
 
-    execmd = bindir(1:10) // 'triangle_'//hostype(1:6)// ' -nep '&
+    execmd = bindir(1:10)//'triangle_'//hostype(1:6)//' -nep '&
     &//fname(1:7)//' > log/triangle.log'
     ifail = system(execmd)
-    call flush(6)
-    if(ifail.ne.0)then
-      write(6,*)'triangle has returned an error code ifail = ',&
+    call flush (6)
+    if (ifail .ne. 0) then
+      write (6, *) 'triangle has returned an error code ifail = ',&
       &ifail
       call exit(ifail)
-    endif
+    end if
 
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Freeze mesh topology
@@ -815,44 +815,44 @@ program undifi_2d
 
     if (STEADY) then
 
-      if (imtf.ne.0.and.i.gt.imtf)then
-        write(*,1001,advance='no')'mesh topology freezing -->  '
+      if (imtf .ne. 0 .and. i .gt. imtf) then
+        write (*, 1001, advance='no') 'mesh topology freezing -->  '
 
-        fname2='stepXXXXX/naXXXXX.1'
-        write(fname2(5:9),fmt="(i5.5)")imtf
-        write(fname2(13:17),fmt="(i5.5)")imtf
-        execmd ='cp '//fname2(1:19)//'.ele '//fname(1:7)//'.1.ele'
+        fname2 = 'stepXXXXX/naXXXXX.1'
+        write (fname2(5:9), fmt="(i5.5)") imtf
+        write (fname2(13:17), fmt="(i5.5)") imtf
+        execmd = 'cp '//fname2(1:19)//'.ele '//fname(1:7)//'.1.ele'
 !          write(*,*)execmd
         ifail = system(execmd)
-        call flush(6)
-        if (ifail.ne.0) then
-          write(6,*)'cp has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'cp has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
-        execmd ='cp '//fname2(1:19)//'.neigh '//&
+        end if
+        execmd = 'cp '//fname2(1:19)//'.neigh '//&
         &fname(1:7)//'.1.neigh'
 !          write(*,*)execmd
         ifail = system(execmd)
-        call flush(6)
-        if (ifail.ne.0) then
-          write(6,*)'cp has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'cp has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
-        execmd ='cp '//fname2(1:19)//'.edge '//fname(1:7)//'.1.edge'
+        end if
+        execmd = 'cp '//fname2(1:19)//'.edge '//fname(1:7)//'.1.edge'
 !          write(*,*)execmd
         ifail = system(execmd)
-        call flush(6)
-        if (ifail.ne.0) then
-          write(6,*)'cp has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'cp has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
+        end if
 
-        write(*,1002)' ok'
+        write (*, 1002) ' ok'
 
-      endif
+      end if
 
     end if ! STEADY
 
@@ -865,37 +865,37 @@ program undifi_2d
 !  echo na0x.1 | triangle2dat
 ! **********************************************************************
 
-      write(*,1001,advance='no')'triangle2dat           -->  '
+      write (*, 1001, advance='no') 'triangle2dat           -->  '
 !        execmd = "echo " // fname(1:7)
 !     +   // ".1 |" // bindir(1:10) // "triangle2dat_" // hostype(1:6)
 !     +   // " > log/triangle2dat.log"
       if (nprdbnd .eq. 0) then                            ! for the cases without periodic BCs
-        execmd = "printf '" // fname(1:7)&
-        &// ".1\nn'|"&
-        &// bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-        &// " > log/triangle2dat.log"
-      elseif(nprdbnd.eq.1.and.prdbndclr(3,1).eq.1)then    ! for the cases with only one periodic boundary
-        write(color1,fmt="(i2.2)")prdbndclr(1,1)          ! with points having the same x
-        write(color2,fmt="(i2.2)")prdbndclr(2,1)
-        execmd = "printf '" // fname(1:7)&
-        &// ".1\ny\n"&
-        &// color1 // "\n"&
-        &// color2 // "\nx'|"&
-        &// bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-        &// " > log/triangle2dat.log"
-      elseif (nprdbnd.eq.1 .and. prdbndclr(3,1).eq.2) then ! for the cases with only one periodic boundary
-        write(color1,fmt="(i2.2)")prdbndclr(1,1)           ! with points having the same y
-        write(color2,fmt="(i2.2)")prdbndclr(2,1)
-        execmd = "printf '" // fname(1:7)&
-        &// ".1\ny\n"&
-        &// color1 // "\n"&
-        &// color2 // "\ny'|"&
-        &// bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-        &// " > log/triangle2dat.log"
+        execmd = "printf '"//fname(1:7)&
+        &//".1\nn'|"&
+        &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
+        &//" > log/triangle2dat.log"
+      elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 1) then    ! for the cases with only one periodic boundary
+        write (color1, fmt="(i2.2)") prdbndclr(1, 1)          ! with points having the same x
+        write (color2, fmt="(i2.2)") prdbndclr(2, 1)
+        execmd = "printf '"//fname(1:7)&
+        &//".1\ny\n"&
+        &//color1//"\n"&
+        &//color2//"\nx'|"&
+        &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
+        &//" > log/triangle2dat.log"
+      elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 2) then ! for the cases with only one periodic boundary
+        write (color1, fmt="(i2.2)") prdbndclr(1, 1)           ! with points having the same y
+        write (color2, fmt="(i2.2)") prdbndclr(2, 1)
+        execmd = "printf '"//fname(1:7)&
+        &//".1\ny\n"&
+        &//color1//"\n"&
+        &//color2//"\ny'|"&
+        &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
+        &//" > log/triangle2dat.log"
 
       else ! for cases with more thatn one periodic boundary
-        write(*,*)' case not implemented!'
-      endif
+        write (*, *) ' case not implemented!'
+      end if
 
 !        write(*,*)execmd
 
@@ -908,15 +908,15 @@ program undifi_2d
 !         write(*,*)execmd
 
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)execmd
-        write(6,*)'triangle2dat has returned an error code ifail = ',&
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) execmd
+        write (6, *) 'triangle2dat has returned an error code ifail = ',&
         &ifail
         call exit(1)
-      endif
+      end if
 
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! ****************************
 !  Run one step of EulFS code
@@ -926,35 +926,35 @@ program undifi_2d
 !          It runs the predictor step of the EulFS code (we need to use dt/2)
         execmd = "cp -f .petscrc_predictor .petscrc"
         ifail = system(execmd)
-        if(ifail.ne.0)call exit(1)
+        if (ifail .ne. 0) call exit(1)
       end if
 
-      write(*,1001,advance='no')'eulfs                  -->  '
+      write (*, 1001, advance='no') 'eulfs                  -->  '
 !        execmd = bindir(1:10) // "eulfs11.13_"
 !     +                        //gastype(1:4)//"_"//hostype(1:6)
 !     +  // " -itmax 1 > log/eulfs.log"
-      execmd = bindir(1:10) // "EulFS_"//hostype(1:6)&
-      &// " -itmax 1 > log/eulfs.log"
+      execmd = bindir(1:10)//"EulFS_"//hostype(1:6)&
+      &//" -itmax 1 > log/eulfs.log"
 
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)'eulfs has returned an error code ifail = ',&
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) 'eulfs has returned an error code ifail = ',&
         &ifail
         call exit(1)
-      endif
+      end if
 
       if (unsteady) then
         execmd = "cp step000001.dat file001.dat"
         ifail = system(execmd)
-        if(ifail.ne.0)call exit(1)
-      endif
+        if (ifail .ne. 0) call exit(1)
+      end if
 
 !        execmd = "cp file003.dat file010.dat"
 !        ifail = system(execmd)
 !        if(ifail.ne.0)call exit(1)
 
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Convert the code files into triangle fmt using:
@@ -963,22 +963,22 @@ program undifi_2d
 !  the code and a copy with "old" values is copied in na0x.1.node.bak
 ! **********************************************************************
 
-      write(*,1001,advance='no')'dat2triangle           -->  '
+      write (*, 1001, advance='no') 'dat2triangle           -->  '
 !        execmd = "echo "//fname(1:7)//".1 | "// bindir(1:10)
 !    +   // "dat2triangle_" // hostype(1:6)
 !    +   // ">log/dat2triangle.log"
-      execmd = "printf '"//fname(1:7)//".1' | "// bindir(1:10)&
-      &// "dat2triangle-NEW-" // hostype(1:6)&
-      &// ">log/dat2triangle.log"
+      execmd = "printf '"//fname(1:7)//".1' | "//bindir(1:10)&
+      &//"dat2triangle-NEW-"//hostype(1:6)&
+      &//">log/dat2triangle.log"
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)'dat2triangle has returned an error code ifail = ',&
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) 'dat2triangle has returned an error code ifail = ',&
         &ifail
         call exit(1)
-      endif
+      end if
 
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! ***********************************
     elseif (SU2) then ! SU2 SOLVER
@@ -994,20 +994,20 @@ program undifi_2d
 !  triangle2su2/main.f) -- fine for now, CircularCylinder has none.
 ! **********************************************************************
 
-      write(*,1001,advance='no')'triangle2su2           -->  '
-      execmd = "printf '" // fname(1:7)&
-      &// ".1\nsu2case'|"&
-      &// bindir(1:10)//"triangle2su2-"//hostype(1:6)&
-      &// " > log/triangle2su2.log"
+      write (*, 1001, advance='no') 'triangle2su2           -->  '
+      execmd = "printf '"//fname(1:7)&
+      &//".1\nsu2case'|"&
+      &//bindir(1:10)//"triangle2su2-"//hostype(1:6)&
+      &//" > log/triangle2su2.log"
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)&
-        &'triangle2su2 has returned an error code ifail = ',ifail
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *)&
+        &'triangle2su2 has returned an error code ifail = ', ifail
         call exit(1)
-      endif
+      end if
 
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **************************
 !  Run one step of SU2 code
@@ -1015,18 +1015,18 @@ program undifi_2d
 !  su2case.cfg sets ITER=1 with RESTART_SOL=YES: one implicit step
 !  per outer UNDIFI iteration, the SU2 analogue of EulFS's -itmax 1.
 
-      write(*,1001,advance='no')'su2                    -->  '
-      execmd = bindir(1:10) // "SU2_CFD"&
-      &// " su2case.cfg > log/su2.log"
+      write (*, 1001, advance='no') 'su2                    -->  '
+      execmd = bindir(1:10)//"SU2_CFD"&
+      &//" su2case.cfg > log/su2.log"
 
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)'su2 has returned an error code ifail = ',ifail
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) 'su2 has returned an error code ifail = ', ifail
         call exit(1)
-      endif
+      end if
 
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Convert su2case's restart state back into triangle fmt:
@@ -1035,20 +1035,20 @@ program undifi_2d
 !  the code and a copy with "old" values is copied in na0x.1.node.BAK
 ! **********************************************************************
 
-      write(*,1001,advance='no')'su22triangle           -->  '
-      execmd = "printf '" // fname(1:7)&
-      &// ".1\nsu2case'|"&
-      &// bindir(1:10)//"su22triangle-"//hostype(1:6)&
-      &// " > log/su22triangle.log"
+      write (*, 1001, advance='no') 'su22triangle           -->  '
+      execmd = "printf '"//fname(1:7)&
+      &//".1\nsu2case'|"&
+      &//bindir(1:10)//"su22triangle-"//hostype(1:6)&
+      &//" > log/su22triangle.log"
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)&
-        &'su22triangle has returned an error code ifail = ',ifail
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *)&
+        &'su22triangle has returned an error code ifail = ', ifail
         call exit(1)
-      endif
+      end if
 
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! ***********************************
     elseif (NEO) then ! NEO SOLVER
@@ -1056,14 +1056,14 @@ program undifi_2d
 
 !      neogrid0 works only for the 1st iteration of ShockVortex
 !      but in all other cases we need this conversion
-      if( STEADY .or. i /= 1+nbegin .or. testcase=="ShockVortex") then
+      if (STEADY .or. i /= 1 + nbegin .or. testcase == "ShockVortex") then
 
-        write(*,1001,advance='no')'na00xTovvvv            -->   '
-        execmd = "echo " // fname(1:7)&
-        &// ".1 |" // bindir(1:10) // "na2vvvv"&
-        &// " > log/na2vvvv.log"
+        write (*, 1001, advance='no') 'na00xTovvvv            -->   '
+        execmd = "echo "//fname(1:7)&
+        &//".1 |"//bindir(1:10)//"na2vvvv"&
+        &//" > log/na2vvvv.log"
         ifail = system(execmd)
-        write(*,1002)'ok'
+        write (*, 1002) 'ok'
 
       end if
 
@@ -1072,18 +1072,18 @@ program undifi_2d
 !       code using: echo na0X.1 | triangle2dat
 ! ****************************************************************
 
-      write(*,1001,advance='no')'triangle2grd           -->   '
-      execmd = "echo " // fname(1:7)&
-      &// ".1 |" // bindir(1:10) // "triangle2grd"&
-      &// " > log/triangle2grd.log"
+      write (*, 1001, advance='no') 'triangle2grd           -->   '
+      execmd = "echo "//fname(1:7)&
+      &//".1 |"//bindir(1:10)//"triangle2grd"&
+      &//" > log/triangle2grd.log"
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)'triangle2grd has returned an error code ifail = ',&
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) 'triangle2grd has returned an error code ifail = ',&
         &ifail
         call exit(ifail)
-      endif
-      write(*,1002)'ok'
+      end if
+      write (*, 1002) 'ok'
 
 !     ******************
       if (UNSTEADY) then
@@ -1091,27 +1091,27 @@ program undifi_2d
 
 !       if it is the 1st iteration
 !       **************************
-        if (i == 1+nbegin) then
+        if (i == 1 + nbegin) then
 
-          write(*,1001,advance='no')'NEO 1st iteration      -->  '
+          write (*, 1001, advance='no') 'NEO 1st iteration      -->  '
 
-          execmd = bindir(1:10) // "CRD_euler"&
-          &// "> log/neo.log"
+          execmd = bindir(1:10)//"CRD_euler"&
+          &//"> log/neo.log"
           ifail = system(execmd)
-          call flush(6)
-          if (ifail.ne.0) then
-            write(6,*)'NEO (1st iteration)&
-            &                                    has returned an error code ifail = ',ifail
+          call flush (6)
+          if (ifail .ne. 0) then
+            write (6, *) 'NEO (1st iteration)&
+            &                                    has returned an error code ifail = ', ifail
             call exit(1)
-          endif
+          end if
 
           execmd = "cp ./NEO_data/output/vvvv.dat "//&
           &"./NEO_data/output/vvvv0.dat "
-          ifail  = system(execmd)
+          ifail = system(execmd)
 
           execmd = "mv ./NEO_data/output/vvvv.dat "//&
           &"./NEO_data/output/vvvv_input.dat "
-          ifail  = system(execmd)
+          ifail = system(execmd)
 
 !         Here the following happens (for unsteady cases):
 !         - the 1st iteration uses NEO_data/textinput/inputfile-exp.txt
@@ -1128,31 +1128,30 @@ program undifi_2d
 
           execmd = "mv ./NEO_data/textinput/inputfile-exp.txt "//&
           &"./NEO_data/textinput/inputfile-exp.txt.BAK "
-          ifail  = system(execmd)
+          ifail = system(execmd)
 
           execmd = "cp inputfile-exp.txt "//"./NEO_data/textinput/"
-          ifail  = system(execmd)
+          ifail = system(execmd)
 
-          write(*,1002)' ok'
+          write (*, 1002) ' ok'
 
         end if ! 1ST ITERATION
 
       end if ! UNSTEADY
 
-
 !     for all the other iterations
 !     ****************************
-      write(*,1001,advance='no')'NEO                    -->   '
-      execmd = bindir(1:10) // "CRD_euler"&
-      &// "> log/neo.log"
+      write (*, 1001, advance='no') 'NEO                    -->   '
+      execmd = bindir(1:10)//"CRD_euler"&
+      &//"> log/neo.log"
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)'neo has returned an error code ifail = ',&
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) 'neo has returned an error code ifail = ',&
         &ifail
         call exit(ifail)
-      endif
-      write(*,1002)'ok'
+      end if
+      write (*, 1002) 'ok'
 
 ! **********************************************************************
 !  Convert the code files into triangle fmt using:
@@ -1162,25 +1161,25 @@ program undifi_2d
 !        na0X.1.node.BAK
 ! **********************************************************************
 
-      write(*,1001,advance='no')'NEO2triangle           -->   '
-      execmd = "echo "//fname(1:7)//".1 | "// bindir(1:10)&
-      &// "NEO2triangle" // ">log/NEO2triangle.log"
+      write (*, 1001, advance='no') 'NEO2triangle           -->   '
+      execmd = "echo "//fname(1:7)//".1 | "//bindir(1:10)&
+      &//"NEO2triangle"//">log/NEO2triangle.log"
       ifail = system(execmd)
-      call flush(6)
-      if(ifail.ne.0)then
-        write(6,*)'neo2triangle has returned an error code ifail = ',&
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) 'neo2triangle has returned an error code ifail = ',&
         &ifail
         call exit(1)
-      endif
-      write(*,1002)'ok'
+      end if
+      write (*, 1002) 'ok'
 
-    ELSE
+    else
 
-      write(*,*)'should be running either EULFS ',eulfs,' or NEO ',&
+      write (*, *) 'should be running either EULFS ', eulfs, ' or NEO ',&
       &neo
       call exit(10)
 
-    ENDIF ! IF-THEN-ELSE ON THE CFD CODE
+    end if ! IF-THEN-ELSE ON THE CFD CODE
 
 ! **********************************************************************
 !  Here the corrector step starts
@@ -1199,7 +1198,7 @@ program undifi_2d
 !  in the connectivity
 ! **********************************************************************
 
-      write(*,1001,advance='no')'readmesh               -->  '
+      write (*, 1001, advance='no') 'readmesh               -->  '
       fname(1:9) = fname(1:7)//".1"
       fndbnds = .false.
       call readmesh(&
@@ -1226,7 +1225,7 @@ program undifi_2d
       &fndbnds)
 
       lout(1) = istkst(1) ! number of arrays allocated in the stack
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
       ! TODO: check whether FX_USTATE should be added here ...
 
@@ -1238,34 +1237,34 @@ program undifi_2d
 !  routine works on nodal values of grid (0)
 ! **********************************************************************
 
-      totshockpoints=2*nshmax*npshmax
+      totshockpoints = 2*nshmax*npshmax
 
-      write(*,1001,advance='no')'zroe(1)->zroe(0)       -->  '
+      write (*, 1001, advance='no') 'zroe(1)->zroe(0)       -->  '
 
-      if ( npoin(1) .eq. (npoin(0)+totshockpoints)) then
+      if (npoin(1) .eq. (npoin(0) + totshockpoints)) then
 
-        call dcopy(ndof*npoin(1),dstak(lzroe(1)),1,dstak(lzroe(0)),1)
-        write(*,1002)' ok'
+        call dcopy(ndof*npoin(1), dstak(lzroe(1)), 1, dstak(lzroe(0)), 1)
+        write (*, 1002) ' ok'
 
       else
 
 !         the nof gridpoints in grid(1) must equal the number of
 !         gridpoints on the background mesh + 2 * nshockpoints
 
-        write(6,*) 'there is a mismatch in the nof gridpoints'
-        write(6,*) 'btw grid(0) and grid(1)'
-        write(*,*) npoin(0), totshockpoints
-        write(*,*) npoin(1), totshockpoints
+        write (6, *) 'there is a mismatch in the nof gridpoints'
+        write (6, *) 'btw grid(0) and grid(1)'
+        write (*, *) npoin(0), totshockpoints
+        write (*, *) npoin(1), totshockpoints
         call exit(1)
 
-      endif
+      end if
 
 !       work is a work array used to store nodal values in the shock points
 !       work is used in interp() and shockmov()
 
-      lwork    = istkgt(2*ndof*nshmax*npshmax,4) ! work array
-      lxyshold = istkgt(2*ndim*nshmax*npshmax,4) ! work array
-      lxyshnew = istkgt(2*ndim*nshmax*npshmax,4) ! work array
+      lwork = istkgt(2*ndof*nshmax*npshmax, 4) ! work array
+      lxyshold = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
+      lxyshnew = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
 
 ! **********************************************************************
 !  Updates nodal values in all the shock points of grid (0) using R-H
@@ -1274,11 +1273,11 @@ program undifi_2d
 !        elsewhere
 ! **********************************************************************
 
-      write(*,1001,advance='no')'co_state_dps           -->  '
+      write (*, 1001, advance='no') 'co_state_dps           -->  '
       call co_state_dps(&
       &xyshnew,&
-      &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-      &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
       &zroeshuoldnew,&
       &zroeshdoldnew,&
       &norshnew,&
@@ -1288,17 +1287,17 @@ program undifi_2d
       &nshocksegs,&
       &typeshocks,&
       &i)
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 
-      write(*,1001,advance='no')'fx_state_dps           -->  '
+      write (*, 1001, advance='no') 'fx_state_dps           -->  '
       call fx_state_dps(&
       &xyshnew,&                                           ! not used
-      &dstak(lcorg(0)+npoin(0)*ndim),&                     ! upstream   coord.
-      &dstak(lcorg(0)+npoin(0)*ndim+nshmax*npshmax*ndim),& ! downstream coord.
-      &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream   state
-      &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+      &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream   coord.
+      &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
+      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream   state
+      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
       &zroeshuoldnew,&
       &zroeshdoldnew,&
       &norshnew,&
@@ -1317,19 +1316,19 @@ program undifi_2d
       &istak(liclr(0)),&
       &nclr(0),&
       &dstak(lcorg(0)))
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 
-      write(*,1001,advance='no')'zroesh(0)->zroesh(1)   -->  '
+      write (*, 1001, advance='no') 'zroesh(0)->zroesh(1)   -->  '
       call dcopy(ndof*totshockpoints,&
-      &dstak(lzroe(0)+npoin(0)*ndof),1,&
-      &dstak(lzroe(1)+npoin(0)*ndof),1)
-      write(*,1002)' ok'
+      &dstak(lzroe(0) + npoin(0)*ndof), 1,&
+      &dstak(lzroe(1) + npoin(0)*ndof), 1)
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 
-      write(*,1001,advance='no')'calc_vel               -->  '
+      write (*, 1001, advance='no') 'calc_vel               -->  '
       call calc_vel(&
       &npoin(0),&
       &varray,&
@@ -1340,38 +1339,38 @@ program undifi_2d
       &'n',&
       &nowtime,&
       &testcase)
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  It gives to eulfs information about grid velocity (corrector step)
 ! **********************************************************************
 
       if (EULFS) then
-        write(*,1001,advance='no')'solzne                 -->   '
+        write (*, 1001, advance='no') 'solzne                 -->   '
         call solzne(&
         &velfile,&
         &varray,&
         &ndim,&
-        &npoin(0)+2*npshmax*nshmax,&
+        &npoin(0) + 2*npshmax*nshmax,&
         &mode)
-        write(*,1002)' ok'
+        write (*, 1002) ' ok'
       end if
 
 ! **********************************************************************
 !  It generates the new mesh
 ! **********************************************************************
 
-      write(*,1001,advance='no')'triangle               -->  '
-      execmd = bindir(1:10) // 'triangle_'//hostype(1:6)// ' -nep '&
+      write (*, 1001, advance='no') 'triangle               -->  '
+      execmd = bindir(1:10)//'triangle_'//hostype(1:6)//' -nep '&
       &//fname(1:7)//' > log/triangle.log'
-      ifail  = system(execmd)
-      call flush(6)
-      if (ifail.ne.0) then
-        write(6,*)'triangle has returned an error code ifail = ',&
+      ifail = system(execmd)
+      call flush (6)
+      if (ifail .ne. 0) then
+        write (6, *) 'triangle has returned an error code ifail = ',&
         &ifail
         call exit(1)
-      endif
-      write(*,1002)' ok'
+      end if
+      write (*, 1002) ' ok'
 
 ! ***********************************
       if (EULFS) then ! EulFS SOLVER
@@ -1382,37 +1381,37 @@ program undifi_2d
 !  echo na0x.1 | triangle2dat
 ! **********************************************************************
 
-        write(*,1001,advance='no')'triangle2dat           -->  '
+        write (*, 1001, advance='no') 'triangle2dat           -->  '
 !        execmd = "echo " // fname(1:7)
 !     +   // ".1 |" // bindir(1:10) // "triangle2dat_" // hostype(1:6)
 !     +   // " > log/triangle2dat.log"
         if (nprdbnd .eq. 0) then                            ! for the cases without periodic BCs
-          execmd = "printf '" // fname(1:7)&
-          &// ".1\nn'|"&
-          &// bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-          &// " > log/triangle2dat.log"
-        elseif(nprdbnd.eq.1.and.prdbndclr(3,1).eq.1)then    ! for the cases with only one periodic boundary
-          write(color1,fmt="(i2.2)")prdbndclr(1,1)          ! with points having the same x
-          write(color2,fmt="(i2.2)")prdbndclr(2,1)
-          execmd = "printf '" // fname(1:7)&
-          &// ".1\ny\n"&
-          &// color1 // "\n"&
-          &// color2 // "\nx'|"&
-          &// bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-          &// " > log/triangle2dat.log"
-        elseif (nprdbnd.eq.1 .and. prdbndclr(3,1).eq.2) then ! for the cases with only one periodic boundary
-          write(color1,fmt="(i2.2)")prdbndclr(1,1)           ! with points having the same y
-          write(color2,fmt="(i2.2)")prdbndclr(2,1)
-          execmd = "printf '" // fname(1:7)&
-          &// ".1\ny\n"&
-          &// color1 // "\n"&
-          &// color2 // "\ny'|"&
-          &// bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-          &// " > log/triangle2dat.log"
+          execmd = "printf '"//fname(1:7)&
+          &//".1\nn'|"&
+          &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
+          &//" > log/triangle2dat.log"
+        elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 1) then    ! for the cases with only one periodic boundary
+          write (color1, fmt="(i2.2)") prdbndclr(1, 1)          ! with points having the same x
+          write (color2, fmt="(i2.2)") prdbndclr(2, 1)
+          execmd = "printf '"//fname(1:7)&
+          &//".1\ny\n"&
+          &//color1//"\n"&
+          &//color2//"\nx'|"&
+          &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
+          &//" > log/triangle2dat.log"
+        elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 2) then ! for the cases with only one periodic boundary
+          write (color1, fmt="(i2.2)") prdbndclr(1, 1)           ! with points having the same y
+          write (color2, fmt="(i2.2)") prdbndclr(2, 1)
+          execmd = "printf '"//fname(1:7)&
+          &//".1\ny\n"&
+          &//color1//"\n"&
+          &//color2//"\ny'|"&
+          &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
+          &//" > log/triangle2dat.log"
 
         else ! for cases with more thatn one periodic boundary
-          write(*,*)' case not implemented!'
-        endif
+          write (*, *) ' case not implemented!'
+        end if
 
 !        write(*,*)execmd
 
@@ -1425,15 +1424,15 @@ program undifi_2d
 !         write(*,*)execmd
 
         ifail = system(execmd)
-        call flush(6)
-        if(ifail.ne.0)then
-          write(6,*)execmd
-          write(6,*)'triangle2dat has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) execmd
+          write (6, *) 'triangle2dat has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
+        end if
 
-        write(*,1002)' ok'
+        write (*, 1002) ' ok'
 
 ! ****************************
 !  Run one step of EulFS code
@@ -1443,35 +1442,35 @@ program undifi_2d
 !          It runs the corrector step of the EulFS code (now we use the full dt)
         execmd = "cp -f .petscrc_corrector .petscrc"
         ifail = system(execmd)
-        if(ifail.ne.0)call exit(1)
+        if (ifail .ne. 0) call exit(1)
 !        end if
 
-        write(*,1001,advance='no')'eulfs                  -->  '
+        write (*, 1001, advance='no') 'eulfs                  -->  '
 !        execmd = bindir(1:10) // "eulfs11.13_"
 !     +                        //gastype(1:4)//"_"//hostype(1:6)
 !     +  // " -itmax 1 > log/eulfs.log"
-        execmd = bindir(1:10) // "EulFS_"//hostype(1:6)&
-        &// " -itmax 1 > log/eulfs.log"
+        execmd = bindir(1:10)//"EulFS_"//hostype(1:6)&
+        &//" -itmax 1 > log/eulfs.log"
 
         ifail = system(execmd)
-        call flush(6)
-        if(ifail.ne.0)then
-          write(6,*)'eulfs has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'eulfs has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
+        end if
 
 !        if (UNSTEADY) then
         execmd = "cp step000001.dat file001.dat"
         ifail = system(execmd)
-        if(ifail.ne.0)call exit(1)
+        if (ifail .ne. 0) call exit(1)
 !        endif
 
 !        execmd = "cp file003.dat file010.dat"
 !        ifail = system(execmd)
 !        if(ifail.ne.0)call exit(1)
 
-        write(*,1002)' ok'
+        write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Convert the code files into triangle fmt using:
@@ -1480,22 +1479,22 @@ program undifi_2d
 !  the code and a copy with "old" values is copied in na0x.1.node.bak
 ! **********************************************************************
 
-        write(*,1001,advance='no')'dat2triangle           -->  '
+        write (*, 1001, advance='no') 'dat2triangle           -->  '
 !        execmd = "echo "//fname(1:7)//".1 | "// bindir(1:10)
 !    +   // "dat2triangle_" // hostype(1:6)
 !    +   // ">log/dat2triangle.log"
-        execmd = "printf '"//fname(1:7)//".1' | "// bindir(1:10)&
-        &// "dat2triangle-NEW-" // hostype(1:6)&
-        &// ">log/dat2triangle.log"
+        execmd = "printf '"//fname(1:7)//".1' | "//bindir(1:10)&
+        &//"dat2triangle-NEW-"//hostype(1:6)&
+        &//">log/dat2triangle.log"
         ifail = system(execmd)
-        call flush(6)
-        if(ifail.ne.0)then
-          write(6,*)'dat2triangle has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'dat2triangle has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
+        end if
 
-        write(*,1002)' ok'
+        write (*, 1002) ' ok'
 
       elseif (NEO) then ! NEO SOLVER for UNSTEADY predictor step
 
@@ -1503,68 +1502,68 @@ program undifi_2d
 !   Update of vvvv.dat (input) for NEO
 ! **********************************************************************
 
-        write(*,1001,advance='no')'na2vvvv                -->  '
-        execmd = "echo " // fname(1:7)&
-        &// ".1 |" // bindir(1:10) // "na2vvvv"&
-        &// " > log/na2vvvv.log"
-        ifail  = system(execmd)
-        write(*,1002)' ok'
+        write (*, 1001, advance='no') 'na2vvvv                -->  '
+        execmd = "echo "//fname(1:7)&
+        &//".1 |"//bindir(1:10)//"na2vvvv"&
+        &//" > log/na2vvvv.log"
+        ifail = system(execmd)
+        write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  convert the triangle files into a fmt readable by the code
 !  using: echo na0x.1 | triangle2dat
 ! **********************************************************************
 
-        write(*,1001,advance='no')'triangle2grd           -->  '
-        execmd = "echo " // fname(1:7)&
-        &// ".1 |" // bindir(1:10) // "triangle2grd"&
-        &// " > log/triangle2grd.log"
+        write (*, 1001, advance='no') 'triangle2grd           -->  '
+        execmd = "echo "//fname(1:7)&
+        &//".1 |"//bindir(1:10)//"triangle2grd"&
+        &//" > log/triangle2grd.log"
         ifail = system(execmd)
-        call flush(6)
-        if (ifail.ne.0) then
-          write(6,*)'triangle2grd has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'triangle2grd has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
-        write(*,1002)' ok'
+        end if
+        write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  One step with NEO
 ! **********************************************************************
 
-        write(*,1001,advance='no')'NEO                    -->  '
-        execmd = bindir(1:10) // "CRD_euler"&
-        &// " > log/neo.log"
-        ifail  = system(execmd)
-        call flush(6)
-        if (ifail.ne.0) then
-          write(6,*)'NEO has returned an error code ifail = ',&
+        write (*, 1001, advance='no') 'NEO                    -->  '
+        execmd = bindir(1:10)//"CRD_euler"&
+        &//" > log/neo.log"
+        ifail = system(execmd)
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'NEO has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
-        write(*,1002)' ok'
+        end if
+        write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Convert dat file to triangle file
 ! **********************************************************************
 
-        write(*,1001,advance='no')'NEO2triangle           -->  '
-        execmd = "echo "//fname(1:7)//".1 | "// bindir(1:10)&
-        &// "NEO2triangle" // ">log/NEO2triangle.log"
+        write (*, 1001, advance='no') 'NEO2triangle           -->  '
+        execmd = "echo "//fname(1:7)//".1 | "//bindir(1:10)&
+        &//"NEO2triangle"//">log/NEO2triangle.log"
         ifail = system(execmd)
-        call flush(6)
-        if (ifail.ne.0) then
-          write(6,*)'NEO2triangle has returned an error code ifail = ',&
+        call flush (6)
+        if (ifail .ne. 0) then
+          write (6, *) 'NEO2triangle has returned an error code ifail = ',&
           &ifail
           call exit(1)
-        endif
-        write(*,1002)' ok'
+        end if
+        write (*, 1002) ' ok'
 
       end if ! end SOLVER (EULFS/NEO) for UNSTEADY (corrector step)
 
 ! **********************************************************************
 
-      write(*,1001,advance='no')'mv_grid                -->  '
+      write (*, 1001, advance='no') 'mv_grid                -->  '
       call mv_grid(&
       &npoin(0),&
       &varray,&
@@ -1573,7 +1572,7 @@ program undifi_2d
       &wshnew,&
       &i,&
       &testcase) ! as in calc_vel, added arg to switch case
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 
@@ -1582,7 +1581,7 @@ program undifi_2d
 !       call dcopy(ndim*npshmax*nshmax,zroeshdold,1,zroeshdoldnew,1)
 !       call dcopy(ndim*npshmax*nshmax,zroeshuold,1,zroeshuoldnew,1)
 !       call dcopy(ndim*npshmax*nshmax,norsh,1,norshnew,1)
-      call dcopy(ndim*npshmax*nshmax,wshnew,1,wsh,1)
+      call dcopy(ndim*npshmax*nshmax, wshnew, 1, wsh, 1)
 !       write(*,1002)' ok'
 
     end if ! UNSTEADY TODO: check the variables in this part ...
@@ -1597,9 +1596,9 @@ program undifi_2d
 !  in the connectivity
 ! **********************************************************************
 
-    write(*,1001,advance='no')'readmesh               -->  '
+    write (*, 1001, advance='no') 'readmesh               -->  '
     fname(1:9) = fname(1:7)//".1"
-    fndbnds=.false.
+    fndbnds = .false.
     call readmesh(&
     &lbndfac(1),&
     &lcelcel(1),&
@@ -1624,7 +1623,7 @@ program undifi_2d
     &fndbnds)
 
     lout(1) = istkst(1) ! number of arrays allocated in the stack
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  TODO: comment this procedure
@@ -1645,33 +1644,33 @@ program undifi_2d
 !  routine works on nodal values of grid (0)
 ! **********************************************************************
 
-    totshockpoints=2*nshmax*npshmax
+    totshockpoints = 2*nshmax*npshmax
 
-    write(*,1001,advance='no')'zroe(1)->zroe(0)       -->  '
-    if (npoin(1) .eq. (npoin(0)+totshockpoints)) then
-      call dcopy(ndof*npoin(1),dstak(lzroe(1)),1,&
-      &dstak(lzroe(0)),1)
+    write (*, 1001, advance='no') 'zroe(1)->zroe(0)       -->  '
+    if (npoin(1) .eq. (npoin(0) + totshockpoints)) then
+      call dcopy(ndof*npoin(1), dstak(lzroe(1)), 1,&
+      &dstak(lzroe(0)), 1)
 
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
     else
 
 !       the nof gridpoints in grid(1) must equal the number of
 !       gridpoints on the background mesh + 2 x nshockpoints
 
-      write(6,*)'there is a mismatch in the nof gridpoints'
-      write(6,*)'btw grid(0) and grid(1)'
-      write(*,*)npoin(0),totshockpoints
-      write(*,*)npoin(1),totshockpoints
+      write (6, *) 'there is a mismatch in the nof gridpoints'
+      write (6, *) 'btw grid(0) and grid(1)'
+      write (*, *) npoin(0), totshockpoints
+      write (*, *) npoin(1), totshockpoints
       call exit(1)
-    endif
+    end if
 
 !     work is a work array used to store nodal values in the shock points
 !     work is used in interp() and shockmov()
 
-    lwork    = istkgt(2*ndof*nshmax*npshmax,4)
-    lxyshold = istkgt(2*ndim*nshmax*npshmax,4) ! work array
-    lxyshnew = istkgt(2*ndim*nshmax*npshmax,4) ! work array
+    lwork = istkgt(2*ndof*nshmax*npshmax, 4)
+    lxyshold = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
+    lxyshnew = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
 
 !     SHOCKmov updates nodal values in the shock points of grid (0)
 !     computes R-H relations, moves the shock
@@ -1703,11 +1702,11 @@ program undifi_2d
 !  relations and compute the shock speed
 ! **********************************************************************
 
-    write(*,1001,advance='no')'co_state_dps           -->  '
+    write (*, 1001, advance='no') 'co_state_dps           -->  '
     call co_state_dps(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &zroeshuold,& !ZROESHuOLDnew?
     &zroeshdold,& !ZROESHdOLDnew?
     &norsh,&      !NORSHnew?
@@ -1717,20 +1716,20 @@ program undifi_2d
     &nshocksegs,&
     &typeshocks,&
     &i)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Fix and correct the nodal values and shock speed in all special
 !  point using the correct s-s interaction relation
 ! **********************************************************************
 
-    write(*,1001,advance='no')'fx_state_dps           -->  '
+    write (*, 1001, advance='no') 'fx_state_dps           -->  '
     call fx_state_dps(&
     &xysh,& !XYSHnew?
-    &dstak(lcorg(0)+npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0)+npoin(0)*ndim+nshmax*npshmax*ndim),& ! downstream coord.
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
+    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &zroeshuold,& !ZROESHuOLDnew?
     &zroeshdold,& !ZROESHdOLDnew?
     &norsh,&      !NORSHnew?
@@ -1749,7 +1748,7 @@ program undifi_2d
     &istak(liclr(0)),&
     &nclr(0),&
     &dstak(lcorg(0)))
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Update the nodal values of shocks on the grid (1)
@@ -1757,11 +1756,11 @@ program undifi_2d
 !        co_state_dps routines work on nodal values of grid (0)
 ! **********************************************************************
 
-    write(*,1001,advance='no')'zroesh(0)->zroesh(1)   -->  '
+    write (*, 1001, advance='no') 'zroesh(0)->zroesh(1)   -->  '
     call dcopy(ndof*totshockpoints,&
-    &dstak(lzroe(0)+npoin(0)*ndof),1,&
-    &dstak(lzroe(1)+npoin(0)*ndof),1)
-    write(*,1002)' ok'
+    &dstak(lzroe(0) + npoin(0)*ndof), 1,&
+    &dstak(lzroe(1) + npoin(0)*ndof), 1)
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Calculate the mean shock velocity
@@ -1770,12 +1769,12 @@ program undifi_2d
     if (UNSTEADY) then
 !     ******************
 
-      write(*,1001,advance='no')'wsh_mean               -->  '
+      write (*, 1001, advance='no') 'wsh_mean               -->  '
       call wsh_mean(&
       &wsh,&
       &wshnew,&
       &wshmean)
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
     end if ! UNSTEADY
 
@@ -1783,17 +1782,17 @@ program undifi_2d
 !  Move the shocks
 ! **********************************************************************
 
-    write(*,1001,advance='no')'mv_dps                 -->  '
+    write (*, 1001, advance='no') 'mv_dps                 -->  '
     call mv_dps(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &wsh,&
     &i,&
     &nshocks,&
     &nshockpoints,&
     &nshocksegs,&
     &typeshocks)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Fix and correct the nodal position in all special point
@@ -1802,13 +1801,13 @@ program undifi_2d
     if (STEADY) then
 !     ****************
 
-      write(*,1001,advance='no')'fx_dps_loc             -->  '
+      write (*, 1001, advance='no') 'fx_dps_loc             -->  '
       call fx_dps_loc(&
       &xysh,&
-      &dstak(lcorg(0)+npoin(0)*ndim),&                     ! upstream coord.
-      &dstak(lcorg(0)+npoin(0)*ndim+nshmax*npshmax*ndim),& ! downstream coord.
-      &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-      &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+      &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
+      &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
+      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
       &zroeshuold,&
       &zroeshdold,&
       &norsh,&
@@ -1829,23 +1828,23 @@ program undifi_2d
       &dstak(lzroe(0)),& ! vale
       &dstak(lcorg(0)),&
       &shtopolchanged)  ! vale
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Filters the shocks
 ! **********************************************************************
 
-      write(*,1001,advance='no')'fltr_dls               -->  '
+      write (*, 1001, advance='no') 'fltr_dls               -->  '
       call fltr_dls(&
       &xysh,&
-      &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
       &wsh,&
       &i,&
       &nshocks,&
       &nshockpoints,&
       &nshocksegs,&
       &typeshocks)
-      write(*,1002)' ok'
+      write (*, 1002) ' ok'
 
     end if ! STEADY
 
@@ -1856,7 +1855,8 @@ program undifi_2d
 ! **********************************************************************
 
 !      goto 2340
-    write(*,1001,advance='no')'interp                 -->  '
+    write (*, 1001, advance='no') 'interp                 -->  '
+!    +      nshockpointsold)
     call interp(&
     &istak(lbndfac(1)),&
     &nbfac(1),&
@@ -1866,21 +1866,20 @@ program undifi_2d
     &dstak(lcorg(1)),&
     &dstak(lzroe(1)),&
     &xysh,&
-    &dstak(lcorg(1)+npoin(0)*ndim),&                     !upstream coord.
-    &dstak(lcorg(1)+npoin(0)*ndim+nshmax*npshmax*ndim),& !downstream coord.
+    &dstak(lcorg(1) + npoin(0)*ndim),&                     !upstream coord.
+    &dstak(lcorg(1) + npoin(0)*ndim + nshmax*npshmax*ndim),& !downstream coord.
     &nphampoints,&
     &dstak(lcorg(0)),&
     &dstak(lzroe(0)),&
     &istak(lnodcod(0)),&
     &npoin(0),&
     &nshocks,&
-!    +      nshockpointsold)
     &nshockpoints,&
     &istak(lia(1)),&
     &istak(lja(1)),&
     &istak(liclr(0)),&
     &nclr(0))
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 2340 continue
 
@@ -1890,15 +1889,15 @@ program undifi_2d
 ! **********************************************************************
 
 !     if(i.gt.1000)  goto 3450
-    write(*,1001,advance='no')'rd_dps                 -->  '
+    write (*, 1001, advance='no') 'rd_dps                 -->  '
     call rd_dps(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
     &nshocks,&
     &nshockpoints,&
     &nshocksegs)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 3450 continue
 
@@ -1926,27 +1925,27 @@ program undifi_2d
 !  value of zroe
 ! **********************************************************************
 
-    write(*,1001,advance='no')'wtri0                  -->  '
+    write (*, 1001, advance='no') 'wtri0                  -->  '
+!    +     ndim,
+!    +     ndof,
     call wtri0(&
     &dstak(lcorg(0)),&
-!    +     ndim,
     &dstak(lzroe(0)),&
-!    +     ndof,
     &istak(lnodcod(0)),&
     &npoin(0),&
     &fnameback(1:4))
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Write file sh99.dat containing information about shock/discontinuity
 ! **********************************************************************
 
-    write(*,1001,advance='no')'wrt_sdw_info           -->  '
+    write (*, 1001, advance='no') 'wrt_sdw_info           -->  '
     call wrt_sdw_info(&
     &xysh,&
-    &dstak(lzroe(0)+npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof),& ! downstream state
-    &istak(lnodcod(0)+npoin(0)),&
+    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
+    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &istak(lnodcod(0) + npoin(0)),&
     &nshocks,&
     &nshockpoints,&
     &nshocksegs,&
@@ -1955,7 +1954,7 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr)
-    write(*,1002)' ok'
+    write (*, 1002) ' ok'
 
 ! **********************************************************************
 !  Copy new shock on the old one
@@ -1963,12 +1962,12 @@ program undifi_2d
 
     if (UNSTEADY) then
 
-      write(*,1001,advance='no')'copy sh(1) in sh(0)    -->  '
-      call dcopy(ndim*npshmax*nshmax,zroeshdoldnew,1, zroeshdold,1)
-      call dcopy(ndim*npshmax*nshmax,zroeshuoldnew,1, zroeshuold,1)
-      call dcopy(ndim*npshmax*nshmax,norshnew,1, norsh,1)
-      call dcopy(ndim*npshmax*nshmax,wshnew,1, wsh,1)
-      write(*,1002)' ok'
+      write (*, 1001, advance='no') 'copy sh(1) in sh(0)    -->  '
+      call dcopy(ndim*npshmax*nshmax, zroeshdoldnew, 1, zroeshdold, 1)
+      call dcopy(ndim*npshmax*nshmax, zroeshuoldnew, 1, zroeshuold, 1)
+      call dcopy(ndim*npshmax*nshmax, norshnew, 1, norsh, 1)
+      call dcopy(ndim*npshmax*nshmax, wshnew, 1, wsh, 1)
+      write (*, 1002) ' ok'
 
     end if ! UNSTEADY
 
@@ -1986,35 +1985,35 @@ program undifi_2d
 !  Restore the original arrays of the background grid
 ! **********************************************************************
 
-    nbfac(0)  = nbfac(2)
+    nbfac(0) = nbfac(2)
     nbpoin(0) = nbpoin(2)
-    nitems    = nbfac(2)
-    call icopy(3*nitems,   istak(lbndfac(2)),1,istak(lbndfac(0)),1)
-    call icopy(3*nbpoin(2),istak(lnodptr(2)),1,istak(lnodptr(0)),1)
-    call icopy(npoin(0),istak(lnodcod(2)),1,istak(lnodcod(0)),1)
+    nitems = nbfac(2)
+    call icopy(3*nitems, istak(lbndfac(2)), 1, istak(lbndfac(0)), 1)
+    call icopy(3*nbpoin(2), istak(lnodptr(2)), 1, istak(lnodptr(0)), 1)
+    call icopy(npoin(0), istak(lnodcod(2)), 1, istak(lnodcod(0)), 1)
 
 ! **********************************************************************
 !  Release all pointers allocated for the shocked mesh (1)
 ! **********************************************************************
 
-    call istkrl(lout(1)-lout(0))
+    call istkrl(lout(1) - lout(0))
 
 ! **********************************************************************
 !  Create a directory to backup files
 ! **********************************************************************
 
-    write(backdir(5:9),fmt="(i5.5)")i
-    if(mod(i-1,ibak).eq.0)then
+    write (backdir(5:9), fmt="(i5.5)") i
+    if (mod(i - 1, ibak) .eq. 0) then
       execmd = "mkdir -v "//backdir(1:9)
       ifail = system(execmd)
 !     execmd = "mv shocknor.dat shock.log file00[1-3].dat file010.dat fs
 !    &pl.out shocks.dat "//fname(1:7)//".* "//backdir(1:9)
-      if(eulfs)then
+      if (eulfs) then
         execmd = "mv -v shocknor.dat file00[1-4].dat file010.dat sh&
         &99.dat  "//fname(1:7)//".* "//fnameback(1:4)//".node&
         &                               "//backdir(1:9)
         ifail = system(execmd)
-      elseif(neo)then
+      elseif (neo) then
         execmd = "mv -v shocknor.dat sh99.dat&
         &                                        "//fname(1:7)//".* "//fnameback(1:4)//".node "//&
         &backdir(1:9)
@@ -2037,7 +2036,7 @@ program undifi_2d
 !         end if
 !
         execmd =&
-        &"cp -v ./NEO_data/output/vvvv.dat "// backdir(1:9)
+        &"cp -v ./NEO_data/output/vvvv.dat "//backdir(1:9)
         ifail = system(execmd)
 
         execmd =&
@@ -2055,35 +2054,35 @@ program undifi_2d
 !    &         //backdir(5:9)//".dat"
 !         ifail = system(execmd)
 
-      endif
+      end if
 !         ifail = system(execmd)
     else ! backing up or not ...
 !     execmd = "rm shocknor.dat shock.log file00[1-3].dat file010.dat fs
 !    &pl.out shocks.dat "//fname(1:7)//".*"
-      if(EULFS)then
+      if (EULFS) then
         execmd = "rm shocknor.dat file00[1-4].dat file010.dat&
         &                               "//fname(1:7)//".* "//fnameback(1:4)//".node "//&
         &"sh99.dat "
-      elseif(NEO)then
+      elseif (NEO) then
         execmd = "rm shocknor.dat "//fname(1:7)//".* "//fnameback(1:4)//&
         &".node "//"sh99.dat "
-      endif
+      end if
       ifail = system(execmd)
-    endif
+    end if
 
     if (EULFS) then
       execmd = "cut -c34- convhst.l2 >> convergenza.dat"
       ifail = system(execmd)
     elseif (NEO) then
 !     .. can we do something similar with NEO?
-    endif
+    end if
 
 1000 continue
 
 ! 100 format (12x,a)
 ! 120 format (12x,i6)
 
-  write(*,*)'End program'
+    write (*, *) 'End program'
 
-  stop
-end program undifi_2d
+    stop
+    end program undifi_2d

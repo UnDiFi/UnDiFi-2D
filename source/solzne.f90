@@ -1,27 +1,27 @@
 ! Subroutine for reading(mode='r') and writing(mode='w') nodal values
 
-subroutine solzne(filename,varray,nofvar,npoin,mode)
+subroutine solzne(filename, varray, nofvar, npoin, mode)
 
   implicit none
   include 'paramt.h'
 
 !     .. scalar arguments ..
-  integer nofvar,npoin
-  character filename* (*),mode* (*)
+  integer nofvar, npoin
+  character filename*(*), mode*(*)
 
 !     .. array arguments ..
-  double precision varray(nofvar,npoin)
+  double precision varray(nofvar, npoin)
 
 !     .. local scalars ..
-  integer ifail,ixdrs,npold,nvold
+  integer ifail, ixdrs, npold, nvold
 
 !     .. external functions ..
   integer initxdr
-  integer ixdrint,ixdrimat,ixdrclose,ixdrdmat
+  integer ixdrint, ixdrimat, ixdrclose, ixdrdmat
   external initxdr
 
 !     .. external subroutines ..
-  external seterr,ixdrint,ixdrimat,ixdrclose,ixdrdmat
+  external seterr, ixdrint, ixdrimat, ixdrclose, ixdrdmat
 
 !     .. data statements ..
   data ifail/0/
@@ -33,30 +33,30 @@ subroutine solzne(filename,varray,nofvar,npoin,mode)
 !        write (6,fmt=112) filename
 !      endif
 
-  ixdrs = initxdr(filename,mode,.false.)
+  ixdrs = initxdr(filename, mode, .false.)
 
   npold = npoin
   nvold = nofvar
-  ifail = ixdrint(ixdrs,npoin)
-  ifail = ixdrint(ixdrs,nofvar)
-  if (mode.eq.'r') then
-    if (npoin.ne.npold) call seterr&
+  ifail = ixdrint(ixdrs, npoin)
+  ifail = ixdrint(ixdrs, nofvar)
+  if (mode .eq. 'r') then
+    if (npoin .ne. npold) call seterr&
     &(30hinconsistent npoin in datafile,&
-    &30,1,2)
-    if (nofvar.ne.nvold) call seterr&
+    &30, 1, 2)
+    if (nofvar .ne. nvold) call seterr&
     &(31hinconsistent nofvar in datafile,&
-    &31,1,2)
-  endif
+    &31, 1, 2)
+  end if
 
-  ifail = ixdrdmat(ixdrs,nofvar*npoin,varray)
+  ifail = ixdrdmat(ixdrs, nofvar*npoin, varray)
 !     call x04caf('general',' ',nofvar,npoin,varray,nofvar,
 !    +            'nodal values',ifail)
   ifail = ixdrclose(ixdrs)
 
   return
 
-110 format (/,5x,'reading solution from ',a40,/)
-112 format (/,5x,'writing solution to ',a40,/)
-115 format (' done',/)
+110 format(/, 5x, 'reading solution from ', a40,/)
+112 format(/, 5x, 'writing solution to ', a40,/)
+115 format(' done',/)
 
 end subroutine solzne

@@ -104,3 +104,21 @@ jobs:
           python-version: "3.x"
       - run: pip install -r tests/tools/requirements.txt
       - run: python3 tests/tools/compare.py selftest
+
+  style-check:
+    name: fprettify style check (source/*.f90)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: pip install fprettify
+      - name: Check source/*.f90 is fprettify-clean
+        run: |
+          fprettify --case 1 1 1 1 --diff source/*.f90 > /tmp/fprettify.diff
+          if [ -s /tmp/fprettify.diff ]; then
+            echo "The following files are not fprettify-formatted (run: fprettify --case 1 1 1 1 source/*.f90):"
+            cat /tmp/fprettify.diff
+            exit 1
+          fi

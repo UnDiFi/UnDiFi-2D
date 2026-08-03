@@ -11,30 +11,30 @@ subroutine pr_sh_state(&
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer nshocks,nspecpoints,nshockedges(*),nshockpoints(*),&
-  &isppnts,idummy,nshe
+  integer nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
+  &isppnts, idummy, nshe
 
 !     .. array arguments ..
-  double precision zroesh(ndof,npshmax,*)
+  double precision zroesh(ndof, npshmax, *)
 
 !     .. array arguments ..
 !     character*(*) fname
 
 !     .. local scalars ..
-  integer i,k,ish
+  integer i, k, ish
 
 !     open log file
-  open(8,file='log/re_sdw_info.log')
+  open (8, file='log/re_sdw_info.log')
 
-  do ish=1,nshocks
-    do  k=1, nshockpoints(ish)
-      write(*,*)k,zroesh(1,k,ish),zroesh(2,k,ish)
-    enddo
-  enddo
-  write(*,*)
+  do ish = 1, nshocks
+    do k = 1, nshockpoints(ish)
+      write (*, *) k, zroesh(1, k, ish), zroesh(2, k, ish)
+    end do
+  end do
+  write (*, *)
   pause
   continue
 
-  close(8)
+  close (8)
   return
 end subroutine pr_sh_state

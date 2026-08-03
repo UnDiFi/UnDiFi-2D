@@ -6,8 +6,8 @@ subroutine fx_bndry_wedge
   include 'paramt.h'
 
 !     open log file
-  open(8,file='log/fx_bndry_wedge.log')
+  open (8, file='log/fx_bndry_wedge.log')
 
-  close(8)
+  close (8)
   return
 end subroutine fx_bndry_wedge

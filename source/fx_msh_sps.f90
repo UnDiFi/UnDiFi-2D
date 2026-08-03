@@ -30,36 +30,36 @@ subroutine fx_msh_sps(&
   implicit none
   include 'paramt.h'
 
-  integer nelem,npoin,nvt,nbfac,nbfac_sh,nbfac_new
-  integer nshocks,nshockedges(nshmax),nshockpoints(nshmax)
-  integer nspecpoints,shinspps(2,5,*),ispclr(5,*),nodcod(npoin)
+  integer nelem, npoin, nvt, nbfac, nbfac_sh, nbfac_new
+  integer nshocks, nshockedges(nshmax), nshockpoints(nshmax)
+  integer nspecpoints, shinspps(2, 5, *), ispclr(5, *), nodcod(npoin)
 
 !     .. array arguments ..
-  double precision   xy(ndim,*),&
-  &xysh(ndim,npshmax,*),&
-  &xyshu(ndim,npshmax,*),&
-  &xyshd(ndim,npshmax,*)
-  integer            ibndfac(3,*)
+  double precision xy(ndim, *),&
+  &xysh(ndim, npshmax, *),&
+  &xyshu(ndim, npshmax, *),&
+  &xyshd(ndim, npshmax, *)
+  integer ibndfac(3, *)
 
 !     .. array arguments ..
 !     character*(*) fname
   character*5 typespecpoints(*)
 
 !     .. local scalars ..
-  double precision x0,y0,help,s1,s2,x1,y1,x2,y2,x3,y3,x4,y4
-  integer i,iedg1,iedg2,ifail,ipoin(4),i1,i2,ibc,&
-  &ibfac,ish,ish1,ip1,isppnts,ish2,ip2,&
-  &ilist,ibf,&
-  &ishplistu(npshmax,nshmax),&
-  &ishplistd(npshmax,nshmax),&
-  &idum1,idum2,j1,j2,&
+  double precision x0, y0, help, s1, s2, x1, y1, x2, y2, x3, y3, x4, y4
+  integer i, iedg1, iedg2, ifail, ipoin(4), i1, i2, ibc,&
+  &ibfac, ish, ish1, ip1, isppnts, ish2, ip2,&
+  &ilist, ibf,&
+  &ishplistu(npshmax, nshmax),&
+  &ishplistd(npshmax, nshmax),&
+  &idum1, idum2, j1, j2,&
   &ishel1
 
 !     .. external functions ..
   integer findbedg
 
 !     open log file
-  open(8,file='log/fx_msh_sps.log')
+  open (8, file='log/fx_msh_sps.log')
 
 !     check the intersections of the shock lines
 !
@@ -159,18 +159,18 @@ subroutine fx_msh_sps(&
 ! TODO: check how to modify this part
 
 !      create the shock nodes list
-  ilist=npoin
-  do ish=1,nshmax
-    do i=1,npshmax
-      ilist=ilist+1
-      ishplistu(i,ish)=ilist
+  ilist = npoin
+  do ish = 1, nshmax
+    do i = 1, npshmax
+      ilist = ilist + 1
+      ishplistu(i, ish) = ilist
     end do
   end do
 
-  do ish=1,nshmax
-    do i=1,npshmax
-      ilist=ilist+1
-      ishplistd(i,ish)=ilist
+  do ish = 1, nshmax
+    do i = 1, npshmax
+      ilist = ilist + 1
+      ishplistd(i, ish) = ilist
     end do
   end do
 
@@ -189,21 +189,21 @@ subroutine fx_msh_sps(&
 !***************************************
 
 !     create shock edges (downstream)
-  ibfac=nbfac
-  do ish=1, nshocks
+  ibfac = nbfac
+  do ish = 1, nshocks
     nshockedges(ish) = nshockpoints(ish) - 1
     do i = 1, nshockedges(ish)
-      ibfac=ibfac+1
-      ibndfac(1,ibfac)=ishplistd(i,ish)
-      ibndfac(2,ibfac)=ishplistd(i+1,ish)
-      ibndfac(3,ibfac)=10
+      ibfac = ibfac + 1
+      ibndfac(1, ibfac) = ishplistd(i, ish)
+      ibndfac(2, ibfac) = ishplistd(i + 1, ish)
+      ibndfac(3, ibfac) = 10
     end do
 
     do i = 1, nshockedges(ish)
-      ibfac=ibfac+1
-      ibndfac(1,ibfac)=ishplistu(i,ish)
-      ibndfac(2,ibfac)=ishplistu(i+1,ish)
-      ibndfac(3,ibfac)=10
+      ibfac = ibfac + 1
+      ibndfac(1, ibfac) = ishplistu(i, ish)
+      ibndfac(2, ibfac) = ishplistu(i + 1, ish)
+      ibndfac(3, ibfac) = 10
     end do
   end do
 
@@ -221,22 +221,22 @@ subroutine fx_msh_sps(&
 !
 !     nbfacnew=ibfac
 
-  do isppnts=1,nspecpoints
-    if(typespecpoints(isppnts).eq.'IPX'.or.&
-    &typespecpoints(isppnts).eq.'IPY'.or.&
-    &typespecpoints(isppnts).eq.'OPX'.or.&
-    &typespecpoints(isppnts).eq.'OPY'.or.&
-    &typespecpoints(isppnts).eq.'FWP'.or.&
+  do isppnts = 1, nspecpoints
 !    +     typespecpoints(isppnts).eq.'PC' .or.
-    &typespecpoints(isppnts).eq.'WPNRX'.or.&
-    &typespecpoints(isppnts).eq.'WPNRY')then
+    if (typespecpoints(isppnts) .eq. 'IPX' .or.&
+    &typespecpoints(isppnts) .eq. 'IPY' .or.&
+    &typespecpoints(isppnts) .eq. 'OPX' .or.&
+    &typespecpoints(isppnts) .eq. 'OPY' .or.&
+    &typespecpoints(isppnts) .eq. 'FWP' .or.&
+    &typespecpoints(isppnts) .eq. 'WPNRX' .or.&
+    &typespecpoints(isppnts) .eq. 'WPNRY') then
 
-      ish1 = shinspps(1,1,isppnts)
-      i    = shinspps(2,1,isppnts)-1
-      ip1  = 1+i*(nshockpoints(ish1)-1)
+      ish1 = shinspps(1, 1, isppnts)
+      i = shinspps(2, 1, isppnts) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
 
-      x0 = xyshd(1,ip1,ish1)
-      y0 = xyshd(2,ip1,ish1)
+      x0 = xyshd(1, ip1, ish1)
+      y0 = xyshd(2, ip1, ish1)
 
 !aldo
 !         do ibf=1,nbfac
@@ -250,19 +250,19 @@ subroutine fx_msh_sps(&
 !         enddo
 !aldo
 
-      iedg1 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s1)
-      write(8,*)'typespecpoints:',typespecpoints(isppnts)
-      write(8,*)'s(1) ' ,s1,x0,y0,iedg1
-      if( iedg1 .eq. -1 )then
-        write(8,*)'failed matching 1st shock point of the shock n.'&
-        &,ish1
+      iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+      write (8, *) 'typespecpoints:', typespecpoints(isppnts)
+      write (8, *) 's(1) ', s1, x0, y0, iedg1
+      if (iedg1 .eq. -1) then
+        write (8, *) 'failed matching 1st shock point of the shock n.'&
+        &, ish1
         stop
       else
-        write(8,*)'shockpoint (1) ' ,x0,y0,' falls within ',&
-        &(ibndfac(i,iedg1),i=1,2)
-      endif
-      x0 = xyshu(1,ip1,ish1)
-      y0 = xyshu(2,ip1,ish1)
+        write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+        &(ibndfac(i, iedg1), i=1, 2)
+      end if
+      x0 = xyshu(1, ip1, ish1)
+      y0 = xyshu(2, ip1, ish1)
 
 !         do ibf=1,nbfac
 !          i1 = ibndfac(1,ibf)
@@ -274,518 +274,518 @@ subroutine fx_msh_sps(&
 !         write(8,*)ibf,(y0-y1)*(x2-x1)-(x0-x1)*(y2-y1)
 !         enddo
 
-      iedg2 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s2)
+      iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
 
-      write(8,*)'shockpoint (2) ' ,x0,y0,' falls within ',&
-      &(ibndfac(i,iedg2),i=1,2)
-      write(8,*)'s(2) ' ,s2,x0,y0,iedg2
-      if( iedg2 .eq. -1 )then
-        write(8,*)'failed matching 2nd shock point of the shock n.'&
-        &,ish1
+      write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg2), i=1, 2)
+      write (8, *) 's(2) ', s2, x0, y0, iedg2
+      if (iedg2 .eq. -1) then
+        write (8, *) 'failed matching 2nd shock point of the shock n.'&
+        &, ish1
         stop
-      endif
+      end if
 
 !        check if the shock crosses a bndry point
-      if( s1 .lt. 0.d0 .or. s1 .gt. 1.d0.or.&
-      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0 )then
-        write(8,*)'s(',i,') out of bounds',s1,s2
+      if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+        write (8, *) 's(', i, ') out of bounds', s1, s2
         stop
-      endif
-      if( iedg2 .ne. iedg1 )then
-        write(8,*)'shock points (1) (2) not on the same bndry edge'
-        write(8,*)iedg1,iedg2
-        write(8,*)s1,s2
+      end if
+      if (iedg2 .ne. iedg1) then
+        write (8, *) 'shock points (1) (2) not on the same bndry edge'
+        write (8, *) iedg1, iedg2
+        write (8, *) s1, s2
         stop
-      endif
+      end if
 
 !        split the existing edges of the background mesh
 !        if the first point of the shock  is at the boundary
-      write(8,*)'**********************'
-      write(8,*)'shock:',ish1
-      write(8,*)iedg1
-      write(8,*)'**********************'
-      if(iedg1.gt.0)then
+      write (8, *) '**********************'
+      write (8, *) 'shock:', ish1
+      write (8, *) iedg1
+      write (8, *) '**********************'
+      if (iedg1 .gt. 0) then
 
-        i   = iedg1
-        i1  = ibndfac(1,i)
-        i2  = ibndfac(2,i)
-        ibc = ibndfac(3,i)
+        i = iedg1
+        i1 = ibndfac(1, i)
+        i2 = ibndfac(2, i)
+        ibc = ibndfac(3, i)
 
 ! ************************************************************
 
-        if(nodcod(i1).lt.0.or.nodcod(i2).lt.0)then
+        if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
 !             write(*,*) 'stopped'
 !             write(*,*)'nodcod(1):',nodcod(i1)
 !             write(*,*)'nodcod(2):',nodcod(i2)
 !             write(*,*)'s1:',s1
 !             write(*,*)'s2:',s2
 !             write(*,*)
-          if(nodcod(i1).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(1,i)=ishplistu(ip1,ish1)
-            idum1=i1
-            idum2=ishplistd(ip1,ish1)
-          elseif(nodcod(i1).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(1,i)=ishplistd(ip1,ish1)
-            idum1=i1
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(2,i)=ishplistd(ip1,ish1)
-            idum1=i2
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(2,i)=ishplistu(ip1,ish1)
-            idum1=i2
-            idum2=ishplistd(ip1,ish1)
-          endif
-          do ibf=1,nbfac
-            if(ibndfac(1,ibf).eq.idum1)ibndfac(1,ibf)=idum2
-            if(ibndfac(2,ibf).eq.idum1)ibndfac(2,ibf)=idum2
-          enddo
+          if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(1, i) = ishplistu(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistd(ip1, ish1)
+          elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(1, i) = ishplistd(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(2, i) = ishplistd(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(2, i) = ishplistu(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistd(ip1, ish1)
+          end if
+          do ibf = 1, nbfac
+            if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+            if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+          end do
 
         else
 ! *****************************************************
-          ibndfac(3,i)=-ibc
-          write(8,*)'removing background edge ' ,i,i1,i2
+          ibndfac(3, i) = -ibc
+          write (8, *) 'removing background edge ', i, i1, i2
 
 !          create 2 new edges at boundary
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistd(ip1,ish1)
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistd(ip1, ish1)
           else
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistu(ip1,ish1)
-          endif
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistu(ip1, ish1)
+          end if
 
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=ishplistu(ip1,ish1)
-            ibndfac(2,ibfac)=i2
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = ishplistu(ip1, ish1)
+            ibndfac(2, ibfac) = i2
           else
-            ibndfac(1,ibfac)=ishplistd(ip1,ish1)
-            ibndfac(2,ibfac)=i2
-          endif
-        endif
-      endif
+            ibndfac(1, ibfac) = ishplistd(ip1, ish1)
+            ibndfac(2, ibfac) = i2
+          end if
+        end if
+      end if
 
-    elseif(typespecpoints(isppnts).eq.'PC') then
+    elseif (typespecpoints(isppnts) .eq. 'PC') then
 
 ! point 1
 
-      ish1 = shinspps(1,1,isppnts)
-      i    = shinspps(2,1,isppnts)-1
-      ip1  = 1+i*(nshockpoints(ish1)-1)
+      ish1 = shinspps(1, 1, isppnts)
+      i = shinspps(2, 1, isppnts) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
 
-      x0 = xyshd(1,ip1,ish1)
-      y0 = xyshd(2,ip1,ish1)
+      x0 = xyshd(1, ip1, ish1)
+      y0 = xyshd(2, ip1, ish1)
 !aldo
-      do ibf=1,nbfac
-        i1 = ibndfac(1,ibf)
-        i2 = ibndfac(2,ibf)
-        x1 = xy(1,i1)
-        y1 = xy(2,i1)
-        x2 = xy(1,i2)
-        y2 = xy(2,i2)
-        write(8,*)ibf,(y0-y1)*(x2-x1)-(x0-x1)*(y2-y1)
-      enddo
+      do ibf = 1, nbfac
+        i1 = ibndfac(1, ibf)
+        i2 = ibndfac(2, ibf)
+        x1 = xy(1, i1)
+        y1 = xy(2, i1)
+        x2 = xy(1, i2)
+        y2 = xy(2, i2)
+        write (8, *) ibf, (y0 - y1)*(x2 - x1) - (x0 - x1)*(y2 - y1)
+      end do
 !aldo
 
-      iedg1 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s1)
-      write(8,*)'typespecpoints:',typespecpoints(isppnts)
-      write(8,*)'s(1) ' ,s1,x0,y0,iedg1
-      if( iedg1 .eq. -1 )then
-        write(8,*)'failed matching 1st shock point of the shock n.'&
-        &,ish1
+      iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+      write (8, *) 'typespecpoints:', typespecpoints(isppnts)
+      write (8, *) 's(1) ', s1, x0, y0, iedg1
+      if (iedg1 .eq. -1) then
+        write (8, *) 'failed matching 1st shock point of the shock n.'&
+        &, ish1
         stop
       else
-        write(8,*)'shockpoint (1) ' ,x0,y0,' falls within ',&
-        &(ibndfac(i,iedg1),i=1,2)
-      endif
-      x0 = xyshu(1,ip1,ish1)
-      y0 = xyshu(2,ip1,ish1)
+        write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+        &(ibndfac(i, iedg1), i=1, 2)
+      end if
+      x0 = xyshu(1, ip1, ish1)
+      y0 = xyshu(2, ip1, ish1)
 
-      do ibf=1,nbfac
-        i1 = ibndfac(1,ibf)
-        i2 = ibndfac(2,ibf)
-        x1 = xy(1,i1)
-        y1 = xy(2,i1)
-        x2 = xy(1,i2)
-        y2 = xy(2,i2)
-        write(8,*)ibf,(y0-y1)*(x2-x1)-(x0-x1)*(y2-y1)
-      enddo
+      do ibf = 1, nbfac
+        i1 = ibndfac(1, ibf)
+        i2 = ibndfac(2, ibf)
+        x1 = xy(1, i1)
+        y1 = xy(2, i1)
+        x2 = xy(1, i2)
+        y2 = xy(2, i2)
+        write (8, *) ibf, (y0 - y1)*(x2 - x1) - (x0 - x1)*(y2 - y1)
+      end do
 
-      iedg2 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s2)
+      iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
 
-      write(8,*)'shockpoint (2) ' ,x0,y0,' falls within ',&
-      &(ibndfac(i,iedg2),i=1,2)
-      write(8,*)'s(2) ' ,s2,x0,y0,iedg2
-      if( iedg2 .eq. -1 )then
-        write(8,*)'failed matching 2nd shock point of the shock n.'&
-        &,ish1
+      write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg2), i=1, 2)
+      write (8, *) 's(2) ', s2, x0, y0, iedg2
+      if (iedg2 .eq. -1) then
+        write (8, *) 'failed matching 2nd shock point of the shock n.'&
+        &, ish1
         stop
-      endif
+      end if
 
 !        check if the shock crosses a bndry point
-      if( s1 .lt. 0.d0 .or. s1 .gt. 1.d0.or.&
-      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0 )then
-        write(8,*)'s(',i,') out of bounds',s1,s2
+      if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+        write (8, *) 's(', i, ') out of bounds', s1, s2
         stop
-      endif
-      if( iedg2 .ne. iedg1 )then
-        write(8,*)'shock points (1) (2) not on the same bndry edge'
-        write(8,*)iedg1,iedg2
-        write(8,*)s1,s2
+      end if
+      if (iedg2 .ne. iedg1) then
+        write (8, *) 'shock points (1) (2) not on the same bndry edge'
+        write (8, *) iedg1, iedg2
+        write (8, *) s1, s2
         stop
-      endif
+      end if
 
 !        split the existing edges of the background mesh
 !        if the first point of the shock is at the boundary
-      write(8,*)'**********************'
-      write(8,*)'shock:',ish1
-      write(8,*)iedg1
-      write(8,*)'**********************'
-      if(iedg1.gt.0)then
+      write (8, *) '**********************'
+      write (8, *) 'shock:', ish1
+      write (8, *) iedg1
+      write (8, *) '**********************'
+      if (iedg1 .gt. 0) then
 
-        i   = iedg1
-        i1  = ibndfac(1,i)
-        i2  = ibndfac(2,i)
-        ibc = ibndfac(3,i)
+        i = iedg1
+        i1 = ibndfac(1, i)
+        i2 = ibndfac(2, i)
+        ibc = ibndfac(3, i)
 
 ! ************************************************************
 
-        if(nodcod(i1).lt.0.or.nodcod(i2).lt.0)then
+        if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
 !             write(*,*) 'stopped!'
 !             write(*,*)'nodcod(1):',nodcod(i1)
 !             write(*,*)'nodcod(2):',nodcod(i2)
 !             write(*,*)'s1:',s1
 !             write(*,*)'s2:',s2
 !             write(*,*)
-          if(nodcod(i1).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(1,i)=ishplistu(ip1,ish1)
-            idum1=i1
-            idum2=ishplistd(ip1,ish1)
-          elseif(nodcod(i1).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(1,i)=ishplistd(ip1,ish1)
-            idum1=i1
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(2,i)=ishplistd(ip1,ish1)
-            idum1=i2
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(2,i)=ishplistu(ip1,ish1)
-            idum1=i2
-            idum2=ishplistd(ip1,ish1)
-          endif
-          do ibf=1,nbfac
-            if(ibndfac(1,ibf).eq.idum1)ibndfac(1,ibf)=idum2
-            if(ibndfac(2,ibf).eq.idum1)ibndfac(2,ibf)=idum2
-          enddo
+          if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(1, i) = ishplistu(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistd(ip1, ish1)
+          elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(1, i) = ishplistd(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(2, i) = ishplistd(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(2, i) = ishplistu(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistd(ip1, ish1)
+          end if
+          do ibf = 1, nbfac
+            if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+            if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+          end do
 
         else
 
 ! *****************************************************
 
-          ibndfac(3,i)=-ibc
-          write(8,*)'removing background edge ' ,i,i1,i2
+          ibndfac(3, i) = -ibc
+          write (8, *) 'removing background edge ', i, i1, i2
 
 !          create 2 new edges at  boundary
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistd(ip1,ish1)
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistd(ip1, ish1)
           else
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistu(ip1,ish1)
-          endif
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistu(ip1, ish1)
+          end if
 
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=ishplistu(ip1,ish1)
-            ibndfac(2,ibfac)=i2
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = ishplistu(ip1, ish1)
+            ibndfac(2, ibfac) = i2
           else
-            ibndfac(1,ibfac)=ishplistd(ip1,ish1)
-            ibndfac(2,ibfac)=i2
-          endif
-        endif
-      endif
+            ibndfac(1, ibfac) = ishplistd(ip1, ish1)
+            ibndfac(2, ibfac) = i2
+          end if
+        end if
+      end if
 
 ! point 2
 
-      ish1 = shinspps(1,2,isppnts)
-      i    = shinspps(2,2,isppnts)-1
-      ip1  = 1+i*(nshockpoints(ish1)-1)
+      ish1 = shinspps(1, 2, isppnts)
+      i = shinspps(2, 2, isppnts) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
 
-      x0 = xyshd(1,ip1,ish1)
-      y0 = xyshd(2,ip1,ish1)
+      x0 = xyshd(1, ip1, ish1)
+      y0 = xyshd(2, ip1, ish1)
 
 !aldo
-      do ibf=1,nbfac
-        i1 = ibndfac(1,ibf)
-        i2 = ibndfac(2,ibf)
-        x1 = xy(1,i1)
-        y1 = xy(2,i1)
-        x2 = xy(1,i2)
-        y2 = xy(2,i2)
-        write(8,*)ibf,(y0-y1)*(x2-x1)-(x0-x1)*(y2-y1)
-      enddo
+      do ibf = 1, nbfac
+        i1 = ibndfac(1, ibf)
+        i2 = ibndfac(2, ibf)
+        x1 = xy(1, i1)
+        y1 = xy(2, i1)
+        x2 = xy(1, i2)
+        y2 = xy(2, i2)
+        write (8, *) ibf, (y0 - y1)*(x2 - x1) - (x0 - x1)*(y2 - y1)
+      end do
 !aldo
 
-      iedg1 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s1)
-      write(8,*)'typespecpoints:',typespecpoints(isppnts)
-      write(8,*)'s(1) ' ,s1,x0,y0,iedg1
-      if( iedg1 .eq. -1 )then
-        write(8,*)'failed matching 1st shock point of the shock n.'&
-        &,ish1
+      iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+      write (8, *) 'typespecpoints:', typespecpoints(isppnts)
+      write (8, *) 's(1) ', s1, x0, y0, iedg1
+      if (iedg1 .eq. -1) then
+        write (8, *) 'failed matching 1st shock point of the shock n.'&
+        &, ish1
         stop
       else
-        write(8,*)'shockpoint (1) ' ,x0,y0,' falls within ',&
-        &(ibndfac(i,iedg1),i=1,2)
-      endif
-      x0 = xyshu(1,ip1,ish1)
-      y0 = xyshu(2,ip1,ish1)
+        write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+        &(ibndfac(i, iedg1), i=1, 2)
+      end if
+      x0 = xyshu(1, ip1, ish1)
+      y0 = xyshu(2, ip1, ish1)
 
-      do ibf=1,nbfac
-        i1 = ibndfac(1,ibf)
-        i2 = ibndfac(2,ibf)
-        x1 = xy(1,i1)
-        y1 = xy(2,i1)
-        x2 = xy(1,i2)
-        y2 = xy(2,i2)
-        write(8,*)ibf,(y0-y1)*(x2-x1)-(x0-x1)*(y2-y1)
-      enddo
+      do ibf = 1, nbfac
+        i1 = ibndfac(1, ibf)
+        i2 = ibndfac(2, ibf)
+        x1 = xy(1, i1)
+        y1 = xy(2, i1)
+        x2 = xy(1, i2)
+        y2 = xy(2, i2)
+        write (8, *) ibf, (y0 - y1)*(x2 - x1) - (x0 - x1)*(y2 - y1)
+      end do
 
-      iedg2 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s2)
+      iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
 
-      write(8,*)'shockpoint (2) ' ,x0,y0,' falls within ',&
-      &(ibndfac(i,iedg2),i=1,2)
-      write(8,*)'s(2) ' ,s2,x0,y0,iedg2
-      if( iedg2 .eq. -1 )then
-        write(8,*)'failed matching 2nd shock point of the shock n.'&
-        &,ish1
+      write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg2), i=1, 2)
+      write (8, *) 's(2) ', s2, x0, y0, iedg2
+      if (iedg2 .eq. -1) then
+        write (8, *) 'failed matching 2nd shock point of the shock n.'&
+        &, ish1
         stop
-      endif
+      end if
 
 !        check if the shock crosses a bndry point
-      if( s1 .lt. 0.d0 .or. s1 .gt. 1.d0.or.&
-      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0 )then
-        write(8,*)'s(',i,') out of bounds',s1,s2
+      if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+        write (8, *) 's(', i, ') out of bounds', s1, s2
         stop
-      endif
-      if( iedg2 .ne. iedg1 )then
-        write(8,*)'shock points (1) (2) not on the same bndry edge'
-        write(8,*)iedg1,iedg2
-        write(8,*)s1,s2
+      end if
+      if (iedg2 .ne. iedg1) then
+        write (8, *) 'shock points (1) (2) not on the same bndry edge'
+        write (8, *) iedg1, iedg2
+        write (8, *) s1, s2
         stop
-      endif
+      end if
 
 !        split the existing edges of the background mesh
 !        if the first point of the shock is at the boundary
-      write(8,*)'**********************'
-      write(8,*)'shock:',ish1
-      write(8,*)iedg1
-      write(8,*)'**********************'
-      if(iedg1.gt.0)then
+      write (8, *) '**********************'
+      write (8, *) 'shock:', ish1
+      write (8, *) iedg1
+      write (8, *) '**********************'
+      if (iedg1 .gt. 0) then
 
-        i   = iedg1
-        i1  = ibndfac(1,i)
-        i2  = ibndfac(2,i)
-        ibc = ibndfac(3,i)
+        i = iedg1
+        i1 = ibndfac(1, i)
+        i2 = ibndfac(2, i)
+        ibc = ibndfac(3, i)
 
 ! ***********************************************************
 
-        if(nodcod(i1).lt.0.or.nodcod(i2).lt.0)then
+        if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
 !             write(*,*) 'stopped!'
 !             write(*,*)'nodcod(1):',nodcod(i1)
 !             write(*,*)'nodcod(2):',nodcod(i2)
 !             write(*,*)'s1:',s1
 !             write(*,*)'s2:',s2
 !             write(*,*)
-          if(nodcod(i1).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(1,i)=ishplistu(ip1,ish1)
-            idum1=i1
-            idum2=ishplistd(ip1,ish1)
-          elseif(nodcod(i1).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(1,i)=ishplistd(ip1,ish1)
-            idum1=i1
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(2,i)=ishplistd(ip1,ish1)
-            idum1=i2
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(2,i)=ishplistu(ip1,ish1)
-            idum1=i2
-            idum2=ishplistd(ip1,ish1)
-          endif
-          do ibf=1,nbfac
-            if(ibndfac(1,ibf).eq.idum1)ibndfac(1,ibf)=idum2
-            if(ibndfac(2,ibf).eq.idum1)ibndfac(2,ibf)=idum2
-          enddo
+          if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(1, i) = ishplistu(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistd(ip1, ish1)
+          elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(1, i) = ishplistd(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(2, i) = ishplistd(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(2, i) = ishplistu(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistd(ip1, ish1)
+          end if
+          do ibf = 1, nbfac
+            if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+            if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+          end do
 
         else
 
 ! *****************************************************
 
-          ibndfac(3,i)=-ibc
-          write(8,*)'removing background edge ' ,i,i1,i2
+          ibndfac(3, i) = -ibc
+          write (8, *) 'removing background edge ', i, i1, i2
 
 !          create 2 new edges at boundary
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistd(ip1,ish1)
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistd(ip1, ish1)
           else
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistu(ip1,ish1)
-          endif
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistu(ip1, ish1)
+          end if
 
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=ishplistu(ip1,ish1)
-            ibndfac(2,ibfac)=i2
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = ishplistu(ip1, ish1)
+            ibndfac(2, ibfac) = i2
           else
-            ibndfac(1,ibfac)=ishplistd(ip1,ish1)
-            ibndfac(2,ibfac)=i2
-          endif
-        endif
-      endif
+            ibndfac(1, ibfac) = ishplistd(ip1, ish1)
+            ibndfac(2, ibfac) = i2
+          end if
+        end if
+      end if
 
-    elseif(typespecpoints(isppnts).eq.'TE')then
+    elseif (typespecpoints(isppnts) .eq. 'TE') then
 
-      ish1 = shinspps(1,1,isppnts)
-      i    = shinspps(2,1,isppnts)-1
-      ip1  = 1+i*(nshockpoints(ish1)-1)
+      ish1 = shinspps(1, 1, isppnts)
+      i = shinspps(2, 1, isppnts) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
 
-      ish2 = shinspps(1,3,isppnts)
-      i    = shinspps(2,3,isppnts)-1
-      ip2  = 1+i*(nshockpoints(ish2)-1)
+      ish2 = shinspps(1, 3, isppnts)
+      i = shinspps(2, 3, isppnts) - 1
+      ip2 = 1 + i*(nshockpoints(ish2) - 1)
 
-      x0 = xysh(1,ip1,ish1)
-      y0 = xysh(2,ip1,ish1)
+      x0 = xysh(1, ip1, ish1)
+      y0 = xysh(2, ip1, ish1)
 !         write(*,*)'x0,y0 1 ',x0,y0
 
-      iedg1 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s1)
-      write(8,*)'typespecpoints:',typespecpoints(isppnts)
-      write(8,*)'s(1) ' ,s1,x0,y0,iedg1
-      if( iedg1 .eq. -1)then
-        write(8,*)'failed matching 1st shock point of the shock n.'&
-        &,ish1
+      iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+      write (8, *) 'typespecpoints:', typespecpoints(isppnts)
+      write (8, *) 's(1) ', s1, x0, y0, iedg1
+      if (iedg1 .eq. -1) then
+        write (8, *) 'failed matching 1st shock point of the shock n.'&
+        &, ish1
         stop
       else
-        write(8,*)'shockpoint (1)' ,x0,y0,' falls within ',&
-        &(ibndfac(i,iedg1),i=1,2)
-      endif
+        write (8, *) 'shockpoint (1)', x0, y0, ' falls within ',&
+        &(ibndfac(i, iedg1), i=1, 2)
+      end if
 
-      i   = iedg1
-      i1  = ibndfac(1,i)
-      i2  = ibndfac(2,i)
-      ibc = ibndfac(3,i)
+      i = iedg1
+      i1 = ibndfac(1, i)
+      i2 = ibndfac(2, i)
+      ibc = ibndfac(3, i)
 
-      ibndfac(3,i)=-ibc
-      write(8,*)'removing background edge ' ,i,i1,i2
+      ibndfac(3, i) = -ibc
+      write (8, *) 'removing background edge ', i, i1, i2
 
 !           create a new edge at boundary
-      ibfac=ibfac+1
-      ibndfac(3,ibfac)=ibc
-      if( nodcod(i1)  .lt. 0.0d0 )then
-        ibndfac(1,ibfac)=ishplistu(ip1,ish1)
-        ibndfac(2,ibfac)=i2
-        j1=1
-      elseif(nodcod(i2)  .lt. 0.0d0)then
-        ibndfac(1,ibfac)=i1
-        ibndfac(2,ibfac)=ishplistu(ip1,ish1)
-        j1=2
+      ibfac = ibfac + 1
+      ibndfac(3, ibfac) = ibc
+      if (nodcod(i1) .lt. 0.0d0) then
+        ibndfac(1, ibfac) = ishplistu(ip1, ish1)
+        ibndfac(2, ibfac) = i2
+        j1 = 1
+      elseif (nodcod(i2) .lt. 0.0d0) then
+        ibndfac(1, ibfac) = i1
+        ibndfac(2, ibfac) = ishplistu(ip1, ish1)
+        j1 = 2
       else
-        write(*,*)'condition not considered'
+        write (*, *) 'condition not considered'
         stop
-      endif
+      end if
 
-      x0 = xysh(1,ip2,ish2)
-      y0 = xysh(2,ip2,ish2)
+      x0 = xysh(1, ip2, ish2)
+      y0 = xysh(2, ip2, ish2)
 !         write(*,*)'x0,y0 2 ',x0,y0
 
-      iedg2 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s1)
-      write(8,*)'typespecpoints:',typespecpoints(isppnts)
-      write(8,*)'s(2) ' ,s1,x0,y0,iedg2
-      if( iedg2 .eq. -1)then
-        write(8,*)'failed matching 1st shock point of the shock n.'&
-        &,ish2
+      iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+      write (8, *) 'typespecpoints:', typespecpoints(isppnts)
+      write (8, *) 's(2) ', s1, x0, y0, iedg2
+      if (iedg2 .eq. -1) then
+        write (8, *) 'failed matching 1st shock point of the shock n.'&
+        &, ish2
         stop
       else
-        write(8,*)'shockpoint (2)' ,x0,y0,' falls within ',&
-        &(ibndfac(i,iedg2),i=1,2)
-      endif
+        write (8, *) 'shockpoint (2)', x0, y0, ' falls within ',&
+        &(ibndfac(i, iedg2), i=1, 2)
+      end if
 
-      i   = iedg2
-      i1  = ibndfac(1,i)
-      i2  = ibndfac(2,i)
-      ibc = ibndfac(3,i)
+      i = iedg2
+      i1 = ibndfac(1, i)
+      i2 = ibndfac(2, i)
+      ibc = ibndfac(3, i)
 !          write(*,*)'iedg2    :',iedg2
 !          write(*,*)'nodcod(1):',nodcod(i1),i1
 !          write(*,*)'nodcod(2):',nodcod(i2),i2
 !          write(*,*)'ibc:      ',ibc
 
-      ibndfac(3,i)=-ibc
-      write(8,*)'removing background edge ' ,i,i1,i2
+      ibndfac(3, i) = -ibc
+      write (8, *) 'removing background edge ', i, i1, i2
 
 !           create a new edge at boundary
-      ibfac=ibfac+1
-      ibndfac(3,ibfac)=ibc
-      if( nodcod(i1)  .lt. 0.0d0 )then
-        ibndfac(1,ibfac)=ishplistu(ip2,ish2)
-        ibndfac(2,ibfac)=i2
-        j2=1
-      elseif(nodcod(i2)  .lt. 0.0d0)then
-        ibndfac(1,ibfac)=i1
-        ibndfac(2,ibfac)=ishplistu(ip2,ish2)
-        j2=2
+      ibfac = ibfac + 1
+      ibndfac(3, ibfac) = ibc
+      if (nodcod(i1) .lt. 0.0d0) then
+        ibndfac(1, ibfac) = ishplistu(ip2, ish2)
+        ibndfac(2, ibfac) = i2
+        j2 = 1
+      elseif (nodcod(i2) .lt. 0.0d0) then
+        ibndfac(1, ibfac) = i1
+        ibndfac(2, ibfac) = ishplistu(ip2, ish2)
+        j2 = 2
       else
-        write(*,*)'condition not considered'
+        write (*, *) 'condition not considered'
         stop
-      endif
+      end if
 
 !          check cross
-      x1= xy(1,ibndfac(1,ibfac))
-      y1= xy(2,ibndfac(1,ibfac))
-      x2= xy(1,ibndfac(2,ibfac))
-      y2= xy(2,ibndfac(2,ibfac))
-      x3= xy(1,ibndfac(1,ibfac-1))
-      y3= xy(2,ibndfac(1,ibfac-1))
-      x4= xy(1,ibndfac(2,ibfac-1))
-      y4= xy(2,ibndfac(2,ibfac-1))
+      x1 = xy(1, ibndfac(1, ibfac))
+      y1 = xy(2, ibndfac(1, ibfac))
+      x2 = xy(1, ibndfac(2, ibfac))
+      y2 = xy(2, ibndfac(2, ibfac))
+      x3 = xy(1, ibndfac(1, ibfac - 1))
+      y3 = xy(2, ibndfac(1, ibfac - 1))
+      x4 = xy(1, ibndfac(2, ibfac - 1))
+      y4 = xy(2, ibndfac(2, ibfac - 1))
 
-      idum1=ishel1(x1, y1, x1, y1 ,x2, y2, x3, y3,&
+      idum1 = ishel1(x1, y1, x1, y1, x2, y2, x3, y3,&
       &x4, y4)
 
 !          write(*,*)'ishel1:',idum1
-      if(idum1.eq.0.)then
+      if (idum1 .eq. 0.) then
 
-        if( j1.eq.1 )then
-          ibndfac(1,ibfac-1)=ishplistu(ip2,ish2)
-        elseif(j1.eq.2)then
-          ibndfac(2,ibfac-1)=ishplistu(ip2,ish2)
+        if (j1 .eq. 1) then
+          ibndfac(1, ibfac - 1) = ishplistu(ip2, ish2)
+        elseif (j1 .eq. 2) then
+          ibndfac(2, ibfac - 1) = ishplistu(ip2, ish2)
         else
-          write(*,*)'condition not considered'
+          write (*, *) 'condition not considered'
           stop
-        endif
+        end if
 
-        if( j2.eq.1 )then
-          ibndfac(1,ibfac)=ishplistu(ip1,ish1)
-        elseif(j2.eq.2)then
-          ibndfac(2,ibfac)=ishplistu(ip1,ish1)
+        if (j2 .eq. 1) then
+          ibndfac(1, ibfac) = ishplistu(ip1, ish1)
+        elseif (j2 .eq. 2) then
+          ibndfac(2, ibfac) = ishplistu(ip1, ish1)
         else
-          write(*,*)'condition not considered'
+          write (*, *) 'condition not considered'
           stop
-        endif
+        end if
 
-      endif
+      end if
 
 !          i   = iedg2
 !          i1  = ibndfac(1,i)
@@ -798,150 +798,150 @@ subroutine fx_msh_sps(&
 
 !         pause
 
-    elseif(typespecpoints(isppnts).eq.'RRX'.or.&
-    &typespecpoints(isppnts).eq.'RR')then
+    elseif (typespecpoints(isppnts) .eq. 'RRX' .or.&
+    &typespecpoints(isppnts) .eq. 'RR') then
 
-      ish1 = shinspps(1,1,isppnts)
-      i    = shinspps(2,1,isppnts)-1
-      ip1  = 1+i*(nshockpoints(ish1)-1)
+      ish1 = shinspps(1, 1, isppnts)
+      i = shinspps(2, 1, isppnts) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
 
-      ish2 = shinspps(1,2,isppnts)
-      i    = shinspps(2,2,isppnts)-1
-      ip2  = 1+i*(nshockpoints(ish2)-1)
+      ish2 = shinspps(1, 2, isppnts)
+      i = shinspps(2, 2, isppnts) - 1
+      ip2 = 1 + i*(nshockpoints(ish2) - 1)
 
-      x0 = xyshd(1,ip2,ish2)
-      y0 = xyshd(2,ip2,ish2)
+      x0 = xyshd(1, ip2, ish2)
+      y0 = xyshd(2, ip2, ish2)
 
-      write(8,*)'typespecpoints:',typespecpoints(isppnts)
-      iedg1 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s1)
-      write(8,*)'s(1) ' ,s1,x0,y0,iedg1
-      if( iedg1 .eq. -1 )then
-        write(8,*)'failed matching 1st shock point of the shock n.'&
-        &,ish2
+      write (8, *) 'typespecpoints:', typespecpoints(isppnts)
+      iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+      write (8, *) 's(1) ', s1, x0, y0, iedg1
+      if (iedg1 .eq. -1) then
+        write (8, *) 'failed matching 1st shock point of the shock n.'&
+        &, ish2
         stop
       else
-        write(8,*)'shockpoint (1) ' ,x0,y0,' falls within ',&
-        &(ibndfac(i,iedg1),i=1,2)
-      endif
-      x0 = xyshu(1,ip1,ish1)
-      y0 = xyshu(2,ip1,ish1)
-      iedg2 = findbedg(xy,ndim,ibndfac,nbfac,x0,y0,s2)
+        write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+        &(ibndfac(i, iedg1), i=1, 2)
+      end if
+      x0 = xyshu(1, ip1, ish1)
+      y0 = xyshu(2, ip1, ish1)
+      iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
 
-      write(8,*)'shockpoint (2) ' ,x0,y0,' falls within ',&
-      &(ibndfac(i,iedg2),i=1,2)
-      write(8,*)'s(2) ' ,s2,x0,y0,iedg2
-      if( iedg2 .eq. -1 )then
-        write(8,*)'failed matching 2nd shock point of the shock n.'&
-        &,ish1
+      write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg2), i=1, 2)
+      write (8, *) 's(2) ', s2, x0, y0, iedg2
+      if (iedg2 .eq. -1) then
+        write (8, *) 'failed matching 2nd shock point of the shock n.'&
+        &, ish1
         stop
-      endif
+      end if
 
 !     check if the shock crosses a bndry point
 
-      if( s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
-      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0 )then
-        write(8,*)'out of bounds',s1,s2
+      if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+        write (8, *) 'out of bounds', s1, s2
         stop
-      endif
-      if( iedg1 .ne. iedg2 )then
-        write(8,*)'shock points (1) (2) not on the same bndry edge'
-        write(8,*)iedg1,iedg2
-        write(8,*)s1,s2
+      end if
+      if (iedg1 .ne. iedg2) then
+        write (8, *) 'shock points (1) (2) not on the same bndry edge'
+        write (8, *) iedg1, iedg2
+        write (8, *) s1, s2
         stop
-      endif
+      end if
 
 !        split the existing edges of the background mesh
 !        if the first point of the shock is at the boundary
-      write(8,*)'**********************'
-      write(8,*)'shock:',ish1
-      write(8,*)iedg1
-      write(8,*)'**********************'
-      if(iedg1.gt.0)then
-        i   = iedg1
-        i1  = ibndfac(1,i)
-        i2  = ibndfac(2,i)
-        ibc = ibndfac(3,i)
+      write (8, *) '**********************'
+      write (8, *) 'shock:', ish1
+      write (8, *) iedg1
+      write (8, *) '**********************'
+      if (iedg1 .gt. 0) then
+        i = iedg1
+        i1 = ibndfac(1, i)
+        i2 = ibndfac(2, i)
+        ibc = ibndfac(3, i)
 
 ! ***********************************************************
 
-        if(nodcod(i1).lt.0.or.nodcod(i2).lt.0)then
+        if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
 !             write(*,*) 'stopped!'
 !             write(*,*)'nodcod(1):',nodcod(i1)
 !             write(*,*)'nodcod(2):',nodcod(i2)
 !             write(*,*)'s1:',s1
 !             write(*,*)'s2:',s2
 !             write(*,*)
-          if(nodcod(i1).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(1,i)=ishplistu(ip1,ish1)
-            idum1=i1
-            idum2=ishplistd(ip2,ish2)
-          elseif(nodcod(i1).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(1,i)=ishplistd(ip2,ish2)
-            idum1=i1
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.lt.s2)then
-            ibndfac(2,i)=ishplistd(ip2,ish2)
-            idum1=i2
-            idum2=ishplistu(ip1,ish1)
-          elseif(nodcod(i2).lt.0.d+0.and.s1.gt.s2)then
-            ibndfac(2,i)=ishplistu(ip1,ish1)
-            idum1=i2
-            idum2=ishplistd(ip2,ish2)
-          endif
-          do ibf=1,nbfac
-            if(ibndfac(1,ibf).eq.idum1)ibndfac(1,ibf)=idum2
-            if(ibndfac(2,ibf).eq.idum1)ibndfac(2,ibf)=idum2
-          enddo
+          if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(1, i) = ishplistu(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistd(ip2, ish2)
+          elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(1, i) = ishplistd(ip2, ish2)
+            idum1 = i1
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(2, i) = ishplistd(ip2, ish2)
+            idum1 = i2
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(2, i) = ishplistu(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistd(ip2, ish2)
+          end if
+          do ibf = 1, nbfac
+            if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+            if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+          end do
 
         else
 
 ! *****************************************************
 
-          ibndfac(3,i)=-ibc
-          write(8,*)'removing background edge ' ,i,i1,i2
+          ibndfac(3, i) = -ibc
+          write (8, *) 'removing background edge ', i, i1, i2
 
 !          create 2 new edges at boundary
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistd(ip2,ish2)
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistd(ip2, ish2)
           else
-            ibndfac(1,ibfac)=i1
-            ibndfac(2,ibfac)=ishplistu(ip1,ish1)
-          endif
+            ibndfac(1, ibfac) = i1
+            ibndfac(2, ibfac) = ishplistu(ip1, ish1)
+          end if
 
-          ibfac=ibfac+1
-          ibndfac(3,ibfac)=ibc
-          if( s1 .lt. s2 )then
-            ibndfac(1,ibfac)=ishplistu(ip1,ish1)
-            ibndfac(2,ibfac)=i2
+          ibfac = ibfac + 1
+          ibndfac(3, ibfac) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac) = ishplistu(ip1, ish1)
+            ibndfac(2, ibfac) = i2
           else
-            ibndfac(1,ibfac)=ishplistd(ip2,ish2)
-            ibndfac(2,ibfac)=i2
-          endif
-        endif
-      endif
+            ibndfac(1, ibfac) = ishplistd(ip2, ish2)
+            ibndfac(2, ibfac) = i2
+          end if
+        end if
+      end if
 
 ! nothing to do
-    elseif(typespecpoints(isppnts).eq.'TP')then
+    elseif (typespecpoints(isppnts) .eq. 'TP') then
 
-    elseif(typespecpoints(isppnts).eq.'QP')then
+    elseif (typespecpoints(isppnts) .eq. 'QP') then
 
-    elseif(typespecpoints(isppnts).eq.'EP')then
+    elseif (typespecpoints(isppnts) .eq. 'EP') then
 
-    elseif(typespecpoints(isppnts).eq.'C')then
+    elseif (typespecpoints(isppnts) .eq. 'C') then
 
-    elseif(typespecpoints(isppnts).eq.'SP')then
+    elseif (typespecpoints(isppnts) .eq. 'SP') then
 
     else
 
-      write(*,*)'condition not implemented!'
-      write(*,*)
+      write (*, *) 'condition not implemented!'
+      write (*, *)
       stop
-    endif
+    end if
 
-  enddo
+  end do
 
 !     split the existing edges of the background mesh
 !     if the last point of the shock is at the boundary
@@ -979,62 +979,61 @@ subroutine fx_msh_sps(&
 !       endif
 !     end do
 
-  nbfac_sh=ibfac
+  nbfac_sh = ibfac
 
 !     create 4 new edges near the triple point
 
-  close(8)
+  close (8)
 
-  close(130)
+  close (130)
 
   return
 end subroutine fx_msh_sps
 
-
-integer function findbedg(xy,ndim,ibndfac,nbfac,xsh,ysh,s)
+integer function findbedg(xy, ndim, ibndfac, nbfac, xsh, ysh, s)
 
 !     finds the bndry edge (of the background mesh)
 !     the shock point (xsh,ysh) belongs to
 
   implicit none
-  integer ndim,nbfac
-  double precision xy(ndim,*)
-  integer ibndfac(3,*)
-  double precision xsh,ysh,s
-  double precision x,y,x1,x2,y1,y2
-  integer i1,i2,ibc,ibfac
+  integer ndim, nbfac
+  double precision xy(ndim, *)
+  integer ibndfac(3, *)
+  double precision xsh, ysh, s
+  double precision x, y, x1, x2, y1, y2
+  integer i1, i2, ibc, ibfac
   double precision toler
-  parameter (toler=0.2d-6)
+  parameter(toler=0.2d-6)
   double precision tline
-  tline(x,y) = (y-y1)*(x2-x1)-(x-x1)*(y2-y1)
+  tline(x, y) = (y - y1)*(x2 - x1) - (x - x1)*(y2 - y1)
 
   do 10 ibfac = 1, nbfac
-    i1 = ibndfac(1,ibfac)
-    i2 = ibndfac(2,ibfac)
-    ibc = ibndfac(3,ibfac)
+    i1 = ibndfac(1, ibfac)
+    i2 = ibndfac(2, ibfac)
+    ibc = ibndfac(3, ibfac)
 
-    if( ibc.lt.0 )goto 10
-    x1 = xy(1,i1)
-    y1 = xy(2,i1)
-    x2 = xy(1,i2)
-    y2 = xy(2,i2)
+    if (ibc .lt. 0) goto 10
+    x1 = xy(1, i1)
+    y1 = xy(2, i1)
+    x2 = xy(1, i2)
+    y2 = xy(2, i2)
 
-    if( abs(tline(xsh,ysh)).le.toler )then
+    if (abs(tline(xsh, ysh)) .le. toler) then
 
-      if( abs(y2-y1) .gt. abs(x2-x1) )then
-        s = (ysh-y1)/(y2-y1)
+      if (abs(y2 - y1) .gt. abs(x2 - x1)) then
+        s = (ysh - y1)/(y2 - y1)
       else
-        s = (xsh-x1)/(x2-x1)
+        s = (xsh - x1)/(x2 - x1)
 
-      endif
+      end if
 !             if( 0.d0 .le. s .and. s .le. 1.d0 )then
-      if( 0.d0 .le. s .and. s .le. 1.d0 )then
+      if (0.d0 .le. s .and. s .le. 1.d0) then
         findbedg = ibfac
         return
-      endif
-    endif
-10 continue
-  findbedg = -1
+      end if
+    end if
+10  continue
+    findbedg = -1
 
-  return
-end function findbedg
+    return
+    end function findbedg

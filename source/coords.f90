@@ -1,6 +1,6 @@
-SUBROUTINE COORDS(X,Y,X1,X2,X3,Y1,Y2,Y3,R,IER)
-  INTEGER IER
-  DOUBLE PRECISION X,Y,X1,X2,X3,Y1,Y2,Y3,R(3)
+subroutine COORDS(X, Y, X1, X2, X3, Y1, Y2, Y3, R, IER)
+  integer IER
+  double precision X, Y, X1, X2, X3, Y1, Y2, Y3, R(3)
 !
 !***********************************************************
 !
@@ -37,7 +37,7 @@ SUBROUTINE COORDS(X,Y,X1,X2,X3,Y1,Y2,Y3,R,IER)
 !
 !***********************************************************
 !
-  DOUBLE PRECISION U(3),V(3),AREA,XP,YP
+  double precision U(3), V(3), AREA, XP, YP
 !
 ! LOCAL PARAMETERS -
 !
@@ -57,22 +57,22 @@ SUBROUTINE COORDS(X,Y,X1,X2,X3,Y1,Y2,Y3,R,IER)
 ! AREA = 3-1 X 3-2
 !
   AREA = U(1)*V(2) - U(2)*V(1)
-  IF (AREA.EQ.0.D0) GOTO 1
+  if (AREA .eq. 0.d0) goto 1
 !
 ! R(1) = (2-3 X 2-(X,Y))/AREA, R(2) = (1-(X,Y) X 1-3)/AREA,
 !   R(3) = (1-2 X 1-(X,Y))/AREA
 !
-  R(1) = (U(1)* (Y-Y2)-V(1)* (X-X2))/AREA
+  R(1) = (U(1)*(Y - Y2) - V(1)*(X - X2))/AREA
   XP = X - X1
   YP = Y - Y1
-  R(2) = (U(2)*YP-V(2)*XP)/AREA
-  R(3) = (U(3)*YP-V(3)*XP)/AREA
+  R(2) = (U(2)*YP - V(2)*XP)/AREA
+  R(3) = (U(3)*YP - V(3)*XP)/AREA
   IER = 0
-  RETURN
+  return
 !
 ! VERTICES ARE COLLINEAR
 !
 1 IER = 1
-  RETURN
+  return
 
 end subroutine COORDS

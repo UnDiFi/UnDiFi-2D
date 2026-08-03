@@ -32,38 +32,38 @@ subroutine dump_sdw_info(dumpfname,&
 
 !     .. scalar arguments ..
   character*(*) dumpfname
-  integer nshocks,nspecpoints,nshockedges(*),nshockpoints(*),&
-  &isppnts,nshe
+  integer nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
+  &isppnts, nshe
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. array arguments ..
-  double precision xysh(ndim,npshmax,*),&
-  &zroeshu(ndof,npshmax,*),&
-  &zroeshd(ndof,npshmax,*)
+  double precision xysh(ndim, npshmax, *),&
+  &zroeshu(ndof, npshmax, *),&
+  &zroeshd(ndof, npshmax, *)
 
-  integer nodcodsh(npshmax,*),&
-  &shinspps(2,5,*),&
-  &ispclr(5,*)
+  integer nodcodsh(npshmax, *),&
+  &shinspps(2, 5, *),&
+  &ispclr(5, *)
 
 !     .. local scalars ..
-  integer i,k,ish
+  integer i, k, ish
 
 !     open the dump file (fresh each call: same semantics as sh99.dat)
-  open(14,file=dumpfname)
-  write(14,*)nshocks
-  do ish=1,nshocks
-    write(14,*)nshockpoints(ish),typesh(ish)
-    do k = 1,nshockpoints(ish)
-      write(14,*)(xysh(i,k,ish),i=1,ndim),&
-      &(zroeshd(i,k,ish),i=1,ndof),&
-      &(zroeshu(i,k,ish),i=1,ndof)
+  open (14, file=dumpfname)
+  write (14, *) nshocks
+  do ish = 1, nshocks
+    write (14, *) nshockpoints(ish), typesh(ish)
+    do k = 1, nshockpoints(ish)
+      write (14, *) (xysh(i, k, ish), i=1, ndim),&
+      &(zroeshd(i, k, ish), i=1, ndof),&
+      &(zroeshu(i, k, ish), i=1, ndof)
     end do
   end do
 
-  write(14,*)nspecpoints
-  do isppnts = 1,nspecpoints
-    write(14,*)typespecpoints(isppnts)
+  write (14, *) nspecpoints
+  do isppnts = 1, nspecpoints
+    write (14, *) typespecpoints(isppnts)
     if (typespecpoints(isppnts) .eq. 'TP') then
       nshe = 4
     elseif (typespecpoints(isppnts) .eq. 'QP') then
@@ -97,25 +97,25 @@ subroutine dump_sdw_info(dumpfname,&
     elseif (typespecpoints(isppnts) .eq. 'PC') then
       nshe = 2
     else
-      write(*,*)'dump_sdw_info: special point type not implemented!'
+      write (*, *) 'dump_sdw_info: special point type not implemented!'
       stop
-    endif
+    end if
 
     if (typespecpoints(isppnts) .eq. 'RR' .or.&
     &typespecpoints(isppnts) .eq. 'FWP' .or.&
     &typespecpoints(isppnts) .eq. 'PC') then
-      do k=1,nshe
-        write(14,*)shinspps(1,k,isppnts),shinspps(2,k,isppnts),&
-        &ispclr(k,isppnts)
-      enddo
+      do k = 1, nshe
+        write (14, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts),&
+        &ispclr(k, isppnts)
+      end do
     else
-      do k=1,nshe
-        write(14,*)shinspps(1,k,isppnts),shinspps(2,k,isppnts)
-      enddo
-    endif
-  enddo
+      do k = 1, nshe
+        write (14, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
+      end do
+    end if
+  end do
 
-  close(14)
+  close (14)
 
   return
 end subroutine dump_sdw_info

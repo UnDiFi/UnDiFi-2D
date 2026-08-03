@@ -14,9 +14,9 @@
 !
 !     call subroutine( ...,istak(lpmap(0)),....
 
-subroutine readpmap(nitems,npnod,lpmap)
+subroutine readpmap(nitems, npnod, lpmap)
   implicit none
-  integer nitems,npnod,lpmap
+  integer nitems, npnod, lpmap
 
 !<     nitems (input) the nof of gridpoints incls. both sets of periodic nodes
 !<     npnod  (output) the nof periodic gridpoints in only one of the two sets
@@ -26,7 +26,7 @@ subroutine readpmap(nitems,npnod,lpmap)
 !<     j = lpmap(i) = 0 means that i is not among the periodic meshpoints
 
   logical lflag
-  integer i,j,n
+  integer i, j, n
 
 !     .. arrays in common ..
   double precision dstak(1)
@@ -34,35 +34,35 @@ subroutine readpmap(nitems,npnod,lpmap)
   common/cstak/dstak
 
 !     .. equivalences ..
-  equivalence (dstak(1),istak(1))
+  equivalence(dstak(1), istak(1))
 
 !     .. external functions ..
-  integer  istkgt
+  integer istkgt
   external istkgt
 
 !     read the file with the index of all nodes and in case
 !     the corresponding node on the periodic boundary
-  inquire(file="pnodes0.dat",exist=lflag)
-  if(.not.lflag)then
+  inquire (file="pnodes0.dat", exist=lflag)
+  if (.not. lflag) then
 !     if the file is absent, build a table with all zero (i.e. with any periodic node)
-    n=nitems
-    lpmap = istkgt(n,2)
-    do i = lpmap,lpmap+n-1
-      istak(i)=0
-    enddo
+    n = nitems
+    lpmap = istkgt(n, 2)
+    do i = lpmap, lpmap + n - 1
+      istak(i) = 0
+    end do
     return
-  endif
-  open(13,file="pnodes0.dat")
-  read(13,*)n,npnod
-  if(n.ne.nitems)then
-    write(6,*)'the nof meshpoints in the dataset and in pnodes0.d&
+  end if
+  open (13, file="pnodes0.dat")
+  read (13, *) n, npnod
+  if (n .ne. nitems) then
+    write (6, *) 'the nof meshpoints in the dataset and in pnodes0.d&
     &at do not match'
     call exit(13)
-  endif
-  lpmap = istkgt(n,2)
-  do i = lpmap,lpmap+n-1
-    read(13,*)j,istak(i)
-  enddo
-  close(13)
+  end if
+  lpmap = istkgt(n, 2)
+  do i = lpmap, lpmap + n - 1
+    read (13, *) j, istak(i)
+  end do
+  close (13)
   return
 end subroutine readpmap
