@@ -161,7 +161,7 @@ program undifi_2d
   if (n_args /= 5 .and. n_args /= 6) then
     write (*, *) 'Usage: ../../bin/UnDiFi-2D_x86_64&
     &                                 0 501 false true "TestCaseName" [su2]'
-    call abort()
+    call fatal('wrong number of command-line arguments', 1)
   end if
   do i = 1, n_args
     call get_command_argument(i, args(i))

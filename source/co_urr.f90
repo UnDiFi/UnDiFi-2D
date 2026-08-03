@@ -5,7 +5,7 @@ subroutine co_urr(y, tauwx, tauwy, yn1)
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
-  external solg
+  external solg, futp1
   include 'paramt.h'
 
   integer(i4) i, j, k, nn

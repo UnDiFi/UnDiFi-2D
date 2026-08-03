@@ -58,6 +58,7 @@ subroutine fx_msh_sps(&
 
 !     .. external functions ..
   integer(i4) findbedg
+  external findbedg, ishel1
 
 !     open log file
   open (8, file='log/fx_msh_sps.log')

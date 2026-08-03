@@ -21,6 +21,7 @@ subroutine fnd_phps(nface,&
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, neshmax, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
+  external rdshp, ishel1, ishel2
   include 'paramt.h'
 
   integer(i4) nface, nelem, npoin, nvt, nbfac, nbpoin

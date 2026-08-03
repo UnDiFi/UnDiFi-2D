@@ -54,6 +54,7 @@ subroutine co_norm(xysh,&
   real(wp) dum1, dum2, lp1, lp2, lm1, lm2, lp22, lm22
   real(wp) a, b, c, nx, ny, dist
   integer(i4) shp_dpndnc, dcp_dpndnc, ish, isppnts
+  external shp_dpndnc, dcp_dpndnc
   integer(i4) ip, ip1, ip2, ip3, ip4, ish1, ish2, ish3, ish4
   character*1 typesh(*)
   character*5 typespecpoints(*)

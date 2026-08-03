@@ -10,7 +10,7 @@ subroutine co_shock(x1, x2, wshk, R14)
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
-  external solg
+  external solg, f
   include 'paramt.h'
 
   real(wp) x1, x2, wshk, R14
@@ -267,7 +267,7 @@ subroutine co_dc(x1, x2, wdc)
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
-  external solg
+  external solg, fdc
   include 'paramt.h'
 
   real(wp) x1, x2, wdc

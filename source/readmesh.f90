@@ -31,6 +31,7 @@ subroutine readmesh(lbndfac, lcelcel, lcelnod, lcorg, ledgptr,&
 
 !     .. local arrays ..
   integer(i4) kspace, lenstr
+  external lenstr
 
 !     .. external subroutines ..
   external dinit, iinit, istkin, istkrl

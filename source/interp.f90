@@ -198,6 +198,7 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
   parameter(eps=1.e-08, ilog=1)
   real(wp) area
   integer(i4) icycl
+  external area, icycl
 
   info1 = info
   info = 0
