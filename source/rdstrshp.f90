@@ -38,12 +38,12 @@ subroutine rdstrshpnt(xysh, zold, shpnt, dx1,&
   if (2*rshpnt .gt. npshmax) then
     write (6, *) ' too many shock points! increase npshmax in paramt&
     &   up to ', 2*rshpnt, ' at least'
-    call exit(1)
+    error stop 1
   end if
   if (rshpnt .gt. nmax) then
     write (6, *) ' subr. rdstrshpnt must be called with nmax >= ',&
     &rshpnt
-    call exit(1)
+    error stop 1
   end if
 
 !     compute the redistribution step

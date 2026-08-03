@@ -1,5 +1,6 @@
 program undifi_2d
 
+  use mod_error, only: fatal
   implicit none(type, external)
 
 ! ********************************************************************************************************************************
@@ -238,7 +239,7 @@ program undifi_2d
   if (eulfs) then
     execmd = "rm -fv convergenza.dat"
     ifail = system(execmd)
-    if (ifail .ne. 0) call exit(ifail)
+    if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), ifail)
 
 !        copy file .petsrc in home
 !        for UNSTEADY EulFS simulations this file
@@ -249,7 +250,7 @@ program undifi_2d
       execmd = "cp -fv .petscrc .petscrc"
     end if
 !        ifail = system(execmd)
-    if (ifail .ne. 0) call exit(ifail)
+    if (ifail .ne. 0) call fatal('system command failed', ifail)
   end if
 
 !     the initial grid is stored in a file called na00.1
@@ -787,7 +788,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'neogrid0 has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
         write (*, 1002) ' ok'
       end if
@@ -809,7 +810,7 @@ program undifi_2d
     if (ifail .ne. 0) then
       write (6, *) 'triangle has returned an error code ifail = ',&
       &ifail
-      call exit(ifail)
+      error stop ifail
     end if
 
     write (*, 1002) ' ok'
@@ -833,7 +834,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'cp has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
         execmd = 'cp '//fname2(1:19)//'.neigh '//&
         &fname(1:7)//'.1.neigh'
@@ -843,7 +844,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'cp has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
         execmd = 'cp '//fname2(1:19)//'.edge '//fname(1:7)//'.1.edge'
 !          write(*,*)execmd
@@ -852,7 +853,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'cp has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
 
         write (*, 1002) ' ok'
@@ -918,7 +919,7 @@ program undifi_2d
         write (6, *) execmd
         write (6, *) 'triangle2dat has returned an error code ifail = ',&
         &ifail
-        call exit(1)
+        error stop 1
       end if
 
       write (*, 1002) ' ok'
@@ -931,7 +932,7 @@ program undifi_2d
 !          It runs the predictor step of the EulFS code (we need to use dt/2)
         execmd = "cp -f .petscrc_predictor .petscrc"
         ifail = system(execmd)
-        if (ifail .ne. 0) call exit(1)
+        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
       end if
 
       write (*, 1001, advance='no') 'eulfs                  -->  '
@@ -946,13 +947,13 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *) 'eulfs has returned an error code ifail = ',&
         &ifail
-        call exit(1)
+        error stop 1
       end if
 
       if (unsteady) then
         execmd = "cp step000001.dat file001.dat"
         ifail = system(execmd)
-        if (ifail .ne. 0) call exit(1)
+        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
       end if
 
 !        execmd = "cp file003.dat file010.dat"
@@ -980,7 +981,7 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *) 'dat2triangle has returned an error code ifail = ',&
         &ifail
-        call exit(1)
+        error stop 1
       end if
 
       write (*, 1002) ' ok'
@@ -1009,7 +1010,7 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *)&
         &'triangle2su2 has returned an error code ifail = ', ifail
-        call exit(1)
+        error stop 1
       end if
 
       write (*, 1002) ' ok'
@@ -1028,7 +1029,7 @@ program undifi_2d
       call flush (6)
       if (ifail .ne. 0) then
         write (6, *) 'su2 has returned an error code ifail = ', ifail
-        call exit(1)
+        error stop 1
       end if
 
       write (*, 1002) ' ok'
@@ -1050,7 +1051,7 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *)&
         &'su22triangle has returned an error code ifail = ', ifail
-        call exit(1)
+        error stop 1
       end if
 
       write (*, 1002) ' ok'
@@ -1086,7 +1087,7 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *) 'triangle2grd has returned an error code ifail = ',&
         &ifail
-        call exit(ifail)
+        error stop ifail
       end if
       write (*, 1002) 'ok'
 
@@ -1107,7 +1108,7 @@ program undifi_2d
           if (ifail .ne. 0) then
             write (6, *) 'NEO (1st iteration)&
             &                                    has returned an error code ifail = ', ifail
-            call exit(1)
+            error stop 1
           end if
 
           execmd = "cp ./NEO_data/output/vvvv.dat "//&
@@ -1154,7 +1155,7 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *) 'neo has returned an error code ifail = ',&
         &ifail
-        call exit(ifail)
+        error stop ifail
       end if
       write (*, 1002) 'ok'
 
@@ -1174,7 +1175,7 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *) 'neo2triangle has returned an error code ifail = ',&
         &ifail
-        call exit(1)
+        error stop 1
       end if
       write (*, 1002) 'ok'
 
@@ -1182,7 +1183,7 @@ program undifi_2d
 
       write (*, *) 'should be running either EULFS ', eulfs, ' or NEO ',&
       &neo
-      call exit(10)
+      error stop 10
 
     end if ! IF-THEN-ELSE ON THE CFD CODE
 
@@ -1260,7 +1261,7 @@ program undifi_2d
         write (6, *) 'btw grid(0) and grid(1)'
         write (*, *) npoin(0), totshockpoints
         write (*, *) npoin(1), totshockpoints
-        call exit(1)
+        error stop 1
 
       end if
 
@@ -1373,7 +1374,7 @@ program undifi_2d
       if (ifail .ne. 0) then
         write (6, *) 'triangle has returned an error code ifail = ',&
         &ifail
-        call exit(1)
+        error stop 1
       end if
       write (*, 1002) ' ok'
 
@@ -1434,7 +1435,7 @@ program undifi_2d
           write (6, *) execmd
           write (6, *) 'triangle2dat has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
 
         write (*, 1002) ' ok'
@@ -1447,7 +1448,7 @@ program undifi_2d
 !          It runs the corrector step of the EulFS code (now we use the full dt)
         execmd = "cp -f .petscrc_corrector .petscrc"
         ifail = system(execmd)
-        if (ifail .ne. 0) call exit(1)
+        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
 !        end if
 
         write (*, 1001, advance='no') 'eulfs                  -->  '
@@ -1462,13 +1463,13 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'eulfs has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
 
 !        if (UNSTEADY) then
         execmd = "cp step000001.dat file001.dat"
         ifail = system(execmd)
-        if (ifail .ne. 0) call exit(1)
+        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
 !        endif
 
 !        execmd = "cp file003.dat file010.dat"
@@ -1496,7 +1497,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'dat2triangle has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
 
         write (*, 1002) ' ok'
@@ -1528,7 +1529,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'triangle2grd has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
         write (*, 1002) ' ok'
 
@@ -1544,7 +1545,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'NEO has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
         write (*, 1002) ' ok'
 
@@ -1560,7 +1561,7 @@ program undifi_2d
         if (ifail .ne. 0) then
           write (6, *) 'NEO2triangle has returned an error code ifail = ',&
           &ifail
-          call exit(1)
+          error stop 1
         end if
         write (*, 1002) ' ok'
 
@@ -1667,7 +1668,7 @@ program undifi_2d
       write (6, *) 'btw grid(0) and grid(1)'
       write (*, *) npoin(0), totshockpoints
       write (*, *) npoin(1), totshockpoints
-      call exit(1)
+      error stop 1
     end if
 
 !     work is a work array used to store nodal values in the shock points

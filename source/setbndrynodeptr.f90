@@ -253,7 +253,7 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                     if ((IBC .lt. 0) .or. (IBC .gt. MAXPATCHES)) then
                       write (6, *) 'Subr. FindColours: Boundary colour ', IBC, ' is&
                       &          outside the range ', 0, MAXPATCHES
-                      call exit(2)
+                      error stop 2
                     end if
                     IC(IBC) = IC(IBC) + 1
                   end do
@@ -386,7 +386,7 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 !
                       write (6, *) 'Cannot find node; un-recoverable error in SetBndr&
                       &yNodeList (2)'
-                      call exit(2)
+                      error stop 2
                     end if ! test on CLOSED(*)
 100                 continue
                     IBGN = IA(IPATCH)
@@ -420,7 +420,7 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                       if (IBGN .ne. IEND) then
                         write (6, *) 'Is ', IBGN, ' = ', IEND, ' ?????'
                         write (6, *) (ja(j), j=ibgn, iend)
-                        call exit(4)
+                        error stop 4
                       end if
                       IBGN = IA(IPATCH)
                       write (6, *) 'Subr. SetBndryNodeList: Found ', IEND - IBGN + 1,&

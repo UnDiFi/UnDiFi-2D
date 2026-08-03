@@ -65,7 +65,7 @@ subroutine rd_dps_eq(&
     if (nshockpoints_new .gt. npshmax) then
       write (6, *) 'too many shock points! increase npshmax in&
       &                        paramt.f'
-      call exit(1)
+      error stop 1
     end if
 
 !       compute distribution step

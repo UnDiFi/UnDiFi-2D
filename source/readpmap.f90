@@ -57,7 +57,7 @@ subroutine readpmap(nitems, npnod, lpmap)
   if (n .ne. nitems) then
     write (6, *) 'the nof meshpoints in the dataset and in pnodes0.d&
     &at do not match'
-    call exit(13)
+    error stop 13
   end if
   lpmap = istkgt(n, 2)
   do i = lpmap, lpmap + n - 1
