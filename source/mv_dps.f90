@@ -9,29 +9,30 @@ subroutine mv_dps(xysh,&
 &nshockedges,&
 &typesh)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
+  integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
   character*1 typesh(*)
 
 !     .. array arguments ..
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &zroesh(ndof, npshmax, *),&
   &wsh(ndim, npshmax, *)
 
 !     .. local scalar  ..
-  double precision dum, p, a, help, ro, u, v
+  real(wp) dum, p, a, help, ro, u, v
 
 !     .. local scalars ..
-  double precision dt, wshmod
-  double precision xyshnew(ndim, npshmax, npshmax),&
+  real(wp) dt, wshmod
+  real(wp) xyshnew(ndim, npshmax, npshmax),&
   &wshnew(ndim, npshmax, npshmax)
 
-  integer i, im, iv, ish, k
+  integer(i4) i, im, iv, ish, k
 
 !     open log file
   open (8, file='log/mv_dps.log')

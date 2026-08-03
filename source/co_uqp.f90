@@ -2,16 +2,17 @@
 
 subroutine co_uqp(y, wqpx, wqpy, yn1)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external solg
   include 'paramt.h'
 
-  integer i, j, k, nn
-  double precision gam, delta, a, b, bb
-  double precision wqpx, wqpy
-  double precision y, futp2, g, yn, yn1, g1, dum, dum1, dum2, dyn1
-  double precision theta, dyn, sx14, taux14, tauy14, nx14, ny14
-  double precision store13, store14, store15, store16
+  integer(i4) i, j, k, nn
+  real(wp) gam, delta, a, b, bb
+  real(wp) wqpx, wqpy
+  real(wp) y, futp2, g, yn, yn1, g1, dum, dum1, dum2, dyn1
+  real(wp) theta, dyn, sx14, taux14, tauy14, nx14, ny14
+  real(wp) store13, store14, store15, store16
   logical flag1
   dimension y(24), yn(24), yn1(24), g(24, 24), g1(24, 24), a(14, 24), b(14)
   dimension bb(24), dyn(24)
@@ -134,20 +135,21 @@ subroutine co_uqp(y, wqpx, wqpy, yn1)
   return
 end subroutine co_uqp
 
-double precision function futp2(i, y, a, b, wqpx, wqpy)
+real(wp) function futp2(i, y, a, b, wqpx, wqpy)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
-  integer i, ii, j
-  double precision y, a, b, wqpx, wqpy, wn, wt, wsh, unsh1
+  integer(i4) i, ii, j
+  real(wp) y, a, b, wqpx, wqpy, wn, wt, wsh, unsh1
   dimension y(24), a(14, 24), b(14)
-  double precision ro1, ro2, p1, p2, u1, u2, gam, delta
-  double precision v1, v2, un1, un2, ut1, ut2, e1, e2
-  double precision taux12, tauy12, nx12, ny12, sx12
-  double precision taux23, tauy23, nx23, ny23, sx23
-  double precision taux14, tauy14, nx14, ny14, sx14
-  double precision sx23corr
+  real(wp) ro1, ro2, p1, p2, u1, u2, gam, delta
+  real(wp) v1, v2, un1, un2, ut1, ut2, e1, e2
+  real(wp) taux12, tauy12, nx12, ny12, sx12
+  real(wp) taux23, tauy23, nx23, ny23, sx23
+  real(wp) taux14, tauy14, nx14, ny14, sx14
+  real(wp) sx23corr
   logical flag1
 
 ! assign constants and variables

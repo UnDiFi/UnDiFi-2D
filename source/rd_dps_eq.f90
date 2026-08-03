@@ -8,32 +8,33 @@ subroutine rd_dps_eq(&
 &nshockpoints,&
 &nshockedges)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
+  integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
 
 !     .. array arguments ..
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *)
 
 !     .. local scalar  ..
-  double precision dum, dx, sh_edge_lgth, alpha, beta
+  real(wp) dum, dx, sh_edge_lgth, alpha, beta
 
 !     .. array arguments ..
 !     character*(*) fname
-  double precision xysh_new(ndim, npshmax),&
+  real(wp) xysh_new(ndim, npshmax),&
   &zroeshu_new(ndof, npshmax),&
   &zroeshd_new(ndof, npshmax),&
   &sh_absc(npshmax), sh_absc_new(npshmax)
 
 !     .. local scalars ..
-  double precision ds, dsj
-  integer i, im, iv, ish, k, j, nshockpoints_new
+  real(wp) ds, dsj
+  integer(i4) i, im, iv, ish, k, j, nshockpoints_new
 
 !     open log file
   open (8, file='log/rd_dps_eq.log')

@@ -16,39 +16,40 @@ subroutine co_pnt_dspl(&                   ! not used
 &shinspps,&
 &ispclr)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external co_intr_pnt
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer nspecpoints, shinspps(2, 5, *), ispclr(5, *)
-  integer nshocks, nshockedges(*), nshockpoints(*)
+  integer(i4) nspecpoints, shinspps(2, 5, *), ispclr(5, *)
+  integer(i4) nshocks, nshockedges(*), nshockpoints(*)
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. array arguments ..
-  double precision xysh(ndim, npshmax, *),&
+  real(wp) xysh(ndim, npshmax, *),&
   &xyshu(ndim, npshmax, *),&
   &xyshd(ndim, npshmax, *),&
   &vshnor(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *)
 
-  integer nodcodsh(npshmax, *)
+  integer(i4) nodcodsh(npshmax, *)
 
 !     .. array arguments ..
-  double precision xc(2), yc(2), xs(2), ys(2)
+  real(wp) xc(2), yc(2), xs(2), ys(2)
 
 !     character*(*) fname
 
 !     .. local scalars ..
-  double precision xi, yi
-  double precision dx, dy, dum, tx, ty
-  double precision alpha, dds, f1, f2, f3
-  integer i, k, n1, n2
-  integer nnn, np, isppnts
-  integer ip, ip1, ip2, ip3, ip4, ip5
-  integer ish, ish1, ish2, ish3, ish4, ish5
+  real(wp) xi, yi
+  real(wp) dx, dy, dum, tx, ty
+  real(wp) alpha, dds, f1, f2, f3
+  integer(i4) i, k, n1, n2
+  integer(i4) nnn, np, isppnts
+  integer(i4) ip, ip1, ip2, ip3, ip4, ip5
+  integer(i4) ish, ish1, ish2, ish3, ish4, ish5
 
   do ish = 1, nshmax
     do i = 1, npshmax
@@ -861,12 +862,13 @@ end subroutine co_pnt_dspl
 
 !     find interpolation point
 subroutine co_intr_pnt(xi, yi, xc, yc, xs, ys)
+  use mod_kinds, only: wp, i4
 
-  integer nn
+  integer(i4) nn
   parameter(nn=2)
-  double precision a(nn, nn), b(nn), x(nn)
-  double precision xi, yi
-  double precision xc(2), yc(2), xs(2), ys(2)
+  real(wp) a(nn, nn), b(nn), x(nn)
+  real(wp) xi, yi
+  real(wp) xc(2), yc(2), xs(2), ys(2)
 
   rdshp = -1.0
 

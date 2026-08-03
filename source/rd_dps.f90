@@ -9,29 +9,30 @@ subroutine rd_dps(&
 &nshockpoints,&
 &nshockedges)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
+  integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
 
 !     .. array arguments ..
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *)
 
 !     .. local scalar  ..
-  double precision dum, length_rel_min, length_rel_max
+  real(wp) dum, length_rel_min, length_rel_max
 
 !     .. array arguments ..
 !     character*(*) fname
-  double precision sh_edge_lgth(npshmax)
+  real(wp) sh_edge_lgth(npshmax)
 
 !     .. local scalars ..
-  double precision dt
-  integer i, im, iv, ish, k, ile_min, ile_max, np_c, np_i
+  real(wp) dt
+  integer(i4) i, im, iv, ish, k, ile_min, ile_max, np_c, np_i
 
 !     open log file
   open (8, file='log/rd_dps.log')

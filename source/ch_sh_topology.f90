@@ -21,43 +21,44 @@ subroutine ch_sh_topology(&
 &zroe,&
 &corg)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external solg
   include 'paramt.h'
 
 !     .. scalar arguments ..
-  integer nshocks, nspecpoints, nshockpoints(*),&
+  integer(i4) nshocks, nspecpoints, nshockpoints(*),&
   &shinspps(2, 5, *),&
   &ispclr(5, *)
   character*5 typespecpoints(*)
   character*1 typesh(*)
 
 !     .. array arguments ..
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *),&
   &wsh(ndim, npshmax, *)
-  integer nclr
-  integer ia(*), ja(*), iclr(nclr)
-  double precision corg(ndim, *), zroe(ndof, *)
+  integer(i4) nclr
+  integer(i4) ia(*), ja(*), iclr(nclr)
+  real(wp) corg(ndim, *), zroe(ndof, *)
 
 !     .. local scalars ..
-  integer isppnts, ip, ip1, ish1, i, j
-  integer clr, bbgn, bend, bgnwedge
-  double precision x1wedge, y1wedge,&
+  integer(i4) isppnts, ip, ip1, ish1, i, j
+  integer(i4) clr, bbgn, bend, bgnwedge
+  real(wp) x1wedge, y1wedge,&
   &x2wedge, y2wedge,&
   &x1wall, y1wall,&
   &x2wall, y2wall,&
   &x1sh, y1sh, x2sh, y2sh
-  double precision xywedge(2)
-  double precision dum, dum1, dum2, dumx1, dumy1
-  double precision dx, dy, rad, wedgeangle
-  double precision ui, vi
-  double precision tau, taux, tauy, nx, ny, xi, yi
-  integer nn, ish
+  real(wp) xywedge(2)
+  real(wp) dum, dum1, dum2, dumx1, dumy1
+  real(wp) dx, dy, rad, wedgeangle
+  real(wp) ui, vi
+  real(wp) tau, taux, tauy, nx, ny, xi, yi
+  integer(i4) nn, ish
   parameter(nn=2)
-  double precision a(nn, nn), b(nn), x(nn)
+  real(wp) a(nn, nn), b(nn), x(nn)
 
   open (8, file="log/ch_sh_topology.log")
 

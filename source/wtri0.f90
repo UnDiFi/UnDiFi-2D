@@ -8,23 +8,24 @@ subroutine wtri0(xy,&
 &npoin,&
 &fname)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..
-  integer npoin
+  integer(i4) npoin
 
 !     .. array arguments ..
   character*(*) fname
   character fwork*255
-  double precision xy(ndim, *), zroe(ndof, *)
-  integer nodcod(*)
+  real(wp) xy(ndim, *), zroe(ndof, *)
+  integer(i4) nodcod(*)
 
 !     .. local scalars ..
-  integer ia, k, ipoin, ilist
+  integer(i4) ia, k, ipoin, ilist
 
 !     .. external functions ..
-  integer icycl, lenstr
+  integer(i4) icycl, lenstr
   external icycl, lenstr
 
 !     .. intrinsic functions ..

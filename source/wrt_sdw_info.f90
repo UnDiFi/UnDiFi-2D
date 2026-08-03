@@ -15,29 +15,30 @@ subroutine wrt_sdw_info(xysh,&
 &ispclr1,&
 &ispclr2)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
+  integer(i4) nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
   &isppnts, idummy, nshe
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. array arguments ..
-  double precision xysh(ndim, npshmax, *),&
+  real(wp) xysh(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *)
 
-  integer nodcodsh(npshmax, *),&
+  integer(i4) nodcodsh(npshmax, *),&
   &shinspps(2, 5, *),&
   &ispclr(5, *),&
   &ispclr1(5, *),&
   &ispclr2(5, *)
 
 !     .. local scalars ..
-  integer i, k, ish
+  integer(i4) i, k, ish
 
 !     open log file
   open (8, file='log/wrt_sdw_info.log')

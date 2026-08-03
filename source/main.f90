@@ -1,6 +1,7 @@
 program undifi_2d
 
   use mod_error, only: fatal
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
 
 ! ********************************************************************************************************************************
@@ -46,13 +47,13 @@ program undifi_2d
 
 !    .. parameters ..
   include 'paramt.h'
-  integer*4 nin, nout
+  integer(i4) nin, nout
   parameter(nin=5, nout=6)
-  integer nva
+  integer(i4) nva
   parameter(nva=9990000)
 
 !     .. array definitions
-  double precision xysh(ndim, npshmax, nshmax),&
+  real(wp) xysh(ndim, npshmax, nshmax),&
   &xyshu(ndim, npshmax, nshmax),&
   &xyshd(ndim, npshmax, nshmax),&
   &zroeshuold(ndof, npshmax, nshmax),&
@@ -61,7 +62,7 @@ program undifi_2d
   &wsh(ndim, npshmax, nshmax)
 
 !     arrays for unsteady predictor-corrector time accurate integration
-  double precision xyshnew(ndim, npshmax, nshmax),&
+  real(wp) xyshnew(ndim, npshmax, nshmax),&
   &norshnew(ndim, npshmax, nshmax),&
   &wshnew(ndim, npshmax, nshmax),&
   &wshmean(ndim, npshmax, nshmax),&
@@ -69,7 +70,7 @@ program undifi_2d
   &zroeshdoldnew(ndof, npshmax, nshmax),&
   &varray(ndim, 30000) ! modify with the logic dstak/istak
 
-  integer*4 nodcodsh(npshmax, nshmax),&
+  integer(i4) nodcodsh(npshmax, nshmax),&
   &nshocksegs(nshmax),&
   &nshockpoints(nshmax),&
   &shinspps(2, 5, nspmax),&
@@ -85,12 +86,12 @@ program undifi_2d
   &typeshocks(nshmax)
 
 !     .. scalar definition
-  integer*4 nShocks,&
+  integer(i4) nShocks,&
   &nPhamPoints,&
   &nSpecPoints
 
 !     .. arrays in common ..
-  double precision dstak(nva)
+  real(wp) dstak(nva)
   character execmd*255,&
   &fname*255,&
   &fname2*255,&
@@ -106,28 +107,28 @@ program undifi_2d
   &ISPREDICTOR
 
 !     .. local scalars ..
-  integer i,&
+  integer(i4) i,&
   &nshockpointsold(nshmax), ish,&
   &nholes, totshockpoints, ii,&
   &nvt, ifail, nsteps, nitems, nbegin
 
 !     .. local arrays ..
-  integer istak(1), lout(0:2)
+  integer(i4) istak(1), lout(0:2)
 
 !     pointers in 0 refer to the background mesh
-  integer lbndfac(0:2), lcelcel(0:2), lcelnod(0:2), lcorg(0:2),&
+  integer(i4) lbndfac(0:2), lcelcel(0:2), lcelnod(0:2), lcorg(0:2),&
   &lnodcod(0:2), lzroe(0:2), ledgptr(0:2), lnodptr(0:2),&
   &lshnor, lxyshold, lxyshnew, lwork, lpmap(0:2)
-  integer nbfac(0:2), nelem(0:2), nhole(0:2), nedge(0:2), npoin(0:2),&
+  integer(i4) nbfac(0:2), nelem(0:2), nhole(0:2), nedge(0:2), npoin(0:2),&
   &nbpoin(0:2), nbfac_sh, npnod(0:2)
-  integer lia(0:2), lja(0:2), liclr(0:2), nclr(0:2)
+  integer(i4) lia(0:2), lja(0:2), liclr(0:2), nclr(0:2)
   logical fndbnds
 
 !     .. external functions ..
-  integer initxdr, istkgt, istkst, system
+  integer(i4) initxdr, istkgt, istkst, system
 !     external initxdr,istkgt,istkst,system
   external initxdr, istkgt, istkst
-  double precision rand
+  real(wp) rand
   external rand
 
 !     .. external subroutines ..
@@ -145,10 +146,10 @@ program undifi_2d
   equivalence(dstak(1), istak(1))
 
 !     Time steps for predictor-corrector
-  double precision dtpr, dtco, nowtime
+  real(wp) dtpr, dtco, nowtime
 
 !     Read command line arguments
-  integer           :: no, n_args
+  integer(i4)           :: no, n_args
   character(len=20) :: testcase
   character(len=20) :: args(6)
   character(len=20) :: solvername

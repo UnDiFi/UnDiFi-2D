@@ -22,7 +22,8 @@ LIBS1    = -lport -lmylib  -lfxdr -lsparse-blas -ltirpc
 
 MAKEFILE = Makefile
 
-OBJS     = mod_error.o \
+OBJS     = mod_kinds.o \
+	         mod_error.o \
 	         fx_msh_sps.o \
 	         co_utp.o \
 	         co_uqp.o \
@@ -67,7 +68,8 @@ PROGRAM = UnDiFi-2D_$(HOSTTYPE)
 
 SHELL   = /bin/sh
 
-SRCS    = mod_error.f90 \
+SRCS    = mod_kinds.f90 \
+	        mod_error.f90 \
 	        fx_msh_sps.f90 \
 	        co_utp.f90 \
 	        co_uqp.f90 \
@@ -108,6 +110,7 @@ SRCS    = mod_error.f90 \
 
 SYSHDRS	=
 
+.SUFFIXES:
 .SUFFIXES: .f90 .o
 
 .f90.o:

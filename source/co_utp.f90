@@ -2,16 +2,17 @@
 
 subroutine co_utp(y, r14, dxr14, dyr14, r23, unsh1, yn1, flag1, ifail)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external solg
   include 'paramt.h'
 
-  integer i, j, k, nn, icont
-  double precision gam, delta, a, b, bb
-  double precision r14, dxr14, dyr14, r23, unsh1
-  double precision y, futp, g, yn, yn1, g1, dum, dum1, dum2, dyn1, dumold
-  double precision theta, dyn, sx14, taux14, tauy14, nx14, ny14
-  double precision store13, store14, store15, store16
+  integer(i4) i, j, k, nn, icont
+  real(wp) gam, delta, a, b, bb
+  real(wp) r14, dxr14, dyr14, r23, unsh1
+  real(wp) y, futp, g, yn, yn1, g1, dum, dum1, dum2, dyn1, dumold
+  real(wp) theta, dyn, sx14, taux14, tauy14, nx14, ny14
+  real(wp) store13, store14, store15, store16
   logical flag1, ifail
   dimension y(20), yn(20), yn1(20), g(20, 20), g1(20, 20), a(11, 20), b(11)
   dimension bb(20), dyn(20)
@@ -178,21 +179,22 @@ subroutine co_utp(y, r14, dxr14, dyr14, r23, unsh1, yn1, flag1, ifail)
   return
 end subroutine co_utp
 
-double precision function futp(i, y, a, b, r14, dxr14, dyr14, r23, unsh1,&
+real(wp) function futp(i, y, a, b, r14, dxr14, dyr14, r23, unsh1,&
 &flag1)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
-  integer i, ii, j
-  double precision y, a, b, r14, r23, wn, wt, wsh, unsh1
+  integer(i4) i, ii, j
+  real(wp) y, a, b, r14, r23, wn, wt, wsh, unsh1
   dimension y(20), a(11, 20), b(11)
-  double precision ro1, ro2, p1, p2, u1, u2, gam, delta
-  double precision v1, v2, un1, un2, ut1, ut2, e1, e2
-  double precision taux12, tauy12, nx12, ny12, sx12
-  double precision taux23, tauy23, nx23, ny23, sx23
-  double precision taux14, tauy14, nx14, ny14, sx14
-  double precision sx23corr, dxr14, dyr14
+  real(wp) ro1, ro2, p1, p2, u1, u2, gam, delta
+  real(wp) v1, v2, un1, un2, ut1, ut2, e1, e2
+  real(wp) taux12, tauy12, nx12, ny12, sx12
+  real(wp) taux23, tauy23, nx23, ny23, sx23
+  real(wp) taux14, tauy14, nx14, ny14, sx14
+  real(wp) sx23corr, dxr14, dyr14
   logical flag1
 
 !     assign constants and variables

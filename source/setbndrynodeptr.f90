@@ -10,6 +10,7 @@
 subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 &NBPOIN, LNODPTR, LIAO, LJAO, LICLR, NCLR)
 !
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
 !
 !     $Id: setbndrynodeptr.f,v 1.4 2018/08/06 09:18:23 abonfi Exp abonfi $
@@ -23,17 +24,17 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 !     .. Parameters ..
 
 !     .. Local Scalars ..
-  integer LBNDFAC, LNODCOD
-  integer LNODPTR, LWKSP
-  integer NBFAC, NPOIN, IPOIN, NBPOIN
-  integer IFAIL, I, K, NCLR, NNZR
-  integer LIAO, LJAO, LICLR
+  integer(i4) LBNDFAC, LNODCOD
+  integer(i4) LNODPTR, LWKSP
+  integer(i4) NBFAC, NPOIN, IPOIN, NBPOIN
+  integer(i4) IFAIL, I, K, NCLR, NNZR
+  integer(i4) LIAO, LJAO, LICLR
 
 !     .. Local Arrays ..
 
-  integer MAXPATCHES
+  integer(i4) MAXPATCHES
   parameter(MAXPATCHES=50)
-  integer IC(0:MAXPATCHES) ! number of bndry gridpoints within patch coloured i, 0 <=i<= MAXPATCHES
+  integer(i4) IC(0:MAXPATCHES) ! number of bndry gridpoints within patch coloured i, 0 <=i<= MAXPATCHES
   logical CLOSED(0:MAXPATCHES) ! .TRUE. if the boundary patch is closed (i.e. a profile)
 !     ..
 !     .. External Subroutines ..
@@ -45,15 +46,15 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 !
 !     ..
 !     .. Arrays in Common ..
-  double precision DSTAK(1)
-  integer ISTAK(1)
+  real(wp) DSTAK(1)
+  integer(i4) ISTAK(1)
   common/CSTAK/DSTAK
 !     ..
 !     .. Equivalences ..
   equivalence(DSTAK(1), ISTAK(1))
 !     ..
 !     .. External Functions ..
-  integer ISTKGT
+  integer(i4) ISTKGT
   external ISTKGT
 !
 !     count the nof boundary vertices
@@ -132,13 +133,14 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
     subroutine MYROUTINE(NODCODE, IBNDPTR, NBFAC, INODPTR, NPOIN, NBPOIN,&
     &IWORK)
 !
+      use mod_kinds, only: wp, i4
       implicit none(type, external)
       external BINSRC, ISORTRX
 !
-      integer NBFAC, NPOIN, NBPOIN
-      integer NODCODE(*)
-      integer IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3), IWORK(2*NBPOIN)
-      integer IPOIN, IPOS, LAST, IFAIL, J, K, IFACE
+      integer(i4) NBFAC, NPOIN, NBPOIN
+      integer(i4) NODCODE(*)
+      integer(i4) IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3), IWORK(2*NBPOIN)
+      integer(i4) IPOIN, IPOS, LAST, IFAIL, J, K, IFACE
       logical VERBOSE
       parameter(VERBOSE=.false.)
 !     PARAMETER(VERBOSE=.TRUE.)
@@ -228,13 +230,14 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                 subroutine FINDCOLOURS(IBNDPTR, INODPTR, IC, CLOSED, MAXPATCHES,&
                 &NBFAC, NBPOIN, NC)
 !
+                  use mod_kinds, only: wp, i4
                   implicit none(type, external)
 !
-                  integer NBFAC, NBPOIN, NC, MAXPATCHES
-                  integer IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3), IC(0:*)
+                  integer(i4) NBFAC, NBPOIN, NC, MAXPATCHES
+                  integer(i4) IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3), IC(0:*)
                   logical CLOSED(0:*)
-                  integer IPOIN, IPOS, I, J, IBC, IE
-                  integer IFLG(2)
+                  integer(i4) IPOIN, IPOS, I, J, IBC, IE
+                  integer(i4) IFLG(2)
 
                   ! 13/06/2020 -- BugFix by Prof. Bonfiglioli
                   ! DO IBC = 1, MAXPATCHES
@@ -313,14 +316,15 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 !
 !     this routine finds the list of bndry gridpoints belonging to bndry ICLR
 !
+                  use mod_kinds, only: wp, i4
                   implicit none(type, external)
                   external NEARBY
 !
-                  integer NBFAC, NBPOIN, NCLR
-                  integer IA(*), JA(*), ICLR(NCLR)
-                  integer IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3)
-                  integer IPOIN, I, J, LAST, NOW, IEND, IBGN, ISTART, IPATCH, IBC, NC, IE
-                  integer IFLG(2), NEIGHB(2)
+                  integer(i4) NBFAC, NBPOIN, NCLR
+                  integer(i4) IA(*), JA(*), ICLR(NCLR)
+                  integer(i4) IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3)
+                  integer(i4) IPOIN, I, J, LAST, NOW, IEND, IBGN, ISTART, IPATCH, IBC, NC, IE
+                  integer(i4) IFLG(2), NEIGHB(2)
                   logical CLOSED(0:*)
                   logical VERBOSE
 !     PARAMETER(VERBOSE=.TRUE.)
@@ -434,18 +438,19 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                       end subroutine SetBndryNodeList
 !
                       subroutine NEARBY(INODE, IBNDPTR, INODPTR, NBPOIN, NEIGHB, IBC)
+                        use mod_kinds, only: wp, i4
                         implicit none(type, external)
                         external BINSRC
-                        integer INODE, NBPOIN, IBC ! Input
+                        integer(i4) INODE, NBPOIN, IBC ! Input
 !     INODE is a GLOBAL nodenumber
-                        integer NEIGHB(*) ! Output
-                        integer IBNDPTR(3, *), INODPTR(NBPOIN, 3) ! Input
+                        integer(i4) NEIGHB(*) ! Output
+                        integer(i4) IBNDPTR(3, *), INODPTR(NBPOIN, 3) ! Input
 !
 !     INODPTR is a nodal pointer for boundary nodes
 !     INODPTR(1,*) addresses the global nodenumber
 !     INODPTR(2,*) addresses one of the two edges it belongs to
 !     INODPTR(3,*) addresses the other edge it belongs to
-                        integer IPOS, N1, JBC, IE, I, J, LAST, K
+                        integer(i4) IPOS, N1, JBC, IE, I, J, LAST, K
                         logical VERBOSE
                         parameter(VERBOSE=.false.)
 !     PARAMETER(VERBOSE=.TRUE.)
@@ -511,11 +516,12 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                       end subroutine NEARBY
 !
                       subroutine CHECK(IA, JA, ICLR, NCLR, CORG, NDIM)
+                        use mod_kinds, only: wp, i4
                         implicit none(type, external)
-                        integer NDIM, NCLR
-                        integer IA(*), JA(*), ICLR(NCLR)
-                        double precision CORG(NDIM, *)
-                        integer I, J, K, JBGN, JEND, L, NNZR
+                        integer(i4) NDIM, NCLR
+                        integer(i4) IA(*), JA(*), ICLR(NCLR)
+                        real(wp) CORG(NDIM, *)
+                        integer(i4) I, J, K, JBGN, JEND, L, NNZR
                         character*24 FNAME
                         FNAME = "bndry00.dat"
                         nnzr = ia(nclr + 1) - ia(1)

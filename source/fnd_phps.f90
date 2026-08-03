@@ -18,27 +18,28 @@ subroutine fnd_phps(nface,&
 &nphpoin,&
 &pmap)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
-  integer nface, nelem, npoin, nvt, nbfac, nbpoin
-  integer nshocks, nshockedges(nshmax), nshockpoints(nshmax)
+  integer(i4) nface, nelem, npoin, nvt, nbfac, nbpoin
+  integer(i4) nshocks, nshockedges(nshmax), nshockpoints(nshmax)
 
 !     .. array arguments ..
-  double precision xy(ndim, npoin), xysh(ndim, npshmax, nshmax)
-  integer ibndfac(3, nbfac + neshmax), inodptr(nbpoin, 3),&
+  real(wp) xy(ndim, npoin), xysh(ndim, npshmax, nshmax)
+  integer(i4) ibndfac(3, nbfac + neshmax), inodptr(nbpoin, 3),&
   &icelnod(nvt, nelem),&
   &nodcod(npoin),&
   &iedgptr(3, nface),&
   &pmap(npoin)
 
 !     character*(*) fname
-  integer inode(2)
+  integer(i4) inode(2)
 
 !     .. local scalars ..
-  double precision xc1, xc2, xc3, yc1, yc2, yc3, xs1, xs2, ys1, ys2, rdshp
-  double precision d1, d2, d3
-  integer i, k, n1, n2, n3, ielem, ielemsh, ishel1, ishel2, ii, nphpoin,&
+  real(wp) xc1, xc2, xc3, yc1, yc2, yc3, xs1, xs2, ys1, ys2, rdshp
+  real(wp) d1, d2, d3
+  integer(i4) i, k, n1, n2, n3, ielem, ielemsh, ishel1, ishel2, ii, nphpoin,&
   &ifail, nbphp, ish, iface, last, ipos, ipoin
 
 ! open log file
@@ -173,11 +174,12 @@ subroutine fnd_phps(nface,&
 ! denoted by the two shock points. If all results have the same sign then
 ! the straight line does not cross the triangle.
 
-    integer function ishel1(xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1,&
+    integer(i4) function ishel1(xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1,&
     &xs2, ys2)
 
-      double precision xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1, xs2, ys2
-      double precision eval, x, y
+      use mod_kinds, only: wp, i4
+      real(wp) xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1, xs2, ys2
+      real(wp) eval, x, y
 
       eval(x, y) = (xs1 - x)*(ys1 - ys2) - (ys1 - y)*(xs1 - xs2)
 
@@ -195,14 +197,15 @@ subroutine fnd_phps(nface,&
 ! intersection point with the shock straight line enclosed between the
 ! two shock points
 
-    integer function ishel2(xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1,&
+    integer(i4) function ishel2(xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1,&
     &xs2, ys2)
 
-      double precision xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1, xs2, ys2
-      integer nn
+      use mod_kinds, only: wp, i4
+      real(wp) xc1, yc1, xc2, yc2, xc3, yc3, xs1, ys1, xs2, ys2
+      integer(i4) nn
       parameter(nn=2)
-      double precision a(nn, nn), b(nn), x(nn)
-      double precision xi, yi, rlsh2, rl2
+      real(wp) a(nn, nn), b(nn), x(nn)
+      real(wp) xi, yi, rlsh2, rl2
 
       ishel2 = 0
 
@@ -285,14 +288,15 @@ subroutine fnd_phps(nface,&
       return
     end function ishel2
 
-    double precision function rdshp(xc, yc, xs1, ys1, xs2, ys2, Smin)
+    real(wp) function rdshp(xc, yc, xs1, ys1, xs2, ys2, Smin)
 
-      integer nn
+      use mod_kinds, only: wp, i4
+      integer(i4) nn
       parameter(nn=2)
-      double precision a(nn, nn), b(nn), x(nn)
-      double precision xi, yi, rlsh2, rl2, Smin
-      double precision xc, yc, xs1, ys1, xs2, ys2
-      double precision rlsh3
+      real(wp) a(nn, nn), b(nn), x(nn)
+      real(wp) xi, yi, rlsh2, rl2, Smin
+      real(wp) xc, yc, xs1, ys1, xs2, ys2
+      real(wp) rlsh3
 
       rdshp = -1.0
 
@@ -330,12 +334,13 @@ subroutine fnd_phps(nface,&
     subroutine solg(n, nmax, a, b, x)
 !     subroutine : gauss method for the solution of a
 !                  linear algebraic system
+      use mod_kinds, only: wp, i4
       implicit none(type, external)
-      double precision a, b, x
-      integer n, nmax
+      real(wp) a, b, x
+      integer(i4) n, nmax
 
-      double precision summ, pik, app
-      integer i, j, k, imax, j1, i1
+      real(wp) summ, pik, app
+      integer(i4) i, j, k, imax, j1, i1
 
       dimension a(nmax, nmax), b(nmax), x(nmax)
 !     Triangularization of matrix A with partial pivot

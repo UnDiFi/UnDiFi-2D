@@ -19,9 +19,9 @@
 
 !     .. Parameters ..
 
-      REAL*8  ZERO,HALF,ONE,TWO,PI
-      INTEGER*4 NSHMAX, NPSHMAX,NESHMAX,NDIM,NDOF,NSPMAX,IBAK
-      INTEGER*4 NADDHOLESMAX,NprdBndMAX,IMTF
+      real(wp)  ZERO,HALF,ONE,TWO,PI
+      integer(i4) NSHMAX, NPSHMAX,NESHMAX,NDIM,NDOF,NSPMAX,IBAK
+      integer(i4) NADDHOLESMAX,NprdBndMAX,IMTF
       PARAMETER (ZERO=0.00d0,                                        &
                  HALF=0.5d0,                                         &
                  ONE=1.00d0,                                         &
@@ -38,9 +38,9 @@
 
 !     .. Common area  ..
 
-      REAL*8  EPS,SHRELAX,GA,GM1,SNDMIN,DXCELL,                      &
+      real(wp)  EPS,SHRELAX,GA,GM1,SNDMIN,DXCELL,                    &
               CADDhole(NDIM, NADDHOLESMAX),FLT_Dspeed
-      INTEGER*4 NADDHOLES,NprdBnd,prdBndclr(3,NprdBndMAX)
+      integer(i4) NADDHOLES,NprdBnd,prdBndclr(3,NprdBndMAX)
       COMMON/PARAMT/CADDhole,EPS,SNDMIN,DXCELL,GA,SHRELAX,           &
                     GM1,IBAK,NADDHOLES,NprdBnd,prdBndclr,            &
                     FLT_Dspeed,IMTF

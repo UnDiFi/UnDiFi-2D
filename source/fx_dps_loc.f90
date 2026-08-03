@@ -27,19 +27,20 @@ subroutine fx_dps_loc(&
 &corg,&
 &shtopolchanged)!vale
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external solg
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax),&
+  integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax),&
   &nspecpoints, shinspps(2, 5, *), ispclr(*)
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. array arguments ..
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &xyshu(ndim, npshmax, *),&
   &xyshd(ndim, npshmax, *),&
@@ -49,12 +50,12 @@ subroutine fx_dps_loc(&
   &zroeshdold(ndof, npshmax, *),&
   &vshnor(ndim, npshmax, *),&
   &wsh(ndim, npshmax, *)
-  integer nclr
-  integer ia(*), ja(*), iclr(nclr)
-  double precision corg(ndim, *), zroe(ndof, *)
+  integer(i4) nclr
+  integer(i4) ia(*), ja(*), iclr(nclr)
+  real(wp) corg(ndim, *), zroe(ndof, *)
 
 ! vale
-  double precision xywedge(2), dum1, dum2
+  real(wp) xywedge(2), dum1, dum2
   logical shtopolchanged
 ! vale
 
@@ -62,13 +63,13 @@ subroutine fx_dps_loc(&
 !     character*(*) fname
 
 !     .. local scalars ..
-  integer isppnts, ip1, ish1, ip2, ish2, i, j, k, kp1
-  integer clr, bbgn, bend
-  double precision xi, yi, x1, y1, x2, y2, dumx1, dumy1, dumx2, dumy2
-  double precision dum, xi1, yi1
-  integer nn, ish
+  integer(i4) isppnts, ip1, ish1, ip2, ish2, i, j, k, kp1
+  integer(i4) clr, bbgn, bend
+  real(wp) xi, yi, x1, y1, x2, y2, dumx1, dumy1, dumx2, dumy2
+  real(wp) dum, xi1, yi1
+  integer(i4) nn, ish
   parameter(nn=2)
-  double precision a(nn, nn), b(nn), x(nn)
+  real(wp) a(nn, nn), b(nn), x(nn)
 
 !     double precision dx,dy,kine,ws,hh,wws,taux,tauy,dum,wrr,wss
 !     double precision wqpx,wqpy,w,cs,dum1,f1,f3,dxr14,dyr14

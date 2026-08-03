@@ -27,27 +27,28 @@ subroutine fx_msh_sps(&
 &shinspps,&
 &ispclr)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
-  integer nelem, npoin, nvt, nbfac, nbfac_sh, nbfac_new
-  integer nshocks, nshockedges(nshmax), nshockpoints(nshmax)
-  integer nspecpoints, shinspps(2, 5, *), ispclr(5, *), nodcod(npoin)
+  integer(i4) nelem, npoin, nvt, nbfac, nbfac_sh, nbfac_new
+  integer(i4) nshocks, nshockedges(nshmax), nshockpoints(nshmax)
+  integer(i4) nspecpoints, shinspps(2, 5, *), ispclr(5, *), nodcod(npoin)
 
 !     .. array arguments ..
-  double precision xy(ndim, *),&
+  real(wp) xy(ndim, *),&
   &xysh(ndim, npshmax, *),&
   &xyshu(ndim, npshmax, *),&
   &xyshd(ndim, npshmax, *)
-  integer ibndfac(3, *)
+  integer(i4) ibndfac(3, *)
 
 !     .. array arguments ..
 !     character*(*) fname
   character*5 typespecpoints(*)
 
 !     .. local scalars ..
-  double precision x0, y0, help, s1, s2, x1, y1, x2, y2, x3, y3, x4, y4
-  integer i, iedg1, iedg2, ifail, ipoin(4), i1, i2, ibc,&
+  real(wp) x0, y0, help, s1, s2, x1, y1, x2, y2, x3, y3, x4, y4
+  integer(i4) i, iedg1, iedg2, ifail, ipoin(4), i1, i2, ibc,&
   &ibfac, ish, ish1, ip1, isppnts, ish2, ip2,&
   &ilist, ibf,&
   &ishplistu(npshmax, nshmax),&
@@ -56,7 +57,7 @@ subroutine fx_msh_sps(&
   &ishel1
 
 !     .. external functions ..
-  integer findbedg
+  integer(i4) findbedg
 
 !     open log file
   open (8, file='log/fx_msh_sps.log')
@@ -974,21 +975,22 @@ subroutine fx_msh_sps(&
   return
 end subroutine fx_msh_sps
 
-integer function findbedg(xy, ndim, ibndfac, nbfac, xsh, ysh, s)
+integer(i4) function findbedg(xy, ndim, ibndfac, nbfac, xsh, ysh, s)
 
 !     finds the bndry edge (of the background mesh)
 !     the shock point (xsh,ysh) belongs to
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
-  integer ndim, nbfac
-  double precision xy(ndim, *)
-  integer ibndfac(3, *)
-  double precision xsh, ysh, s
-  double precision x, y, x1, x2, y1, y2
-  integer i1, i2, ibc, ibfac
-  double precision toler
+  integer(i4) ndim, nbfac
+  real(wp) xy(ndim, *)
+  integer(i4) ibndfac(3, *)
+  real(wp) xsh, ysh, s
+  real(wp) x, y, x1, x2, y1, y2
+  integer(i4) i1, i2, ibc, ibfac
+  real(wp) toler
   parameter(toler=0.2d-6)
-  double precision tline
+  real(wp) tline
   tline(x, y) = (y - y1)*(x2 - x1) - (x - x1)*(y2 - y1)
 
   do 10 ibfac = 1, nbfac

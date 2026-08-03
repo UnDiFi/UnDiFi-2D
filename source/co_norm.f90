@@ -17,48 +17,49 @@ subroutine co_norm(xysh,&
 &nclr,&
 &corg)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
-  integer nshocks, nshockpoints(*), nspecpoints, shinspps(2, 5, *)
-  integer ispclr(5, *)
-  integer i, j, j2, k, kp1, depip1, depim1, ii
+  integer(i4) nshocks, nshockpoints(*), nspecpoints, shinspps(2, 5, *)
+  integer(i4) ispclr(5, *)
+  integer(i4) i, j, j2, k, kp1, depip1, depim1, ii
 
-  integer nclr
-  integer ia(*), ja(*), iclr(nclr)
-  double precision corg(ndim, *)
+  integer(i4) nclr
+  integer(i4) ia(*), ja(*), iclr(nclr)
+  real(wp) corg(ndim, *)
 
-  integer clr, bbgn, bend
+  integer(i4) clr, bbgn, bend
 
-  double precision xysh(ndim, npshmax, *)
-  double precision vshnor(ndim, npshmax, *)
-  double precision zroesh(ndof, npshmax, *)
+  real(wp) xysh(ndim, npshmax, *)
+  real(wp) vshnor(ndim, npshmax, *)
+  real(wp) zroesh(ndof, npshmax, *)
 
 ! vale
-  double precision zroeshu(ndof, npshmax, *)
-  double precision pu, pd
+  real(wp) zroeshu(ndof, npshmax, *)
+  real(wp) pu, pd
 ! vale
 
-  double precision xi, yi, xj, yj, ush, vsh, tau, dum
-  double precision x1, y1, x2, y2
-  double precision dumx1, dumy1, dumx2, dumy2
-  double precision um, vm, rom, am, pm, help, mm, alpham, thetam
-  double precision uj, vj, roj, aj, pj, mj, alphaj, thetaj
-  double precision uv, vv, rov, av, pv, mv, alphav, thetav
-  double precision tauxim1, tauyim1, tauxip1, tauyip1, taux, tauy
-  double precision xj2, yj2, tauxip2, tauyip2, tauxim2, tauyim2
-  double precision tauxjp2, tauyjp2, tauxjm2, tauyjm2
-  double precision lp12, lm12, ui, vi, nx2, ny2, nx3, ny3, nx4, ny4, nx1, ny1
-  double precision dum1, dum2, lp1, lp2, lm1, lm2, lp22, lm22
-  double precision a, b, c, nx, ny, dist
-  integer shp_dpndnc, dcp_dpndnc, ish, isppnts
-  integer ip, ip1, ip2, ip3, ip4, ish1, ish2, ish3, ish4
+  real(wp) xi, yi, xj, yj, ush, vsh, tau, dum
+  real(wp) x1, y1, x2, y2
+  real(wp) dumx1, dumy1, dumx2, dumy2
+  real(wp) um, vm, rom, am, pm, help, mm, alpham, thetam
+  real(wp) uj, vj, roj, aj, pj, mj, alphaj, thetaj
+  real(wp) uv, vv, rov, av, pv, mv, alphav, thetav
+  real(wp) tauxim1, tauyim1, tauxip1, tauyip1, taux, tauy
+  real(wp) xj2, yj2, tauxip2, tauyip2, tauxim2, tauyim2
+  real(wp) tauxjp2, tauyjp2, tauxjm2, tauyjm2
+  real(wp) lp12, lm12, ui, vi, nx2, ny2, nx3, ny3, nx4, ny4, nx1, ny1
+  real(wp) dum1, dum2, lp1, lp2, lm1, lm2, lp22, lm22
+  real(wp) a, b, c, nx, ny, dist
+  integer(i4) shp_dpndnc, dcp_dpndnc, ish, isppnts
+  integer(i4) ip, ip1, ip2, ip3, ip4, ish1, ish2, ish3, ish4
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. arrays in common ..
-  double precision dstak(1)
-  integer istak(1)
+  real(wp) dstak(1)
+  integer(i4) istak(1)
   common/cstak/dstak
 
 !     .. equivalences ..
@@ -672,9 +673,10 @@ subroutine co_norm(xysh,&
   return
 end subroutine co_norm
 
-integer function shp_dpndnc_old(x, y, ush, vsh, xi, yi, ui, vi, ai)
-  double precision x, y, ush, vsh, xi, yi, ui, vi, ai
-  double precision taux, tauy, tau, utau
+integer(i4) function shp_dpndnc_old(x, y, ush, vsh, xi, yi, ui, vi, ai)
+  use mod_kinds, only: wp, i4
+  real(wp) x, y, ush, vsh, xi, yi, ui, vi, ai
+  real(wp) taux, tauy, tau, utau
 
 !     determine tangent versor
   taux = xi - x
@@ -693,10 +695,11 @@ integer function shp_dpndnc_old(x, y, ush, vsh, xi, yi, ui, vi, ai)
   return
 end function shp_dpndnc_old
 
-integer function shp_dpndnc_old2(x, y, ush, vsh, xi, yi, ui, vi, ai)
-  double precision x, y, ush, vsh, xi, yi, ui, vi, ai, umod
-  double precision xx, yy, xxi, yyi, dsh1, dsh2, dt
-  double precision taux1, tauy1, tau1, taux2, tauy2, tau2, dum, dx1, dx2
+integer(i4) function shp_dpndnc_old2(x, y, ush, vsh, xi, yi, ui, vi, ai)
+  use mod_kinds, only: wp, i4
+  real(wp) x, y, ush, vsh, xi, yi, ui, vi, ai, umod
+  real(wp) xx, yy, xxi, yyi, dsh1, dsh2, dt
+  real(wp) taux1, tauy1, tau1, taux2, tauy2, tau2, dum, dx1, dx2
 
 !     calculate dt for the test
   rl = sqrt((x - xi)**2 + (y - yi)**2)
@@ -755,10 +758,11 @@ integer function shp_dpndnc_old2(x, y, ush, vsh, xi, yi, ui, vi, ai)
   return
 end function shp_dpndnc_old2
 
-integer function shp_dpndnc(x, y, ush, vsh, xi, yi, ui, vi, ai)
-  double precision x, y, ush, vsh, xi, yi, ui, vi, ai
-  double precision xx, yy, uu, vv, aa, dum, dt1, dt2
-  double precision taux, tauy, tau, utau
+integer(i4) function shp_dpndnc(x, y, ush, vsh, xi, yi, ui, vi, ai)
+  use mod_kinds, only: wp, i4
+  real(wp) x, y, ush, vsh, xi, yi, ui, vi, ai
+  real(wp) xx, yy, uu, vv, aa, dum, dt1, dt2
+  real(wp) taux, tauy, tau, utau
 
   xx = x - xi
   yy = y - yi
@@ -787,10 +791,11 @@ integer function shp_dpndnc(x, y, ush, vsh, xi, yi, ui, vi, ai)
   return
 end function shp_dpndnc
 
-integer function dcp_dpndnc(x, y, ush, vsh, xi, yi, ui, vi, ai)
-  double precision x, y, ush, vsh, xi, yi, ui, vi, ai
-  double precision xx, yy, uu, vv, aa, dum, dt1, dt2
-  double precision taux, tauy, tau, utau
+integer(i4) function dcp_dpndnc(x, y, ush, vsh, xi, yi, ui, vi, ai)
+  use mod_kinds, only: wp, i4
+  real(wp) x, y, ush, vsh, xi, yi, ui, vi, ai
+  real(wp) xx, yy, uu, vv, aa, dum, dt1, dt2
+  real(wp) taux, tauy, tau, utau
 
   xx = x - xi
   yy = y - yi

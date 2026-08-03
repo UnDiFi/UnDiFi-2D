@@ -2,6 +2,7 @@
 # Makefile (the authoritative list -- SRCS there has drifted, see the
 # co_pnt_dipl.f typo fixed alongside this CMake build).
 set(UNDIFI2D_SOURCES
+  mod_kinds.f90
   mod_error.f90
   fx_msh_sps.f90
   co_utp.f90

@@ -1,7 +1,8 @@
 subroutine COORDS(X, Y, X1, X2, X3, Y1, Y2, Y3, R, IER)
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
-  integer IER
-  double precision X, Y, X1, X2, X3, Y1, Y2, Y3, R(3)
+  integer(i4) IER
+  real(wp) X, Y, X1, X2, X3, Y1, Y2, Y3, R(3)
 !
 !***********************************************************
 !
@@ -38,7 +39,7 @@ subroutine COORDS(X, Y, X1, X2, X3, Y1, Y2, Y3, R, IER)
 !
 !***********************************************************
 !
-  double precision U(3), V(3), AREA, XP, YP
+  real(wp) U(3), V(3), AREA, XP, YP
 !
 ! LOCAL PARAMETERS -
 !

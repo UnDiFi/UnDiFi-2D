@@ -25,19 +25,20 @@ subroutine fx_state_dps(&
 &nclr,&
 &corg)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external co_uqp, co_urr, co_utp
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax),&
+  integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax),&
   &nspecpoints, shinspps(2, 5, *), ispclr(*)
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. array arguments ..
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &xyshu(ndim, npshmax, *),&
   &xyshd(ndim, npshmax, *),&
@@ -47,26 +48,26 @@ subroutine fx_state_dps(&
   &zroeshdold(ndof, npshmax, *),&
   &vshnor(ndim, npshmax, *),&
   &wsh(ndim, npshmax, *)
-  integer nclr
-  integer ia(*), ja(*), iclr(nclr)
-  double precision corg(ndim, *)
+  integer(i4) nclr
+  integer(i4) ia(*), ja(*), iclr(nclr)
+  real(wp) corg(ndim, *)
 
 !     .. local scalars ..
-  double precision dx, dy, kine, ws, hh, wws, taux, tauy, dum, wrr, wss
-  double precision wqpx, wqpy, w, cs, dum1, f1, f2, f3, dxr14, dyr14
-  double precision help, x1(ndof), x2(ndof), taux12, tauy12, nx, ny
-  double precision r2(npshmax, nshmax), xtpi(24), xtp(24), r23, r14
-  double precision r14old, varz(ndof), avarz(ndof)
-  double precision dumm2, dumx, dumy, rmach, gam, p0, rho0, astar
-  double precision dumz1v, dumz2v, dumz3v, dumz4v
-  double precision chxpu, chxmu, chypu, chymu, uu, vv, a, wshmod
-  double precision chxpd, chxmd, chypd, chymd, rmachip1d, dump, dumm
-  double precision pu, pd
-  double precision dumx1, dumy1, dumx2, dumy2, xi, yi
-  integer i, im, iv, k, totnshockpoints
-  integer j, kp1, bbgn, bend, clr
-  integer isppnts
-  integer ip, ish, ip1, ip2, ip3, ip4, ip5, ish1, ish2, ish3, ish4, ish5
+  real(wp) dx, dy, kine, ws, hh, wws, taux, tauy, dum, wrr, wss
+  real(wp) wqpx, wqpy, w, cs, dum1, f1, f2, f3, dxr14, dyr14
+  real(wp) help, x1(ndof), x2(ndof), taux12, tauy12, nx, ny
+  real(wp) r2(npshmax, nshmax), xtpi(24), xtp(24), r23, r14
+  real(wp) r14old, varz(ndof), avarz(ndof)
+  real(wp) dumm2, dumx, dumy, rmach, gam, p0, rho0, astar
+  real(wp) dumz1v, dumz2v, dumz3v, dumz4v
+  real(wp) chxpu, chxmu, chypu, chymu, uu, vv, a, wshmod
+  real(wp) chxpd, chxmd, chypd, chymd, rmachip1d, dump, dumm
+  real(wp) pu, pd
+  real(wp) dumx1, dumy1, dumx2, dumy2, xi, yi
+  integer(i4) i, im, iv, k, totnshockpoints
+  integer(i4) j, kp1, bbgn, bend, clr
+  integer(i4) isppnts
+  integer(i4) ip, ish, ip1, ip2, ip3, ip4, ip5, ish1, ish2, ish3, ish4, ish5
   logical flag1, ifail
 
 !     assign constants

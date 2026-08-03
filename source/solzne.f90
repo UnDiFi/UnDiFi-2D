@@ -2,22 +2,23 @@
 
 subroutine solzne(filename, varray, nofvar, npoin, mode)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..
-  integer nofvar, npoin
+  integer(i4) nofvar, npoin
   character filename*(*), mode*(*)
 
 !     .. array arguments ..
-  double precision varray(nofvar, npoin)
+  real(wp) varray(nofvar, npoin)
 
 !     .. local scalars ..
-  integer ifail, ixdrs, npold, nvold
+  integer(i4) ifail, ixdrs, npold, nvold
 
 !     .. external functions ..
-  integer initxdr
-  integer ixdrint, ixdrimat, ixdrclose, ixdrdmat
+  integer(i4) initxdr
+  integer(i4) ixdrint, ixdrimat, ixdrclose, ixdrdmat
   external initxdr
 
 !     .. external subroutines ..

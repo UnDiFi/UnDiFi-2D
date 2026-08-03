@@ -16,11 +16,12 @@ subroutine chg_bnd_ptr(&
 !
 !     nbfac  boundary faces (shock segments excluded)
 !     nbpoin boundary nodes (shock points   excluded)
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
 
-  integer nbfac, npoin, nbpoin
-  integer nodcode(*)
-  integer ibndptr(3, nbfac), inodptr(nbpoin, 3)
+  integer(i4) nbfac, npoin, nbpoin
+  integer(i4) nodcode(*)
+  integer(i4) ibndptr(3, nbfac), inodptr(nbpoin, 3)
 
 !     ibndptr(1,i) first node of the i-th boundary face
 !     ibndptr(2,i) second node of the i-th boundary face
@@ -37,10 +38,10 @@ subroutine chg_bnd_ptr(&
 !     the vector inodptr is built from it in setbndrynodeptr() recalled from readmesh()
 
 !     .. local scalars ..
-  integer ipoin, ipos, last, ifail, j, k, iface
+  integer(i4) ipoin, ipos, last, ifail, j, k, iface
 
 !     .. local arrays ..
-  integer inode(2)
+  integer(i4) inode(2)
 
 !     .. external subroutines ..
   external dinit, iinit, binsrc

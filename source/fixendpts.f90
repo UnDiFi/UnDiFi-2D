@@ -8,20 +8,21 @@ subroutine fixendpts(xy, n1, n2, ndim)
 !        2b) to account for the bndry segments of the background mesh
 !            cut by the shock
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
 
 !     .. scalar arguments ..
-  integer ndim, n1, n2
+  integer(i4) ndim, n1, n2
 
 !     .. array arguments ..
-  double precision xy(ndim, *)
+  real(wp) xy(ndim, *)
 
 !     .. array arguments ..
 !     character*(*) fname
 
 !     .. local scalars ..
-  double precision x1, y1, x2, y2, dx, dy, x4, y4, s, t, help
-  integer i, ifail
+  real(wp) x1, y1, x2, y2, dx, dy, x4, y4, s, t, help
+  integer(i4) i, ifail
 
 !     check the intersections of the shock lines
   x1 = xy(1, n1)

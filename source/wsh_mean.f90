@@ -5,17 +5,18 @@ subroutine wsh_mean(&
 &wsh_n1,&
 &wshmean)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
 !     ..array definition..
-  double precision&
+  real(wp)&
   &wsh_n(ndim, npshmax, nshmax),&
   &wsh_n1(ndim, npshmax, nshmax),&
   &wshmean(ndim, npshmax, nshmax)
 
 !     ..integer definition..
-  integer i1, i2, i3
+  integer(i4) i1, i2, i3
 
   open (8, file='log/ush_mean.log')
   open (9, file='log/vsh_mean.log')

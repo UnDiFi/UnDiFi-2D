@@ -2,6 +2,7 @@
 
 subroutine fx_bndry_wedge
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 

@@ -26,28 +26,29 @@ subroutine dump_sdw_info(dumpfname,&
 &shinspps,&
 &ispclr)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
   character*(*) dumpfname
-  integer nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
+  integer(i4) nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
   &isppnts, nshe
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. array arguments ..
-  double precision xysh(ndim, npshmax, *),&
+  real(wp) xysh(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *)
 
-  integer nodcodsh(npshmax, *),&
+  integer(i4) nodcodsh(npshmax, *),&
   &shinspps(2, 5, *),&
   &ispclr(5, *)
 
 !     .. local scalars ..
-  integer i, k, ish
+  integer(i4) i, k, ish
 
 !     open the dump file (fresh each call: same semantics as sh99.dat)
   open (14, file=dumpfname)

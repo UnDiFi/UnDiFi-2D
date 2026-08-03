@@ -24,42 +24,43 @@ subroutine wtri(&
 
 !     write a node and a poly file in triangle fmt
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..
-  integer nofvert, npoin, nbfac, nbfac_sh, nphpoin,&
+  integer(i4) nofvert, npoin, nbfac, nbfac_sh, nphpoin,&
   &nshocks, nshockpoints(*), nshocksegs(*)
 
 !     .. array arguments ..
   character*(*) fname
   character fwork*255
-  double precision xy(ndim, *),&
+  real(wp) xy(ndim, *),&
   &xysh(ndim, npshmax, *),&
   &xyshu(ndim, npshmax, *),&
   &xyshd(ndim, npshmax, *),&
   &zroe(ndof, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *)
-  integer ibndfac(3, *),&
+  integer(i4) ibndfac(3, *),&
   &icelnod(nofvert, *),&
   &nodcod(*),&
   &nodcodsh(npshmax, *)
 
 !     .. local scalars ..
-  double precision x0, y0, dum1, dum2, dum3, dum4, dum, distmin3, distmin4,&
+  real(wp) x0, y0, dum1, dum2, dum3, dum4, dum, distmin3, distmin4,&
   &distmin31, distmin41,&
   &dum4x, dum2x, dum4y, dum2y, dum3x, dum3y,&
   &dumx, dumy,&
   &alpha, alpha3, alpha4
-  integer ia, k, iface, ipoin, n, ibc, icheck, ilist, i, ish,&
+  integer(i4) ia, k, iface, ipoin, n, ibc, icheck, ilist, i, ish,&
   &ishplist(npshmax, nshmax), nholes, ihole,&
   &ipoinatdistmin3, ipoinatdistmin4,&
   &ipoinatdistmin31, ipoinatdistmin41,&
   &ish1, ish2, i1, i2, icount
 
 !     .. external functions ..
-  integer icycl, lenstr
+  integer(i4) icycl, lenstr
   external icycl, lenstr
 
 !     .. intrinsic functions ..

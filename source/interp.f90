@@ -25,17 +25,18 @@ subroutine interp(&
 &iclr,&
 &nclr)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external finder
   include 'paramt.h'
 
 !     .. scalar arguments ..
-  integer nelem, nvt, nbfac
-  integer nshocks, nshockpoints(nshmax), nphpoin
+  integer(i4) nelem, nvt, nbfac
+  integer(i4) nshocks, nshockpoints(nshmax), nphpoin
 
 !     .. array arguments ..
 !    &                 work(ndim,npshmax,*),
-  double precision xysh(ndim, npshmax, *),&
+  real(wp) xysh(ndim, npshmax, *),&
   &xyshu(ndim, npshmax, *),&
   &xyshd(ndim, npshmax, *),&
   &xy(ndim, *),&
@@ -43,17 +44,17 @@ subroutine interp(&
   &xybkg(ndim, *),&
   &zbkg(ndof, *)
 
-  integer ibndfac(3, *),&
+  integer(i4) ibndfac(3, *),&
   &icelnod(nvt, nelem),&
   &nodcod(*),&
   &npoin(0:*)
 
-  integer nclr
-  integer ia(*), ja(*), iclr(nclr)
+  integer(i4) nclr
+  integer(i4) ia(*), ja(*), iclr(nclr)
 
 !     .. local scalars ..
-  integer ipoin, ielem, i, ii, k, n, ifail, ish, clr, bbgn, bend, j, kp1, ibc
-  double precision x0, y0, x1, y1, x2, y2, dum, dum1, dum2
+  integer(i4) ipoin, ielem, i, ii, k, n, ifail, ish, clr, bbgn, bend, j, kp1, ibc
+  real(wp) x0, y0, x1, y1, x2, y2, dum, dum1, dum2
 
 !     open log file
   open (8, file='log/interp.log')
@@ -184,17 +185,18 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
 !            info = 0 node found !=0 search failed
 !            zout(*) is filled with the interpolated value
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
-  integer ielem, ndim, ndof, info, nelem, info1
-  integer icelnod(3, *)
-  double precision coor(ndim, *), zroe(ndof, *), aa
-  double precision xyin(ndim), zout(ndof)
-  double precision x0, y0, xp(4), yp(4), a(3), t, s, help
-  integer idxs(3), iv, ipoin, ivar, ilog
-  double precision eps
+  integer(i4) ielem, ndim, ndof, info, nelem, info1
+  integer(i4) icelnod(3, *)
+  real(wp) coor(ndim, *), zroe(ndof, *), aa
+  real(wp) xyin(ndim), zout(ndof)
+  real(wp) x0, y0, xp(4), yp(4), a(3), t, s, help
+  integer(i4) idxs(3), iv, ipoin, ivar, ilog
+  real(wp) eps
   parameter(eps=1.e-08, ilog=1)
-  double precision area
-  integer icycl
+  real(wp) area
+  integer(i4) icycl
 
   info1 = info
   info = 0
@@ -303,28 +305,29 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
       &typespecpoints,&
       &shinspps)
 
+        use mod_kinds, only: wp, i4
         implicit none(type, external)
         external finder
         include 'paramt.h'
 
 !     .. scalar arguments ..
-        integer nelem, nvt, nbfac
-        integer nshocks, nshockpoints(nshmax), nphpoin
-        integer nspecpoints, shinspps(2, 5, *)
+        integer(i4) nelem, nvt, nbfac
+        integer(i4) nshocks, nshockpoints(nshmax), nphpoin
+        integer(i4) nspecpoints, shinspps(2, 5, *)
 
 !     .. array arguments ..
-        double precision xysh(ndim, npshmax, *),&
+        real(wp) xysh(ndim, npshmax, *),&
         &xy(ndim, *),&
         &zroesh(ndof, npshmax, *),&
         &zroeshu(ndof, npshmax, *),&
         &zroe(ndim, *)
 
-        integer icelnod(nvt, nelem),&
+        integer(i4) icelnod(nvt, nelem),&
         &npoin(0:*)
-        double precision vshnor(ndim, npshmax, *)
+        real(wp) vshnor(ndim, npshmax, *)
 
 !     .. array arguments ..
-        double precision xybkg(ndim),&
+        real(wp) xybkg(ndim),&
         &zbkg(ndof)
 
 !     .. character array arguments
@@ -332,10 +335,10 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
         character*5 typespecpoints(*)
 
 !     .. local scalars ..
-        integer ipoin, ielem, i, ii, k, n, ifail, ish, clr, bbgn, bend, j, kp1, ibc
-        integer ip, ip1, ish1, isppnts
-        double precision x0, y0, x1, y1, x2, y2, dum, dum1, dum2
-        double precision uv, vv, av, thetav, rov, help, pv, mv, alphav
+        integer(i4) ipoin, ielem, i, ii, k, n, ifail, ish, clr, bbgn, bend, j, kp1, ibc
+        integer(i4) ip, ip1, ish1, isppnts
+        real(wp) x0, y0, x1, y1, x2, y2, dum, dum1, dum2
+        real(wp) uv, vv, av, thetav, rov, help, pv, mv, alphav
 
 !     open log file
         open (8, file='log/interp_sp.log')

@@ -2,6 +2,7 @@ subroutine readmesh(lbndfac, lcelcel, lcelnod, lcorg, ledgptr,&
 &lnodcod, lnodptr, lzroe, nbfac, npoin, nelem, nhole, nbpoin,&
 &nvt, nedge, fname, lia, lja, liclr, nclr, fndbnds)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external check, rtri, setbndrynodeptr
   include 'paramt.h'
@@ -22,14 +23,14 @@ subroutine readmesh(lbndfac, lcelcel, lcelnod, lcorg, ledgptr,&
 !     neshmax : max number of shock element for each shocks
 
 !     .. local scalars ..
-  integer lbndfac, lcelcel, lcelnod, lcorg, ledgptr, lnodcod, lnodptr,&
+  integer(i4) lbndfac, lcelcel, lcelnod, lcorg, ledgptr, lnodcod, lnodptr,&
   &lzroe, lia, lja, liclr, nclr
-  integer nbfac, npoin, nelem, nhole, nbpoin, nvt, nedge
-  integer ifail, k
+  integer(i4) nbfac, npoin, nelem, nhole, nbpoin, nvt, nedge
+  integer(i4) ifail, k
   logical fndbnds
 
 !     .. local arrays ..
-  integer kspace, lenstr
+  integer(i4) kspace, lenstr
 
 !     .. external subroutines ..
   external dinit, iinit, istkin, istkrl
@@ -37,15 +38,15 @@ subroutine readmesh(lbndfac, lcelcel, lcelnod, lcorg, ledgptr,&
   character*(*) fname
 
 !     .. arrays in common ..
-  double precision dstak(1)
-  integer istak(1)
+  real(wp) dstak(1)
+  integer(i4) istak(1)
   common/cstak/dstak
 
 !     .. equivalences ..
   equivalence(dstak(1), istak(1))
 
 !     .. external functions ..
-  integer istkgt
+  integer(i4) istkgt
   external istkgt
 
 !     open log file

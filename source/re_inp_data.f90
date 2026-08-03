@@ -4,11 +4,12 @@
 
 subroutine re_inp_data
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
 !     .. local scalars ..
-  integer*4 i
+  integer(i4) i
 
 !     open log file
   open (8, file='log/re_inp_data.log')

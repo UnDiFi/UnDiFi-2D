@@ -16,19 +16,20 @@ subroutine co_state_dps(&
 &typesh,&
 &iter)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external co_dc, co_shock
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
+  integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
   character*1 typesh(*)
 
 !     .. array arguments ..
 !    +                 xyshu      (ndim, npshmax, *),
 !    +                 xyshd      (ndim, npshmax, *),
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *),&
@@ -38,10 +39,10 @@ subroutine co_state_dps(&
   &wsh(ndim, npshmax, *)
 
 !     .. local scalars ..
-  double precision dx, dy, kine, ws, hh, mmn
-  double precision help, x1(ndof), x2(ndof)
-  double precision r2(npshmax, nshmax)
-  integer i, im, iv, ish, k, totnshockpoints
+  real(wp) dx, dy, kine, ws, hh, mmn
+  real(wp) help, x1(ndof), x2(ndof)
+  real(wp) r2(npshmax, nshmax)
+  integer(i4) i, im, iv, ish, k, totnshockpoints
 
 !     open log file
   open (8, file='log/co_dps_state.log')

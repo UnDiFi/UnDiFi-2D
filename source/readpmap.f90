@@ -15,8 +15,9 @@
 !     call subroutine( ...,istak(lpmap(0)),....
 
 subroutine readpmap(nitems, npnod, lpmap)
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
-  integer nitems, npnod, lpmap
+  integer(i4) nitems, npnod, lpmap
 
 !<     nitems (input) the nof of gridpoints incls. both sets of periodic nodes
 !<     npnod  (output) the nof periodic gridpoints in only one of the two sets
@@ -26,18 +27,18 @@ subroutine readpmap(nitems, npnod, lpmap)
 !<     j = lpmap(i) = 0 means that i is not among the periodic meshpoints
 
   logical lflag
-  integer i, j, n
+  integer(i4) i, j, n
 
 !     .. arrays in common ..
-  double precision dstak(1)
-  integer istak(1)
+  real(wp) dstak(1)
+  integer(i4) istak(1)
   common/cstak/dstak
 
 !     .. equivalences ..
   equivalence(dstak(1), istak(1))
 
 !     .. external functions ..
-  integer istkgt
+  integer(i4) istkgt
   external istkgt
 
 !     read the file with the index of all nodes and in case

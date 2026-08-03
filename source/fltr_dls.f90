@@ -10,33 +10,34 @@ subroutine fltr_dls(&
 &nshockedges,&
 &typesh)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
+  integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)
   character*1 typesh(*)
 
 !     .. array arguments ..
-  double precision&
+  real(wp)&
   &xysh(ndim, npshmax, *),&
   &zroesh(ndof, npshmax, *),&
   &wsh(ndim, npshmax, *)
 
-  double precision fltrsh(nshmax)
+  real(wp) fltrsh(nshmax)
 
 !     .. local scalar  ..
-  double precision dum, p, a, help, ro, u, v
+  real(wp) dum, p, a, help, ro, u, v
 
 !     .. array arguments ..
 !     character*(*) fname
 
 !     .. local scalars ..
-  double precision dt, wshmod
-  double precision xyshnew(ndim, npshmax, npshmax)
+  real(wp) dt, wshmod
+  real(wp) xyshnew(ndim, npshmax, npshmax)
 
-  integer i, im, iv, ish, k
+  integer(i4) i, im, iv, ish, k
 
 !     open log file
   open (8, file='log/fltr_dls.log')

@@ -5,15 +5,16 @@ subroutine calc_vel(npoin, varray, dt, xy, wsh, i, ispredictor,&
 !     x=a*t^3*(1-x/l); where "a" depends on the acceleration of the piston
 !     itself and "l" is the total grid length along the x-coordinate
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
-  integer npoin, i
-  double precision xy(ndim, npoin), varray(ndim, npoin), l0
-  double precision wsh(2, npshmax*nshmax)
-  double precision xnew(ndim, npoin), xold(ndim, npoin)
-  integer ipoin, ilist, ish
-  double precision dt, t, l, vp, x0, nowtime
+  integer(i4) npoin, i
+  real(wp) xy(ndim, npoin), varray(ndim, npoin), l0
+  real(wp) wsh(2, npshmax*nshmax)
+  real(wp) xnew(ndim, npoin), xold(ndim, npoin)
+  integer(i4) ipoin, ilist, ish
+  real(wp) dt, t, l, vp, x0, nowtime
   character c5*5, xyfile*11, velfile*12, ispredictor
   character(len=20) :: testcase
 

@@ -6,22 +6,23 @@ subroutine pr_sh_state(&
 &nshockpoints,&
 &nshockedges)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
+  integer(i4) nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
   &isppnts, idummy, nshe
 
 !     .. array arguments ..
-  double precision zroesh(ndof, npshmax, *)
+  real(wp) zroesh(ndof, npshmax, *)
 
 !     .. array arguments ..
 !     character*(*) fname
 
 !     .. local scalars ..
-  integer i, k, ish
+  integer(i4) i, k, ish
 
 !     open log file
   open (8, file='log/re_sdw_info.log')

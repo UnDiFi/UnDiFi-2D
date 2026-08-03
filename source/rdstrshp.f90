@@ -3,16 +3,17 @@
 subroutine rdstrshpnt(xysh, zold, shpnt, dx1,&
 &rxysh, znew, rshpnt, nmax, ish)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
-  integer shpnt, rshpnt, nmax
-  double precision dx1, dx, s, sr, alpha, beta, ds, dsj
+  integer(i4) shpnt, rshpnt, nmax
+  real(wp) dx1, dx, s, sr, alpha, beta, ds, dsj
   dimension s(1000), sr(1000)
-  double precision zold(ndof, *), znew(ndof, *)
-  double precision rxysh(ndim, *), xysh(ndim, *)
-  double precision kk
-  integer i, j, ivar, ish, nn, mm
+  real(wp) zold(ndof, *), znew(ndof, *)
+  real(wp) rxysh(ndim, *), xysh(ndim, *)
+  real(wp) kk
+  integer(i4) i, j, ivar, ish, nn, mm
 
   dx = dx1
 

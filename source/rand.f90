@@ -1,6 +1,6 @@
 !==============================================================
 !
-double precision function rand(ix)
+real(wp) function rand(ix)
 !     function rand(ix)
 !
 !==============================================================
@@ -8,8 +8,9 @@ double precision function rand(ix)
 !     ix=ix*a mod p
 !     implicit real*8(a-h,o-z)
 !
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
-  integer a, p, ix, b15, b16, xhi, xalo, leftlo, fhi, k
+  integer(i4) a, p, ix, b15, b16, xhi, xalo, leftlo, fhi, k
 !
 !     7**5, 2**15, 2**16, 2**31-1
   data a/16807/, b15/32768/, b16/65536/, p/2147483647/

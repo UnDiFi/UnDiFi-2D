@@ -19,35 +19,36 @@ subroutine re_sdw_info(xysh,&
 &shinspps,&
 &ispclr)
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
-  integer nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
+  integer(i4) nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
   &isppnts, idummy, nshe
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
 !     .. array arguments ..
-  double precision xysh(ndim, npshmax, *),&
+  real(wp) xysh(ndim, npshmax, *),&
   &zroeshu(ndof, npshmax, *),&
   &zroeshd(ndof, npshmax, *),&
   &zroeshuold(ndof, npshmax, *),&
   &zroeshdold(ndof, npshmax, *)
 ! vale
-  integer inode, ibfac
-  integer npoin, nbfac, ibndfac(3, *)
-  double precision coor(ndim, *)
-  double precision xywedge(2)
+  integer(i4) inode, ibfac
+  integer(i4) npoin, nbfac, ibndfac(3, *)
+  real(wp) coor(ndim, *)
+  real(wp) xywedge(2)
   logical foundbgnwedge
 ! vale
-  integer nodcodsh(npshmax, *),&
+  integer(i4) nodcodsh(npshmax, *),&
   &shinspps(2, 5, *),&
   &ispclr(5, *)
 
 !     .. local scalars ..
-  integer i, k, ish
+  integer(i4) i, k, ish
 
 !     open log file
   open (8, file='log/re_sdw_info.log')

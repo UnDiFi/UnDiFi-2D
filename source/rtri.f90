@@ -24,24 +24,25 @@ subroutine rtri(iedgptr,&
 !      only dimensions are read if imode == 0
 !      the actual data are read if imode != 0
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..
-  integer nface, nelem, npoin, nvt, nbfac, imode
+  integer(i4) nface, nelem, npoin, nvt, nbfac, imode
 
 !     .. array arguments ..
   character*(*) fname, ftype
   character fwork*255
-  double precision coor(ndim, npoin), zroe(ndof, npoin)
-  integer ibndfac(3, nbfac), icelnod(nvt, nelem), nodcode(npoin),&
+  real(wp) coor(ndim, npoin), zroe(ndof, npoin)
+  integer(i4) ibndfac(3, nbfac), icelnod(nvt, nelem), nodcode(npoin),&
   &icelcel(nvt, nelem), iedgptr(3, nface)
 
 !     .. local scalars ..
-  integer ia, k, ielem, iface, ipoin, idum, iattr, nhole, i, idum1, idum2
+  integer(i4) ia, k, ielem, iface, ipoin, idum, iattr, nhole, i, idum1, idum2
 
 !     .. external functions ..
-  integer icycl, lenstr
+  integer(i4) icycl, lenstr
   external icycl, lenstr
 
 !     open log file

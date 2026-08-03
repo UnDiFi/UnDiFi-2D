@@ -7,15 +7,16 @@ subroutine co_shock(x1, x2, wshk, R14)
 !     x1(3) and x2(3) upstream and downstream normal velocity
 !     wshk shock velocity
 
+  use mod_kinds, only: wp, i4
   implicit none(type, external)
   external solg
   include 'paramt.h'
 
-  double precision x1, x2, wshk, R14
+  real(wp) x1, x2, wshk, R14
   dimension x1(4), x2(4)
-  integer I, J, K, NN
-  double precision rov, rom, pv, pm, uv, um, w, gam, delta, R1, R2, a, dyn
-  double precision f, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
+  integer(i4) I, J, K, NN
+  real(wp) rov, rom, pv, pm, uv, um, w, gam, delta, R1, R2, a, dyn
+  real(wp) f, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
   dimension yn(4), yn1(4), g(4, 4), g1(4, 4), dyn(4), b(4)
   common/shck/rom, pm, um, gam, delta, R2
 
@@ -150,11 +151,12 @@ subroutine co_shock(x1, x2, wshk, R14)
 end subroutine co_shock
 
 ! ************************************
-double precision function f(i, y)
-  integer i
-  double precision y
+real(wp) function f(i, y)
+  use mod_kinds, only: wp, i4
+  integer(i4) i
+  real(wp) y
   dimension y(4)
-  double precision rov, rom, pv, pm, uv, um, w, gam, delta, R2
+  real(wp) rov, rom, pv, pm, uv, um, w, gam, delta, R2
   common/shck/rom, pm, um, gam, delta, R2
 
   rov = y(1)
@@ -183,14 +185,15 @@ double precision function f(i, y)
 end function f
 
 subroutine invmat(a, b, r)
+  use mod_kinds, only: wp, i4
 
   implicit real*8(a - h, o - z)
 !     subroutine for matrix inversion
 !     a     : matrix r*r to be inverted (real)
 !     b     : matrix r*r inverted
 !     r     : dimension (max 20) (integer)
-  integer r, j, i, k, l
-  real*8 a(4, 4), b(4, 4), c(4, 4)
+  integer(i4) r, j, i, k, l
+  real(wp) a(4, 4), b(4, 4), c(4, 4)
 
   do 2 i = 1, r
     do 3 j = 1, r
@@ -248,16 +251,17 @@ subroutine invmat(a, b, r)
 !     x1(3) and x2(3) upstream and downstream normal velocity
 !     wdc  contact discontinuity velocity
 
+                            use mod_kinds, only: wp, i4
                             implicit none(type, external)
                             external solg
                             include 'paramt.h'
 
-                            double precision x1, x2, wdc
+                            real(wp) x1, x2, wdc
                             dimension x1(4), x2(4)
 
-                            integer I, J, K, NN
-                            double precision ro1, ro2, p1, p2, u1, u2, w, gam, delta, R1, R2, S1, S2, dyn
-                            double precision fdc, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
+                            integer(i4) I, J, K, NN
+                            real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta, R1, R2, S1, S2, dyn
+                            real(wp) fdc, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
                             dimension yn(7), yn1(7), g(7, 7), g1(7, 7), dyn(7), b(7)
 
                             common/dc/gam, delta, R1, R2, S1, S2
@@ -345,12 +349,13 @@ subroutine invmat(a, b, r)
                             return
                           end subroutine co_dc
 
-                          double precision function fdc(i, y)
-                            integer i
-                            double precision y
+                          real(wp) function fdc(i, y)
+                            use mod_kinds, only: wp, i4
+                            integer(i4) i
+                            real(wp) y
                             dimension y(7)
-                            double precision ro1, ro2, p1, p2, u1, u2, w, gam, delta
-                            double precision R1, R2, S1, S2
+                            real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta
+                            real(wp) R1, R2, S1, S2
                             common/dc/gam, delta, R1, R2, S1, S2
 
                             ro1 = y(1)
