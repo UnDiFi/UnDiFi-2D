@@ -1,551 +1,505 @@
-!> @LBNDFAC[in] bndry face pointer read from the poly file
-!> @LNODCOD[in] nodal pointe read from the node or poly file
-!> @NBFAC[in] nof bndry faces
-!> @NPOIN[in] nof vertices
-!> @NBPOIN[in] nof boundary vertices
-!> @LNODPTR[out] pointer for boundary vertices
-!> @LIAO[out] IA(1:NCLR+1)
-!> @LJAO[out] JA(1:NNZR)
-!> @LICLR[out] ICLR(1:NCLR) colour of the NCLR patches
-subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
-&NBPOIN, LNODPTR, LIAO, LJAO, LICLR, NCLR)
+!> @bndfac[in] bndry face pointer read from the poly file, bndfac(3,nbfac)
+!> @nodcod[in] nodal pointer read from the node or poly file, nodcod(npoin)
+!> @nbfac[in] nof bndry faces
+!> @npoin[in] nof vertices
+!> @nbpoin[out] nof boundary vertices
+!> @nodptr[out] pointer for boundary vertices, nodptr(nbpoin,3)
+!> @ia[out] ia(1:nclr+1)
+!> @ja[out] ja(1:nnzr)
+!> @iclr[out] iclr(1:nclr) colour of the nclr patches
+subroutine setbndrynodeptr(bndfac, nodcod, nbfac, npoin,&
+&nbpoin, nodptr, ia, ja, iclr, nclr)
 !
   use mod_kinds, only: wp, i4
   implicit none(type, external)
 !
-!     $Id: setbndrynodeptr.f,v 1.4 2018/08/06 09:18:23 abonfi Exp abonfi $
+!     ndim  is the space dimension =2
+!     nvt = ndim+1 is the number of vertices
 !
-!     NDIM  is the space dimension =2
-!     NVT = NDIM+1 is the number of vertices
+!     npshmax     : max number of shock points.
+!     neshmax     : max number of shock elements
 !
-!     NPSHMAX     : max number of shock points.
-!     NESHMAX     : max number of shock elements
-!
-!     .. Parameters ..
+!     .. scalar arguments ..
+  integer(i4), intent(in) :: nbfac, npoin
+  integer(i4), intent(out) :: nbpoin, nclr
 
-!     .. Local Scalars ..
-  integer(i4) LBNDFAC, LNODCOD
-  integer(i4) LNODPTR, LWKSP
-  integer(i4) NBFAC, NPOIN, IPOIN, NBPOIN
-  integer(i4) IFAIL, I, K, NCLR, NNZR
-  integer(i4) LIAO, LJAO, LICLR
+!     .. array arguments ..
+  integer(i4), intent(in) :: bndfac(3, nbfac), nodcod(npoin)
+  integer(i4), allocatable, intent(out) :: nodptr(:, :), ia(:), ja(:), iclr(:)
 
-!     .. Local Arrays ..
+!     .. local scalars ..
+  integer(i4) ipoin, k, nnzr
 
-  integer(i4) MAXPATCHES
-  parameter(MAXPATCHES=50)
-  integer(i4) IC(0:MAXPATCHES) ! number of bndry gridpoints within patch coloured i, 0 <=i<= MAXPATCHES
-  logical CLOSED(0:MAXPATCHES) ! .TRUE. if the boundary patch is closed (i.e. a profile)
+!     .. local arrays ..
+  integer(i4), parameter :: maxpatches = 50
+  integer(i4) ic(0:maxpatches) ! number of bndry gridpoints within patch coloured i, 0 <=i<= maxpatches
+  logical closed(0:maxpatches) ! .true. if the boundary patch is closed (i.e. a profile)
+  integer(i4), allocatable :: iwork(:)
 !     ..
-!     .. External Subroutines ..
-  external DINIT, IINIT, ISTKIN, ISTKRL
-  external FINDCOLOURS, MYROUTINE, SetBndryNodeList
-!     ..
-!
-!     CHARACTER*(*) FNAME
-!
-!     ..
-!     .. Arrays in Common ..
-  real(wp) DSTAK(1)
-  integer(i4) ISTAK(1)
-  common/CSTAK/DSTAK
-!     ..
-!     .. Equivalences ..
-  equivalence(DSTAK(1), ISTAK(1))
-!     ..
-!     .. External Functions ..
-  integer(i4) ISTKGT
-  external ISTKGT
+!     .. external subroutines ..
+  external findcolours, myroutine, setbndrynodelist
 !
 !     count the nof boundary vertices
 !
-  NBPOIN = 0
-  do 1 IPOIN = 0, NPOIN - 1
-    if (ISTAK(LNODCOD + IPOIN) .gt. 0) NBPOIN = NBPOIN + 1
-1   continue
-    write (6, *) 'SetBndryNodePtr: Found ', NBPOIN, ' boundary points'
-    LNODPTR = ISTKGT(3*NBPOIN, 2)
-    LWKSP = ISTKGT(2*NBPOIN, 2)
-    call IINIT(3*NBPOIN, 0, ISTAK(LNODPTR), 1)
-    call IINIT(2*NBPOIN, 0, ISTAK(LWKSP), 1)
-    call MYROUTINE(ISTAK(LNODCOD), ISTAK(LBNDFAC), NBFAC, ISTAK(LNODPTR),&
-    &NPOIN, NBPOIN, ISTAK(LWKSP))
-    call ISTKRL(1) ! release the workspace
-    call FINDCOLOURS(ISTAK(LBNDFAC), ISTAK(LNODPTR),&
-    &IC, CLOSED, MAXPATCHES, NBFAC, NBPOIN, NCLR)
-!     call exit(0)
-    write (6, *) 'SetBndryNodePtr: Found ', NCLR, ' colours or bndry patche&
-    &s'
+  nbpoin = 0
+  do ipoin = 1, npoin
+    if (nodcod(ipoin) .gt. 0) nbpoin = nbpoin + 1
+  end do
+  write (6, *) 'setbndrynodeptr: found ', nbpoin, ' boundary points'
+  allocate (nodptr(nbpoin, 3), source=0_i4)
+  allocate (iwork(2*nbpoin), source=0_i4)
+  call myroutine(nodcod, bndfac, nbfac, nodptr, npoin, nbpoin, iwork)
+  deallocate (iwork) ! workspace
+  call findcolours(bndfac, nodptr, ic, closed, maxpatches, nbfac, nbpoin, nclr)
+  write (6, *) 'setbndrynodeptr: found ', nclr, ' colours or bndry patches'
 !
-    LIAO = ISTKGT(NCLR + 1, 2) ! pointer in CSR format
-    LICLR = ISTKGT(NCLR, 2) ! colour of the K-th boundary patch
+  allocate (ia(nclr + 1), source=0_i4) ! pointer in csr format
+  allocate (iclr(nclr), source=0_i4) ! colour of the k-th boundary patch
 !
-!     We use two pointers IA(1:NCLR+1) and JA(1:NNZR) to address the bndry gridpoints
-!     Gridpoints belonging to boundary (or patch) I, where 1<=I<=NCLR
-!     are stored in JA(J), J=JBGN,JEND where
-!     JBGN = IA(I), JEND = IA(I+1)-1
-!     the total nof entries in JA is NNZR = IA(NCLR+1)-IA(1);
-!     note that IA(1) = 1
+!     we use two pointers ia(1:nclr+1) and ja(1:nnzr) to address the bndry gridpoints
+!     gridpoints belonging to boundary (or patch) i, where 1<=i<=nclr
+!     are stored in ja(j), j=jbgn,jend where
+!     jbgn = ia(i), jend = ia(i+1)-1
+!     the total nof entries in ja is nnzr = ia(nclr+1)-ia(1);
+!     note that ia(1) = 1
 !
 !     therefore, in order to address all gridpoints of patch coloured 3, we do:
 !
-!     JBGN = IA(3)
-!     JEND = IA(4) -1
-!     DO J = JBGN,JEND
-!        IPOIN = JA(J) ! global node number
-!     ENDDO
+!     jbgn = ia(3)
+!     jend = ia(4) -1
+!     do j = jbgn,jend
+!        ipoin = ja(j) ! global node number
+!     enddo
 !
-!     Here we first setup the IA array
+!     here we first setup the ia array
 !
-    ISTAK(LIAO) = 1
-    K = 0
-    do I = 0, MAXPATCHES
-      if (IC(I) .gt. 0) then ! skip empty colours
-        K = K + 1
-        if (K .gt. NCLR) then
-          write (6, *) 'SetBndryNodePtr: Found too many colours; check&
-          & NCLR !'
-          stop
-        end if
-        ISTAK(LIAO + K) = ISTAK(LIAO + K - 1) + IC(I)
-        ISTAK(LICLR + K - 1) = I ! colour of the K-th boundary patch
+  ia(1) = 1
+  k = 0
+  do ipoin = 0, maxpatches
+    if (ic(ipoin) .gt. 0) then ! skip empty colours
+      k = k + 1
+      if (k .gt. nclr) then
+        write (6, *) 'setbndrynodeptr: found too many colours; check&
+        & nclr !'
+        error stop 1
       end if
-    end do
-    NNZR = ISTAK(LIAO + NCLR) - ISTAK(LIAO)
-    write (6, *) 'SetBndryNodePtr: ', NNZR, ' entries expected in ja'
+      ia(k + 1) = ia(k) + ic(ipoin)
+      iclr(k) = ipoin ! colour of the k-th boundary patch
+    end if
+  end do
+  nnzr = ia(nclr + 1) - ia(1)
+  write (6, *) 'setbndrynodeptr: ', nnzr, ' entries expected in ja'
 !
-!     allocate JA
+!     allocate ja
 !
-    LJAO = ISTKGT(NNZR, 2)
-    call IINIT(NNZR, 0, ISTAK(LJAO), 1)
+  allocate (ja(nnzr), source=0_i4)
 !
-    write (6, *) 'SetBndryNodePtr: finished initializing'
-    write (6, *) 'SetBndryNodePtr: now calling SetBndryNodeList'
-    write (6, *)
+  write (6, *) 'setbndrynodeptr: finished initializing'
+  write (6, *) 'setbndrynodeptr: now calling setbndrynodelist'
+  write (6, *)
 !
-!     Here we fill the JA array
+!     here we fill the ja array
 !
-    call SetBndryNodeList(ISTAK(LIAO), ISTAK(LJAO), ISTAK(LICLR),&
-    &NCLR, CLOSED, ISTAK(LBNDFAC), NBFAC, ISTAK(LNODPTR), NBPOIN)
-    return
-    end subroutine SetBndryNodePtr
+  call setbndrynodelist(ia, ja, iclr, nclr, closed, bndfac, nbfac, nodptr, nbpoin)
+end subroutine setbndrynodeptr
 !
-    subroutine MYROUTINE(NODCODE, IBNDPTR, NBFAC, INODPTR, NPOIN, NBPOIN,&
-    &IWORK)
+subroutine myroutine(nodcode, ibndptr, nbfac, inodptr, npoin, nbpoin,&
+&iwork)
 !
-      use mod_kinds, only: wp, i4
-      implicit none(type, external)
-      external BINSRC, ISORTRX
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  external binsrc, isortrx
 !
-      integer(i4) NBFAC, NPOIN, NBPOIN
-      integer(i4) NODCODE(*)
-      integer(i4) IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3), IWORK(2*NBPOIN)
-      integer(i4) IPOIN, IPOS, LAST, IFAIL, J, K, IFACE
-      logical VERBOSE
-      parameter(VERBOSE=.false.)
-!     PARAMETER(VERBOSE=.TRUE.)
+  integer(i4) nbfac, npoin, nbpoin
+  integer(i4) nodcode(*)
+  integer(i4) ibndptr(3, nbfac), inodptr(nbpoin, 3), iwork(2*nbpoin)
+  integer(i4) ipoin, ipos, last, ifail, j, k, iface
+  logical verbose
+  parameter(verbose=.false.)
+!     parameter(verbose=.true.)
 !
-!     INODPTR is a nodal pointer for boundary nodes
-!     INODPTR(1,*) addresses the global nodenumber
-!     INODPTR(2,*) addresses one of the two edges it belongs to
-!     INODPTR(3,*) addresses the other edge it belongs to
+!     inodptr is a nodal pointer for boundary nodes
+!     inodptr(1,*) addresses the global nodenumber
+!     inodptr(2,*) addresses one of the two edges it belongs to
+!     inodptr(3,*) addresses the other edge it belongs to
 !
-!     IBNDPTR is a nodal pointer for boundary edges
-!     IBNDPTR(1,*) addresses the global nodenumber of one of the two vertices of the boundary edges
-!     IBNDPTR(2,*) addresses the global nodenumber of the other      vertex   of the boundary edges
-!     IBNDPTR(3,*) is the colour of the boundary face
+!     ibndptr is a nodal pointer for boundary edges
+!     ibndptr(1,*) addresses the global nodenumber of one of the two vertices of the boundary edges
+!     ibndptr(2,*) addresses the global nodenumber of the other      vertex   of the boundary edges
+!     ibndptr(3,*) is the colour of the boundary face
 !
 !     fill the first entry of the pointer with the node number
 !
-      LAST = 0
-      do 1 IPOIN = 1, NPOIN
-        if (NODCODE(IPOIN) .gt. 0) then
-          LAST = LAST + 1
-          IWORK(LAST) = IPOIN
+  last = 0
+  do ipoin = 1, npoin
+    if (nodcode(ipoin) .gt. 0) then
+      last = last + 1
+      iwork(last) = ipoin
+    end if
+  end do
+  if (last .eq. nbpoin) then
+    write (8, *) 'found ', nbpoin, ' boundary points'
+  else
+    error stop 'last .ne. nbpoin'
+  end if
+!
+!     iwork(1:nbpoin) stores the nbpoin node numbers
+!
+  call isortrx(nbpoin, iwork, iwork(nbpoin + 1))
+  do ipoin = 1, nbpoin
+    inodptr(ipoin, 1) = iwork(iwork(nbpoin + ipoin))
+  end do
+!
+  ifail = 0
+  outer: do iface = 1, nbfac
+    inner: do j = 1, 2
+      ipoin = ibndptr(j, iface)
+      call binsrc(ipoin, inodptr(1, 1), nbpoin, ipos, last)
+      if (ipos .eq. 0) then
+        write (6, *) 'subr. myroutine: entry not found for ',&
+        &ipoin
+        error stop 1
+      end if
+      do k = 2, 3
+        if (inodptr(ipos, k) .eq. 0) then
+          inodptr(ipos, k) = iface
+          cycle inner
         end if
-1       continue
-        if (LAST .eq. NBPOIN) then
-          write (8, *) 'Found ', NBPOIN, ' boundary points'
-        else
-          stop 'LAST .NE. NBPOIN'
-        end if
-!
-!     IWORK(1:NBPOIN) stores the NBPOIN node numbers
-!
-        call ISORTRX(NBPOIN, IWORK, IWORK(NBPOIN + 1))
-        do 2 IPOIN = 1, NBPOIN
-          INODPTR(IPOIN, 1) = IWORK(IWORK(NBPOIN + IPOIN))
-2         continue
-!     write(6,*)(inodptr(ipoin,1),ipoin=1,nbpoin)
-!     pause
-!
-!     CALL X04EAF('General',' ',NBPOIN,3,INODPTR,NBPOIN,
-!    +            'Nodal Bndry pointer',IFAIL)
-!     CALL X04EAF('General',' ',3,NBFAC,IBNDPTR,3,
-!    +            'Face Bndry pointer',IFAIL)
-!
-          IFAIL = 0
-          outer: do IFACE = 1, NBFAC
-            inner: do J = 1, 2
-              IPOIN = IBNDPTR(J, IFACE)
-              call BINSRC(IPOIN, INODPTR(1, 1), NBPOIN, IPOS, LAST)
-              if (IPOS .eq. 0) then
-                write (6, *) 'Subr. Myroutine: Entry NOT found for ',&
-                &IPOIN
-                stop
-              end if
-              do K = 2, 3
-                if (INODPTR(IPOS, K) .eq. 0) then
-                  INODPTR(IPOS, K) = IFACE
-                  cycle inner
-                end if
-              end do
+      end do
 !
 !    the node seems to belong to more than 2 boundary faces
 !
-              IFAIL = IPOIN
-              write (6, *) 'Subr. Myroutine: the node seems to belong to more&
-              &    than 2 boundary faces'
-              write (6, *) 'Subr. Myroutine: Face no. ', IFACE, (IBNDPTR(K, IFACE),&
-              &K=1, 3)
-              write (6, *) 'Subr. Myroutine: Node no. ', IPOIN, (INODPTR(IPOS, K), K&
-              &=1, 3)
-              exit outer
-            end do inner
-          end do outer
+      ifail = ipoin
+      write (6, *) 'subr. myroutine: the node seems to belong to more&
+      &    than 2 boundary faces'
+      write (6, *) 'subr. myroutine: face no. ', iface, (ibndptr(k, iface),&
+      &k=1, 3)
+      write (6, *) 'subr. myroutine: node no. ', ipoin, (inodptr(ipos, k), k&
+      &=1, 3)
+      exit outer
+    end do inner
+  end do outer
 !
-          if (IFAIL .ne. 0 .or. VERBOSE) then
-!         CALL X04EAF('General',' ',NBPOIN,3,INODPTR,NBPOIN,
-!     +            'Nodal Bndry pointer',IFAIL)
-!         CALL X04EAF('General',' ',3,NBFAC,IBNDPTR,3,
-!     +            'Face Bndry pointer',IFAIL)
-            if (IFAIL .ne. 0) stop 'Unrecoverable error in CheckBndryPntr'
-          end if
+  if (ifail .ne. 0 .or. verbose) then
+    if (ifail .ne. 0) error stop 'unrecoverable error in checkbndrypntr'
+  end if
 !
-          return
-          end subroutine MYROUTINE
+end subroutine myroutine
 
-          subroutine FINDCOLOURS(IBNDPTR, INODPTR, IC, CLOSED, MAXPATCHES,&
-          &NBFAC, NBPOIN, NC)
+subroutine findcolours(ibndptr, inodptr, ic, closed, maxpatches,&
+&nbfac, nbpoin, nc)
 !
-            use mod_kinds, only: wp, i4
-            implicit none(type, external)
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
 !
-            integer(i4) NBFAC, NBPOIN, NC, MAXPATCHES
-            integer(i4) IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3), IC(0:*)
-            logical CLOSED(0:*)
-            integer(i4) IPOIN, IPOS, I, J, IBC, IE
-            integer(i4) IFLG(2)
+  integer(i4) nbfac, nbpoin, nc, maxpatches
+  integer(i4) ibndptr(3, nbfac), inodptr(nbpoin, 3), ic(0:*)
+  logical closed(0:*)
+  integer(i4) ipoin, ipos, i, j, ibc, ie
+  integer(i4) iflg(2)
 
-            ! 13/06/2020 -- BugFix by Prof. Bonfiglioli
-            ! DO IBC = 1, MAXPATCHES
-            ! to avoid nasty initialization of IBC(0)
-            do IBC = 0, MAXPATCHES
-              CLOSED(IBC) = .true. ! TRUE if the boundary is closed (e.g. airfoil)
-              IC(IBC) = 0
-            end do
+  ! 13/06/2020 -- bugfix by prof. bonfiglioli
+  ! do ibc = 1, maxpatches
+  ! to avoid nasty initialization of ibc(0)
+  do ibc = 0, maxpatches
+    closed(ibc) = .true. ! true if the boundary is closed (e.g. airfoil)
+    ic(ibc) = 0
+  end do
 !
-!     Here we count the nof boundary patches (NC) i.e. boundary surfaces
+!     here we count the nof boundary patches (nc) i.e. boundary surfaces
 !     with different colours
 !
-            NC = 0
-            do IPOS = 1, NBFAC
-              IBC = IBNDPTR(3, IPOS)
-              if ((IBC .lt. 0) .or. (IBC .gt. MAXPATCHES)) then
-                write (6, *) 'Subr. FindColours: Boundary colour ', IBC, ' is&
-                &          outside the range ', 0, MAXPATCHES
-                error stop 2
-              end if
-              IC(IBC) = IC(IBC) + 1
-            end do
-            do IBC = 1, MAXPATCHES
-              if (IC(IBC) .ne. 0) then
-                NC = NC + 1
-                write (6, *) 'Subr. FindColours: Boundary coloured ', IBC, ' ha&
-                &s ', IC(IBC), ' edges'
-              end if
-            end do
-            write (6, *)
-            write (6, *) 'Subr. FindColours: There are ', NC, ' different boundary&
-            & patches'
-            write (6, *)
+  nc = 0
+  do ipos = 1, nbfac
+    ibc = ibndptr(3, ipos)
+    if ((ibc .lt. 0) .or. (ibc .gt. maxpatches)) then
+      write (6, *) 'subr. findcolours: boundary colour ', ibc, ' is&
+      &          outside the range ', 0, maxpatches
+      error stop 2
+    end if
+    ic(ibc) = ic(ibc) + 1
+  end do
+  do ibc = 1, maxpatches
+    if (ic(ibc) .ne. 0) then
+      nc = nc + 1
+      write (6, *) 'subr. findcolours: boundary coloured ', ibc, ' ha&
+      &s ', ic(ibc), ' edges'
+    end if
+  end do
+  write (6, *)
+  write (6, *) 'subr. findcolours: there are ', nc, ' different boundary&
+  & patches'
+  write (6, *)
 !
 !     check whether the patches are open or closed:
 !     whenever a boundary gridpoint belongs to two edges coloured differently,
 !     those two colours belong to an open boundary
 !     otherwise the boundary is closed
 !
-            do J = 1, NBPOIN ! loop over boundary points
-              IPOIN = INODPTR(J, 1) ! the global nodenumber of the J-th boundary point
-              do I = 2, 3 ! loop over the edges that share boundary point J
-                IE = INODPTR(J, I)
-                IFLG(I - 1) = IBNDPTR(3, IE) ! this is the colour
-              end do
-              if (IFLG(1) .ne. IFLG(2)) then ! identify the boundary gridpoints that belong to bndry edges of different colours
-                write (6, *) 'Subr. FindColours: Gridpoint ', IPOIN, ' belongs to&
-                & patches ', IFLG(1), ' and ', IFLG(2)
-                CLOSED(IFLG(1)) = .false.
-                CLOSED(IFLG(2)) = .false.
-              end if
-            end do ! end loop over bndry gridpoints
+  do j = 1, nbpoin ! loop over boundary points
+    ipoin = inodptr(j, 1) ! the global nodenumber of the j-th boundary point
+    do i = 2, 3 ! loop over the edges that share boundary point j
+      ie = inodptr(j, i)
+      iflg(i - 1) = ibndptr(3, ie) ! this is the colour
+    end do
+    if (iflg(1) .ne. iflg(2)) then ! identify the boundary gridpoints that belong to bndry edges of different colours
+      write (6, *) 'subr. findcolours: gridpoint ', ipoin, ' belongs to&
+      & patches ', iflg(1), ' and ', iflg(2)
+      closed(iflg(1)) = .false.
+      closed(iflg(2)) = .false.
+    end if
+  end do ! end loop over bndry gridpoints
 !
-            do IBC = 1, MAXPATCHES
-              if (IC(IBC) .ne. 0) then
-                write (6, *) 'Subr. FindColours: Bndry patch ', IBC, ' has ',&
-                &IC(IBC), ' bndry edges; closed is ', CLOSED(IBC)
+  do ibc = 1, maxpatches
+    if (ic(ibc) .ne. 0) then
+      write (6, *) 'subr. findcolours: bndry patch ', ibc, ' has ',&
+      &ic(ibc), ' bndry edges; closed is ', closed(ibc)
 !
 !     if the boundary patch is closed, the nof boundary points equals the nof bndry edges
 !     otherwise it equals the nof bndry edges+1
-!     here we reset IC which is no longer the nof bndry edges, but the nof boundary points
-!     with color IBC
+!     here we reset ic which is no longer the nof bndry edges, but the nof boundary points
+!     with color ibc
 !
-                if (CLOSED(IBC)) then
-!                 IC(IBC) = IC(IBC)
-                else
-                  IC(IBC) = IC(IBC) + 1 ! IC will return the nof bndry points lying on the bndry coloured IBC
-                end if
-              end if  !
-            end do
-            return
-          end subroutine FINDCOLOURS
+      if (closed(ibc)) then
+!                 ic(ibc) = ic(ibc)
+      else
+        ic(ibc) = ic(ibc) + 1 ! ic will return the nof bndry points lying on the bndry coloured ibc
+      end if
+    end if  !
+  end do
+end subroutine findcolours
 !
-          subroutine SetBndryNodeList(IA, JA, ICLR, NCLR, CLOSED, IBNDPTR, NBFAC,&
-          &INODPTR, NBPOIN)
+subroutine setbndrynodelist(ia, ja, iclr, nclr, closed, ibndptr, nbfac,&
+&inodptr, nbpoin)
 !
-!     this routine finds the list of bndry gridpoints belonging to bndry ICLR
+!     this routine finds the list of bndry gridpoints belonging to bndry iclr
 !
-            use mod_kinds, only: wp, i4
-            implicit none(type, external)
-            external NEARBY
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  external nearby
 !
-            integer(i4) NBFAC, NBPOIN, NCLR
-            integer(i4) IA(*), JA(*), ICLR(NCLR)
-            integer(i4) IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3)
-            integer(i4) IPOIN, I, J, LAST, NOW, IEND, IBGN, ISTART, IPATCH, IBC, NC, IE
-            integer(i4) IFLG(2), NEIGHB(2)
-            logical CLOSED(0:*)
-            logical VERBOSE
-            logical found
-            logical advanced
-!     PARAMETER(VERBOSE=.TRUE.)
-            parameter(VERBOSE=.false.)
+  integer(i4) nbfac, nbpoin, nclr
+  integer(i4) ia(*), ja(*), iclr(nclr)
+  integer(i4) ibndptr(3, nbfac), inodptr(nbpoin, 3)
+  integer(i4) ipoin, i, j, last, now, iend, ibgn, istart, ipatch, ibc, nc, ie
+  integer(i4) iflg(2), neighb(2)
+  logical closed(0:*)
+  logical verbose
+  logical found
+  logical advanced
+!     parameter(verbose=.true.)
+  parameter(verbose=.false.)
 !
-!     Input
-!     INODPTR is a nodal pointer for boundary nodes
-!     INODPTR(1,*) addresses the global nodenumber
-!     INODPTR(2,*) addresses one of the two edges it belongs to
-!     INODPTR(3,*) addresses the other edge it belongs to
+!     input
+!     inodptr is a nodal pointer for boundary nodes
+!     inodptr(1,*) addresses the global nodenumber
+!     inodptr(2,*) addresses one of the two edges it belongs to
+!     inodptr(3,*) addresses the other edge it belongs to
 !
-!     Input
-!     IBNDPTR is a nodal pointer for boundary edges
-!     IBNDPTR(1,*) addresses the global nodenumber of one of the two vertices of the boundary edges
-!     IBNDPTR(2,*) addresses the global nodenumber of the other      vertex   of the boundary edges
-!     IBNDPTR(3,*) is the colour of the boundary face
+!     input
+!     ibndptr is a nodal pointer for boundary edges
+!     ibndptr(1,*) addresses the global nodenumber of one of the two vertices of the boundary edges
+!     ibndptr(2,*) addresses the global nodenumber of the other      vertex   of the boundary edges
+!     ibndptr(3,*) is the colour of the boundary face
 !
-            do 120 IPATCH = 1, NCLR  ! loo over all patches
-              IBC = ICLR(IPATCH)
-              write (6, *) 'SetBndryNodeList: Patch ', IPATCH, ' has colour ', IBC,&
-              &' expecting ', IA(IPATCH + 1) - IA(IPATCH), ' vertices'
-              if (CLOSED(IBC)) then
-                write (6, *) 'SetBndryNodeList: Patch ', IPATCH, ' is CLOSED ',&
-                &CLOSED(IBC)
+  do ipatch = 1, nclr  ! loo over all patches
+    ibc = iclr(ipatch)
+    write (6, *) 'setbndrynodelist: patch ', ipatch, ' has colour ', ibc,&
+    &' expecting ', ia(ipatch + 1) - ia(ipatch), ' vertices'
+    if (closed(ibc)) then
+      write (6, *) 'setbndrynodelist: patch ', ipatch, ' is closed ',&
+      &closed(ibc)
 !
-!     Any bndry gridpoint that belongs to an adge coloured IBC is all right
+!     any bndry gridpoint that belongs to an adge coloured ibc is all right
 !
-                found = .false.
-                search_closed: do J = 1, NBPOIN ! loop over bndry gridpoints
-                  IPOIN = INODPTR(J, 1) ! the global nodenumber of the J-th boundary point
-                  do I = 2, 3 ! loop over the edges that share boundary point IPOIN
-                    IE = INODPTR(J, I)
-                    if (IBNDPTR(3, IE) .eq. IBC) then
-                      ISTART = IPOIN
-                      found = .true.
-                      exit search_closed
-                    end if
-                  end do
-                end do search_closed
-                if (.not. found) then
-                  write (6, *) 'Cannot find node; un-recoverable error in SetBndr&
-                  &yNodeList (1)'
-                end if
-              else ! the boundary is open
-                write (6, *) 'SetBndryNodeList: Patch ', IPATCH, ' is OPEN ',&
-                &CLOSED(IBC)
+      found = .false.
+      search_closed: do j = 1, nbpoin ! loop over bndry gridpoints
+        ipoin = inodptr(j, 1) ! the global nodenumber of the j-th boundary point
+        do i = 2, 3 ! loop over the edges that share boundary point ipoin
+          ie = inodptr(j, i)
+          if (ibndptr(3, ie) .eq. ibc) then
+            istart = ipoin
+            found = .true.
+            exit search_closed
+          end if
+        end do
+      end do search_closed
+      if (.not. found) then
+        write (6, *) 'cannot find node; un-recoverable error in setbndr&
+        &ynodelist (1)'
+      end if
+    else ! the boundary is open
+      write (6, *) 'setbndrynodelist: patch ', ipatch, ' is open ',&
+      &closed(ibc)
 !
-!     identify one of the two endpoints lying on patch coloured IBC:
+!     identify one of the two endpoints lying on patch coloured ibc:
 !     for an open boundary, this is the endpoint that is shared btw two
 !     bndry faces of different colour
 !
-                found = .false.
-                search_open: do J = 1, NBPOIN ! loop over bndry gridpoints
-                  IPOIN = INODPTR(J, 1) ! the global nodenumber of the J-th boundary point
-                  do I = 2, 3 ! loop over the edges that share boundary point IPOIN
-                    IE = INODPTR(J, I)
-                    IFLG(I - 1) = IBNDPTR(3, IE)
-                  end do
-                  if (IFLG(1) .ne. IFLG(2)) then ! we have found the boundary gridpoints that belong to bndry edges of different colours
-                    write (6, *) 'SetBndryNodeList: Gridpoint ', IPOIN,&
-                    &' belongs to patch ', IFLG(1), ' and ', IFLG(2)
-                    if ((IFLG(1) .eq. IBC) .or. (IFLG(2) .eq. IBC)) then
-                      ISTART = IPOIN ! set the starting point
-                      found = .true.
-                      exit search_open
-                    end if
-                  end if
-                end do search_open ! end loop over bndry gridpoints
+      found = .false.
+      search_open: do j = 1, nbpoin ! loop over bndry gridpoints
+        ipoin = inodptr(j, 1) ! the global nodenumber of the j-th boundary point
+        do i = 2, 3 ! loop over the edges that share boundary point ipoin
+          ie = inodptr(j, i)
+          iflg(i - 1) = ibndptr(3, ie)
+        end do
+        if (iflg(1) .ne. iflg(2)) then ! we have found the boundary gridpoints that belong to bndry edges of different colours
+          write (6, *) 'setbndrynodelist: gridpoint ', ipoin,&
+          &' belongs to patch ', iflg(1), ' and ', iflg(2)
+          if ((iflg(1) .eq. ibc) .or. (iflg(2) .eq. ibc)) then
+            istart = ipoin ! set the starting point
+            found = .true.
+            exit search_open
+          end if
+        end if
+      end do search_open ! end loop over bndry gridpoints
 !
-                if (.not. found) then
-                  write (6, *) 'Cannot find node; un-recoverable error in SetBndr&
-                  &yNodeList (2)'
-                  error stop 2
-                end if
-              end if ! test on CLOSED(*)
-              IBGN = IA(IPATCH)
-              IEND = IA(IPATCH + 1) - 1
-              JA(IBGN) = ISTART
-              NOW = ISTART
-              LAST = -1
-              if (VERBOSE) write (6, 200) IPATCH, NOW, LAST, (NEIGHB(J), J=1, 2)
-              NC = IEND - IBGN + 1  ! number of vertices expected on current patch
-              traverse: do
-                call NEARBY(NOW, IBNDPTR, INODPTR, NBPOIN, NEIGHB, IBC)
-                if (VERBOSE) write (6, 200) IPATCH, NOW, LAST, (NEIGHB(J), J=1, 2)
+      if (.not. found) then
+        write (6, *) 'cannot find node; un-recoverable error in setbndr&
+        &ynodelist (2)'
+        error stop 2
+      end if
+    end if ! test on closed(*)
+    ibgn = ia(ipatch)
+    iend = ia(ipatch + 1) - 1
+    ja(ibgn) = istart
+    now = istart
+    last = -1
+    if (verbose) write (6, 200) ipatch, now, last, (neighb(j), j=1, 2)
+    nc = iend - ibgn + 1  ! number of vertices expected on current patch
+    traverse: do
+      call nearby(now, ibndptr, inodptr, nbpoin, neighb, ibc)
+      if (verbose) write (6, 200) ipatch, now, last, (neighb(j), j=1, 2)
 !
-!     NEIGHB(1:2) gives the two vertices that surrount gridpoint NOW
-!     AND have the same bndry colour
+!     neighb(1:2) gives the two vertices that surrount gridpoint now
+!     and have the same bndry colour
 !
-                advanced = .false.
-                do J = 1, 2
-                  if ((NEIGHB(J) .ne. 0) .and. (NEIGHB(J) .ne. LAST)) then
-                    LAST = NOW
-                    NOW = NEIGHB(J)
-                    if (NOW .eq. ISTART) exit traverse ! this should only occur when the patch is closed
-                    IBGN = IBGN + 1
-                    JA(IBGN) = NOW
-                    advanced = .true.
-                    exit
-                  end if
-                end do
-                if (.not. advanced) exit traverse
-              end do traverse
+      advanced = .false.
+      do j = 1, 2
+        if ((neighb(j) .ne. 0) .and. (neighb(j) .ne. last)) then
+          last = now
+          now = neighb(j)
+          if (now .eq. istart) exit traverse ! this should only occur when the patch is closed
+          ibgn = ibgn + 1
+          ja(ibgn) = now
+          advanced = .true.
+          exit
+        end if
+      end do
+      if (.not. advanced) exit traverse
+    end do traverse
 !
-              if (IBGN .ne. IEND) then
-                write (6, *) 'Is ', IBGN, ' = ', IEND, ' ?????'
-                write (6, *) (ja(j), j=ibgn, iend)
-                error stop 4
-              end if
-              IBGN = IA(IPATCH)
-              write (6, *) 'Subr. SetBndryNodeList: Found ', IEND - IBGN + 1,&
-              &' vertices in patch ', IPATCH
-              write (6, *) 'Subr. SetBndryNodeList: vertices are: ',&
-              &(ja(j), j=ibgn, iend)
-              write (6, *)
-120           continue ! end the outermost loop over patches
-200           format(1x, 'Patch ', I2, ' curr, prev, vertices and neighb are ', 4(I3, 1x))
-              return
-              end subroutine SetBndryNodeList
+    if (ibgn .ne. iend) then
+      write (6, *) 'is ', ibgn, ' = ', iend, ' ?????'
+      write (6, *) (ja(j), j=ibgn, iend)
+      error stop 4
+    end if
+    ibgn = ia(ipatch)
+    write (6, *) 'subr. setbndrynodelist: found ', iend - ibgn + 1,&
+    &' vertices in patch ', ipatch
+    write (6, *) 'subr. setbndrynodelist: vertices are: ',&
+    &(ja(j), j=ibgn, iend)
+    write (6, *)
+  end do ! end the outermost loop over patches
+200 format(1x, 'patch ', i2, ' curr, prev, vertices and neighb are ', 4(i3, 1x))
+end subroutine setbndrynodelist
 !
-              subroutine NEARBY(INODE, IBNDPTR, INODPTR, NBPOIN, NEIGHB, IBC)
-                use mod_kinds, only: wp, i4
-                implicit none(type, external)
-                external BINSRC
-                integer(i4) INODE, NBPOIN, IBC ! Input
-!     INODE is a GLOBAL nodenumber
-                integer(i4) NEIGHB(*) ! Output
-                integer(i4) IBNDPTR(3, *), INODPTR(NBPOIN, 3) ! Input
+subroutine nearby(inode, ibndptr, inodptr, nbpoin, neighb, ibc)
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  external binsrc
+  integer(i4) inode, nbpoin, ibc ! input
+!     inode is a global nodenumber
+  integer(i4) neighb(*) ! output
+  integer(i4) ibndptr(3, *), inodptr(nbpoin, 3) ! input
 !
-!     INODPTR is a nodal pointer for boundary nodes
-!     INODPTR(1,*) addresses the global nodenumber
-!     INODPTR(2,*) addresses one of the two edges it belongs to
-!     INODPTR(3,*) addresses the other edge it belongs to
-                integer(i4) IPOS, N1, JBC, IE, I, J, LAST, K
-                logical VERBOSE
-                parameter(VERBOSE=.false.)
-!     PARAMETER(VERBOSE=.TRUE.)
+!     inodptr is a nodal pointer for boundary nodes
+!     inodptr(1,*) addresses the global nodenumber
+!     inodptr(2,*) addresses one of the two edges it belongs to
+!     inodptr(3,*) addresses the other edge it belongs to
+  integer(i4) ipos, n1, jbc, ie, i, j, last, k
+  logical verbose
+  parameter(verbose=.false.)
+!     parameter(verbose=.true.)
 !
-!     we need to find one of the two bndry vertices neighbouring INODE
-!     that shares the same bndry code IBC; if the boundary is closed
+!     we need to find one of the two bndry vertices neighbouring inode
+!     that shares the same bndry code ibc; if the boundary is closed
 !     there are two candidates, if it is open there must be only one
 !
-                NEIGHB(1) = 0
-                NEIGHB(2) = 0
-!     find the location IPOS in INODPTR where INODE is stored
-                call BINSRC(INODE, INODPTR(1, 1), NBPOIN, IPOS, LAST)
-                if (IPOS .eq. 0) then
-                  write (6, *) 'Subr. Nearby(): Entry NOT found for ',&
-                  &INODE
-                  stop
-                else
-                  if (VERBOSE)&
-                  &write (6, *) 'Node ', INODE, ' found in entry ', IPOS,&
-                  &INODPTR(IPOS, 1)
-                end if
-!     write(6,*)
-!     write(6,*)
-!     write(6,*)
+  neighb(1) = 0
+  neighb(2) = 0
+!     find the location ipos in inodptr where inode is stored
+  call binsrc(inode, inodptr(1, 1), nbpoin, ipos, last)
+  if (ipos .eq. 0) then
+    write (6, *) 'subr. nearby(): entry not found for ',&
+    &inode
+    error stop 1
+  else
+    if (verbose)&
+    &write (6, *) 'node ', inode, ' found in entry ', ipos,&
+    &inodptr(ipos, 1)
+  end if
 !
-!                 INODE
+!                 inode
 !     +-------------+-------------+
 !            ^             ^
 !            |             |
-!     INODPTR(IPOS,2) INODPTR(IPOS,3)
+!     inodptr(ipos,2) inodptr(ipos,3)
 !
-                LAST = 0
-                do I = 2, 3 ! loop over the edges that share boundary point INODE
-                  IE = INODPTR(IPOS, I)
-                  JBC = IBNDPTR(3, IE) ! colour of the neighbouring boundary face
-                  if (VERBOSE)&
-                  &write (6, *) 'Node ', (INODPTR(IPOS, K), K=1, 3), ' edge', i - 1, ' is ', IE&
-                  &, ' coloured ', JBC, ' with verts ', (IBNDPTR(J, IE), j=1, 2)
+  last = 0
+  do i = 2, 3 ! loop over the edges that share boundary point inode
+    ie = inodptr(ipos, i)
+    jbc = ibndptr(3, ie) ! colour of the neighbouring boundary face
+    if (verbose)&
+    &write (6, *) 'node ', (inodptr(ipos, k), k=1, 3), ' edge', i - 1, ' is ', ie&
+    &, ' coloured ', jbc, ' with verts ', (ibndptr(j, ie), j=1, 2)
 !
-!        Pick up the edge that has colour IBC
+!        pick up the edge that has colour ibc
 !
-                  if (JBC .eq. IBC) then ! the neighbouring face has the same colour
-                    do J = 1, 2  ! loop over the two vertices of the boundary face
-                      N1 = IBNDPTR(J, IE)
-                      if ((N1 .ne. INODE)) then
-                        LAST = LAST + 1
-                        if (LAST .gt. 2) then ! A node on a boundary must not have more than two neighbours
-                          stop 'There is smthg very wrong'
-                        end if
-                        NEIGHB(LAST) = N1
-                      end if
-                    end do ! end loop over the two vertices of the neighbouring edges
-                  else
-                    if (VERBOSE)&
-                    &write (6, *) 'Skipping face ', IE, ' has colour ', JBC,&
-                    &'rather than ', IBC
-!                    NEIGHB(J) = 0 ! J might be uninitialized
-                  end if
-                end do ! end loop over the two edges that meet at a bndry gridpoint
-                if (VERBOSE)&
-                &write (6, *) 'Node ', INODE, ' has neighb ', (neighb(k), k=1, 2)
-                return
-              end subroutine NEARBY
+    if (jbc .eq. ibc) then ! the neighbouring face has the same colour
+      do j = 1, 2  ! loop over the two vertices of the boundary face
+        n1 = ibndptr(j, ie)
+        if ((n1 .ne. inode)) then
+          last = last + 1
+          if (last .gt. 2) then ! a node on a boundary must not have more than two neighbours
+            error stop 'there is smthg very wrong'
+          end if
+          neighb(last) = n1
+        end if
+      end do ! end loop over the two vertices of the neighbouring edges
+    else
+      if (verbose)&
+      &write (6, *) 'skipping face ', ie, ' has colour ', jbc,&
+      &'rather than ', ibc
+!                    neighb(j) = 0 ! j might be uninitialized
+    end if
+  end do ! end loop over the two edges that meet at a bndry gridpoint
+  if (verbose)&
+  &write (6, *) 'node ', inode, ' has neighb ', (neighb(k), k=1, 2)
+end subroutine nearby
 !
-              subroutine CHECK(IA, JA, ICLR, NCLR, CORG, NDIM)
-                use mod_kinds, only: wp, i4
-                implicit none(type, external)
-                integer(i4) NDIM, NCLR
-                integer(i4) IA(*), JA(*), ICLR(NCLR)
-                real(wp) CORG(NDIM, *)
-                integer(i4) I, J, K, JBGN, JEND, L, NNZR
-                character*24 FNAME
-                FNAME = "bndry00.dat"
-                nnzr = ia(nclr + 1) - ia(1)
-                write (6, *) 'nnzr = ', nnzr
-                do I = 1, NCLR
-                  write (FNAME(6:7), FMT="(I2.2)") I
-                  open (10, FILE=FNAME)
-                  write (10, *) '# patch ', I, ' has colour ', ICLR(I)
-                  JBGN = IA(I)
-                  JEND = IA(I + 1) - 1
-                  write (6, *) 'jbgn, jend = ', jbgn, jend
-                  do J = JBGN, JEND
-                    K = JA(J)
-                    write (10, *) (CORG(L, K), L=1, NDIM)
-                  end do
-                  close (10)
-                end do
-                return
-              end subroutine CHECK
+subroutine check(ia, ja, iclr, nclr, corg, ndim)
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  integer(i4) ndim, nclr
+  integer(i4) ia(*), ja(*), iclr(nclr)
+  real(wp) corg(ndim, *)
+  integer(i4) i, j, k, jbgn, jend, l, nnzr
+  character*24 fname
+  fname = "bndry00.dat"
+  nnzr = ia(nclr + 1) - ia(1)
+  write (6, *) 'nnzr = ', nnzr
+  do i = 1, nclr
+    write (fname(6:7), fmt="(I2.2)") i
+    open (10, file=fname)
+    write (10, *) '# patch ', i, ' has colour ', iclr(i)
+    jbgn = ia(i)
+    jend = ia(i + 1) - 1
+    write (6, *) 'jbgn, jend = ', jbgn, jend
+    do j = jbgn, jend
+      k = ja(j)
+      write (10, *) (corg(l, k), l=1, ndim)
+    end do
+    close (10)
+  end do
+end subroutine check
