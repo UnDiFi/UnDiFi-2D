@@ -19,7 +19,7 @@ module mod_mesh
     integer(i4), allocatable :: celcel(:, :) ! (nvt, nelem)
     integer(i4), allocatable :: bndfac(:, :) ! (3, nbfac)
     integer(i4), allocatable :: nodcod(:)    ! (npoin)
-    integer(i4), allocatable :: nodptr(:)    ! (nbpoin), from setbndrynodeptr
+    integer(i4), allocatable :: nodptr(:, :) ! (nbpoin,3), from setbndrynodeptr
     integer(i4), allocatable :: edgptr(:, :) ! (3, nedge)
     integer(i4), allocatable :: ia(:), ja(:), iclr(:) ! boundary-patch CSR, from setbndrynodeptr
     integer(i4), allocatable :: pmap(:)      ! (npoin), periodic-node map, see readpmap.f90

@@ -4,6 +4,7 @@ program undifi_2d
   use mod_run_external, only: run_external
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, neshmax, nprdbndmax, npshmax, nshmax, nspmax
+  use mod_mesh, only: mesh_t
   implicit none(type, external)
 
 ! ********************************************************************************************************************************
@@ -51,8 +52,6 @@ program undifi_2d
   include 'paramt.h'
   integer(i4) nin, nout
   parameter(nin=5, nout=6)
-  integer(i4) nva
-  parameter(nva=9990000)
 
 !     .. array definitions
   real(wp) xysh(ndim, npshmax, nshmax),&
@@ -70,7 +69,7 @@ program undifi_2d
   &wshmean(ndim, npshmax, nshmax),&
   &zroeshuoldnew(ndof, npshmax, nshmax),&
   &zroeshdoldnew(ndof, npshmax, nshmax),&
-  &varray(ndim, 30000) ! modify with the logic dstak/istak
+  &varray(ndim, 30000)
 
   integer(i4) nodcodsh(npshmax, nshmax),&
   &nshocksegs(nshmax),&
@@ -92,8 +91,6 @@ program undifi_2d
   &nPhamPoints,&
   &nSpecPoints
 
-!     .. arrays in common ..
-  real(wp) dstak(nva)
   character execmd*255,&
   &fname*255,&
   &fname2*255,&
@@ -112,40 +109,25 @@ program undifi_2d
   integer(i4) i,&
   &nshockpointsold(nshmax), ish,&
   &nholes, totshockpoints, ii,&
-  &nvt, ifail, nsteps, nitems, nbegin
+  &nvt, ifail, nsteps, nbegin
 
-!     .. local arrays ..
-  integer(i4) istak(1), lout(0:2)
-
-!     pointers in 0 refer to the background mesh
-  integer(i4) lbndfac(0:2), lcelcel(0:2), lcelnod(0:2), lcorg(0:2),&
-  &lnodcod(0:2), lzroe(0:2), ledgptr(0:2), lnodptr(0:2),&
-  &lshnor, lxyshold, lxyshnew, lwork, lpmap(0:2)
-  integer(i4) nbfac(0:2), nelem(0:2), nhole(0:2), nedge(0:2), npoin(0:2),&
-  &nbpoin(0:2), nbfac_sh, npnod(0:2)
-  integer(i4) lia(0:2), lja(0:2), liclr(0:2), nclr(0:2)
+!     background(0)/fitting(1)/backup(2) meshes -- see mod_mesh (issue #13)
+  type(mesh_t) :: bkg, fit, bak
+  integer(i4) nbfac_sh
   logical fndbnds
 
 !     .. external functions ..
-  integer(i4) initxdr, istkgt, istkst
-!     external initxdr,istkgt,istkst
-  external initxdr, istkgt, istkst
+  integer(i4) initxdr
+  external initxdr
   real(wp) rand
   external rand
 
 !     .. external subroutines ..
-  external dinit, iinit, istkin, istkrl
   external calc_vel, co_norm, co_pnt_dspl, co_state_dps, dcopy, fltr_dls,&
-  &fnd_phps, fx_dps_loc, fx_msh_sps, fx_state_dps, icopy, interp,&
+  &fnd_phps, fx_dps_loc, fx_msh_sps, fx_state_dps, interp,&
   &interp_sp, mv_dps, mv_grid, rd_dps, rd_dps_eq, re_inp_data,&
   &re_sdw_info, readmesh, readpmap, solzne, wrt_sdw_info, wsh_mean,&
   &wtri, wtri0
-
-!     .. common blocks ..
-  common/cstak/dstak
-
-!     .. equivalences ..
-  equivalence(dstak(1), istak(1))
 
 !     Time steps for predictor-corrector
   real(wp) dtpr, dtco, nowtime
@@ -222,8 +204,6 @@ program undifi_2d
 !     NDIM = 2
 !     NDOF = 4 ! will be reset within rtri
 
-  call istkin(nva, 4)
-
 ! ---------- allocate space
 
 !     write (nout,fmt=4000)
@@ -261,28 +241,8 @@ program undifi_2d
   write (*, 1001, advance='no') 'readmesh               -->  '
   fndbnds = .true.
 !     fndbnds=.false.
-  call readmesh(&
-  &lbndfac(0),&
-  &lcelcel(0),&
-  &lcelnod(0),&
-  &lcorg(0),&
-  &ledgptr(0),&
-  &lnodcod(0),&
-  &lnodptr(0),&
-  &lzroe(0),&
-  &nbfac(0),&
-  &npoin(0),&
-  &nelem(0),&
-  &nhole(0),&
-  &nbpoin(0),&
-  &nvt,&
-  &nedge(0),&
-  &fname,&
-  &lia(0),&
-  &lja(0),&
-  &liclr(0),&
-  &nclr(0),&
-  &fndbnds)
+  call readmesh(bkg, fname, fndbnds)
+  nvt = bkg%nvt
   write (*, 1002) ' ok'
 1001 format(a)
 1002 format(a)
@@ -292,9 +252,7 @@ program undifi_2d
 ! **********************************************************************
 
   write (*, 1001, advance='no') 'readpmap               -->  '
-  call readpmap(npoin(0),&
-  &npnod(0),&
-  &lpmap(0))
+  call readpmap(bkg)
   write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -304,23 +262,19 @@ program undifi_2d
 ! **********************************************************************
 
   write (*, 1001, advance='no') 'copy mesh(0) in mesh(2)-->  '
-  nitems = nbfac(0) + 2*nshmax*neshmax
-  lbndfac(2) = istkgt(3*nitems, 2)
-  lnodptr(2) = istkgt(3*nbpoin(0), 2)
-  lnodcod(2) = istkgt(npoin(0), 2)
-  call icopy(3*nbfac(0), istak(lbndfac(0)), 1, istak(lbndfac(2)), 1)
-  call icopy(3*nbpoin(0), istak(lnodptr(0)), 1, istak(lnodptr(2)), 1)
-  call icopy(npoin(0), istak(lnodcod(0)), 1, istak(lnodcod(2)), 1)
-  nbfac(2) = nbfac(0)
-  nbpoin(2) = nbpoin(0)
+  bak%nbfac = bkg%nbfac
+  bak%nbpoin = bkg%nbpoin
+!     only the real (unpadded) entries are backed up -- the shock-edge/
+!     shock-point tail that fx_msh_sps/fnd_phps write into bndfac/nodcod's
+!     padded region is deliberately left alone by the restore below
+  bak%bndfac = bkg%bndfac(:, 1:bkg%nbfac)
+  bak%nodptr = bkg%nodptr
+  bak%nodcod = bkg%nodcod(1:bkg%npoin)
   write (*, 1002) ' ok'
-
-  lout(0) = istkst(1) ! number of arrays allocated in the stack
-!     write(6,*)lout(0),' arrays have been allocated on the background mesh'
 
 !     call x04eaf('general',' ',3,nbfac,istak(lbndfac(2)),3,
 !    +            'bndry pointer(2) in main',ifail)
-!     call x04eaf('general',' ',3,nbfac,istak(lbndfac(0)),3,
+!     call x04eaf('general',' ',3,nbfac,bkg%bndfac,3,
 !    +            'bndry pointer(0) in main',ifail)
 !
 !     allocate an array to store the normal to the shock
@@ -366,15 +320,15 @@ program undifi_2d
   write (*, 1001, advance='no') 're_sdw_info            -->  '
   call re_sdw_info(&
   &xysh,&
-  &dstak(lzroe(0) + npoin(0)*ndof),&                        !upstream state
-  &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),&    !downstream state
+  &bkg%zroe(1, bkg%npoin + 1),&                        !upstream state
+  &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),&    !downstream state
   &zroeshuold,&
   &zroeshdold,&
-  &istak(lnodcod(0) + npoin(0)),&
-  &dstak(lcorg(0)),&   !vale
-  &istak(lbndfac(0)),& !vale
-  &nbfac(0),&          !vale
-  &npoin(0),&          !vale
+  &bkg%nodcod(bkg%npoin + 1),&
+  &bkg%xy,&   !vale
+  &bkg%bndfac,& !vale
+  &bkg%nbfac,&          !vale
+  &bkg%npoin,&          !vale
   &nshocks,&
   &nshockpoints,&
   &nshocksegs,&
@@ -395,30 +349,30 @@ program undifi_2d
     write (*, 1001, advance='no') 'rd_sps_eq              -->  '
     call rd_dps_eq(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &nshocks,&
     &nshockpoints,&
     &nshocksegs)
     write (*, 1002) ' ok'
 
-    call dcopy(nshmax*npshmax*ndof, dstak(lzroe(0) + npoin(0)*ndof), 1,&
+    call dcopy(nshmax*npshmax*ndof, bkg%zroe(1, bkg%npoin + 1), 1,&
     &zroeshuold, 1)
     call dcopy(nshmax*npshmax*ndof,&
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof), 1,&
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax), 1,&
     &zroeshdold, 1)
 
   end if ! STEADY
 
 !     call fx_sh_state(
-!    +     dstak(lzroe(0)+npoin(0)*ndof), ! upstream state
+!    +     dstak(lzroe(0)+bkg%npoin*ndof), ! upstream state
 !    +     nshocks,
 !    +     nshockpoints,
 !    +     nshocksegs)
 
 !     call pr_sh_state(
-!    +     dstak(lzroe(0)+npoin(0)*ndof),                     ! upstream state
-!    +     dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof), ! downstream state
+!    +     dstak(lzroe(0)+bkg%npoin*ndof),                     ! upstream state
+!    +     dstak(lzroe(0)+bkg%npoin*ndof+nshmax*npshmax*ndof), ! downstream state
 !    +     nshocks,
 !    +     nshockpoints,
 !    +     nshocksegs)
@@ -432,8 +386,8 @@ program undifi_2d
     write (*, 1001, advance='no') 'co_norm                -->  '
     call co_norm(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &norsh,&
     &nshocks,&
     &nshockpoints,&
@@ -442,11 +396,11 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr,&
-    &istak(lia(0)),&
-    &istak(lja(0)),&
-    &istak(liclr(0)),&
-    &nclr(0),&
-    &dstak(lcorg(0)))
+    &bkg%ia,&
+    &bkg%ja,&
+    &bkg%iclr,&
+    &bkg%nclr,&
+    &bkg%xy)
     write (*, 1002) ' ok'
 
 !       fix the normal orientation which otherwise
@@ -465,8 +419,8 @@ program undifi_2d
     write (*, 1001, advance='no') 'co_state_dps           -->  '
     call co_state_dps(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &zroeshuold,&
     &zroeshdold,&
     &norsh,&
@@ -485,10 +439,10 @@ program undifi_2d
     write (*, 1001, advance='no') 'fx_state_dps           -->  '
     call fx_state_dps(&
     &xysh,&
-    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
+    &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &zroeshuold,&
     &zroeshdold,&
     &norsh,&
@@ -502,11 +456,11 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr,&
-    &istak(lia(0)),&
-    &istak(lja(0)),&
-    &istak(liclr(0)),&
-    &nclr(0),&
-    &dstak(lcorg(0)))
+    &bkg%ia,&
+    &bkg%ja,&
+    &bkg%iclr,&
+    &bkg%nclr,&
+    &bkg%xy)
     write (*, 1002) ' ok'
 
   end if ! UNSTEADY testcases
@@ -541,23 +495,23 @@ program undifi_2d
 
     write (*, 1001, advance='no') 'fnd_phps               -->  '
     call fnd_phps(&
-    &nedge(0),&
-    &istak(lbndfac(0)),&
-    &nbfac(0),&
-    &istak(lcelnod(0)),&
+    &bkg%nedge,&
+    &bkg%bndfac,&
+    &bkg%nbfac,&
+    &bkg%celnod,&
     &nvt,&
-    &nelem(0),&
-    &dstak(lcorg(0)),&
+    &bkg%nelem,&
+    &bkg%xy,&
     &xysh,&
-    &istak(lnodcod(0)),&
-    &npoin(0),&
-    &istak(lnodptr(0)),&
-    &nbpoin(0),&
+    &bkg%nodcod,&
+    &bkg%npoin,&
+    &bkg%nodptr,&
+    &bkg%nbpoin,&
     &nshocks,&
     &nshockpoints,&
     &nshocksegs,&
     &nphampoints,&
-    &istak(lpmap(0)))
+    &bkg%pmap)
     write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -567,8 +521,8 @@ program undifi_2d
     write (*, 1001, advance='no') 'co_norm                -->  '
     call co_norm(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &norsh,&
     &nshocks,&
     &nshockpoints,&
@@ -577,11 +531,11 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr,&
-    &istak(lia(0)),&
-    &istak(lja(0)),&
-    &istak(liclr(0)),&
-    &nclr(0),&
-    &dstak(lcorg(0)))
+    &bkg%ia,&
+    &bkg%ja,&
+    &bkg%iclr,&
+    &bkg%nclr,&
+    &bkg%xy)
     write (*, 1002) ' ok'
 
 !     fix the normal orientation which otherwise
@@ -603,16 +557,16 @@ program undifi_2d
       write (*, 1001, advance='no') 'interp_sp              -->  '
 !    +       nshockpointsold)
       call interp_sp(&
-      &istak(lcelnod(0)),&
+      &bkg%celnod,&
       &nvt,&
-      &nelem(0),&
-      &dstak(lcorg(0)),&
-      &dstak(lzroe(0)),&
+      &bkg%nelem,&
+      &bkg%xy,&
+      &bkg%zroe,&
       &xysh,&
-      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+      &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+      &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
       &norsh,&
-      &npoin(0),&
+      &bkg%npoin,&
       &nshocks,&
       &nshockpoints,&
       &typeshocks,&
@@ -631,10 +585,10 @@ program undifi_2d
     write (*, 1001, advance='no') 'co_pnt_dspl            -->  '
     call co_pnt_dspl(&
     &xysh,&
-    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &istak(lnodcod(0) + npoin(0)),&
+    &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
+    &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%nodcod(bkg%npoin + 1),&
     &norsh,&
     &nshocks,&
     &nshockpoints,&
@@ -652,17 +606,17 @@ program undifi_2d
 
     write (*, 1001, advance='no') 'fx_msh_sps             -->  '
     call fx_msh_sps(&
-    &istak(lbndfac(0)),&
-    &istak(lnodcod(0)),&
-    &nbfac(0),&
+    &bkg%bndfac,&
+    &bkg%nodcod,&
+    &bkg%nbfac,&
     &nbfac_sh,&
     &nvt,&
-    &nelem(0),&
-    &dstak(lcorg(0)),&
+    &bkg%nelem,&
+    &bkg%xy,&
     &xysh,&
-    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
-    &npoin(0),&
+    &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
+    &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
+    &bkg%npoin,&
     &nshocks,&
     &nshockpoints,&
     &nshocksegs,&
@@ -713,10 +667,10 @@ program undifi_2d
 
       write (*, 1001, advance='no') 'calc_vel               -->  '
       call calc_vel(&
-      &npoin(0),&
+      &bkg%npoin,&
       &varray,&
       &dtpr,&
-      &dstak(lcorg(0)),&
+      &bkg%xy,&
       &wsh,&
       &i,&
       &'y',&
@@ -734,7 +688,7 @@ program undifi_2d
         &velfile,&
         &varray,&
         &ndim,&
-        &npoin(0) + 2*npshmax*nshmax,&
+        &bkg%npoin + 2*npshmax*nshmax,&
         &mode)
         write (*, 1002) ' ok'
       end if ! EULFS
@@ -748,21 +702,21 @@ program undifi_2d
     write (fname(3:7), fmt="(i5.5)") i
     write (*, 1001, advance='no') 'wtri                   -->  '
     call wtri(&
-    &istak(lbndfac(0)),&
-    &nbfac(0),&
+    &bkg%bndfac,&
+    &bkg%nbfac,&
     &nbfac_sh,&
-    &istak(lcelnod(0)),&
+    &bkg%celnod,&
     &nvt,&
-    &dstak(lcorg(0)),&
+    &bkg%xy,&
     &xysh,&
-    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
-    &dstak(lzroe(0)),&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
-    &istak(lnodcod(0)),&
-    &istak(lnodcod(0) + npoin(0)),&
-    &npoin(0),&
+    &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
+    &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
+    &bkg%zroe,&
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
+    &bkg%nodcod,&
+    &bkg%nodcod(bkg%npoin + 1),&
+    &bkg%npoin,&
     &fname(1:7),&
     &nshocks,&
     &nshockpoints,&
@@ -1108,30 +1062,7 @@ program undifi_2d
       write (*, 1001, advance='no') 'readmesh               -->  '
       fname(1:9) = fname(1:7)//".1"
       fndbnds = .false.
-      call readmesh(&
-      &lbndfac(1),&
-      &lcelcel(1),&
-      &lcelnod(1),&
-      &lcorg(1),&
-      &ledgptr(1),&
-      &lnodcod(1),&
-      &lnodptr(1),&
-      &lzroe(1),&
-      &nbfac(1),&
-      &npoin(1),&
-      &nelem(1),&
-      &nhole(1),&
-      &nbpoin(1),&
-      &nvt,&
-      &nedge(1),&
-      &fname,&
-      &lia(1),&
-      &lja(1),&
-      &liclr(1),&
-      &nclr(1),&
-      &fndbnds)
-
-      lout(1) = istkst(1) ! number of arrays allocated in the stack
+      call readmesh(fit, fname, fndbnds)
       write (*, 1002) ' ok'
 
       ! TODO: check whether FX_USTATE should be added here ...
@@ -1148,9 +1079,9 @@ program undifi_2d
 
       write (*, 1001, advance='no') 'zroe(1)->zroe(0)       -->  '
 
-      if (npoin(1) .eq. (npoin(0) + totshockpoints)) then
+      if (fit%npoin .eq. (bkg%npoin + totshockpoints)) then
 
-        call dcopy(ndof*npoin(1), dstak(lzroe(1)), 1, dstak(lzroe(0)), 1)
+        call dcopy(ndof*fit%npoin, fit%zroe, 1, bkg%zroe, 1)
         write (*, 1002) ' ok'
 
       else
@@ -1160,18 +1091,11 @@ program undifi_2d
 
         write (6, *) 'there is a mismatch in the nof gridpoints'
         write (6, *) 'btw grid(0) and grid(1)'
-        write (*, *) npoin(0), totshockpoints
-        write (*, *) npoin(1), totshockpoints
+        write (*, *) bkg%npoin, totshockpoints
+        write (*, *) fit%npoin, totshockpoints
         error stop 1
 
       end if
-
-!       work is a work array used to store nodal values in the shock points
-!       work is used in interp() and shockmov()
-
-      lwork = istkgt(2*ndof*nshmax*npshmax, 4) ! work array
-      lxyshold = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
-      lxyshnew = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
 
 ! **********************************************************************
 !  Updates nodal values in all the shock points of grid (0) using R-H
@@ -1183,8 +1107,8 @@ program undifi_2d
       write (*, 1001, advance='no') 'co_state_dps           -->  '
       call co_state_dps(&
       &xyshnew,&
-      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+      &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+      &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
       &zroeshuoldnew,&
       &zroeshdoldnew,&
       &norshnew,&
@@ -1201,10 +1125,10 @@ program undifi_2d
       write (*, 1001, advance='no') 'fx_state_dps           -->  '
       call fx_state_dps(&
       &xyshnew,&                                           ! not used
-      &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream   coord.
-      &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
-      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream   state
-      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+      &bkg%xy(1, bkg%npoin + 1),&                     ! upstream   coord.
+      &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
+      &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream   state
+      &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
       &zroeshuoldnew,&
       &zroeshdoldnew,&
       &norshnew,&
@@ -1218,29 +1142,29 @@ program undifi_2d
       &typespecpoints,&
       &shinspps,&
       &ispclr,&
-      &istak(lia(0)),&
-      &istak(lja(0)),&
-      &istak(liclr(0)),&
-      &nclr(0),&
-      &dstak(lcorg(0)))
+      &bkg%ia,&
+      &bkg%ja,&
+      &bkg%iclr,&
+      &bkg%nclr,&
+      &bkg%xy)
       write (*, 1002) ' ok'
 
 ! **********************************************************************
 
       write (*, 1001, advance='no') 'zroesh(0)->zroesh(1)   -->  '
       call dcopy(ndof*totshockpoints,&
-      &dstak(lzroe(0) + npoin(0)*ndof), 1,&
-      &dstak(lzroe(1) + npoin(0)*ndof), 1)
+      &bkg%zroe(1, bkg%npoin + 1), 1,&
+      &fit%zroe(1, bkg%npoin + 1), 1)
       write (*, 1002) ' ok'
 
 ! **********************************************************************
 
       write (*, 1001, advance='no') 'calc_vel               -->  '
       call calc_vel(&
-      &npoin(0),&
+      &bkg%npoin,&
       &varray,&
       &dtco,&
-      &dstak(lcorg(0)),&
+      &bkg%xy,&
       &wsh,& !WSHnew?
       &i,&
       &'n',&
@@ -1258,7 +1182,7 @@ program undifi_2d
         &velfile,&
         &varray,&
         &ndim,&
-        &npoin(0) + 2*npshmax*nshmax,&
+        &bkg%npoin + 2*npshmax*nshmax,&
         &mode)
         write (*, 1002) ' ok'
       end if
@@ -1427,10 +1351,10 @@ program undifi_2d
 
       write (*, 1001, advance='no') 'mv_grid                -->  '
       call mv_grid(&
-      &npoin(0),&
+      &bkg%npoin,&
       &varray,&
       &dtco,&
-      &dstak(lcorg(0)),&
+      &bkg%xy,&
       &wshnew,&
       &i,&
       &testcase) ! as in calc_vel, added arg to switch case
@@ -1461,30 +1385,7 @@ program undifi_2d
     write (*, 1001, advance='no') 'readmesh               -->  '
     fname(1:9) = fname(1:7)//".1"
     fndbnds = .false.
-    call readmesh(&
-    &lbndfac(1),&
-    &lcelcel(1),&
-    &lcelnod(1),&
-    &lcorg(1),&
-    &ledgptr(1),&
-    &lnodcod(1),&
-    &lnodptr(1),&
-    &lzroe(1),&
-    &nbfac(1),&
-    &npoin(1),&
-    &nelem(1),&
-    &nhole(1),&
-    &nbpoin(1),&
-    &nvt,&
-    &nedge(1),&
-    &fname,&
-    &lia(1),&
-    &lja(1),&
-    &liclr(1),&
-    &nclr(1),&
-    &fndbnds)
-
-    lout(1) = istkst(1) ! number of arrays allocated in the stack
+    call readmesh(fit, fname, fndbnds)
     write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -1492,8 +1393,8 @@ program undifi_2d
 ! **********************************************************************
 
 !     call pr_sh_state(
-!    +   dstak(lzroe(0)+npoin(0)*ndof),                     ! upstream state
-!!   +   dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof), ! downstream state
+!    +   dstak(lzroe(0)+bkg%npoin*ndof),                     ! upstream state
+!!   +   dstak(lzroe(0)+bkg%npoin*ndof+nshmax*npshmax*ndof), ! downstream state
 !    +   nshocks,
 !    +   nshockpoints,
 !    +   nshocksegs)
@@ -1509,9 +1410,9 @@ program undifi_2d
     totshockpoints = 2*nshmax*npshmax
 
     write (*, 1001, advance='no') 'zroe(1)->zroe(0)       -->  '
-    if (npoin(1) .eq. (npoin(0) + totshockpoints)) then
-      call dcopy(ndof*npoin(1), dstak(lzroe(1)), 1,&
-      &dstak(lzroe(0)), 1)
+    if (fit%npoin .eq. (bkg%npoin + totshockpoints)) then
+      call dcopy(ndof*fit%npoin, fit%zroe, 1,&
+      &bkg%zroe, 1)
 
       write (*, 1002) ' ok'
 
@@ -1522,17 +1423,10 @@ program undifi_2d
 
       write (6, *) 'there is a mismatch in the nof gridpoints'
       write (6, *) 'btw grid(0) and grid(1)'
-      write (*, *) npoin(0), totshockpoints
-      write (*, *) npoin(1), totshockpoints
+      write (*, *) bkg%npoin, totshockpoints
+      write (*, *) fit%npoin, totshockpoints
       error stop 1
     end if
-
-!     work is a work array used to store nodal values in the shock points
-!     work is used in interp() and shockmov()
-
-    lwork = istkgt(2*ndof*nshmax*npshmax, 4)
-    lxyshold = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
-    lxyshnew = istkgt(2*ndim*nshmax*npshmax, 4) ! work array
 
 !     SHOCKmov updates nodal values in the shock points of grid (0)
 !     computes R-H relations, moves the shock
@@ -1548,15 +1442,15 @@ program undifi_2d
 !     REcreate shock edges near the triple point
 
 !     write(6,*)' calling chktpnt in main '
-!     call chktpnt2(istak(lbndfac(0)),nbfac(0),nbfac_sh,
-!    &     istak(lcelnod(0)),nvt,
-!    &     nelem(0),
-!    &     dstak(lcorg(0)),
-!    &     dstak(lcorg(0)+npoin(0)*ndim),
-!    &     dstak(lcorg(1)+npoin(0)*ndim),
-!    &     dstak(lzroe(0)+npoin(0)*ndof),ndof,
+!     call chktpnt2(bkg%bndfac,bkg%nbfac,nbfac_sh,
+!    &     bkg%celnod,nvt,
+!    &     bkg%nelem,
+!    &     bkg%xy,
+!    &     dstak(lcorg(0)+bkg%npoin*ndim),
+!    &     dstak(lcorg(1)+bkg%npoin*ndim),
+!    &     dstak(lzroe(0)+bkg%npoin*ndof),ndof,
 !    &     ndim,
-!    &     npoin(0),
+!    &     bkg%npoin,
 !    &     nshocks,nshockpoints,nshocksegs)
 
 ! **********************************************************************
@@ -1567,8 +1461,8 @@ program undifi_2d
     write (*, 1001, advance='no') 'co_state_dps           -->  '
     call co_state_dps(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &zroeshuold,& !ZROESHuOLDnew?
     &zroeshdold,& !ZROESHdOLDnew?
     &norsh,&      !NORSHnew?
@@ -1588,10 +1482,10 @@ program undifi_2d
     write (*, 1001, advance='no') 'fx_state_dps           -->  '
     call fx_state_dps(&
     &xysh,& !XYSHnew?
-    &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
-    &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
+    &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &zroeshuold,& !ZROESHuOLDnew?
     &zroeshdold,& !ZROESHdOLDnew?
     &norsh,&      !NORSHnew?
@@ -1605,11 +1499,11 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr,&
-    &istak(lia(0)),&
-    &istak(lja(0)),&
-    &istak(liclr(0)),&
-    &nclr(0),&
-    &dstak(lcorg(0)))
+    &bkg%ia,&
+    &bkg%ja,&
+    &bkg%iclr,&
+    &bkg%nclr,&
+    &bkg%xy)
     write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -1620,8 +1514,8 @@ program undifi_2d
 
     write (*, 1001, advance='no') 'zroesh(0)->zroesh(1)   -->  '
     call dcopy(ndof*totshockpoints,&
-    &dstak(lzroe(0) + npoin(0)*ndof), 1,&
-    &dstak(lzroe(1) + npoin(0)*ndof), 1)
+    &bkg%zroe(1, bkg%npoin + 1), 1,&
+    &fit%zroe(1, bkg%npoin + 1), 1)
     write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -1647,7 +1541,7 @@ program undifi_2d
     write (*, 1001, advance='no') 'mv_dps                 -->  '
     call mv_dps(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &wsh,&
     &i,&
     &nshocks,&
@@ -1666,10 +1560,10 @@ program undifi_2d
       write (*, 1001, advance='no') 'fx_dps_loc             -->  '
       call fx_dps_loc(&
       &xysh,&
-      &dstak(lcorg(0) + npoin(0)*ndim),&                     ! upstream coord.
-      &dstak(lcorg(0) + npoin(0)*ndim + nshmax*npshmax*ndim),& ! downstream coord.
-      &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+      &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
+      &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
+      &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+      &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
       &zroeshuold,&
       &zroeshdold,&
       &norsh,&
@@ -1683,12 +1577,12 @@ program undifi_2d
       &typespecpoints,&
       &shinspps,&
       &ispclr,&
-      &istak(lia(0)),&
-      &istak(lja(0)),&
-      &istak(liclr(0)),&
-      &nclr(0),&
-      &dstak(lzroe(0)),& ! vale
-      &dstak(lcorg(0)),&
+      &bkg%ia,&
+      &bkg%ja,&
+      &bkg%iclr,&
+      &bkg%nclr,&
+      &bkg%zroe,& ! vale
+      &bkg%xy,&
       &shtopolchanged)  ! vale
       write (*, 1002) ' ok'
 
@@ -1699,7 +1593,7 @@ program undifi_2d
       write (*, 1001, advance='no') 'fltr_dls               -->  '
       call fltr_dls(&
       &xysh,&
-      &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+      &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
       &wsh,&
       &i,&
       &nshocks,&
@@ -1720,27 +1614,27 @@ program undifi_2d
     write (*, 1001, advance='no') 'interp                 -->  '
 !    +      nshockpointsold)
     call interp(&
-    &istak(lbndfac(1)),&
-    &nbfac(1),&
-    &istak(lcelnod(1)),&
+    &fit%bndfac,&
+    &fit%nbfac,&
+    &fit%celnod,&
     &nvt,&
-    &nelem(1),&
-    &dstak(lcorg(1)),&
-    &dstak(lzroe(1)),&
+    &fit%nelem,&
+    &fit%xy,&
+    &fit%zroe,&
     &xysh,&
-    &dstak(lcorg(1) + npoin(0)*ndim),&                     !upstream coord.
-    &dstak(lcorg(1) + npoin(0)*ndim + nshmax*npshmax*ndim),& !downstream coord.
+    &fit%xy(1, bkg%npoin + 1),&                     !upstream coord.
+    &fit%xy(1, bkg%npoin + 1 + nshmax*npshmax),& !downstream coord.
     &nphampoints,&
-    &dstak(lcorg(0)),&
-    &dstak(lzroe(0)),&
-    &istak(lnodcod(0)),&
-    &npoin(0),&
+    &bkg%xy,&
+    &bkg%zroe,&
+    &bkg%nodcod,&
+    &bkg%npoin,&
     &nshocks,&
     &nshockpoints,&
-    &istak(lia(1)),&
-    &istak(lja(1)),&
-    &istak(liclr(0)),&
-    &nclr(0))
+    &fit%ia,&
+    &fit%ja,&
+    &bkg%iclr,&
+    &bkg%nclr)
     write (*, 1002) ' ok'
 
 2340 continue
@@ -1754,8 +1648,8 @@ program undifi_2d
     write (*, 1001, advance='no') 'rd_dps                 -->  '
     call rd_dps(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
     &nshocks,&
     &nshockpoints,&
     &nshocksegs)
@@ -1772,8 +1666,8 @@ program undifi_2d
 !       write(*,1001)'rd_sps_eq              -->   '
 !       call rd_dps_eq(
 !    +       xysh,
-!    +       dstak(lzroe(0)+npoin(0)*ndof),                     ! upstream state
-!    +       dstak(lzroe(0)+npoin(0)*ndof+nshmax*npshmax*ndof), ! downstream state
+!    +       dstak(lzroe(0)+bkg%npoin*ndof),                     ! upstream state
+!    +       dstak(lzroe(0)+bkg%npoin*ndof+nshmax*npshmax*ndof), ! downstream state
 !    +       nshocks,
 !    +       nshockpoints,
 !    +       nshocksegs)
@@ -1791,10 +1685,10 @@ program undifi_2d
 !    +     ndim,
 !    +     ndof,
     call wtri0(&
-    &dstak(lcorg(0)),&
-    &dstak(lzroe(0)),&
-    &istak(lnodcod(0)),&
-    &npoin(0),&
+    &bkg%xy,&
+    &bkg%zroe,&
+    &bkg%nodcod,&
+    &bkg%npoin,&
     &fnameback(1:4))
     write (*, 1002) ' ok'
 
@@ -1805,9 +1699,9 @@ program undifi_2d
     write (*, 1001, advance='no') 'wrt_sdw_info           -->  '
     call wrt_sdw_info(&
     &xysh,&
-    &dstak(lzroe(0) + npoin(0)*ndof),&                     ! upstream state
-    &dstak(lzroe(0) + npoin(0)*ndof + nshmax*npshmax*ndof),& ! downstream state
-    &istak(lnodcod(0) + npoin(0)),&
+    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
+    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
+    &bkg%nodcod(bkg%npoin + 1),&
     &nshocks,&
     &nshockpoints,&
     &nshocksegs,&
@@ -1833,32 +1727,23 @@ program undifi_2d
 
     end if ! UNSTEADY
 
-    call istkrl(3)
-
-!     call solzne("file004.dat",dstak(lzroe(0)),ndof,npoin(0),"w")
-
-!     call x04eaf('general',' ',3,nbfac,istak(lbndfac(2)),3,
-!    +            'bndry pointer(2) in main',ifail)
-!     call x04eaf('general',' ',3,nbfac,istak(lbndfac(0)),3,
-!    +            'bndry pointer(0) in main',ifail)
-!     pause
+!     call solzne("file004.dat",bkg%zroe,ndof,bkg%npoin,"w")
 
 ! **********************************************************************
 !  Restore the original arrays of the background grid
 ! **********************************************************************
 
-    nbfac(0) = nbfac(2)
-    nbpoin(0) = nbpoin(2)
-    nitems = nbfac(2)
-    call icopy(3*nitems, istak(lbndfac(2)), 1, istak(lbndfac(0)), 1)
-    call icopy(3*nbpoin(2), istak(lnodptr(2)), 1, istak(lnodptr(0)), 1)
-    call icopy(npoin(0), istak(lnodcod(2)), 1, istak(lnodcod(0)), 1)
+    bkg%nbfac = bak%nbfac
+    bkg%nbpoin = bak%nbpoin
+    bkg%bndfac(:, 1:bak%nbfac) = bak%bndfac
+    bkg%nodptr = bak%nodptr
+    bkg%nodcod(1:bkg%npoin) = bak%nodcod
 
 ! **********************************************************************
-!  Release all pointers allocated for the shocked mesh (1)
+!  Release all arrays allocated for the shocked mesh (1)
 ! **********************************************************************
 
-    call istkrl(lout(1) - lout(0))
+    call fit%free()
 
 ! **********************************************************************
 !  Create a directory to backup files
