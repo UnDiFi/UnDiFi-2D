@@ -1,6 +1,7 @@
 program undifi_2d
 
   use mod_error, only: fatal
+  use mod_run_external, only: run_external
   use mod_kinds, only: wp, i4
   implicit none(type, external)
 
@@ -125,8 +126,8 @@ program undifi_2d
   logical fndbnds
 
 !     .. external functions ..
-  integer(i4) initxdr, istkgt, istkst, system
-!     external initxdr,istkgt,istkst,system
+  integer(i4) initxdr, istkgt, istkst
+!     external initxdr,istkgt,istkst
   external initxdr, istkgt, istkst
   real(wp) rand
   external rand
@@ -228,13 +229,12 @@ program undifi_2d
 
 4000 format(/, /, ' memory allocation   ', /, ' ', 19('='),/)
 
-  ifail = system("echo 'Running on' `uname -a` > triangle.log")
-  ifail = system("date >> triangle.log")
+  ifail = run_external("echo 'Running on' `uname -a` > triangle.log", 'echo', fatal_on_error=.false.)
+  ifail = run_external("date >> triangle.log", 'date', fatal_on_error=.false.)
 
   if (eulfs) then
     execmd = "rm -fv convergenza.dat"
-    ifail = system(execmd)
-    if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), ifail)
+    ifail = run_external(execmd, 'rm')
 
 !        copy file .petsrc in home
 !        for UNSTEADY EulFS simulations this file
@@ -778,13 +778,7 @@ program undifi_2d
       if (i == 1 + nbegin .and. testcase == "ShockExpansion") then
         write (*, 1001, advance='no') 'neogrid0               -->  '
         execmd = bindir(1:10)//'neogrid0'
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'neogrid0 has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'neogrid0')
         write (*, 1002) ' ok'
       end if
     end if
@@ -800,13 +794,7 @@ program undifi_2d
 
     execmd = bindir(1:10)//'triangle_'//hostype(1:6)//' -nep '&
     &//fname(1:7)//' > log/triangle.log'
-    ifail = system(execmd)
-    call flush (6)
-    if (ifail .ne. 0) then
-      write (6, *) 'triangle has returned an error code ifail = ',&
-      &ifail
-      error stop ifail
-    end if
+    ifail = run_external(execmd, 'triangle')
 
     write (*, 1002) ' ok'
 
@@ -823,33 +811,12 @@ program undifi_2d
         write (fname2(5:9), fmt="(i5.5)") imtf
         write (fname2(13:17), fmt="(i5.5)") imtf
         execmd = 'cp '//fname2(1:19)//'.ele '//fname(1:7)//'.1.ele'
-!          write(*,*)execmd
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'cp has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'cp')
         execmd = 'cp '//fname2(1:19)//'.neigh '//&
         &fname(1:7)//'.1.neigh'
-!          write(*,*)execmd
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'cp has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'cp')
         execmd = 'cp '//fname2(1:19)//'.edge '//fname(1:7)//'.1.edge'
-!          write(*,*)execmd
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'cp has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'cp')
 
         write (*, 1002) ' ok'
 
@@ -908,14 +875,7 @@ program undifi_2d
 !    +   // " > log/triangle2dat.log"
 !         write(*,*)execmd
 
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) execmd
-        write (6, *) 'triangle2dat has returned an error code ifail = ',&
-        &ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'triangle2dat')
 
       write (*, 1002) ' ok'
 
@@ -926,8 +886,7 @@ program undifi_2d
       if (UNSTEADY) then
 !          It runs the predictor step of the EulFS code (we need to use dt/2)
         execmd = "cp -f .petscrc_predictor .petscrc"
-        ifail = system(execmd)
-        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
+        ifail = run_external(execmd, 'cp')
       end if
 
       write (*, 1001, advance='no') 'eulfs                  -->  '
@@ -937,18 +896,11 @@ program undifi_2d
       execmd = bindir(1:10)//"EulFS_"//hostype(1:6)&
       &//" -itmax 1 > log/eulfs.log"
 
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) 'eulfs has returned an error code ifail = ',&
-        &ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'eulfs')
 
       if (unsteady) then
         execmd = "cp step000001.dat file001.dat"
-        ifail = system(execmd)
-        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
+        ifail = run_external(execmd, 'cp')
       end if
 
 !        execmd = "cp file003.dat file010.dat"
@@ -971,13 +923,7 @@ program undifi_2d
       execmd = "printf '"//fname(1:7)//".1' | "//bindir(1:10)&
       &//"dat2triangle-NEW-"//hostype(1:6)&
       &//">log/dat2triangle.log"
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) 'dat2triangle has returned an error code ifail = ',&
-        &ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'dat2triangle')
 
       write (*, 1002) ' ok'
 
@@ -1000,13 +946,7 @@ program undifi_2d
       &//".1\nsu2case'|"&
       &//bindir(1:10)//"triangle2su2-"//hostype(1:6)&
       &//" > log/triangle2su2.log"
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *)&
-        &'triangle2su2 has returned an error code ifail = ', ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'triangle2su2')
 
       write (*, 1002) ' ok'
 
@@ -1020,12 +960,7 @@ program undifi_2d
       execmd = bindir(1:10)//"SU2_CFD"&
       &//" su2case.cfg > log/su2.log"
 
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) 'su2 has returned an error code ifail = ', ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'su2')
 
       write (*, 1002) ' ok'
 
@@ -1041,13 +976,7 @@ program undifi_2d
       &//".1\nsu2case'|"&
       &//bindir(1:10)//"su22triangle-"//hostype(1:6)&
       &//" > log/su22triangle.log"
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *)&
-        &'su22triangle has returned an error code ifail = ', ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'su22triangle')
 
       write (*, 1002) ' ok'
 
@@ -1063,7 +992,7 @@ program undifi_2d
         execmd = "echo "//fname(1:7)&
         &//".1 |"//bindir(1:10)//"na2vvvv"&
         &//" > log/na2vvvv.log"
-        ifail = system(execmd)
+        ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
         write (*, 1002) 'ok'
 
       end if
@@ -1077,13 +1006,7 @@ program undifi_2d
       execmd = "echo "//fname(1:7)&
       &//".1 |"//bindir(1:10)//"triangle2grd"&
       &//" > log/triangle2grd.log"
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) 'triangle2grd has returned an error code ifail = ',&
-        &ifail
-        error stop ifail
-      end if
+      ifail = run_external(execmd, 'triangle2grd')
       write (*, 1002) 'ok'
 
 !     ******************
@@ -1098,21 +1021,15 @@ program undifi_2d
 
           execmd = bindir(1:10)//"CRD_euler"&
           &//"> log/neo.log"
-          ifail = system(execmd)
-          call flush (6)
-          if (ifail .ne. 0) then
-            write (6, *) 'NEO (1st iteration)&
-            &                                    has returned an error code ifail = ', ifail
-            error stop 1
-          end if
+          ifail = run_external(execmd, 'NEO (1st iteration)')
 
           execmd = "cp ./NEO_data/output/vvvv.dat "//&
           &"./NEO_data/output/vvvv0.dat "
-          ifail = system(execmd)
+          ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
 
           execmd = "mv ./NEO_data/output/vvvv.dat "//&
           &"./NEO_data/output/vvvv_input.dat "
-          ifail = system(execmd)
+          ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
 
 !         Here the following happens (for unsteady cases):
 !         - the 1st iteration uses NEO_data/textinput/inputfile-exp.txt
@@ -1129,10 +1046,10 @@ program undifi_2d
 
           execmd = "mv ./NEO_data/textinput/inputfile-exp.txt "//&
           &"./NEO_data/textinput/inputfile-exp.txt.BAK "
-          ifail = system(execmd)
+          ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
 
           execmd = "cp inputfile-exp.txt "//"./NEO_data/textinput/"
-          ifail = system(execmd)
+          ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
 
           write (*, 1002) ' ok'
 
@@ -1145,13 +1062,7 @@ program undifi_2d
       write (*, 1001, advance='no') 'NEO                    -->   '
       execmd = bindir(1:10)//"CRD_euler"&
       &//"> log/neo.log"
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) 'neo has returned an error code ifail = ',&
-        &ifail
-        error stop ifail
-      end if
+      ifail = run_external(execmd, 'neo')
       write (*, 1002) 'ok'
 
 ! **********************************************************************
@@ -1165,13 +1076,7 @@ program undifi_2d
       write (*, 1001, advance='no') 'NEO2triangle           -->   '
       execmd = "echo "//fname(1:7)//".1 | "//bindir(1:10)&
       &//"NEO2triangle"//">log/NEO2triangle.log"
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) 'neo2triangle has returned an error code ifail = ',&
-        &ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'neo2triangle')
       write (*, 1002) 'ok'
 
     else
@@ -1364,13 +1269,7 @@ program undifi_2d
       write (*, 1001, advance='no') 'triangle               -->  '
       execmd = bindir(1:10)//'triangle_'//hostype(1:6)//' -nep '&
       &//fname(1:7)//' > log/triangle.log'
-      ifail = system(execmd)
-      call flush (6)
-      if (ifail .ne. 0) then
-        write (6, *) 'triangle has returned an error code ifail = ',&
-        &ifail
-        error stop 1
-      end if
+      ifail = run_external(execmd, 'triangle')
       write (*, 1002) ' ok'
 
 ! ***********************************
@@ -1424,14 +1323,7 @@ program undifi_2d
 !    +   // " > log/triangle2dat.log"
 !         write(*,*)execmd
 
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) execmd
-          write (6, *) 'triangle2dat has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'triangle2dat')
 
         write (*, 1002) ' ok'
 
@@ -1442,8 +1334,7 @@ program undifi_2d
 !        if (UNSTEADY) then
 !          It runs the corrector step of the EulFS code (now we use the full dt)
         execmd = "cp -f .petscrc_corrector .petscrc"
-        ifail = system(execmd)
-        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
+        ifail = run_external(execmd, 'cp')
 !        end if
 
         write (*, 1001, advance='no') 'eulfs                  -->  '
@@ -1453,18 +1344,11 @@ program undifi_2d
         execmd = bindir(1:10)//"EulFS_"//hostype(1:6)&
         &//" -itmax 1 > log/eulfs.log"
 
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'eulfs has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'eulfs')
 
 !        if (UNSTEADY) then
         execmd = "cp step000001.dat file001.dat"
-        ifail = system(execmd)
-        if (ifail .ne. 0) call fatal('system command failed: '//trim(execmd), 1)
+        ifail = run_external(execmd, 'cp')
 !        endif
 
 !        execmd = "cp file003.dat file010.dat"
@@ -1487,13 +1371,7 @@ program undifi_2d
         execmd = "printf '"//fname(1:7)//".1' | "//bindir(1:10)&
         &//"dat2triangle-NEW-"//hostype(1:6)&
         &//">log/dat2triangle.log"
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'dat2triangle has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'dat2triangle')
 
         write (*, 1002) ' ok'
 
@@ -1507,7 +1385,7 @@ program undifi_2d
         execmd = "echo "//fname(1:7)&
         &//".1 |"//bindir(1:10)//"na2vvvv"&
         &//" > log/na2vvvv.log"
-        ifail = system(execmd)
+        ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
         write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -1519,13 +1397,7 @@ program undifi_2d
         execmd = "echo "//fname(1:7)&
         &//".1 |"//bindir(1:10)//"triangle2grd"&
         &//" > log/triangle2grd.log"
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'triangle2grd has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'triangle2grd')
         write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -1535,13 +1407,7 @@ program undifi_2d
         write (*, 1001, advance='no') 'NEO                    -->  '
         execmd = bindir(1:10)//"CRD_euler"&
         &//" > log/neo.log"
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'NEO has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'NEO')
         write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -1551,13 +1417,7 @@ program undifi_2d
         write (*, 1001, advance='no') 'NEO2triangle           -->  '
         execmd = "echo "//fname(1:7)//".1 | "//bindir(1:10)&
         &//"NEO2triangle"//">log/NEO2triangle.log"
-        ifail = system(execmd)
-        call flush (6)
-        if (ifail .ne. 0) then
-          write (6, *) 'NEO2triangle has returned an error code ifail = ',&
-          &ifail
-          error stop 1
-        end if
+        ifail = run_external(execmd, 'NEO2triangle')
         write (*, 1002) ' ok'
 
       end if ! end SOLVER (EULFS/NEO) for UNSTEADY (corrector step)
@@ -2006,19 +1866,19 @@ program undifi_2d
     write (backdir(5:9), fmt="(i5.5)") i
     if (mod(i - 1, ibak) .eq. 0) then
       execmd = "mkdir -v "//backdir(1:9)
-      ifail = system(execmd)
+      ifail = run_external(execmd, 'mkdir', fatal_on_error=.false.)
 !     execmd = "mv shocknor.dat shock.log file00[1-3].dat file010.dat fs
 !    &pl.out shocks.dat "//fname(1:7)//".* "//backdir(1:9)
       if (eulfs) then
         execmd = "mv -v shocknor.dat file00[1-4].dat file010.dat sh&
         &99.dat  "//fname(1:7)//".* "//fnameback(1:4)//".node&
         &                               "//backdir(1:9)
-        ifail = system(execmd)
+        ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
       elseif (neo) then
         execmd = "mv -v shocknor.dat sh99.dat&
         &                                        "//fname(1:7)//".* "//fnameback(1:4)//".node "//&
         &backdir(1:9)
-        ifail = system(execmd)
+        ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
         execmd =&
         &"cp -vp ./NEO_data/input/neogrid.grd&
         &                              ./NEO_data/input/vel.dat "//backdir(1:9)
@@ -2028,7 +1888,7 @@ program undifi_2d
 
 ! Note: make attention with cp/mv because of vel.dat file
 
-        ifail = system(execmd)
+        ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
 !
 !         if (i == 1+nbegin) then
 !            execmd = "mv ../../../NEO_source/output/vvvv0.dat "
@@ -2038,11 +1898,11 @@ program undifi_2d
 !
         execmd =&
         &"cp -v ./NEO_data/output/vvvv.dat "//backdir(1:9)
-        ifail = system(execmd)
+        ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
 
         execmd =&
         &"mv -v ./NEO_data/output/vvvv_input.dat "//backdir(1:9)
-        ifail = system(execmd)
+        ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
 
 ! copy the solution fie in Tec folder
 !         if (i == 1+nbegin) then
@@ -2068,12 +1928,12 @@ program undifi_2d
         execmd = "rm shocknor.dat "//fname(1:7)//".* "//fnameback(1:4)//&
         &".node "//"sh99.dat "
       end if
-      ifail = system(execmd)
+      ifail = run_external(execmd, 'rm', fatal_on_error=.false.)
     end if
 
     if (EULFS) then
       execmd = "cut -c34- convhst.l2 >> convergenza.dat"
-      ifail = system(execmd)
+      ifail = run_external(execmd, 'cut', fatal_on_error=.false.)
     elseif (NEO) then
 !     .. can we do something similar with NEO?
     end if

@@ -24,6 +24,7 @@ MAKEFILE = Makefile
 
 OBJS     = mod_kinds.o \
 	         mod_error.o \
+	         mod_run_external.o \
 	         fx_msh_sps.o \
 	         co_utp.o \
 	         co_uqp.o \
@@ -70,6 +71,7 @@ SHELL   = /bin/sh
 
 SRCS    = mod_kinds.f90 \
 	        mod_error.f90 \
+	        mod_run_external.f90 \
 	        fx_msh_sps.f90 \
 	        co_utp.f90 \
 	        co_uqp.f90 \

@@ -4,6 +4,7 @@
 set(UNDIFI2D_SOURCES
   mod_kinds.f90
   mod_error.f90
+  mod_run_external.f90
   fx_msh_sps.f90
   co_utp.f90
   co_uqp.f90
