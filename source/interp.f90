@@ -25,7 +25,8 @@ subroutine interp(&
 &iclr,&
 &nclr)
 
-  implicit none
+  implicit none(type, external)
+  external finder
   include 'paramt.h'
 
 !     .. scalar arguments ..
@@ -183,7 +184,7 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
 !            info = 0 node found !=0 search failed
 !            zout(*) is filled with the interpolated value
 
-  implicit none
+  implicit none(type, external)
   integer ielem, ndim, ndof, info, nelem, info1
   integer icelnod(3, *)
   double precision coor(ndim, *), zroe(ndof, *), aa
@@ -302,7 +303,8 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
       &typespecpoints,&
       &shinspps)
 
-        implicit none
+        implicit none(type, external)
+        external finder
         include 'paramt.h'
 
 !     .. scalar arguments ..

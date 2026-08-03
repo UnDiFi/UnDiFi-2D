@@ -24,7 +24,7 @@ subroutine rtri(iedgptr,&
 !      only dimensions are read if imode == 0
 !      the actual data are read if imode != 0
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..

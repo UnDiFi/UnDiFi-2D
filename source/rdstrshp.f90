@@ -3,7 +3,7 @@
 subroutine rdstrshpnt(xysh, zold, shpnt, dx1,&
 &rxysh, znew, rshpnt, nmax, ish)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer shpnt, rshpnt, nmax

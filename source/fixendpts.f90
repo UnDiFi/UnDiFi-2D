@@ -8,7 +8,7 @@ subroutine fixendpts(xy, n1, n2, ndim)
 !        2b) to account for the bndry segments of the background mesh
 !            cut by the shock
 
-  implicit none
+  implicit none(type, external)
 
 !     .. scalar arguments ..
   integer ndim, n1, n2

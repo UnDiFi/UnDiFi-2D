@@ -27,7 +27,7 @@ subroutine fx_msh_sps(&
 &shinspps,&
 &ispclr)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer nelem, npoin, nvt, nbfac, nbfac_sh, nbfac_new
@@ -995,7 +995,7 @@ integer function findbedg(xy, ndim, ibndfac, nbfac, xsh, ysh, s)
 !     finds the bndry edge (of the background mesh)
 !     the shock point (xsh,ysh) belongs to
 
-  implicit none
+  implicit none(type, external)
   integer ndim, nbfac
   double precision xy(ndim, *)
   integer ibndfac(3, *)

@@ -25,7 +25,8 @@ subroutine fx_state_dps(&
 &nclr,&
 &corg)
 
-  implicit none
+  implicit none(type, external)
+  external co_uqp, co_urr, co_utp
   include 'paramt.h'
   include 'shock.com'
 

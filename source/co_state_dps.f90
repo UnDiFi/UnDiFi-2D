@@ -16,7 +16,8 @@ subroutine co_state_dps(&
 &typesh,&
 &iter)
 
-  implicit none
+  implicit none(type, external)
+  external co_dc, co_shock
   include 'paramt.h'
   include 'shock.com'
 

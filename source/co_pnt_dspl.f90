@@ -16,7 +16,8 @@ subroutine co_pnt_dspl(&                   ! not used
 &shinspps,&
 &ispclr)
 
-  implicit none
+  implicit none(type, external)
+  external co_intr_pnt
   include 'paramt.h'
   include 'shock.com'
 

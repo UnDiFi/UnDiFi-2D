@@ -8,7 +8,7 @@ subroutine wtri0(xy,&
 &npoin,&
 &fname)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..

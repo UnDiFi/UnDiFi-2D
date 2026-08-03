@@ -2,7 +2,8 @@
 
 subroutine co_urr(y, tauwx, tauwy, yn1)
 
-  implicit none
+  implicit none(type, external)
+  external solg
   include 'paramt.h'
 
   integer i, j, k, nn
@@ -116,7 +117,7 @@ end subroutine co_urr
 
 double precision function futp1(i, y, a, b, tauwx, tauwy)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer i, ii, j

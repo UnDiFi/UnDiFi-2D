@@ -27,7 +27,8 @@ subroutine fx_dps_loc(&
 &corg,&
 &shtopolchanged)!vale
 
-  implicit none
+  implicit none(type, external)
+  external solg
   include 'paramt.h'
   include 'shock.com'
 

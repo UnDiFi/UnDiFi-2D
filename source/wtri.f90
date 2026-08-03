@@ -24,7 +24,7 @@ subroutine wtri(&
 
 !     write a node and a poly file in triangle fmt
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..

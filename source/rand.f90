@@ -8,6 +8,7 @@ double precision function rand(ix)
 !     ix=ix*a mod p
 !     implicit real*8(a-h,o-z)
 !
+  implicit none(type, external)
   integer a, p, ix, b15, b16, xhi, xalo, leftlo, fhi, k
 !
 !     7**5, 2**15, 2**16, 2**31-1

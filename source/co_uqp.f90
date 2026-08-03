@@ -2,7 +2,8 @@
 
 subroutine co_uqp(y, wqpx, wqpy, yn1)
 
-  implicit none
+  implicit none(type, external)
+  external solg
   include 'paramt.h'
 
   integer i, j, k, nn
@@ -135,7 +136,7 @@ end subroutine co_uqp
 
 double precision function futp2(i, y, a, b, wqpx, wqpy)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer i, ii, j

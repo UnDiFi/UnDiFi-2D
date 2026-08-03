@@ -9,7 +9,7 @@ subroutine mv_dps(xysh,&
 &nshockedges,&
 &typesh)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 

@@ -15,7 +15,7 @@ subroutine wrt_sdw_info(xysh,&
 &ispclr1,&
 &ispclr2)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 

@@ -9,7 +9,7 @@ subroutine rd_dps(&
 &nshockpoints,&
 &nshockedges)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 

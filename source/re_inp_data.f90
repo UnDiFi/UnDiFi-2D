@@ -4,7 +4,7 @@
 
 subroutine re_inp_data
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
 !     .. local scalars ..

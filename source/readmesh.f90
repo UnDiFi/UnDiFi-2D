@@ -2,7 +2,8 @@ subroutine readmesh(lbndfac, lcelcel, lcelnod, lcorg, ledgptr,&
 &lnodcod, lnodptr, lzroe, nbfac, npoin, nelem, nhole, nbpoin,&
 &nvt, nedge, fname, lia, lja, liclr, nclr, fndbnds)
 
-!     implicit none
+  implicit none(type, external)
+  external check, rtri, setbndrynodeptr
   include 'paramt.h'
 
 !     this subroutine reads a mesh written by the triangle code
@@ -23,7 +24,7 @@ subroutine readmesh(lbndfac, lcelcel, lcelnod, lcorg, ledgptr,&
 !     .. local scalars ..
   integer lbndfac, lcelcel, lcelnod, lcorg, ledgptr, lnodcod, lnodptr,&
   &lzroe, lia, lja, liclr, nclr
-  integer nbfac, npoin, nelem, nhole, nvt, nedge
+  integer nbfac, npoin, nelem, nhole, nbpoin, nvt, nedge
   integer ifail, k
   logical fndbnds
 

@@ -4,7 +4,7 @@ subroutine fx_sh_state(zroesh,&
 &nshockpoints,&
 &nshockedges)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 

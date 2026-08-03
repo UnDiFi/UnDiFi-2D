@@ -10,7 +10,7 @@
 subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 &NBPOIN, LNODPTR, LIAO, LJAO, LICLR, NCLR)
 !
-  implicit none
+  implicit none(type, external)
 !
 !     $Id: setbndrynodeptr.f,v 1.4 2018/08/06 09:18:23 abonfi Exp abonfi $
 !
@@ -38,6 +38,7 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 !     ..
 !     .. External Subroutines ..
   external DINIT, IINIT, ISTKIN, ISTKRL
+  external FINDCOLOURS, MYROUTINE, SetBndryNodeList
 !     ..
 !
 !     CHARACTER*(*) FNAME
@@ -131,7 +132,8 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
     subroutine MYROUTINE(NODCODE, IBNDPTR, NBFAC, INODPTR, NPOIN, NBPOIN,&
     &IWORK)
 !
-      implicit none
+      implicit none(type, external)
+      external BINSRC, ISORTRX
 !
       integer NBFAC, NPOIN, NBPOIN
       integer NODCODE(*)
@@ -226,7 +228,7 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                 subroutine FINDCOLOURS(IBNDPTR, INODPTR, IC, CLOSED, MAXPATCHES,&
                 &NBFAC, NBPOIN, NC)
 !
-                  implicit none
+                  implicit none(type, external)
 !
                   integer NBFAC, NBPOIN, NC, MAXPATCHES
                   integer IBNDPTR(3, NBFAC), INODPTR(NBPOIN, 3), IC(0:*)
@@ -311,7 +313,8 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
 !
 !     this routine finds the list of bndry gridpoints belonging to bndry ICLR
 !
-                  implicit none
+                  implicit none(type, external)
+                  external NEARBY
 !
                   integer NBFAC, NBPOIN, NCLR
                   integer IA(*), JA(*), ICLR(NCLR)
@@ -431,7 +434,8 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                       end subroutine SetBndryNodeList
 !
                       subroutine NEARBY(INODE, IBNDPTR, INODPTR, NBPOIN, NEIGHB, IBC)
-                        implicit none
+                        implicit none(type, external)
+                        external BINSRC
                         integer INODE, NBPOIN, IBC ! Input
 !     INODE is a GLOBAL nodenumber
                         integer NEIGHB(*) ! Output
@@ -507,7 +511,7 @@ subroutine SetBndryNodePtr(LBNDFAC, LNODCOD, NBFAC, NPOIN,&
                       end subroutine NEARBY
 !
                       subroutine CHECK(IA, JA, ICLR, NCLR, CORG, NDIM)
-                        implicit none
+                        implicit none(type, external)
                         integer NDIM, NCLR
                         integer IA(*), JA(*), ICLR(NCLR)
                         double precision CORG(NDIM, *)

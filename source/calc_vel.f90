@@ -5,7 +5,7 @@ subroutine calc_vel(npoin, varray, dt, xy, wsh, i, ispredictor,&
 !     x=a*t^3*(1-x/l); where "a" depends on the acceleration of the piston
 !     itself and "l" is the total grid length along the x-coordinate
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer npoin, i

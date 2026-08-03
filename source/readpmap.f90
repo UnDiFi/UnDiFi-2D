@@ -15,7 +15,7 @@
 !     call subroutine( ...,istak(lpmap(0)),....
 
 subroutine readpmap(nitems, npnod, lpmap)
-  implicit none
+  implicit none(type, external)
   integer nitems, npnod, lpmap
 
 !<     nitems (input) the nof of gridpoints incls. both sets of periodic nodes

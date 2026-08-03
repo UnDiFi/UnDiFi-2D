@@ -7,7 +7,8 @@ subroutine co_shock(x1, x2, wshk, R14)
 !     x1(3) and x2(3) upstream and downstream normal velocity
 !     wshk shock velocity
 
-  implicit none
+  implicit none(type, external)
+  external solg
   include 'paramt.h'
 
   double precision x1, x2, wshk, R14
@@ -247,7 +248,8 @@ subroutine invmat(a, b, r)
 !     x1(3) and x2(3) upstream and downstream normal velocity
 !     wdc  contact discontinuity velocity
 
-                            implicit none
+                            implicit none(type, external)
+                            external solg
                             include 'paramt.h'
 
                             double precision x1, x2, wdc

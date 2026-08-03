@@ -2,7 +2,8 @@
 
 subroutine co_utp(y, r14, dxr14, dyr14, r23, unsh1, yn1, flag1, ifail)
 
-  implicit none
+  implicit none(type, external)
+  external solg
   include 'paramt.h'
 
   integer i, j, k, nn, icont
@@ -180,7 +181,7 @@ end subroutine co_utp
 double precision function futp(i, y, a, b, r14, dxr14, dyr14, r23, unsh1,&
 &flag1)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer i, ii, j

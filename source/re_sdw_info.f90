@@ -19,7 +19,7 @@ subroutine re_sdw_info(xysh,&
 &shinspps,&
 &ispclr)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
 

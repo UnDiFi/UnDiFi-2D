@@ -1,6 +1,6 @@
 program undifi_2d
 
-  implicit none
+  implicit none(type, external)
 
 ! ********************************************************************************************************************************
 !  This program reads a triangle grid that already contains more than a shock, moves the shocks and re-grids using triangle
@@ -131,6 +131,11 @@ program undifi_2d
 
 !     .. external subroutines ..
   external dinit, iinit, istkin, istkrl
+  external calc_vel, co_norm, co_pnt_dspl, co_state_dps, dcopy, fltr_dls,&
+  &fnd_phps, fx_dps_loc, fx_msh_sps, fx_state_dps, icopy, interp,&
+  &interp_sp, mv_dps, mv_grid, rd_dps, rd_dps_eq, re_inp_data,&
+  &re_sdw_info, readmesh, readpmap, solzne, wrt_sdw_info, wsh_mean,&
+  &wtri, wtri0
 
 !     .. common blocks ..
   common/cstak/dstak

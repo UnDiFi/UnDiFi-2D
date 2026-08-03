@@ -18,7 +18,7 @@ subroutine fnd_phps(nface,&
 &nphpoin,&
 &pmap)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer nface, nelem, npoin, nvt, nbfac, nbpoin
@@ -378,7 +378,7 @@ subroutine fnd_phps(nface,&
     subroutine solg(n, nmax, a, b, x)
 !     subroutine : gauss method for the solution of a
 !                  linear algebraic system
-      implicit none
+      implicit none(type, external)
       double precision a, b, x
       integer n, nmax
 

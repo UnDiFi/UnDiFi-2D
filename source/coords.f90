@@ -1,4 +1,5 @@
 subroutine COORDS(X, Y, X1, X2, X3, Y1, Y2, Y3, R, IER)
+  implicit none(type, external)
   integer IER
   double precision X, Y, X1, X2, X3, Y1, Y2, Y3, R(3)
 !

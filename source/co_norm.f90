@@ -17,7 +17,7 @@ subroutine co_norm(xysh,&
 &nclr,&
 &corg)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer nshocks, nshockpoints(*), nspecpoints, shinspps(2, 5, *)

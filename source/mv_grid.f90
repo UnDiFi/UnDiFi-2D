@@ -5,7 +5,7 @@ subroutine mv_grid(npoin, varray, dt, xy, wsh, i, testcase)
 !        x=a*t^3*(1-x/l); where "a" depends on the acceleration of the pistion itself and
 !        "l" is the total grid length along the x-coordinate
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
   integer npoin, i

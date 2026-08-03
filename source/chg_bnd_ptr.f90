@@ -16,7 +16,7 @@ subroutine chg_bnd_ptr(&
 !
 !     nbfac  boundary faces (shock segments excluded)
 !     nbpoin boundary nodes (shock points   excluded)
-  implicit none
+  implicit none(type, external)
 
   integer nbfac, npoin, nbpoin
   integer nodcode(*)
@@ -43,7 +43,7 @@ subroutine chg_bnd_ptr(&
   integer inode(2)
 
 !     .. external subroutines ..
-  external dinit, iinit
+  external dinit, iinit, binsrc
 
 !     open log file
   open (8, file='log/ChangeBndryPtr.log')

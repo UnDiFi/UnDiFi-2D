@@ -5,7 +5,7 @@ subroutine wsh_mean(&
 &wsh_n1,&
 &wshmean)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
 !     ..array definition..

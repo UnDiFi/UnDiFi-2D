@@ -21,7 +21,8 @@ subroutine ch_sh_topology(&
 &zroe,&
 &corg)
 
-  implicit none
+  implicit none(type, external)
+  external solg
   include 'paramt.h'
 
 !     .. scalar arguments ..

@@ -2,7 +2,7 @@
 
 subroutine fx_bndry_wedge
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
 !     open log file

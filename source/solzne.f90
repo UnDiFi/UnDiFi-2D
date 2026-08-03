@@ -2,7 +2,7 @@
 
 subroutine solzne(filename, varray, nofvar, npoin, mode)
 
-  implicit none
+  implicit none(type, external)
   include 'paramt.h'
 
 !     .. scalar arguments ..
