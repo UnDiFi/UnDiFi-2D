@@ -7,7 +7,6 @@ subroutine fx_sh_state(zroesh,&
   use mod_kinds, only: wp, i4
   use mod_constants, only: ndof, npshmax
   implicit none(type, external)
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&

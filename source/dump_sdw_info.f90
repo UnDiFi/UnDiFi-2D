@@ -29,7 +29,6 @@ subroutine dump_sdw_info(dumpfname,&
   use mod_kinds, only: wp, i4
   use mod_constants, only: ndim, ndof, npshmax
   implicit none(type, external)
-  include 'shock.com'
 
 !     .. scalar arguments ..
   character*(*) dumpfname

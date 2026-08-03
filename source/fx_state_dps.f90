@@ -27,10 +27,10 @@ subroutine fx_state_dps(&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
+  use mod_freestream, only: z1v, z2v, z3v, z4v
   implicit none(type, external)
   external co_uqp, co_urr, co_utp
   include 'paramt.h'
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax),&

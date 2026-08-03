@@ -18,10 +18,10 @@ subroutine co_state_dps(&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
+  use mod_freestream, only: z1m, z1v, z2m, z2v, z3m, z3v, z4m, z4v
   implicit none(type, external)
   external co_dc, co_shock
   include 'paramt.h'
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)

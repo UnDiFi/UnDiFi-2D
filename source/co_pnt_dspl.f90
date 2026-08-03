@@ -21,7 +21,6 @@ subroutine co_pnt_dspl(&                   ! not used
   implicit none(type, external)
   external co_intr_pnt
   include 'paramt.h'
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) nspecpoints, shinspps(2, 5, *), ispclr(5, *)

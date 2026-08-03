@@ -6,6 +6,7 @@ set(UNDIFI2D_SOURCES
   mod_constants.f90
   mod_config.f90
   mod_mesh.f90
+  mod_freestream.f90
   mod_error.f90
   mod_run_external.f90
   fx_msh_sps.f90
@@ -49,8 +50,8 @@ set(UNDIFI2D_SOURCES
 
 add_executable(UnDiFi-2D ${UNDIFI2D_SOURCES})
 
-# paramt.h / shock.com are resolved via the Fortran INCLUDE statement
-# (not the C preprocessor), which gfortran/ifx/nvfortran all search via -I.
+# paramt.h is resolved via the Fortran INCLUDE statement (not the C
+# preprocessor), which gfortran/ifx/nvfortran all search via -I.
 target_include_directories(UnDiFi-2D PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 undifi_link_vendor_libs(UnDiFi-2D port mylib fxdr sparse-blas tirpc)

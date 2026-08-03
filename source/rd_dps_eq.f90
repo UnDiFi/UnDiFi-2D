@@ -12,7 +12,6 @@ subroutine rd_dps_eq(&
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   include 'paramt.h'
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)

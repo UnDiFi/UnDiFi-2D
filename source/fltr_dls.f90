@@ -13,7 +13,6 @@ subroutine fltr_dls(&
   use mod_kinds, only: wp, i4
   use mod_constants, only: ndim, ndof, npshmax, nshmax
   implicit none(type, external)
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax)

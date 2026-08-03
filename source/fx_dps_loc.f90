@@ -32,7 +32,6 @@ subroutine fx_dps_loc(&
   implicit none(type, external)
   external solg
   include 'paramt.h'
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) iter, nshocks, nshockpoints(nshmax), nshockedges(nshmax),&

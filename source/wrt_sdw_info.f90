@@ -18,7 +18,6 @@ subroutine wrt_sdw_info(xysh,&
   use mod_kinds, only: wp, i4
   use mod_constants, only: ndim, ndof, npshmax
   implicit none(type, external)
-  include 'shock.com'
 
 !     .. scalar arguments ..
   integer(i4) nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
