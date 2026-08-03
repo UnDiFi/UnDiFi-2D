@@ -17,6 +17,7 @@ subroutine co_pnt_dspl(&                   ! not used
 &ispclr)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   external co_intr_pnt
   include 'paramt.h'

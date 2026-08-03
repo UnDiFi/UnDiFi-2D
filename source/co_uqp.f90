@@ -3,6 +3,7 @@
 subroutine co_uqp(y, wqpx, wqpy, yn1)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   external solg
   include 'paramt.h'
@@ -140,6 +141,7 @@ end subroutine co_uqp
 real(wp) function futp2(i, y, a, b, wqpx, wqpy)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   include 'paramt.h'
 

@@ -26,6 +26,7 @@ subroutine fx_state_dps(&
 &corg)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   external co_uqp, co_urr, co_utp
   include 'paramt.h'

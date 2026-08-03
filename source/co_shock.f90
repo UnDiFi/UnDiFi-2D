@@ -8,6 +8,7 @@ subroutine co_shock(x1, x2, wshk, R14)
 !     wshk shock velocity
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   external solg
   include 'paramt.h'
@@ -264,6 +265,7 @@ subroutine co_dc(x1, x2, wdc)
 !     wdc  contact discontinuity velocity
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   external solg
   include 'paramt.h'

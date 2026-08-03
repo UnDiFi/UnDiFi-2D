@@ -9,6 +9,7 @@ subroutine rd_dps_eq(&
 &nshockedges)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   include 'paramt.h'
   include 'shock.com'
@@ -65,7 +66,7 @@ subroutine rd_dps_eq(&
 !       check the new number of shock points
     if (nshockpoints_new .gt. npshmax) then
       write (6, *) 'too many shock points! increase npshmax in&
-      &                        paramt.f'
+      &                        mod_constants'
       error stop 1
     end if
 

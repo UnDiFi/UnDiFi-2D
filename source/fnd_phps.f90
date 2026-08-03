@@ -19,6 +19,7 @@ subroutine fnd_phps(nface,&
 &pmap)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, neshmax, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   include 'paramt.h'
 

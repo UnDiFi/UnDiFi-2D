@@ -26,6 +26,7 @@ subroutine interp(&
 &nclr)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   external finder
   include 'paramt.h'
@@ -306,6 +307,7 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
       &shinspps)
 
         use mod_kinds, only: wp, i4
+        use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
         implicit none(type, external)
         external finder
         include 'paramt.h'

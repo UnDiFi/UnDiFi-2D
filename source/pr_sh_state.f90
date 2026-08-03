@@ -7,8 +7,8 @@ subroutine pr_sh_state(&
 &nshockedges)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndof, npshmax
   implicit none(type, external)
-  include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..

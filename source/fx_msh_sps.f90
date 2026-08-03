@@ -28,8 +28,8 @@ subroutine fx_msh_sps(&
 &ispclr)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndim, npshmax, nshmax
   implicit none(type, external)
-  include 'paramt.h'
 
   integer(i4) nelem, npoin, nvt, nbfac, nbfac_sh, nbfac_new
   integer(i4) nshocks, nshockedges(nshmax), nshockpoints(nshmax)

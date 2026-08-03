@@ -4,7 +4,6 @@ subroutine solzne(filename, varray, nofvar, npoin, mode)
 
   use mod_kinds, only: wp, i4
   implicit none(type, external)
-  include 'paramt.h'
 
 !     .. scalar arguments ..
   integer(i4) nofvar, npoin

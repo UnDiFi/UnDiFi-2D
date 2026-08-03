@@ -3,6 +3,7 @@ program undifi_2d
   use mod_error, only: fatal
   use mod_run_external, only: run_external
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, ndof, neshmax, nprdbndmax, npshmax, nshmax, nspmax
   implicit none(type, external)
 
 ! ********************************************************************************************************************************

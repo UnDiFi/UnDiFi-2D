@@ -3,6 +3,7 @@
 subroutine co_utp(y, r14, dxr14, dyr14, r23, unsh1, yn1, flag1, ifail)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   external solg
   include 'paramt.h'
@@ -186,6 +187,7 @@ real(wp) function futp(i, y, a, b, r14, dxr14, dyr14, r23, unsh1,&
 &flag1)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   include 'paramt.h'
 

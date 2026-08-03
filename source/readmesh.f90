@@ -3,9 +3,9 @@ subroutine readmesh(lbndfac, lcelcel, lcelnod, lcorg, ledgptr,&
 &nvt, nedge, fname, lia, lja, liclr, nclr, fndbnds)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndim, ndof, neshmax, npshmax, nshmax, zero
   implicit none(type, external)
   external check, rtri, setbndrynodeptr
-  include 'paramt.h'
 
 !     this subroutine reads a mesh written by the triangle code
 !     the arrays are allocated into a 1d array (called dstak)

@@ -6,8 +6,8 @@ subroutine wsh_mean(&
 &wshmean)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: half, ndim, npshmax, nshmax
   implicit none(type, external)
-  include 'paramt.h'
 
 !     ..array definition..
   real(wp)&

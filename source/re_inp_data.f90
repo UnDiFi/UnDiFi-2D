@@ -5,10 +5,13 @@
 subroutine re_inp_data
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use mod_config, only: config_t, read_config
   implicit none(type, external)
   include 'paramt.h'
 
 !     .. local scalars ..
+  type(config_t) :: cfg
   integer(i4) i
 
 !     open log file
@@ -22,26 +25,28 @@ subroutine re_inp_data
 
   open (12, file='input.dat', status='old')
   write (8, *) ' open file input.dat'
-  read (12, *) eps        !< distance between the two shock faces
-  read (12, *) sndmin     !< maximum nondimensional distance of the phantom nodes
-  read (12, *) dxcell     !< lenght of shock edges
-  read (12, *) shrelax    !< relax coefficent of shock point integration
-  read (12, *) ibak       !< number of steps between the writing of a solution file and the next
-  read (12, *) ga         !< specific heat ratio
-  gm1 = ga - 1.0d+0
+  cfg = read_config(12)
 
-  read (12, *) naddholes   !< number of addition hole points
+  eps = cfg%eps
+  sndmin = cfg%sndmin
+  dxcell = cfg%dxcell
+  shrelax = cfg%shrelax
+  ibak = cfg%ibak
+  ga = cfg%ga
+  gm1 = cfg%gm1
+  naddholes = cfg%naddholes
   do i = 1, naddholes
-    read (12, *) caddhole(1, i), caddhole(2, i) !< coordinates of addition hole points
+    caddhole(1, i) = cfg%caddhole(1, i)
+    caddhole(2, i) = cfg%caddhole(2, i)
   end do
-  read (12, *) nprdbnd     !< number of periodic boundaries (allowed value 0=no periodic boundary 1 = one periodic boundary
+  nprdbnd = cfg%nprdbnd
   do i = 1, nprdbnd
-    read (12, *) prdbndclr(1, i), prdbndclr(2, i), prdbndclr(3, i) !< corresponding color pairs (indices 1 and 2)
-    !< of each periodic boundaries and equal coordinate
-    !< of periodic boundary (index 3 1=x 2=y)
+    prdbndclr(1, i) = cfg%prdbndclr(1, i)
+    prdbndclr(2, i) = cfg%prdbndclr(2, i)
+    prdbndclr(3, i) = cfg%prdbndclr(3, i)
   end do
-  read (12, *) flt_dspeed  !< filter on discontinuity speeds [0,1.0] (0=disactive)
-  read (12, *) imtf        !< iteration of mesh topology freezing (this value must be equal to one backup iteration)
+  flt_dspeed = cfg%flt_dspeed
+  imtf = cfg%imtf
 
   close (12)
   close (8)

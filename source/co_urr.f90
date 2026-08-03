@@ -3,6 +3,7 @@
 subroutine co_urr(y, tauwx, tauwy, yn1)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   external solg
   include 'paramt.h'
@@ -121,6 +122,7 @@ end subroutine co_urr
 real(wp) function futp1(i, y, a, b, tauwx, tauwy)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
   implicit none(type, external)
   include 'paramt.h'
 

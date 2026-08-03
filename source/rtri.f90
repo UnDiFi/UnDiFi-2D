@@ -25,8 +25,8 @@ subroutine rtri(iedgptr,&
 !      the actual data are read if imode != 0
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndim, ndof
   implicit none(type, external)
-  include 'paramt.h'
 
 !     .. scalar arguments ..
   integer(i4) nface, nelem, npoin, nvt, nbfac, imode

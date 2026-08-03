@@ -22,6 +22,7 @@ subroutine ch_sh_topology(&
 &corg)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax
   implicit none(type, external)
   external solg
   include 'paramt.h'

@@ -3,6 +3,8 @@
 # co_pnt_dipl.f typo fixed alongside this CMake build).
 set(UNDIFI2D_SOURCES
   mod_kinds.f90
+  mod_constants.f90
+  mod_config.f90
   mod_error.f90
   mod_run_external.f90
   fx_msh_sps.f90

@@ -6,6 +6,7 @@ subroutine calc_vel(npoin, varray, dt, xy, wsh, i, ispredictor,&
 !     itself and "l" is the total grid length along the x-coordinate
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   include 'paramt.h'
 

@@ -20,8 +20,8 @@ subroutine re_sdw_info(xysh,&
 &ispclr)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndim, ndof, npshmax, nshmax
   implicit none(type, external)
-  include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..

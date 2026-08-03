@@ -17,6 +17,7 @@ subroutine co_state_dps(&
 &iter)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   implicit none(type, external)
   external co_dc, co_shock
   include 'paramt.h'

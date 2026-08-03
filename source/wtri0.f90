@@ -9,8 +9,8 @@ subroutine wtri0(xy,&
 &fname)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndim, ndof
   implicit none(type, external)
-  include 'paramt.h'
 
 !     .. scalar arguments ..
   integer(i4) npoin

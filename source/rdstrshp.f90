@@ -4,8 +4,8 @@ subroutine rdstrshpnt(xysh, zold, shpnt, dx1,&
 &rxysh, znew, rshpnt, nmax, ish)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndim, ndof, npshmax
   implicit none(type, external)
-  include 'paramt.h'
 
   integer(i4) shpnt, rshpnt, nmax
   real(wp) dx1, dx, s, sr, alpha, beta, ds, dsj
@@ -37,7 +37,7 @@ subroutine rdstrshpnt(xysh, zold, shpnt, dx1,&
 !ren cccccccccccccccccccccc
 
   if (2*rshpnt .gt. npshmax) then
-    write (6, *) ' too many shock points! increase npshmax in paramt&
+    write (6, *) ' too many shock points! increase npshmax in mod_constants&
     &   up to ', 2*rshpnt, ' at least'
     error stop 1
   end if

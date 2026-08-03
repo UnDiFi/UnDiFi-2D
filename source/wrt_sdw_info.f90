@@ -16,8 +16,8 @@ subroutine wrt_sdw_info(xysh,&
 &ispclr2)
 
   use mod_kinds, only: wp, i4
+  use mod_constants, only: ndim, ndof, npshmax
   implicit none(type, external)
-  include 'paramt.h'
   include 'shock.com'
 
 !     .. scalar arguments ..
