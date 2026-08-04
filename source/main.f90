@@ -5,6 +5,9 @@ program undifi_2d
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, neshmax, nprdbndmax, npshmax, nshmax, nspmax
   use mod_mesh, only: mesh_t
+  use mod_shock_system, only: xysh, zroeshuold, zroeshdold, norsh, wsh,&
+  &xyshnew, norshnew, wshnew, wshmean, zroeshuoldnew, zroeshdoldnew,&
+  &shock_system_init, shock_system_refresh
   implicit none(type, external)
 
 ! ********************************************************************************************************************************
@@ -54,25 +57,12 @@ program undifi_2d
   parameter(nin=5, nout=6)
 
 !     .. array definitions
-  real(wp) xysh(ndim, npshmax, nshmax),&
-  &xyshu(ndim, npshmax, nshmax),&
-  &xyshd(ndim, npshmax, nshmax),&
-  &zroeshuold(ndof, npshmax, nshmax),&
-  &zroeshdold(ndof, npshmax, nshmax),&
-  &norsh(ndim, npshmax, nshmax),&
-  &wsh(ndim, npshmax, nshmax)
+!     xysh, zroeshuold, zroeshdold, norsh, wsh, nodcodsh and their *new
+!     predictor/corrector shadow counterparts now live in mod_shock_system
+!     (Phase 3.1, ROADMAP.md #14) -- use-associated above.
+  real(wp) varray(ndim, 30000)
 
-!     arrays for unsteady predictor-corrector time accurate integration
-  real(wp) xyshnew(ndim, npshmax, nshmax),&
-  &norshnew(ndim, npshmax, nshmax),&
-  &wshnew(ndim, npshmax, nshmax),&
-  &wshmean(ndim, npshmax, nshmax),&
-  &zroeshuoldnew(ndof, npshmax, nshmax),&
-  &zroeshdoldnew(ndof, npshmax, nshmax),&
-  &varray(ndim, 30000)
-
-  integer(i4) nodcodsh(npshmax, nshmax),&
-  &nshocksegs(nshmax),&
+  integer(i4) nshocksegs(nshmax),&
   &nshockpoints(nshmax),&
   &shinspps(2, 5, nspmax),&
   &ispclr(5, nspmax)
@@ -112,7 +102,9 @@ program undifi_2d
   &nvt, ifail, nsteps, nbegin
 
 !     background(0)/fitting(1)/backup(2) meshes -- see mod_mesh (issue #13)
-  type(mesh_t) :: bkg, fit, bak
+!     target: bkg%zroe backs disc(:)%zu/%zd's pointer association, see
+!     mod_shock_system (Phase 3.1, ROADMAP.md #14)
+  type(mesh_t), target :: bkg, fit, bak
   integer(i4) nbfac_sh
   logical fndbnds
 
@@ -338,6 +330,11 @@ program undifi_2d
   &shinspps,&
   &ispclr)
   write (*, 1002) ' ok'
+
+!     mod_shock_system's disc(:)/disc_new(:) (Phase 3.1, ROADMAP.md #14):
+!     no consumer yet, kept in sync for Phase 3.2 to build on
+  call shock_system_init(nshocks, bkg%npoin, bkg%zroe)
+  call shock_system_refresh(nshockpoints, nshocksegs, typeshocks)
 
 ! **********************************************************************
 !  Shock points (equally-spaced) redistribution strategy
@@ -1654,6 +1651,10 @@ program undifi_2d
     &nshockpoints,&
     &nshocksegs)
     write (*, 1002) ' ok'
+
+!     mod_shock_system's disc(:)/disc_new(:) (Phase 3.1, ROADMAP.md #14):
+!     rd_dps may have changed nshockpoints/nshocksegs above
+    call shock_system_refresh(nshockpoints, nshocksegs, typeshocks)
 
 3450 continue
 
