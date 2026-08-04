@@ -83,12 +83,14 @@ module mod_special_point
   end type trailing_edge_t
 
 ! RRX (curved=.false.) / RR (curved=.true.) -- regular reflection off a
-! wall, nshe=2. Newton-solved via co_urr today. iclr (boundary color) is
-! only meaningful when curved -- RR recomputes its wall tangent from
-! boundary geometry, RRX assumes an axis-aligned wall.
+! wall, nshe=2. Newton-solved via co_urr today. iclr (boundary color per
+! leg) is only meaningful when curved -- RR recomputes its wall tangent
+! from boundary geometry (reading one ispclr(k,isppnts) per of its 2
+! legs, confirmed in re_sdw_info.f90/wrt_sdw_info.f90), RRX assumes an
+! axis-aligned wall and carries no color at all.
   type, extends(special_point_t) :: regular_reflection_t
     logical :: curved = .false.
-    integer(i4) :: iclr = 0
+    integer(i4) :: iclr(2) = 0
   contains
     procedure :: solve_state => rr_solve_state
   end type regular_reflection_t

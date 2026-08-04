@@ -21,11 +21,13 @@ subroutine re_sdw_info(xysh,&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: ndim, ndof, npshmax, nshmax
+  use mod_special_point, only: special_point_t
+  use mod_special_point_registry, only: make_special_point, sp_read
   implicit none(type, external)
 
 !     .. scalar arguments ..
   integer(i4) nshocks, nspecpoints, nshockedges(*), nshockpoints(*),&
-  &isppnts, idummy, nshe
+  &isppnts, idummy
   character*1 typesh(*)
   character*5 typespecpoints(*)
 
@@ -36,11 +38,8 @@ subroutine re_sdw_info(xysh,&
   &zroeshuold(ndof, npshmax, *),&
   &zroeshdold(ndof, npshmax, *)
 ! vale
-  integer(i4) inode, ibfac
   integer(i4) npoin, nbfac, ibndfac(3, *)
   real(wp) coor(ndim, *)
-  real(wp) xywedge(2)
-  logical foundbgnwedge
 ! vale
   integer(i4) nodcodsh(npshmax, *),&
   &shinspps(2, 5, *),&
@@ -48,6 +47,7 @@ subroutine re_sdw_info(xysh,&
 
 !     .. local scalars ..
   integer(i4) i, k, ish
+  class(special_point_t), allocatable :: sp
 
 !     open log file
   open (8, file='log/re_sdw_info.log')
@@ -92,10 +92,6 @@ subroutine re_sdw_info(xysh,&
       end do
     end do
 
-!       write(8,*)' in shock n.:', ish
-!       write(8,*)' there are ', nshockpoints(ish),' shock vertices'
-!       write(8,*)' there are ', nshockedges(ish),' shock edges'
-
   end do
 
   idummy = 0
@@ -105,163 +101,10 @@ subroutine re_sdw_info(xysh,&
   do isppnts = 1, nspecpoints
     read (12, *) typespecpoints(isppnts)
     write (8, *) typespecpoints(isppnts)
-    if (typespecpoints(isppnts) .eq. 'TP') then                 ! internal special point: triple point
-      nshe = 4
-      idummy = idummy + nshe
 
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'QP') then             ! internal special point: quad point
-      nshe = 5
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'TE') then             ! trailing edge point:
-      nshe = 3
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'RRX') then            ! boundary special point: regular reflection along x-wall
-      nshe = 2                                                ! obsolte - use rr
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'RR') then             ! boundary special point: regular reflection along
-      ! a generic (also curved) wall
-      nshe = 2
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts),&
-        &ispclr(k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts),&
-        &ispclr(k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'WPNRX') then          ! boundary special point: wall point without reflection
-      nshe = 1                                                ! floating along x direction
-      idummy = idummy + nshe                                    ! obsolete - use fwp
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'WPNRY') then          ! boundary special point: wall point without reflection
-      nshe = 1                                                ! floating along y direction
-      idummy = idummy + nshe                                    ! obsolete - use fwp
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'IPX') then            ! boundary special point: inlet point
-      nshe = 1                                                ! floating along x direction
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'IPY') then            ! boundary special point: inlet point
-      nshe = 1                                                ! floating along y direction
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'OPX') then            ! boundary special point: outlet point
-      nshe = 1                                                ! floating along x direction
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'OPY') then            ! boundary special point: outlet point
-      nshe = 1                                                ! floating along y direction
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'EP') then             ! boundary special point: end point
-      nshe = 1
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'C') then              ! connection between two shocks
-      nshe = 2
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'FWP') then             ! boundary special point: floating wall point along a coloured wall
-      nshe = 1
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts),&
-        &ispclr(k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts),&
-        &ispclr(k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'PC') then             ! periodic connection between two shocks
-      nshe = 2
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts),&
-        &ispclr(k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts),&
-        &ispclr(k, isppnts)
-      end do
-
-    elseif (typespecpoints(isppnts) .eq. 'SP') then              ! boundary special point: start point
-      ! (shock point originated from a characteristic coalescence)
-      nshe = 1
-      idummy = idummy + nshe
-
-      do k = 1, nshe
-        read (12, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-        write (8, *) shinspps(1, k, isppnts), shinspps(2, k, isppnts)
-      end do
-
-    else
-      write (8, *) 'condition not implemented'
-      write (*, *) 'condition not implemented'
-      stop
-    end if
+    call make_special_point(typespecpoints(isppnts), sp)
+    idummy = idummy + sp%nshe
+    call sp_read(12, 8, sp, shinspps(:, :, isppnts), ispclr(:, isppnts))
   end do
 
 !     check condition on special points

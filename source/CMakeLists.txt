@@ -13,6 +13,7 @@ set(UNDIFI2D_SOURCES
   mod_shock_system.f90
   mod_newton_solve.f90
   mod_special_point.f90
+  mod_special_point_registry.f90
   fx_msh_sps.f90
   co_utp.f90
   co_uqp.f90
