@@ -26,7 +26,7 @@ module mod_special_point_registry
   &new_connection_t
   implicit none(type, external)
   private
-  public :: make_special_point, sp_read, sp_write
+  public :: make_special_point, sp_read, sp_write, sp_unpack
 
 contains
 
@@ -130,5 +130,48 @@ contains
       end if
     end do
   end subroutine sp_write
+
+! Phase 3.2 increment 4: populates sp%ish/sp%leg (and, for the 3
+! iclr-carrying variants, sp%iclr, when a well-shaped ispclr slice is
+! available) from the shinspps(:,:,isppnts)/ispclr(:,isppnts) slices
+! already read once by re_sdw_info.f90 at startup -- the behavior
+! chains (fx_state_dps.f90 and, in later increments, co_pnt_dspl/
+! fx_msh_sps/fx_dps_loc/co_norm) call this right after
+! make_special_point, every dispatch, since each special_point_t is
+! built fresh per point per call (see mod_special_point.f90's header
+! for why that's the right shape here, unlike mod_discontinuity.f90's
+! persistent aliased storage).
+!
+! ispclr is OPTIONAL because fx_state_dps.f90 itself declares its own
+! ispclr dummy argument rank-1 (ispclr(*)) rather than the rank-2
+! (5,*) shape every other chain uses -- a real, confirmed pre-existing
+! mismatch (bug #1 in the merged-3.2 plan) reachable only via 'RR',
+! which no regression fixture exercises. Rather than paper over that
+! bug by reshaping a rank-1 array into something sp_unpack can slice
+! per-leg, fx_state_dps.f90 omits ispclr here entirely and instead
+! passes the raw ispclr(isppnts) scalar straight through to
+! solve_state's ispclr_flat argument, reproducing the legacy flat
+! single-subscript read bit-for-bit. Callers with a properly rank-2
+! ispclr (increments 5-8) pass the real per-point slice instead.
+  subroutine sp_unpack(sp, shinspps, ispclr)
+    class(special_point_t), intent(inout) :: sp
+    integer(i4), intent(in) :: shinspps(:, :) ! (2, >=nshe) slice: shinspps(:,:,isppnts)
+    integer(i4), intent(in), optional :: ispclr(:) ! (>=nshe) slice: ispclr(:,isppnts)
+
+    allocate (sp%ish(sp%nshe), sp%leg(sp%nshe))
+    sp%ish(1:sp%nshe) = shinspps(1, 1:sp%nshe)
+    sp%leg(1:sp%nshe) = shinspps(2, 1:sp%nshe)
+
+    if (present(ispclr)) then
+      select type (sp)
+      type is (regular_reflection_t)
+        if (sp%curved) sp%iclr(1:sp%nshe) = ispclr(1:sp%nshe)
+      type is (floating_wall_point_t)
+        sp%iclr = ispclr(1)
+      type is (connection_t)
+        if (sp%periodic) sp%iclr(1:sp%nshe) = ispclr(1:sp%nshe)
+      end select
+    end if
+  end subroutine sp_unpack
 
 end module mod_special_point_registry
