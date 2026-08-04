@@ -1,22 +1,39 @@
 ! Compute an unsteady regular reflection point
 
+module co_urr_ctx_m
+! Phase 3.2 increment 1 (ROADMAP.md #14): closure payload for futp1's
+! residual evaluation, replacing the (a, b, tauwx, tauwy) argument list
+! co_urr used to pass on every call into futp1, now that both go
+! through mod_newton_solve's generic residual_if(i, y, ctx) interface.
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  private
+  public :: urr_ctx_t
+
+  type :: urr_ctx_t
+    real(wp) :: a(10, 15) = 0.0_wp
+    real(wp) :: b(10) = 0.0_wp
+    real(wp) :: tauwx = 0.0_wp, tauwy = 0.0_wp
+  end type urr_ctx_t
+
+end module co_urr_ctx_m
+
 subroutine co_urr(y, tauwx, tauwy, yn1)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use mod_newton_solve, only: newton_solve, residual_if
+  use co_urr_ctx_m, only: urr_ctx_t
   implicit none(type, external)
-  external solg, futp1
+  procedure(residual_if) :: futp1
   include 'paramt.h'
 
-  integer(i4) i, j, k, nn
-  real(wp) gam, delta, a, b, bb
+  integer(i4) i, j, nn
+  real(wp) gam, delta
   real(wp) tauwx, tauwy
-  real(wp) y, futp1, g, yn, yn1, g1, dum, dum1, dum2, dyn1
-  real(wp) theta, dyn, sx14, taux14, tauy14, nx14, ny14
-  real(wp) store13, store14, store15, store16
-  logical flag1
-  dimension y(15), yn(15), yn1(15), g(15, 15), g1(15, 15), a(10, 15), b(10)
-  dimension bb(15), dyn(15)
+  real(wp) y, yn1
+  dimension y(15), yn1(15)
+  type(urr_ctx_t) :: ctx
 
 !     assign constants
   gam = ga
@@ -30,112 +47,73 @@ subroutine co_urr(y, tauwx, tauwy, yn1)
 !     compute oblique shock given the upsteam state and deviation angle
   do i = 1, nn - (4 + 1)
     do j = 1, nn
-      a(i, j) = 0.d+0
+      ctx%a(i, j) = 0.d+0
     end do
-    b(i) = 0.d+0
+    ctx%b(i) = 0.d+0
   end do
 
 !     state 1 is known
-  a(1, 1) = 1.0d+0
-  a(2, 2) = 1.0d+0
-  a(3, 3) = 1.0d+0
-  a(4, 4) = 1.0d+0
-  b(1) = y(1)
-  b(2) = y(2)
-  b(3) = y(3)
-  b(4) = y(4)
+  ctx%a(1, 1) = 1.0d+0
+  ctx%a(2, 2) = 1.0d+0
+  ctx%a(3, 3) = 1.0d+0
+  ctx%a(4, 4) = 1.0d+0
+  ctx%b(1) = y(1)
+  ctx%b(2) = y(2)
+  ctx%b(3) = y(3)
+  ctx%b(4) = y(4)
 
 !     state 2 is known
-  a(5, 5) = 1.0d+0
-  a(6, 6) = 1.0d+0
-  a(7, 7) = 1.0d+0
-  a(8, 8) = 1.0d+0
-  b(5) = y(5)
-  b(6) = y(6)
-  b(7) = y(7)
-  b(8) = y(8)
+  ctx%a(5, 5) = 1.0d+0
+  ctx%a(6, 6) = 1.0d+0
+  ctx%a(7, 7) = 1.0d+0
+  ctx%a(8, 8) = 1.0d+0
+  ctx%b(5) = y(5)
+  ctx%b(6) = y(6)
+  ctx%b(7) = y(7)
+  ctx%b(8) = y(8)
 
 !     value of sx12 is known
-  a(9, 13) = 1.0d+0
-  b(9) = y(13)
+  ctx%a(9, 13) = 1.0d+0
+  ctx%b(9) = y(13)
 
 !     velocity of the reflection point
-  a(10, 15) = 1.0d+0
-  b(10) = y(15)
+  ctx%a(10, 15) = 1.0d+0
+  ctx%b(10) = y(15)
+
+  ctx%tauwx = tauwx
+  ctx%tauwy = tauwy
 
 ! compute downstream state and shock velocity with the Newton-Raphson method
+  call newton_solve(nn, y, futp1, ctx, 1.0_wp, 1.0e-6_wp, 0.01_wp, yn1)
 
-!     initialize vector of unknowns
-  do i = 1, nn
-    yn1(i) = y(i)
-  end do
-
-100 format(15(1x, f10.5))
-  do
-    do i = 1, nn
-      yn(i) = yn1(i)
-      bb(i) = futp1(i, yn1, a, b, tauwx, tauwy)
-!       write(*,*)i,bb(i)
-    end do
-
-!     compute jacobian
-    do i = 1, nn
-      do j = 1, nn
-        do k = 1, nn
-          yn1(k) = yn(k)
-        end do
-        dyn1 = abs(yn1(j))*.01
-        if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
-        yn1(j) = yn(j) + dyn1
-!         yn1(j)=yn(j)
-        dum2 = futp1(i, yn1, a, b, tauwx, tauwy)
-        yn1(j) = yn(j) - dyn1
-!         yn1(j)=yn(j)
-        dum1 = futp1(i, yn1, a, b, tauwx, tauwy)
-        g(i, j) = (dum2 - dum1)/(2d0*dyn1)
-!         g(i,j)=(dum2-dum1)/(1d0*dyn1)
-      end do
-    end do
-
-!     write(*,100)((g(i,j),j=1,nn),i=1,nn)
-    call solg(nn, 15, g, bb, dyn)
-    do i = 1, nn
-      yn1(i) = yn(i) - dyn(i)
-!       write(*,*)i,yn(i),yn1(i),dyn(i)
-    end do
-
-!     compute and check residual
-    dum = 0.
-    do i = 1, nn
-      dum = dum + abs(yn1(i) - yn(i))
-    end do
-!     write(*,*)dum
-!     pause
-!     continue
-
-    if (dum .le. 1e-06) exit
-  end do
-
-  return
 end subroutine co_urr
 
-real(wp) function futp1(i, y, a, b, tauwx, tauwy)
+real(wp) function futp1(i, y, ctx) result(r)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use co_urr_ctx_m, only: urr_ctx_t
   implicit none(type, external)
   include 'paramt.h'
 
-  integer(i4) i, ii, j
-  real(wp) y, a, b, tauwx, tauwy, wrr, wn
-  dimension y(15), a(10, 15), b(10)
+  integer(i4), intent(in) :: i
+  real(wp), intent(in) :: y(:)
+  class(*), intent(in) :: ctx
+
+  integer(i4) ii, j
+  real(wp) a(10, 15), b(10), tauwx, tauwy, wrr, wn
   real(wp) ro2, ro3, p2, p3, u2, u3, gam, delta
-  real(wp) v2, v3, un2, un3, ut2, ut3, e1, e2
+  real(wp) v2, v3, un2, un3, ut2, ut3
   real(wp) nwx, nwy
   real(wp) taux23, tauy23, nx23, ny23, sx23
-  real(wp) taux14, tauy14, nx14, ny14, sx14
-  real(wp) sx23corr
-  logical flag1
+
+  select type (ctx)
+  type is (urr_ctx_t)
+    a = ctx%a
+    b = ctx%b
+    tauwx = ctx%tauwx
+    tauwy = ctx%tauwy
+  end select
 
 !     assign constants and variables
   gam = ga
@@ -157,7 +135,6 @@ real(wp) function futp1(i, y, a, b, tauwx, tauwy)
   tauy23 = sin(sx23)
   nx23 = -tauy23
   ny23 = taux23
-!     write(*,*)'nx23,ny23',nx23,ny23
 
 !     compute the normal and tangential velocity components
   un2 = u2*nx23 + v2*ny23
@@ -168,30 +145,29 @@ real(wp) function futp1(i, y, a, b, tauwx, tauwy)
 !     compute the normal velocity component of the reflection point
   wn = wrr*(tauwx*nx23 + tauwy*ny23)
 
-  futp1 = 0.d0
+  r = 0.d0
   if (i .eq. 1) then
-    futp1 = ro2*un2 - ro3*un3 - wn*(ro2 - ro3)
+    r = ro2*un2 - ro3*un3 - wn*(ro2 - ro3)
   elseif (i .eq. 2) then
-    futp1 = p2 + ro2*(un2 - wn)**2 - p3 - ro3*(un3 - wn)**2
+    r = p2 + ro2*(un2 - wn)**2 - p3 - ro3*(un3 - wn)**2
   elseif (i .eq. 3) then
-    futp1 = ut2 - ut3
+    r = ut2 - ut3
   elseif (i .eq. 4) then
-    futp1 = gam/(gam - 1.0)*p2/ro2 + 0.5*(un2 - wn)**2&
+    r = gam/(gam - 1.0)*p2/ro2 + 0.5*(un2 - wn)**2&
     &- gam/(gam - 1.0)*p3/ro3 - 0.5*(un3 - wn)**2
 
   elseif (i .eq. 5) then
     nwx = -tauwy
     nwy = tauwx
-    futp1 = u3*nwx + v3*nwy
+    r = u3*nwx + v3*nwy
 
   elseif (i .ge. 6) then
-    futp1 = 0.d0
+    r = 0.d0
     ii = i - (1*4 + 1)
     do j = 1, 15
-      futp1 = futp1 + a(ii, j)*y(j)
+      r = r + a(ii, j)*y(j)
     end do
-    futp1 = futp1 - b(ii)
+    r = r - b(ii)
   end if
 
-  return
 end function futp1

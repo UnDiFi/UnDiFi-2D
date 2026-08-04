@@ -1,5 +1,38 @@
 ! Compute a shock point
 
+module co_shock_ctx_m
+! Phase 3.2 increment 1 (ROADMAP.md #14): closure payload for f's
+! residual evaluation, replacing the COMMON/shck/ block co_shock used
+! to communicate rom/pm/um/gam/delta/R2 into f, now that both go
+! through mod_newton_solve's generic residual_if(i, y, ctx) interface.
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  private
+  public :: shock_ctx_t
+
+  type :: shock_ctx_t
+    real(wp) :: rom = 0.0_wp, pm = 0.0_wp, um = 0.0_wp
+    real(wp) :: gam = 0.0_wp, delta = 0.0_wp, r2 = 0.0_wp
+  end type shock_ctx_t
+
+end module co_shock_ctx_m
+
+module co_dc_ctx_m
+! Phase 3.2 increment 1 (ROADMAP.md #14): closure payload for fdc's
+! residual evaluation, replacing the COMMON/dc/ block co_dc used to
+! communicate gam/delta/R1/R2/S1/S2 into fdc.
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  private
+  public :: dc_ctx_t
+
+  type :: dc_ctx_t
+    real(wp) :: gam = 0.0_wp, delta = 0.0_wp
+    real(wp) :: r1 = 0.0_wp, r2 = 0.0_wp, s1 = 0.0_wp, s2 = 0.0_wp
+  end type dc_ctx_t
+
+end module co_dc_ctx_m
+
 subroutine co_shock(x1, x2, wshk, R14)
 
 !     x1(1) and x2(1) upstream and downstream density
@@ -9,24 +42,29 @@ subroutine co_shock(x1, x2, wshk, R14)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use mod_newton_solve, only: newton_solve, residual_if
+  use co_shock_ctx_m, only: shock_ctx_t
   implicit none(type, external)
-  external solg, f
+  procedure(residual_if) :: f
   include 'paramt.h'
 
   real(wp) x1, x2, wshk, R14
   dimension x1(4), x2(4)
-  integer(i4) I, J, K, NN
-  real(wp) rov, rom, pv, pm, uv, um, w, gam, delta, R1, R2, a, dyn
-  real(wp) f, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
-  dimension yn(4), yn1(4), g(4, 4), g1(4, 4), dyn(4), b(4)
-  common/shck/rom, pm, um, gam, delta, R2
+  real(wp) rov, rom, pv, pm, uv, um, gam, delta, w
+  real(wp) y0(4), yn1(4)
+  type(shock_ctx_t) :: ctx
+
+! NOTE: w is used uninitialized below (yn1(4) = w), reproducing a
+! pre-existing latent bug in the pre-refactor source (its "initialization
+! of downstream state and shock velocity" block is entirely commented
+! out, leaving w never assigned). Not this increment's job to fix -- see
+! the merged-3.2 plan's "preserve and document, do not fix" policy for
+! untouched latent bugs; giving it an explicit deterministic seed here
+! would itself be an unreviewed numerics change.
 
 ! constants assign
   gam = GA
   delta = (gam - 1.0)/2.
-
-! determination of the upstream and downstream state
-!     if(x1(2).gt.x2(2))then
 
 ! downstream state 1
   rov = x1(1)
@@ -37,152 +75,70 @@ subroutine co_shock(x1, x2, wshk, R14)
   rom = x2(1)
   pm = x2(2)
   um = x2(3)
-!     else
-!         rov=x2(1)
-!         pv =x2(2)
-!         uv =x2(3)
-
-!         rom=x1(1)
-!         pm =x1(2)
-!         um =x1(3)
-!     endif
 
 ! calculation of invariants
-!     R2 = sqrt(gam*pv/rov)+delta*uv
-  R2 = R14
-!     R1 = sqrt(gam*pm/rom)-delta*um
-
-! initialization of downstream state and shock velocity
-! with isentropic flow hypotesis
-!     uv = (R2-R1)/2./delta
-!     a  = (R2+R1)/2.
-!     w  = (um+sqrt(gam*pm/rom)+uv+a)/2.
-!     dum=pm/rom**(gam)
-!     rov=(dum*gam/a**2)**(1./(1.-gam))
-!     pv = a**2*rov/gam
-
-!     help = dsign(1.d0,w)
-
-! initialization of downstream state and shock velocity
-! with steady shock hypotesis
-! N.B w must be an arbitrarily small value but <> 0
-! otherwise the jacobian calculation fails
-!     Mm=abs(um)/sqrt(gam*pm/rom)
-!     pv=pm*(1.d0+2.d0*gam/(gam+1.d0)*(Mm**2-1.d0))
-!     rov=rom*(gam+1.d0)*Mm**2/(2.d0+(gam-1.d0)*Mm**2)
-!     uv=um*rom/rov
-!     w=-0.001
-!     if (R14.eq.0.0d0)then
-!        R14=sqrt(gam*pv/rov)+delta*uv
-!        R2=R14
-!     endif
+  ctx%r2 = R14
+  ctx%rom = rom
+  ctx%pm = pm
+  ctx%um = um
+  ctx%gam = gam
+  ctx%delta = delta
 
 ! compute the downstream state and shock velocity with Newton-Raphson method
 ! initialize the vector of unknowns
-  yn1(1) = rov
-  yn1(2) = pv
-  yn1(3) = uv
-  yn1(4) = w
+  y0(1) = rov
+  y0(2) = pv
+  y0(3) = uv
+  y0(4) = w
 
-  do
-    do i = 1, 4
-      yn(i) = yn1(i)
-    end do
-
-! compute jacobian
-    do i = 1, 4
-      b(i) = f(i, yn)
-      do j = 1, 4
-        do k = 1, 4
-          yn1(k) = yn(k)
-        end do
-!         dum1=f(i,yn1)
-        dyn1 = abs(yn1(j))*.001
-        if (dyn1 .le. 1.0d-7) dyn1 = 1.0d-7
-
-        yn1(j) = yn(j) - dyn1
-        dum1 = f(i, yn1)
-
-        yn1(j) = yn(j) + dyn1
-        dum2 = f(i, yn1)
-        g(i, j) = (dum2 - dum1)/(2.0d0*dyn1)
-!         g(i,j)=(dum2-dum1)/(dyn1)
-
-      end do
-    end do
-
-! invert jacobian matrix
-!     call invmat(g,g1,4)
-
-! compute solution at step n+1
-!     do i=1,4
-!       dyn(i)=0.
-!       do j=1,4
-!         dyn(i)=dyn(i)+g1(i,j)*f(j,yn)
-!       end do
-!       yn1(i)=yn(i)-dyn(i)
-!     enddo
-
-    nn = 4
-    call solg(nn, nn, g, b, dyn)
-    do i = 1, 4
-      yn1(i) = yn(i) - 0.2d0*dyn(i)
-!      yn1(i)=yn(i)-dyn(i)
-    end do
-
-! compute and check residual
-    dum = 0.
-    do i = 1, 4
-      dum = dum + abs(yn1(i) - yn(i))
-    end do
-    if (dum .le. 1d-07) exit
-  end do
+  call newton_solve(4_i4, y0, f, ctx, 0.2_wp, 1.0e-7_wp, 0.001_wp, yn1)
 
   wshk = yn1(4)
-!     wshk=help*ABS(yn1(4))
-!     if(x1(2).gt.x2(2))then
   x1(1) = yn1(1)
   x1(2) = yn1(2)
   x1(3) = yn1(3)
-!     else
-!         x2(1)=yn1(1)
-!         x2(2)=yn1(2)
-!         x2(3)=yn1(3)
-!     endif
 
   return
 end subroutine co_shock
 
 ! ************************************
-real(wp) function f(i, y)
+real(wp) function f(i, y, ctx) result(r)
   use mod_kinds, only: wp, i4
-  integer(i4) i
-  real(wp) y
-  dimension y(4)
-  real(wp) rov, rom, pv, pm, uv, um, w, gam, delta, R2
-  common/shck/rom, pm, um, gam, delta, R2
+  use co_shock_ctx_m, only: shock_ctx_t
+  implicit none(type, external)
+
+  integer(i4), intent(in) :: i
+  real(wp), intent(in) :: y(:)
+  class(*), intent(in) :: ctx
+
+  real(wp) rov, pv, uv, w, rom, pm, um, gam, delta, R2
+
+  select type (ctx)
+  type is (shock_ctx_t)
+    rom = ctx%rom
+    pm = ctx%pm
+    um = ctx%um
+    gam = ctx%gam
+    delta = ctx%delta
+    R2 = ctx%r2
+  end select
 
   rov = y(1)
   pv = y(2)
   uv = y(3)
   w = y(4)
 
-  f = 0
+  r = 0
   if (i .eq. 1) then
-    f = rov*(uv - w) - rom*(um - w)
-!       f=1.0d0-rom*(um-w)/(rov*(uv-w))
+    r = rov*(uv - w) - rom*(um - w)
   elseif (i .eq. 2) then
-    f = pv + rov*(uv - w)**2 - pm - rom*(um - w)**2
-!       f=1.0+rov*(uv-w)**2/pv-pm/pv-rom*(um-w)**2/pv
+    r = pv + rov*(uv - w)**2 - pm - rom*(um - w)**2
   elseif (i .eq. 3) then
-    f = gam/(gam - 1.0)*pv/rov + 0.5*(uv - w)**2&
+    r = gam/(gam - 1.0)*pv/rov + 0.5*(uv - w)**2&
     &- gam/(gam - 1.0)*pm/rom - 0.5*(um - w)**2
-!       f=gam/(gam-1.0)*pv*rom+0.5*(uv-w)**2*rov*rom
-!    &   -gam/(gam-1.0)*pm*rov-0.5*(um-w)**2*rov*rom
 
   elseif (i .eq. 4) then
-    f = sqrt(gam*pv/rov) + delta*uv - R2
-!       f=sqrt(gam*pv)+(delta*uv-R2)*sqrt(rov)
+    r = sqrt(gam*pv/rov) + delta*uv - R2
   end if
   return
 end function f
@@ -266,19 +222,18 @@ subroutine co_dc(x1, x2, wdc)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use mod_newton_solve, only: newton_solve, residual_if
+  use co_dc_ctx_m, only: dc_ctx_t
   implicit none(type, external)
-  external solg, fdc
+  procedure(residual_if) :: fdc
   include 'paramt.h'
 
   real(wp) x1, x2, wdc
   dimension x1(4), x2(4)
 
-  integer(i4) I, J, K, NN
-  real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta, R1, R2, S1, S2, dyn
-  real(wp) fdc, g, yn, yn1, g1, dum, dum1, dum2, dyn1, help, Mm, b
-  dimension yn(7), yn1(7), g(7, 7), g1(7, 7), dyn(7), b(7)
-
-  common/dc/gam, delta, R1, R2, S1, S2
+  real(wp) ro1, ro2, p1, p2, u1, u2, gam, delta
+  real(wp) y0(7), yn1(7)
+  type(dc_ctx_t) :: ctx
 
   ro1 = x1(1)
   p1 = x1(2)
@@ -286,73 +241,31 @@ subroutine co_dc(x1, x2, wdc)
   ro2 = x2(1)
   p2 = x2(2)
   u2 = x2(3)
-  wdc = wdc
 
 ! assign constants
   gam = GA
   delta = (gam - 1.0)/2.
 
 ! compute invariants
-  R1 = sqrt(gam*p1/ro1) + delta*u1
-  R2 = sqrt(gam*p2/ro2) - delta*u2
-  S1 = p1/ro1**gam
-  S2 = p2/ro2**gam
+  ctx%gam = gam
+  ctx%delta = delta
+  ctx%r1 = sqrt(gam*p1/ro1) + delta*u1
+  ctx%r2 = sqrt(gam*p2/ro2) - delta*u2
+  ctx%s1 = p1/ro1**gam
+  ctx%s2 = p2/ro2**gam
 
 ! compute the downstream state and shock velocity with Newton-Raphson method
 
 ! initialize the vector of unknowns
-  yn1(1) = ro1
-  yn1(2) = p1
-  yn1(3) = u1
-  yn1(4) = ro2
-  yn1(5) = p2
-  yn1(6) = u2
-  yn1(7) = wdc
+  y0(1) = ro1
+  y0(2) = p1
+  y0(3) = u1
+  y0(4) = ro2
+  y0(5) = p2
+  y0(6) = u2
+  y0(7) = wdc
 
-  do
-    do i = 1, 7
-      yn(i) = yn1(i)
-    end do
-
-! compute jacobian
-    do i = 1, 7
-      b(i) = fdc(i, yn)
-      do j = 1, 7
-        do k = 1, 7
-          yn1(k) = yn(k)
-        end do
-!         dum1=fdc(i,yn1)
-        dyn1 = abs(yn1(j))*.01
-        if (dyn1 .le. 1.0d-7) dyn1 = 1.0d-7
-
-        yn1(j) = yn(j) - dyn1
-        dum1 = fdc(i, yn1)
-
-        yn1(j) = yn(j) + dyn1
-        dum2 = fdc(i, yn1)
-        g(i, j) = (dum2 - dum1)/(2.0d0*dyn1)
-!         g(i,j)=(dum2-dum1)/(dyn1)
-
-      end do
-    end do
-
-    nn = 7
-    call solg(nn, nn, g, b, dyn)
-!     write(*,*)'******'
-    do i = 1, 7
-!      yn1(i)=yn(i)-0.5d0*dyn(i)
-      yn1(i) = yn(i) - dyn(i)
-!      write(*,*)i,yn1(i)
-    end do
-
-! compute and check residual
-    dum = 0.
-    do i = 1, 7
-      dum = dum + abs(yn1(i) - yn(i))
-    end do
-!     write(*,*)dum
-    if (dum .le. 1d-10) exit
-  end do
+  call newton_solve(7_i4, y0, fdc, ctx, 1.0_wp, 1.0e-10_wp, 0.01_wp, yn1)
 
   wdc = yn1(7)
   x1(1) = yn1(1)
@@ -365,14 +278,27 @@ subroutine co_dc(x1, x2, wdc)
   return
 end subroutine co_dc
 
-real(wp) function fdc(i, y)
+real(wp) function fdc(i, y, ctx) result(r)
   use mod_kinds, only: wp, i4
-  integer(i4) i
-  real(wp) y
-  dimension y(7)
+  use co_dc_ctx_m, only: dc_ctx_t
+  implicit none(type, external)
+
+  integer(i4), intent(in) :: i
+  real(wp), intent(in) :: y(:)
+  class(*), intent(in) :: ctx
+
   real(wp) ro1, ro2, p1, p2, u1, u2, w, gam, delta
   real(wp) R1, R2, S1, S2
-  common/dc/gam, delta, R1, R2, S1, S2
+
+  select type (ctx)
+  type is (dc_ctx_t)
+    gam = ctx%gam
+    delta = ctx%delta
+    R1 = ctx%r1
+    R2 = ctx%r2
+    S1 = ctx%s1
+    S2 = ctx%s2
+  end select
 
   ro1 = y(1)
   p1 = y(2)
@@ -382,21 +308,21 @@ real(wp) function fdc(i, y)
   u2 = y(6)
   w = y(7)
 
-  fdc = 0.d+0
+  r = 0.d+0
   if (i .eq. 1) then
-    fdc = sqrt(gam*p1/ro1) + delta*u1 - R1
+    r = sqrt(gam*p1/ro1) + delta*u1 - R1
   elseif (i .eq. 2) then
-    fdc = p1/ro1**gam - S1
+    r = p1/ro1**gam - S1
   elseif (i .eq. 3) then
-    fdc = sqrt(gam*p2/ro2) - delta*u2 - R2
+    r = sqrt(gam*p2/ro2) - delta*u2 - R2
   elseif (i .eq. 4) then
-    fdc = p2/ro2**gam - S2
+    r = p2/ro2**gam - S2
   elseif (i .eq. 5) then
-    fdc = p1 - p2
+    r = p1 - p2
   elseif (i .eq. 6) then
-    fdc = u1 - u2
+    r = u1 - u2
   elseif (i .eq. 7) then
-    fdc = w - u1
+    r = w - u1
   end if
 
   return

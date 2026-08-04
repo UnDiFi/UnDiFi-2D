@@ -1,22 +1,39 @@
 ! Compute an unsteady quadruple point (QP)
 
+module co_uqp_ctx_m
+! Phase 3.2 increment 1 (ROADMAP.md #14): closure payload for futp2's
+! residual evaluation, replacing the (a, b, wqpx, wqpy) argument list
+! co_uqp used to pass on every call into futp2, now that both go
+! through mod_newton_solve's generic residual_if(i, y, ctx) interface.
+  use mod_kinds, only: wp, i4
+  implicit none(type, external)
+  private
+  public :: uqp_ctx_t
+
+  type :: uqp_ctx_t
+    real(wp) :: a(14, 24) = 0.0_wp
+    real(wp) :: b(14) = 0.0_wp
+    real(wp) :: wqpx = 0.0_wp, wqpy = 0.0_wp
+  end type uqp_ctx_t
+
+end module co_uqp_ctx_m
+
 subroutine co_uqp(y, wqpx, wqpy, yn1)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use mod_newton_solve, only: newton_solve, residual_if
+  use co_uqp_ctx_m, only: uqp_ctx_t
   implicit none(type, external)
-  external solg, futp2
+  procedure(residual_if) :: futp2
   include 'paramt.h'
 
-  integer(i4) i, j, k, nn
-  real(wp) gam, delta, a, b, bb
+  integer(i4) i, j, nn
+  real(wp) gam, delta
   real(wp) wqpx, wqpy
-  real(wp) y, futp2, g, yn, yn1, g1, dum, dum1, dum2, dyn1
-  real(wp) theta, dyn, sx14, taux14, tauy14, nx14, ny14
-  real(wp) store13, store14, store15, store16
-  logical flag1
-  dimension y(24), yn(24), yn1(24), g(24, 24), g1(24, 24), a(14, 24), b(14)
-  dimension bb(24), dyn(24)
+  real(wp) y, yn1
+  dimension y(24), yn1(24)
+  type(uqp_ctx_t) :: ctx
 
   open (8, file='log/co_uqp.log')
 
@@ -33,100 +50,56 @@ subroutine co_uqp(y, wqpx, wqpy, yn1)
 ! state and deviation known
   do i = 1, (3*4 + 2)
     do j = 1, nn
-      a(i, j) = 0.d+0
+      ctx%a(i, j) = 0.d+0
     end do
-    b(i) = 0.d+0
+    ctx%b(i) = 0.d+0
   end do
 
 ! state 1 known
-  a(1, 1) = 1.0d+0
-  a(2, 2) = 1.0d+0
-  a(3, 3) = 1.0d+0
-  a(4, 4) = 1.0d+0
-  b(1) = y(1)
-  b(2) = y(2)
-  b(3) = y(3)
-  b(4) = y(4)
+  ctx%a(1, 1) = 1.0d+0
+  ctx%a(2, 2) = 1.0d+0
+  ctx%a(3, 3) = 1.0d+0
+  ctx%a(4, 4) = 1.0d+0
+  ctx%b(1) = y(1)
+  ctx%b(2) = y(2)
+  ctx%b(3) = y(3)
+  ctx%b(4) = y(4)
 
 ! state 2 known
-  a(5, 5) = 1.0d+0
-  a(6, 6) = 1.0d+0
-  a(7, 7) = 1.0d+0
-  a(8, 8) = 1.0d+0
-  b(5) = y(5)
-  b(6) = y(6)
-  b(7) = y(7)
-  b(8) = y(8)
+  ctx%a(5, 5) = 1.0d+0
+  ctx%a(6, 6) = 1.0d+0
+  ctx%a(7, 7) = 1.0d+0
+  ctx%a(8, 8) = 1.0d+0
+  ctx%b(5) = y(5)
+  ctx%b(6) = y(6)
+  ctx%b(7) = y(7)
+  ctx%b(8) = y(8)
 
 ! state 3 known
-  a(9, 9) = 1.0d+0
-  a(10, 10) = 1.0d+0
-  a(11, 11) = 1.0d+0
-  a(12, 12) = 1.0d+0
-  b(9) = y(9)
-  b(10) = y(10)
-  b(11) = y(11)
-  b(12) = y(12)
+  ctx%a(9, 9) = 1.0d+0
+  ctx%a(10, 10) = 1.0d+0
+  ctx%a(11, 11) = 1.0d+0
+  ctx%a(12, 12) = 1.0d+0
+  ctx%b(9) = y(9)
+  ctx%b(10) = y(10)
+  ctx%b(11) = y(11)
+  ctx%b(12) = y(12)
 
 ! value sx12 known
-  a(13, 21) = 1.0d+0
-  b(13) = y(21)
+  ctx%a(13, 21) = 1.0d+0
+  ctx%b(13) = y(21)
 
 ! value sx13 known
-  a(14, 23) = 1.0d+0
-  b(14) = y(23)
+  ctx%a(14, 23) = 1.0d+0
+  ctx%b(14) = y(23)
+
+  ctx%wqpx = wqpx
+  ctx%wqpy = wqpy
 
 ! calcuate the downstream state and shock velocity
 ! with the newton-raphson method
-
-! initialization of the vector of unknowns
-  do i = 1, nn
-    yn1(i) = y(i)
-  end do
-
-100 format(24(1x, f10.5))
-  do
-    do i = 1, nn
-      yn(i) = yn1(i)
-      bb(i) = futp2(i, yn1, a, b, wqpx, wqpy)
-    end do
-
-! jacobian calculation
-    do i = 1, nn
-      do j = 1, nn
-        do k = 1, nn
-          yn1(k) = yn(k)
-        end do
-        dyn1 = abs(yn1(j))*.001
-        if (dyn1 .lt. 1.0d-7) dyn1 = 1.0d-7
-        yn1(j) = yn(j) + dyn1
-        dum2 = futp2(i, yn1, a, b, wqpx, wqpy)
-        yn1(j) = yn(j) - dyn1
-        dum1 = futp2(i, yn1, a, b, wqpx, wqpy)
-        g(i, j) = (dum2 - dum1)/(2*dyn1)
-      end do
-    end do
-
-!     write(*,100)((g(i,j),j=1,24),i=1,24)
-    call solg(nn, nn, g, bb, dyn)
-    do i = 1, nn
-      yn1(i) = yn(i) - 0.5*dyn(i)
-!      write(*,*)i,yn(i),yn1(i),dyn(i)
-    end do
-
-! calculation and check of residual
-    dum = 0.
-    do i = 1, nn
-      dum = dum + abs(yn1(i) - yn(i))
-    end do
-    write (8, *) 'conv--->', dum
-!     if(dum.gt.10.)then
-!        write(*,*)'change r23 --> r14'
-!        flag1=.false.
-!      endif
-
-    if (dum .le. 1e-11) exit
-  end do
+  call newton_solve(nn, y, futp2, ctx, 0.5_wp, 1.0e-11_wp, 0.001_wp, yn1,&
+  &log_unit=8_i4)
 
   write (8, *)
   do i = 1, nn
@@ -135,26 +108,33 @@ subroutine co_uqp(y, wqpx, wqpy, yn1)
 
   close (8)
 
-  return
 end subroutine co_uqp
 
-real(wp) function futp2(i, y, a, b, wqpx, wqpy)
+real(wp) function futp2(i, y, ctx) result(r)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use co_uqp_ctx_m, only: uqp_ctx_t
   implicit none(type, external)
   include 'paramt.h'
 
-  integer(i4) i, ii, j
-  real(wp) y, a, b, wqpx, wqpy, wn, wt, wsh, unsh1
-  dimension y(24), a(14, 24), b(14)
+  integer(i4), intent(in) :: i
+  real(wp), intent(in) :: y(:)
+  class(*), intent(in) :: ctx
+
+  integer(i4) ii, j
+  real(wp) a(14, 24), b(14), wqpx, wqpy, wn
   real(wp) ro1, ro2, p1, p2, u1, u2, gam, delta
-  real(wp) v1, v2, un1, un2, ut1, ut2, e1, e2
+  real(wp) v1, v2, un1, un2, ut1, ut2
   real(wp) taux12, tauy12, nx12, ny12, sx12
-  real(wp) taux23, tauy23, nx23, ny23, sx23
-  real(wp) taux14, tauy14, nx14, ny14, sx14
-  real(wp) sx23corr
-  logical flag1
+
+  select type (ctx)
+  type is (uqp_ctx_t)
+    a = ctx%a
+    b = ctx%b
+    wqpx = ctx%wqpx
+    wqpy = ctx%wqpy
+  end select
 
 ! assign constants and variables
   gam = ga
@@ -186,15 +166,15 @@ real(wp) function futp2(i, y, a, b, wqpx, wqpy)
 ! calculation of the normal velocity component to shock 24 in the quadruple point
     wn = wqpx*nx12 + wqpy*ny12
 
-    futp2 = 0.d0
+    r = 0.d0
     if (i .eq. 1) then
-      futp2 = ro1*un1 - ro2*un2 - wn*(ro1 - ro2)
+      r = ro1*un1 - ro2*un2 - wn*(ro1 - ro2)
     elseif (i .eq. 2) then
-      futp2 = p1 + ro1*(un1 - wn)**2 - p2 - ro2*(un2 - wn)**2
+      r = p1 + ro1*(un1 - wn)**2 - p2 - ro2*(un2 - wn)**2
     elseif (i .eq. 3) then
-      futp2 = ut1 - ut2
+      r = ut1 - ut2
     elseif (i .eq. 4) then
-      futp2 = gam/(gam - 1.0)*p1/ro1 + 0.5*(un1 - wn)**2&
+      r = gam/(gam - 1.0)*p1/ro1 + 0.5*(un1 - wn)**2&
       &- gam/(gam - 1.0)*p2/ro2 - 0.5*(un2 - wn)**2
 
     end if
@@ -224,16 +204,16 @@ real(wp) function futp2(i, y, a, b, wqpx, wqpy)
     ut1 = u1*taux12 + v1*tauy12
     ut2 = u2*taux12 + v2*tauy12
 
-    futp2 = 0.d0
+    r = 0.d0
     if (i .eq. 5) then
-      futp2 = ro1*un1 - ro2*un2 - wn*(ro1 - ro2)
+      r = ro1*un1 - ro2*un2 - wn*(ro1 - ro2)
     elseif (i .eq. 6) then
-      futp2 = p1 + ro1*(un1 - wn)**2 - p2 - ro2*(un2 - wn)**2
+      r = p1 + ro1*(un1 - wn)**2 - p2 - ro2*(un2 - wn)**2
 
     elseif (i .eq. 7) then
-      futp2 = ut1 - ut2
+      r = ut1 - ut2
     elseif (i .eq. 8) then
-      futp2 = gam/(gam - 1.0)*p1/ro1 + 0.5*(un1 - wn)**2&
+      r = gam/(gam - 1.0)*p1/ro1 + 0.5*(un1 - wn)**2&
       &- gam/(gam - 1.0)*p2/ro2 - 0.5*(un2 - wn)**2
     end if
   elseif (i .eq. 9) then
@@ -245,7 +225,7 @@ real(wp) function futp2(i, y, a, b, wqpx, wqpy)
     p2 = y(18)
     u2 = y(19)
     v2 = y(20)
-    futp2 = p1 - p2
+    r = p1 - p2
   elseif (i .eq. 10) then
     ro1 = y(13)
     p1 = y(14)
@@ -255,15 +235,14 @@ real(wp) function futp2(i, y, a, b, wqpx, wqpy)
     p2 = y(18)
     u2 = y(19)
     v2 = y(20)
-    futp2 = (u1*u2 + v1*v2)**2 - (u1*u1 + v1*v1)*(u2*u2 + v2*v2)
+    r = (u1*u2 + v1*v2)**2 - (u1*u1 + v1*v1)*(u2*u2 + v2*v2)
   elseif (i .ge. 11) then
-    futp2 = 0.d0
+    r = 0.d0
     ii = i - (2*4 + 1 + 1)
     do j = 1, 24
-      futp2 = futp2 + a(ii, j)*y(j)
+      r = r + a(ii, j)*y(j)
     end do
-    futp2 = futp2 - b(ii)
+    r = r - b(ii)
   end if
 
-  return
 end function futp2
