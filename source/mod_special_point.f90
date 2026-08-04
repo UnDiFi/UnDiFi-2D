@@ -58,9 +58,9 @@ module mod_special_point
     integer(i4), allocatable :: ish(:) ! (nshe) shock indices, from shinspps(1,:,isppnts)
     integer(i4), allocatable :: leg(:) ! (nshe) endpoint flags,  from shinspps(2,:,isppnts)
   contains
-    procedure(sp_solve_if), deferred :: solve_state ! fx_state_dps.f90 -- every type overrides (this increment)
+    procedure(sp_solve_if), deferred :: solve_state ! fx_state_dps.f90 -- every type overrides (increment 4)
     procedure :: remesh_boundary => sp_noop ! fx_msh_sps.f90  -- default no-op (increment 6)
-    procedure :: displace => sp_noop ! co_pnt_dspl.f90 -- default no-op (increment 5)
+    procedure :: displace => sp_displace_noop ! co_pnt_dspl.f90 -- most types override (this increment)
     procedure :: relocate => sp_noop ! fx_dps_loc.f90  -- default no-op (increment 7)
     procedure :: correct_normal => sp_noop ! co_norm.f90     -- default no-op (increment 8)
   end type special_point_t
@@ -81,18 +81,44 @@ module mod_special_point
       real(wp), intent(in) :: corg(ndim, *)
       integer(i4), intent(in) :: ispclr_flat ! = ispclr(isppnts) via the legacy rank-1 mis-indexed read (RR only, see rr_solve_state)
     end subroutine sp_solve_if
+
+! dx_carry/dy_carry reproduce a confirmed pre-existing latent bug in
+! co_pnt_dspl.f90 (bug #2 in the merged-3.2 plan): its RRX branch reads
+! a `dx` local that the ENCLOSING dispatch subroutine never resets per
+! point -- it holds whatever wall_float_t's x/y branch (or, before any
+! such branch has run, the generic per-point offset loop's very last
+! iteration) last left it as. That shared-mutable-local dependency has
+! no equivalent once each point's displace is an independent call, so
+! the caller (co_pnt_dspl.f90) threads its own persistent dx/dy locals
+! through every displace call via these two arguments -- wf_displace
+! updates them (mirroring the legacy code's own assignment into the
+! same shared local), rr_displace's RRX path reads (but does not
+! update) them, matching the original bit-for-bit. Every other type
+! ignores them.
+    subroutine sp_displace_if(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+    &nshockpoints, dx_carry, dy_carry)
+      import :: special_point_t, wp, i4
+      class(special_point_t), intent(inout) :: this
+      real(wp), intent(in) :: xysh(:, :, :)
+      real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+      real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+      integer(i4), intent(in) :: nshockpoints(:)
+      real(wp), intent(inout) :: dx_carry, dy_carry
+    end subroutine sp_displace_if
   end interface
 
 ! TP -- triple point (internal), nshe=4. Newton-solved via co_utp today.
   type, extends(special_point_t) :: triple_point_t
   contains
     procedure :: solve_state => tp_solve_state
+    procedure :: displace => tp_displace
   end type triple_point_t
 
 ! QP -- quadruple point (internal), nshe=5. Newton-solved via co_uqp today.
   type, extends(special_point_t) :: quad_point_t
   contains
     procedure :: solve_state => qp_solve_state
+    procedure :: displace => qp_displace
   end type quad_point_t
 
 ! TE -- trailing edge point, nshe=3. Also Newton-solved via co_uqp today
@@ -101,6 +127,7 @@ module mod_special_point
   type, extends(special_point_t) :: trailing_edge_t
   contains
     procedure :: solve_state => te_solve_state
+    procedure :: displace => te_displace
   end type trailing_edge_t
 
 ! RRX (curved=.false.) / RR (curved=.true.) -- regular reflection off a
@@ -114,6 +141,7 @@ module mod_special_point
     integer(i4) :: iclr(2) = 0
   contains
     procedure :: solve_state => rr_solve_state
+    procedure :: displace => rr_displace
   end type regular_reflection_t
 
 ! WPNRX/WPNRY/IPX/IPY/OPX/OPY -- floating points constrained to slide
@@ -127,6 +155,7 @@ module mod_special_point
     logical :: restore_only = .false.
   contains
     procedure :: solve_state => wf_solve_state
+    procedure :: displace => wf_displace
   end type wall_float_t
 
 ! FWP -- floating wall point on a coloured (possibly curved) boundary,
@@ -144,12 +173,14 @@ module mod_special_point
   type, extends(special_point_t) :: end_point_t
   contains
     procedure :: solve_state => ep_solve_state
+    procedure :: displace => ep_displace
   end type end_point_t
 
 ! SP -- start/sonic point (characteristic coalescence), nshe=1.
   type, extends(special_point_t) :: start_point_t
   contains
     procedure :: solve_state => sonic_solve_state
+    procedure :: displace => sonic_displace
   end type start_point_t
 
 ! C (periodic=.false.) / PC (periodic=.true.) -- connection between two
@@ -159,6 +190,7 @@ module mod_special_point
     integer(i4) :: iclr(2) = 0
   contains
     procedure :: solve_state => conn_solve_state
+    procedure :: displace => conn_displace
   end type connection_t
 
 contains
@@ -1059,14 +1091,636 @@ contains
     zroeshu(4, ip2, ish2) = zroeshu(4, ip1, ish1)
   end subroutine conn_solve_state
 
-! Shared default for the four behaviors most codes leave untouched in
-! their corresponding legacy chain -- literally does nothing, matching
-! today's empty if/elseif arms (e.g. fx_msh_sps.f90's TP/QP/EP/C/SP
-! branches, fx_dps_loc.f90's TP/QP/RRX/EP/SP/C/TE branches, ...). This
-! one CAN be shared as-is across all types: it's bound directly on
-! special_point_t itself (not overriding a deferred binding in an
-! extension), so its passed-object dummy legitimately is the abstract
-! base type.
+! Default displace: does nothing to xyshu/xyshd, matching co_pnt_dspl.f90's
+! empty FWP and PC branches (the only two codes that reach it -- every
+! other type overrides below).
+  subroutine sp_displace_noop(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    class(special_point_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+  end subroutine sp_displace_noop
+
+! wall_float_t: ports co_pnt_dspl.f90's {IPX,OPX,WPNRX}/{IPY,OPY,WPNRY}
+! branches verbatim (lines 78-104) -- purely axis-keyed here (unlike
+! solve_state, this chain treats IP*/OP*/WPN* identically regardless of
+! restore_only). Updates dx_carry/dy_carry from vshnor, mirroring the
+! legacy code's own assignment into its shared dx/dy locals -- see
+! sp_displace_if's header for why that matters (rr_displace's RRX path
+! depends on reading exactly this stale value).
+  subroutine wf_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(wall_float_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+    include 'paramt.h'
+
+    integer(i4) :: i, ish, ip
+
+    ish = this%ish(1); i = this%leg(1) - 1
+    ip = 1 + i*(nshockpoints(ish) - 1)
+    dx_carry = vshnor(1, ip, ish)
+    dy_carry = vshnor(2, ip, ish)
+
+    if (this%axis .eq. 'X') then
+      xyshu(1, ip, ish) = xysh(1, ip, ish) + 0.5d+0*eps/dx_carry
+      xyshu(2, ip, ish) = xysh(2, ip, ish)
+      xyshd(1, ip, ish) = xysh(1, ip, ish) - 0.5d+0*eps/dx_carry
+      xyshd(2, ip, ish) = xysh(2, ip, ish)
+    else
+      xyshu(1, ip, ish) = xysh(1, ip, ish)
+      xyshu(2, ip, ish) = xysh(2, ip, ish) + 0.5d+0*eps/dy_carry
+      xyshd(1, ip, ish) = xysh(1, ip, ish)
+      xyshd(2, ip, ish) = xysh(2, ip, ish) - 0.5d+0*eps/dy_carry
+    end if
+  end subroutine wf_displace
+
+! TP: ports co_pnt_dspl.f90's 'TP' branch verbatim (lines 106-258) --
+! moves all 4 legs along their local shock tangent by eps, then overlaps
+! (averages) the appropriate up/downstream point pairs depending on
+! whether the incident and reflected shocks belong to opposite or the
+! same family.
+  subroutine tp_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(triple_point_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+    include 'paramt.h'
+
+    real(wp) :: tx, ty, dum, f1, f2
+    integer(i4) :: i, k, ish1, ish2, ish3, ish4, ip1, ip2, ip3, ip4
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(2); i = this%leg(2) - 1; ip2 = 1 + i*(nshockpoints(ish2) - 1)
+    ish3 = this%ish(3); i = this%leg(3) - 1; ip3 = 1 + i*(nshockpoints(ish3) - 1)
+    ish4 = this%ish(4); i = this%leg(4) - 1; ip4 = 1 + i*(nshockpoints(ish4) - 1)
+
+    f1 = vshnor(1, ip1, ish1)*zroeshu(4, ip1, ish1) -&
+    &vshnor(2, ip1, ish1)*zroeshu(3, ip1, ish1)
+    f1 = -sign(1.d0, f1)
+
+    f2 = vshnor(1, ip2, ish2)*zroeshu(4, ip2, ish2) -&
+    &vshnor(2, ip2, ish2)*zroeshu(3, ip2, ish2)
+    f2 = -sign(1.d0, f2)
+
+! move incident shock point
+    if (ip1 .eq. 1) then
+      tx = xysh(1, ip1, ish1) - xysh(1, ip1 - 1, ish1)
+      ty = xysh(2, ip1, ish1) - xysh(2, ip1 - 1, ish1)
+    else
+      tx = xysh(1, ip1 - 1, ish1) - xysh(1, ip1, ish1)
+      ty = xysh(2, ip1 - 1, ish1) - xysh(2, ip1, ish1)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip1, ish1) = xyshu(1, ip1, ish1) + eps*tx
+    xyshu(2, ip1, ish1) = xyshu(2, ip1, ish1) + eps*ty
+    xyshd(1, ip1, ish1) = xyshd(1, ip1, ish1) + eps*tx
+    xyshd(2, ip1, ish1) = xyshd(2, ip1, ish1) + eps*ty
+
+! move reflected shock point
+    if (ip2 .eq. 1) then
+      tx = xysh(1, ip2, ish2) - xysh(1, ip2 - 1, ish2)
+      ty = xysh(2, ip2, ish2) - xysh(2, ip2 - 1, ish2)
+    else
+      tx = xysh(1, ip2 - 1, ish2) - xysh(1, ip2, ish2)
+      ty = xysh(2, ip2 - 1, ish2) - xysh(2, ip2, ish2)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip2, ish2) = xyshu(1, ip2, ish2) + eps*tx
+    xyshu(2, ip2, ish2) = xyshu(2, ip2, ish2) + eps*ty
+    xyshd(1, ip2, ish2) = xyshd(1, ip2, ish2) + eps*tx
+    xyshd(2, ip2, ish2) = xyshd(2, ip2, ish2) + eps*ty
+
+! move mach stem point
+    if (ip3 .eq. 1) then
+      tx = xysh(1, ip3, ish3) - xysh(1, ip3 - 1, ish3)
+      ty = xysh(2, ip3, ish3) - xysh(2, ip3 - 1, ish3)
+    else
+      tx = xysh(1, ip3 - 1, ish3) - xysh(1, ip3, ish3)
+      ty = xysh(2, ip3 - 1, ish3) - xysh(2, ip3, ish3)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip3, ish3) = xyshu(1, ip3, ish3) + eps*tx
+    xyshu(2, ip3, ish3) = xyshu(2, ip3, ish3) + eps*ty
+    xyshd(1, ip3, ish3) = xyshd(1, ip3, ish3) + eps*tx
+    xyshd(2, ip3, ish3) = xyshd(2, ip3, ish3) + eps*ty
+
+! move contact discontinuity point
+    if (ip4 .eq. 1) then
+      tx = xysh(1, ip4, ish4) - xysh(1, ip4 - 1, ish4)
+      ty = xysh(2, ip4, ish4) - xysh(2, ip4 - 1, ish4)
+    else
+      tx = xysh(1, ip4 - 1, ish4) - xysh(1, ip4, ish4)
+      ty = xysh(2, ip4 - 1, ish4) - xysh(2, ip4, ish4)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip4, ish4) = xyshu(1, ip4, ish4) + eps*tx
+    xyshu(2, ip4, ish4) = xyshu(2, ip4, ish4) + eps*ty
+    xyshd(1, ip4, ish4) = xyshd(1, ip4, ish4) + eps*tx
+    xyshd(2, ip4, ish4) = xyshd(2, ip4, ish4) + eps*ty
+
+    if (f1*f2 .lt. 0.) then
+      do k = 1, ndim
+        dum = 0.5*(xyshu(k, ip1, ish1) + xyshu(k, ip3, ish3))
+        xyshu(k, ip1, ish1) = dum; xyshu(k, ip3, ish3) = dum
+      end do
+      do k = 1, ndim
+        dum = 0.5*(xyshd(k, ip1, ish1) + xyshu(k, ip2, ish2))
+        xyshd(k, ip1, ish1) = dum; xyshu(k, ip2, ish2) = dum
+      end do
+    else
+      do k = 1, ndim
+        dum = 0.5*(xyshd(k, ip1, ish1) + xyshu(k, ip3, ish3))
+        xyshd(k, ip1, ish1) = dum; xyshu(k, ip3, ish3) = dum
+      end do
+      do k = 1, ndim
+        dum = 0.5*(xyshu(k, ip1, ish1) + xyshu(k, ip2, ish2))
+        xyshu(k, ip1, ish1) = dum; xyshu(k, ip2, ish2) = dum
+      end do
+    end if
+
+    do k = 1, ndim
+      dum = 0.5*(xyshd(k, ip3, ish3) + xyshd(k, ip4, ish4))
+      xyshd(k, ip3, ish3) = dum; xyshd(k, ip4, ish4) = dum
+    end do
+
+    do k = 1, ndim
+      dum = 0.5*(xyshd(k, ip2, ish2) + xyshu(k, ip4, ish4))
+      xyshd(k, ip2, ish2) = dum; xyshu(k, ip4, ish4) = dum
+    end do
+  end subroutine tp_displace
+
+! RRX (curved=.false.) / RR (curved=.true.): ports co_pnt_dspl.f90's
+! 'RRX'/'RR' branches verbatim (lines 260-366). RRX additionally does an
+! axis-constrained pre-step using dx_carry -- see sp_displace_if's
+! header comment for the latent-bug preservation this requires. Both
+! variants then find the intersection point of the two legs' local
+! tangent segments via co_intr_pnt and overlap both legs onto it.
+  subroutine rr_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(regular_reflection_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+    include 'paramt.h'
+    external co_intr_pnt
+
+    real(wp) :: xc(2), yc(2), xs(2), ys(2), xi, yi
+    integer(i4) :: i, ish1, ish2, ip1, ip2
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(2); i = this%leg(2) - 1; ip2 = 1 + i*(nshockpoints(ish2) - 1)
+
+    if (.not. this%curved) then
+      xyshu(1, ip1, ish1) = xysh(1, ip1, ish1) + 0.5d+0*eps/dx_carry
+      xyshu(2, ip1, ish1) = xysh(2, ip1, ish1)
+      xyshd(1, ip1, ish1) = xysh(1, ip1, ish1) - 0.5d+0*eps/dx_carry
+      xyshd(2, ip1, ish1) = xysh(2, ip1, ish1)
+
+      xyshu(1, ip2, ish2) = xysh(1, ip2, ish2) + 0.5d+0*eps/dx_carry
+      xyshu(2, ip2, ish2) = xysh(2, ip2, ish2)
+      xyshd(1, ip2, ish2) = xysh(1, ip2, ish2) - 0.5d+0*eps/dx_carry
+      xyshd(2, ip2, ish2) = xysh(2, ip2, ish2)
+    end if
+
+    xc(1) = xyshd(1, ip1, ish1)
+    yc(1) = xyshd(2, ip1, ish1)
+    if (ip1 .eq. 1) then
+      xc(2) = xyshd(1, ip1 + 1, ish1)
+      yc(2) = xyshd(2, ip1 + 1, ish1)
+    else
+      xc(2) = xyshd(1, ip1 - 1, ish1)
+      yc(2) = xyshd(2, ip1 - 1, ish1)
+    end if
+
+    xs(1) = xyshu(1, ip2, ish2)
+    ys(1) = xyshu(2, ip2, ish2)
+    if (ip2 .eq. 1) then
+      xs(2) = xyshu(1, ip2 + 1, ish2)
+      ys(2) = xyshu(2, ip2 + 1, ish2)
+    else
+      xs(2) = xyshu(1, ip2 - 1, ish2)
+      ys(2) = xyshu(2, ip2 - 1, ish2)
+    end if
+
+    call co_intr_pnt(xi, yi, xc, yc, xs, ys)
+
+    xyshd(1, ip1, ish1) = xi
+    xyshd(2, ip1, ish1) = yi
+    xyshu(1, ip2, ish2) = xi
+    xyshu(2, ip2, ish2) = yi
+  end subroutine rr_displace
+
+! QP: ports co_pnt_dspl.f90's 'QP' branch verbatim (lines 368-753) --
+! moves all 5 legs along their local tangent by eps, then does 5
+! successive co_intr_pnt calls to overlap: incident-1/incident-2 (side
+! picked by family), incident-1(other side)/reflected-1-upstream,
+! incident-2(other side)/reflected-2-upstream, reflected-1-downstream/
+! contact-upstream, reflected-2-downstream/contact-downstream.
+  subroutine qp_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(quad_point_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+    include 'paramt.h'
+    external co_intr_pnt
+
+    real(wp) :: xc(2), yc(2), xs(2), ys(2), xi, yi
+    real(wp) :: tx, ty, dum, f1, f3
+    integer(i4) :: i, ish1, ish2, ish3, ish4, ish5, ip1, ip2, ip3, ip4, ip5
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(2); i = this%leg(2) - 1; ip2 = 1 + i*(nshockpoints(ish2) - 1)
+    ish3 = this%ish(3); i = this%leg(3) - 1; ip3 = 1 + i*(nshockpoints(ish3) - 1)
+    ish4 = this%ish(4); i = this%leg(4) - 1; ip4 = 1 + i*(nshockpoints(ish4) - 1)
+    ish5 = this%ish(5); i = this%leg(5) - 1; ip5 = 1 + i*(nshockpoints(ish5) - 1)
+
+    f1 = vshnor(1, ip1, ish1)*zroeshu(4, ip1, ish1) -&
+    &vshnor(2, ip1, ish1)*zroeshu(3, ip1, ish1)
+    f1 = -sign(1.d0, f1)
+
+    f3 = vshnor(1, ip3, ish3)*zroeshu(4, ip3, ish3) -&
+    &vshnor(2, ip3, ish3)*zroeshu(3, ip3, ish3)
+    f3 = -sign(1.d0, f3)
+
+! move incident shock 1 point
+    if (ip1 .eq. 1) then
+      tx = xysh(1, ip1, ish1) - xysh(1, ip1 - 1, ish1)
+      ty = xysh(2, ip1, ish1) - xysh(2, ip1 - 1, ish1)
+    else
+      tx = xysh(1, ip1 - 1, ish1) - xysh(1, ip1, ish1)
+      ty = xysh(2, ip1 - 1, ish1) - xysh(2, ip1, ish1)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip1, ish1) = xyshu(1, ip1, ish1) + eps*tx
+    xyshu(2, ip1, ish1) = xyshu(2, ip1, ish1) + eps*ty
+    xyshd(1, ip1, ish1) = xyshd(1, ip1, ish1) + eps*tx
+    xyshd(2, ip1, ish1) = xyshd(2, ip1, ish1) + eps*ty
+
+! move reflected shock 1 point
+    if (ip2 .eq. 1) then
+      tx = xysh(1, ip2, ish2) - xysh(1, ip2 - 1, ish2)
+      ty = xysh(2, ip2, ish2) - xysh(2, ip2 - 1, ish2)
+    else
+      tx = xysh(1, ip2 - 1, ish2) - xysh(1, ip2, ish2)
+      ty = xysh(2, ip2 - 1, ish2) - xysh(2, ip2, ish2)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip2, ish2) = xyshu(1, ip2, ish2) + eps*tx
+    xyshu(2, ip2, ish2) = xyshu(2, ip2, ish2) + eps*ty
+    xyshd(1, ip2, ish2) = xyshd(1, ip2, ish2) + eps*tx
+    xyshd(2, ip2, ish2) = xyshd(2, ip2, ish2) + eps*ty
+
+! move incident shock 2 point
+    if (ip3 .eq. 1) then
+      tx = xysh(1, ip3, ish3) - xysh(1, ip3 - 1, ish3)
+      ty = xysh(2, ip3, ish3) - xysh(2, ip3 - 1, ish3)
+    else
+      tx = xysh(1, ip3 - 1, ish3) - xysh(1, ip3, ish3)
+      ty = xysh(2, ip3 - 1, ish3) - xysh(2, ip3, ish3)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip3, ish3) = xyshu(1, ip3, ish3) + eps*tx
+    xyshu(2, ip3, ish3) = xyshu(2, ip3, ish3) + eps*ty
+    xyshd(1, ip3, ish3) = xyshd(1, ip3, ish3) + eps*tx
+    xyshd(2, ip3, ish3) = xyshd(2, ip3, ish3) + eps*ty
+
+! move reflected shock 2 point
+    if (ip4 .eq. 1) then
+      tx = xysh(1, ip4, ish4) - xysh(1, ip4 - 1, ish4)
+      ty = xysh(2, ip4, ish4) - xysh(2, ip4 - 1, ish4)
+    else
+      tx = xysh(1, ip4 - 1, ish4) - xysh(1, ip4, ish4)
+      ty = xysh(2, ip4 - 1, ish4) - xysh(2, ip4, ish4)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip4, ish4) = xyshu(1, ip4, ish4) + eps*tx
+    xyshu(2, ip4, ish4) = xyshu(2, ip4, ish4) + eps*ty
+    xyshd(1, ip4, ish4) = xyshd(1, ip4, ish4) + eps*tx
+    xyshd(2, ip4, ish4) = xyshd(2, ip4, ish4) + eps*ty
+
+! move contact discontinuity point
+    if (ip5 .eq. 1) then
+      tx = xysh(1, ip5, ish5) - xysh(1, ip5 - 1, ish5)
+      ty = xysh(2, ip5, ish5) - xysh(2, ip5 - 1, ish5)
+    else
+      tx = xysh(1, ip5 - 1, ish5) - xysh(1, ip5, ish5)
+      ty = xysh(2, ip5 - 1, ish5) - xysh(2, ip5, ish5)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip5, ish5) = xyshu(1, ip5, ish5) + eps*tx
+    xyshu(2, ip5, ish5) = xyshu(2, ip5, ish5) + eps*ty
+    xyshd(1, ip5, ish5) = xyshd(1, ip5, ish5) + eps*tx
+    xyshd(2, ip5, ish5) = xyshd(2, ip5, ish5) + eps*ty
+
+! overlap incident shock 1 with incident shock 2 (side picked by family)
+    if (f1 .gt. 0.d0) then
+      xc(1) = xyshu(1, ip1, ish1); yc(1) = xyshu(2, ip1, ish1)
+      if (ip1 .eq. 1) then
+        xc(2) = xyshu(1, ip1 + 1, ish1); yc(2) = xyshu(2, ip1 + 1, ish1)
+      else
+        xc(2) = xyshu(1, ip1 - 1, ish1); yc(2) = xyshu(2, ip1 - 1, ish1)
+      end if
+    else
+      xc(1) = xyshd(1, ip1, ish1); yc(1) = xyshd(2, ip1, ish1)
+      if (ip1 .eq. 1) then
+        xc(2) = xyshd(1, ip1 + 1, ish1); yc(2) = xyshd(2, ip1 + 1, ish1)
+      else
+        xc(2) = xyshd(1, ip1 - 1, ish1); yc(2) = xyshd(2, ip1 - 1, ish1)
+      end if
+    end if
+
+    if (f3 .lt. 0.d0) then
+      xs(1) = xyshu(1, ip3, ish3); ys(1) = xyshu(2, ip3, ish3)
+      if (ip3 .eq. 1) then
+        xs(2) = xyshu(1, ip3 + 1, ish3); ys(2) = xyshu(2, ip3 + 1, ish3)
+      else
+        xs(2) = xyshu(1, ip3 - 1, ish3); ys(2) = xyshu(2, ip3 - 1, ish3)
+      end if
+    else
+      xs(1) = xyshd(1, ip3, ish3); ys(1) = xyshd(2, ip3, ish3)
+      if (ip3 .eq. 1) then
+        xs(2) = xyshd(1, ip3 + 1, ish3); ys(2) = xyshd(2, ip3 + 1, ish3)
+      else
+        xs(2) = xyshd(1, ip3 - 1, ish3); ys(2) = xyshd(2, ip3 - 1, ish3)
+      end if
+    end if
+
+    call co_intr_pnt(xi, yi, xc, yc, xs, ys)
+
+    if (f1 .gt. 0.d0) then
+      xyshu(1, ip1, ish1) = xi; xyshu(2, ip1, ish1) = yi
+    else
+      xyshd(1, ip1, ish1) = xi; xyshd(2, ip1, ish1) = yi
+    end if
+    if (f3 .lt. 0.d0) then
+      xyshu(1, ip3, ish3) = xi; xyshu(2, ip3, ish3) = yi
+    else
+      xyshd(1, ip3, ish3) = xi; xyshd(2, ip3, ish3) = yi
+    end if
+
+! overlap incident shock 1 (other side) with reflected shock 1 upstream
+    if (f1 .gt. 0.d0) then
+      xc(1) = xyshd(1, ip1, ish1); yc(1) = xyshd(2, ip1, ish1)
+      if (ip1 .eq. 1) then
+        xc(2) = xyshd(1, ip1 + 1, ish1); yc(2) = xyshd(2, ip1 + 1, ish1)
+      else
+        xc(2) = xyshd(1, ip1 - 1, ish1); yc(2) = xyshd(2, ip1 - 1, ish1)
+      end if
+    else
+      xc(1) = xyshu(1, ip1, ish1); yc(1) = xyshu(2, ip1, ish1)
+      if (ip1 .eq. 1) then
+        xc(2) = xyshu(1, ip1 + 1, ish1); yc(2) = xyshu(2, ip1 + 1, ish1)
+      else
+        xc(2) = xyshu(1, ip1 - 1, ish1); yc(2) = xyshu(2, ip1 - 1, ish1)
+      end if
+    end if
+
+    xs(1) = xyshu(1, ip2, ish2); ys(1) = xyshu(2, ip2, ish2)
+    if (ip2 .eq. 1) then
+      xs(2) = xyshu(1, ip2 + 1, ish2); ys(2) = xyshu(2, ip2 + 1, ish2)
+    else
+      xs(2) = xyshu(1, ip2 - 1, ish2); ys(2) = xyshu(2, ip2 - 1, ish2)
+    end if
+
+    call co_intr_pnt(xi, yi, xc, yc, xs, ys)
+
+    if (f1 .gt. 0.d0) then
+      xyshd(1, ip1, ish1) = xi; xyshd(2, ip1, ish1) = yi
+    else
+      xyshu(1, ip1, ish1) = xi; xyshu(2, ip1, ish1) = yi
+    end if
+    xyshu(1, ip2, ish2) = xi; xyshu(2, ip2, ish2) = yi
+
+! overlap incident shock 2 (other side) with reflected shock 2 upstream
+    if (f3 .gt. 0.d+0) then
+      xc(1) = xyshu(1, ip3, ish3); yc(1) = xyshu(2, ip3, ish3)
+      if (ip3 .eq. 1) then
+        xc(2) = xyshu(1, ip3 + 1, ish3); yc(2) = xyshu(2, ip3 + 1, ish3)
+      else
+        xc(2) = xyshu(1, ip3 - 1, ish3); yc(2) = xyshu(2, ip3 - 1, ish3)
+      end if
+    else
+      xc(1) = xyshd(1, ip3, ish3); yc(1) = xyshd(2, ip3, ish3)
+      if (ip3 .eq. 1) then
+        xc(2) = xyshd(1, ip3 + 1, ish3); yc(2) = xyshd(2, ip3 + 1, ish3)
+      else
+        xc(2) = xyshd(1, ip3 - 1, ish3); yc(2) = xyshd(2, ip3 - 1, ish3)
+      end if
+    end if
+
+    xs(1) = xyshu(1, ip4, ish4); ys(1) = xyshu(2, ip4, ish4)
+    if (ip4 .eq. 1) then
+      xs(2) = xyshu(1, ip4 + 1, ish4); ys(2) = xyshu(2, ip4 + 1, ish4)
+    else
+      xs(2) = xyshu(1, ip4 - 1, ish4); ys(2) = xyshu(2, ip4 - 1, ish4)
+    end if
+
+    call co_intr_pnt(xi, yi, xc, yc, xs, ys)
+
+    if (f3 .lt. 0.d0) then
+      xyshd(1, ip3, ish3) = xi; xyshd(2, ip3, ish3) = yi
+    else
+      xyshu(1, ip3, ish3) = xi; xyshu(2, ip3, ish3) = yi
+    end if
+    xyshu(1, ip4, ish4) = xi; xyshu(2, ip4, ish4) = yi
+
+! overlap reflected shock 1 downstream with contact discontinuity upstream
+    xc(1) = xyshd(1, ip2, ish2); yc(1) = xyshd(2, ip2, ish2)
+    if (ip2 .eq. 1) then
+      xc(2) = xyshd(1, ip2 + 1, ish2); yc(2) = xyshd(2, ip2 + 1, ish2)
+    else
+      xc(2) = xyshd(1, ip2 - 1, ish2); yc(2) = xyshd(2, ip2 - 1, ish2)
+    end if
+
+    xs(1) = xyshu(1, ip5, ish5); ys(1) = xyshu(2, ip5, ish5)
+    if (ip5 .eq. 1) then
+      xs(2) = xyshu(1, ip5 + 1, ish5); ys(2) = xyshu(2, ip5 + 1, ish5)
+    else
+      xs(2) = xyshu(1, ip5 - 1, ish5); ys(2) = xyshu(2, ip5 - 1, ish5)
+    end if
+
+    call co_intr_pnt(xi, yi, xc, yc, xs, ys)
+
+    xyshd(1, ip2, ish2) = xi; xyshd(2, ip2, ish2) = yi
+    xyshu(1, ip5, ish5) = xi; xyshu(2, ip5, ish5) = yi
+
+! overlap reflected shock 2 downstream with contact discontinuity downstream
+    xc(1) = xyshd(1, ip4, ish4); yc(1) = xyshd(2, ip4, ish4)
+    if (ip4 .eq. 1) then
+      xc(2) = xyshd(1, ip4 + 1, ish4); yc(2) = xyshd(2, ip4 + 1, ish4)
+    else
+      xc(2) = xyshd(1, ip4 - 1, ish4); yc(2) = xyshd(2, ip4 - 1, ish4)
+    end if
+
+    xs(1) = xyshd(1, ip5, ish5); ys(1) = xyshd(2, ip5, ish5)
+    if (ip5 .eq. 1) then
+      xs(2) = xyshd(1, ip5 + 1, ish5); ys(2) = xyshd(2, ip5 + 1, ish5)
+    else
+      xs(2) = xyshd(1, ip5 - 1, ish5); ys(2) = xyshd(2, ip5 - 1, ish5)
+    end if
+
+    call co_intr_pnt(xi, yi, xc, yc, xs, ys)
+
+    xyshd(1, ip4, ish4) = xi; xyshd(2, ip4, ish4) = yi
+    xyshd(1, ip5, ish5) = xi; xyshd(2, ip5, ish5) = yi
+  end subroutine qp_displace
+
+! TE: ports co_pnt_dspl.f90's 'TE' branch verbatim (lines 756-802). Uses
+! its OWN leg-index roles (leg1=shock1, leg2=contact discontinuity,
+! leg3=shock2) -- distinct from te_solve_state's leg roles, since this
+! is independent legacy code that happens to share the same nshe=3
+! shinspps records. The `if (ip1 .eq. 1)` guard on a tangent computed
+! from ip2/ish2 is exactly what the original does (not a transcription
+! slip here) -- preserved as-is.
+  subroutine te_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(trailing_edge_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+    include 'paramt.h'
+
+    real(wp) :: tx, ty, dum
+    integer(i4) :: i, ish1, ish2, ish3, ip1, ip2, ip3
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(2); i = this%leg(2) - 1; ip2 = 1 + i*(nshockpoints(ish2) - 1)
+    ish3 = this%ish(3); i = this%leg(3) - 1; ip3 = 1 + i*(nshockpoints(ish3) - 1)
+
+! move contact discontinuity point
+    if (ip1 .eq. 1) then
+      tx = xysh(1, ip2, ish2) - xysh(1, ip2 - 1, ish2)
+      ty = xysh(2, ip2, ish2) - xysh(2, ip2 - 1, ish2)
+    else
+      tx = xysh(1, ip2 - 1, ish2) - xysh(1, ip2, ish2)
+      ty = xysh(2, ip2 - 1, ish2) - xysh(2, ip2, ish2)
+    end if
+    dum = sqrt(tx**2 + ty**2)
+    tx = tx/dum; ty = ty/dum
+    xyshu(1, ip2, ish2) = xyshu(1, ip2, ish2) + eps*tx
+    xyshu(2, ip2, ish2) = xyshu(2, ip2, ish2) + eps*ty
+    xyshd(1, ip2, ish2) = xyshd(1, ip2, ish2) + eps*tx
+    xyshd(2, ip2, ish2) = xyshd(2, ip2, ish2) + eps*ty
+
+    xyshd(1, ip1, ish1) = xyshd(1, ip2, ish2)
+    xyshd(2, ip1, ish1) = xyshd(2, ip2, ish2)
+
+    xyshd(1, ip3, ish3) = xyshu(1, ip2, ish2)
+    xyshd(2, ip3, ish3) = xyshu(2, ip2, ish2)
+  end subroutine te_displace
+
+! EP: ports co_pnt_dspl.f90's 'EP' branch verbatim (lines 804-814) --
+! simply overlaps up/downstream with the un-displaced point.
+  subroutine ep_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    class(end_point_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+
+    integer(i4) :: i, ish, ip
+
+    ish = this%ish(1); i = this%leg(1) - 1
+    ip = 1 + i*(nshockpoints(ish) - 1)
+
+    xyshd(1, ip, ish) = xysh(1, ip, ish)
+    xyshd(2, ip, ish) = xysh(2, ip, ish)
+    xyshu(1, ip, ish) = xysh(1, ip, ish)
+    xyshu(2, ip, ish) = xysh(2, ip, ish)
+  end subroutine ep_displace
+
+! SP: ports co_pnt_dspl.f90's 'SP' branch verbatim (lines 835-845) --
+! byte-identical to ep_displace's body in this chain (the original
+! duplicates this same 4-line overlap between its EP and SP branches;
+! kept duplicated here too, matching the source rather than merging).
+  subroutine sonic_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    class(start_point_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+
+    integer(i4) :: i, ish, ip
+
+    ish = this%ish(1); i = this%leg(1) - 1
+    ip = 1 + i*(nshockpoints(ish) - 1)
+
+    xyshd(1, ip, ish) = xysh(1, ip, ish)
+    xyshd(2, ip, ish) = xysh(2, ip, ish)
+    xyshu(1, ip, ish) = xysh(1, ip, ish)
+    xyshu(2, ip, ish) = xysh(2, ip, ish)
+  end subroutine sonic_displace
+
+! C (periodic=.false.) / PC (periodic=.true.): ports co_pnt_dspl.f90's
+! 'C' branch verbatim (lines 816-833); 'PC' is a confirmed no-op in this
+! chain (empty branch in the original), so periodic returns immediately.
+  subroutine conn_displace(this, xysh, xyshu, xyshd, vshnor, zroeshu,&
+  &nshockpoints, dx_carry, dy_carry)
+    class(connection_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: xyshu(:, :, :), xyshd(:, :, :)
+    real(wp), intent(in) :: vshnor(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    real(wp), intent(inout) :: dx_carry, dy_carry
+
+    integer(i4) :: i, ish1, ish2, ip1, ip2
+
+    if (this%periodic) return
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(2); i = this%leg(2) - 1; ip2 = 1 + i*(nshockpoints(ish2) - 1)
+
+    xyshd(1, ip2, ish2) = xyshd(1, ip1, ish1)
+    xyshd(2, ip2, ish2) = xyshd(2, ip1, ish1)
+    xyshu(1, ip2, ish2) = xyshu(1, ip1, ish1)
+    xyshu(2, ip2, ish2) = xyshu(2, ip1, ish1)
+  end subroutine conn_displace
+
+! Shared default for remesh_boundary/relocate/correct_normal (still
+! their increment-2 minimal (this)-only signature -- increments 6-8
+! give each its own real signature the same way displace just did,
+! replacing this default with a dedicated sp_..._noop where needed).
+! Literally does nothing, matching today's empty if/elseif arms (e.g.
+! fx_msh_sps.f90's TP/QP/EP/C/SP branches, fx_dps_loc.f90's TP/QP/RRX/
+! EP/SP/C/TE branches, ...). This one CAN be shared as-is across all
+! types: it's bound directly on special_point_t itself (not overriding
+! a deferred binding in an extension), so its passed-object dummy
+! legitimately is the abstract base type.
   subroutine sp_noop(this)
     class(special_point_t), intent(inout) :: this
   end subroutine sp_noop
