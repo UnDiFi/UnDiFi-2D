@@ -1,1 +1,2 @@
-PASS  scalar  /home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/RegularReflection-1/eulfs_fitting_steady/candidate_scalar.log
+FAIL  scalar  /home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/RegularReflection-1/eulfs_fitting_steady/candidate_scalar.log
+  shock -: l2=1.73205e-07 linf=1e-07 rel_l2=1.73205e-07 

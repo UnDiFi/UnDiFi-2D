@@ -8,53 +8,53 @@ eulfs fitting steady
  Is steady?  T
  testcase: RegularReflection-2 
  1 x86_64    
-readmesh               -->   SetBndryNodePtr: Found          294  boundary points
- Subr. FindColours: Boundary coloured            1  has           91  edges
- Subr. FindColours: Boundary coloured            2  has           52  edges
- Subr. FindColours: Boundary coloured            3  has          102  edges
- Subr. FindColours: Boundary coloured            4  has           49  edges
+readmesh               -->   setbndrynodeptr: found          294  boundary points
+ subr. findcolours: boundary coloured            1  has           91  edges
+ subr. findcolours: boundary coloured            2  has           52  edges
+ subr. findcolours: boundary coloured            3  has          102  edges
+ subr. findcolours: boundary coloured            4  has           49  edges
 
- Subr. FindColours: There are            4  different boundary patches
+ subr. findcolours: there are            4  different boundary patches
 
- Subr. FindColours: Gridpoint            1  belongs to patches            1  and            4
- Subr. FindColours: Gridpoint            2  belongs to patches            1  and            2
- Subr. FindColours: Gridpoint            3  belongs to patches            2  and            3
- Subr. FindColours: Gridpoint            4  belongs to patches            3  and            4
- Subr. FindColours: Bndry patch            1  has           91  bndry edges; closed is  F
- Subr. FindColours: Bndry patch            2  has           52  bndry edges; closed is  F
- Subr. FindColours: Bndry patch            3  has          102  bndry edges; closed is  F
- Subr. FindColours: Bndry patch            4  has           49  bndry edges; closed is  F
- SetBndryNodePtr: Found            4  colours or bndry patches
- SetBndryNodePtr:          298  entries expected in ja
- SetBndryNodePtr: finished initializing
- SetBndryNodePtr: now calling SetBndryNodeList
+ subr. findcolours: gridpoint            1  belongs to patches            1  and            4
+ subr. findcolours: gridpoint            2  belongs to patches            1  and            2
+ subr. findcolours: gridpoint            3  belongs to patches            2  and            3
+ subr. findcolours: gridpoint            4  belongs to patches            3  and            4
+ subr. findcolours: bndry patch            1  has           91  bndry edges; closed is  F
+ subr. findcolours: bndry patch            2  has           52  bndry edges; closed is  F
+ subr. findcolours: bndry patch            3  has          102  bndry edges; closed is  F
+ subr. findcolours: bndry patch            4  has           49  bndry edges; closed is  F
+ setbndrynodeptr: found            4  colours or bndry patches
+ setbndrynodeptr:          298  entries expected in ja
+ setbndrynodeptr: finished initializing
+ setbndrynodeptr: now calling setbndrynodelist
 
- SetBndryNodeList: Patch            1  has colour            1  expecting           92  vertices
- SetBndryNodeList: Patch            1  is OPEN  F
- SetBndryNodeList: Gridpoint            1  belongs to patch            1  and            4
- Subr. SetBndryNodeList: Found           92  vertices in patch            1
- Subr. SetBndryNodeList: vertices are:            1        1215         829         832        1523         519         828         188         821         885         170         899         883         900         605         872         904         581        1496        1258        1071         887        1374        1421           8        2274        2038        1770        2048        1750        2999        2074        3240        2072        2785        2787        1615        2801        2795        2805        2791        3005        2826        2650        2832        2700        2846        3007           5        3804        3398        3393        3512        3357        3555        3564        3507        3566        3550        3387        3896        3901        4930        3905        5240        4942        5126        4941        5330        5177        5563        2877        5555        5528        5283        5839        5539        6336        6332        6583        6565        5515        6963        6962        7258        6580        7533        7554        7529        7705        7834           2
+ setbndrynodelist: patch            1  has colour            1  expecting           92  vertices
+ setbndrynodelist: patch            1  is open  F
+ setbndrynodelist: gridpoint            1  belongs to patch            1  and            4
+ subr. setbndrynodelist: found           92  vertices in patch            1
+ subr. setbndrynodelist: vertices are:            1        1215         829         832        1523         519         828         188         821         885         170         899         883         900         605         872         904         581        1496        1258        1071         887        1374        1421           8        2274        2038        1770        2048        1750        2999        2074        3240        2072        2785        2787        1615        2801        2795        2805        2791        3005        2826        2650        2832        2700        2846        3007           5        3804        3398        3393        3512        3357        3555        3564        3507        3566        3550        3387        3896        3901        4930        3905        5240        4942        5126        4941        5330        5177        5563        2877        5555        5528        5283        5839        5539        6336        6332        6583        6565        5515        6963        6962        7258        6580        7533        7554        7529        7705        7834           2
 
- SetBndryNodeList: Patch            2  has colour            2  expecting           53  vertices
- SetBndryNodeList: Patch            2  is OPEN  F
- SetBndryNodeList: Gridpoint            1  belongs to patch            1  and            4
- SetBndryNodeList: Gridpoint            2  belongs to patch            1  and            2
- Subr. SetBndryNodeList: Found           53  vertices in patch            2
- Subr. SetBndryNodeList: vertices are:            2        7835        7800        7816        7551        7806        7700        7251        7457        7441        7467        7255        7675        7676        7879        5944        7680        7677        7787        7116        7130        6548        6816        6817        6788        6821        6818        7131        4855        6436        5873        6924        6529        7510        6945        7508        6931        7865        7171        7867        5871        7488        7490        7485        7502        7486        7772        7762        7767        7755        7809        7770           3
+ setbndrynodelist: patch            2  has colour            2  expecting           53  vertices
+ setbndrynodelist: patch            2  is open  F
+ setbndrynodelist: gridpoint            1  belongs to patch            1  and            4
+ setbndrynodelist: gridpoint            2  belongs to patch            1  and            2
+ subr. setbndrynodelist: found           53  vertices in patch            2
+ subr. setbndrynodelist: vertices are:            2        7835        7800        7816        7551        7806        7700        7251        7457        7441        7467        7255        7675        7676        7879        5944        7680        7677        7787        7116        7130        6548        6816        6817        6788        6821        6818        7131        4855        6436        5873        6924        6529        7510        6945        7508        6931        7865        7171        7867        5871        7488        7490        7485        7502        7486        7772        7762        7767        7755        7809        7770           3
 
- SetBndryNodeList: Patch            3  has colour            3  expecting          103  vertices
- SetBndryNodeList: Patch            3  is OPEN  F
- SetBndryNodeList: Gridpoint            1  belongs to patch            1  and            4
- SetBndryNodeList: Gridpoint            2  belongs to patch            1  and            2
- SetBndryNodeList: Gridpoint            3  belongs to patch            2  and            3
- Subr. SetBndryNodeList: Found          103  vertices in patch            3
- Subr. SetBndryNodeList: vertices are:            3        7830        7810        7355        7831        7821        7818        6637        7329        7311        6638        7302        6636        5877        7043        6645        6468        7044        6650        6656        6482        6671        6669        6668        7397        7375        5333        7389        7289        7016        7285        7276        7292        6705        7566        7573        7281        7708        7707        5207        7008        6999        7009        6983        6991        6989        6997        6401        7036        6606        6408        6612        6610        7859           7        4091        5263        5845        4524        3232        4073        4068        4055        4061        4525        1839        4531        3920        3108        3596        2474        3109        3102        3093        3585        3582        3590         817        2394        2403        2361        2405        2395        2411        2289        2724        2415        2416        2469        2510        1388        2441        2529        2196        2433        2202        1868        2209        1922        1896        2215        1937           4
+ setbndrynodelist: patch            3  has colour            3  expecting          103  vertices
+ setbndrynodelist: patch            3  is open  F
+ setbndrynodelist: gridpoint            1  belongs to patch            1  and            4
+ setbndrynodelist: gridpoint            2  belongs to patch            1  and            2
+ setbndrynodelist: gridpoint            3  belongs to patch            2  and            3
+ subr. setbndrynodelist: found          103  vertices in patch            3
+ subr. setbndrynodelist: vertices are:            3        7830        7810        7355        7831        7821        7818        6637        7329        7311        6638        7302        6636        5877        7043        6645        6468        7044        6650        6656        6482        6671        6669        6668        7397        7375        5333        7389        7289        7016        7285        7276        7292        6705        7566        7573        7281        7708        7707        5207        7008        6999        7009        6983        6991        6989        6997        6401        7036        6606        6408        6612        6610        7859           7        4091        5263        5845        4524        3232        4073        4068        4055        4061        4525        1839        4531        3920        3108        3596        2474        3109        3102        3093        3585        3582        3590         817        2394        2403        2361        2405        2395        2411        2289        2724        2415        2416        2469        2510        1388        2441        2529        2196        2433        2202        1868        2209        1922        1896        2215        1937           4
 
- SetBndryNodeList: Patch            4  has colour            4  expecting           50  vertices
- SetBndryNodeList: Patch            4  is OPEN  F
- SetBndryNodeList: Gridpoint            1  belongs to patch            1  and            4
- Subr. SetBndryNodeList: Found           50  vertices in patch            4
- Subr. SetBndryNodeList: vertices are:            1        1449         840         844         590         818         159         260         216         259         262           9         157         136         154          21          22          19          97          13         200          38          20         201           6         291         321         290         322         325         289         941        1272        1310         944         287        1270        1282        1276        1290        1368         923        1928        1911        1926        1886        1940        1925        2216           4
+ setbndrynodelist: patch            4  has colour            4  expecting           50  vertices
+ setbndrynodelist: patch            4  is open  F
+ setbndrynodelist: gridpoint            1  belongs to patch            1  and            4
+ subr. setbndrynodelist: found           50  vertices in patch            4
+ subr. setbndrynodelist: vertices are:            1        1449         840         844         590         818         159         260         216         259         262           9         157         136         154          21          22          19          97          13         200          38          20         201           6         291         321         290         322         325         289         941        1272        1310         944         287        1270        1282        1276        1290        1368         923        1928        1911        1926        1886        1940        1925        2216           4
 
  nnzr =          298
  jbgn, jend =            1          92

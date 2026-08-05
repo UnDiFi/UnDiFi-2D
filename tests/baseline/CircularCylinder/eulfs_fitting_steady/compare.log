@@ -1,1 +1,2 @@
-PASS  scalar  /home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/CircularCylinder/eulfs_fitting_steady/candidate_scalar.log
+FAIL  scalar  /home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/CircularCylinder/eulfs_fitting_steady/candidate_scalar.log
+  shock -: l2=0.000102956 linf=7e-05 rel_l2=0.000199639 

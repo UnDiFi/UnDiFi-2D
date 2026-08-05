@@ -10,7 +10,7 @@
     1.0
   ],
   "candidate_values": [
-    7.342e-05,
+    7.341e-05,
     5.911e-05,
     4.72e-05,
     1.743e-05,
@@ -18,9 +18,9 @@
   ],
   "rtol": 1e-09,
   "atol": 1e-12,
-  "l2": 0.0,
-  "linf": 0.0,
-  "rel_l2": 0.0,
-  "within_tolerance": true,
-  "pass": true
+  "l2": 9.999999999994822e-09,
+  "linf": 9.999999999994822e-09,
+  "rel_l2": 9.999999942914155e-09,
+  "within_tolerance": false,
+  "pass": false
 }

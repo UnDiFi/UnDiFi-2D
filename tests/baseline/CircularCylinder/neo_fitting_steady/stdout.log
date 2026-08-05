@@ -10,53 +10,53 @@ CircularCylinder
  Is steady?  T
  testcase: CircularCylinder    
  1 x86_64    
-readmesh               -->   SetBndryNodePtr: Found           90  boundary points
- Subr. FindColours: Boundary coloured            1  has           47  edges
- Subr. FindColours: Boundary coloured            2  has           12  edges
- Subr. FindColours: Boundary coloured            3  has           19  edges
- Subr. FindColours: Boundary coloured            4  has           12  edges
+readmesh               -->   setbndrynodeptr: found           90  boundary points
+ subr. findcolours: boundary coloured            1  has           47  edges
+ subr. findcolours: boundary coloured            2  has           12  edges
+ subr. findcolours: boundary coloured            3  has           19  edges
+ subr. findcolours: boundary coloured            4  has           12  edges
 
- Subr. FindColours: There are            4  different boundary patches
+ subr. findcolours: there are            4  different boundary patches
 
- Subr. FindColours: Gridpoint           47  belongs to patches            1  and            2
- Subr. FindColours: Gridpoint           59  belongs to patches            2  and            3
- Subr. FindColours: Gridpoint           78  belongs to patches            3  and            4
- Subr. FindColours: Gridpoint           90  belongs to patches            1  and            4
- Subr. FindColours: Bndry patch            1  has           47  bndry edges; closed is  F
- Subr. FindColours: Bndry patch            2  has           12  bndry edges; closed is  F
- Subr. FindColours: Bndry patch            3  has           19  bndry edges; closed is  F
- Subr. FindColours: Bndry patch            4  has           12  bndry edges; closed is  F
- SetBndryNodePtr: Found            4  colours or bndry patches
- SetBndryNodePtr:           94  entries expected in ja
- SetBndryNodePtr: finished initializing
- SetBndryNodePtr: now calling SetBndryNodeList
+ subr. findcolours: gridpoint           47  belongs to patches            1  and            2
+ subr. findcolours: gridpoint           59  belongs to patches            2  and            3
+ subr. findcolours: gridpoint           78  belongs to patches            3  and            4
+ subr. findcolours: gridpoint           90  belongs to patches            1  and            4
+ subr. findcolours: bndry patch            1  has           47  bndry edges; closed is  F
+ subr. findcolours: bndry patch            2  has           12  bndry edges; closed is  F
+ subr. findcolours: bndry patch            3  has           19  bndry edges; closed is  F
+ subr. findcolours: bndry patch            4  has           12  bndry edges; closed is  F
+ setbndrynodeptr: found            4  colours or bndry patches
+ setbndrynodeptr:           94  entries expected in ja
+ setbndrynodeptr: finished initializing
+ setbndrynodeptr: now calling setbndrynodelist
 
- SetBndryNodeList: Patch            1  has colour            1  expecting           48  vertices
- SetBndryNodeList: Patch            1  is OPEN  F
- SetBndryNodeList: Gridpoint           47  belongs to patch            1  and            2
- Subr. SetBndryNodeList: Found           48  vertices in patch            1
- Subr. SetBndryNodeList: vertices are:           47          46          45          44          43          42          41          40          39          38          37          36          35          34          33          32          31          30          29          28          27          26          25          24          23          22          21          20          19          18          17          16          15          14          13          12          11          10           9           8           7           6           5           4           3           2           1          90
+ setbndrynodelist: patch            1  has colour            1  expecting           48  vertices
+ setbndrynodelist: patch            1  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ subr. setbndrynodelist: found           48  vertices in patch            1
+ subr. setbndrynodelist: vertices are:           47          46          45          44          43          42          41          40          39          38          37          36          35          34          33          32          31          30          29          28          27          26          25          24          23          22          21          20          19          18          17          16          15          14          13          12          11          10           9           8           7           6           5           4           3           2           1          90
 
- SetBndryNodeList: Patch            2  has colour            2  expecting           13  vertices
- SetBndryNodeList: Patch            2  is OPEN  F
- SetBndryNodeList: Gridpoint           47  belongs to patch            1  and            2
- Subr. SetBndryNodeList: Found           13  vertices in patch            2
- Subr. SetBndryNodeList: vertices are:           47          48          49          50          51          52          53          54          55          56          57          58          59
+ setbndrynodelist: patch            2  has colour            2  expecting           13  vertices
+ setbndrynodelist: patch            2  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ subr. setbndrynodelist: found           13  vertices in patch            2
+ subr. setbndrynodelist: vertices are:           47          48          49          50          51          52          53          54          55          56          57          58          59
 
- SetBndryNodeList: Patch            3  has colour            3  expecting           20  vertices
- SetBndryNodeList: Patch            3  is OPEN  F
- SetBndryNodeList: Gridpoint           47  belongs to patch            1  and            2
- SetBndryNodeList: Gridpoint           59  belongs to patch            2  and            3
- Subr. SetBndryNodeList: Found           20  vertices in patch            3
- Subr. SetBndryNodeList: vertices are:           59          60          61          62          63          64          65          66          67          68          69          70          71          72          73          74          75          76          77          78
+ setbndrynodelist: patch            3  has colour            3  expecting           20  vertices
+ setbndrynodelist: patch            3  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ setbndrynodelist: gridpoint           59  belongs to patch            2  and            3
+ subr. setbndrynodelist: found           20  vertices in patch            3
+ subr. setbndrynodelist: vertices are:           59          60          61          62          63          64          65          66          67          68          69          70          71          72          73          74          75          76          77          78
 
- SetBndryNodeList: Patch            4  has colour            4  expecting           13  vertices
- SetBndryNodeList: Patch            4  is OPEN  F
- SetBndryNodeList: Gridpoint           47  belongs to patch            1  and            2
- SetBndryNodeList: Gridpoint           59  belongs to patch            2  and            3
- SetBndryNodeList: Gridpoint           78  belongs to patch            3  and            4
- Subr. SetBndryNodeList: Found           13  vertices in patch            4
- Subr. SetBndryNodeList: vertices are:           78          79          80          81          82          83          84          85          86          87          88          89          90
+ setbndrynodelist: patch            4  has colour            4  expecting           13  vertices
+ setbndrynodelist: patch            4  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ setbndrynodelist: gridpoint           59  belongs to patch            2  and            3
+ setbndrynodelist: gridpoint           78  belongs to patch            3  and            4
+ subr. setbndrynodelist: found           13  vertices in patch            4
+ subr. setbndrynodelist: vertices are:           78          79          80          81          82          83          84          85          86          87          88          89          90
 
  nnzr =           94
  jbgn, jend =            1          48
