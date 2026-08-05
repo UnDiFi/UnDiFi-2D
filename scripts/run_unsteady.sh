@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o pipefail  # so `binary | tee run.log`'s exit status reflects the binary, not tee
 
 # ----------------------------------
 # Colors
@@ -136,24 +137,24 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ];
 
 #                            nbegin, nsteps, eulfs, steady, testcase,   logfile
 #                            ######  ######  #####  ######  ########    #######
-  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $Iters  false  true    $testname | tee run.log
+  ../../build/gfortran-release/bin/UnDiFi-2D 0       $Iters  false  true    $testname | tee run.log
 
 
 elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
 #  modify NEO's input file for SF simulation
    cp NEO_data/textinput/inputfile-exp.txt.SF NEO_data/textinput/inputfile-exp.txt
 
-   ../../build/gfortran-debug/bin/UnDiFi-2D 0      $Iters  false  false   $testname | tee run.log
+   ../../build/gfortran-release/bin/UnDiFi-2D 0      $Iters  false  false   $testname | tee run.log
 
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ]; then
-   ../../build/gfortran-debug/bin/UnDiFi-2D 0      $Iters  true   true    $testname | tee run.log
+   ../../build/gfortran-release/bin/UnDiFi-2D 0      $Iters  true   true    $testname | tee run.log
 
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
 # Be sure that no any .petsrc is present in test and home directory
    rm ~/home/.petscrc
    rm .petscrc
-   ../../build/gfortran-debug/bin/UnDiFi-2D 0      $Iters  true   false   $testname | tee run.log
+   ../../build/gfortran-release/bin/UnDiFi-2D 0      $Iters  true   false   $testname | tee run.log
 
 fi

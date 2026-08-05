@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o pipefail  # so `binary | tee run.log`'s exit status reflects the binary, not tee
 
 # ----------------------------------
 # Colors
@@ -149,7 +150,7 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ];
   echo "" > NEO_data/input/vel.dat
 
 #                            nbegin, nsteps, eulfs, steady, testcase,   logfile
-  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  false  true    $testname | tee run.log
+  ../../build/gfortran-release/bin/UnDiFi-2D 0       $iters  false  true    $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -158,19 +159,19 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" 
 # modify NEO's input file for SF simulation
   cp NEO_data/textinput/inputfile-exp.txt.SF NEO_data/textinput/inputfile-exp.txt
 
-  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  false  false   $testname | tee run.log
+  ../../build/gfortran-release/bin/UnDiFi-2D 0       $iters  false  false   $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ]; then
-  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  true   true    $testname | tee run.log
+  ../../build/gfortran-release/bin/UnDiFi-2D 0       $iters  true   true    $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
-  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  true   false   $testname | tee run.log
+  ../../build/gfortran-release/bin/UnDiFi-2D 0       $iters  true   false   $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 

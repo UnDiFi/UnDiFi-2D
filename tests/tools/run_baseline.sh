@@ -59,7 +59,13 @@ elif [ "$SOLVER" = "eulfs" ] && [ "$MODE" = "capturing" ]; then
 fi
 
 VERDICT="NO_CHECKSUM"
-if [ -n "$CHECKSUM_FILE" ] && [ -f "$CHECKSUM_FILE" ] && [ -f "$CANDIDATE_FILE" ]; then
+if [ "$STATUS" -ne 0 ]; then
+  # A nonzero exit (now reliable: run.sh sets pipefail, so a crashed
+  # binary's status survives its own `| tee run.log`) always means
+  # FAIL, regardless of what a stale candidate_scalar.log left over
+  # from an earlier successful run might otherwise compare as.
+  VERDICT="FAIL"
+elif [ -n "$CHECKSUM_FILE" ] && [ -f "$CHECKSUM_FILE" ] && [ -f "$CANDIDATE_FILE" ]; then
   if python3 "$TESTS_DIR/tools/compare.py" scalar "$CHECKSUM_FILE" "$CANDIDATE_FILE" \
       --json "$OUT_DIR/compare_report.json" > "$OUT_DIR/compare.log" 2>&1; then
     VERDICT="PASS"

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o pipefail  # so `binary | tee run.log`'s exit status reflects the binary, not tee
 
 # ----------------------------------
 # Colors
@@ -125,18 +126,18 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ];
   echo "" > NEO_data/input/vel.dat
 
 #                             nbegin, nsteps, eulfs, steady, testcase,            logfile
-   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     false  true    "SSInteractions2-2" | tee run.log
+   ../../build/gfortran-release/bin/UnDiFi-2D 0       501     false  true    "SSInteractions2-2" | tee run.log
 
 elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
 #  modify NEO's input file for SF simulation
    cp NEO_data/textinput/inputfile-exp.txt.SF NEO_data/textinput/inputfile-exp.txt
 
-   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     false  false   "SSInteractions2-2" | tee run.log
+   ../../build/gfortran-release/bin/UnDiFi-2D 0       501     false  false   "SSInteractions2-2" | tee run.log
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ]; then
-   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     true   true    "SSInteractions2-2" | tee run.log
+   ../../build/gfortran-release/bin/UnDiFi-2D 0       501     true   true    "SSInteractions2-2" | tee run.log
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
-   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     true   false   "SSInteractions2-2" | tee run.log
+   ../../build/gfortran-release/bin/UnDiFi-2D 0       501     true   false   "SSInteractions2-2" | tee run.log
 
 fi
