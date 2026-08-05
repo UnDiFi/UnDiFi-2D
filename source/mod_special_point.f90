@@ -10,11 +10,12 @@ module mod_special_point
 ! be preserved bit-for-bit when each chain is ported).
 !
 ! Increment 4 ported fx_state_dps.f90's real logic into every type's
-! solve_state; increment 5 did the same for co_pnt_dspl.f90's displace.
-! Increment 6 (this revision) ports fx_msh_sps.f90's real logic into
-! remesh_boundary. relocate/correct_normal still default to the shared
-! no-op; increments 7-8 add real overrides there only where the
-! corresponding legacy chain does real work.
+! solve_state; increment 5 did the same for co_pnt_dspl.f90's displace;
+! increment 6 did the same for fx_msh_sps.f90's remesh_boundary;
+! increment 7 did the same for fx_dps_loc.f90's relocate. Increment 8
+! (this revision) ports co_norm.f90's real logic into correct_normal --
+! the last of the six legacy dispatch chains. Increment 9 is cleanup
+! only (no further behavior to port).
 !
 ! special_point_t's array components are plain allocatable, NOT
 ! pointer-into-shared-storage like mod_discontinuity.f90's
@@ -37,8 +38,9 @@ module mod_special_point
 ! touch. Fortran requires every override of a deferred binding to share
 ! one exact signature, so the interface is sized for the union of all
 ! nine types' needs; each type's implementation simply ignores the
-! arguments it doesn't need (matching how e.g. sp_noop already ignores
-! its sole argument for the sixteen no-op codes elsewhere).
+! arguments it doesn't need (matching how e.g. sp_relocate_noop already
+! ignores every one of its arguments for the many no-op codes
+! elsewhere).
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: ndim
@@ -62,8 +64,8 @@ module mod_special_point
     procedure(sp_solve_if), deferred :: solve_state ! fx_state_dps.f90 -- every type overrides (increment 4)
     procedure :: remesh_boundary => sp_remesh_noop ! fx_msh_sps.f90  -- most types no-op, 5 override (increment 6)
     procedure :: displace => sp_displace_noop ! co_pnt_dspl.f90 -- most types override (this increment)
-    procedure :: relocate => sp_noop ! fx_dps_loc.f90  -- default no-op (increment 7)
-    procedure :: correct_normal => sp_noop ! co_norm.f90     -- default no-op (increment 8)
+    procedure :: relocate => sp_relocate_noop ! fx_dps_loc.f90  -- most types no-op, 3 override (increment 7)
+    procedure :: correct_normal => sp_correct_normal_noop ! co_norm.f90 -- most types no-op, 5 override (increment 8)
   end type special_point_t
 
   abstract interface
@@ -129,6 +131,45 @@ module mod_special_point
       integer(i4), intent(in) :: nbfac
       integer(i4), intent(inout) :: ibfac_carry
     end subroutine sp_remesh_if
+
+! isppnts (the point's 1-based index into the typespecpoints/shinspps
+! list) is threaded through unlike every other behavior's interface,
+! solely so connection_t's periodic branch can reproduce
+! fx_dps_loc.f90's own confirmed FIXME-flagged ispclr(isppnts+1) read
+! for its second leg bit-for-bit (bug #6 in the merged-3.2 plan).
+! ispclr therefore stays the file's own rank-1 assumed-size shape
+! (unlike sp_solve_if's pre-extracted ispclr_flat scalar) since PC
+! needs two different index reads from the same array, not just one.
+    subroutine sp_relocate_if(this, xysh, nshockpoints, isppnts, ispclr,&
+    &ia, ja, iclr, nclr, corg)
+      import :: special_point_t, wp, i4, ndim
+      class(special_point_t), intent(inout) :: this
+      real(wp), intent(inout) :: xysh(:, :, :)
+      integer(i4), intent(in) :: nshockpoints(:)
+      integer(i4), intent(in) :: isppnts
+      integer(i4), intent(in) :: ispclr(*)
+      integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+      real(wp), intent(in) :: corg(ndim, *)
+    end subroutine sp_relocate_if
+
+! Unlike sp_relocate_if, this needs no raw ispclr/isppnts pair: the one
+! type that reads a boundary colour here (floating_wall_point_t) reads
+! its OWN sp%iclr, already populated by sp_unpack from a properly
+! rank-2 ispclr slice -- co_norm.f90 itself declares ispclr(5,*)
+! correctly (unlike fx_state_dps.f90/fx_dps_loc.f90's rank-1
+! declarations), so there's no bug-preservation reason to thread the
+! raw array through here too.
+    subroutine sp_correct_normal_if(this, xysh, zroeshu, vshnor,&
+    &nshockpoints, ia, ja, iclr, nclr, corg)
+      import :: special_point_t, wp, i4, ndim
+      class(special_point_t), intent(inout) :: this
+      real(wp), intent(inout) :: xysh(:, :, :)
+      real(wp), intent(in) :: zroeshu(:, :, :)
+      real(wp), intent(inout) :: vshnor(:, :, :)
+      integer(i4), intent(in) :: nshockpoints(:)
+      integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+      real(wp), intent(in) :: corg(ndim, *)
+    end subroutine sp_correct_normal_if
   end interface
 
 ! TP -- triple point (internal), nshe=4. Newton-solved via co_utp today.
@@ -136,6 +177,7 @@ module mod_special_point
   contains
     procedure :: solve_state => tp_solve_state
     procedure :: displace => tp_displace
+    procedure :: correct_normal => tp_correct_normal
   end type triple_point_t
 
 ! QP -- quadruple point (internal), nshe=5. Newton-solved via co_uqp today.
@@ -168,6 +210,7 @@ module mod_special_point
     procedure :: solve_state => rr_solve_state
     procedure :: displace => rr_displace
     procedure :: remesh_boundary => rr_remesh_boundary
+    procedure :: relocate => rr_relocate
   end type regular_reflection_t
 
 ! WPNRX/WPNRY/IPX/IPY/OPX/OPY -- floating points constrained to slide
@@ -183,6 +226,7 @@ module mod_special_point
     procedure :: solve_state => wf_solve_state
     procedure :: displace => wf_displace
     procedure :: remesh_boundary => wf_remesh_boundary
+    procedure :: correct_normal => wf_correct_normal
   end type wall_float_t
 
 ! FWP -- floating wall point on a coloured (possibly curved) boundary,
@@ -193,6 +237,8 @@ module mod_special_point
   contains
     procedure :: solve_state => fwp_solve_state
     procedure :: remesh_boundary => fwp_remesh_boundary
+    procedure :: relocate => fwp_relocate
+    procedure :: correct_normal => fwp_correct_normal
   end type floating_wall_point_t
 
 ! EP -- end point, nshe=1. Kept distinct from start_point_t despite
@@ -209,6 +255,7 @@ module mod_special_point
   contains
     procedure :: solve_state => sonic_solve_state
     procedure :: displace => sonic_displace
+    procedure :: correct_normal => sonic_correct_normal
   end type start_point_t
 
 ! C (periodic=.false.) / PC (periodic=.true.) -- connection between two
@@ -220,6 +267,8 @@ module mod_special_point
     procedure :: solve_state => conn_solve_state
     procedure :: displace => conn_displace
     procedure :: remesh_boundary => conn_remesh_boundary
+    procedure :: relocate => conn_relocate
+    procedure :: correct_normal => conn_correct_normal
   end type connection_t
 
 contains
@@ -2367,18 +2416,603 @@ contains
     end do
   end subroutine conn_remesh_boundary
 
-! Shared default for relocate/correct_normal (still their increment-2
-! minimal (this)-only signature -- increments 7-8 give each its own
-! real signature the same way remesh_boundary just did, replacing this
-! default with a dedicated sp_..._noop where needed). Literally does
-! nothing, matching today's empty if/elseif arms (e.g. fx_dps_loc.f90's
-! TP/QP/RRX/EP/SP/C/TE branches, ...). This one CAN be shared as-is
-! across all types: it's bound directly on special_point_t itself (not
-! overriding a deferred binding in an extension), so its passed-object
-! dummy legitimately is the abstract base type.
-  subroutine sp_noop(this)
+! Default relocate: does nothing, matching fx_dps_loc.f90's empty
+! IPX/IPY/OPX/OPY/WPNRX/WPNRY/TP/QP/RRX/EP/SP/C/TE branches. RRX is a
+! genuine no-op in THIS chain despite being real work in
+! co_pnt_dspl.f90's displace -- see rr_relocate's header. Every code
+! that reaches real work below (FWP/RR/PC) overrides this.
+  subroutine sp_relocate_noop(this, xysh, nshockpoints, isppnts, ispclr,&
+  &ia, ja, iclr, nclr, corg)
     class(special_point_t), intent(inout) :: this
-  end subroutine sp_noop
+    real(wp), intent(inout) :: xysh(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: isppnts
+    integer(i4), intent(in) :: ispclr(*)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+  end subroutine sp_relocate_noop
+
+! FWP: ports fx_dps_loc.f90's shared 'FWP'/'RR' branch verbatim (lines
+! 106-197) for the FWP side only -- the branch's own inner "if RR also
+! update the second shock's point" step (see rr_relocate) is dead for
+! FWP, since typespecpoints(isppnts) can never equal 'RR' while running
+! this override, so it's omitted here rather than carried as inert
+! code. The bounds check below uses the PRE-intersection point (xi,yi)
+! -- unlike conn_relocate's PC branch, which uses the POST-intersection
+! point (xi1,yi1) for the same check; a genuine cross-branch divergence
+! in the original, ported verbatim, not an inconsistency to fix.
+  subroutine fwp_relocate(this, xysh, nshockpoints, isppnts, ispclr, ia,&
+  &ja, iclr, nclr, corg)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(floating_wall_point_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: isppnts
+    integer(i4), intent(in) :: ispclr(*)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+    external solg
+    include 'paramt.h'
+
+    integer(i4) :: ish1, ip1, i, clr, bbgn, bend, j, k, kp1
+    integer(i4), parameter :: nn = 2
+    real(wp) :: a(nn, nn), b(nn), x(nn)
+    real(wp) :: xi, yi, x1, y1, x2, y2, dumx1, dumy1, dumx2, dumy2
+    real(wp) :: dum, xi1, yi1
+
+    ish1 = this%ish(1); i = this%leg(1) - 1
+    ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+    xi = xysh(1, ip1, ish1)
+    yi = xysh(2, ip1, ish1)
+
+    do clr = 1, nclr
+      if (iclr(clr) .eq. ispclr(isppnts)) exit
+    end do
+
+    bbgn = ia(clr)
+    bend = ia(clr + 1) - 1
+
+    do j = bbgn, bend - 1
+      k = ja(j)
+      kp1 = ja(j + 1)
+      x1 = corg(1, k)
+      y1 = corg(2, k)
+      x2 = corg(1, kp1)
+      y2 = corg(2, kp1)
+
+      dumx1 = x1
+      dumy1 = y1
+      dumx2 = x2
+      dumy2 = y2
+
+      if (dumx2 .lt. dumx1) then
+        dum = dumx1
+        dumx1 = dumx2
+        dumx2 = dum
+      end if
+
+      if (dumy2 .lt. dumy1) then
+        dum = dumy1
+        dumy1 = dumy2
+        dumy2 = dum
+      end if
+
+      a(1, 1) = (y2 - y1)
+      a(1, 2) = (x1 - x2)
+      b(1) = x2*(y2 - y1) + y2*(x1 - x2)
+
+      a(2, 1) = a(1, 2)
+      a(2, 2) = -a(1, 1)
+      b(2) = a(2, 1)*xi + a(2, 2)*yi
+
+      call solg(nn, nn, a, b, x)
+      xi1 = x(1)
+      yi1 = x(2)
+      dum = sqrt((xi1 - xi)**2 + (yi1 - yi)**2)
+
+      if (dum .lt. dxcell*0.5 .and.&
+      &xi .le. dumx2 .and.&
+      &xi .ge. dumx1 .and.&
+      &yi .le. dumy2 .and.&
+      &yi .ge. dumy1) then
+
+        xysh(1, ip1, ish1) = xi1
+        xysh(2, ip1, ish1) = yi1
+      end if
+    end do
+  end subroutine fwp_relocate
+
+! RRX (curved=.false., no-op) / RR (curved=.true.): ports
+! fx_dps_loc.f90's shared 'FWP'/'RR' branch verbatim (lines 106-197)
+! for the RR side, including the inner update of the second incident
+! shock's matching point (lines 186-194) -- reached unconditionally
+! here since curved already implies typespecpoints(isppnts).eq.'RR'
+! (see new_regular_reflection_t). RRX genuinely does nothing in this
+! chain (confirmed empty branch in the original at line 473) despite
+! being real work in co_pnt_dspl.f90's displace -- a real cross-chain
+! divergence flagged in the merged-3.2 plan, not a bug. ish1/ip1 are
+! deliberately mutated in place (reassigned to the second shock inside
+! the match branch, not restored before the next do-j iteration) --
+! matching the original's own shared-locals shape verbatim, per the
+! same "thread the carry, don't eliminate it" lesson from increment 5's
+! dx_carry. Unverified by any fixture: the merged-3.2 plan flags RR as
+! having zero regression coverage, so a second boundary-segment match
+! within the same isppnts (which would read this mutated ish1/ip1
+! rather than the original point) is an untested path in both the
+! legacy code and this port.
+  subroutine rr_relocate(this, xysh, nshockpoints, isppnts, ispclr, ia,&
+  &ja, iclr, nclr, corg)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(regular_reflection_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: isppnts
+    integer(i4), intent(in) :: ispclr(*)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+    external solg
+    include 'paramt.h'
+
+    integer(i4) :: ish1, ip1, i, clr, bbgn, bend, j, k, kp1
+    integer(i4), parameter :: nn = 2
+    real(wp) :: a(nn, nn), b(nn), x(nn)
+    real(wp) :: xi, yi, x1, y1, x2, y2, dumx1, dumy1, dumx2, dumy2
+    real(wp) :: dum, xi1, yi1
+
+    if (.not. this%curved) return
+
+    ish1 = this%ish(1); i = this%leg(1) - 1
+    ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+    xi = xysh(1, ip1, ish1)
+    yi = xysh(2, ip1, ish1)
+
+    do clr = 1, nclr
+      if (iclr(clr) .eq. ispclr(isppnts)) exit
+    end do
+
+    bbgn = ia(clr)
+    bend = ia(clr + 1) - 1
+
+    do j = bbgn, bend - 1
+      k = ja(j)
+      kp1 = ja(j + 1)
+      x1 = corg(1, k)
+      y1 = corg(2, k)
+      x2 = corg(1, kp1)
+      y2 = corg(2, kp1)
+
+      dumx1 = x1
+      dumy1 = y1
+      dumx2 = x2
+      dumy2 = y2
+
+      if (dumx2 .lt. dumx1) then
+        dum = dumx1
+        dumx1 = dumx2
+        dumx2 = dum
+      end if
+
+      if (dumy2 .lt. dumy1) then
+        dum = dumy1
+        dumy1 = dumy2
+        dumy2 = dum
+      end if
+
+      a(1, 1) = (y2 - y1)
+      a(1, 2) = (x1 - x2)
+      b(1) = x2*(y2 - y1) + y2*(x1 - x2)
+
+      a(2, 1) = a(1, 2)
+      a(2, 2) = -a(1, 1)
+      b(2) = a(2, 1)*xi + a(2, 2)*yi
+
+      call solg(nn, nn, a, b, x)
+      xi1 = x(1)
+      yi1 = x(2)
+      dum = sqrt((xi1 - xi)**2 + (yi1 - yi)**2)
+
+      if (dum .lt. dxcell*0.5 .and.&
+      &xi .le. dumx2 .and.&
+      &xi .ge. dumx1 .and.&
+      &yi .le. dumy2 .and.&
+      &yi .ge. dumy1) then
+
+        xysh(1, ip1, ish1) = xi1
+        xysh(2, ip1, ish1) = yi1
+
+        ish1 = this%ish(2); i = this%leg(2) - 1
+        ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+        xysh(1, ip1, ish1) = xi1
+        xysh(2, ip1, ish1) = yi1
+      end if
+    end do
+  end subroutine rr_relocate
+
+! C (periodic=.false.) / PC (periodic=.true.): ports fx_dps_loc.f90's
+! 'PC' branch verbatim (lines 253-451, point 1 then point 2 -- both
+! blocks share the same structure, collapsed here into one do kk=1,2
+! loop run in the same order, differing only in which shinspps leg
+! feeds ish1/ip1 and which ispclr index feeds the boundary-colour
+! lookup). 'C' is a confirmed no-op in this chain. The bounds check
+! below uses the POST-intersection point (xi1,yi1) -- unlike
+! fwp_relocate/rr_relocate's shared branch, which uses the
+! pre-intersection (xi,yi) for the same check; ported verbatim, not
+! reconciled. Point 2's ispclr(isppnts+1) read is the FIXME-flagged bug
+! #6 from the merged-3.2 plan ("could be dangerous") -- carried forward
+! verbatim, not fixed. The original's final "temporary code" block
+! (lines 453-465) computes a value whose only uses are commented out
+! (dead) and is omitted here.
+  subroutine conn_relocate(this, xysh, nshockpoints, isppnts, ispclr,&
+  &ia, ja, iclr, nclr, corg)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(connection_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: isppnts
+    integer(i4), intent(in) :: ispclr(*)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+    external solg
+    include 'paramt.h'
+
+    integer(i4) :: ish1, ip1, i, clr, bbgn, bend, j, k, kp1, kk
+    integer(i4), parameter :: nn = 2
+    real(wp) :: a(nn, nn), b(nn), x(nn)
+    real(wp) :: xi, yi, x1, y1, x2, y2, dumx1, dumy1, dumx2, dumy2
+    real(wp) :: dum, xi1, yi1
+
+    if (.not. this%periodic) return
+
+    do kk = 1, 2
+      ish1 = this%ish(kk); i = this%leg(kk) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+      xi = xysh(1, ip1, ish1)
+      yi = xysh(2, ip1, ish1)
+
+      do clr = 1, nclr
+        if (iclr(clr) .eq. ispclr(isppnts + kk - 1)) exit    ! FIXME: correct this part of code, could be dangerous
+      end do
+
+      bbgn = ia(clr)
+      bend = ia(clr + 1) - 1
+
+      do j = bbgn, bend - 1
+        k = ja(j)
+        kp1 = ja(j + 1)
+        x1 = corg(1, k)
+        y1 = corg(2, k)
+        x2 = corg(1, kp1)
+        y2 = corg(2, kp1)
+
+        dumx1 = x1
+        dumy1 = y1
+        dumx2 = x2
+        dumy2 = y2
+
+        if (dumx2 .lt. dumx1) then
+          dum = dumx1
+          dumx1 = dumx2
+          dumx2 = dum
+        end if
+
+        if (dumy2 .lt. dumy1) then
+          dum = dumy1
+          dumy1 = dumy2
+          dumy2 = dum
+        end if
+
+        a(1, 1) = (y2 - y1)
+        a(1, 2) = (x1 - x2)
+        b(1) = x2*(y2 - y1) + y2*(x1 - x2)
+
+        a(2, 1) = a(1, 2)
+        a(2, 2) = -a(1, 1)
+        b(2) = a(2, 1)*xi + a(2, 2)*yi
+
+        call solg(nn, nn, a, b, x)
+        xi1 = x(1)
+        yi1 = x(2)
+        dum = sqrt((xi1 - xi)**2 + (yi1 - yi)**2)
+
+        if (dum .lt. dxcell*0.5 .and.&
+        &xi1 .le. dumx2 .and.&
+        &xi1 .ge. dumx1 .and.&
+        &yi1 .le. dumy2 .and.&
+        &yi1 .ge. dumy1) then
+
+          xysh(1, ip1, ish1) = xi1
+          xysh(2, ip1, ish1) = yi1
+        end if
+      end do
+    end do
+  end subroutine conn_relocate
+
+! Default correct_normal: does nothing, matching co_norm.f90's empty
+! QP/RRX/RR/EP/TE branches. Every code that reaches real work below
+! (WPNRX/FWP/C/PC/SP) overrides this; WPNRY hits a fatal stop inside
+! wf_correct_normal instead (see its header); TP gets an explicit
+! checked-but-inert override (tp_correct_normal) rather than this
+! shared default, to record that its no-op status was verified, not
+! merely skipped.
+  subroutine sp_correct_normal_noop(this, xysh, zroeshu, vshnor,&
+  &nshockpoints, ia, ja, iclr, nclr, corg)
+    class(special_point_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    real(wp), intent(in) :: zroeshu(:, :, :)
+    real(wp), intent(inout) :: vshnor(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+  end subroutine sp_correct_normal_noop
+
+! TP: co_norm.f90's own 'TP' branch (lines 480-513) computes a
+! sign-flip condition (dum = nx2*nx4+ny2*ny4 .lt. 0.0d0) but the do-loop
+! body that would act on it (lines 509-512) is entirely commented out
+! in the original -- checked, confirmed inert, kept as an explicit
+! override rather than falling through to the shared default so a
+! future reader sees this was verified, not merely skipped.
+  subroutine tp_correct_normal(this, xysh, zroeshu, vshnor, nshockpoints,&
+  &ia, ja, iclr, nclr, corg)
+    class(triple_point_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    real(wp), intent(in) :: zroeshu(:, :, :)
+    real(wp), intent(inout) :: vshnor(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+  end subroutine tp_correct_normal
+
+! WPNRX/WPNRY/IPX/IPY/OPX/OPY: ports co_norm.f90's per-code branches
+! verbatim -- WPNRX (lines 295-304) is the only real one (hard-clamp
+! the normal to horizontal); IPX/IPY/OPX/OPY are explicit no-op
+! branches in the original (lines 599-606); WPNRY has NO branch at all
+! in the original, hitting the fatal else-stop at lines 617-621 (bug #5
+! in the merged-3.2 plan) -- reproduced verbatim below rather than
+! given a "sensible" implementation. A select case with no matching
+! case for IPX/IPY/OPX/OPY simply does nothing, which is the no-op
+! itself -- no explicit case needed for them.
+  subroutine wf_correct_normal(this, xysh, zroeshu, vshnor, nshockpoints,&
+  &ia, ja, iclr, nclr, corg)
+    class(wall_float_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    real(wp), intent(in) :: zroeshu(:, :, :)
+    real(wp), intent(inout) :: vshnor(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+
+    integer(i4) :: ish1, ip1, i
+
+    select case (this%code)
+    case ('WPNRX')
+      ish1 = this%ish(1); i = this%leg(1) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+      vshnor(1, ip1, ish1) = vshnor(1, ip1, ish1)/abs(vshnor(1, ip1, ish1))
+      vshnor(2, ip1, ish1) = 0.
+    case ('WPNRY')
+      write (*, *) this%code
+      write (*, *) 'condition not defined'
+      write (8, *) 'condition not defined'
+      stop
+    end select
+  end subroutine wf_correct_normal
+
+! FWP: ports co_norm.f90's 'FWP' branch (lines 307-393) verbatim for
+! its live statements only. Two spans of the original are genuinely
+! dead and omitted here: the ui/vi/first `dum` computation (lines
+! 362-366) is immediately overwritten by the next `dum` assignment
+! (line 369) without ever being read, and the whole "compute normal of
+! the first internal point" tail (lines 395-424) only ever writes to
+! vshnor through commented-out assignments -- neither has any
+! observable effect, matching the same dead-code-omission precedent as
+! fx_dps_loc.f90's "temporary code" tail in increment 7. this%iclr is
+! already populated by sp_unpack from co_norm.f90's own correctly
+! rank-2 ispclr(5,*) -- no bug to preserve here (see sp_correct_normal_if).
+  subroutine fwp_correct_normal(this, xysh, zroeshu, vshnor, nshockpoints,&
+  &ia, ja, iclr, nclr, corg)
+    class(floating_wall_point_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    real(wp), intent(in) :: zroeshu(:, :, :)
+    real(wp), intent(inout) :: vshnor(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+
+    real(wp) :: xi, yi, x1, y1, x2, y2, dumx1, dumy1, dumx2, dumy2
+    real(wp) :: dum, taux, tauy
+    integer(i4) :: ish1, ip1, i, clr, bbgn, bend, j, k, kp1
+
+    ish1 = this%ish(1); i = this%leg(1) - 1
+    ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+    xi = xysh(1, ip1, ish1)
+    yi = xysh(2, ip1, ish1)
+
+    do clr = 1, nclr
+      if (iclr(clr) .eq. this%iclr) exit
+    end do
+
+    bbgn = ia(clr)
+    bend = ia(clr + 1) - 1
+    do j = bbgn, bend - 1
+      k = ja(j)
+      kp1 = ja(j + 1)
+      x1 = corg(1, k)
+      y1 = corg(2, k)
+      x2 = corg(1, kp1)
+      y2 = corg(2, kp1)
+
+      dumx1 = x1
+      dumy1 = y1
+      dumx2 = x2
+      dumy2 = y2
+
+      if (dumx2 .lt. dumx1) then
+        dum = dumx1
+        dumx1 = dumx2
+        dumx2 = dum
+      end if
+
+      if (dumy2 .lt. dumy1) then
+        dum = dumy1
+        dumy1 = dumy2
+        dumy2 = dum
+      end if
+
+      if (xi .le. dumx2 .and.&
+      &xi .ge. dumx1 .and.&
+      &yi .le. dumy2 .and.&
+      &yi .ge. dumy1) then
+
+        taux = x2 - x1
+        tauy = y2 - y1
+        dum = sqrt(taux**2 + tauy**2)
+        taux = taux/dum
+        tauy = tauy/dum
+
+        dum = taux*vshnor(1, ip1, ish1) + tauy*vshnor(2, ip1, ish1)
+        if (dum .lt. 0.) then
+          taux = -taux
+          tauy = -tauy
+        end if
+        vshnor(1, ip1, ish1) = taux
+        vshnor(2, ip1, ish1) = tauy
+      end if
+    end do
+  end subroutine fwp_correct_normal
+
+! C (periodic=.false.) / PC (periodic=.true.): ports co_norm.f90's
+! merged 'C'/'PC' branch (lines 427-474) verbatim -- unlike
+! remesh_boundary/relocate, THIS chain does real (and identical) work
+! for both C and PC, so there's no periodic guard here at all.
+  subroutine conn_correct_normal(this, xysh, zroeshu, vshnor,&
+  &nshockpoints, ia, ja, iclr, nclr, corg)
+    class(connection_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    real(wp), intent(in) :: zroeshu(:, :, :)
+    real(wp), intent(inout) :: vshnor(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+
+    integer(i4) :: ish1, ish2, ip1, ip2, i
+    real(wp) :: nx1, ny1, nx2, ny2
+
+    ish1 = this%ish(1); i = this%leg(1) - 1
+    ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(2); i = this%leg(2) - 1
+    ip2 = 1 + i*(nshockpoints(ish2) - 1)
+
+    nx1 = vshnor(1, ip1, ish1)
+    ny1 = vshnor(2, ip1, ish1)
+    nx2 = vshnor(1, ip2, ish2)
+    ny2 = vshnor(2, ip2, ish2)
+
+! Attention (original comment): section of the code not general!
+    if (ip1 .eq. 1) then
+      nx1 = nx2
+      ny1 = ny2
+    else
+      nx2 = nx1
+      ny2 = ny1
+    end if
+
+    vshnor(1, ip1, ish1) = nx1
+    vshnor(2, ip1, ish1) = ny1
+    vshnor(1, ip2, ish2) = nx2
+    vshnor(2, ip2, ish2) = ny2
+  end subroutine conn_correct_normal
+
+! SP: ports co_norm.f90's 'SP' branch verbatim (lines 517-597) --
+! unlike every other correct_normal override, this one also relocates
+! the end point's coordinates (xysh), not just its normal, and reads
+! upstream state (zroeshu) to compute the Mach angle. Preserves the
+! original's own internal fatal stop on mm<1.0 (subsonic upstream at
+! this point is treated as an error, not a recoverable condition).
+  subroutine sonic_correct_normal(this, xysh, zroeshu, vshnor,&
+  &nshockpoints, ia, ja, iclr, nclr, corg)
+    use mod_constants, only: naddholesmax, nprdbndmax
+    class(start_point_t), intent(inout) :: this
+    real(wp), intent(inout) :: xysh(:, :, :)
+    real(wp), intent(in) :: zroeshu(:, :, :)
+    real(wp), intent(inout) :: vshnor(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
+    real(wp), intent(in) :: corg(ndim, *)
+    include 'paramt.h'
+
+    real(wp) :: um, vm, thetam, rom, help, pm, am, mm, alpham
+    real(wp) :: nx1, ny1, nx2, ny2, dum1, dum2, dum, nx, ny, dist
+    integer(i4) :: ish1, ip, ip1, i
+
+    ish1 = this%ish(1); i = this%leg(1) - 1
+    ip = 1 + i*(nshockpoints(ish1) - 1)
+    ip1 = 2 + i*(nshockpoints(ish1) - 3)
+
+    um = zroeshu(3, ip1, ish1)/zroeshu(1, ip1, ish1)
+    vm = zroeshu(4, ip1, ish1)/zroeshu(1, ip1, ish1)
+    thetam = atan(vm/um)
+    rom = zroeshu(1, ip1, ish1)*zroeshu(1, ip1, ish1)
+    help = zroeshu(3, ip1, ish1)**2 + zroeshu(4, ip1, ish1)**2
+    pm = gm1/ga*(zroeshu(1, ip1, ish1)*zroeshu(2, ip1, ish1) - 0.5d0*help)
+    am = sqrt(ga*pm/rom)
+    mm = sqrt(um**2 + vm**2)/am
+    if (mm .lt. 1.0000) then
+      write (*, *) 'upstream mach number negative'
+      write (*, *) 'at shock point', ip1
+      write (*, *) 'shock n.', ish1
+      stop
+    end if
+    alpham = asin(1./mm)
+
+    nx1 = -sin(thetam - alpham)
+    ny1 = cos(thetam - alpham)
+    nx2 = -sin(thetam + alpham)
+    ny2 = cos(thetam + alpham)
+
+    dum1 = nx1*vshnor(1, ip1, ish1) + ny1*vshnor(2, ip1, ish1)
+    dum2 = nx2*vshnor(1, ip1, ish1) + ny2*vshnor(2, ip1, ish1)
+
+    vshnor(1, ip1, ish1) = nx2
+    vshnor(2, ip1, ish1) = ny2
+
+    if (abs(dum1) .gt. abs(dum2)) then
+      vshnor(1, ip1, ish1) = nx1
+      vshnor(2, ip1, ish1) = ny1
+    end if
+
+    dum = (um*vshnor(1, ip1, ish1) + vm*vshnor(2, ip1, ish1))/am
+    if (dum .gt. 0.) then
+      vshnor(1, ip1, ish1) = -vshnor(1, ip1, ish1)
+      vshnor(2, ip1, ish1) = -vshnor(2, ip1, ish1)
+    end if
+
+    vshnor(1, ip, ish1) = vshnor(1, ip1, ish1)
+    vshnor(2, ip, ish1) = vshnor(2, ip1, ish1)
+
+    nx = xysh(1, ip, ish1) - xysh(1, ip1, ish1)
+    ny = xysh(2, ip, ish1) - xysh(2, ip1, ish1)
+    dist = sqrt((xysh(1, ip1, ish1) - xysh(1, ip, ish1))**2 +&
+    &(xysh(2, ip1, ish1) - xysh(2, ip, ish1))**2)
+    nx = nx/dist
+    ny = ny/dist
+    dum1 = vshnor(2, ip, ish1)
+    dum2 = -vshnor(1, ip, ish1)
+    if (dum1*nx + dum2*ny .lt. 0.) then
+      dum1 = -dum1
+      dum2 = -dum2
+    end if
+    nx = dum1
+    ny = dum2
+
+    xysh(1, ip, ish1) = xysh(1, ip1, ish1) + nx*dist
+    xysh(2, ip, ish1) = xysh(2, ip1, ish1) + ny*dist
+  end subroutine sonic_correct_normal
 
   function new_triple_point_t() result(sp)
     type(triple_point_t) :: sp
