@@ -136,24 +136,24 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ];
 
 #                            nbegin, nsteps, eulfs, steady, testcase,   logfile
 #                            ######  ######  #####  ######  ########    #######
-  ../../bin/UnDiFi-2D_x86_64 0       $Iters  false  true    $testname | tee run.log
+  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $Iters  false  true    $testname | tee run.log
 
 
 elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
 #  modify NEO's input file for SF simulation
    cp NEO_data/textinput/inputfile-exp.txt.SF NEO_data/textinput/inputfile-exp.txt
 
-   ../../bin/UnDiFi-2D_x86_64 0      $Iters  false  false   $testname | tee run.log
+   ../../build/gfortran-debug/bin/UnDiFi-2D 0      $Iters  false  false   $testname | tee run.log
 
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ]; then
-   ../../bin/UnDiFi-2D_x86_64 0      $Iters  true   true    $testname | tee run.log
+   ../../build/gfortran-debug/bin/UnDiFi-2D 0      $Iters  true   true    $testname | tee run.log
 
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
 # Be sure that no any .petsrc is present in test and home directory
    rm ~/home/.petscrc
    rm .petscrc
-   ../../bin/UnDiFi-2D_x86_64 0      $Iters  true   false   $testname | tee run.log
+   ../../build/gfortran-debug/bin/UnDiFi-2D 0      $Iters  true   false   $testname | tee run.log
 
 fi

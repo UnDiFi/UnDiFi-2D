@@ -125,18 +125,18 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ];
   echo "" > NEO_data/input/vel.dat
 
 #                             nbegin, nsteps, eulfs, steady, testcase,            logfile
-   ../../bin/UnDiFi-2D_x86_64 0       501     false  true    "RegularReflection-1" | tee run.log
+   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     false  true    "RegularReflection-1" | tee run.log
 
 elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
 #  modify NEO's input file for SF simulation
    cp NEO_data/textinput/inputfile-exp.txt.SF NEO_data/textinput/inputfile-exp.txt
 
-   ../../bin/UnDiFi-2D_x86_64 0       501     false  false   "RegularReflection-1" | tee run.log
+   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     false  false   "RegularReflection-1" | tee run.log
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ]; then
-   ../../bin/UnDiFi-2D_x86_64 0       501     true   true    "RegularReflection-1" | tee run.log
+   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     true   true    "RegularReflection-1" | tee run.log
 
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
-   ../../bin/UnDiFi-2D_x86_64 0       501     true   false   "RegularReflection-1" | tee run.log
+   ../../build/gfortran-debug/bin/UnDiFi-2D 0       501     true   false   "RegularReflection-1" | tee run.log
 
 fi

@@ -149,7 +149,7 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ];
   echo "" > NEO_data/input/vel.dat
 
 #                            nbegin, nsteps, eulfs, steady, testcase,   logfile
-  ../../bin/UnDiFi-2D_x86_64 0       $iters  false  true    $testname | tee run.log
+  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  false  true    $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -158,19 +158,19 @@ elif [ "$Solver" = "neo" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" 
 # modify NEO's input file for SF simulation
   cp NEO_data/textinput/inputfile-exp.txt.SF NEO_data/textinput/inputfile-exp.txt
 
-  ../../bin/UnDiFi-2D_x86_64 0       $iters  false  false   $testname | tee run.log
+  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  false  false   $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "steady" ]; then
-  ../../bin/UnDiFi-2D_x86_64 0       $iters  true   true    $testname | tee run.log
+  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  true   true    $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------
 elif [ "$Solver" = "eulfs" ] && [ "$Mode" = "fitting" ] && [ "$Flow" = "unsteady" ]; then
-  ../../bin/UnDiFi-2D_x86_64 0       $iters  true   false   $testname | tee run.log
+  ../../build/gfortran-debug/bin/UnDiFi-2D 0       $iters  true   false   $testname | tee run.log
 # ---------------------------------------------------------------------------------------------------------------------------------
 
 
