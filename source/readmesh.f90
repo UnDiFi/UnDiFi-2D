@@ -3,8 +3,9 @@ subroutine readmesh(mesh, fname, fndbnds)
   use mod_kinds, only: wp, i4
   use mod_constants, only: ndim, ndof, neshmax, npshmax, nshmax, zero
   use mod_mesh, only: mesh_t
+  use mod_setbndrynodeptr, only: setbndrynodeptr
   implicit none(type, external)
-  external check, rtri, setbndrynodeptr
+  external check, rtri
 
 !     this subroutine reads a mesh written by the triangle code, straight
 !     into mesh's allocatable arrays (ROADMAP.md Phase 2.3/2.4, issue #13).
