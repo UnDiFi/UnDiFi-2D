@@ -50,17 +50,27 @@ subroutine co_shock(x1, x2, wshk, R14)
 
   real(wp) x1, x2, wshk, R14
   dimension x1(4), x2(4)
-  real(wp) rov, rom, pv, pm, uv, um, gam, delta, w
+  real(wp) rov, rom, pv, pm, uv, um, gam, delta
   real(wp) y0(4), yn1(4)
   type(shock_ctx_t) :: ctx
 
-! NOTE: w is used uninitialized below (yn1(4) = w), reproducing a
-! pre-existing latent bug in the pre-refactor source (its "initialization
-! of downstream state and shock velocity" block is entirely commented
-! out, leaving w never assigned). Not this increment's job to fix -- see
-! the merged-3.2 plan's "preserve and document, do not fix" policy for
-! untouched latent bugs; giving it an explicit deterministic seed here
-! would itself be an unreviewed numerics change.
+! w seeds the Newton unknown vector's shock-velocity component (y0(4)
+! below). The pre-refactor source left it uninitialized -- its own
+! "initialization of downstream state and shock velocity" block is
+! entirely commented out, including the line `w=-0.001` right next to
+! a comment explicitly noting "w must be an arbitrarily small value
+! but <> 0 otherwise the jacobian calculation fails". Initially
+! preserved as an untouched latent bug (increment 1), but confirmed to
+! have a real, non-hypothetical consequence: on NACA0012_M080_A0, w's
+! stack-garbage value differs between the pre-refactor and
+! post-refactor compiled code (same source-level bug, different
+! compiled layout once the loop moved into mod_newton_solve), and the
+! post-refactor value seeds a Newton iteration that never converges --
+! an infinite loop, confirmed via a from-scratch build of the
+! pre-refactor commit (272668e) on the same case, which does not hang.
+! Restoring the author's own documented intended seed value fixes this
+! and makes the seed deterministic instead of layout-dependent.
+  real(wp), parameter :: w = -0.001_wp
 
 ! constants assign
   gam = GA
