@@ -352,6 +352,34 @@ end module
 *Exit criterion:* `main.f90` < 400 lines; `fx_state_dps` chain eliminated;
 regressions pass. Closes F6, F7.
 
+**Status as of 2026-08-05**: 3.1 done as designed above (`mod_discontinuity`,
+`mod_shock_system`). 3.2/3.3/3.4 were merged into one step (user's explicit
+choice, to avoid landing `special_point_t` with no registry to dispatch
+through it) and are done, 9 increments/commits, as `mod_special_point.f90`
+(abstract base + 9 concrete types — `triple_point_t`, `quad_point_t`,
+`trailing_edge_t`, `regular_reflection_t`, `wall_float_t`,
+`floating_wall_point_t`, `end_point_t`, `start_point_t`, `connection_t`,
+covering all 16 type codes via merged codes + discriminating fields, not
+the design sketch's 10-type breakdown) and `mod_special_point_registry.f90`
+(`make_special_point` factory, `sp_read`/`sp_write`). Scope ended up wider
+than F6's original three chains: **seven** dispatch chains were actually
+unified — `fx_state_dps.f90`, `co_pnt_dspl.f90`, `fx_msh_sps.f90`,
+`fx_dps_loc.f90`, `co_norm.f90`'s correction pass, the
+`re_sdw_info.f90`/`wrt_sdw_info.f90` serialization pair, and a previously-
+undiscovered seventh (`interp.f90`'s `interp_sp`, a single 'SP'-only branch
+missed by the initial research pass and found only once real end-to-end
+regression testing actually worked — see the harness-fix commits from
+2026-08-05). `main.f90` needed zero edits for any of this (every dispatch
+chain's external signature was unchanged) and is therefore nowhere near the
+400-line target — that depends on 3.6/3.7, still not started. 3.5 (analytic
+Jacobians) also not started. Six known pre-existing latent bugs in the
+original dispatch chains were found and preserved bit-for-bit rather than
+fixed (documented in code comments at each site); two separate, unrelated
+Newton-solve infinite-loop bugs (`co_shock`'s uninitialized seed,
+`co_dc`'s unreachable tolerance) were found and fixed, since — unlike the
+preserved latent bugs — they made the code non-terminating rather than
+merely numerically different.
+
 ## Phase 4 — Performance and shared-memory parallelism (OpenMP)
 
 Order set by the Phase-0.5 profile, but the expected ranking:

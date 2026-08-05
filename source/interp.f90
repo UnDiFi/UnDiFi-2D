@@ -308,10 +308,10 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
       &shinspps)
 
         use mod_kinds, only: wp, i4
-        use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
+        use mod_constants, only: ndim, ndof, npshmax, nshmax
+        use mod_special_point, only: special_point_t
+        use mod_special_point_registry, only: make_special_point, sp_unpack
         implicit none(type, external)
-        external finder
-        include 'paramt.h'
 
 !     .. scalar arguments ..
         integer(i4) nelem, nvt, nbfac
@@ -329,19 +329,14 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
         &npoin(0:*)
         real(wp) vshnor(ndim, npshmax, *)
 
-!     .. array arguments ..
-        real(wp) xybkg(ndim),&
-        &zbkg(ndof)
-
 !     .. character array arguments
         character*1 typesh(*)
         character*5 typespecpoints(*)
 
 !     .. local scalars ..
-        integer(i4) ipoin, ielem, i, ii, k, n, ifail, ish, clr, bbgn, bend, j, kp1, ibc
-        integer(i4) ip, ip1, ish1, isppnts
-        real(wp) x0, y0, x1, y1, x2, y2, dum, dum1, dum2
-        real(wp) uv, vv, av, thetav, rov, help, pv, mv, alphav
+        integer(i4) isppnts
+
+        class(special_point_t), allocatable :: sp
 
 !     open log file
         open (8, file='log/interp_sp.log')
@@ -353,40 +348,17 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
 !     Note: the nof of shock points is that on the shocked mesh
 !     not the one on the background mesh since this one might have
 !     been updated in the shock redistribution routine called by shockmov
+! Phase 3.2 increment 9: a seventh, previously-undiscovered
+! typespecpoints dispatch site -- this loop's single 'SP'-only branch
+! (no elseif, no fatal stop for anything else) now goes through the
+! same special_point_t registry as the other six, via
+! interpolate_state (default no-op, overridden only by start_point_t).
         do isppnts = 1, nspecpoints
-
-          if (typespecpoints(isppnts) .eq. 'SP') then
-
-            ish1 = shinspps(1, 1, isppnts)
-            i = shinspps(2, 1, isppnts) - 1
-            ip = 1 + i*(nshockpoints(ish1) - 1)
-            ip1 = 2 + i*(nshockpoints(ish1) - 3)
-
-            xybkg(1) = xysh(1, ip, ish1)
-            xybkg(2) = xysh(2, ip, ish1)
-            write (8, *) 'vertecx coordinates to find ', xybkg(1), xybkg(2)&
-            &, ip, ip1, ish1, nshockpoints(ish1)
-
-            ifail = 0
-            call finder(icelnod, nelem, xy, ndim, zroe, ndof, xybkg,&
-            &zbkg, ielem, ifail)
-            if (ifail .ne. 0) then
-              write (8, *) 'cell not found '
-              stop
-            end if
-            write (8, *) 'found in cell ', ielem, ifail
-
-            zroesh(1, ip, ish1) = zbkg(1)
-            zroesh(2, ip, ish1) = zbkg(2)
-            zroesh(3, ip, ish1) = zbkg(3)
-            zroesh(4, ip, ish1) = zbkg(4)
-
-            zroeshu(1, ip, ish1) = zbkg(1)
-            zroeshu(2, ip, ish1) = zbkg(2)
-            zroeshu(3, ip, ish1) = zbkg(3)
-            zroeshu(4, ip, ish1) = zbkg(4)
-
-          end if
+          call make_special_point(typespecpoints(isppnts), sp)
+          call sp_unpack(sp, shinspps(:, :, isppnts))
+          call sp%interpolate_state(icelnod, nelem, xy, zroe,&
+          &xysh(:, :, 1:nshmax), zroesh(:, :, 1:nshmax),&
+          &zroeshu(:, :, 1:nshmax), nshockpoints(1:nshmax))
         end do
 
         close (8)

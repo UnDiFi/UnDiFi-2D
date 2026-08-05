@@ -66,6 +66,7 @@ module mod_special_point
     procedure :: displace => sp_displace_noop ! co_pnt_dspl.f90 -- most types override (this increment)
     procedure :: relocate => sp_relocate_noop ! fx_dps_loc.f90  -- most types no-op, 3 override (increment 7)
     procedure :: correct_normal => sp_correct_normal_noop ! co_norm.f90 -- most types no-op, 5 override (increment 8)
+    procedure :: interpolate_state => sp_interpolate_state_noop ! interp.f90's interp_sp -- default no-op, SP overrides (increment 9)
   end type special_point_t
 
   abstract interface
@@ -170,6 +171,27 @@ module mod_special_point
       integer(i4), intent(in) :: nclr, ia(*), ja(*), iclr(nclr)
       real(wp), intent(in) :: corg(ndim, *)
     end subroutine sp_correct_normal_if
+
+! A seventh, previously-undiscovered typespecpoints dispatch site
+! (increment 9): interp.f90's interp_sp, called every time level, has
+! its own single-branch 'SP'-only check (no elseif for any other
+! code), interpolating background-mesh state onto the start point via
+! finder. icelnod/xy/zroe stay assumed-size (matching the ia/ja/corg
+! convention from sp_solve_if) since interp_sp's own dummies are
+! assumed-size too and no bound here is known from any single dummy
+! argument available.
+    subroutine sp_interpolate_state_if(this, icelnod, nelem, xy, zroe,&
+    &xysh, zroesh, zroeshu, nshockpoints)
+      import :: special_point_t, wp, i4, ndim
+      class(special_point_t), intent(inout) :: this
+      integer(i4), intent(in) :: nelem
+      integer(i4), intent(in) :: icelnod(3, *)
+      real(wp), intent(in) :: xy(ndim, *)
+      real(wp), intent(in) :: zroe(*)
+      real(wp), intent(in) :: xysh(:, :, :)
+      real(wp), intent(inout) :: zroesh(:, :, :), zroeshu(:, :, :)
+      integer(i4), intent(in) :: nshockpoints(:)
+    end subroutine sp_interpolate_state_if
   end interface
 
 ! TP -- triple point (internal), nshe=4. Newton-solved via co_utp today.
@@ -256,6 +278,7 @@ module mod_special_point
     procedure :: solve_state => sonic_solve_state
     procedure :: displace => sonic_displace
     procedure :: correct_normal => sonic_correct_normal
+    procedure :: interpolate_state => sonic_interpolate_state
   end type start_point_t
 
 ! C (periodic=.false.) / PC (periodic=.true.) -- connection between two
@@ -3013,6 +3036,73 @@ contains
     xysh(1, ip, ish1) = xysh(1, ip1, ish1) + nx*dist
     xysh(2, ip, ish1) = xysh(2, ip1, ish1) + ny*dist
   end subroutine sonic_correct_normal
+
+! Default interpolate_state: does nothing. interp_sp's single 'SP'
+! branch (no elseif for anything else) is the only place any code
+! does real work here -- every other type falls straight through to
+! this no-op, matching interp_sp's own implicit skip of every
+! non-'SP' point.
+  subroutine sp_interpolate_state_noop(this, icelnod, nelem, xy, zroe,&
+  &xysh, zroesh, zroeshu, nshockpoints)
+    class(special_point_t), intent(inout) :: this
+    integer(i4), intent(in) :: nelem
+    integer(i4), intent(in) :: icelnod(3, *)
+    real(wp), intent(in) :: xy(ndim, *)
+    real(wp), intent(in) :: zroe(*)
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: zroesh(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+  end subroutine sp_interpolate_state_noop
+
+! SP: ports interp.f90's interp_sp verbatim (lines 356-390) -- the only
+! typespecpoints branch in that subroutine. ip1 is computed but only
+! ever fed into the debug log write below (never used for indexing),
+! matching the original exactly. Preserves the original's fatal stop
+! if finder can't locate the background cell containing this point.
+  subroutine sonic_interpolate_state(this, icelnod, nelem, xy, zroe,&
+  &xysh, zroesh, zroeshu, nshockpoints)
+    use mod_constants, only: ndof
+    class(start_point_t), intent(inout) :: this
+    integer(i4), intent(in) :: nelem
+    integer(i4), intent(in) :: icelnod(3, *)
+    real(wp), intent(in) :: xy(ndim, *)
+    real(wp), intent(in) :: zroe(*)
+    real(wp), intent(in) :: xysh(:, :, :)
+    real(wp), intent(inout) :: zroesh(:, :, :), zroeshu(:, :, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    external finder
+
+    real(wp) :: xybkg(ndim), zbkg(ndof)
+    integer(i4) :: i, ish1, ip, ip1, ielem, ifail
+
+    ish1 = this%ish(1); i = this%leg(1) - 1
+    ip = 1 + i*(nshockpoints(ish1) - 1)
+    ip1 = 2 + i*(nshockpoints(ish1) - 3)
+
+    xybkg(1) = xysh(1, ip, ish1)
+    xybkg(2) = xysh(2, ip, ish1)
+    write (8, *) 'vertecx coordinates to find ', xybkg(1), xybkg(2)&
+    &, ip, ip1, ish1, nshockpoints(ish1)
+
+    ifail = 0
+    call finder(icelnod, nelem, xy, ndim, zroe, ndof, xybkg, zbkg,&
+    &ielem, ifail)
+    if (ifail .ne. 0) then
+      write (8, *) 'cell not found '
+      stop
+    end if
+    write (8, *) 'found in cell ', ielem, ifail
+
+    zroesh(1, ip, ish1) = zbkg(1)
+    zroesh(2, ip, ish1) = zbkg(2)
+    zroesh(3, ip, ish1) = zbkg(3)
+    zroesh(4, ip, ish1) = zbkg(4)
+
+    zroeshu(1, ip, ish1) = zbkg(1)
+    zroeshu(2, ip, ish1) = zbkg(2)
+    zroeshu(3, ip, ish1) = zbkg(3)
+    zroeshu(4, ip, ish1) = zbkg(4)
+  end subroutine sonic_interpolate_state
 
   function new_triple_point_t() result(sp)
     type(triple_point_t) :: sp
