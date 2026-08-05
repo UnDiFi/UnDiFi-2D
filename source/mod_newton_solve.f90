@@ -44,7 +44,7 @@ module mod_newton_solve
 contains
 
   subroutine newton_solve(n, y0, resid, ctx, damping, tol, fd_eps_rel, y,&
-  &ifail, log_unit, log_iter, detect_divergence)
+  &ifail, log_unit, log_iter, detect_divergence, maxiter)
     integer(i4), intent(in) :: n
     real(wp), intent(in) :: y0(n), damping, tol, fd_eps_rel
     procedure(residual_if) :: resid
@@ -53,11 +53,12 @@ contains
     logical, intent(out), optional :: ifail
     integer(i4), intent(in), optional :: log_unit
     logical, intent(in), optional :: log_iter, detect_divergence
+    integer(i4), intent(in), optional :: maxiter
     external solg
 
     real(wp) :: yn(n), yn1(n), g(n, n), bb(n), dyn(n)
     real(wp) :: dyn1, dum1, dum2, dum, dumold
-    integer(i4) :: i, j, k, icont
+    integer(i4) :: i, j, k, icont, maxiter_eff
     logical :: want_divergence, want_log_iter
 
     want_divergence = .false.
@@ -65,6 +66,8 @@ contains
     want_log_iter = .false.
     if (present(log_iter)) want_log_iter = log_iter
     if (present(ifail)) ifail = .false.
+    maxiter_eff = 500_i4
+    if (present(maxiter)) maxiter_eff = maxiter
 
     yn1 = y0
     icont = 0
@@ -111,6 +114,24 @@ contains
         else
           write (log_unit, *) 'conv--->', dum
         end if
+      end if
+
+! Safety net: none of the five pre-refactor solvers had one (the
+! do/exit-only-on-convergence loop was extracted verbatim), and real
+! end-to-end regression testing -- only possible once the test harness
+! itself was fixed to actually run the CMake build (see this session's
+! earlier commits) -- found two independent, unrelated inputs where
+! that assumption was false: co_shock hanging on NACA0012_M080_A0
+! (separately root-caused and fixed: an uninitialized Newton seed) and
+! co_dc hanging on SSInteractions2-2 (root cause not yet isolated).
+! Bail out with ifail after maxiter_eff iterations rather than loop
+! forever; the four callers that don't check ifail (only co_utp does,
+! for its own divergence-triggered retry) simply proceed with
+! whatever iterate was reached, no worse than hanging and no different
+! from what they already do the instant tol is satisfied.
+      if (icont .ge. maxiter_eff) then
+        if (present(ifail)) ifail = .true.
+        exit
       end if
 
       if (want_divergence) then
