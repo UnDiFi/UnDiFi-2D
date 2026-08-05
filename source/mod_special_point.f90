@@ -9,11 +9,12 @@ module mod_special_point
 ! at the shared no-op default, and the six known latent bugs that must
 ! be preserved bit-for-bit when each chain is ported).
 !
-! Increment 4 (this revision) ports fx_state_dps.f90's real logic into
-! every type's solve_state, replacing the increment-2 stubs. The other
-! four behaviors (remesh_boundary/displace/relocate/correct_normal)
-! still default to the shared no-op; increments 5-8 add real overrides
-! there only where the corresponding legacy chain does real work.
+! Increment 4 ported fx_state_dps.f90's real logic into every type's
+! solve_state; increment 5 did the same for co_pnt_dspl.f90's displace.
+! Increment 6 (this revision) ports fx_msh_sps.f90's real logic into
+! remesh_boundary. relocate/correct_normal still default to the shared
+! no-op; increments 7-8 add real overrides there only where the
+! corresponding legacy chain does real work.
 !
 ! special_point_t's array components are plain allocatable, NOT
 ! pointer-into-shared-storage like mod_discontinuity.f90's
@@ -59,7 +60,7 @@ module mod_special_point
     integer(i4), allocatable :: leg(:) ! (nshe) endpoint flags,  from shinspps(2,:,isppnts)
   contains
     procedure(sp_solve_if), deferred :: solve_state ! fx_state_dps.f90 -- every type overrides (increment 4)
-    procedure :: remesh_boundary => sp_noop ! fx_msh_sps.f90  -- default no-op (increment 6)
+    procedure :: remesh_boundary => sp_remesh_noop ! fx_msh_sps.f90  -- most types no-op, 5 override (increment 6)
     procedure :: displace => sp_displace_noop ! co_pnt_dspl.f90 -- most types override (this increment)
     procedure :: relocate => sp_noop ! fx_dps_loc.f90  -- default no-op (increment 7)
     procedure :: correct_normal => sp_noop ! co_norm.f90     -- default no-op (increment 8)
@@ -105,6 +106,29 @@ module mod_special_point
       integer(i4), intent(in) :: nshockpoints(:)
       real(wp), intent(inout) :: dx_carry, dy_carry
     end subroutine sp_displace_if
+
+! ibfac_carry threads fx_msh_sps.f90's own persistent `ibfac` local (the
+! running count of boundary-mesh edges in ibndfac, growing as each
+! special point's remesh_boundary carves new boundary segments to route
+! around the shock hole) through every dispatch call in the
+! do isppnts=1,nspecpoints loop, exactly as the legacy subroutine's own
+! single shared local did across its if/elseif branches. ibndfac/xy stay
+! assumed-size (matching fx_msh_sps.f90's own dummy-argument shapes,
+! same ia/ja/corg workaround as sp_solve_if) since neither array's real
+! extent is known from any single dummy argument available here.
+    subroutine sp_remesh_if(this, xysh, xyshu, xyshd, ibndfac, nodcod, xy,&
+    &ishplistu, ishplistd, nshockpoints, nbfac, ibfac_carry)
+      import :: special_point_t, wp, i4, ndim
+      class(special_point_t), intent(inout) :: this
+      real(wp), intent(in) :: xysh(:, :, :), xyshu(:, :, :), xyshd(:, :, :)
+      integer(i4), intent(inout) :: ibndfac(3, *)
+      integer(i4), intent(in) :: nodcod(*)
+      real(wp), intent(in) :: xy(ndim, *)
+      integer(i4), intent(in) :: ishplistu(:, :), ishplistd(:, :)
+      integer(i4), intent(in) :: nshockpoints(:)
+      integer(i4), intent(in) :: nbfac
+      integer(i4), intent(inout) :: ibfac_carry
+    end subroutine sp_remesh_if
   end interface
 
 ! TP -- triple point (internal), nshe=4. Newton-solved via co_utp today.
@@ -128,6 +152,7 @@ module mod_special_point
   contains
     procedure :: solve_state => te_solve_state
     procedure :: displace => te_displace
+    procedure :: remesh_boundary => te_remesh_boundary
   end type trailing_edge_t
 
 ! RRX (curved=.false.) / RR (curved=.true.) -- regular reflection off a
@@ -142,6 +167,7 @@ module mod_special_point
   contains
     procedure :: solve_state => rr_solve_state
     procedure :: displace => rr_displace
+    procedure :: remesh_boundary => rr_remesh_boundary
   end type regular_reflection_t
 
 ! WPNRX/WPNRY/IPX/IPY/OPX/OPY -- floating points constrained to slide
@@ -156,6 +182,7 @@ module mod_special_point
   contains
     procedure :: solve_state => wf_solve_state
     procedure :: displace => wf_displace
+    procedure :: remesh_boundary => wf_remesh_boundary
   end type wall_float_t
 
 ! FWP -- floating wall point on a coloured (possibly curved) boundary,
@@ -165,6 +192,7 @@ module mod_special_point
     integer(i4) :: iclr = 0
   contains
     procedure :: solve_state => fwp_solve_state
+    procedure :: remesh_boundary => fwp_remesh_boundary
   end type floating_wall_point_t
 
 ! EP -- end point, nshe=1. Kept distinct from start_point_t despite
@@ -191,6 +219,7 @@ module mod_special_point
   contains
     procedure :: solve_state => conn_solve_state
     procedure :: displace => conn_displace
+    procedure :: remesh_boundary => conn_remesh_boundary
   end type connection_t
 
 contains
@@ -1711,16 +1740,642 @@ contains
     xyshu(2, ip2, ish2) = xyshu(2, ip1, ish1)
   end subroutine conn_displace
 
-! Shared default for remesh_boundary/relocate/correct_normal (still
-! their increment-2 minimal (this)-only signature -- increments 6-8
-! give each its own real signature the same way displace just did,
-! replacing this default with a dedicated sp_..._noop where needed).
-! Literally does nothing, matching today's empty if/elseif arms (e.g.
-! fx_msh_sps.f90's TP/QP/EP/C/SP branches, fx_dps_loc.f90's TP/QP/RRX/
-! EP/SP/C/TE branches, ...). This one CAN be shared as-is across all
-! types: it's bound directly on special_point_t itself (not overriding
-! a deferred binding in an extension), so its passed-object dummy
-! legitimately is the abstract base type.
+! Default remesh_boundary: does nothing, matching fx_msh_sps.f90's empty
+! TP/QP/EP/SP branches and its non-periodic 'C' branch (see
+! conn_remesh_boundary). Every code that reaches real work below
+! (WPNRX/WPNRY/IPX/IPY/OPX/OPY/FWP/RRX/RR/TE/PC) overrides this.
+  subroutine sp_remesh_noop(this, xysh, xyshu, xyshd, ibndfac, nodcod, xy,&
+  &ishplistu, ishplistd, nshockpoints, nbfac, ibfac_carry)
+    class(special_point_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :), xyshu(:, :, :), xyshd(:, :, :)
+    integer(i4), intent(inout) :: ibndfac(3, *)
+    integer(i4), intent(in) :: nodcod(*)
+    real(wp), intent(in) :: xy(ndim, *)
+    integer(i4), intent(in) :: ishplistu(:, :), ishplistd(:, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nbfac
+    integer(i4), intent(inout) :: ibfac_carry
+  end subroutine sp_remesh_noop
+
+! WPNRX/WPNRY/IPX/IPY/OPX/OPY: ports fx_msh_sps.f90's shared
+! IPX/IPY/OPX/OPY/FWP/WPNRX/WPNRY branch verbatim (lines 226-361) --
+! identical for all 6 wall_float_t codes (no axis/restore_only
+! branching in this chain at all; fwp_remesh_boundary below duplicates
+! the same body for FWP, exactly as the legacy if/elseif reached both
+! via one shared .or. condition). ibfac_carry replaces the enclosing
+! dispatch subroutine's own persistent `ibfac` local -- see sp_remesh_if.
+  subroutine wf_remesh_boundary(this, xysh, xyshu, xyshd, ibndfac, nodcod,&
+  &xy, ishplistu, ishplistd, nshockpoints, nbfac, ibfac_carry)
+    class(wall_float_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :), xyshu(:, :, :), xyshd(:, :, :)
+    integer(i4), intent(inout) :: ibndfac(3, *)
+    integer(i4), intent(in) :: nodcod(*)
+    real(wp), intent(in) :: xy(ndim, *)
+    integer(i4), intent(in) :: ishplistu(:, :), ishplistd(:, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nbfac
+    integer(i4), intent(inout) :: ibfac_carry
+
+    integer(i4), external :: findbedg
+    real(wp) :: x0, y0, s1, s2
+    integer(i4) :: i, ish1, ip1, iedg1, iedg2, i1, i2, ibc, ibf, idum1, idum2
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+    x0 = xyshd(1, ip1, ish1)
+    y0 = xyshd(2, ip1, ish1)
+    iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+    write (8, *) 'typespecpoints:', this%code
+    write (8, *) 's(1) ', s1, x0, y0, iedg1
+    if (iedg1 .eq. -1) then
+      write (8, *) 'failed matching 1st shock point of the shock n.', ish1
+      stop
+    else
+      write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg1), i=1, 2)
+    end if
+
+    x0 = xyshu(1, ip1, ish1)
+    y0 = xyshu(2, ip1, ish1)
+    iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
+    write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+    &(ibndfac(i, iedg2), i=1, 2)
+    write (8, *) 's(2) ', s2, x0, y0, iedg2
+    if (iedg2 .eq. -1) then
+      write (8, *) 'failed matching 2nd shock point of the shock n.', ish1
+      stop
+    end if
+
+    if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+    &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+      write (8, *) 's(', i, ') out of bounds', s1, s2
+      stop
+    end if
+    if (iedg2 .ne. iedg1) then
+      write (8, *) 'shock points (1) (2) not on the same bndry edge'
+      write (8, *) iedg1, iedg2
+      write (8, *) s1, s2
+      stop
+    end if
+
+    write (8, *) '**********************'
+    write (8, *) 'shock:', ish1
+    write (8, *) iedg1
+    write (8, *) '**********************'
+    if (iedg1 .gt. 0) then
+      i = iedg1
+      i1 = ibndfac(1, i)
+      i2 = ibndfac(2, i)
+      ibc = ibndfac(3, i)
+
+      if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
+        if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+          ibndfac(1, i) = ishplistu(ip1, ish1)
+          idum1 = i1
+          idum2 = ishplistd(ip1, ish1)
+        elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+          ibndfac(1, i) = ishplistd(ip1, ish1)
+          idum1 = i1
+          idum2 = ishplistu(ip1, ish1)
+        elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+          ibndfac(2, i) = ishplistd(ip1, ish1)
+          idum1 = i2
+          idum2 = ishplistu(ip1, ish1)
+        elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+          ibndfac(2, i) = ishplistu(ip1, ish1)
+          idum1 = i2
+          idum2 = ishplistd(ip1, ish1)
+        end if
+        do ibf = 1, nbfac
+          if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+          if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+        end do
+      else
+        ibndfac(3, i) = -ibc
+        write (8, *) 'removing background edge ', i, i1, i2
+
+        ibfac_carry = ibfac_carry + 1
+        ibndfac(3, ibfac_carry) = ibc
+        if (s1 .lt. s2) then
+          ibndfac(1, ibfac_carry) = i1
+          ibndfac(2, ibfac_carry) = ishplistd(ip1, ish1)
+        else
+          ibndfac(1, ibfac_carry) = i1
+          ibndfac(2, ibfac_carry) = ishplistu(ip1, ish1)
+        end if
+
+        ibfac_carry = ibfac_carry + 1
+        ibndfac(3, ibfac_carry) = ibc
+        if (s1 .lt. s2) then
+          ibndfac(1, ibfac_carry) = ishplistu(ip1, ish1)
+          ibndfac(2, ibfac_carry) = i2
+        else
+          ibndfac(1, ibfac_carry) = ishplistd(ip1, ish1)
+          ibndfac(2, ibfac_carry) = i2
+        end if
+      end if
+    end if
+  end subroutine wf_remesh_boundary
+
+! FWP: duplicates wf_remesh_boundary's body verbatim -- fx_msh_sps.f90
+! reaches this exact same code for FWP via the same shared .or.
+! condition (see wf_remesh_boundary's header); floating_wall_point_t is
+! a separate concrete type so Fortran can't share one override across
+! both without a common ancestor neither type has.
+  subroutine fwp_remesh_boundary(this, xysh, xyshu, xyshd, ibndfac, nodcod,&
+  &xy, ishplistu, ishplistd, nshockpoints, nbfac, ibfac_carry)
+    class(floating_wall_point_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :), xyshu(:, :, :), xyshd(:, :, :)
+    integer(i4), intent(inout) :: ibndfac(3, *)
+    integer(i4), intent(in) :: nodcod(*)
+    real(wp), intent(in) :: xy(ndim, *)
+    integer(i4), intent(in) :: ishplistu(:, :), ishplistd(:, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nbfac
+    integer(i4), intent(inout) :: ibfac_carry
+
+    integer(i4), external :: findbedg
+    real(wp) :: x0, y0, s1, s2
+    integer(i4) :: i, ish1, ip1, iedg1, iedg2, i1, i2, ibc, ibf, idum1, idum2
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+    x0 = xyshd(1, ip1, ish1)
+    y0 = xyshd(2, ip1, ish1)
+    iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+    write (8, *) 'typespecpoints:', this%code
+    write (8, *) 's(1) ', s1, x0, y0, iedg1
+    if (iedg1 .eq. -1) then
+      write (8, *) 'failed matching 1st shock point of the shock n.', ish1
+      stop
+    else
+      write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg1), i=1, 2)
+    end if
+
+    x0 = xyshu(1, ip1, ish1)
+    y0 = xyshu(2, ip1, ish1)
+    iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
+    write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+    &(ibndfac(i, iedg2), i=1, 2)
+    write (8, *) 's(2) ', s2, x0, y0, iedg2
+    if (iedg2 .eq. -1) then
+      write (8, *) 'failed matching 2nd shock point of the shock n.', ish1
+      stop
+    end if
+
+    if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+    &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+      write (8, *) 's(', i, ') out of bounds', s1, s2
+      stop
+    end if
+    if (iedg2 .ne. iedg1) then
+      write (8, *) 'shock points (1) (2) not on the same bndry edge'
+      write (8, *) iedg1, iedg2
+      write (8, *) s1, s2
+      stop
+    end if
+
+    write (8, *) '**********************'
+    write (8, *) 'shock:', ish1
+    write (8, *) iedg1
+    write (8, *) '**********************'
+    if (iedg1 .gt. 0) then
+      i = iedg1
+      i1 = ibndfac(1, i)
+      i2 = ibndfac(2, i)
+      ibc = ibndfac(3, i)
+
+      if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
+        if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+          ibndfac(1, i) = ishplistu(ip1, ish1)
+          idum1 = i1
+          idum2 = ishplistd(ip1, ish1)
+        elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+          ibndfac(1, i) = ishplistd(ip1, ish1)
+          idum1 = i1
+          idum2 = ishplistu(ip1, ish1)
+        elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+          ibndfac(2, i) = ishplistd(ip1, ish1)
+          idum1 = i2
+          idum2 = ishplistu(ip1, ish1)
+        elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+          ibndfac(2, i) = ishplistu(ip1, ish1)
+          idum1 = i2
+          idum2 = ishplistd(ip1, ish1)
+        end if
+        do ibf = 1, nbfac
+          if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+          if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+        end do
+      else
+        ibndfac(3, i) = -ibc
+        write (8, *) 'removing background edge ', i, i1, i2
+
+        ibfac_carry = ibfac_carry + 1
+        ibndfac(3, ibfac_carry) = ibc
+        if (s1 .lt. s2) then
+          ibndfac(1, ibfac_carry) = i1
+          ibndfac(2, ibfac_carry) = ishplistd(ip1, ish1)
+        else
+          ibndfac(1, ibfac_carry) = i1
+          ibndfac(2, ibfac_carry) = ishplistu(ip1, ish1)
+        end if
+
+        ibfac_carry = ibfac_carry + 1
+        ibndfac(3, ibfac_carry) = ibc
+        if (s1 .lt. s2) then
+          ibndfac(1, ibfac_carry) = ishplistu(ip1, ish1)
+          ibndfac(2, ibfac_carry) = i2
+        else
+          ibndfac(1, ibfac_carry) = ishplistd(ip1, ish1)
+          ibndfac(2, ibfac_carry) = i2
+        end if
+      end if
+    end if
+  end subroutine fwp_remesh_boundary
+
+! RRX/RR: ports fx_msh_sps.f90's shared 'RRX'/'RR' branch verbatim
+! (lines 787-910) -- no curved-vs-flat branching in this chain, both
+! variants reach here identically via the legacy .or. condition.
+  subroutine rr_remesh_boundary(this, xysh, xyshu, xyshd, ibndfac, nodcod,&
+  &xy, ishplistu, ishplistd, nshockpoints, nbfac, ibfac_carry)
+    class(regular_reflection_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :), xyshu(:, :, :), xyshd(:, :, :)
+    integer(i4), intent(inout) :: ibndfac(3, *)
+    integer(i4), intent(in) :: nodcod(*)
+    real(wp), intent(in) :: xy(ndim, *)
+    integer(i4), intent(in) :: ishplistu(:, :), ishplistd(:, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nbfac
+    integer(i4), intent(inout) :: ibfac_carry
+
+    integer(i4), external :: findbedg
+    real(wp) :: x0, y0, s1, s2
+    integer(i4) :: i, ish1, ish2, ip1, ip2, iedg1, iedg2, i1, i2, ibc, ibf,&
+    &idum1, idum2
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(2); i = this%leg(2) - 1; ip2 = 1 + i*(nshockpoints(ish2) - 1)
+
+    x0 = xyshd(1, ip2, ish2)
+    y0 = xyshd(2, ip2, ish2)
+    write (8, *) 'typespecpoints:', this%code
+    iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+    write (8, *) 's(1) ', s1, x0, y0, iedg1
+    if (iedg1 .eq. -1) then
+      write (8, *) 'failed matching 1st shock point of the shock n.', ish2
+      stop
+    else
+      write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg1), i=1, 2)
+    end if
+
+    x0 = xyshu(1, ip1, ish1)
+    y0 = xyshu(2, ip1, ish1)
+    iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
+    write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+    &(ibndfac(i, iedg2), i=1, 2)
+    write (8, *) 's(2) ', s2, x0, y0, iedg2
+    if (iedg2 .eq. -1) then
+      write (8, *) 'failed matching 2nd shock point of the shock n.', ish1
+      stop
+    end if
+
+    if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+    &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+      write (8, *) 'out of bounds', s1, s2
+      stop
+    end if
+    if (iedg1 .ne. iedg2) then
+      write (8, *) 'shock points (1) (2) not on the same bndry edge'
+      write (8, *) iedg1, iedg2
+      write (8, *) s1, s2
+      stop
+    end if
+
+    write (8, *) '**********************'
+    write (8, *) 'shock:', ish1
+    write (8, *) iedg1
+    write (8, *) '**********************'
+    if (iedg1 .gt. 0) then
+      i = iedg1
+      i1 = ibndfac(1, i)
+      i2 = ibndfac(2, i)
+      ibc = ibndfac(3, i)
+
+      if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
+        if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+          ibndfac(1, i) = ishplistu(ip1, ish1)
+          idum1 = i1
+          idum2 = ishplistd(ip2, ish2)
+        elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+          ibndfac(1, i) = ishplistd(ip2, ish2)
+          idum1 = i1
+          idum2 = ishplistu(ip1, ish1)
+        elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+          ibndfac(2, i) = ishplistd(ip2, ish2)
+          idum1 = i2
+          idum2 = ishplistu(ip1, ish1)
+        elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+          ibndfac(2, i) = ishplistu(ip1, ish1)
+          idum1 = i2
+          idum2 = ishplistd(ip2, ish2)
+        end if
+        do ibf = 1, nbfac
+          if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+          if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+        end do
+      else
+        ibndfac(3, i) = -ibc
+        write (8, *) 'removing background edge ', i, i1, i2
+
+        ibfac_carry = ibfac_carry + 1
+        ibndfac(3, ibfac_carry) = ibc
+        if (s1 .lt. s2) then
+          ibndfac(1, ibfac_carry) = i1
+          ibndfac(2, ibfac_carry) = ishplistd(ip2, ish2)
+        else
+          ibndfac(1, ibfac_carry) = i1
+          ibndfac(2, ibfac_carry) = ishplistu(ip1, ish1)
+        end if
+
+        ibfac_carry = ibfac_carry + 1
+        ibndfac(3, ibfac_carry) = ibc
+        if (s1 .lt. s2) then
+          ibndfac(1, ibfac_carry) = ishplistu(ip1, ish1)
+          ibndfac(2, ibfac_carry) = i2
+        else
+          ibndfac(1, ibfac_carry) = ishplistd(ip2, ish2)
+          ibndfac(2, ibfac_carry) = i2
+        end if
+      end if
+    end if
+  end subroutine rr_remesh_boundary
+
+! TE: ports fx_msh_sps.f90's 'TE' branch verbatim (lines 646-785), using
+! legs 1 and 3 of the 3 shock legs (leg 2 unused in this chain, matching
+! te_solve_state's same leg selection). ishel1 (fnd_phps.f90) is the
+! same external boundary-edge-crossing check the original called.
+  subroutine te_remesh_boundary(this, xysh, xyshu, xyshd, ibndfac, nodcod,&
+  &xy, ishplistu, ishplistd, nshockpoints, nbfac, ibfac_carry)
+    class(trailing_edge_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :), xyshu(:, :, :), xyshd(:, :, :)
+    integer(i4), intent(inout) :: ibndfac(3, *)
+    integer(i4), intent(in) :: nodcod(*)
+    real(wp), intent(in) :: xy(ndim, *)
+    integer(i4), intent(in) :: ishplistu(:, :), ishplistd(:, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nbfac
+    integer(i4), intent(inout) :: ibfac_carry
+
+    integer(i4), external :: findbedg, ishel1
+    real(wp) :: x0, y0, s1, x1, y1, x2, y2, x3, y3, x4, y4
+    integer(i4) :: i, ish1, ish2, ip1, ip2, iedg1, iedg2, i1, i2, ibc,&
+    &j1, j2, idum1
+
+    ish1 = this%ish(1); i = this%leg(1) - 1; ip1 = 1 + i*(nshockpoints(ish1) - 1)
+    ish2 = this%ish(3); i = this%leg(3) - 1; ip2 = 1 + i*(nshockpoints(ish2) - 1)
+
+    x0 = xysh(1, ip1, ish1)
+    y0 = xysh(2, ip1, ish1)
+    iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+    write (8, *) 'typespecpoints:', this%code
+    write (8, *) 's(1) ', s1, x0, y0, iedg1
+    if (iedg1 .eq. -1) then
+      write (8, *) 'failed matching 1st shock point of the shock n.', ish1
+      stop
+    else
+      write (8, *) 'shockpoint (1)', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg1), i=1, 2)
+    end if
+
+    i = iedg1
+    i1 = ibndfac(1, i)
+    i2 = ibndfac(2, i)
+    ibc = ibndfac(3, i)
+
+    ibndfac(3, i) = -ibc
+    write (8, *) 'removing background edge ', i, i1, i2
+
+    ibfac_carry = ibfac_carry + 1
+    ibndfac(3, ibfac_carry) = ibc
+    if (nodcod(i1) .lt. 0.0d0) then
+      ibndfac(1, ibfac_carry) = ishplistu(ip1, ish1)
+      ibndfac(2, ibfac_carry) = i2
+      j1 = 1
+    elseif (nodcod(i2) .lt. 0.0d0) then
+      ibndfac(1, ibfac_carry) = i1
+      ibndfac(2, ibfac_carry) = ishplistu(ip1, ish1)
+      j1 = 2
+    else
+      write (*, *) 'condition not considered'
+      stop
+    end if
+
+    x0 = xysh(1, ip2, ish2)
+    y0 = xysh(2, ip2, ish2)
+    iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+    write (8, *) 'typespecpoints:', this%code
+    write (8, *) 's(2) ', s1, x0, y0, iedg2
+    if (iedg2 .eq. -1) then
+      write (8, *) 'failed matching 1st shock point of the shock n.', ish2
+      stop
+    else
+      write (8, *) 'shockpoint (2)', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg2), i=1, 2)
+    end if
+
+    i = iedg2
+    i1 = ibndfac(1, i)
+    i2 = ibndfac(2, i)
+    ibc = ibndfac(3, i)
+
+    ibndfac(3, i) = -ibc
+    write (8, *) 'removing background edge ', i, i1, i2
+
+    ibfac_carry = ibfac_carry + 1
+    ibndfac(3, ibfac_carry) = ibc
+    if (nodcod(i1) .lt. 0.0d0) then
+      ibndfac(1, ibfac_carry) = ishplistu(ip2, ish2)
+      ibndfac(2, ibfac_carry) = i2
+      j2 = 1
+    elseif (nodcod(i2) .lt. 0.0d0) then
+      ibndfac(1, ibfac_carry) = i1
+      ibndfac(2, ibfac_carry) = ishplistu(ip2, ish2)
+      j2 = 2
+    else
+      write (*, *) 'condition not considered'
+      stop
+    end if
+
+    x1 = xy(1, ibndfac(1, ibfac_carry))
+    y1 = xy(2, ibndfac(1, ibfac_carry))
+    x2 = xy(1, ibndfac(2, ibfac_carry))
+    y2 = xy(2, ibndfac(2, ibfac_carry))
+    x3 = xy(1, ibndfac(1, ibfac_carry - 1))
+    y3 = xy(2, ibndfac(1, ibfac_carry - 1))
+    x4 = xy(1, ibndfac(2, ibfac_carry - 1))
+    y4 = xy(2, ibndfac(2, ibfac_carry - 1))
+
+    idum1 = ishel1(x1, y1, x1, y1, x2, y2, x3, y3, x4, y4)
+
+    if (idum1 .eq. 0.) then
+      if (j1 .eq. 1) then
+        ibndfac(1, ibfac_carry - 1) = ishplistu(ip2, ish2)
+      elseif (j1 .eq. 2) then
+        ibndfac(2, ibfac_carry - 1) = ishplistu(ip2, ish2)
+      else
+        write (*, *) 'condition not considered'
+        stop
+      end if
+
+      if (j2 .eq. 1) then
+        ibndfac(1, ibfac_carry) = ishplistu(ip1, ish1)
+      elseif (j2 .eq. 2) then
+        ibndfac(2, ibfac_carry) = ishplistu(ip1, ish1)
+      else
+        write (*, *) 'condition not considered'
+        stop
+      end if
+    end if
+  end subroutine te_remesh_boundary
+
+! C (periodic=.false.) / PC (periodic=.true.): ports fx_msh_sps.f90's
+! 'PC' branch verbatim (lines 363-644, point 1 then point 2 -- the two
+! blocks are byte-identical modulo which shinspps leg feeds ish1/ip1,
+! collapsed here into one do k=1,2 loop run in the same order); 'C' is a
+! confirmed no-op in this chain (empty branch in the original, opposite
+! of co_pnt_dspl.f90's C/PC split -- see conn_displace's header), so
+! non-periodic returns immediately.
+  subroutine conn_remesh_boundary(this, xysh, xyshu, xyshd, ibndfac,&
+  &nodcod, xy, ishplistu, ishplistd, nshockpoints, nbfac, ibfac_carry)
+    class(connection_t), intent(inout) :: this
+    real(wp), intent(in) :: xysh(:, :, :), xyshu(:, :, :), xyshd(:, :, :)
+    integer(i4), intent(inout) :: ibndfac(3, *)
+    integer(i4), intent(in) :: nodcod(*)
+    real(wp), intent(in) :: xy(ndim, *)
+    integer(i4), intent(in) :: ishplistu(:, :), ishplistd(:, :)
+    integer(i4), intent(in) :: nshockpoints(:)
+    integer(i4), intent(in) :: nbfac
+    integer(i4), intent(inout) :: ibfac_carry
+
+    integer(i4), external :: findbedg
+    real(wp) :: x0, y0, s1, s2
+    integer(i4) :: i, ish1, ip1, iedg1, iedg2, i1, i2, ibc, ibf, idum1,&
+    &idum2, k
+
+    if (.not. this%periodic) return
+
+    do k = 1, 2
+      ish1 = this%ish(k); i = this%leg(k) - 1
+      ip1 = 1 + i*(nshockpoints(ish1) - 1)
+
+      x0 = xyshd(1, ip1, ish1)
+      y0 = xyshd(2, ip1, ish1)
+      iedg1 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s1)
+      write (8, *) 'typespecpoints:', this%code
+      write (8, *) 's(1) ', s1, x0, y0, iedg1
+      if (iedg1 .eq. -1) then
+        write (8, *) 'failed matching 1st shock point of the shock n.', ish1
+        stop
+      else
+        write (8, *) 'shockpoint (1) ', x0, y0, ' falls within ',&
+        &(ibndfac(i, iedg1), i=1, 2)
+      end if
+
+      x0 = xyshu(1, ip1, ish1)
+      y0 = xyshu(2, ip1, ish1)
+      iedg2 = findbedg(xy, ndim, ibndfac, nbfac, x0, y0, s2)
+      write (8, *) 'shockpoint (2) ', x0, y0, ' falls within ',&
+      &(ibndfac(i, iedg2), i=1, 2)
+      write (8, *) 's(2) ', s2, x0, y0, iedg2
+      if (iedg2 .eq. -1) then
+        write (8, *) 'failed matching 2nd shock point of the shock n.', ish1
+        stop
+      end if
+
+      if (s1 .lt. 0.d0 .or. s1 .gt. 1.d0 .or.&
+      &s2 .lt. 0.d0 .or. s2 .gt. 1.d0) then
+        write (8, *) 's(', i, ') out of bounds', s1, s2
+        stop
+      end if
+      if (iedg2 .ne. iedg1) then
+        write (8, *) 'shock points (1) (2) not on the same bndry edge'
+        write (8, *) iedg1, iedg2
+        write (8, *) s1, s2
+        stop
+      end if
+
+      write (8, *) '**********************'
+      write (8, *) 'shock:', ish1
+      write (8, *) iedg1
+      write (8, *) '**********************'
+      if (iedg1 .gt. 0) then
+        i = iedg1
+        i1 = ibndfac(1, i)
+        i2 = ibndfac(2, i)
+        ibc = ibndfac(3, i)
+
+        if (nodcod(i1) .lt. 0 .or. nodcod(i2) .lt. 0) then
+          if (nodcod(i1) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(1, i) = ishplistu(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistd(ip1, ish1)
+          elseif (nodcod(i1) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(1, i) = ishplistd(ip1, ish1)
+            idum1 = i1
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .lt. s2) then
+            ibndfac(2, i) = ishplistd(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistu(ip1, ish1)
+          elseif (nodcod(i2) .lt. 0.d+0 .and. s1 .gt. s2) then
+            ibndfac(2, i) = ishplistu(ip1, ish1)
+            idum1 = i2
+            idum2 = ishplistd(ip1, ish1)
+          end if
+          do ibf = 1, nbfac
+            if (ibndfac(1, ibf) .eq. idum1) ibndfac(1, ibf) = idum2
+            if (ibndfac(2, ibf) .eq. idum1) ibndfac(2, ibf) = idum2
+          end do
+        else
+          ibndfac(3, i) = -ibc
+          write (8, *) 'removing background edge ', i, i1, i2
+
+          ibfac_carry = ibfac_carry + 1
+          ibndfac(3, ibfac_carry) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac_carry) = i1
+            ibndfac(2, ibfac_carry) = ishplistd(ip1, ish1)
+          else
+            ibndfac(1, ibfac_carry) = i1
+            ibndfac(2, ibfac_carry) = ishplistu(ip1, ish1)
+          end if
+
+          ibfac_carry = ibfac_carry + 1
+          ibndfac(3, ibfac_carry) = ibc
+          if (s1 .lt. s2) then
+            ibndfac(1, ibfac_carry) = ishplistu(ip1, ish1)
+            ibndfac(2, ibfac_carry) = i2
+          else
+            ibndfac(1, ibfac_carry) = ishplistd(ip1, ish1)
+            ibndfac(2, ibfac_carry) = i2
+          end if
+        end if
+      end if
+    end do
+  end subroutine conn_remesh_boundary
+
+! Shared default for relocate/correct_normal (still their increment-2
+! minimal (this)-only signature -- increments 7-8 give each its own
+! real signature the same way remesh_boundary just did, replacing this
+! default with a dedicated sp_..._noop where needed). Literally does
+! nothing, matching today's empty if/elseif arms (e.g. fx_dps_loc.f90's
+! TP/QP/RRX/EP/SP/C/TE branches, ...). This one CAN be shared as-is
+! across all types: it's bound directly on special_point_t itself (not
+! overriding a deferred binding in an extension), so its passed-object
+! dummy legitimately is the abstract base type.
   subroutine sp_noop(this)
     class(special_point_t), intent(inout) :: this
   end subroutine sp_noop
