@@ -23,13 +23,33 @@ module mod_newton_solve
 ! ".le." in co_shock/co_dc -- an immaterial difference (only matters at
 ! exact floating-point equality to 1e-7, never hit by a computed
 ! abs(y)*rel_eps in practice), standardized here to ".le.".
+!
+! Phase 3.5 increment 1 (ROADMAP.md #14): optional analytic Jacobian
+! (`jac`), replacing the FD double-loop below when supplied. Absent (the
+! default -- still true for co_dc/co_urr/co_uqp/co_utp until their own
+! increments add a `jac`), behavior is byte-for-byte identical to before.
+! `verify_jac` is a permanent, opt-in runtime cross-check: when a `jac`
+! is supplied, it also computes the FD Jacobian purely for comparison and
+! warns on disagreement, while still stepping with the analytic one --
+! meant to validate a new analytic Jacobian's derivation against real
+! solver traffic (many distinct iterates, not just a few hand-picked
+! sample points) before trusting it, then left available as a standing
+! safety net for any later analytic Jacobian added the same way.
 
   use mod_kinds, only: wp, i4
   implicit none(type, external)
   private
-  public :: newton_solve, residual_if
+  public :: newton_solve, residual_if, jacobian_if
 
   real(wp), parameter :: fd_eps_floor = 1.0e-7_wp
+! jac_check_* is deliberately loose, not a numerics tolerance: the FD
+! comparator itself carries roundoff noise (tiny fd_eps_floor-scale
+! perturbations divided back out) that a genuinely correct analytic
+! Jacobian will still disagree with at the ~1e-4 relative level on
+! entries with near-zero arguments -- this only needs to catch a real
+! derivation mistake (wrong sign, wrong term, swapped index), which
+! shows up as order-1 relative disagreement, not roundoff-level noise.
+  real(wp), parameter :: jac_check_rtol = 1.0e-4_wp, jac_check_atol = 1.0e-7_wp
 
   abstract interface
     function residual_if(i, y, ctx) result(r)
@@ -39,12 +59,19 @@ module mod_newton_solve
       class(*), intent(in) :: ctx
       real(wp) :: r
     end function residual_if
+
+    subroutine jacobian_if(y, ctx, g)
+      import :: wp
+      real(wp), intent(in) :: y(:)
+      class(*), intent(in) :: ctx
+      real(wp), intent(out) :: g(:, :)
+    end subroutine jacobian_if
   end interface
 
 contains
 
   subroutine newton_solve(n, y0, resid, ctx, damping, tol, fd_eps_rel, y,&
-  &ifail, log_unit, log_iter, detect_divergence, maxiter)
+  &ifail, log_unit, log_iter, detect_divergence, maxiter, jac, verify_jac)
     integer(i4), intent(in) :: n
     real(wp), intent(in) :: y0(n), damping, tol, fd_eps_rel
     procedure(residual_if) :: resid
@@ -54,12 +81,14 @@ contains
     integer(i4), intent(in), optional :: log_unit
     logical, intent(in), optional :: log_iter, detect_divergence
     integer(i4), intent(in), optional :: maxiter
+    procedure(jacobian_if), optional :: jac
+    logical, intent(in), optional :: verify_jac
     external solg
 
-    real(wp) :: yn(n), yn1(n), g(n, n), bb(n), dyn(n)
-    real(wp) :: dyn1, dum1, dum2, dum, dumold
-    integer(i4) :: i, j, k, icont, maxiter_eff
-    logical :: want_divergence, want_log_iter
+    real(wp) :: yn(n), yn1(n), g(n, n), gfd(n, n), bb(n), dyn(n)
+    real(wp) :: dum, dumold
+    integer(i4) :: i, j, icont, maxiter_eff
+    logical :: want_divergence, want_log_iter, want_verify_jac
 
     want_divergence = .false.
     if (present(detect_divergence)) want_divergence = detect_divergence
@@ -68,6 +97,8 @@ contains
     if (present(ifail)) ifail = .false.
     maxiter_eff = 500_i4
     if (present(maxiter)) maxiter_eff = maxiter
+    want_verify_jac = .false.
+    if (present(verify_jac)) want_verify_jac = verify_jac
 
     yn1 = y0
     icont = 0
@@ -78,22 +109,26 @@ contains
         bb(i) = resid(i, yn1, ctx)
       end do
 
+      if (present(jac)) then
+        call jac(yn, ctx, g)
+        if (want_verify_jac) then
+          call fd_jacobian(n, yn, resid, ctx, fd_eps_rel, gfd)
+          do i = 1, n
+            do j = 1, n
+              if (abs(g(i, j) - gfd(i, j)) .gt.&
+              &jac_check_atol + jac_check_rtol*abs(gfd(i, j))) then
+                if (present(log_unit)) then
+                  write (log_unit, *) 'JACOBIAN MISMATCH', i, j, g(i, j), gfd(i, j)
+                end if
+              end if
+            end do
+          end do
+        end if
+      else
 ! jacobian: central finite differences, relative perturbation fd_eps_rel
 ! of the current iterate, floored at fd_eps_floor absolute
-      do i = 1, n
-        do j = 1, n
-          do k = 1, n
-            yn1(k) = yn(k)
-          end do
-          dyn1 = abs(yn1(j))*fd_eps_rel
-          if (dyn1 .le. fd_eps_floor) dyn1 = fd_eps_floor
-          yn1(j) = yn(j) + dyn1
-          dum2 = resid(i, yn1, ctx)
-          yn1(j) = yn(j) - dyn1
-          dum1 = resid(i, yn1, ctx)
-          g(i, j) = (dum2 - dum1)/(2.0_wp*dyn1)
-        end do
-      end do
+        call fd_jacobian(n, yn, resid, ctx, fd_eps_rel, g)
+      end if
 
       call solg(n, n, g, bb, dyn)
       do i = 1, n
@@ -158,5 +193,37 @@ contains
 
     y = yn1
   end subroutine newton_solve
+
+! Central-finite-difference Jacobian at the base point yn, relative
+! perturbation fd_eps_rel of the current iterate, floored at
+! fd_eps_floor absolute. Factored out of newton_solve's main loop so it
+! can be called either as the sole Jacobian source (no `jac` supplied)
+! or, when `verify_jac` is set, purely as a cross-check against an
+! analytic `jac` -- same computation either way, not a behavior change
+! from the pre-3.5 inline double loop.
+  subroutine fd_jacobian(n, yn, resid, ctx, fd_eps_rel, g)
+    integer(i4), intent(in) :: n
+    real(wp), intent(in) :: yn(n), fd_eps_rel
+    procedure(residual_if) :: resid
+    class(*), intent(in) :: ctx
+    real(wp), intent(out) :: g(n, n)
+
+    real(wp) :: yp(n)
+    real(wp) :: dyn1, dum1, dum2
+    integer(i4) :: i, j
+
+    do i = 1, n
+      do j = 1, n
+        yp = yn
+        dyn1 = abs(yn(j))*fd_eps_rel
+        if (dyn1 .le. fd_eps_floor) dyn1 = fd_eps_floor
+        yp(j) = yn(j) + dyn1
+        dum2 = resid(i, yp, ctx)
+        yp(j) = yn(j) - dyn1
+        dum1 = resid(i, yp, ctx)
+        g(i, j) = (dum2 - dum1)/(2.0_wp*dyn1)
+      end do
+    end do
+  end subroutine fd_jacobian
 
 end module mod_newton_solve

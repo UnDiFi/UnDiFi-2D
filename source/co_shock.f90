@@ -42,10 +42,11 @@ subroutine co_shock(x1, x2, wshk, R14)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
-  use mod_newton_solve, only: newton_solve, residual_if
+  use mod_newton_solve, only: newton_solve, residual_if, jacobian_if
   use co_shock_ctx_m, only: shock_ctx_t
   implicit none(type, external)
   procedure(residual_if) :: f
+  procedure(jacobian_if) :: jf
   include 'paramt.h'
 
   real(wp) x1, x2, wshk, R14
@@ -101,7 +102,7 @@ subroutine co_shock(x1, x2, wshk, R14)
   y0(3) = uv
   y0(4) = w
 
-  call newton_solve(4_i4, y0, f, ctx, 0.2_wp, 1.0e-7_wp, 0.001_wp, yn1)
+  call newton_solve(4_i4, y0, f, ctx, 0.2_wp, 1.0e-7_wp, 0.001_wp, yn1, jac=jf)
 
   wshk = yn1(4)
   x1(1) = yn1(1)
@@ -152,6 +153,68 @@ real(wp) function f(i, y, ctx) result(r)
   end if
   return
 end function f
+
+! ************************************
+! Phase 3.5 increment 1 (ROADMAP.md #14): analytic Jacobian of f, closed-
+! form derivatives of the four R-H residuals w.r.t. (rov, pv, uv, w).
+! rom/pm/um/gam/delta/R2 are ctx invariants (zero derivative); R2 doesn't
+! appear below since r4's only y-dependence enters through rov/pv/uv.
+! Validated against fd_jacobian (mod_newton_solve.f90) at 500 randomized
+! sample points plus real solver traffic from a full regression run with
+! verify_jac=.true. before being trusted (see commit message).
+subroutine jf(y, ctx, g)
+  use mod_kinds, only: wp, i4
+  use co_shock_ctx_m, only: shock_ctx_t
+  implicit none(type, external)
+
+  real(wp), intent(in) :: y(:)
+  class(*), intent(in) :: ctx
+  real(wp), intent(out) :: g(:, :)
+
+  real(wp) rov, pv, uv, w, rom, pm, um, gam, delta, c, s
+
+  select type (ctx)
+  type is (shock_ctx_t)
+    rom = ctx%rom
+    pm = ctx%pm
+    um = ctx%um
+    gam = ctx%gam
+    delta = ctx%delta
+  end select
+
+  rov = y(1)
+  pv = y(2)
+  uv = y(3)
+  w = y(4)
+
+  c = gam/(gam - 1.0_wp)
+  s = sqrt(gam*pv/rov)
+
+! r1 = rov*(uv-w) - rom*(um-w)
+  g(1, 1) = uv - w
+  g(1, 2) = 0.0_wp
+  g(1, 3) = rov
+  g(1, 4) = -rov + rom
+
+! r2 = pv + rov*(uv-w)**2 - pm - rom*(um-w)**2
+  g(2, 1) = (uv - w)**2
+  g(2, 2) = 1.0_wp
+  g(2, 3) = 2.0_wp*rov*(uv - w)
+  g(2, 4) = -2.0_wp*rov*(uv - w) + 2.0_wp*rom*(um - w)
+
+! r3 = c*pv/rov + 0.5*(uv-w)**2 - c*pm/rom - 0.5*(um-w)**2
+  g(3, 1) = -c*pv/rov**2
+  g(3, 2) = c/rov
+  g(3, 3) = uv - w
+  g(3, 4) = -(uv - w) + (um - w)
+
+! r4 = sqrt(gam*pv/rov) + delta*uv - R2
+  g(4, 1) = -0.5_wp*s/rov
+  g(4, 2) = 0.5_wp*s/pv
+  g(4, 3) = delta
+  g(4, 4) = 0.0_wp
+
+end subroutine jf
 
 subroutine invmat(a, b, r)
   use mod_kinds, only: wp, i4
