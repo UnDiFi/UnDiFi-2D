@@ -295,10 +295,11 @@ subroutine co_dc(x1, x2, wdc)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
-  use mod_newton_solve, only: newton_solve, residual_if
+  use mod_newton_solve, only: newton_solve, residual_if, jacobian_if
   use co_dc_ctx_m, only: dc_ctx_t
   implicit none(type, external)
   procedure(residual_if) :: fdc
+  procedure(jacobian_if) :: jfdc
   include 'paramt.h'
 
   real(wp) x1, x2, wdc
@@ -338,7 +339,7 @@ subroutine co_dc(x1, x2, wdc)
   y0(6) = u2
   y0(7) = wdc
 
-  call newton_solve(7_i4, y0, fdc, ctx, 1.0_wp, 1.0e-10_wp, 0.01_wp, yn1)
+  call newton_solve(7_i4, y0, fdc, ctx, 1.0_wp, 1.0e-10_wp, 0.01_wp, yn1, jac=jfdc)
 
   wdc = yn1(7)
   x1(1) = yn1(1)
@@ -400,3 +401,71 @@ real(wp) function fdc(i, y, ctx) result(r)
 
   return
 end function fdc
+
+! ************************************
+! Phase 3.5 increment 2 (ROADMAP.md #14): analytic Jacobian of fdc,
+! closed-form derivatives of the 7 residuals w.r.t.
+! (ro1, p1, u1, ro2, p2, u2, w). gam/delta/R1/R2/S1/S2 are ctx
+! invariants (zero derivative). Sparse by construction: each residual
+! depends on at most 3 of the 7 unknowns. Validated the same way as
+! co_shock's jf (see mod_newton_solve.f90) before being trusted.
+subroutine jfdc(y, ctx, g)
+  use mod_kinds, only: wp, i4
+  use co_dc_ctx_m, only: dc_ctx_t
+  implicit none(type, external)
+
+  real(wp), intent(in) :: y(:)
+  class(*), intent(in) :: ctx
+  real(wp), intent(out) :: g(:, :)
+
+  real(wp) ro1, p1, ro2, p2, gam, delta, s1, s3, t2, t4
+
+  select type (ctx)
+  type is (dc_ctx_t)
+    gam = ctx%gam
+    delta = ctx%delta
+  end select
+
+  ro1 = y(1)
+  p1 = y(2)
+  ro2 = y(4)
+  p2 = y(5)
+
+  s1 = sqrt(gam*p1/ro1)
+  s3 = sqrt(gam*p2/ro2)
+  t2 = p1/ro1**gam
+  t4 = p2/ro2**gam
+
+  g = 0.0_wp
+
+! r1 = sqrt(gam*p1/ro1) + delta*u1 - R1
+  g(1, 1) = -0.5_wp*s1/ro1
+  g(1, 2) = 0.5_wp*s1/p1
+  g(1, 3) = delta
+
+! r2 = p1/ro1**gam - S1
+  g(2, 1) = -gam*t2/ro1
+  g(2, 2) = t2/p1
+
+! r3 = sqrt(gam*p2/ro2) - delta*u2 - R2
+  g(3, 4) = -0.5_wp*s3/ro2
+  g(3, 5) = 0.5_wp*s3/p2
+  g(3, 6) = -delta
+
+! r4 = p2/ro2**gam - S2
+  g(4, 4) = -gam*t4/ro2
+  g(4, 5) = t4/p2
+
+! r5 = p1 - p2
+  g(5, 2) = 1.0_wp
+  g(5, 5) = -1.0_wp
+
+! r6 = u1 - u2
+  g(6, 3) = 1.0_wp
+  g(6, 6) = -1.0_wp
+
+! r7 = w - u1
+  g(7, 3) = -1.0_wp
+  g(7, 7) = 1.0_wp
+
+end subroutine jfdc

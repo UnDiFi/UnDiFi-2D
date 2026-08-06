@@ -50,6 +50,15 @@ module mod_newton_solve
 ! derivation mistake (wrong sign, wrong term, swapped index), which
 ! shows up as order-1 relative disagreement, not roundoff-level noise.
   real(wp), parameter :: jac_check_rtol = 1.0e-4_wp, jac_check_atol = 1.0e-7_wp
+! The verify_jac comparison always uses this tight step, independent of
+! the caller's own fd_eps_rel (some solvers, e.g. co_dc, use a
+! deliberately large fd_eps_rel like 0.01 for Newton-step robustness --
+! central-difference truncation error on a power-law term at a 1% step
+! is itself ~1e-4 relative, large enough to swamp jac_check_rtol and
+! produce false-positive mismatches against a *correct* analytic
+! Jacobian; using the caller's own step would make verification only as
+! precise as the thing it's supposed to be checking).
+  real(wp), parameter :: jac_check_fd_eps_rel = 1.0e-6_wp
 
   abstract interface
     function residual_if(i, y, ctx) result(r)
@@ -112,7 +121,7 @@ contains
       if (present(jac)) then
         call jac(yn, ctx, g)
         if (want_verify_jac) then
-          call fd_jacobian(n, yn, resid, ctx, fd_eps_rel, gfd)
+          call fd_jacobian(n, yn, resid, ctx, jac_check_fd_eps_rel, gfd)
           do i = 1, n
             do j = 1, n
               if (abs(g(i, j) - gfd(i, j)) .gt.&
