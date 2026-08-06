@@ -22,10 +22,11 @@ subroutine co_uqp(y, wqpx, wqpy, yn1)
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
-  use mod_newton_solve, only: newton_solve, residual_if
+  use mod_newton_solve, only: newton_solve, residual_if, jacobian_if
   use co_uqp_ctx_m, only: uqp_ctx_t
   implicit none(type, external)
   procedure(residual_if) :: futp2
+  procedure(jacobian_if) :: jfutp2
   include 'paramt.h'
 
   integer(i4) i, j, nn
@@ -99,7 +100,7 @@ subroutine co_uqp(y, wqpx, wqpy, yn1)
 ! calcuate the downstream state and shock velocity
 ! with the newton-raphson method
   call newton_solve(nn, y, futp2, ctx, 0.5_wp, 1.0e-11_wp, 0.001_wp, yn1,&
-  &log_unit=8_i4)
+  &log_unit=8_i4, jac=jfutp2)
 
   write (8, *)
   do i = 1, nn
@@ -246,3 +247,176 @@ real(wp) function futp2(i, y, ctx) result(r)
   end if
 
 end function futp2
+
+! ************************************
+! Phase 3.5 increment 4 (ROADMAP.md #14): analytic Jacobian of futp2.
+! Equations 1-4 and 5-8 are two independent copies of the same R-H
+! block used in co_urr/co_shock (mass/momentum/tangential-velocity/
+! energy), each parameterized by its own shock angle (sx=y(22) for
+! block A/shock 24, sx=y(24) for block B/shock 35); unlike co_urr's
+! wn=wrr*(tauwx*nx+tauwy*ny), here wn=wqpx*nx+wqpy*ny directly (wqpx/
+! wqpy are ctx constants, no separate unknown scaling it), so d(wn)/dsx
+! = -(wqpx*tx+wqpy*ty) with no extra factor. Equation 9 is a plain
+! pressure-equality row (linear). Equation 10 is a parallel-velocity
+! condition between the two blocks' downstream states, differentiated
+! directly (not via its (a.b)^2-|a|^2|b|^2 = -(a x b)^2 identity, to
+! keep the derivation mechanical and easy to re-check against futp2's
+! own source). Rows 11-24 are the linear known-value rows, Jacobian =
+! ctx%a's row directly. Validated the same way as the other analytic
+! Jacobians (see mod_newton_solve.f90) before being trusted.
+subroutine jfutp2(y, ctx, g)
+  use mod_kinds, only: wp, i4
+  use mod_constants, only: naddholesmax, ndim, nprdbndmax
+  use co_uqp_ctx_m, only: uqp_ctx_t
+  implicit none(type, external)
+  include 'paramt.h'
+
+  real(wp), intent(in) :: y(:)
+  class(*), intent(in) :: ctx
+  real(wp), intent(out) :: g(:, :)
+
+  real(wp) :: a(14, 24), wqpx, wqpy
+  real(wp) :: ro1, p1, u1, v1, ro2, p2, u2, v2, sx
+  real(wp) :: gam, c
+  real(wp) :: nx, ny, tx, ty, un1, un2, ut1, ut2, wn, d1, d2, kk, kt
+  real(wp) :: uA, vA, uB, vB, aa, bb, cc
+  integer(i4) :: i, j
+
+  select type (ctx)
+  type is (uqp_ctx_t)
+    a = ctx%a
+    wqpx = ctx%wqpx
+    wqpy = ctx%wqpy
+  end select
+
+  gam = ga
+  c = gam/(gam - 1.0_wp)
+
+  g = 0.0_wp
+
+! ---- block A: eq 1-4, shock 24 ----
+  ro1 = y(5); p1 = y(6); u1 = y(7); v1 = y(8)
+  ro2 = y(13); p2 = y(14); u2 = y(15); v2 = y(16)
+  sx = y(22)
+
+  tx = cos(sx); ty = sin(sx)
+  nx = -ty; ny = tx
+
+  un1 = u1*nx + v1*ny
+  un2 = u2*nx + v2*ny
+  ut1 = u1*tx + v1*ty
+  ut2 = u2*tx + v2*ty
+  kk = wqpx*nx + wqpy*ny ! wn = kk
+  kt = wqpx*tx + wqpy*ty ! d(wn)/d(sx) = -kt
+  wn = kk
+  d1 = un1 - wn
+  d2 = un2 - wn
+
+  g(1, 5) = un1 - wn
+  g(1, 13) = wn - un2
+  g(1, 7) = ro1*nx
+  g(1, 8) = ro1*ny
+  g(1, 15) = -ro2*nx
+  g(1, 16) = -ro2*ny
+  g(1, 22) = -ro1*ut1 + ro2*ut2 + kt*(ro1 - ro2)
+
+  g(2, 6) = 1.0_wp
+  g(2, 14) = -1.0_wp
+  g(2, 5) = d1**2
+  g(2, 13) = -d2**2
+  g(2, 7) = 2.0_wp*ro1*d1*nx
+  g(2, 8) = 2.0_wp*ro1*d1*ny
+  g(2, 15) = -2.0_wp*ro2*d2*nx
+  g(2, 16) = -2.0_wp*ro2*d2*ny
+  g(2, 22) = 2.0_wp*ro1*d1*(-ut1 + kt) - 2.0_wp*ro2*d2*(-ut2 + kt)
+
+  g(3, 7) = tx
+  g(3, 8) = ty
+  g(3, 15) = -tx
+  g(3, 16) = -ty
+  g(3, 22) = un1 - un2
+
+  g(4, 5) = -c*p1/ro1**2
+  g(4, 6) = c/ro1
+  g(4, 13) = c*p2/ro2**2
+  g(4, 14) = -c/ro2
+  g(4, 7) = d1*nx
+  g(4, 8) = d1*ny
+  g(4, 15) = -d2*nx
+  g(4, 16) = -d2*ny
+  g(4, 22) = d1*(-ut1 + kt) - d2*(-ut2 + kt)
+
+! ---- block B: eq 5-8, shock 35 ----
+  ro1 = y(9); p1 = y(10); u1 = y(11); v1 = y(12)
+  ro2 = y(17); p2 = y(18); u2 = y(19); v2 = y(20)
+  sx = y(24)
+
+  tx = cos(sx); ty = sin(sx)
+  nx = -ty; ny = tx
+
+  un1 = u1*nx + v1*ny
+  un2 = u2*nx + v2*ny
+  ut1 = u1*tx + v1*ty
+  ut2 = u2*tx + v2*ty
+  kk = wqpx*nx + wqpy*ny
+  kt = wqpx*tx + wqpy*ty
+  wn = kk
+  d1 = un1 - wn
+  d2 = un2 - wn
+
+  g(5, 9) = un1 - wn
+  g(5, 17) = wn - un2
+  g(5, 11) = ro1*nx
+  g(5, 12) = ro1*ny
+  g(5, 19) = -ro2*nx
+  g(5, 20) = -ro2*ny
+  g(5, 24) = -ro1*ut1 + ro2*ut2 + kt*(ro1 - ro2)
+
+  g(6, 10) = 1.0_wp
+  g(6, 18) = -1.0_wp
+  g(6, 9) = d1**2
+  g(6, 17) = -d2**2
+  g(6, 11) = 2.0_wp*ro1*d1*nx
+  g(6, 12) = 2.0_wp*ro1*d1*ny
+  g(6, 19) = -2.0_wp*ro2*d2*nx
+  g(6, 20) = -2.0_wp*ro2*d2*ny
+  g(6, 24) = 2.0_wp*ro1*d1*(-ut1 + kt) - 2.0_wp*ro2*d2*(-ut2 + kt)
+
+  g(7, 11) = tx
+  g(7, 12) = ty
+  g(7, 19) = -tx
+  g(7, 20) = -ty
+  g(7, 24) = un1 - un2
+
+  g(8, 9) = -c*p1/ro1**2
+  g(8, 10) = c/ro1
+  g(8, 17) = c*p2/ro2**2
+  g(8, 18) = -c/ro2
+  g(8, 11) = d1*nx
+  g(8, 12) = d1*ny
+  g(8, 19) = -d2*nx
+  g(8, 20) = -d2*ny
+  g(8, 24) = d1*(-ut1 + kt) - d2*(-ut2 + kt)
+
+! r9 = p1 - p2 (block A's downstream p vs block B's downstream p)
+  g(9, 14) = 1.0_wp
+  g(9, 18) = -1.0_wp
+
+! r10 = (u1*u2+v1*v2)**2 - (u1**2+v1**2)*(u2**2+v2**2)
+  uA = y(15); vA = y(16); uB = y(19); vB = y(20)
+  aa = uA*uB + vA*vB
+  bb = uA**2 + vA**2
+  cc = uB**2 + vB**2
+  g(10, 15) = 2.0_wp*(aa*uB - uA*cc)
+  g(10, 16) = 2.0_wp*(aa*vB - vA*cc)
+  g(10, 19) = 2.0_wp*(aa*uA - bb*uB)
+  g(10, 20) = 2.0_wp*(aa*vA - bb*vB)
+
+! rows 11-24: linear known-value rows, Jacobian = ctx%a's row directly
+  do i = 11, 24
+    do j = 1, 24
+      g(i, j) = a(i - 10, j)
+    end do
+  end do
+
+end subroutine jfutp2
