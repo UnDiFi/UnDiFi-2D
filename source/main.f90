@@ -8,6 +8,7 @@ program undifi_2d
   use mod_shock_system, only: xysh, zroeshuold, zroeshdold, norsh, wsh,&
   &xyshnew, norshnew, wshnew, wshmean, zroeshuoldnew, zroeshdoldnew,&
   &shock_system_init, shock_system_refresh
+  use mod_shock_advance, only: advance
   implicit none(type, external)
 
 ! ********************************************************************************************************************************
@@ -98,7 +99,7 @@ program undifi_2d
 !     .. local scalars ..
   integer(i4) i,&
   &nshockpointsold(nshmax), ish,&
-  &nholes, totshockpoints, ii,&
+  &nholes, ii,&
   &nvt, ifail, nsteps, nbegin
 
 !     background(0)/fitting(1)/backup(2) meshes -- see mod_mesh (issue #13)
@@ -1056,12 +1057,6 @@ program undifi_2d
 !  in the connectivity
 ! **********************************************************************
 
-      write (*, 1001, advance='no') 'readmesh               -->  '
-      fname(1:9) = fname(1:7)//".1"
-      fndbnds = .false.
-      call readmesh(fit, fname, fndbnds)
-      write (*, 1002) ' ok'
-
       ! TODO: check whether FX_USTATE should be added here ...
 
 ! **********************************************************************
@@ -1069,120 +1064,19 @@ program undifi_2d
 !  the shocked grid (1); the shocked grid contains "wrong" values in
 !  the phantom nodes but these will be changed at a later stage in
 !  interp() we need to perform this copy here, since the shockmov()
-!  routine works on nodal values of grid (0)
+!  routine works on nodal values of grid (0). Updates nodal values in
+!  all the shock points of grid (0) using R-H relations and compute the
+!  shock speed. Prepares grid velocity for the corrector solve.
+!  (mod_shock_advance.f90, ROADMAP.md #14 3.6 -- was duplicated inline
+!  with the loop-end block below, differing only in which shadow-array
+!  set is targeted and in this grid-velocity prep)
 ! **********************************************************************
 
-      totshockpoints = 2*nshmax*npshmax
-
-      write (*, 1001, advance='no') 'zroe(1)->zroe(0)       -->  '
-
-      if (fit%npoin .eq. (bkg%npoin + totshockpoints)) then
-
-        call dcopy(ndof*fit%npoin, fit%zroe, 1, bkg%zroe, 1)
-        write (*, 1002) ' ok'
-
-      else
-
-!         the nof gridpoints in grid(1) must equal the number of
-!         gridpoints on the background mesh + 2 * nshockpoints
-
-        write (6, *) 'there is a mismatch in the nof gridpoints'
-        write (6, *) 'btw grid(0) and grid(1)'
-        write (*, *) bkg%npoin, totshockpoints
-        write (*, *) fit%npoin, totshockpoints
-        error stop 1
-
-      end if
-
-! **********************************************************************
-!  Updates nodal values in all the shock points of grid (0) using R-H
-!  relations and compute the shock speed
-!  Note: xysh coordinates are used only to write tecplot file but not
-!        elsewhere
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'co_state_dps           -->  '
-      call co_state_dps(&
-      &xyshnew,&
-      &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
-      &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
-      &zroeshuoldnew,&
-      &zroeshdoldnew,&
-      &norshnew,&
-      &wshnew,&
-      &nshocks,&
-      &nshockpoints,&
-      &nshocksegs,&
-      &typeshocks,&
-      &i)
-      write (*, 1002) ' ok'
-
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'fx_state_dps           -->  '
-      call fx_state_dps(&
-      &xyshnew,&                                           ! not used
-      &bkg%xy(1, bkg%npoin + 1),&                     ! upstream   coord.
-      &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
-      &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream   state
-      &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
-      &zroeshuoldnew,&
-      &zroeshdoldnew,&
-      &norshnew,&
-      &wshnew,&
-      &nshocks,&
-      &nshockpoints,&
-      &nshocksegs,&
-      &typeshocks,&
-      &i,&
-      &nspecpoints,&
-      &typespecpoints,&
-      &shinspps,&
-      &ispclr,&
-      &bkg%ia,&
-      &bkg%ja,&
-      &bkg%iclr,&
-      &bkg%nclr,&
-      &bkg%xy)
-      write (*, 1002) ' ok'
-
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'zroesh(0)->zroesh(1)   -->  '
-      call dcopy(ndof*totshockpoints,&
-      &bkg%zroe(1, bkg%npoin + 1), 1,&
-      &fit%zroe(1, bkg%npoin + 1), 1)
-      write (*, 1002) ' ok'
-
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'calc_vel               -->  '
-      call calc_vel(&
-      &bkg%npoin,&
-      &varray,&
-      &dtco,&
-      &bkg%xy,&
-      &wsh,& !WSHnew?
-      &i,&
-      &'n',&
-      &nowtime,&
-      &testcase)
-      write (*, 1002) ' ok'
-
-! **********************************************************************
-!  It gives to eulfs information about grid velocity (corrector step)
-! **********************************************************************
-
-      if (EULFS) then
-        write (*, 1001, advance='no') 'solzne                 -->   '
-        call solzne(&
-        &velfile,&
-        &varray,&
-        &ndim,&
-        &bkg%npoin + 2*npshmax*nshmax,&
-        &mode)
-        write (*, 1002) ' ok'
-      end if
+      fname(1:9) = fname(1:7)//".1"
+      call advance(bkg, fit, fname, i, nshocks, nshockpoints, nshocksegs,&
+      &typeshocks, nspecpoints, typespecpoints, shinspps, ispclr,&
+      &new_shadow=.true., eulfs=eulfs, varray=varray, velfile=velfile,&
+      &mode=mode, testcase=testcase, dt=dtco, velflag='n')
 
 ! **********************************************************************
 !  It generates the new mesh
@@ -1379,12 +1273,6 @@ program undifi_2d
 !  in the connectivity
 ! **********************************************************************
 
-    write (*, 1001, advance='no') 'readmesh               -->  '
-    fname(1:9) = fname(1:7)//".1"
-    fndbnds = .false.
-    call readmesh(fit, fname, fndbnds)
-    write (*, 1002) ' ok'
-
 ! **********************************************************************
 !  TODO: comment this procedure
 ! **********************************************************************
@@ -1395,35 +1283,6 @@ program undifi_2d
 !    +   nshocks,
 !    +   nshockpoints,
 !    +   nshocksegs)
-
-! **********************************************************************
-!  Update the nodal values on the backgroud grid (0) using values of
-!  the shocked grid (1); the shocked grid contains "wrong" values in
-!  the phantom nodes but these will be changed at a later stage in
-!  interp() we need to perform this copy here, since the shockmov()
-!  routine works on nodal values of grid (0)
-! **********************************************************************
-
-    totshockpoints = 2*nshmax*npshmax
-
-    write (*, 1001, advance='no') 'zroe(1)->zroe(0)       -->  '
-    if (fit%npoin .eq. (bkg%npoin + totshockpoints)) then
-      call dcopy(ndof*fit%npoin, fit%zroe, 1,&
-      &bkg%zroe, 1)
-
-      write (*, 1002) ' ok'
-
-    else
-
-!       the nof gridpoints in grid(1) must equal the number of
-!       gridpoints on the background mesh + 2 x nshockpoints
-
-      write (6, *) 'there is a mismatch in the nof gridpoints'
-      write (6, *) 'btw grid(0) and grid(1)'
-      write (*, *) bkg%npoin, totshockpoints
-      write (*, *) fit%npoin, totshockpoints
-      error stop 1
-    end if
 
 !     SHOCKmov updates nodal values in the shock points of grid (0)
 !     computes R-H relations, moves the shock
@@ -1451,69 +1310,21 @@ program undifi_2d
 !    &     nshocks,nshockpoints,nshocksegs)
 
 ! **********************************************************************
-!  Update nodal values in all the shock points of grid (0) using R-H
-!  relations and compute the shock speed
+!  Read the mesh generated by triangle, update the nodal values on the
+!  background grid (0) from the shocked grid (1), update nodal values in
+!  all the shock points of grid (0) using R-H relations, compute the
+!  shock speed, fix and correct the nodal values/shock speed in all
+!  special points, and copy the updated shock state back onto grid (1).
+!  (mod_shock_advance.f90, ROADMAP.md #14 3.6 -- was duplicated inline
+!  with the mid-loop block above; no grid-velocity prep follows here,
+!  since there is no further solve this iteration)
 ! **********************************************************************
 
-    write (*, 1001, advance='no') 'co_state_dps           -->  '
-    call co_state_dps(&
-    &xysh,&
-    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
-    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
-    &zroeshuold,& !ZROESHuOLDnew?
-    &zroeshdold,& !ZROESHdOLDnew?
-    &norsh,&      !NORSHnew?
-    &wsh,&        !WSHnew?
-    &nshocks,&
-    &nshockpoints,&
-    &nshocksegs,&
-    &typeshocks,&
-    &i)
-    write (*, 1002) ' ok'
-
-! **********************************************************************
-!  Fix and correct the nodal values and shock speed in all special
-!  point using the correct s-s interaction relation
-! **********************************************************************
-
-    write (*, 1001, advance='no') 'fx_state_dps           -->  '
-    call fx_state_dps(&
-    &xysh,& !XYSHnew?
-    &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
-    &bkg%xy(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream coord.
-    &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
-    &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
-    &zroeshuold,& !ZROESHuOLDnew?
-    &zroeshdold,& !ZROESHdOLDnew?
-    &norsh,&      !NORSHnew?
-    &wsh,&        !WSHnew?
-    &nshocks,&
-    &nshockpoints,&
-    &nshocksegs,&
-    &typeshocks,&
-    &i,&
-    &nspecpoints,&
-    &typespecpoints,&
-    &shinspps,&
-    &ispclr,&
-    &bkg%ia,&
-    &bkg%ja,&
-    &bkg%iclr,&
-    &bkg%nclr,&
-    &bkg%xy)
-    write (*, 1002) ' ok'
-
-! **********************************************************************
-!  Update the nodal values of shocks on the grid (1)
-!  Note: we need to perform this copy here, since the fx_state_sps and
-!        co_state_dps routines work on nodal values of grid (0)
-! **********************************************************************
-
-    write (*, 1001, advance='no') 'zroesh(0)->zroesh(1)   -->  '
-    call dcopy(ndof*totshockpoints,&
-    &bkg%zroe(1, bkg%npoin + 1), 1,&
-    &fit%zroe(1, bkg%npoin + 1), 1)
-    write (*, 1002) ' ok'
+    fname(1:9) = fname(1:7)//".1"
+    call advance(bkg, fit, fname, i, nshocks, nshockpoints, nshocksegs,&
+    &typeshocks, nspecpoints, typespecpoints, shinspps, ispclr,&
+    &new_shadow=.false., eulfs=eulfs, varray=varray, velfile=velfile,&
+    &mode=mode, testcase=testcase)
 
 ! **********************************************************************
 !  Calculate the mean shock velocity
