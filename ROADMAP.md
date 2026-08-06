@@ -371,14 +371,29 @@ missed by the initial research pass and found only once real end-to-end
 regression testing actually worked — see the harness-fix commits from
 2026-08-05). `main.f90` needed zero edits for any of this (every dispatch
 chain's external signature was unchanged) and is therefore nowhere near the
-400-line target — that depends on 3.6/3.7, still not started. 3.5 (analytic
-Jacobians) also not started. Six known pre-existing latent bugs in the
+400-line target — that depends on 3.7, tracked separately as issue #15.
+Six known pre-existing latent bugs in the
 original dispatch chains were found and preserved bit-for-bit rather than
 fixed (documented in code comments at each site); two separate, unrelated
 Newton-solve infinite-loop bugs (`co_shock`'s uninitialized seed,
 `co_dc`'s unreachable tolerance) were found and fixed, since — unlike the
 preserved latent bugs — they made the code non-terminating rather than
 merely numerically different.
+
+**Update, 2026-08-07: 3.5 and 3.6 are also done, closing issue #14.** 3.5
+(analytic Jacobians) gave all five Newton-solve call sites
+(`co_shock` x2, `co_dc`, `co_urr`, `co_uqp`, `co_utp`) hand-derived analytic
+Jacobians wired through a shared `mod_newton_solve.f90`, each cross-checked
+at runtime against its own FD Jacobian (`verify_jac`) over tens of thousands
+of real Newton iterations before being trusted; FD remains the fallback
+whenever a caller doesn't supply `jac`. 3.6 collapsed `main.f90`'s two
+duplicated predictor/corrector "absorb the mesh into the shock state"
+sequences into `mod_shock_advance.f90`'s `subroutine advance`. All 11
+roadmap-tracked regression fixtures (10 checksum-comparable, `ShockVortex`
+excluded per a pre-existing harness/case mismatch) were re-verified after
+every increment; zero unexplained numeric drift throughout. Issue #14 is
+closed; 3.7 (`flow_solver_t`, the last Phase-3 item, `main.f90` under 400
+lines) continues as issue #15.
 
 ## Phase 4 — Performance and shared-memory parallelism (OpenMP)
 
