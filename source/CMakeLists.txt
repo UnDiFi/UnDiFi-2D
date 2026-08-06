@@ -17,6 +17,7 @@ set(UNDIFI2D_SOURCES
   mod_shock_advance.f90
   mod_solver_iface.f90
   mod_eulfs_solver.f90
+  mod_neo_solver.f90
   mod_setbndrynodeptr.f90
   fx_msh_sps.f90
   co_utp.f90
