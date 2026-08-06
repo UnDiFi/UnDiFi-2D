@@ -15,6 +15,7 @@ set(UNDIFI2D_SOURCES
   mod_special_point.f90
   mod_special_point_registry.f90
   mod_shock_advance.f90
+  mod_solver_iface.f90
   mod_setbndrynodeptr.f90
   fx_msh_sps.f90
   co_utp.f90
