@@ -441,6 +441,48 @@ Order set by the Phase-0.5 profile, but the expected ranking:
 cylinder case; identical results within Phase-0 tolerance; OMP and serial
 builds both in CI.
 
+**Status as of 2026-08-07: 4.1 done** (`mod_search.f90`, a uniform bin grid
+-- not a k-d-tree, since mesh cell sizes are roughly uniform within one
+`DXCELL`-controlled refinement level; the module's `query_point`/
+`query_segment` interface can host a k-d-tree later if a non-uniform case
+needs it). Both named consumers retrofitted: `fnd_phps.f90`'s shock-
+segment/cell-crossing scan and `interp.f90`'s `finder`-based phantom-
+point/cell-containment scan (via a new `finder_search`, since `finder`
+itself is also called directly by `mod_special_point.f90` far too rarely
+to need the optimization, and touching it would only add risk). Both
+build a fresh grid per call rather than sharing one across `main.f90` --
+mesh regenerates every outer iteration, and redundant O(nelem)
+construction is trivial next to the O(N²)-ish scans it replaces.
+Regression-verified (10-fixture sweep, candidate values checked
+bit-identical to already-characterized day-to-day environmental drift,
+not new drift). No timing/speedup measurement performed — the exit
+criterion's "level-3 cylinder case" isn't checked into the repo (only
+level-0, `DXCELL=0.10`, exists; level-3 would be `DXCELL=0.0125` by
+inference from the documented level-4 value) and generating it plus
+scaling-benchmark tooling is separate follow-up work.
+
+**Scoping research also found two things this table's text didn't
+anticipate**, left for whoever picks up 4.2:
+- **`disc%solve_jumps` doesn't exist.** It's aspirational text from
+  Phase 3's original design sketch; `discontinuity_t` shipped with zero
+  type-bound procedures (Phase 3 built the special-point side instead).
+  The real 4.2 target is the still-standalone `co_state_dps.f90` (calls
+  `co_shock`/`co_dc` per point, both already reentrant via Phase 3.5's
+  per-call Newton contexts).
+- **Two real thread-safety hazards sit directly in 4.2's named files**,
+  beyond the `open(8,...)` issue 4.5 already anticipates: `co_state_dps.f90`
+  writes every loop iteration to `mod_freestream`'s module-global scratch
+  (`z1m/z1v/.../z4m/z4v`) -- harmless serially (write-only, silently
+  overwritten), a real data race under `!$omp parallel do`. Phase 3
+  already fixed the identical pattern in `mod_special_point.f90`'s
+  `tp_solve_state` by localizing the variables; `co_state_dps.f90` itself
+  was never converted and needs the same fix before 4.2 lands. Separately,
+  `co_norm.f90`'s sign-flip pass is a count-then-bulk-flip reduction
+  (needs `omp reduction` + a barrier), not a naively parallel loop like
+  its main per-point normal-computation loop (which has no such hazard).
+
+4.2-4.6 and all OpenMP build/CI/benchmark infrastructure: not started.
+
 ## Phase 5 — Distributed memory (MPI / coarrays)
 
 Two distinct parallelisations, do not conflate them:
