@@ -647,22 +647,28 @@ program undifi_2d
 !       memory allocation.
 
       write (*, 1001, advance='no') 'copy sh(0) in sh(1)    -->  '
-      call dcopy(ndim*npshmax*nshmax, xysh, 1, xyshnew, 1)
 !     zroeshdold/zroeshuold are (ndof, npshmax, nshmax), not (ndim, ...)
-!     like xysh/norsh/wsh -- the dcopy calls below used to read
-!     `ndim*npshmax*nshmax` (element count) here too. Since ndof is the
-!     fastest-varying dimension, `ndim*npshmax*nshmax` elements is
-!     exactly (ndim/ndof)*nshmax = 5 whole per-shock slices (out of the
-!     nshmax=10 max), not "half of every point's dof" -- so this
-!     silently left shock slots 6-10 uncopied (stale) on every UNSTEADY
-!     predictor step, for any case with more than 5 shocks. The
-!     analogous copy from bkg%zroe elsewhere in this file already used
-!     ndof correctly; this one didn't. Fixed here (Phase 4, ROADMAP.md
-!     #16, found while scoping 4.4's dcopy cleanup).
-      call dcopy(ndof*npshmax*nshmax, zroeshdold, 1, zroeshdoldnew, 1)
-      call dcopy(ndof*npshmax*nshmax, zroeshuold, 1, zroeshuoldnew, 1)
-      call dcopy(ndim*npshmax*nshmax, norsh, 1, norshnew, 1)
-      call dcopy(ndim*npshmax*nshmax, wsh, 1, wshnew, 1)
+!     like xysh/norsh/wsh -- these dcopy calls used to read
+!     `ndim*npshmax*nshmax` (element count) for zroeshdold/zroeshuold
+!     too. Since ndof is the fastest-varying dimension,
+!     `ndim*npshmax*nshmax` elements is exactly (ndim/ndof)*nshmax = 5
+!     whole per-shock slices (out of the nshmax=10 max), not "half of
+!     every point's dof" -- so this silently left shock slots 6-10
+!     uncopied (stale) on every UNSTEADY predictor step, for any case
+!     with more than 5 shocks. Fixed here (Phase 4, ROADMAP.md #16,
+!     found while scoping 4.4's dcopy cleanup) alongside 4.4 itself:
+!     each array's declared bound is the compile-time max (npshmax=500
+!     points, nshmax=10 shocks), but real cases use far fewer of
+!     either, so a flat dcopy over the whole declared extent copies
+!     mostly padding. Looping per real shock and copying only its real
+!     nshockpoints(ish) removes that waste.
+      do ish = 1, nShocks
+        call dcopy(ndim*nshockpoints(ish), xysh(1, 1, ish), 1, xyshnew(1, 1, ish), 1)
+        call dcopy(ndof*nshockpoints(ish), zroeshdold(1, 1, ish), 1, zroeshdoldnew(1, 1, ish), 1)
+        call dcopy(ndof*nshockpoints(ish), zroeshuold(1, 1, ish), 1, zroeshuoldnew(1, 1, ish), 1)
+        call dcopy(ndim*nshockpoints(ish), norsh(1, 1, ish), 1, norshnew(1, 1, ish), 1)
+        call dcopy(ndim*nshockpoints(ish), wsh(1, 1, ish), 1, wshnew(1, 1, ish), 1)
+      end do
       write (*, 1002) ' ok'
 
 ! **********************************************************************
@@ -890,7 +896,9 @@ program undifi_2d
 !       call dcopy(ndim*npshmax*nshmax,zroeshdold,1,zroeshdoldnew,1)
 !       call dcopy(ndim*npshmax*nshmax,zroeshuold,1,zroeshuoldnew,1)
 !       call dcopy(ndim*npshmax*nshmax,norsh,1,norshnew,1)
-      call dcopy(ndim*npshmax*nshmax, wshnew, 1, wsh, 1)
+      do ish = 1, nShocks
+        call dcopy(ndim*nshockpoints(ish), wshnew(1, 1, ish), 1, wsh(1, 1, ish), 1)
+      end do
 !       write(*,1002)' ok'
 
     end if ! UNSTEADY TODO: check the variables in this part ...
@@ -1164,12 +1172,16 @@ program undifi_2d
     if (UNSTEADY) then
 
       write (*, 1001, advance='no') 'copy sh(1) in sh(0)    -->  '
-!     see the matching comment at the mirror-direction copy above (~line
-!     650): zroeshdold/zroeshuold need ndof, not ndim, here too.
-      call dcopy(ndof*npshmax*nshmax, zroeshdoldnew, 1, zroeshdold, 1)
-      call dcopy(ndof*npshmax*nshmax, zroeshuoldnew, 1, zroeshuold, 1)
-      call dcopy(ndim*npshmax*nshmax, norshnew, 1, norsh, 1)
-      call dcopy(ndim*npshmax*nshmax, wshnew, 1, wsh, 1)
+!     see the matching comments at the mirror-direction copy above
+!     (~line 649): zroeshdold/zroeshuold need ndof, not ndim, and every
+!     array here only needs its real nshockpoints(ish) columns, not the
+!     full npshmax-per-shock declared bound.
+      do ish = 1, nShocks
+        call dcopy(ndof*nshockpoints(ish), zroeshdoldnew(1, 1, ish), 1, zroeshdold(1, 1, ish), 1)
+        call dcopy(ndof*nshockpoints(ish), zroeshuoldnew(1, 1, ish), 1, zroeshuold(1, 1, ish), 1)
+        call dcopy(ndim*nshockpoints(ish), norshnew(1, 1, ish), 1, norsh(1, 1, ish), 1)
+        call dcopy(ndim*nshockpoints(ish), wshnew(1, 1, ish), 1, wsh(1, 1, ish), 1)
+      end do
       write (*, 1002) ' ok'
 
     end if ! UNSTEADY
