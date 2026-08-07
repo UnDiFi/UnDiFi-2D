@@ -44,6 +44,7 @@ module mod_eulfs_solver
 
   use mod_kinds, only: wp, i4
   use mod_solver_iface, only: flow_solver_t, solver_run_ctx_t
+  use mod_timer, only: timer_tic, timer_toc
   implicit none(type, external)
   private
 
@@ -96,6 +97,7 @@ contains
     integer(i4) :: ifail
 
     write (*, '(a)', advance='no') 'triangle2dat           -->  '
+    call timer_tic()
     if (nprdbnd .eq. 0) then                            ! for the cases without periodic BCs
       execmd = "printf '"//ctx%fname&
       &//".1\nn'|"&
@@ -125,7 +127,7 @@ contains
 
     ifail = run_external(execmd, 'triangle2dat')
 
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
   end subroutine eulfs_prepare
 
   subroutine eulfs_run(self, ctx)
@@ -146,6 +148,7 @@ contains
     end if
 
     write (*, '(a)', advance='no') 'eulfs                  -->  '
+    call timer_tic()
     execmd = ctx%bindir//"EulFS_"//ctx%hostype&
     &//" -itmax 1 > log/eulfs.log"
 
@@ -156,7 +159,7 @@ contains
       ifail = run_external(execmd, 'cp')
     end if
 
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
   end subroutine eulfs_run
 
   subroutine eulfs_harvest(self, ctx)
@@ -167,12 +170,13 @@ contains
     integer(i4) :: ifail
 
     write (*, '(a)', advance='no') 'dat2triangle           -->  '
+    call timer_tic()
     execmd = "printf '"//ctx%fname//".1' | "//ctx%bindir&
     &//"dat2triangle-NEW-"//ctx%hostype&
     &//">log/dat2triangle.log"
     ifail = run_external(execmd, 'dat2triangle')
 
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
   end subroutine eulfs_harvest
 
   subroutine eulfs_archive(self, ctx)

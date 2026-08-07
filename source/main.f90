@@ -11,6 +11,7 @@ program undifi_2d
   use mod_shock_advance, only: advance
   use mod_solver_iface, only: flow_solver_t, solver_run_ctx_t
   use mod_solver_registry, only: make_flow_solver
+  use mod_timer, only: timer_tic, timer_toc
   implicit none(type, external)
 
 ! ********************************************************************************************************************************
@@ -228,11 +229,12 @@ program undifi_2d
 ! **********************************************************************
 
   write (*, 1001, advance='no') 'readmesh               -->  '
+  call timer_tic()
   fndbnds = .true.
 !     fndbnds=.false.
   call readmesh(bkg, fname, fndbnds)
   nvt = bkg%nvt
-  write (*, 1002) ' ok'
+  write (*, 1002) ' ok'//timer_toc()
 1001 format(a)
 1002 format(a)
 
@@ -241,8 +243,9 @@ program undifi_2d
 ! **********************************************************************
 
   write (*, 1001, advance='no') 'readpmap               -->  '
+  call timer_tic()
   call readpmap(bkg)
-  write (*, 1002) ' ok'
+  write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Make backups of some of the arrays of the background mesh:
@@ -251,6 +254,7 @@ program undifi_2d
 ! **********************************************************************
 
   write (*, 1001, advance='no') 'copy mesh(0) in mesh(2)-->  '
+  call timer_tic()
   bak%nbfac = bkg%nbfac
   bak%nbpoin = bkg%nbpoin
 !     only the real (unpadded) entries are backed up -- the shock-edge/
@@ -259,7 +263,7 @@ program undifi_2d
   bak%bndfac = bkg%bndfac(:, 1:bkg%nbfac)
   bak%nodptr = bkg%nodptr
   bak%nodcod = bkg%nodcod(1:bkg%npoin)
-  write (*, 1002) ' ok'
+  write (*, 1002) ' ok'//timer_toc()
 
 !     call x04eaf('general',' ',3,nbfac,istak(lbndfac(2)),3,
 !    +            'bndry pointer(2) in main',ifail)
@@ -280,8 +284,9 @@ program undifi_2d
 ! **********************************************************************
 
   write (*, 1001, advance='no') 're_inp_data            -->  '
+  call timer_tic()
   call re_inp_data
-  write (*, 1002) ' ok'
+  write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Read the timesteps.dat file containing information about the dt
@@ -293,11 +298,12 @@ program undifi_2d
   if (UNSTEADY) then
 
     write (*, 1001, advance='no') 're_dt_data             -->  '
+    call timer_tic()
     open (unit=12, file='timesteps.dat', status='old', action='read')
     read (12, *) dtpr
     read (12, *) dtco
     close (12)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
     write (*, '(1x,f7.4, 1x, f7.4)') dtpr, dtco
 
   end if ! UNSTEADY
@@ -307,6 +313,7 @@ program undifi_2d
 ! **********************************************************************
 
   write (*, 1001, advance='no') 're_sdw_info            -->  '
+  call timer_tic()
   call re_sdw_info(&
   &xysh,&
   &bkg%zroe(1, bkg%npoin + 1),&                        !upstream state
@@ -326,7 +333,7 @@ program undifi_2d
   &typespecpoints,&
   &shinspps,&
   &ispclr)
-  write (*, 1002) ' ok'
+  write (*, 1002) ' ok'//timer_toc()
 
 !     mod_shock_system's disc(:)/disc_new(:) (Phase 3.1, ROADMAP.md #14):
 !     no consumer yet, kept in sync for Phase 3.2 to build on
@@ -341,6 +348,7 @@ program undifi_2d
   if (STEADY) then
 
     write (*, 1001, advance='no') 'rd_sps_eq              -->  '
+    call timer_tic()
     call rd_dps_eq(&
     &xysh,&
     &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -348,7 +356,7 @@ program undifi_2d
     &nshocks,&
     &nshockpoints,&
     &nshocksegs)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
     call dcopy(nshmax*npshmax*ndof, bkg%zroe(1, bkg%npoin + 1), 1,&
     &zroeshuold, 1)
@@ -378,6 +386,7 @@ program undifi_2d
   if (UNSTEADY) then
 
     write (*, 1001, advance='no') 'co_norm                -->  '
+    call timer_tic()
     call co_norm(&
     &xysh,&
     &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -395,7 +404,7 @@ program undifi_2d
     &bkg%iclr,&
     &bkg%nclr,&
     &bkg%xy)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 !       fix the normal orientation which otherwise
 !       creates problems due to steady flow upstream
@@ -411,6 +420,7 @@ program undifi_2d
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'co_state_dps           -->  '
+    call timer_tic()
     call co_state_dps(&
     &xysh,&
     &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -424,13 +434,14 @@ program undifi_2d
     &nshocksegs,&
     &typeshocks,&
     &i)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Fix the states in the discontinuity points
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'fx_state_dps           -->  '
+    call timer_tic()
     call fx_state_dps(&
     &xysh,&
     &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
@@ -455,7 +466,7 @@ program undifi_2d
     &bkg%iclr,&
     &bkg%nclr,&
     &bkg%xy)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
   end if ! UNSTEADY testcases
 
@@ -488,6 +499,7 @@ program undifi_2d
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'fnd_phps               -->  '
+    call timer_tic()
     call fnd_phps(&
     &bkg%nedge,&
     &bkg%bndfac,&
@@ -506,13 +518,14 @@ program undifi_2d
     &nshocksegs,&
     &nphampoints,&
     &bkg%pmap)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Compute the normal unit vector to shocks and discontinuities
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'co_norm                -->  '
+    call timer_tic()
     call co_norm(&
     &xysh,&
     &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -530,7 +543,7 @@ program undifi_2d
     &bkg%iclr,&
     &bkg%nclr,&
     &bkg%xy)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 !     fix the normal orientation which otherwise
 !     creates problems due to steady flow upstream
@@ -549,6 +562,7 @@ program undifi_2d
 
 !       goto 2340
       write (*, 1001, advance='no') 'interp_sp              -->  '
+      call timer_tic()
 !    +       nshockpointsold)
       call interp_sp(&
       &bkg%celnod,&
@@ -567,7 +581,7 @@ program undifi_2d
       &nspecpoints,&
       &typespecpoints,&
       &shinspps)
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
     end if ! STEADY
 
@@ -577,6 +591,7 @@ program undifi_2d
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'co_pnt_dspl            -->  '
+    call timer_tic()
     call co_pnt_dspl(&
     &xysh,&
     &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
@@ -592,13 +607,14 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Fix the mesh around the special points
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'fx_msh_sps             -->  '
+    call timer_tic()
     call fx_msh_sps(&
     &bkg%bndfac,&
     &bkg%nodcod,&
@@ -618,7 +634,7 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Copy shock(0) in shock(1)
@@ -647,6 +663,7 @@ program undifi_2d
 !       memory allocation.
 
       write (*, 1001, advance='no') 'copy sh(0) in sh(1)    -->  '
+      call timer_tic()
 !     zroeshdold/zroeshuold are (ndof, npshmax, nshmax), not (ndim, ...)
 !     like xysh/norsh/wsh -- these dcopy calls used to read
 !     `ndim*npshmax*nshmax` (element count) for zroeshdold/zroeshuold
@@ -669,7 +686,7 @@ program undifi_2d
         call dcopy(ndim*nshockpoints(ish), norsh(1, 1, ish), 1, norshnew(1, 1, ish), 1)
         call dcopy(ndim*nshockpoints(ish), wsh(1, 1, ish), 1, wshnew(1, 1, ish), 1)
       end do
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Compute the grid velocity
@@ -677,6 +694,7 @@ program undifi_2d
 ! **********************************************************************
 
       write (*, 1001, advance='no') 'calc_vel               -->  '
+      call timer_tic()
       call calc_vel(&
       &bkg%npoin,&
       &varray,&
@@ -687,7 +705,7 @@ program undifi_2d
       &'y',&
       &nowtime,&
       &testcase)
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  It gives to EulFS info about grid velocity needed for the ALE
@@ -695,13 +713,14 @@ program undifi_2d
 
       if (solver%supports_ale()) then
         write (*, 1001, advance='no') 'solzne                -->   '
+        call timer_tic()
         call solzne(&
         &velfile,&
         &varray,&
         &ndim,&
         &bkg%npoin + 2*npshmax*nshmax,&
         &mode)
-        write (*, 1002) ' ok'
+        write (*, 1002) ' ok'//timer_toc()
       end if ! supports_ale (EULFS only)
 
     end if ! END UNSTEADY
@@ -726,6 +745,7 @@ program undifi_2d
     ctx%corrector = .false.
 
     write (*, 1001, advance='no') 'wtri                   -->  '
+    call timer_tic()
     call wtri(&
     &bkg%bndfac,&
     &bkg%nbfac,&
@@ -747,7 +767,7 @@ program undifi_2d
     &nshockpoints,&
     &nshocksegs,&
     &nphampoints)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  If use NEO and it is the 1st iteration, creates the neogrid0.grd
@@ -766,12 +786,13 @@ program undifi_2d
 !        write(6,*)' meshing with triangle; input file is ',fname(1:7)
 !        write(6,*)
     write (*, 1001, advance='no') 'triangle               -->  '
+    call timer_tic()
 
     execmd = bindir(1:10)//'triangle_'//hostype(1:6)//' -nep '&
     &//fname(1:7)//' > log/triangle.log'
     ifail = run_external(execmd, 'triangle')
 
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Freeze mesh topology
@@ -781,6 +802,7 @@ program undifi_2d
 
       if (imtf .ne. 0 .and. i .gt. imtf) then
         write (*, 1001, advance='no') 'mesh topology freezing -->  '
+        call timer_tic()
 
         fname2 = 'stepXXXXX/naXXXXX.1'
         write (fname2(5:9), fmt="(i5.5)") imtf
@@ -793,7 +815,7 @@ program undifi_2d
         execmd = 'cp '//fname2(1:19)//'.edge '//fname(1:7)//'.1.edge'
         ifail = run_external(execmd, 'cp')
 
-        write (*, 1002) ' ok'
+        write (*, 1002) ' ok'//timer_toc()
 
       end if
 
@@ -858,10 +880,11 @@ program undifi_2d
 ! **********************************************************************
 
       write (*, 1001, advance='no') 'triangle               -->  '
+      call timer_tic()
       execmd = bindir(1:10)//'triangle_'//hostype(1:6)//' -nep '&
       &//fname(1:7)//' > log/triangle.log'
       ifail = run_external(execmd, 'triangle')
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
 ! ***********************************
 !     Phase 3.7 (ROADMAP.md #14, issue #15): was the UNSTEADY-corrector
@@ -879,6 +902,7 @@ program undifi_2d
 ! **********************************************************************
 
       write (*, 1001, advance='no') 'mv_grid                -->  '
+      call timer_tic()
       call mv_grid(&
       &bkg%npoin,&
       &varray,&
@@ -887,7 +911,7 @@ program undifi_2d
       &wshnew,&
       &i,&
       &testcase) ! as in calc_vel, added arg to switch case
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 
@@ -975,11 +999,12 @@ program undifi_2d
 !     ******************
 
       write (*, 1001, advance='no') 'wsh_mean               -->  '
+      call timer_tic()
       call wsh_mean(&
       &wsh,&
       &wshnew,&
       &wshmean)
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
     end if ! UNSTEADY
 
@@ -988,6 +1013,7 @@ program undifi_2d
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'mv_dps                 -->  '
+    call timer_tic()
     call mv_dps(&
     &xysh,&
     &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
@@ -997,7 +1023,7 @@ program undifi_2d
     &nshockpoints,&
     &nshocksegs,&
     &typeshocks)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Fix and correct the nodal position in all special point
@@ -1007,6 +1033,7 @@ program undifi_2d
 !     ****************
 
       write (*, 1001, advance='no') 'fx_dps_loc             -->  '
+      call timer_tic()
       call fx_dps_loc(&
       &xysh,&
       &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
@@ -1033,13 +1060,14 @@ program undifi_2d
       &bkg%zroe,& ! vale
       &bkg%xy,&
       &shtopolchanged)  ! vale
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Filters the shocks
 ! **********************************************************************
 
       write (*, 1001, advance='no') 'fltr_dls               -->  '
+      call timer_tic()
       call fltr_dls(&
       &xysh,&
       &bkg%zroe(1, bkg%npoin + 1 + nshmax*npshmax),& ! downstream state
@@ -1049,7 +1077,7 @@ program undifi_2d
       &nshockpoints,&
       &nshocksegs,&
       &typeshocks)
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
     end if ! STEADY
 
@@ -1061,6 +1089,7 @@ program undifi_2d
 
 !      goto 2340
     write (*, 1001, advance='no') 'interp                 -->  '
+    call timer_tic()
 !    +      nshockpointsold)
     call interp(&
     &fit%bndfac,&
@@ -1084,7 +1113,7 @@ program undifi_2d
     &fit%ja,&
     &bkg%iclr,&
     &bkg%nclr)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 2340 continue
 
@@ -1095,6 +1124,7 @@ program undifi_2d
 
 !     if(i.gt.1000)  goto 3450
     write (*, 1001, advance='no') 'rd_dps                 -->  '
+    call timer_tic()
     call rd_dps(&
     &xysh,&
     &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -1102,7 +1132,7 @@ program undifi_2d
     &nshocks,&
     &nshockpoints,&
     &nshocksegs)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 !     mod_shock_system's disc(:)/disc_new(:) (Phase 3.1, ROADMAP.md #14):
 !     rd_dps may have changed nshockpoints/nshocksegs above
@@ -1135,6 +1165,7 @@ program undifi_2d
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'wtri0                  -->  '
+    call timer_tic()
 !    +     ndim,
 !    +     ndof,
     call wtri0(&
@@ -1143,13 +1174,14 @@ program undifi_2d
     &bkg%nodcod,&
     &bkg%npoin,&
     &fnameback(1:4))
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Write file sh99.dat containing information about shock/discontinuity
 ! **********************************************************************
 
     write (*, 1001, advance='no') 'wrt_sdw_info           -->  '
+    call timer_tic()
     call wrt_sdw_info(&
     &xysh,&
     &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -1163,7 +1195,7 @@ program undifi_2d
     &typespecpoints,&
     &shinspps,&
     &ispclr)
-    write (*, 1002) ' ok'
+    write (*, 1002) ' ok'//timer_toc()
 
 ! **********************************************************************
 !  Copy new shock on the old one
@@ -1172,6 +1204,7 @@ program undifi_2d
     if (UNSTEADY) then
 
       write (*, 1001, advance='no') 'copy sh(1) in sh(0)    -->  '
+      call timer_tic()
 !     see the matching comments at the mirror-direction copy above
 !     (~line 649): zroeshdold/zroeshuold need ndof, not ndim, and every
 !     array here only needs its real nshockpoints(ish) columns, not the
@@ -1182,7 +1215,7 @@ program undifi_2d
         call dcopy(ndim*nshockpoints(ish), norshnew(1, 1, ish), 1, norsh(1, 1, ish), 1)
         call dcopy(ndim*nshockpoints(ish), wshnew(1, 1, ish), 1, wsh(1, 1, ish), 1)
       end do
-      write (*, 1002) ' ok'
+      write (*, 1002) ' ok'//timer_toc()
 
     end if ! UNSTEADY
 

@@ -27,6 +27,7 @@ module mod_su2_solver
 
   use mod_kinds, only: wp, i4
   use mod_solver_iface, only: flow_solver_t, solver_run_ctx_t
+  use mod_timer, only: timer_tic, timer_toc
   implicit none(type, external)
   private
 
@@ -61,13 +62,14 @@ contains
 ! **********************************************************************
 
     write (*, '(a)', advance='no') 'triangle2su2           -->  '
+    call timer_tic()
     execmd = "printf '"//ctx%fname&
     &//".1\nsu2case'|"&
     &//ctx%bindir//"triangle2su2-"//ctx%hostype&
     &//" > log/triangle2su2.log"
     ifail = run_external(execmd, 'triangle2su2')
 
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
   end subroutine su2_prepare
 
   subroutine su2_run(self, ctx)
@@ -86,12 +88,13 @@ contains
 !  per outer UNDIFI iteration, the SU2 analogue of EulFS's -itmax 1.
 
     write (*, '(a)', advance='no') 'su2                    -->  '
+    call timer_tic()
     execmd = ctx%bindir//"SU2_CFD"&
     &//" su2case.cfg > log/su2.log"
 
     ifail = run_external(execmd, 'su2')
 
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
   end subroutine su2_run
 
   subroutine su2_harvest(self, ctx)
@@ -111,13 +114,14 @@ contains
 ! **********************************************************************
 
     write (*, '(a)', advance='no') 'su22triangle           -->  '
+    call timer_tic()
     execmd = "printf '"//ctx%fname&
     &//".1\nsu2case'|"&
     &//ctx%bindir//"su22triangle-"//ctx%hostype&
     &//" > log/su22triangle.log"
     ifail = run_external(execmd, 'su22triangle')
 
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
   end subroutine su2_harvest
 
 end module mod_su2_solver

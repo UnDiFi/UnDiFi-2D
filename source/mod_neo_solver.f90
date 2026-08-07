@@ -46,6 +46,7 @@ module mod_neo_solver
 
   use mod_kinds, only: wp, i4
   use mod_solver_iface, only: flow_solver_t, solver_run_ctx_t
+  use mod_timer, only: timer_tic, timer_toc
   implicit none(type, external)
   private
 
@@ -71,9 +72,10 @@ contains
 
     if (ctx%iter == 1 + ctx%nbegin .and. trim(ctx%testcase) == "ShockExpansion") then
       write (*, '(a)', advance='no') 'neogrid0               -->  '
+      call timer_tic()
       execmd = ctx%bindir//'neogrid0'
       ifail = run_external(execmd, 'neogrid0')
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
     end if
   end subroutine neo_pre_mesh_setup
 
@@ -87,18 +89,20 @@ contains
     if (ctx%corrector) then
 
       write (*, '(a)', advance='no') 'na2vvvv                -->  '
+      call timer_tic()
       execmd = "echo "//ctx%fname&
       &//".1 |"//ctx%bindir//"na2vvvv"&
       &//" > log/na2vvvv.log"
       ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
       write (*, '(a)', advance='no') 'triangle2grd           -->  '
+      call timer_tic()
       execmd = "echo "//ctx%fname&
       &//".1 |"//ctx%bindir//"triangle2grd"&
       &//" > log/triangle2grd.log"
       ifail = run_external(execmd, 'triangle2grd')
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
     else
 
@@ -108,20 +112,22 @@ contains
       &trim(ctx%testcase) == "ShockVortex") then
 
         write (*, '(a)', advance='no') 'na00xTovvvv            -->   '
+        call timer_tic()
         execmd = "echo "//ctx%fname&
         &//".1 |"//ctx%bindir//"na2vvvv"&
         &//" > log/na2vvvv.log"
         ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
-        write (*, '(a)') 'ok'
+        write (*, '(a)') 'ok'//timer_toc()
 
       end if
 
       write (*, '(a)', advance='no') 'triangle2grd           -->   '
+      call timer_tic()
       execmd = "echo "//ctx%fname&
       &//".1 |"//ctx%bindir//"triangle2grd"&
       &//" > log/triangle2grd.log"
       ifail = run_external(execmd, 'triangle2grd')
-      write (*, '(a)') 'ok'
+      write (*, '(a)') 'ok'//timer_toc()
 
     end if
   end subroutine neo_prepare
@@ -136,10 +142,11 @@ contains
     if (ctx%corrector) then
 
       write (*, '(a)', advance='no') 'NEO                    -->  '
+      call timer_tic()
       execmd = ctx%bindir//"CRD_euler"&
       &//" > log/neo.log"
       ifail = run_external(execmd, 'NEO')
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
     else
 
@@ -152,6 +159,7 @@ contains
         if (ctx%iter == 1 + ctx%nbegin) then
 
           write (*, '(a)', advance='no') 'NEO 1st iteration      -->  '
+          call timer_tic()
 
           execmd = ctx%bindir//"CRD_euler"//"> log/neo.log"
           ifail = run_external(execmd, 'NEO (1st iteration)')
@@ -184,7 +192,7 @@ contains
           execmd = "cp inputfile-exp.txt "//"./NEO_data/textinput/"
           ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
 
-          write (*, '(a)') ' ok'
+          write (*, '(a)') ' ok'//timer_toc()
 
         end if ! 1ST ITERATION
 
@@ -193,10 +201,11 @@ contains
 !     for all the other iterations
 !     ****************************
       write (*, '(a)', advance='no') 'NEO                    -->   '
+      call timer_tic()
       execmd = ctx%bindir//"CRD_euler"&
       &//"> log/neo.log"
       ifail = run_external(execmd, 'neo')
-      write (*, '(a)') 'ok'
+      write (*, '(a)') 'ok'//timer_toc()
 
     end if
   end subroutine neo_run
@@ -210,16 +219,18 @@ contains
 
     if (ctx%corrector) then
       write (*, '(a)', advance='no') 'NEO2triangle           -->  '
+      call timer_tic()
       execmd = "echo "//ctx%fname//".1 | "//ctx%bindir&
       &//"NEO2triangle"//">log/NEO2triangle.log"
       ifail = run_external(execmd, 'NEO2triangle')
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
     else
       write (*, '(a)', advance='no') 'NEO2triangle           -->   '
+      call timer_tic()
       execmd = "echo "//ctx%fname//".1 | "//ctx%bindir&
       &//"NEO2triangle"//">log/NEO2triangle.log"
       ifail = run_external(execmd, 'neo2triangle')
-      write (*, '(a)') 'ok'
+      write (*, '(a)') 'ok'//timer_toc()
     end if
   end subroutine neo_harvest
 

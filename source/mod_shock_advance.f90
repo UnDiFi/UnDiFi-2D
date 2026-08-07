@@ -16,6 +16,7 @@ module mod_shock_advance
   use mod_mesh, only: mesh_t
   use mod_shock_system, only: xysh, zroeshuold, zroeshdold, norsh, wsh,&
   &xyshnew, norshnew, wshnew, zroeshuoldnew, zroeshdoldnew
+  use mod_timer, only: timer_tic, timer_toc
   implicit none(type, external)
   private
 
@@ -59,16 +60,18 @@ contains
     real(wp) :: nowtime
 
     write (*, '(a)', advance='no') 'readmesh               -->  '
+    call timer_tic()
     fndbnds = .false.
     call readmesh(fit, fname, fndbnds)
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
 
     totshockpoints = 2*nshmax*npshmax
 
     write (*, '(a)', advance='no') 'zroe(1)->zroe(0)       -->  '
+    call timer_tic()
     if (fit%npoin .eq. (bkg%npoin + totshockpoints)) then
       call dcopy(ndof*fit%npoin, fit%zroe, 1, bkg%zroe, 1)
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
     else
 !         the nof gridpoints in grid(1) must equal the number of
 !         gridpoints on the background mesh + 2 * nshockpoints
@@ -82,6 +85,7 @@ contains
     if (new_shadow) then
 
       write (*, '(a)', advance='no') 'co_state_dps           -->  '
+      call timer_tic()
       call co_state_dps(&
       &xyshnew,&
       &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -95,9 +99,10 @@ contains
       &nshocksegs,&
       &typeshocks,&
       &iter)
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
       write (*, '(a)', advance='no') 'fx_state_dps           -->  '
+      call timer_tic()
       call fx_state_dps(&
       &xyshnew,&                                           ! not used
       &bkg%xy(1, bkg%npoin + 1),&                     ! upstream   coord.
@@ -122,11 +127,12 @@ contains
       &bkg%iclr,&
       &bkg%nclr,&
       &bkg%xy)
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
     else
 
       write (*, '(a)', advance='no') 'co_state_dps           -->  '
+      call timer_tic()
       call co_state_dps(&
       &xysh,&
       &bkg%zroe(1, bkg%npoin + 1),&                     ! upstream state
@@ -140,9 +146,10 @@ contains
       &nshocksegs,&
       &typeshocks,&
       &iter)
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
       write (*, '(a)', advance='no') 'fx_state_dps           -->  '
+      call timer_tic()
       call fx_state_dps(&
       &xysh,&
       &bkg%xy(1, bkg%npoin + 1),&                     ! upstream coord.
@@ -167,19 +174,21 @@ contains
       &bkg%iclr,&
       &bkg%nclr,&
       &bkg%xy)
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
     end if
 
     write (*, '(a)', advance='no') 'zroesh(0)->zroesh(1)   -->  '
+    call timer_tic()
     call dcopy(ndof*totshockpoints,&
     &bkg%zroe(1, bkg%npoin + 1), 1,&
     &fit%zroe(1, bkg%npoin + 1), 1)
-    write (*, '(a)') ' ok'
+    write (*, '(a)') ' ok'//timer_toc()
 
     if (present(dt)) then
 
       write (*, '(a)', advance='no') 'calc_vel               -->  '
+      call timer_tic()
       call calc_vel(&
       &bkg%npoin,&
       &varray,&
@@ -190,17 +199,18 @@ contains
       &velflag,&
       &nowtime,&
       &testcase)
-      write (*, '(a)') ' ok'
+      write (*, '(a)') ' ok'//timer_toc()
 
       if (eulfs) then
         write (*, '(a)', advance='no') 'solzne                 -->   '
+        call timer_tic()
         call solzne(&
         &velfile,&
         &varray,&
         &ndim,&
         &bkg%npoin + 2*npshmax*nshmax,&
         &mode)
-        write (*, '(a)') ' ok'
+        write (*, '(a)') ' ok'//timer_toc()
       end if
 
     end if
