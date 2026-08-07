@@ -63,6 +63,9 @@ set(UNDIFI2D_SOURCES
 )
 
 add_executable(UnDiFi-2D ${UNDIFI2D_SOURCES})
+if(UNDIFI_ENABLE_OPENMP)
+  target_link_libraries(UnDiFi-2D PRIVATE OpenMP::OpenMP_Fortran)
+endif()
 
 # paramt.h is resolved via the Fortran INCLUDE statement (not the C
 # preprocessor), which gfortran/ifx/nvfortran all search via -I.

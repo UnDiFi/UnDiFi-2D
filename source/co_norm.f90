@@ -83,7 +83,19 @@ subroutine co_norm(xysh,&
   end do
 
 !     normals computation for each shock
+! Phase 4.2 (ROADMAP.md #16): each point's normal depends only on its own
+! and neighboring points' *read-only* xysh/zroesh entries (no loop-carried
+! scalar dependency across i), so the inner loop parallelizes cleanly once
+! every scalar it assigns is privatized -- ga/gm1 (paramt.h COMMON) and the
+! xysh/zroesh/vshnor/typesh/nshockpoints arrays are read (or index-i-owned
+! write, for vshnor) and stay shared under the default clause.
   do ish = 1, nshocks
+    !$omp parallel do private(i, j, j2, xi, yi, xj, yj, xj2, yj2, ush, vsh,&
+    !$omp& tauxip1, tauyip1, tauxip2, tauyip2, tauxjp2, tauyjp2,&
+    !$omp& uj, vj, roj, help, pj, aj, depip1, depim1,&
+    !$omp& tauxim1, tauyim1, tauxim2, tauyim2, tauxjm2, tauyjm2,&
+    !$omp& lp12, lm12, lp1, lm1, lm22, lp22, lp2, lm2,&
+    !$omp& taux, tauy, tau, logbuf)
     do i = 1, nshockpoints(ish)
 
       ush = 0.d0
@@ -235,6 +247,7 @@ subroutine co_norm(xysh,&
       vshnor(2, i, ish) = -taux
 
     end do
+    !$omp end parallel do
 
   end do
 
@@ -262,16 +275,17 @@ subroutine co_norm(xysh,&
 !      endif
 !     enddo
 
-! Phase 4.2 note: this count-then-bulk-flip pair is a reduction, not an
-! independent per-point loop -- `ii` is accumulated across every `i` before
-! the flip loop reads it. A naive `!$omp parallel do` on the count loop
-! races on `ii`; it needs `omp reduction(+:ii)` (which also supplies the
-! implicit end-of-loop barrier the flip loop's read of `ii` depends on).
-! The bulk-flip loop itself has no hazard once `ii` is final -- each
-! iteration only touches its own vshnor(:,i,ish) slot.
+! Phase 4.2 (ROADMAP.md #16): this count-then-bulk-flip pair is a
+! reduction, not an independent per-point loop -- `ii` is accumulated
+! across every `i` before the flip loop reads it, so the count loop needs
+! `reduction(+:ii)` rather than a naive `parallel do` (the reduction
+! clause also supplies the implicit end-of-loop barrier the flip loop's
+! read of the final `ii` depends on). The bulk-flip loop itself has no
+! hazard -- each iteration only touches its own vshnor(:,i,ish) slot.
   do ish = 1, nshocks
     if (typesh(ish) .eq. 'S') then
       ii = 0
+      !$omp parallel do private(i, ui, vi, dum) reduction(+:ii)
       do i = 1, nshockpoints(ish)
         ui = zroesh(3, i, ish)/zroesh(1, i, ish)
         vi = zroesh(4, i, ish)/zroesh(1, i, ish)
@@ -280,13 +294,16 @@ subroutine co_norm(xysh,&
           ii = ii + 1
         end if
       end do
+      !$omp end parallel do
       if (ii .ge. nshockpoints(ish)/2.) then
+        !$omp parallel do private(i)
         do i = 1, nshockpoints(ish)
 ! vale   vshnor(1,i,ish)= -vshnor(1,i,ish)
 ! vale   vshnor(2,i,ish)= -vshnor(2,i,ish)
           vshnor(1, i, ish) = -vshnor(1, i, ish)
           vshnor(2, i, ish) = -vshnor(2, i, ish)
         end do
+        !$omp end parallel do
       end if
 
     end if

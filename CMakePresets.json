@@ -61,6 +61,17 @@
         "CMAKE_Fortran_COMPILER": "nvfortran",
         "CMAKE_C_COMPILER": "nvc"
       }
+    },
+    {
+      "name": "gfortran-openmp",
+      "displayName": "gfortran, Release, OpenMP enabled (Phase 4, ROADMAP.md #16)",
+      "binaryDir": "${sourceDir}/build/gfortran-openmp",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_Fortran_COMPILER": "gfortran",
+        "CMAKE_C_COMPILER": "gcc",
+        "UNDIFI_ENABLE_OPENMP": "ON"
+      }
     }
   ],
   "buildPresets": [
@@ -69,6 +80,7 @@
     { "name": "ifx-debug", "configurePreset": "ifx-debug" },
     { "name": "ifx-release", "configurePreset": "ifx-release" },
     { "name": "nvfortran-debug", "configurePreset": "nvfortran-debug" },
-    { "name": "nvfortran-release", "configurePreset": "nvfortran-release" }
+    { "name": "nvfortran-release", "configurePreset": "nvfortran-release" },
+    { "name": "gfortran-openmp", "configurePreset": "gfortran-openmp" }
   ]
 }

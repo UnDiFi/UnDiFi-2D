@@ -43,7 +43,7 @@ subroutine co_state_dps(&
   real(wp) dx, dy, kine, ws, hh, mmn
   real(wp) help, x1(ndof), x2(ndof)
   real(wp) r2(npshmax, nshmax)
-  integer(i4) i, im, iv, ish, k, totnshockpoints
+  integer(i4) i, im, iv, ish, k
   character(len=256) :: logbuf
 
 ! z1m/z1v/z2m/z2v/z3m/z3v/z4m/z4v were mod_freestream module scratch in
@@ -59,7 +59,15 @@ subroutine co_state_dps(&
 !     open log file
   open (8, file='log/co_dps_state.log')
 
-  totnshockpoints = 0
+! Phase 4.2 (ROADMAP.md #16): each shock point's R-H solve (co_shock/
+! co_dc, both reentrant since Phase 3.5's per-call Newton contexts) only
+! reads xysh/vshnor/zroeshu(old)/zroeshd(old) and writes its own iv slot
+! of zroeshu/zroeshd/wsh/r2 -- no loop-carried dependency across iv, so
+! the inner loop parallelizes once its scratch locals (all of them
+! reused across every iv, unlike a fresh-call-frame subroutine) are
+! privatized. The outer ish loop stays serial -- few shocks vs. many
+! points per shock, and its two per-ish log lines aren't worth
+! parallelizing.
   do ish = 1, nshocks
     write (logbuf, *) 'shock/disc. n.', ish
     call log_line(8, logbuf)
@@ -67,9 +75,9 @@ subroutine co_state_dps(&
     write (logbuf, *) 'Zone'
     call log_line(20, logbuf)
 
+    !$omp parallel do private(iv, i, im, dx, dy, help, x1, x2, kine, ws,&
+    !$omp& hh, mmn, k, z1m, z2m, z3m, z4m, z1v, z2v, z3v, z4v, logbuf)
     do iv = 1, nshockpoints(ish)
-      totnshockpoints = totnshockpoints + 1
-
       i = iv
       dx = vshnor(1, i, ish)
       dy = vshnor(2, i, ish)
@@ -185,6 +193,7 @@ subroutine co_state_dps(&
       call log_line(8, logbuf)
 
     end do
+    !$omp end parallel do
   end do
   close (8)
 

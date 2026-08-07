@@ -31,6 +31,16 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Phase 4 (ROADMAP.md #16): OpenMP shared-memory parallelism, opt-in so
+# every existing preset/workflow keeps building single-threaded until the
+# CI/benchmark infra for the OMP variant lands. When ON, the !$omp
+# directives already landed in co_norm.f90/co_state_dps.f90 (4.2) become
+# real parallel regions instead of inert comments.
+option(UNDIFI_ENABLE_OPENMP "Build with OpenMP shared-memory parallelism" OFF)
+if(UNDIFI_ENABLE_OPENMP)
+  find_package(OpenMP REQUIRED COMPONENTS Fortran)
+endif()
+
 # Prebuilt vendored support libraries (libport, libmylib, libfxdr,
 # libsparse-blas, libtirpc, libgeometry, libtriangulation, ...).
 # These are checked in as static archives in lib/linux_intel_x86_64/ and
