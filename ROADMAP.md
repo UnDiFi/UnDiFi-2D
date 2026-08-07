@@ -529,10 +529,28 @@ called exactly once per run rather than per-timestep
 hazard fix) are still flagged for cleanup by whoever touches that file
 next.
 
-**Not started**: 4.6 (`do concurrent` conversion), plus a CI job
-building+running the OMP variant, a thread-count-sweep benchmark
-script, and generating the level-3 cylinder mesh the exit criterion
-needs. Issue #16 stays open until those land.
+**4.6 blocked, verified 2026-08-08**: `gfortran` 13.3 -- the project's
+default, regression-verified compiler -- does not implement F2018
+locality specifiers at all; `do concurrent (i=1:n) local(tmp)` is a
+hard syntax error (`Error: Syntax error in DO statement`), confirmed
+by direct compile test, not inferred from documentation. `ifx` 2025.3
+and `nvfortran` 26.1 both accept the syntax (`ifx` warns it's ignored
+without `-qopenmp`/`-parallel`; `nvfortran` is the real target --
+`-stdpar=multicore`/`=gpu` actually parallelizes `do concurrent`).
+Locality specifiers aren't cosmetic for these kernels: several already
+have per-iteration scratch scalars (the exact class of hazard 4.2 had
+to fix for `co_state_dps.f90`) that would race under a real concurrent
+executor without an explicit `local()` clause. Converting the kernels
+now would either break the default `gfortran` build or ship an
+unverifiable correctness gap on the one compiler everything else is
+regression-tested against -- deferred until `gfortran` adds locality-
+spec support (or a compiler-gated dual implementation is judged worth
+the added maintenance cost, not done here).
+
+**Not started**: a CI job building+running the OMP variant, a
+thread-count-sweep benchmark script, and generating the level-3
+cylinder mesh the exit criterion needs. Issue #16 stays open until
+those land.
 
 ## Phase 5 — Distributed memory (MPI / coarrays)
 
