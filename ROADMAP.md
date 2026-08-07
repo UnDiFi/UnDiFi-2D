@@ -508,13 +508,26 @@ under-copied `zroeshdold`/`zroeshuold` using the wrong per-element
 count, silently leaving shock slots 6-10 stale for any UNSTEADY case
 with >5 shocks -- doesn't fire on any current fixture, all have ≤5).
 
-**4.5 partial**: `mod_log.f90` exists (`log_line`, one named
-`!$omp critical` section) and every in-loop write inside the loops 4.2
-and 4.3 actually parallelize is converted. The other ~24 files'
-`open(8, file='log/*.log')` calls are untouched -- a full rollout is
-still open work. `mod_freestream.f90`'s now-dead
+**4.5 done**: `mod_log.f90` (`log_line`, one named `!$omp critical`
+section) covers every in-loop write inside the loops 4.2/4.3 actually
+parallelize, plus every other genuine per-shock-point log write found
+by auditing the remaining ~23 files that still had `open(unit,
+file='log/*.log')` calls (`fx_state_dps.f90`, `mv_dps.f90`,
+`rd_dps.f90`, `wsh_mean.f90` -- all `nshockpoints(ish)`-or-similar
+loops that run every timestep). The rest were deliberately left
+untouched: no live caller anywhere in the repo (`chg_bnd_ptr.f90`,
+`ch_sh_topology.f90`, `fx_sh_state.f90`, `pr_sh_state.f90` -- dead
+code), no live write in the log unit at all (`fx_bndry_wedge.f90`,
+`fx_dps_loc.f90`, `fx_msh_sps.f90` -- empty/commented-out bodies),
+unconditioned progress messages with no enclosing loop (`main.f90`,
+`readmesh.f90`, `re_inp_data.f90`, `rtri.f90`, `calc_vel.f90`'s only
+real `log/`-unit write), loop bound is `nshocks`/`nspecpoints` (small,
+fixed max ~10) not per-point (`fltr_dls.f90`, `wrt_sdw_info.f90`), or
+called exactly once per run rather than per-timestep
+(`rd_dps_eq.f90`, `re_sdw_info.f90`). `mod_freestream.f90`'s now-dead
 `z1m/z1v/.../z4m/z4v` declarations (nothing `use`s them since the 4.2
-hazard fix) are also still flagged for cleanup here.
+hazard fix) are still flagged for cleanup by whoever touches that file
+next.
 
 **Not started**: 4.6 (`do concurrent` conversion), plus a CI job
 building+running the OMP variant, a thread-count-sweep benchmark
