@@ -20,6 +20,7 @@ set(UNDIFI2D_SOURCES
   mod_neo_solver.f90
   mod_su2_solver.f90
   mod_solver_registry.f90
+  mod_search.f90
   mod_setbndrynodeptr.f90
   fx_msh_sps.f90
   co_utp.f90
