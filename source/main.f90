@@ -92,8 +92,6 @@ program undifi_2d
   &bindir*255,&
   &gastype*4,&
   &hostype*10,&
-  &color1*2,&
-  &color2*2,&
   &VELFILE*18,&
   &MODE,&
   &ISPREDICTOR

@@ -392,8 +392,37 @@ sequences into `mod_shock_advance.f90`'s `subroutine advance`. All 11
 roadmap-tracked regression fixtures (10 checksum-comparable, `ShockVortex`
 excluded per a pre-existing harness/case mismatch) were re-verified after
 every increment; zero unexplained numeric drift throughout. Issue #14 is
-closed; 3.7 (`flow_solver_t`, the last Phase-3 item, `main.f90` under 400
-lines) continues as issue #15.
+closed.
+
+**Update, 2026-08-07: 3.7 (issue #15) is also done.** `main.f90`'s
+three-way `if(EULFS)/elseif(SU2)/elseif(NEO)` dispatch — actually spread
+across **7** call sites, not the two obvious ~250-line blocks the initial
+scoping expected — is replaced by one polymorphic `class(flow_solver_t),
+allocatable :: solver` (`mod_solver_iface.f90`'s abstract base +
+`mod_eulfs_solver.f90`/`mod_neo_solver.f90`/`mod_su2_solver.f90`'s
+concrete types, allocated via `mod_solver_registry.f90`'s
+`make_flow_solver` factory — split from the base module for the same
+circular-dependency reason `mod_special_point_registry.f90` is split from
+`mod_special_point.f90`). `main.f90` drops from 1647 to 1215 lines — real
+progress, but **still short of the <400-line exit criterion**: the
+solver dispatch was the largest single contributor, not the only one,
+and further reduction is out of this issue's scope. SU2's three
+pre-existing gaps (no corrector-step support, no backup/cleanup
+archiving) are preserved as explicit no-ops, not fixed — SU2_CFD isn't
+installed in this environment and zero regression-baseline coverage
+exists for any su2_* case, so a fix would ship unverified; this matches
+the project's standing policy of not opportunistically fixing latent
+gaps a mechanical port happens to touch. Regression-verified via the
+usual 10-fixture NEO sweep **plus**, for the first time in this
+project's Phase-3 work, a EulFS-backed run (`CircularCylinder`) — every
+prior increment's sweeps only ever exercised NEO. Real day-to-day
+environmental drift (not caused by this change) showed up on 7 of the
+11 runs; confirmed via the project's established decisive test
+(rebuilding the pre-3.7 commit in an isolated worktree and re-running
+two of the drifted fixtures today — the unchanged old binary reproduced
+the identical drifted values). Phase 3 (3.1-3.7) is now fully complete;
+issue #15 closure is a separate explicit go-ahead from the user, same
+as #14.
 
 ## Phase 4 — Performance and shared-memory parallelism (OpenMP)
 
