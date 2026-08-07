@@ -27,8 +27,9 @@ subroutine interp(&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
+  use mod_search, only: bin_grid_t, build_bin_grid, query_point
   implicit none(type, external)
-  external finder
+  external finder, finder_search
   include 'paramt.h'
 
 !     .. scalar arguments ..
@@ -57,6 +58,13 @@ subroutine interp(&
   integer(i4) ipoin, ielem, i, ii, k, n, ifail, ish, clr, bbgn, bend, j, kp1, ibc
   real(wp) x0, y0, x1, y1, x2, y2, dum, dum1, dum2
 
+!     Phase 4.1 (ROADMAP.md #16): spatial acceleration structure --
+!     narrows finder's candidate list instead of the brute-force
+!     do ielem=1,nelem scan (see finder_search below). Rebuilt once per
+!     call since the mesh changes every outer iteration.
+  type(bin_grid_t) :: grid
+  integer(i4), allocatable :: cand(:)
+
 !     open log file
   open (8, file='log/interp.log')
 
@@ -78,6 +86,7 @@ subroutine interp(&
 
 !     interpolate in the background mesh nodes, using the connectivity of the shocked mesh;
 !     the interpolation is necessary only for the ghost nodes
+  call build_bin_grid(grid, icelnod, nvt, xy, nelem)
   do ipoin = 1, npoin(0)
 !       if((nodcod(ipoin).eq.-1) or.(nodcod(ipoin).eq.-2)) then
     if ((nodcod(ipoin) .eq. -1)) then
@@ -85,8 +94,9 @@ subroutine interp(&
       &'(', xybkg(1, ipoin), ',', xybkg(2, ipoin), ')'
       ifail = 0
 !            if(ipoin.eq.1449)ifail=99
-      call finder(icelnod, nelem, xy, ndim, zroe, ndof, xybkg(1, ipoin),&
-      &zbkg(1, ipoin), ielem, ifail)
+      call query_point(grid, xybkg(1, ipoin), xybkg(2, ipoin), cand)
+      call finder_search(icelnod, xy, ndim, zroe, ndof, xybkg(1, ipoin),&
+      &zbkg(1, ipoin), cand, size(cand), ielem, ifail)
       write (8, *) 'found in cell ', ielem, ifail
       if (ifail .ne. 0) then
         write (8, *) 'search failed for vertex ', ipoin
@@ -283,6 +293,84 @@ subroutine finder(icelnod, nelem, coor, ndim, zroe, ndof, xyin, zout,&
 300   format(7(f10.5, 1x))
 400   format(9(f10.5, 1x))
       end subroutine finder
+
+! Phase 4.1 (ROADMAP.md #16): like finder above, but scans only a given
+! candidate element list (from mod_search's query_point) instead of
+! 1..nelem. Used by interp's per-phantom-node loop, which calls this
+! O(N_phantom) times per outer iteration -- finder itself is left
+! untouched since mod_special_point.f90's sonic_interpolate_state also
+! calls it directly, at most nspecpoints times per iteration, far too
+! rarely for the O(nelem) scan there to matter. The debug-only
+! info1==99/ilog==0 branches in finder are dropped here, not ported --
+! interp.f90's call site always passes ifail=0 into finder too (the
+! only line that could set it to 99 is commented out), so those
+! branches are equally unreachable from this call path either way.
+      subroutine finder_search(icelnod, coor, ndim, zroe, ndof, xyin, zout,&
+      &candidates, ncand, ielem, info)
+
+        use mod_kinds, only: wp, i4
+        implicit none(type, external)
+        integer(i4) ielem, ndim, ndof, info, ncand
+        integer(i4) icelnod(3, *), candidates(ncand)
+        real(wp) coor(ndim, *), zroe(ndof, *)
+        real(wp) xyin(ndim), zout(ndof)
+        real(wp) x0, y0, xp(4), yp(4), a(3), t, s, help
+        integer(i4) idxs(3), iv, ipoin, ivar, kc
+        real(wp) area
+        integer(i4) icycl
+        external area, icycl
+
+        x0 = xyin(1)
+        y0 = xyin(2)
+
+        do kc = 1, ncand
+          ielem = candidates(kc)
+          do iv = 1, 3
+            ipoin = icelnod(iv, ielem)
+            xp(iv) = coor(1, ipoin)
+            yp(iv) = coor(2, ipoin)
+          end do
+          xp(4) = x0
+          yp(4) = y0
+
+          idxs(1) = 1
+          idxs(2) = 2
+          idxs(3) = 3
+          help = 1.d0/area(xp, yp, 3, idxs)
+          idxs(3) = 4
+
+          do iv = 1, 3
+            idxs(1) = icycl(1 + iv, 3)
+            idxs(2) = icycl(2 + iv, 3)
+            a(iv) = area(xp, yp, 3, idxs)*help
+          end do
+
+          s = min(a(1), a(2), a(3))
+          t = max(a(1), a(2), a(3))
+
+          if ((s .ge. 0.d0 .and. s .le. 1.d0) .and.&
+          &(t .ge. 0.d0 .and. t .le. 1.d0)) then
+            do ivar = 1, ndof
+              zout(ivar) = 0.d0
+            end do
+            do iv = 1, 3
+              ipoin = icelnod(iv, ielem)
+              help = a(iv)
+              do ivar = 1, ndof
+                zout(ivar) = zout(ivar) + help*zroe(ivar, ipoin)
+              end do
+            end do
+            info = 0
+            return
+          end if
+        end do
+
+        info = 1
+        write (6, *) 'search failed for vertex coords ', x0, y0
+        write (6, fmt=1200) (a(iv), iv=1, 3), a(1) + a(2) + a(3), s, t
+        return
+1200    format('a(i),s,s,t ', 6(e12.4, 1x))
+      end subroutine finder_search
 
 ! *************************************************************
 ! Updates values in the phantom nodes of the background mesh(0)
