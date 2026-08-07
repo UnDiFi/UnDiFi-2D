@@ -43,15 +43,23 @@ subroutine co_pnt_dspl(&                   ! not used
   integer(i4) i, isppnts, ish
   class(special_point_t), allocatable :: sp
 
+! Phase 4.3 (ROADMAP.md #16): both loops below write only their own
+! (i,ish) slot of nodcodsh/xyshu/xyshd, reading only read-only inputs
+! (xysh/vshnor) or the loop-private dx/dy -- no log calls in this file,
+! no running counters, no shared read-modify-write like fnd_phps.f90's
+! nodcod. Parallelizes directly once dx/dy are privatized.
+  !$omp parallel do collapse(2) private(i, ish)
   do ish = 1, nshmax
     do i = 1, npshmax
       nodcodsh(i, ish) = -99
     end do
   end do
+  !$omp end parallel do
 
 !     add a second layer of shock nodes
 !     place extra shock nodes on the shock normal
   do ish = 1, nshocks
+    !$omp parallel do private(i, dx, dy)
     do i = 1, nshockpoints(ish)
       dx = vshnor(1, i, ish)
       dy = vshnor(2, i, ish)
@@ -61,6 +69,7 @@ subroutine co_pnt_dspl(&                   ! not used
       xyshd(2, i, ish) = xysh(2, i, ish) - 0.5d0*eps*dy
       nodcodsh(i, ish) = 10
     end do
+    !$omp end parallel do
   end do
 
 !     correct the displacement in the boundary special points

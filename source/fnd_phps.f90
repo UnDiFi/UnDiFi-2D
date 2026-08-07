@@ -77,6 +77,22 @@ subroutine fnd_phps(nface,&
       ys2 = xysh(2, ielemsh + 1, ish)
 
       call query_segment(grid, xs1, ys1, xs2, ys2, cand)
+! Phase 4.3 (ROADMAP.md #16): the geometry tests below (ishel1/ishel2/
+! rdshp, all true external functions with only local state, no
+! module/save data) are independent per candidate and the expensive
+! part of this loop -- but nodcod(n1/n2/n3) is genuinely shared: a node
+! can be a vertex of triangles hit by different shock segments'
+! candidate lists, so two threads could touch the same node. The update
+! is a "first write wins, every possible write agrees" pattern (once a
+! node reads -1/-2 neither `.eq.0` nor `.gt.0` matches again, and the
+! target value depends only on the node's original pre-loop state, not
+! visit order) -- likely benign even unsynchronized in practice, but
+! this is physics-affecting state, not a log line, so it gets a real
+! critical section rather than relying on that argument. The critical
+! region is just six comparisons; the geometry tests above it, the
+! actual cost, stay fully parallel.
+      !$omp parallel do private(kc, ielem, n1, n2, n3, xc1, xc2, xc3,&
+      !$omp& yc1, yc2, yc3, i, ii, d1, d2, d3)
       do kc = 1, size(cand)
         ielem = cand(kc)
 
@@ -105,16 +121,19 @@ subroutine fnd_phps(nface,&
             d3 = rdshp(xc3, yc3, xs1, ys1, xs2, ys2, sndmin)
 
 ! if distance is too small the node become a phantom node
+            !$omp critical (fnd_phps_nodcod)
             if (d1 .ge. 0 .and. d1 .lt. sndmin .and. nodcod(n1) .eq. 0) nodcod(n1) = -1
             if (d1 .ge. 0 .and. d1 .lt. sndmin .and. nodcod(n1) .gt. 0) nodcod(n1) = -2
             if (d2 .ge. 0 .and. d2 .lt. sndmin .and. nodcod(n2) .eq. 0) nodcod(n2) = -1
             if (d2 .ge. 0 .and. d2 .lt. sndmin .and. nodcod(n2) .gt. 0) nodcod(n2) = -2
             if (d3 .ge. 0 .and. d3 .lt. sndmin .and. nodcod(n3) .eq. 0) nodcod(n3) = -1
             if (d3 .ge. 0 .and. d3 .lt. sndmin .and. nodcod(n3) .gt. 0) nodcod(n3) = -2
+            !$omp end critical (fnd_phps_nodcod)
 
           end if
         end if
       end do
+      !$omp end parallel do
     end do
   end do
 
