@@ -8,6 +8,7 @@ set(UNDIFI2D_SOURCES
   mod_mesh.f90
   mod_freestream.f90
   mod_error.f90
+  mod_log.f90
   mod_run_external.f90
   mod_discontinuity.f90
   mod_shock_system.f90

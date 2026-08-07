@@ -21,6 +21,7 @@ subroutine co_norm(xysh,&
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   use mod_special_point, only: special_point_t
   use mod_special_point_registry, only: make_special_point, sp_unpack
+  use mod_log, only: log_line
   implicit none(type, external)
   include 'paramt.h'
 
@@ -53,6 +54,7 @@ subroutine co_norm(xysh,&
   external shp_dpndnc, dcp_dpndnc
   character*1 typesh(*)
   character*5 typespecpoints(*)
+  character(len=256) :: logbuf
 
   class(special_point_t), allocatable :: sp
 
@@ -217,7 +219,8 @@ subroutine co_norm(xysh,&
         end if
       end if
 
-      write (8, *) I, 'tau', taux, tauy, depim1, depip1
+      write (logbuf, *) i, 'tau', taux, tauy, depim1, depip1
+      call log_line(8, logbuf)
 
       tau = sqrt(taux*taux + tauy*tauy)
       taux = taux/tau

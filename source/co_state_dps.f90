@@ -18,6 +18,7 @@ subroutine co_state_dps(&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
+  use mod_log, only: log_line
   implicit none(type, external)
   external co_dc, co_shock
   include 'paramt.h'
@@ -43,6 +44,7 @@ subroutine co_state_dps(&
   real(wp) help, x1(ndof), x2(ndof)
   real(wp) r2(npshmax, nshmax)
   integer(i4) i, im, iv, ish, k, totnshockpoints
+  character(len=256) :: logbuf
 
 ! z1m/z1v/z2m/z2v/z3m/z3v/z4m/z4v were mod_freestream module scratch in
 ! the original -- write-only-then-immediately-consumed within one loop
@@ -59,9 +61,11 @@ subroutine co_state_dps(&
 
   totnshockpoints = 0
   do ish = 1, nshocks
-    write (8, *) 'shock/disc. n.', ish
+    write (logbuf, *) 'shock/disc. n.', ish
+    call log_line(8, logbuf)
 
-    write (20, *) 'Zone'
+    write (logbuf, *) 'Zone'
+    call log_line(20, logbuf)
 
     do iv = 1, nshockpoints(ish)
       totnshockpoints = totnshockpoints + 1
@@ -80,11 +84,11 @@ subroutine co_state_dps(&
       x1(2) = gm1/ga*(zroeshd(1, iv, ish)*zroeshd(2, iv, ish) - 0.5d0*help)! pressure
       r2(iv, ish) = sqrt(ga*x1(2)/x1(1)) + 0.5*gm1*x1(3)
 
-      write (8, *) 'zd(1)', zroeshd(1, iv, ish)
-      write (8, *) 'zd(2)', zroeshd(2, iv, ish)
-      write (8, *) 'zd(3)', zroeshd(3, iv, ish)
-      write (8, *) 'zd(4)', zroeshd(4, iv, ish)
-      write (8, *) 'r2d  ', r2(iv, ish)
+      write (logbuf, *) 'zd(1)', zroeshd(1, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zd(2)', zroeshd(2, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zd(3)', zroeshd(3, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zd(4)', zroeshd(4, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'r2d  ', r2(iv, ish); call log_line(8, logbuf)
 
 !        im is the node corresponding to the shock point iv
       im = iv
@@ -98,10 +102,10 @@ subroutine co_state_dps(&
       help = zroeshu(3, im, ish)**2 + zroeshu(4, im, ish)**2
       x2(2) = gm1/ga*(zroeshu(1, im, ish)*zroeshu(2, im, ish) - 0.5d0*help)
 
-      write (8, *) 'zu(1)', zroeshu(1, im, ish)
-      write (8, *) 'zu(2)', zroeshu(2, im, ish)
-      write (8, *) 'zu(3)', zroeshu(3, im, ish)
-      write (8, *) 'zu(4)', zroeshu(4, im, ish)
+      write (logbuf, *) 'zu(1)', zroeshu(1, im, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zu(2)', zroeshu(2, im, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zu(3)', zroeshu(3, im, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zu(4)', zroeshu(4, im, ish); call log_line(8, logbuf)
 
 !        initialize discontinuity velocity
       ws = 0.0d0
@@ -113,8 +117,9 @@ subroutine co_state_dps(&
 
       mmn = abs(ws - x2(3))/sqrt(ga*x2(2)/x2(1))
 
-      write (20, fmt=400) (xysh(k, iv, ish), k=1, ndim),&
+      write (logbuf, fmt=400) (xysh(k, iv, ish), k=1, ndim),&
       &(x1(k), k=1, 4), (x2(k), k=1, 4), mmn, ws, dx, dy, i
+      call log_line(20, logbuf)
 
 !        wsavg = wsavg + abs(ws)
 !        wsmax = max(abs(ws),wsmax)
@@ -152,10 +157,10 @@ subroutine co_state_dps(&
       zroeshd(3, iv, ish) = z3v
       zroeshd(4, iv, ish) = z4v
 
-      write (8, *) 'zd(1)_new', zroeshd(1, iv, ish)
-      write (8, *) 'zd(2)_new', zroeshd(2, iv, ish)
-      write (8, *) 'zd(3)_new', zroeshd(3, iv, ish)
-      write (8, *) 'zd(4)_new', zroeshd(4, iv, ish)
+      write (logbuf, *) 'zd(1)_new', zroeshd(1, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zd(2)_new', zroeshd(2, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zd(3)_new', zroeshd(3, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zd(4)_new', zroeshd(4, iv, ish); call log_line(8, logbuf)
 
 !        save old upstream state and assign shock upstream recomputed state
 !        do k = 1,ndof
@@ -167,16 +172,17 @@ subroutine co_state_dps(&
       zroeshu(3, im, ish) = z3m
       zroeshu(4, im, ish) = z4m
 
-      write (8, *) 'zu(1)_new', zroeshu(1, iv, ish)
-      write (8, *) 'zu(2)_new', zroeshu(2, iv, ish)
-      write (8, *) 'zu(3)_new', zroeshu(3, iv, ish)
-      write (8, *) 'zu(4)_new', zroeshu(4, iv, ish)
+      write (logbuf, *) 'zu(1)_new', zroeshu(1, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zu(2)_new', zroeshu(2, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zu(3)_new', zroeshu(3, iv, ish); call log_line(8, logbuf)
+      write (logbuf, *) 'zu(4)_new', zroeshu(4, iv, ish); call log_line(8, logbuf)
 
 !        assign discontinuity velocity
       wsh(1, iv, ish) = ws*dx
       wsh(2, iv, ish) = ws*dy
 
-      write (8, *) 's/d pnt n.', iv, 'speed:', wsh(1, iv, ish), wsh(2, iv, ish)
+      write (logbuf, *) 's/d pnt n.', iv, 'speed:', wsh(1, iv, ish), wsh(2, iv, ish)
+      call log_line(8, logbuf)
 
     end do
   end do
