@@ -18,7 +18,6 @@ subroutine co_state_dps(&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
-  use mod_freestream, only: z1m, z1v, z2m, z2v, z3m, z3v, z4m, z4v
   implicit none(type, external)
   external co_dc, co_shock
   include 'paramt.h'
@@ -44,6 +43,16 @@ subroutine co_state_dps(&
   real(wp) help, x1(ndof), x2(ndof)
   real(wp) r2(npshmax, nshmax)
   integer(i4) i, im, iv, ish, k, totnshockpoints
+
+! z1m/z1v/z2m/z2v/z3m/z3v/z4m/z4v were mod_freestream module scratch in
+! the original -- write-only-then-immediately-consumed within one loop
+! iteration, never read by anything else (confirmed: no other file
+! `use`s them). Made local, same fix already applied to the identical
+! pattern in mod_special_point.f90's tp_solve_state; a per-iteration
+! write to a module global is a data race under `!$omp parallel do`
+! (Phase 4.2 target).
+  real(wp) z1m, z2m, z3m, z4m
+  real(wp) z1v, z2v, z3v, z4v
 
 !     open log file
   open (8, file='log/co_dps_state.log')

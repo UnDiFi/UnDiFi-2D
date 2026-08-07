@@ -259,6 +259,13 @@ subroutine co_norm(xysh,&
 !      endif
 !     enddo
 
+! Phase 4.2 note: this count-then-bulk-flip pair is a reduction, not an
+! independent per-point loop -- `ii` is accumulated across every `i` before
+! the flip loop reads it. A naive `!$omp parallel do` on the count loop
+! races on `ii`; it needs `omp reduction(+:ii)` (which also supplies the
+! implicit end-of-loop barrier the flip loop's read of `ii` depends on).
+! The bulk-flip loop itself has no hazard once `ii` is final -- each
+! iteration only touches its own vshnor(:,i,ish) slot.
   do ish = 1, nshocks
     if (typesh(ish) .eq. 'S') then
       ii = 0
