@@ -11,6 +11,7 @@ subroutine mv_dps(xysh,&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
+  use mod_log, only: log_line
   implicit none(type, external)
   include 'paramt.h'
 
@@ -33,6 +34,7 @@ subroutine mv_dps(xysh,&
   &wshnew(ndim, npshmax, npshmax)
 
   integer(i4) i, im, iv, ish, k
+  character(len=200) :: log_buf
 
 !     open log file
   open (8, file='log/mv_dps.log')
@@ -40,9 +42,14 @@ subroutine mv_dps(xysh,&
 !     compute the dt max
 !     dxcell=0.01*0.4
 
+! Phase 4.5 (ROADMAP.md #16): these three do-ish/do-iv loop nests are
+! nshockpoints(ish)-bounded, the same shape as the already-OMP'd
+! kernels -- writes go through mod_log so they stay safe if ever
+! parallelized.
   dt = 1.0d+39
   do ish = 1, nshocks
-    write (8, *) 'shock n.', ish
+    write (log_buf, *) 'shock n.', ish
+    call log_line(8, log_buf)
 
     do iv = 1, nshockpoints(ish)
 
@@ -57,7 +64,8 @@ subroutine mv_dps(xysh,&
         dum = dum + wsh(k, iv, ish)**2
       end do
       wshmod = sqrt(dum)
-      write (8, *) 'shock pnt n.', iv, ' speed:', wshmod
+      write (log_buf, *) 'shock pnt n.', iv, ' speed:', wshmod
+      call log_line(8, log_buf)
 !         dum=dxcell*sndmin/a
 !         cfl=0.010
 !         if(iter.lt.801)cfl=0.010
@@ -87,12 +95,14 @@ subroutine mv_dps(xysh,&
 !     if(iter.le.10)dt=0.0d0
 
   do ish = 1, nshocks
-    write (8, *) 'shock/disc. n.', ish
+    write (log_buf, *) 'shock/disc. n.', ish
+    call log_line(8, log_buf)
     do iv = 1, nshockpoints(ish)
       do k = 1, 2
         xysh(k, iv, ish) = xysh(k, iv, ish) + wsh(k, iv, ish)*dt
       end do
-      write (8, *) xysh(1, iv, ish), xysh(2, iv, ish)
+      write (log_buf, *) xysh(1, iv, ish), xysh(2, iv, ish)
+      call log_line(8, log_buf)
     end do
   end do
 

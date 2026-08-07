@@ -29,6 +29,7 @@ subroutine fx_state_dps(&
   use mod_constants, only: ndim, ndof, npshmax, nshmax
   use mod_special_point, only: special_point_t
   use mod_special_point_registry, only: make_special_point, sp_unpack
+  use mod_log, only: log_line
   implicit none(type, external)
 
 !     .. scalar arguments ..
@@ -57,6 +58,7 @@ subroutine fx_state_dps(&
   integer(i4) i, iv, ish, ip
   integer(i4) isppnts
   class(special_point_t), allocatable :: sp
+  character(len=200) :: log_buf
 
 !     open log file
   open (8, file='log/fx_state_sps.log')
@@ -77,9 +79,13 @@ subroutine fx_state_dps(&
     varz(iv) = 0.0
     avarz(iv) = 0.0
   end do
+! Phase 4.5 (ROADMAP.md #16): this loop is nshockpoints(ish)-bounded, the
+! same shape as the already-OMP'd kernels -- writes go through mod_log
+! so it stays safe if this loop is ever parallelized.
   do ish = 1, nshocks
-    write (8, *) 'variations of z downstream of the shock'
-    write (8, *) 'shock n.', ish
+    call log_line(8, 'variations of z downstream of the shock')
+    write (log_buf, *) 'shock n.', ish
+    call log_line(8, log_buf)
     do i = 1, nshockpoints(ish)
       do iv = 1, ndof
         varz(iv) = zroeshd(iv, i, ish) - zroeshdold(iv, i, ish)
@@ -87,7 +93,8 @@ subroutine fx_state_dps(&
       end do
       wws = wws + sqrt(wsh(1, i, ish)**2 + wsh(2, i, ish)**2)
 
-      write (8, '(1x,i3,5(1x,f15.7))') i, (varz(iv), iv=1, ndof)
+      write (log_buf, '(1x,i3,5(1x,f15.7))') i, (varz(iv), iv=1, ndof)
+      call log_line(8, log_buf)
     end do
   end do
 

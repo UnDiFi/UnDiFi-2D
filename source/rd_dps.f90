@@ -11,6 +11,7 @@ subroutine rd_dps(&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
+  use mod_log, only: log_line
   implicit none(type, external)
   include 'paramt.h'
 
@@ -33,6 +34,7 @@ subroutine rd_dps(&
 !     .. local scalars ..
   real(wp) dt
   integer(i4) i, im, iv, ish, k, ile_min, ile_max, np_c, np_i
+  character(len=200) :: log_buf
 
 !     open log file
   open (8, file='log/rd_dps.log')
@@ -71,10 +73,15 @@ subroutine rd_dps(&
       ile_max = 0.0d0
     end if
 
+! Phase 4.5 (ROADMAP.md #16): all four write loops below are
+! nshockpoints(ish)-bounded, the same shape as the already-OMP'd
+! kernels -- writes go through mod_log so they stay safe if this outer
+! do-ish loop is ever parallelized across shocks.
     if (ile_min .ne. 0) then
-      write (8, *) 'before'
+      call log_line(8, 'before')
       do iv = 1, nshockpoints(ish)
-        write (8, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        write (log_buf, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        call log_line(8, log_buf)
       end do
 
       np_c = ile_min
@@ -103,17 +110,19 @@ subroutine rd_dps(&
       nshockpoints(ish) = nshockpoints(ish) - 1
       nshockedges(ish) = nshockedges(ish) - 1
 
-      write (8, *) 'after'
+      call log_line(8, 'after')
       do iv = 1, nshockpoints(ish)
-        write (8, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        write (log_buf, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        call log_line(8, log_buf)
       end do
 
     end if
 
     if (ile_max .ne. 0) then
-      write (8, *) 'before'
+      call log_line(8, 'before')
       do iv = 1, nshockpoints(ish)
-        write (8, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        write (log_buf, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        call log_line(8, log_buf)
       end do
 
       np_i = ile_max
@@ -140,9 +149,10 @@ subroutine rd_dps(&
       nshockpoints(ish) = nshockpoints(ish) + 1
       nshockedges(ish) = nshockedges(ish) + 1
 
-      write (8, *) 'after'
+      call log_line(8, 'after')
       do iv = 1, nshockpoints(ish)
-        write (8, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        write (log_buf, *) iv, zroeshd(1, iv, ish), zroeshd(2, iv, ish)
+        call log_line(8, log_buf)
       end do
 
     end if
