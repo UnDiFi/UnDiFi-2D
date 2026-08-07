@@ -20,6 +20,7 @@ subroutine fnd_phps(nface,&
 
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, neshmax, nprdbndmax, npshmax, nshmax
+  use mod_search, only: bin_grid_t, build_bin_grid, query_segment
   implicit none(type, external)
   external rdshp, ishel1, ishel2
   include 'paramt.h'
@@ -44,6 +45,14 @@ subroutine fnd_phps(nface,&
   integer(i4) i, k, n1, n2, n3, ielem, ielemsh, ishel1, ishel2, ii, nphpoin,&
   &ifail, nbphp, ish, iface, last, ipos, ipoin
 
+!     Phase 4.1 (ROADMAP.md #16): spatial acceleration structure --
+!     replaces the brute-force do ielem=1,nelem scan below with a
+!     narrowed candidate list from mod_search. Rebuilt once per call
+!     since the mesh changes every outer iteration.
+  type(bin_grid_t) :: grid
+  integer(i4), allocatable :: cand(:)
+  integer(i4) :: kc
+
 ! open log file
   open (8, file='log/fnd_phps.log')
 
@@ -58,9 +67,18 @@ subroutine fnd_phps(nface,&
   nphpoin = 0
 
 !      find mesh cells crossed by the shock
+  call build_bin_grid(grid, icelnod, nvt, xy, nelem)
   do ish = 1, nshocks
     do ielemsh = 1, nshockedges(ish)
-      do ielem = 1, nelem
+
+      xs1 = xysh(1, ielemsh, ish)
+      ys1 = xysh(2, ielemsh, ish)
+      xs2 = xysh(1, ielemsh + 1, ish)
+      ys2 = xysh(2, ielemsh + 1, ish)
+
+      call query_segment(grid, xs1, ys1, xs2, ys2, cand)
+      do kc = 1, size(cand)
+        ielem = cand(kc)
 
         n1 = icelnod(1, ielem)
         n2 = icelnod(2, ielem)
@@ -71,11 +89,6 @@ subroutine fnd_phps(nface,&
         yc1 = xy(2, n1)
         yc2 = xy(2, n2)
         yc3 = xy(2, n3)
-
-        xs1 = xysh(1, ielemsh, ish)
-        ys1 = xysh(2, ielemsh, ish)
-        xs2 = xysh(1, ielemsh + 1, ish)
-        ys2 = xysh(2, ielemsh + 1, ish)
 
 ! if both the functions ishel1 and ishel2 return 0, then shock segment denoted
 ! by the two shock points (xs1, ys1, xs2, ys2) crosses the cell with
