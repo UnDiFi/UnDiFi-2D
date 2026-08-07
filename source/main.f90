@@ -9,6 +9,8 @@ program undifi_2d
   &xyshnew, norshnew, wshnew, wshmean, zroeshuoldnew, zroeshdoldnew,&
   &shock_system_init, shock_system_refresh
   use mod_shock_advance, only: advance
+  use mod_solver_iface, only: flow_solver_t, solver_run_ctx_t
+  use mod_solver_registry, only: make_flow_solver
   implicit none(type, external)
 
 ! ********************************************************************************************************************************
@@ -109,6 +111,12 @@ program undifi_2d
   integer(i4) nbfac_sh
   logical fndbnds
 
+!     Phase 3.7 (ROADMAP.md #14, issue #15): one polymorphic solver
+!     replacing the if(EULFS)/elseif(SU2)/elseif(NEO) dispatch that used
+!     to be inlined at 7 separate call sites -- see mod_solver_iface.f90.
+  class(flow_solver_t), allocatable :: solver
+  type(solver_run_ctx_t) :: ctx
+
 !     .. external functions ..
   integer(i4) initxdr
   external initxdr
@@ -171,6 +179,7 @@ program undifi_2d
 
 !     flag to select the shock-capturing solver, eulfs, neo, or su2
   NEO = (.not. EULFS) .and. (.not. SU2)
+  solver = make_flow_solver(eulfs, su2)
 
 !     flag to select the type of simulation: steady or unsteady
   UNSTEADY = (.not. STEADY)
@@ -206,21 +215,10 @@ program undifi_2d
   ifail = run_external("echo 'Running on' `uname -a` > triangle.log", 'echo', fatal_on_error=.false.)
   ifail = run_external("date >> triangle.log", 'date', fatal_on_error=.false.)
 
-  if (eulfs) then
-    execmd = "rm -fv convergenza.dat"
-    ifail = run_external(execmd, 'rm')
-
-!        copy file .petsrc in home
-!        for UNSTEADY EulFS simulations this file
-!        will be overwritten with .petsrc_predictor and
-!        .petsrc_corrector in their respective steps
-!        They only differ in the dt value
-    if (.not. UNSTEADY) then
-      execmd = "cp -fv .petscrc .petscrc"
-    end if
-!        ifail = system(execmd)
-    if (ifail .ne. 0) call fatal('system command failed', ifail)
-  end if
+!     Phase 3.7 (ROADMAP.md #14, issue #15): was `if (eulfs) then ...
+!     end if` inline here -- see mod_eulfs_solver.f90's eulfs_setup for
+!     the ported logic (including a preserved pre-existing bug).
+  call solver%setup(unsteady)
 
 !     the initial grid is stored in a file called na00.1
   fname = "na00.1"
@@ -680,7 +678,7 @@ program undifi_2d
 !  It gives to EulFS info about grid velocity needed for the ALE
 ! **********************************************************************
 
-      if (EULFS) then
+      if (solver%supports_ale()) then
         write (*, 1001, advance='no') 'solzne                -->   '
         call solzne(&
         &velfile,&
@@ -689,7 +687,7 @@ program undifi_2d
         &bkg%npoin + 2*npshmax*nshmax,&
         &mode)
         write (*, 1002) ' ok'
-      end if ! EULFS
+      end if ! supports_ale (EULFS only)
 
     end if ! END UNSTEADY
 
@@ -698,6 +696,20 @@ program undifi_2d
 ! **********************************************************************
 
     write (fname(3:7), fmt="(i5.5)") i
+
+!     Phase 3.7 (ROADMAP.md #14, issue #15): populate the context passed
+!     to every solver%... call for the rest of this outer iteration.
+!     corrector is set .false. here and only flipped .true. around the
+!     UNSTEADY-corrector-step calls further down.
+    ctx%fname = fname(1:7)
+    ctx%bindir = bindir(1:10)
+    ctx%hostype = hostype(1:6)
+    ctx%testcase = testcase
+    ctx%iter = i
+    ctx%nbegin = nbegin
+    ctx%unsteady = unsteady
+    ctx%corrector = .false.
+
     write (*, 1001, advance='no') 'wtri                   -->  '
     call wtri(&
     &bkg%bndfac,&
@@ -727,14 +739,9 @@ program undifi_2d
 !  grid file in /NEO_data/input/
 ! **********************************************************************
 
-    if (NEO) then ! NEO solver
-      if (i == 1 + nbegin .and. testcase == "ShockExpansion") then
-        write (*, 1001, advance='no') 'neogrid0               -->  '
-        execmd = bindir(1:10)//'neogrid0'
-        ifail = run_external(execmd, 'neogrid0')
-        write (*, 1002) ' ok'
-      end if
-    end if
+!     Phase 3.7 (ROADMAP.md #14, issue #15): was `if (NEO) then ... end
+!     if` inline here -- see mod_neo_solver.f90's neo_pre_mesh_setup.
+    call solver%pre_mesh_setup(ctx)
 
 ! **********************************************************************
 !  Generate the new mesh
@@ -778,267 +785,19 @@ program undifi_2d
     end if ! STEADY
 
 ! ***********************************
-    if (EULFS) then ! EulFS SOLVER
+!     Phase 3.7 (ROADMAP.md #14, issue #15): was the three-way
+!     if(EULFS)/elseif(SU2)/elseif(NEO)/else-error-stop dispatch inline
+!     here (~260 lines) -- see mod_eulfs_solver.f90/mod_neo_solver.f90/
+!     mod_su2_solver.f90 for the ported per-solver logic. The `else`
+!     fallback is dropped: eulfs/su2/neo are mutually exclusive by
+!     construction (see the CLI parsing above), so make_flow_solver
+!     always allocates exactly one of the three concrete types and this
+!     branch was already structurally unreachable.
 ! ***********************************
+    call solver%prepare(ctx)
+    call solver%run(ctx)
+    call solver%harvest(ctx)
 
-! **********************************************************************
-!  Convert the triangle files into a fmt readable by the code using:
-!  echo na0x.1 | triangle2dat
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'triangle2dat           -->  '
-!        execmd = "echo " // fname(1:7)
-!     +   // ".1 |" // bindir(1:10) // "triangle2dat_" // hostype(1:6)
-!     +   // " > log/triangle2dat.log"
-      if (nprdbnd .eq. 0) then                            ! for the cases without periodic BCs
-        execmd = "printf '"//fname(1:7)&
-        &//".1\nn'|"&
-        &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-        &//" > log/triangle2dat.log"
-      elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 1) then    ! for the cases with only one periodic boundary
-        write (color1, fmt="(i2.2)") prdbndclr(1, 1)          ! with points having the same x
-        write (color2, fmt="(i2.2)") prdbndclr(2, 1)
-        execmd = "printf '"//fname(1:7)&
-        &//".1\ny\n"&
-        &//color1//"\n"&
-        &//color2//"\nx'|"&
-        &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-        &//" > log/triangle2dat.log"
-      elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 2) then ! for the cases with only one periodic boundary
-        write (color1, fmt="(i2.2)") prdbndclr(1, 1)           ! with points having the same y
-        write (color2, fmt="(i2.2)") prdbndclr(2, 1)
-        execmd = "printf '"//fname(1:7)&
-        &//".1\ny\n"&
-        &//color1//"\n"&
-        &//color2//"\ny'|"&
-        &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-        &//" > log/triangle2dat.log"
-
-      else ! for cases with more thatn one periodic boundary
-        write (*, *) ' case not implemented!'
-      end if
-
-!        write(*,*)execmd
-
-!        execmd = "printf '" // fname(1:7)
-!    +   // ".1\ny\n2\n4\nx'|" ! for case cascade
-!    +   // ".1\ny\n1\n3\nx'|" ! for case nacapar2
-!    +   // ".1\nn'|"          ! for cases w/o periodic BCs'
-!    +   // bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)
-!    +   // " > log/triangle2dat.log"
-!         write(*,*)execmd
-
-      ifail = run_external(execmd, 'triangle2dat')
-
-      write (*, 1002) ' ok'
-
-! ****************************
-!  Run one step of EulFS code
-! ****************************
-
-      if (UNSTEADY) then
-!          It runs the predictor step of the EulFS code (we need to use dt/2)
-        execmd = "cp -f .petscrc_predictor .petscrc"
-        ifail = run_external(execmd, 'cp')
-      end if
-
-      write (*, 1001, advance='no') 'eulfs                  -->  '
-!        execmd = bindir(1:10) // "eulfs11.13_"
-!     +                        //gastype(1:4)//"_"//hostype(1:6)
-!     +  // " -itmax 1 > log/eulfs.log"
-      execmd = bindir(1:10)//"EulFS_"//hostype(1:6)&
-      &//" -itmax 1 > log/eulfs.log"
-
-      ifail = run_external(execmd, 'eulfs')
-
-      if (unsteady) then
-        execmd = "cp step000001.dat file001.dat"
-        ifail = run_external(execmd, 'cp')
-      end if
-
-!        execmd = "cp file003.dat file010.dat"
-!        ifail = system(execmd)
-!        if(ifail.ne.0)call exit(1)
-
-      write (*, 1002) ' ok'
-
-! **********************************************************************
-!  Convert the code files into triangle fmt using:
-!  echo na0x.1 | dat2triangle
-!  The file na0x.1.node will be overwritten with the values updated by
-!  the code and a copy with "old" values is copied in na0x.1.node.bak
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'dat2triangle           -->  '
-!        execmd = "echo "//fname(1:7)//".1 | "// bindir(1:10)
-!    +   // "dat2triangle_" // hostype(1:6)
-!    +   // ">log/dat2triangle.log"
-      execmd = "printf '"//fname(1:7)//".1' | "//bindir(1:10)&
-      &//"dat2triangle-NEW-"//hostype(1:6)&
-      &//">log/dat2triangle.log"
-      ifail = run_external(execmd, 'dat2triangle')
-
-      write (*, 1002) ' ok'
-
-! ***********************************
-    elseif (SU2) then ! SU2 SOLVER
-! ***********************************
-
-! **********************************************************************
-!  Convert the triangle files into SU2's native mesh + restart state:
-!  echo na0x.1 / su2case | triangle2su2
-!  "su2case" is a fixed basename (not fname) so su2case.cfg's
-!  MESH_FILENAME/SOLUTION_FILENAME/RESTART_FILENAME never have to
-!  change across outer iterations even though the Triangle basename
-!  (fname) does. No periodic-BC support yet (see source_utils/
-!  triangle2su2/main.f) -- fine for now, CircularCylinder has none.
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'triangle2su2           -->  '
-      execmd = "printf '"//fname(1:7)&
-      &//".1\nsu2case'|"&
-      &//bindir(1:10)//"triangle2su2-"//hostype(1:6)&
-      &//" > log/triangle2su2.log"
-      ifail = run_external(execmd, 'triangle2su2')
-
-      write (*, 1002) ' ok'
-
-! **************************
-!  Run one step of SU2 code
-! **************************
-!  su2case.cfg sets ITER=1 with RESTART_SOL=YES: one implicit step
-!  per outer UNDIFI iteration, the SU2 analogue of EulFS's -itmax 1.
-
-      write (*, 1001, advance='no') 'su2                    -->  '
-      execmd = bindir(1:10)//"SU2_CFD"&
-      &//" su2case.cfg > log/su2.log"
-
-      ifail = run_external(execmd, 'su2')
-
-      write (*, 1002) ' ok'
-
-! **********************************************************************
-!  Convert su2case's restart state back into triangle fmt:
-!  echo na0x.1 / su2case | su22triangle
-!  The file na0x.1.node will be overwritten with the values updated by
-!  the code and a copy with "old" values is copied in na0x.1.node.BAK
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'su22triangle           -->  '
-      execmd = "printf '"//fname(1:7)&
-      &//".1\nsu2case'|"&
-      &//bindir(1:10)//"su22triangle-"//hostype(1:6)&
-      &//" > log/su22triangle.log"
-      ifail = run_external(execmd, 'su22triangle')
-
-      write (*, 1002) ' ok'
-
-! ***********************************
-    elseif (NEO) then ! NEO SOLVER
-! ***********************************
-
-!      neogrid0 works only for the 1st iteration of ShockVortex
-!      but in all other cases we need this conversion
-      if (STEADY .or. i /= 1 + nbegin .or. testcase == "ShockVortex") then
-
-        write (*, 1001, advance='no') 'na00xTovvvv            -->   '
-        execmd = "echo "//fname(1:7)&
-        &//".1 |"//bindir(1:10)//"na2vvvv"&
-        &//" > log/na2vvvv.log"
-        ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
-        write (*, 1002) 'ok'
-
-      end if
-
-! ****************************************************************
-!       convert the triangle files into a format readable by the
-!       code using: echo na0X.1 | triangle2dat
-! ****************************************************************
-
-      write (*, 1001, advance='no') 'triangle2grd           -->   '
-      execmd = "echo "//fname(1:7)&
-      &//".1 |"//bindir(1:10)//"triangle2grd"&
-      &//" > log/triangle2grd.log"
-      ifail = run_external(execmd, 'triangle2grd')
-      write (*, 1002) 'ok'
-
-!     ******************
-      if (UNSTEADY) then
-!     ******************
-
-!       if it is the 1st iteration
-!       **************************
-        if (i == 1 + nbegin) then
-
-          write (*, 1001, advance='no') 'NEO 1st iteration      -->  '
-
-          execmd = bindir(1:10)//"CRD_euler"&
-          &//"> log/neo.log"
-          ifail = run_external(execmd, 'NEO (1st iteration)')
-
-          execmd = "cp ./NEO_data/output/vvvv.dat "//&
-          &"./NEO_data/output/vvvv0.dat "
-          ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
-
-          execmd = "mv ./NEO_data/output/vvvv.dat "//&
-          &"./NEO_data/output/vvvv_input.dat "
-          ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
-
-!         Here the following happens (for unsteady cases):
-!         - the 1st iteration uses NEO_data/textinput/inputfile-exp.txt
-!         - After the 1st NEO call, inputfile-exp.txt is moved in BAK
-!         - Then, the inputfile-exp.txt in the testcase folder is
-!           copied in NEO_data/textinput/inputfile-exp.txt
-!         This is done because the two inputfile-exp.txt files differ
-!         for the "Initial state" value. In the first case, it is 14
-!         which means that the NEO function initial_solution()
-!         writes the initial solution for the centered expansion test,
-!         while after the 1st iteration should be 0, since we don't need
-!         to initialize it again but instead just read_solution() which
-!         happens if the variable intial_solution = 0.
-
-          execmd = "mv ./NEO_data/textinput/inputfile-exp.txt "//&
-          &"./NEO_data/textinput/inputfile-exp.txt.BAK "
-          ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
-
-          execmd = "cp inputfile-exp.txt "//"./NEO_data/textinput/"
-          ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
-
-          write (*, 1002) ' ok'
-
-        end if ! 1ST ITERATION
-
-      end if ! UNSTEADY
-
-!     for all the other iterations
-!     ****************************
-      write (*, 1001, advance='no') 'NEO                    -->   '
-      execmd = bindir(1:10)//"CRD_euler"&
-      &//"> log/neo.log"
-      ifail = run_external(execmd, 'neo')
-      write (*, 1002) 'ok'
-
-! **********************************************************************
-!  Convert the code files into triangle fmt using:
-!  echo na0X.1 | NEO2triangle ex (dat2triangle)
-!  Note: the file na0X.1.node will be overwritten with the values
-!        updated by the code and a copy with "old" values is copied in
-!        na0X.1.node.BAK
-! **********************************************************************
-
-      write (*, 1001, advance='no') 'NEO2triangle           -->   '
-      execmd = "echo "//fname(1:7)//".1 | "//bindir(1:10)&
-      &//"NEO2triangle"//">log/NEO2triangle.log"
-      ifail = run_external(execmd, 'neo2triangle')
-      write (*, 1002) 'ok'
-
-    else
-
-      write (*, *) 'should be running either EULFS ', eulfs, ' or NEO ',&
-      &neo
-      error stop 10
-
-    end if ! IF-THEN-ELSE ON THE CFD CODE
 
 ! **********************************************************************
 !  Here the corrector step starts
@@ -1075,7 +834,8 @@ program undifi_2d
       fname(1:9) = fname(1:7)//".1"
       call advance(bkg, fit, fname, i, nshocks, nshockpoints, nshocksegs,&
       &typeshocks, nspecpoints, typespecpoints, shinspps, ispclr,&
-      &new_shadow=.true., eulfs=eulfs, varray=varray, velfile=velfile,&
+      &new_shadow=.true., eulfs=solver%supports_ale(), varray=varray,&
+      &velfile=velfile,&
       &mode=mode, testcase=testcase, dt=dtco, velflag='n')
 
 ! **********************************************************************
@@ -1089,154 +849,17 @@ program undifi_2d
       write (*, 1002) ' ok'
 
 ! ***********************************
-      if (EULFS) then ! EulFS SOLVER
+!     Phase 3.7 (ROADMAP.md #14, issue #15): was the UNSTEADY-corrector
+!     if(EULFS)/elseif(NEO) dispatch inline here (no SU2 arm existed --
+!     su2_t's prepare/run/harvest are no-ops when ctx%corrector is
+!     .true., reproducing that gap exactly, see mod_su2_solver.f90).
 ! ***********************************
+      ctx%corrector = .true.
+      call solver%prepare(ctx)
+      call solver%run(ctx)
+      call solver%harvest(ctx)
+      ctx%corrector = .false.
 
-! **********************************************************************
-!  Convert the triangle files into a fmt readable by the code using:
-!  echo na0x.1 | triangle2dat
-! **********************************************************************
-
-        write (*, 1001, advance='no') 'triangle2dat           -->  '
-!        execmd = "echo " // fname(1:7)
-!     +   // ".1 |" // bindir(1:10) // "triangle2dat_" // hostype(1:6)
-!     +   // " > log/triangle2dat.log"
-        if (nprdbnd .eq. 0) then                            ! for the cases without periodic BCs
-          execmd = "printf '"//fname(1:7)&
-          &//".1\nn'|"&
-          &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-          &//" > log/triangle2dat.log"
-        elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 1) then    ! for the cases with only one periodic boundary
-          write (color1, fmt="(i2.2)") prdbndclr(1, 1)          ! with points having the same x
-          write (color2, fmt="(i2.2)") prdbndclr(2, 1)
-          execmd = "printf '"//fname(1:7)&
-          &//".1\ny\n"&
-          &//color1//"\n"&
-          &//color2//"\nx'|"&
-          &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-          &//" > log/triangle2dat.log"
-        elseif (nprdbnd .eq. 1 .and. prdbndclr(3, 1) .eq. 2) then ! for the cases with only one periodic boundary
-          write (color1, fmt="(i2.2)") prdbndclr(1, 1)           ! with points having the same y
-          write (color2, fmt="(i2.2)") prdbndclr(2, 1)
-          execmd = "printf '"//fname(1:7)&
-          &//".1\ny\n"&
-          &//color1//"\n"&
-          &//color2//"\ny'|"&
-          &//bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)&
-          &//" > log/triangle2dat.log"
-
-        else ! for cases with more thatn one periodic boundary
-          write (*, *) ' case not implemented!'
-        end if
-
-!        write(*,*)execmd
-
-!        execmd = "printf '" // fname(1:7)
-!    +   // ".1\ny\n2\n4\nx'|" ! for case cascade
-!    +   // ".1\ny\n1\n3\nx'|" ! for case nacapar2
-!    +   // ".1\nn'|"          ! for cases w/o periodic BCs'
-!    +   // bindir(1:10)//"triangle2dat-NEW-"//hostype(1:6)
-!    +   // " > log/triangle2dat.log"
-!         write(*,*)execmd
-
-        ifail = run_external(execmd, 'triangle2dat')
-
-        write (*, 1002) ' ok'
-
-! ****************************
-!  Run one step of EulFS code
-! ****************************
-
-!        if (UNSTEADY) then
-!          It runs the corrector step of the EulFS code (now we use the full dt)
-        execmd = "cp -f .petscrc_corrector .petscrc"
-        ifail = run_external(execmd, 'cp')
-!        end if
-
-        write (*, 1001, advance='no') 'eulfs                  -->  '
-!        execmd = bindir(1:10) // "eulfs11.13_"
-!     +                        //gastype(1:4)//"_"//hostype(1:6)
-!     +  // " -itmax 1 > log/eulfs.log"
-        execmd = bindir(1:10)//"EulFS_"//hostype(1:6)&
-        &//" -itmax 1 > log/eulfs.log"
-
-        ifail = run_external(execmd, 'eulfs')
-
-!        if (UNSTEADY) then
-        execmd = "cp step000001.dat file001.dat"
-        ifail = run_external(execmd, 'cp')
-!        endif
-
-!        execmd = "cp file003.dat file010.dat"
-!        ifail = system(execmd)
-!        if(ifail.ne.0)call exit(1)
-
-        write (*, 1002) ' ok'
-
-! **********************************************************************
-!  Convert the code files into triangle fmt using:
-!  echo na0x.1 | dat2triangle
-!  The file na0x.1.node will be overwritten with the values updated by
-!  the code and a copy with "old" values is copied in na0x.1.node.bak
-! **********************************************************************
-
-        write (*, 1001, advance='no') 'dat2triangle           -->  '
-!        execmd = "echo "//fname(1:7)//".1 | "// bindir(1:10)
-!    +   // "dat2triangle_" // hostype(1:6)
-!    +   // ">log/dat2triangle.log"
-        execmd = "printf '"//fname(1:7)//".1' | "//bindir(1:10)&
-        &//"dat2triangle-NEW-"//hostype(1:6)&
-        &//">log/dat2triangle.log"
-        ifail = run_external(execmd, 'dat2triangle')
-
-        write (*, 1002) ' ok'
-
-      elseif (NEO) then ! NEO SOLVER for UNSTEADY predictor step
-
-! **********************************************************************
-!   Update of vvvv.dat (input) for NEO
-! **********************************************************************
-
-        write (*, 1001, advance='no') 'na2vvvv                -->  '
-        execmd = "echo "//fname(1:7)&
-        &//".1 |"//bindir(1:10)//"na2vvvv"&
-        &//" > log/na2vvvv.log"
-        ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
-        write (*, 1002) ' ok'
-
-! **********************************************************************
-!  convert the triangle files into a fmt readable by the code
-!  using: echo na0x.1 | triangle2dat
-! **********************************************************************
-
-        write (*, 1001, advance='no') 'triangle2grd           -->  '
-        execmd = "echo "//fname(1:7)&
-        &//".1 |"//bindir(1:10)//"triangle2grd"&
-        &//" > log/triangle2grd.log"
-        ifail = run_external(execmd, 'triangle2grd')
-        write (*, 1002) ' ok'
-
-! **********************************************************************
-!  One step with NEO
-! **********************************************************************
-
-        write (*, 1001, advance='no') 'NEO                    -->  '
-        execmd = bindir(1:10)//"CRD_euler"&
-        &//" > log/neo.log"
-        ifail = run_external(execmd, 'NEO')
-        write (*, 1002) ' ok'
-
-! **********************************************************************
-!  Convert dat file to triangle file
-! **********************************************************************
-
-        write (*, 1001, advance='no') 'NEO2triangle           -->  '
-        execmd = "echo "//fname(1:7)//".1 | "//bindir(1:10)&
-        &//"NEO2triangle"//">log/NEO2triangle.log"
-        ifail = run_external(execmd, 'NEO2triangle')
-        write (*, 1002) ' ok'
-
-      end if ! end SOLVER (EULFS/NEO) for UNSTEADY (corrector step)
 
 ! **********************************************************************
 
@@ -1323,7 +946,8 @@ program undifi_2d
     fname(1:9) = fname(1:7)//".1"
     call advance(bkg, fit, fname, i, nshocks, nshockpoints, nshocksegs,&
     &typeshocks, nspecpoints, typespecpoints, shinspps, ispclr,&
-    &new_shadow=.false., eulfs=eulfs, varray=varray, velfile=velfile,&
+    &new_shadow=.false., eulfs=solver%supports_ale(), varray=varray,&
+    &velfile=velfile,&
     &mode=mode, testcase=testcase)
 
 ! **********************************************************************
@@ -1562,79 +1186,25 @@ program undifi_2d
 ! **********************************************************************
 
     write (backdir(5:9), fmt="(i5.5)") i
-    if (mod(i - 1, ibak) .eq. 0) then
+    ctx%backdir = backdir(1:9)
+    ctx%fnameback = fnameback(1:4)
+!     Phase 3.7 (ROADMAP.md #14, issue #15): was `if (eulfs)/elseif
+!     (neo)` (backing-up branch) and `if (EULFS)/elseif (NEO)`
+!     (non-backing-up branch) inline here -- see mod_eulfs_solver.f90/
+!     mod_neo_solver.f90's archive() (su2_t doesn't override archive();
+!     SU2 never had an arm at either branch, see mod_su2_solver.f90).
+    ctx%backing_up = (mod(i - 1, ibak) .eq. 0)
+    if (ctx%backing_up) then
       execmd = "mkdir -v "//backdir(1:9)
       ifail = run_external(execmd, 'mkdir', fatal_on_error=.false.)
-!     execmd = "mv shocknor.dat shock.log file00[1-3].dat file010.dat fs
-!    &pl.out shocks.dat "//fname(1:7)//".* "//backdir(1:9)
-      if (eulfs) then
-        execmd = "mv -v shocknor.dat file00[1-4].dat file010.dat sh&
-        &99.dat  "//fname(1:7)//".* "//fnameback(1:4)//".node&
-        &                               "//backdir(1:9)
-        ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
-      elseif (neo) then
-        execmd = "mv -v shocknor.dat sh99.dat&
-        &                                        "//fname(1:7)//".* "//fnameback(1:4)//".node "//&
-        &backdir(1:9)
-        ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
-        execmd =&
-        &"cp -vp ./NEO_data/input/neogrid.grd&
-        &                              ./NEO_data/input/vel.dat "//backdir(1:9)
-
-!    &       "mv -v ../../source_utils/NEO_source/input/neogrid.grd
-!    &       ../../source_utils/NEO_source/input/vel.dat "//backdir(1:9)
-
-! Note: make attention with cp/mv because of vel.dat file
-
-        ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
-!
-!         if (i == 1+nbegin) then
-!            execmd = "mv ../../../NEO_source/output/vvvv0.dat "
-!    &             //backdir(1:9)
-!            ifail = system(execmd)
-!         end if
-!
-        execmd =&
-        &"cp -v ./NEO_data/output/vvvv.dat "//backdir(1:9)
-        ifail = run_external(execmd, 'cp', fatal_on_error=.false.)
-
-        execmd =&
-        &"mv -v ./NEO_data/output/vvvv_input.dat "//backdir(1:9)
-        ifail = run_external(execmd, 'mv', fatal_on_error=.false.)
-
-! copy the solution fie in Tec folder
-!         if (i == 1+nbegin) then
-!            execmd = "cp "//backdir(1:9)//"/vvvv0.dat "
-!    &            //"tec/vvvv00000.dat"
-!            ifail = system(execmd)
-!         end if
-
-!         execmd = "cp ../../source_utils/NEO_source/output/vvvv.dat "//"Tec/vvvv"
-!    &         //backdir(5:9)//".dat"
-!         ifail = system(execmd)
-
-      end if
-!         ifail = system(execmd)
-    else ! backing up or not ...
-!     execmd = "rm shocknor.dat shock.log file00[1-3].dat file010.dat fs
-!    &pl.out shocks.dat "//fname(1:7)//".*"
-      if (EULFS) then
-        execmd = "rm shocknor.dat file00[1-4].dat file010.dat&
-        &                               "//fname(1:7)//".* "//fnameback(1:4)//".node "//&
-        &"sh99.dat "
-      elseif (NEO) then
-        execmd = "rm shocknor.dat "//fname(1:7)//".* "//fnameback(1:4)//&
-        &".node "//"sh99.dat "
-      end if
-      ifail = run_external(execmd, 'rm', fatal_on_error=.false.)
     end if
+    call solver%archive(ctx)
 
-    if (EULFS) then
-      execmd = "cut -c34- convhst.l2 >> convergenza.dat"
-      ifail = run_external(execmd, 'cut', fatal_on_error=.false.)
-    elseif (NEO) then
-!     .. can we do something similar with NEO?
-    end if
+!     Phase 3.7 (ROADMAP.md #14, issue #15): was `if (EULFS)/elseif
+!     (NEO)` inline here -- see mod_eulfs_solver.f90's
+!     eulfs_log_convergence (neo_t/su2_t inherit the shared no-op
+!     default, exactly matching NEO's empty arm and SU2's absent one).
+    call solver%log_convergence()
 
 1000 continue
 
