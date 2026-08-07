@@ -28,6 +28,7 @@ subroutine interp(&
   use mod_kinds, only: wp, i4
   use mod_constants, only: naddholesmax, ndim, ndof, nprdbndmax, npshmax, nshmax
   use mod_search, only: bin_grid_t, build_bin_grid, query_point
+  use mod_log, only: log_line
   implicit none(type, external)
   external finder, finder_search
   include 'paramt.h'
@@ -64,6 +65,7 @@ subroutine interp(&
 !     call since the mesh changes every outer iteration.
   type(bin_grid_t) :: grid
   integer(i4), allocatable :: cand(:)
+  character(len=256) :: logbuf
 
 !     open log file
   open (8, file='log/interp.log')
@@ -87,21 +89,36 @@ subroutine interp(&
 !     interpolate in the background mesh nodes, using the connectivity of the shocked mesh;
 !     the interpolation is necessary only for the ghost nodes
   call build_bin_grid(grid, icelnod, nvt, xy, nelem)
+! Phase 4.3 (ROADMAP.md #16): each ipoin reads only its own nodcod(ipoin)
+! and writes only its own zbkg(:,ipoin) slot -- query_point/finder_search
+! are both pure w.r.t. shared state (grid is intent(in), candidates is a
+! fresh per-call allocation, finder_search is a true external subroutine
+! with no module/save state, so every call gets its own frame) -- so this
+! parallelizes once cand and the loop's scratch locals are privatized.
+! The `stop` on a failed search is an already-fatal, already-rare error
+! path preserved as-is; a STOP inside a parallel region is nonstandard
+! but this was already meant to hard-crash the whole run, serial or not.
+  !$omp parallel do private(ipoin, i, ifail, ielem, cand, logbuf)
   do ipoin = 1, npoin(0)
 !       if((nodcod(ipoin).eq.-1) or.(nodcod(ipoin).eq.-2)) then
     if ((nodcod(ipoin) .eq. -1)) then
-      write (8, *) 'trying to locate ', ipoin,&
+      write (logbuf, *) 'trying to locate ', ipoin,&
       &'(', xybkg(1, ipoin), ',', xybkg(2, ipoin), ')'
+      call log_line(8, logbuf)
       ifail = 0
 !            if(ipoin.eq.1449)ifail=99
       call query_point(grid, xybkg(1, ipoin), xybkg(2, ipoin), cand)
       call finder_search(icelnod, xy, ndim, zroe, ndof, xybkg(1, ipoin),&
       &zbkg(1, ipoin), cand, size(cand), ielem, ifail)
-      write (8, *) 'found in cell ', ielem, ifail
+      write (logbuf, *) 'found in cell ', ielem, ifail
+      call log_line(8, logbuf)
       if (ifail .ne. 0) then
-        write (8, *) 'search failed for vertex ', ipoin
-        write (8, *) (xybkg(i, ipoin), i=1, ndim)
-        write (8, *) 'cell no is ', ielem
+        write (logbuf, *) 'search failed for vertex ', ipoin
+        call log_line(8, logbuf)
+        write (logbuf, *) (xybkg(i, ipoin), i=1, ndim)
+        call log_line(8, logbuf)
+        write (logbuf, *) 'cell no is ', ielem
+        call log_line(8, logbuf)
         stop
       end if
     else
@@ -111,12 +128,20 @@ subroutine interp(&
       end do
     end if
   end do
+  !$omp end parallel do
 
 !     interpolate phantom node on the boundary
+! Phase 4.3 (ROADMAP.md #16): each ipoin reads only its own
+! xybkg(:,ipoin) and writes only its own zbkg(:,ipoin) slot; ibndfac/xy/
+! zroe are read-only here. Parallelizes once the loop's scratch locals
+! are privatized.
+  !$omp parallel do private(ipoin, i, k, kp1, ibc, x0, y0, x1, y1, x2,&
+  !$omp& y2, dum, dum1, dum2, j, ii, logbuf)
   do ipoin = 1, npoin(0)
     if ((nodcod(ipoin) .eq. -2)) then
-      write (8, *) 'trying to locate bounday point', ipoin,&
+      write (logbuf, *) 'trying to locate bounday point', ipoin,&
       &'(', xybkg(1, ipoin), ',', xybkg(2, ipoin), ')'
+      call log_line(8, logbuf)
 
       x0 = xybkg(1, ipoin)
       y0 = xybkg(2, ipoin)
@@ -139,18 +164,23 @@ subroutine interp(&
           dum2 = ((x0 - x2)**2 + (y0 - y2)**2)
 
           if ((dum1 + dum2) .le. dum) then
-            write (8, *) 'search succesfully for vertex ', ipoin
-            write (8, *) (xybkg(ii, ipoin), ii=1, ndim)
+            write (logbuf, *) 'search succesfully for vertex ', ipoin
+            call log_line(8, logbuf)
+            write (logbuf, *) (xybkg(ii, ipoin), ii=1, ndim)
+            call log_line(8, logbuf)
 
             dum = sqrt(dum1) + sqrt(dum2)
             dum1 = sqrt(dum1)/dum
             dum2 = sqrt(dum2)/dum
 
-            write (8, *) 'dum:', dum, 'dum1:', dum1, 'dum2:', dum2
+            write (logbuf, *) 'dum:', dum, 'dum1:', dum1, 'dum2:', dum2
+            call log_line(8, logbuf)
             do j = 1, ndof
               zbkg(j, ipoin) = dum2*zroe(j, k) + dum1*zroe(j, kp1)
-              write (8, *) 'k:', k, 'kp1:', kp1
-              write (8, *) 'z', j, ':', zbkg(j, ipoin), zroe(j, k), zroe(j, kp1)
+              write (logbuf, *) 'k:', k, 'kp1:', kp1
+              call log_line(8, logbuf)
+              write (logbuf, *) 'z', j, ':', zbkg(j, ipoin), zroe(j, k), zroe(j, kp1)
+              call log_line(8, logbuf)
 
             end do
 
@@ -162,6 +192,7 @@ subroutine interp(&
     end if
 
   end do
+  !$omp end parallel do
 
 !    goto 65
 !    do ish=1,nshocks
