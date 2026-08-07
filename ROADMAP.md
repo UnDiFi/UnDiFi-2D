@@ -481,7 +481,45 @@ anticipate**, left for whoever picks up 4.2:
   (needs `omp reduction` + a barrier), not a naively parallel loop like
   its main per-point normal-computation loop (which has no such hazard).
 
-4.2-4.6 and all OpenMP build/CI/benchmark infrastructure: not started.
+**4.2 done**: `!$omp parallel do` over `co_norm.f90`'s per-point normal
+loop (+ `reduction(+:ii)` on its count-then-flip sign pass) and
+`co_state_dps.f90`'s per-point R-H-solve loop, after fixing the
+`mod_freestream` scratch-variable data race both hazards above flagged.
+CMake: OpenMP is opt-in (`UNDIFI_ENABLE_OPENMP`, OFF by default, new
+`gfortran-openmp` preset) -- every other preset still builds the `!$omp`
+lines as inert comments. Verified bit-identical output at
+`OMP_NUM_THREADS=1` vs `=8` on `CircularCylinder neo/fitting/steady`. No
+speedup measured yet -- expected, since these loops are a small slice of
+this level-0 case's runtime; the exit criterion needs the still-missing
+level-3 mesh.
+
+**4.3 done**: `!$omp parallel do` over `interp.f90`'s two per-point
+phantom-interpolation loops, `fnd_phps.f90`'s candidate-triangle geometry
+scan (with a named critical section around the shared `nodcod(n1/n2/n3)`
+update -- a node can be touched by candidate lists from different shock
+segments), and `co_pnt_dspl.f90`'s shock-node displacement loops (no
+shared state, parallelize directly).
+
+**4.4 done**: narrowed `main.f90`'s three UNSTEADY predictor/corrector
+`dcopy` blocks from the compile-time-max element count down to real
+point/shock counts (~10 MB/step of pure waste removed); also fixed a
+real pre-existing bug found along the way (two of the three blocks
+under-copied `zroeshdold`/`zroeshuold` using the wrong per-element
+count, silently leaving shock slots 6-10 stale for any UNSTEADY case
+with >5 shocks -- doesn't fire on any current fixture, all have ≤5).
+
+**4.5 partial**: `mod_log.f90` exists (`log_line`, one named
+`!$omp critical` section) and every in-loop write inside the loops 4.2
+and 4.3 actually parallelize is converted. The other ~24 files'
+`open(8, file='log/*.log')` calls are untouched -- a full rollout is
+still open work. `mod_freestream.f90`'s now-dead
+`z1m/z1v/.../z4m/z4v` declarations (nothing `use`s them since the 4.2
+hazard fix) are also still flagged for cleanup here.
+
+**Not started**: 4.6 (`do concurrent` conversion), plus a CI job
+building+running the OMP variant, a thread-count-sweep benchmark
+script, and generating the level-3 cylinder mesh the exit criterion
+needs. Issue #16 stays open until those land.
 
 ## Phase 5 — Distributed memory (MPI / coarrays)
 
