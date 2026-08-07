@@ -1,0 +1,2036 @@
+ nbegin:            0
+ nsteps:           75
+ Use eulfs?  F
+ Use su2?  F
+ Is steady?  T
+ testcase: CircularCylinder-L3 
+ 1 x86_64    
+readmesh               -->   setbndrynodeptr: found           90  boundary points
+ subr. findcolours: boundary coloured            1  has           47  edges
+ subr. findcolours: boundary coloured            2  has           12  edges
+ subr. findcolours: boundary coloured            3  has           19  edges
+ subr. findcolours: boundary coloured            4  has           12  edges
+
+ subr. findcolours: there are            4  different boundary patches
+
+ subr. findcolours: gridpoint           47  belongs to patches            1  and            2
+ subr. findcolours: gridpoint           59  belongs to patches            2  and            3
+ subr. findcolours: gridpoint           78  belongs to patches            3  and            4
+ subr. findcolours: gridpoint           90  belongs to patches            1  and            4
+ subr. findcolours: bndry patch            1  has           47  bndry edges; closed is  F
+ subr. findcolours: bndry patch            2  has           12  bndry edges; closed is  F
+ subr. findcolours: bndry patch            3  has           19  bndry edges; closed is  F
+ subr. findcolours: bndry patch            4  has           12  bndry edges; closed is  F
+ setbndrynodeptr: found            4  colours or bndry patches
+ setbndrynodeptr:           94  entries expected in ja
+ setbndrynodeptr: finished initializing
+ setbndrynodeptr: now calling setbndrynodelist
+
+ setbndrynodelist: patch            1  has colour            1  expecting           48  vertices
+ setbndrynodelist: patch            1  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ subr. setbndrynodelist: found           48  vertices in patch            1
+ subr. setbndrynodelist: vertices are:           47          46          45          44          43          42          41          40          39          38          37          36          35          34          33          32          31          30          29          28          27          26          25          24          23          22          21          20          19          18          17          16          15          14          13          12          11          10           9           8           7           6           5           4           3           2           1          90
+
+ setbndrynodelist: patch            2  has colour            2  expecting           13  vertices
+ setbndrynodelist: patch            2  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ subr. setbndrynodelist: found           13  vertices in patch            2
+ subr. setbndrynodelist: vertices are:           47          48          49          50          51          52          53          54          55          56          57          58          59
+
+ setbndrynodelist: patch            3  has colour            3  expecting           20  vertices
+ setbndrynodelist: patch            3  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ setbndrynodelist: gridpoint           59  belongs to patch            2  and            3
+ subr. setbndrynodelist: found           20  vertices in patch            3
+ subr. setbndrynodelist: vertices are:           59          60          61          62          63          64          65          66          67          68          69          70          71          72          73          74          75          76          77          78
+
+ setbndrynodelist: patch            4  has colour            4  expecting           13  vertices
+ setbndrynodelist: patch            4  is open  F
+ setbndrynodelist: gridpoint           47  belongs to patch            1  and            2
+ setbndrynodelist: gridpoint           59  belongs to patch            2  and            3
+ setbndrynodelist: gridpoint           78  belongs to patch            3  and            4
+ subr. setbndrynodelist: found           13  vertices in patch            4
+ subr. setbndrynodelist: vertices are:           78          79          80          81          82          83          84          85          86          87          88          89          90
+
+ nnzr =           94
+ jbgn, jend =            1          48
+ jbgn, jend =           49          61
+ jbgn, jend =           62          81
+ jbgn, jend =           82          94
+ ok
+readpmap               -->   ok
+copy mesh(0) in mesh(2)-->   ok
+re_inp_data            -->   ok
+re_sdw_info            -->   ok
+rd_sps_eq              -->   ok
+
+  starting the time loop
+
+ ***********************************
+  time level is            1
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   mkdir: created directory 'step00001'
+ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+renamed 'shocknor.dat' -> 'step00001/shocknor.dat'
+renamed 'sh99.dat' -> 'step00001/sh99.dat'
+renamed 'na00001.1.edge' -> 'step00001/na00001.1.edge'
+renamed 'na00001.1.ele' -> 'step00001/na00001.1.ele'
+renamed 'na00001.1.neigh' -> 'step00001/na00001.1.neigh'
+renamed 'na00001.1.node' -> 'step00001/na00001.1.node'
+renamed 'na00001.1.node.BAK' -> 'step00001/na00001.1.node.BAK'
+renamed 'na00001.1.poly' -> 'step00001/na00001.1.poly'
+renamed 'na00001.1.poly.BAK' -> 'step00001/na00001.1.poly.BAK'
+renamed 'na00001.node' -> 'step00001/na00001.node'
+renamed 'na00001.poly' -> 'step00001/na00001.poly'
+renamed 'na99.node' -> 'step00001/na99.node'
+'./NEO_data/input/neogrid.grd' -> 'step00001/neogrid.grd'
+'./NEO_data/input/vel.dat' -> 'step00001/vel.dat'
+'./NEO_data/output/vvvv.dat' -> 'step00001/vvvv.dat'
+renamed './NEO_data/output/vvvv_input.dat' -> 'step00001/vvvv_input.dat'
+ ***********************************
+  time level is            2
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is            3
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is            4
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is            5
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is            6
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is            7
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is            8
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is            9
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           10
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           11
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           12
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           13
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           14
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           15
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           16
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           17
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           18
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           19
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           20
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           21
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           22
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           23
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           24
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           25
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           26
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           27
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           28
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           29
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           30
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           31
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           32
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           33
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           34
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           35
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           36
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           37
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           38
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           39
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           40
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           41
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           42
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           43
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           44
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           45
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           46
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           47
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           48
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           49
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           50
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           51
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   mkdir: created directory 'step00051'
+ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+renamed 'shocknor.dat' -> 'step00051/shocknor.dat'
+renamed 'sh99.dat' -> 'step00051/sh99.dat'
+renamed 'na00051.1.edge' -> 'step00051/na00051.1.edge'
+renamed 'na00051.1.ele' -> 'step00051/na00051.1.ele'
+renamed 'na00051.1.neigh' -> 'step00051/na00051.1.neigh'
+renamed 'na00051.1.node' -> 'step00051/na00051.1.node'
+renamed 'na00051.1.node.BAK' -> 'step00051/na00051.1.node.BAK'
+renamed 'na00051.1.poly' -> 'step00051/na00051.1.poly'
+renamed 'na00051.1.poly.BAK' -> 'step00051/na00051.1.poly.BAK'
+renamed 'na00051.node' -> 'step00051/na00051.node'
+renamed 'na00051.poly' -> 'step00051/na00051.poly'
+renamed 'na99.node' -> 'step00051/na99.node'
+'./NEO_data/input/neogrid.grd' -> 'step00051/neogrid.grd'
+'./NEO_data/input/vel.dat' -> 'step00051/vel.dat'
+'./NEO_data/output/vvvv.dat' -> 'step00051/vvvv.dat'
+renamed './NEO_data/output/vvvv_input.dat' -> 'step00051/vvvv_input.dat'
+ ***********************************
+  time level is           52
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           53
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           54
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           55
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           56
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           57
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           58
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           59
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           60
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           61
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           62
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           63
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           64
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           65
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           66
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           67
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           68
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           69
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           70
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           71
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           72
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           73
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+ ***********************************
+  time level is           74
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->   ok
+wtri                   -->   ok
+triangle               -->   ok
+na00xTovvvv            -->   ok
+triangle2grd           -->   ok
+NEO                    -->   ok
+NEO2triangle           -->   ok
+readmesh               -->   ok
+zroe(1)->zroe(0)       -->   ok
+co_state_dps           -->   ok
+fx_state_dps           -->   ok
+zroesh(0)->zroesh(1)   -->   ok
+mv_dps                 -->   ok
+fx_dps_loc             -->   ok
+fltr_dls               -->   ok
+interp                 -->   ok
+rd_dps                 -->   ok
+wtri0                  -->   ok
+wrt_sdw_info           -->   ok
+Note: The following floating-point exceptions are signalling: IEEE_INVALID_FLAG IEEE_DENORMAL
+ ***********************************
+  time level is           75
+                                    
+fnd_phps               -->   ok
+co_norm                -->   ok
+interp_sp              -->   ok
+co_pnt_dspl            -->   ok
+fx_msh_sps             -->  

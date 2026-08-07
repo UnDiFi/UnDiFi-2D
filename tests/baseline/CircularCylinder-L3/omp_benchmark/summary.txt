@@ -1,0 +1,6 @@
+
+--- Summary (CircularCylinder-L3, 75 iterations, baseline=1 thread(s)) ---
+threads=1   wall=  111.23s speedup=1.00x
+threads=2   wall=  112.48s speedup=.98x
+threads=4   wall=  120.84s speedup=.92x
+threads=8   wall=  137.96s speedup=.80x
