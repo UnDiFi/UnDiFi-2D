@@ -28,6 +28,22 @@ module mod_neo_solver
 ! architecture gave for free). Never observed to fire in the regression
 ! suite; flagged here rather than silently dropped in case it mattered
 ! for some untested case.
+!
+! Phase 5a increment 2, 2026-08-08: neo_prepare's na2vvvv and
+! triangle2grd calls now run in `!$omp parallel sections` -- both read
+! the same just-regenerated Triangle mesh read-only and write to
+! disjoint files (vvvv_input.dat vs neogrid.grd), confirmed by tracing
+! every open() in both, so there is no shared-state hazard the way
+! there was for co_state_dps/co_norm in Phase 4.2. This is real
+! measured wall time (~8.6% of one outer iteration, architecture-review
+! finding 2026-08-08), unlike Phase 4's fitting-kernel OpenMP which
+! parallelizes ~1% of runtime -- but it only takes effect under the
+! opt-in UNDIFI_ENABLE_OPENMP build, same as every other Phase 4/5a
+! `!$omp` in this codebase; the default build stays fully sequential.
+! mod_timer's timer_tic/timer_toc are NOT used inside the parallel
+! region (their single module-level start time would race across the
+! two section threads) -- each section takes its own system_clock
+! reading into a local variable instead, printed after the join.
 ! Original main.f90 line numbers (pre-3.7, commit c5b9cfb) cited below.
 !
 ! pre_mesh_setup()  <- lines 730-737 (once per outer iteration, called
@@ -64,6 +80,7 @@ module mod_neo_solver
 ! flow_solver_t's no-op default there, which is exactly equivalent.
 ! supports_ale() also inherits the .false. default (NEO has no ALE step).
 
+  use, intrinsic :: iso_fortran_env, only: int64
   use mod_kinds, only: wp, i4
   use mod_solver_iface, only: flow_solver_t, solver_run_ctx_t
   use mod_timer, only: timer_tic, timer_toc
@@ -103,18 +120,27 @@ contains
   subroutine neo_prepare(self, ctx)
     class(neo_t), intent(inout) :: self
     type(solver_run_ctx_t), intent(in) :: ctx
+    integer(int64) :: t0_na, t1_na, t0_tri, t1_tri, clock_rate
+    real(wp) :: dt_na, dt_tri
 
     if (ctx%corrector) then
 
-      write (*, '(a)', advance='no') 'na2vvvv                -->  '
-      call timer_tic()
+      call system_clock(count_rate=clock_rate)
+      !$omp parallel sections
+      !$omp section
+      call system_clock(count=t0_na)
       call na2vvvv(trim(ctx%fname)//".1")
-      write (*, '(a)') ' ok'//timer_toc()
-
-      write (*, '(a)', advance='no') 'triangle2grd           -->  '
-      call timer_tic()
+      call system_clock(count=t1_na)
+      !$omp section
+      call system_clock(count=t0_tri)
       call triangle2grd(trim(ctx%fname)//".1")
-      write (*, '(a)') ' ok'//timer_toc()
+      call system_clock(count=t1_tri)
+      !$omp end parallel sections
+      dt_na = real(t1_na - t0_na, wp)/real(clock_rate, wp)
+      dt_tri = real(t1_tri - t0_tri, wp)/real(clock_rate, wp)
+
+      write (*, '(a,"  ",f11.4," s")') 'na2vvvv                -->   ok', dt_na
+      write (*, '(a,"  ",f11.4," s")') 'triangle2grd           -->   ok', dt_tri
 
     else
 
@@ -123,17 +149,31 @@ contains
       if (.not. ctx%unsteady .or. ctx%iter /= 1 + ctx%nbegin .or.&
       &trim(ctx%testcase) == "ShockVortex") then
 
-        write (*, '(a)', advance='no') 'na00xTovvvv            -->   '
-        call timer_tic()
+        call system_clock(count_rate=clock_rate)
+        !$omp parallel sections
+        !$omp section
+        call system_clock(count=t0_na)
         call na2vvvv(trim(ctx%fname)//".1")
+        call system_clock(count=t1_na)
+        !$omp section
+        call system_clock(count=t0_tri)
+        call triangle2grd(trim(ctx%fname)//".1")
+        call system_clock(count=t1_tri)
+        !$omp end parallel sections
+        dt_na = real(t1_na - t0_na, wp)/real(clock_rate, wp)
+        dt_tri = real(t1_tri - t0_tri, wp)/real(clock_rate, wp)
+
+        write (*, '(a,"  ",f11.4," s")') 'na00xTovvvv            -->   ok', dt_na
+        write (*, '(a,"  ",f11.4," s")') 'triangle2grd           -->   ok', dt_tri
+
+      else
+
+        write (*, '(a)', advance='no') 'triangle2grd           -->   '
+        call timer_tic()
+        call triangle2grd(trim(ctx%fname)//".1")
         write (*, '(a)') 'ok'//timer_toc()
 
       end if
-
-      write (*, '(a)', advance='no') 'triangle2grd           -->   '
-      call timer_tic()
-      call triangle2grd(trim(ctx%fname)//".1")
-      write (*, '(a)') 'ok'//timer_toc()
 
     end if
   end subroutine neo_prepare
