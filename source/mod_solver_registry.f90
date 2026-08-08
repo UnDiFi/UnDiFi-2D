@@ -24,9 +24,9 @@ contains
   ! directly.
   function make_flow_solver(eulfs, su2) result(solver)
     use mod_eulfs_solver, only: eulfs_t
-    use mod_su2_solver, only: su2_t
-    use mod_neo_solver, only: neo_t
-    logical, intent(in) :: eulfs, su2
+    use mod_su2_solver,   only: su2_t
+    use mod_neo_solver,   only: neo_t
+    logical, intent(in)               :: eulfs, su2
     class(flow_solver_t), allocatable :: solver
 
     if (eulfs) then

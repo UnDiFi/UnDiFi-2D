@@ -89,58 +89,58 @@ module mod_solver_iface
   type, abstract :: flow_solver_t
   contains
     procedure(prepare_i), deferred :: prepare
-    procedure(run_i), deferred :: run
+    procedure(run_i),     deferred :: run
     procedure(harvest_i), deferred :: harvest
-    procedure :: setup => solver_default_setup
-    procedure :: pre_mesh_setup => solver_default_pre_mesh_setup
-    procedure :: archive => solver_default_archive
-    procedure :: log_convergence => solver_default_log_convergence
-    procedure :: supports_ale => solver_default_supports_ale
+    procedure                      :: setup           => solver_default_setup
+    procedure                      :: pre_mesh_setup  => solver_default_pre_mesh_setup
+    procedure                      :: archive         => solver_default_archive
+    procedure                      :: log_convergence => solver_default_log_convergence
+    procedure                      :: supports_ale    => solver_default_supports_ale
   end type flow_solver_t
 
   abstract interface
     subroutine prepare_i(self, ctx)
       import :: flow_solver_t, solver_run_ctx_t
-      class(flow_solver_t), intent(inout) :: self
-      type(solver_run_ctx_t), intent(in) :: ctx
+      class(flow_solver_t),   intent(inout) :: self
+      type(solver_run_ctx_t), intent(in)    :: ctx
     end subroutine prepare_i
 
     subroutine run_i(self, ctx)
       import :: flow_solver_t, solver_run_ctx_t
-      class(flow_solver_t), intent(inout) :: self
-      type(solver_run_ctx_t), intent(in) :: ctx
+      class(flow_solver_t),   intent(inout) :: self
+      type(solver_run_ctx_t), intent(in)    :: ctx
     end subroutine run_i
 
     subroutine harvest_i(self, ctx)
       import :: flow_solver_t, solver_run_ctx_t
-      class(flow_solver_t), intent(inout) :: self
-      type(solver_run_ctx_t), intent(in) :: ctx
+      class(flow_solver_t),   intent(inout) :: self
+      type(solver_run_ctx_t), intent(in)    :: ctx
     end subroutine harvest_i
   end interface
 
 contains
 
   subroutine solver_default_setup(self, unsteady)
-    class(flow_solver_t), intent(inout) :: self
-    logical, intent(in) :: unsteady
+    class(flow_solver_t),   intent(inout) :: self
+    logical, intent(in)                   :: unsteady
   end subroutine solver_default_setup
 
   subroutine solver_default_pre_mesh_setup(self, ctx)
-    class(flow_solver_t), intent(inout) :: self
-    type(solver_run_ctx_t), intent(in) :: ctx
+    class(flow_solver_t),   intent(inout) :: self
+    type(solver_run_ctx_t), intent(in)    :: ctx
   end subroutine solver_default_pre_mesh_setup
 
   subroutine solver_default_archive(self, ctx)
-    class(flow_solver_t), intent(inout) :: self
-    type(solver_run_ctx_t), intent(in) :: ctx
+    class(flow_solver_t),   intent(inout) :: self
+    type(solver_run_ctx_t), intent(in)    :: ctx
   end subroutine solver_default_archive
 
   subroutine solver_default_log_convergence(self)
-    class(flow_solver_t), intent(inout) :: self
+    class(flow_solver_t),   intent(inout) :: self
   end subroutine solver_default_log_convergence
 
   logical function solver_default_supports_ale(self) result(ale)
-    class(flow_solver_t), intent(in) :: self
+    class(flow_solver_t),   intent(in)    :: self
     ale = .false.
   end function solver_default_supports_ale
 

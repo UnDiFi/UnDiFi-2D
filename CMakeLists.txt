@@ -80,3 +80,11 @@ enable_testing()
 
 add_subdirectory(source)
 add_subdirectory(source_utils)
+
+# Phase 7.5 (ROADMAP.md #20): unit tests for the physics kernels
+# (test-drive, fetched over the network at configure time -- opt-out for
+# builds without network access, e.g. an offline vendored-lib rebuild).
+option(UNDIFI_ENABLE_TESTS "Build the Fortran unit test suite (test-drive)" ON)
+if(UNDIFI_ENABLE_TESTS)
+  add_subdirectory(tests/unit)
+endif()
