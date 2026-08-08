@@ -8,6 +8,26 @@ module mod_neo_solver
 ! call sites -- these only affect stdout text, never a checksummed
 ! result, but are kept faithfully rather than "cleaned up" into a
 ! single shared string, same rigor as mod_shock_advance.f90's port.
+!
+! Phase 5a (ROADMAP.md #17), 2026-08-08: na2vvvv/triangle2grd/
+! neo2triangle's neo_prepare/neo_harvest call sites now call the
+! in-process ports (na2vvvv.f90, triangle2grd.f90, neo2triangle.f90)
+! directly instead of spawning the source_utils/ standalone executables
+! via run_external -- see na2vvvv.f90 for the full rationale (the
+! issue's own benchmark task showed this round-trip, not the NEO solve
+! itself, dominates wall time). NEO's own solve (neo_run) and the
+! neogrid0/archive run_external calls are untouched -- out of this
+! slice's scope, still spawned as before.
+!
+! KNOWN BEHAVIOR CHANGE, not yet resolved: the corrector-side na2vvvv
+! call used to pass fatal_on_error=.false. to run_external, so a
+! nonzero na2vvvv exit status (e.g. a missing .node file) would log and
+! continue rather than abort. The in-process na2vvvv has no equivalent
+! -- an open()/read() failure now hard-stops the whole UnDiFi-2D
+! process (loses the subprocess-level fault isolation the old
+! architecture gave for free). Never observed to fire in the regression
+! suite; flagged here rather than silently dropped in case it mattered
+! for some untested case.
 ! Original main.f90 line numbers (pre-3.7, commit c5b9cfb) cited below.
 !
 ! pre_mesh_setup()  <- lines 730-737 (once per outer iteration, called
@@ -49,6 +69,7 @@ module mod_neo_solver
   use mod_timer, only: timer_tic, timer_toc
   implicit none(type, external)
   private
+  external :: na2vvvv, triangle2grd, neo2triangle
 
   public :: neo_t
 
@@ -80,28 +101,19 @@ contains
   end subroutine neo_pre_mesh_setup
 
   subroutine neo_prepare(self, ctx)
-    use mod_run_external, only: run_external
     class(neo_t), intent(inout) :: self
     type(solver_run_ctx_t), intent(in) :: ctx
-    character(len=255) :: execmd
-    integer(i4) :: ifail
 
     if (ctx%corrector) then
 
       write (*, '(a)', advance='no') 'na2vvvv                -->  '
       call timer_tic()
-      execmd = "echo "//ctx%fname&
-      &//".1 |"//ctx%bindir//"na2vvvv"&
-      &//" > log/na2vvvv.log"
-      ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
+      call na2vvvv(trim(ctx%fname)//".1")
       write (*, '(a)') ' ok'//timer_toc()
 
       write (*, '(a)', advance='no') 'triangle2grd           -->  '
       call timer_tic()
-      execmd = "echo "//ctx%fname&
-      &//".1 |"//ctx%bindir//"triangle2grd"&
-      &//" > log/triangle2grd.log"
-      ifail = run_external(execmd, 'triangle2grd')
+      call triangle2grd(trim(ctx%fname)//".1")
       write (*, '(a)') ' ok'//timer_toc()
 
     else
@@ -113,20 +125,14 @@ contains
 
         write (*, '(a)', advance='no') 'na00xTovvvv            -->   '
         call timer_tic()
-        execmd = "echo "//ctx%fname&
-        &//".1 |"//ctx%bindir//"na2vvvv"&
-        &//" > log/na2vvvv.log"
-        ifail = run_external(execmd, 'na2vvvv', fatal_on_error=.false.)
+        call na2vvvv(trim(ctx%fname)//".1")
         write (*, '(a)') 'ok'//timer_toc()
 
       end if
 
       write (*, '(a)', advance='no') 'triangle2grd           -->   '
       call timer_tic()
-      execmd = "echo "//ctx%fname&
-      &//".1 |"//ctx%bindir//"triangle2grd"&
-      &//" > log/triangle2grd.log"
-      ifail = run_external(execmd, 'triangle2grd')
+      call triangle2grd(trim(ctx%fname)//".1")
       write (*, '(a)') 'ok'//timer_toc()
 
     end if
@@ -211,25 +217,18 @@ contains
   end subroutine neo_run
 
   subroutine neo_harvest(self, ctx)
-    use mod_run_external, only: run_external
     class(neo_t), intent(inout) :: self
     type(solver_run_ctx_t), intent(in) :: ctx
-    character(len=255) :: execmd
-    integer(i4) :: ifail
 
     if (ctx%corrector) then
       write (*, '(a)', advance='no') 'NEO2triangle           -->  '
       call timer_tic()
-      execmd = "echo "//ctx%fname//".1 | "//ctx%bindir&
-      &//"NEO2triangle"//">log/NEO2triangle.log"
-      ifail = run_external(execmd, 'NEO2triangle')
+      call neo2triangle(trim(ctx%fname)//".1")
       write (*, '(a)') ' ok'//timer_toc()
     else
       write (*, '(a)', advance='no') 'NEO2triangle           -->   '
       call timer_tic()
-      execmd = "echo "//ctx%fname//".1 | "//ctx%bindir&
-      &//"NEO2triangle"//">log/NEO2triangle.log"
-      ifail = run_external(execmd, 'neo2triangle')
+      call neo2triangle(trim(ctx%fname)//".1")
       write (*, '(a)') 'ok'//timer_toc()
     end if
   end subroutine neo_harvest

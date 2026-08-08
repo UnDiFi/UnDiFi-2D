@@ -24,6 +24,11 @@ set(UNDIFI2D_SOURCES
   mod_solver_registry.f90
   mod_search.f90
   mod_setbndrynodeptr.f90
+  boundary_edge_mod.f90
+  r_files_mod.f90
+  na2vvvv.f90
+  triangle2grd.f90
+  neo2triangle.f90
   fx_msh_sps.f90
   co_utp.f90
   co_uqp.f90
