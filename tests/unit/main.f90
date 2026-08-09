@@ -13,6 +13,8 @@ program undifi2d_unit_tests
   use test_rd_dps, only: collect_rd_dps
   use test_rd_dps_eq, only: collect_rd_dps_eq
   use test_interp, only: collect_interp
+  use test_two_shock_theory, only: collect_two_shock_theory
+  use test_three_shock_theory, only: collect_three_shock_theory
   implicit none
 
   integer :: stat, is
@@ -29,7 +31,9 @@ program undifi2d_unit_tests
   &new_testsuite("co_utp", collect_co_utp),&
   &new_testsuite("rd_dps", collect_rd_dps),&
   &new_testsuite("rd_dps_eq", collect_rd_dps_eq),&
-  &new_testsuite("interp", collect_interp)&
+  &new_testsuite("interp", collect_interp),&
+  &new_testsuite("two_shock_theory", collect_two_shock_theory),&
+  &new_testsuite("three_shock_theory", collect_three_shock_theory)&
   &]
 
   call get_argument(1, suite_name)
