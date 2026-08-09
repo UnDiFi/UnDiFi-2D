@@ -12,6 +12,7 @@ program undifi2d_unit_tests
   use test_co_utp, only: collect_co_utp
   use test_rd_dps, only: collect_rd_dps
   use test_rd_dps_eq, only: collect_rd_dps_eq
+  use test_interp, only: collect_interp
   implicit none
 
   integer :: stat, is
@@ -27,7 +28,8 @@ program undifi2d_unit_tests
   &new_testsuite("co_uqp", collect_co_uqp),&
   &new_testsuite("co_utp", collect_co_utp),&
   &new_testsuite("rd_dps", collect_rd_dps),&
-  &new_testsuite("rd_dps_eq", collect_rd_dps_eq)&
+  &new_testsuite("rd_dps_eq", collect_rd_dps_eq),&
+  &new_testsuite("interp", collect_interp)&
   &]
 
   call get_argument(1, suite_name)
