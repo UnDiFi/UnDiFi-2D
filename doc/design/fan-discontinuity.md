@@ -147,8 +147,7 @@ smearing-vs-sharp-edge accuracy question."** This reframing matters for
 scoping WP-D's own validation strategy later — worth flagging back to that
 issue when GR work actually starts.
 
-## 6. Open questions / risks (not resolved here, flagged for the
-   implementation increment to actually decide)
+## 6. Open questions / risks (not resolved here, flagged for the implementation increment to actually decide)
 
 1. **`typesh` single-character ceiling.** `'S'`/`'D'`/`'L'` (issue #23) are
    already 3 of a very small alphabet (`character*1`, read/written verbatim
