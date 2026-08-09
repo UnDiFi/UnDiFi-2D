@@ -113,21 +113,61 @@ contains
     end do
   end subroutine build_bin_grid
 
-  ! Candidates for "which element contains (x,y)": the point's own home
-  ! bin's list is sufficient -- if an element contains the point, that
-  ! element's bounding box necessarily overlaps the point's bin, so
-  ! build_bin_grid already put it there. No neighbor-bin fallback needed.
+  ! Candidates for "which element contains (x,y)": the 3x3 block of bins
+  ! centred on the point's own home bin (clamped to the grid).
+  !
+  ! issue #32: this used to be the home bin alone, on the reasoning that
+  ! "if an element contains the point, that element's bounding box
+  ! necessarily overlaps the point's bin, so build_bin_grid already put
+  ! it there." True in exact arithmetic, but bin_coord's floor
+  ! (int((v-vmin)/h)+1) is evaluated independently for the query point
+  ! and for each element's own bbox edges during build_bin_grid, so a
+  ! point essentially ON a bin boundary COULD in principle land one bin
+  ! over from where its actual containing element's bbox was scattered.
+  ! A real, independently-worth-having robustness improvement on that
+  ! reasoning alone (can only add candidates, never drop a true hit that
+  ! used to be found -- matches this module's own documented invariant),
+  ! kept even though it did NOT fix issue #32's own crash: tested
+  ! directly against SSInteractions2-2's fitting-mode crash (same
+  ! vertex, same iteration 241, still fails after this change). That
+  ! rules the bin-boundary hypothesis OUT as #32's root cause -- the
+  ! failing vertex is not being found in even a 3x3 neighbourhood, which
+  ! points to a genuine gap in the shocked mesh's triangulation at that
+  ! location (no element actually covers the point) rather than a
+  ! search-candidate-list omission. #32 needs further investigation
+  ! starting from that narrower question, not from this module.
   subroutine query_point(grid, x, y, candidates)
     type(bin_grid_t), intent(in) :: grid
     real(wp), intent(in) :: x, y
     integer(i4), allocatable, intent(out) :: candidates(:)
 
-    integer(i4) :: ix, iy, ibin
+    integer(i4) :: ix0, ix1, iy0, iy1, ix, iy, ibin, n, pos
 
-    ix = bin_coord(x, grid%xmin, grid%hx, grid%nx)
-    iy = bin_coord(y, grid%ymin, grid%hy, grid%ny)
-    ibin = (iy - 1)*grid%nx + ix
-    candidates = grid%bin_elems(grid%bin_start(ibin):grid%bin_start(ibin + 1) - 1)
+    ix0 = max(1, bin_coord(x, grid%xmin, grid%hx, grid%nx) - 1)
+    ix1 = min(grid%nx, bin_coord(x, grid%xmin, grid%hx, grid%nx) + 1)
+    iy0 = max(1, bin_coord(y, grid%ymin, grid%hy, grid%ny) - 1)
+    iy1 = min(grid%ny, bin_coord(y, grid%ymin, grid%hy, grid%ny) + 1)
+
+    n = 0
+    do iy = iy0, iy1
+      do ix = ix0, ix1
+        ibin = (iy - 1)*grid%nx + ix
+        n = n + grid%bin_start(ibin + 1) - grid%bin_start(ibin)
+      end do
+    end do
+
+    allocate (candidates(n))
+    pos = 0
+    do iy = iy0, iy1
+      do ix = ix0, ix1
+        ibin = (iy - 1)*grid%nx + ix
+        n = grid%bin_start(ibin + 1) - grid%bin_start(ibin)
+        if (n > 0) then
+          candidates(pos + 1:pos + n) = grid%bin_elems(grid%bin_start(ibin):grid%bin_start(ibin + 1) - 1)
+          pos = pos + n
+        end if
+      end do
+    end do
   end subroutine query_point
 
   ! Candidates for "which elements might be crossed by segment
