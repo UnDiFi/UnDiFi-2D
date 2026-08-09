@@ -6,6 +6,7 @@ program undifi2d_unit_tests
   &select_suite, run_selected, get_argument
   use test_newton_solve, only: collect_newton_solve
   use test_co_shock, only: collect_co_shock
+  use test_co_norm, only: collect_co_norm
   implicit none
 
   integer :: stat, is
@@ -15,7 +16,8 @@ program undifi2d_unit_tests
   stat = 0
   testsuites = [&
   &new_testsuite("newton_solve", collect_newton_solve),&
-  &new_testsuite("co_shock", collect_co_shock)&
+  &new_testsuite("co_shock", collect_co_shock),&
+  &new_testsuite("co_norm", collect_co_norm)&
   &]
 
   call get_argument(1, suite_name)
