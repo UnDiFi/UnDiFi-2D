@@ -1,1 +1,2 @@
-PASS  scalar  /home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/SSInteractions2-2/eulfs_fitting_steady/candidate_scalar.log
+FAIL  scalar  /home/lk/DiFi_v1.0.0/codes/UnDiFi-2D/tests/baseline/SSInteractions2-2/eulfs_fitting_steady/candidate_scalar.log
+  shock -: l2=0.0730721 linf=0.071922 rel_l2=0.0730719 
