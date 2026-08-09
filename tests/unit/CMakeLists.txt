@@ -28,6 +28,8 @@ add_executable(undifi2d_unit_tests
   test_co_urr.f90
   test_co_uqp.f90
   test_co_utp.f90
+  test_rd_dps.f90
+  test_rd_dps_eq.f90
   ${CMAKE_SOURCE_DIR}/source/mod_kinds.f90
   ${CMAKE_SOURCE_DIR}/source/mod_constants.f90
   ${CMAKE_SOURCE_DIR}/source/mod_search.f90
@@ -52,6 +54,8 @@ add_executable(undifi2d_unit_tests
   ${CMAKE_SOURCE_DIR}/source/fx_msh_sps.f90
   ${CMAKE_SOURCE_DIR}/source/interp.f90
   ${CMAKE_SOURCE_DIR}/source/co_norm.f90
+  ${CMAKE_SOURCE_DIR}/source/rd_dps.f90
+  ${CMAKE_SOURCE_DIR}/source/rd_dps_eq.f90
 )
 target_include_directories(undifi2d_unit_tests PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_link_libraries(undifi2d_unit_tests PRIVATE test-drive-lib)
@@ -77,6 +81,8 @@ set(undifi2d_unit_test_suites
   co_urr
   co_uqp
   co_utp
+  rd_dps
+  rd_dps_eq
 )
 foreach(_suite ${undifi2d_unit_test_suites})
   add_test(NAME "unit.${_suite}" COMMAND undifi2d_unit_tests "${_suite}"
