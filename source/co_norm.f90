@@ -137,7 +137,9 @@ subroutine co_norm(xysh,&
       if (i .ne. 1 .and. i .ne. nshockpoints(ish)) then
         if (typesh(ish) .eq. 'S')&
         &depip1 = shp_dpndnc(xi, yi, ush, vsh, xj, yj, uj, vj, aj)
-        if (typesh(ish) .eq. 'D')&
+! Issue #23 (E3): 'L' (slip line) uses the same dependency test as 'D'
+! (contact) -- see co_state_dps.f90's header comment on this dispatch.
+        if (typesh(ish) .eq. 'D' .or. typesh(ish) .eq. 'L')&
         &depip1 = dcp_dpndnc(xi, yi, ush, vsh, xj, yj, uj, vj, aj)
       elseif (i .eq. nshockpoints(ish)) then
         depip1 = 0
@@ -178,7 +180,7 @@ subroutine co_norm(xysh,&
       if (i .ne. 1 .and. i .ne. nshockpoints(ish)) then
         if (typesh(ish) .eq. 'S')&
         &depim1 = shp_dpndnc(xi, yi, ush, vsh, xj, yj, uj, vj, aj)
-        if (typesh(ish) .eq. 'D')&
+        if (typesh(ish) .eq. 'D' .or. typesh(ish) .eq. 'L')&
         &depim1 = dcp_dpndnc(xi, yi, ush, vsh, xj, yj, uj, vj, aj)
       elseif (I .eq. 1) then
         depim1 = 0

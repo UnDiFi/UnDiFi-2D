@@ -16,6 +16,7 @@ program undifi2d_unit_tests
   use test_two_shock_theory, only: collect_two_shock_theory
   use test_three_shock_theory, only: collect_three_shock_theory
   use test_edney_type1, only: collect_edney_type1
+  use test_slip_kind, only: collect_slip_kind
   implicit none
 
   integer :: stat, is
@@ -35,7 +36,8 @@ program undifi2d_unit_tests
   &new_testsuite("interp", collect_interp),&
   &new_testsuite("two_shock_theory", collect_two_shock_theory),&
   &new_testsuite("three_shock_theory", collect_three_shock_theory),&
-  &new_testsuite("edney_type1", collect_edney_type1)&
+  &new_testsuite("edney_type1", collect_edney_type1),&
+  &new_testsuite("slip_kind", collect_slip_kind)&
   &]
 
   call get_argument(1, suite_name)

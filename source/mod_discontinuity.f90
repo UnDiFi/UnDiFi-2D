@@ -27,7 +27,7 @@ module mod_discontinuity
   public :: discontinuity_t
 
   type :: discontinuity_t
-    character(len=:), allocatable :: kind ! 's'=shock, 'd'=contact today (typeshocks); Part III widens this to 'shock'/'contact'/'slip'/'interface'
+    character(len=:), allocatable :: kind ! 's'=shock, 'd'=contact, 'l'=slip line (Issue #23/E3: same jump relations as 'd', see co_state_dps.f90) today (typeshocks); Part III widens this to 'shock'/'contact'/'slip'/'interface'
     logical     :: closed = .false. ! unused until Part III (F11, closed/bubble interfaces)
     integer(i4) :: npoints = 0, nedges = 0
     integer(i4) :: gas_up = 1, gas_dn = 1 ! unused until Part III (F11, multi-species)

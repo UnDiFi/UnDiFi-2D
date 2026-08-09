@@ -34,6 +34,7 @@ add_executable(undifi2d_unit_tests
   test_two_shock_theory.f90
   test_three_shock_theory.f90
   test_edney_type1.f90
+  test_slip_kind.f90
   ${CMAKE_SOURCE_DIR}/source/mod_kinds.f90
   ${CMAKE_SOURCE_DIR}/source/mod_constants.f90
   ${CMAKE_SOURCE_DIR}/source/mod_search.f90
@@ -60,6 +61,7 @@ add_executable(undifi2d_unit_tests
   ${CMAKE_SOURCE_DIR}/source/co_norm.f90
   ${CMAKE_SOURCE_DIR}/source/rd_dps.f90
   ${CMAKE_SOURCE_DIR}/source/rd_dps_eq.f90
+  ${CMAKE_SOURCE_DIR}/source/co_state_dps.f90
 )
 target_include_directories(undifi2d_unit_tests PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_link_libraries(undifi2d_unit_tests PRIVATE test-drive-lib)
@@ -91,6 +93,7 @@ set(undifi2d_unit_test_suites
   two_shock_theory
   three_shock_theory
   edney_type1
+  slip_kind
 )
 foreach(_suite ${undifi2d_unit_test_suites})
   add_test(NAME "unit.${_suite}" COMMAND undifi2d_unit_tests "${_suite}"

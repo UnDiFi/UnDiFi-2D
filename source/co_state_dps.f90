@@ -121,7 +121,18 @@ subroutine co_state_dps(&
 !        compute shock or discontinuity points
       if (typesh(ish) .eq. 'S') call co_shock(x1, x2, ws, r2(iv, ish))
 
-      if (typesh(ish) .eq. 'D') call co_dc(x1, x2, ws)
+! Issue #23 (E3, ROADMAP.md Part III): 'L' (slip line, e.g. a triple
+! point's emanating slipstream) dispatches through the identical co_dc
+! jump-relation solve as 'D' (contact) -- co_dc's own 7-equation system
+! already only enforces pressure continuity (r5) and normal-velocity
+! continuity/no mass flux (r6/r7); it never constrains x1(4)/x2(4)
+! (tangential velocity, left independent on each side, confirmed by the
+! "impose equality of tangential components" line below being 'S'-only).
+! So a tangential-velocity jump was already representable under 'D' --
+! 'L' is a semantic/architectural distinction (letting later code, e.g.
+! DMR's second slipstream or diagnostics, tell a dynamically-generated
+! slipstream apart from a generic material contact), not new numerics.
+      if (typesh(ish) .eq. 'D' .or. typesh(ish) .eq. 'L') call co_dc(x1, x2, ws)
 
       mmn = abs(ws - x2(3))/sqrt(ga*x2(2)/x2(1))
 
