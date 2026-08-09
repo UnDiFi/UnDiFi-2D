@@ -10,12 +10,12 @@ Every discontinuity kind in this codebase today (`'S'` shock, `'D'` contact,
 a 1-D polyline of points, each carrying exactly two states (`zu`, `zd`, one
 on each side) and a jump relation connecting them (`co_shock`/`co_dc`, both
 dispatched from `co_state_dps.f90`). A centred (Prandtl-Meyer) expansion fan
-is not that. It is a **region**: a angular sector swept between two
+is not that. It is a **region**: an angular sector swept between two
 characteristic lines (the *head*, where the flow first turns and becomes
 supersonic-relative-to-the-corner, and the *tail*, where it finishes turning),
 inside which the flow state varies **continuously** with angle, not jumps
 once at a single curve. Forcing a fan into the existing "curve with a
-two-state jump" model is a category error, not just a missing kind — this is
+two-state jump" model is a category error, not just a missing kind, this is
 why the issue calls it "the largest single physics addition in the roadmap."
 
 ## 2. Physics recap: what's actually inside a fan
