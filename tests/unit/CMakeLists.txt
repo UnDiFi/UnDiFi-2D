@@ -25,6 +25,9 @@ add_executable(undifi2d_unit_tests
   test_newton_solve.f90
   test_co_shock.f90
   test_co_norm.f90
+  test_co_urr.f90
+  test_co_uqp.f90
+  test_co_utp.f90
   ${CMAKE_SOURCE_DIR}/source/mod_kinds.f90
   ${CMAKE_SOURCE_DIR}/source/mod_constants.f90
   ${CMAKE_SOURCE_DIR}/source/mod_search.f90
@@ -71,6 +74,9 @@ set(undifi2d_unit_test_suites
   newton_solve
   co_shock
   co_norm
+  co_urr
+  co_uqp
+  co_utp
 )
 foreach(_suite ${undifi2d_unit_test_suites})
   add_test(NAME "unit.${_suite}" COMMAND undifi2d_unit_tests "${_suite}"
