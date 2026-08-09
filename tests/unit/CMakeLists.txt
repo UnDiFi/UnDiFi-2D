@@ -38,6 +38,7 @@ add_executable(undifi2d_unit_tests
   test_interface.f90
   test_mod_gas.f90
   test_co_shock_2gas.f90
+  test_co_norm_closed.f90
   ${CMAKE_SOURCE_DIR}/source/mod_kinds.f90
   ${CMAKE_SOURCE_DIR}/source/mod_constants.f90
   ${CMAKE_SOURCE_DIR}/source/mod_search.f90
@@ -68,6 +69,7 @@ add_executable(undifi2d_unit_tests
   ${CMAKE_SOURCE_DIR}/source/co_interface.f90
   ${CMAKE_SOURCE_DIR}/source/mod_gas.f90
   ${CMAKE_SOURCE_DIR}/source/co_shock_2gas.f90
+  ${CMAKE_SOURCE_DIR}/source/co_norm_closed.f90
 )
 target_include_directories(undifi2d_unit_tests PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_link_libraries(undifi2d_unit_tests PRIVATE test-drive-lib)
@@ -103,6 +105,7 @@ set(undifi2d_unit_test_suites
   interface
   mod_gas
   co_shock_2gas
+  co_norm_closed
 )
 foreach(_suite ${undifi2d_unit_test_suites})
   add_test(NAME "unit.${_suite}" COMMAND undifi2d_unit_tests "${_suite}"

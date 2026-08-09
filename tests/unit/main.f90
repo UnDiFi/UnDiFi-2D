@@ -20,6 +20,7 @@ program undifi2d_unit_tests
   use test_interface, only: collect_interface
   use test_mod_gas, only: collect_mod_gas
   use test_co_shock_2gas, only: collect_co_shock_2gas
+  use test_co_norm_closed, only: collect_co_norm_closed
   implicit none
 
   integer :: stat, is
@@ -43,7 +44,8 @@ program undifi2d_unit_tests
   &new_testsuite("slip_kind", collect_slip_kind),&
   &new_testsuite("interface", collect_interface),&
   &new_testsuite("mod_gas", collect_mod_gas),&
-  &new_testsuite("co_shock_2gas", collect_co_shock_2gas)&
+  &new_testsuite("co_shock_2gas", collect_co_shock_2gas),&
+  &new_testsuite("co_norm_closed", collect_co_norm_closed)&
   &]
 
   call get_argument(1, suite_name)
