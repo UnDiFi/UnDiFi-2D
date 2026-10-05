@@ -39,10 +39,12 @@ add_executable(undifi2d_unit_tests
   test_mod_gas.f90
   test_co_shock_2gas.f90
   test_co_norm_closed.f90
+  test_genesis.f90
   ${CMAKE_SOURCE_DIR}/source/mod_kinds.f90
   ${CMAKE_SOURCE_DIR}/source/mod_constants.f90
   ${CMAKE_SOURCE_DIR}/source/mod_search.f90
   ${CMAKE_SOURCE_DIR}/source/mod_newton_solve.f90
+  ${CMAKE_SOURCE_DIR}/source/mod_genesis.f90
   ${CMAKE_SOURCE_DIR}/source/fnd_phps.f90
   ${CMAKE_SOURCE_DIR}/source/co_shock.f90
   # co_norm.f90's own transitive closure -- mod_special_point.f90 declares

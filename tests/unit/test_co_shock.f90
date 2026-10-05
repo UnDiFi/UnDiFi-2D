@@ -27,7 +27,9 @@ contains
     &new_unittest("normal_shock_moderate", test_moderate),&
     &new_unittest("normal_shock_near_sonic", test_near_sonic),&
     &new_unittest("normal_shock_strong", test_strong),&
-    &new_unittest("normal_shock_gamma_sweep", test_gamma_sweep)&
+    &new_unittest("normal_shock_gamma_sweep", test_gamma_sweep),&
+    &new_unittest("normal_shock_moderate_production_branch", test_moderate_prod),&
+    &new_unittest("normal_shock_near_sonic_production_branch", test_near_sonic_prod)&
     &]
   end subroutine collect_co_shock
 
@@ -51,22 +53,32 @@ contains
 ! designed for and converges to a spurious algebraic root of the same
 ! R-H equations instead (verified while developing this test) -- not a
 ! bug in co_shock, just not the regime it's built to be seeded for.
-  subroutine check_normal_shock(error, gam, rom, pm, M1)
+  subroutine check_normal_shock(error, gam, rom, pm, M1, sgn)
     type(error_type), allocatable, intent(out) :: error
     real(wp), intent(in) :: gam, rom, pm, M1
+! sgn = +1 (default): u.n > 0, the convention the cases below were written
+! with.  sgn = -1: u.n < 0, the orientation co_norm ENFORCES in production
+! (co_norm.f90, "verify u*n <= 0"), on which the invariant R14 pins is the
+! one actually carried into the front from the downstream side.  At zero
+! strength the two are different systems (R-192, FINDINGS F12-F13: det J is
+! O([p]) on the production branch, O([p]^3) on the other), so the
+! production branch needs its own coverage (R-192 FU5).
+    real(wp), intent(in), optional :: sgn
 
     include 'paramt.h'
     external :: co_shock
 
     real(wp) :: am, um, rho_ratio, p_ratio, delta, R14
     real(wp) :: rov_exact, pv_exact, uv_exact
-    real(wp) :: x1(4), x2(4), wshk
+    real(wp) :: x1(4), x2(4), wshk, sg
 
+    sg = 1.0_wp
+    if (present(sgn)) sg = sgn
     ga = gam
     gm1 = gam - 1.0_wp
 
     am = sqrt(gam*pm/rom)
-    um = M1*am                 ! upstream velocity into a stationary shock (w=0)
+    um = sg*M1*am              ! upstream velocity into a stationary shock (w=0)
 
     rho_ratio = (gam + 1.0_wp)*M1**2/((gam - 1.0_wp)*M1**2 + 2.0_wp)
     p_ratio = 1.0_wp + 2.0_wp*gam/(gam + 1.0_wp)*(M1**2 - 1.0_wp)
@@ -123,5 +135,16 @@ contains
     if (allocated(error)) return
     call check_normal_shock(error, 1.2_wp, 1.0_wp, 1.0_wp, 5.0_wp)
   end subroutine test_gamma_sweep
+
+! The same manufactured solutions on the production branch (sgn = -1).
+  subroutine test_moderate_prod(error)
+    type(error_type), allocatable, intent(out) :: error
+    call check_normal_shock(error, 1.4_wp, 1.0_wp, 1.0_wp, 2.0_wp, -1.0_wp)
+  end subroutine test_moderate_prod
+
+  subroutine test_near_sonic_prod(error)
+    type(error_type), allocatable, intent(out) :: error
+    call check_normal_shock(error, 1.4_wp, 1.0_wp, 1.0_wp, 1.02_wp, -1.0_wp)
+  end subroutine test_near_sonic_prod
 
 end module test_co_shock

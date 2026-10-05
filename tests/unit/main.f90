@@ -21,6 +21,7 @@ program undifi2d_unit_tests
   use test_mod_gas, only: collect_mod_gas
   use test_co_shock_2gas, only: collect_co_shock_2gas
   use test_co_norm_closed, only: collect_co_norm_closed
+  use test_genesis, only: collect_genesis
   implicit none
 
   integer :: stat, is
@@ -45,7 +46,8 @@ program undifi2d_unit_tests
   &new_testsuite("interface", collect_interface),&
   &new_testsuite("mod_gas", collect_mod_gas),&
   &new_testsuite("co_shock_2gas", collect_co_shock_2gas),&
-  &new_testsuite("co_norm_closed", collect_co_norm_closed)&
+  &new_testsuite("co_norm_closed", collect_co_norm_closed),&
+  &new_testsuite("genesis", collect_genesis)&
   &]
 
   call get_argument(1, suite_name)

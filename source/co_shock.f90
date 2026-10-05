@@ -44,12 +44,16 @@ subroutine co_shock(x1, x2, wshk, R14)
   use mod_constants, only: naddholesmax, ndim, nprdbndmax
   use mod_newton_solve, only: newton_solve, residual_if, jacobian_if
   use co_shock_ctx_m, only: shock_ctx_t
+  use mod_log, only: log_line
+  use iso_fortran_env, only: error_unit
   implicit none(type, external)
   procedure(residual_if) :: f
   procedure(jacobian_if) :: jf
   include 'paramt.h'
 
   real(wp) x1, x2, wshk, R14
+  logical :: nfail
+  character(len=200) :: msg
   dimension x1(4), x2(4)
   real(wp) rov, rom, pv, pm, uv, um, gam, delta
   real(wp) y0(4), yn1(4)
@@ -102,7 +106,17 @@ subroutine co_shock(x1, x2, wshk, R14)
   y0(3) = uv
   y0(4) = w
 
-  call newton_solve(4_i4, y0, f, ctx, 0.2_wp, 1.0e-7_wp, 0.001_wp, yn1, jac=jf)
+! R-192 FU7: newton_solve's ifail used to be discarded, so a non-converged
+! solve (maxiter reached) returned its last iterate silently and became the
+! shock state of the next step.  It is now reported.  The returned values
+! are unchanged, so results of converged runs are bit-identical.
+  call newton_solve(4_i4, y0, f, ctx, 0.2_wp, 1.0e-7_wp, 0.001_wp, yn1,&
+  &ifail=nfail, jac=jf)
+  if (nfail) then
+    write (msg, '(a,4es12.4)') 'co_shock: Newton not converged, returned y =',&
+    &yn1(1), yn1(2), yn1(3), yn1(4)
+    call log_line(error_unit, msg)
+  end if
 
   wshk = yn1(4)
   x1(1) = yn1(1)
